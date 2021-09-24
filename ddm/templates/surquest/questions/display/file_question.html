@@ -1,0 +1,41 @@
+{% load static cms_tags surquest_tags %}
+
+{% if q.variable_name in filtered_vars %}
+  <input type="hidden" id="q{{ q.pk }}" name="{{ q.variable_name }}" value="{{ missing_filtered_value }}"/>
+
+{% else %}
+  {% if q.question_text != None %}
+    <div class="surquest-question-text">{{ q.question_text|insert_variable_response:submission|safe }}</div>
+  {% endif %}
+  {% if q.question_instruction != None %}
+    <div class="surquest-question-instruction">{{ q.question_instruction|insert_variable_response:submission|safe }}</div>
+  {% endif %}
+
+  <div class="sq-file-upload-interface-container">
+    <div class="sq-file-upload-interface">
+      <input id="q{{ q.pk }}-upload" class="sq-fileupload-input" type="file" name="myfile" accept="{{ q.file_types }}" maxsize="{{ q.max_filesize }}">
+      <button id="q{{ q.pk }}-button" class="surquest-controls-button" type="button" onclick="submitFile('{% url 'file-processor' %}', '{{ q.pk }}')">Datei hochladen</button>
+
+      {% with var_name="upload-"|add:q.pk %}
+        <input id="q{{ q.pk }}" type="hidden" name="{{ q.variable_name }}" {% if q.required %}required{% endif %} value="{% for var, value in initial_data.items %}{% if var == q.variable_name %}{{ value }}{% endif %}{% endfor %}"/>
+      {% endwith %}
+    </div>
+
+    <div id="sq-fileupload-info" class="sq-fileupload-info">
+      Erlaubte Dateiformate: {{ q.valid_file_types }}&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;Maximale Dateigrösse: {{ q.max_filesize|divide:1000 }}MB
+    </div>
+  </div>
+
+  <div id="sq-fileupload-msg-box" class="surquest-hidden"></div>
+
+  {% if q.variable_name in required_but_missing %}
+    <div id="q{{ q.pk }}-errormessage" class="surquest-invalid-infobox">Bitte laden Sie die erforderliche Datei hoch.</div>
+  {% endif %}
+
+  {% for var, value in initial_data.items %}
+    {% if var == q.variable_name and value != '-77' and value != 'failed_ul' %}
+      <div class="surquest-success-infobox">&#10004;   Es wurde bereits eine Datei hochgeladen. Wenn Sie eine neue Datei hochladen, werden die bereits hochgeladenen Daten gelöscht.</div>
+    {% endif %}
+  {% endfor %}
+
+{% endif %}

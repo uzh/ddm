@@ -1,0 +1,48 @@
+{% load static cms_tags surquest_tags %}
+
+{% with q_pk_str=q.pk|stringformat:'s' %}
+  {% with q_var_name='q-'|add:q_pk_str %}
+
+    {% if q_var_name in filtered_vars %}
+      {% for i in q.questionitem_set.all %}
+        <input type="hidden" id="qs_{{ i.id }}_{{ qs }}" name="{{ i.variable_name }}" value="{{ missing_filtered_value }}">
+      {% endfor %}
+
+    {% else %}
+      {% if q.question_text != None %}
+        <div class="surquest-question-text">{{ q.question_text|insert_variable_response:submission|safe }}</div>
+      {% endif %}
+      {% if q.question_instruction != None %}
+        <div class="surquest-question-instruction">{{ q.question_instruction|insert_variable_response:submission|safe }}</div>
+      {% endif %}
+
+      <div class="surquest-gq-response">
+      
+        {% for i in q.questionitem_set.all %}
+          {% with qi_pk_str=i.pk|stringformat:'s' %}
+            {% with qi_var_name='qi-'|add:qi_pk_str %}
+              {% if i.variable_name in filtered_vars %}
+              {% else %}
+                <div class="surquest-list-input-container">
+                  <input class="surquest-list-input" type="text" id="q_{{ i.pk }}" name="{{ i.variable_name }}" value="{% for var, value in initial_data.items %}{% if var == i.variable_name %}{{ value }}{% endif %}{% endfor %}" {% if q.required %}required{% endif %}>
+                </div>
+              {% endif %}
+            {% endwith %}
+          {% endwith %}
+        {% endfor %}
+
+        {% for i in q.questionitem_set.all %}
+          {% with qi_pk_str=i.pk|stringformat:'s' %}
+            {% with qi_var_name='qi-'|add:qi_pk_str %}
+              {% if i.variable_name in filtered_vars %}
+                <input type="hidden" id="qs_{{ i.id }}_{{ qs }}" name="{{ i.variable_name }}" value="{{ missing_filtered_value }}">
+              {% endif %}
+            {% endwith %}
+          {% endwith %}
+        {% endfor %}
+
+      </div>
+    {% endif %}
+
+  {% endwith %}
+{% endwith %}

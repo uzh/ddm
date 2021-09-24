@@ -1,0 +1,55 @@
+{% load static cms_tags surquest_tags %}
+
+{% if q.variable_name in filtered_vars %}
+  <input type="hidden" id="q-{{ q.pk }}-confirmation" name="{{ q.variable_name }}" value="{{ missing_filtered_value }}">
+
+{% else %}
+  {% if q.question_text != None %}
+    <div class="surquest-question-text">{{ q.question_text|insert_variable_response:submission|safe }}</div>
+  {% endif %}
+  {% if q.question_instruction != None %}
+    <div class="surquest-question-instruction">{{ q.question_instruction|insert_variable_response:submission|safe }}</div>
+  {% endif %}
+
+  <div class="ffq-table-container">
+    <table class="ffq-table">
+      <thead>
+      <tr>
+        {% for var in file_fields %}
+          <th>{{ var }}</th>
+        {% endfor %}
+      </tr>
+      </thead>
+      <tbody>
+      {% for inst in file_data %}
+        <tr>
+          {% for value in inst %}
+            <td>{{ value }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if q.need_to_confirm %}
+    <div class="ffq-confirmation">
+      <label class="form-check-label rb-cb-label" for="q-{{ q.pk }}-confirmation-yes">
+        <input id="q-{{ q.pk }}-confirmation-yes" type="radio" name="{{ q.variable_name }}" value="1"  required>
+        Ich bin damit einverstanden, diese Daten zu Forschungszwecken zu spenden.
+      </label>
+    </div>
+
+    <div class="ffq-confirmation">
+      <label class="form-check-label rb-cb-label" for="q-{{ q.pk }}-confirmation-no">
+        <input id="q-{{ q.pk }}-confirmation-no" type="radio" name="{{ q.variable_name }}" value="0"  required>
+        Ich möchte diese Daten lieber nicht spenden.
+      </label>
+    </div>
+  {% endif %}
+
+  {% if q.variable_name in required_but_missing %}
+    <div id="q-{{ q.pk }}-errormessage" class="surquest-invalid-upload-infobox">Bitte geben Sie an, ob Sie damit einverstanden sind, Ihre Daten zu Forschungszwecken zur Verfügung zu stellen.</div>
+  {% endif %}
+
+{% endif %}

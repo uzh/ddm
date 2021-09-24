@@ -1,0 +1,44 @@
+{% load static cms_tags surquest_tags %}
+
+{% with q_pk_str=q.pk|stringformat:'s' %}
+  {% with q_var_name='q-'|add:q_pk_str %}
+
+    {% if q.variable_name in filtered_vars %}
+      <input type="hidden" id="q-{{ q.pk }}" name="q.variable_name" value="{{ missing_filtered_value }}">
+    {% else %}
+      {% if q.question_text != None %}
+        <div class="surquest-question-text">{{ q.question_text|insert_variable_response:submission|safe }}</div>
+      {% endif %}
+      {% if q.question_instruction != None %}
+        <div class="surquest-question-instruction">{{ q.question_instruction|insert_variable_response:submission|safe }}</div>
+      {% endif %}
+
+      {% if q.variable_name in required_but_missing %}
+        <div class="surquest-invalid-infobox">Bitte beantworten Sie diese Frage.</div>
+      {% endif %}
+
+      <div class="surquest-gq-response surquest-cq-response">
+        {% for i in q.get_ordered_items %}
+          {% with qi_pk_str=i.pk|stringformat:'s' %}
+            {% with qi_var_name='qi-'|add:qi_pk_str %}
+
+              {% if q.variable_name in filtered_vars %}
+              {% else %}
+                <div class="surquest-choice-item form-check">
+                  <label  class="form-check-label rb-cb-label" for="{{ i.variable_name }}">
+                    <input class="form-check-input" type="radio" id="{{ i.variable_name }}" name="{{ q.variable_name }}" value="{{ i.value }}" {% if q.required %}required{% endif %}
+                           {% for var, value in initial_data.items %}{% if var == q.variable_name and value|add:"0" == i.value %}checked{% endif %}{% endfor %}>
+                    {{ i.answer|insert_variable_response:submission|safe }}
+                  </label>
+                </div>
+              {% endif %}
+
+            {% endwith %}
+          {% endwith %}
+        {% endfor %}
+
+      </div>
+    {% endif %}
+
+  {% endwith %}
+{% endwith %}

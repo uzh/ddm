@@ -1,0 +1,11 @@
+{% extends "surquest/admin/forms/base_form.html" %}
+{% load i18n admin_urls static admin_modify surquest_tags %}
+
+{% block page_title %}
+  Update Trigger "{{ object }}"
+{% endblock page_title %}
+
+{% block side_nav %}
+  {% include 'surquest/admin/navigation/side_navigation/level_1_questionnaires.html' %}
+  {% include 'surquest/admin/navigation/side_navigation/level_2_questionnaire.html' %}
+{% endblock side_nav %}

@@ -14,9 +14,9 @@ from polymorphic.models import PolymorphicModel
 
 # Here, to avoid circular dependency errors, a general import is used instead of
 # an explicit import.
-import surquest.models as sq_models
-from surquest.settings import SQ_TIMEZONE
-from surquest.tools import cipher_variable, get_or_none, VARIABLE_VALIDATOR
+import ddm.models as ddm_models
+from ddm.settings import SQ_TIMEZONE
+from ddm.tools import cipher_variable, get_or_none, VARIABLE_VALIDATOR
 
 
 FILE_TYPE_VALIDATOR = RegexValidator(
@@ -225,7 +225,7 @@ class Question(PolymorphicModel):
         """
 
         def get_response_value(obj, submission, decrypt=False):
-            existing_response = sq_models.QuestionnaireResponse.objects.filter(
+            existing_response = ddm_models.QuestionnaireResponse.objects.filter(
                 submission=submission,
                 variable=obj.variable).first()
 
@@ -284,7 +284,7 @@ class Question(PolymorphicModel):
         filtered_out = []
 
         # 1: Check filters that are associated with the question.
-        f_seq_question = get_or_none(sq_models.FilterSequence,
+        f_seq_question = get_or_none(ddm_models.FilterSequence,
                                      question=self, question_item=None)
 
         if f_seq_question is not None:
@@ -301,7 +301,7 @@ class Question(PolymorphicModel):
         item_set = self.questionitem_set.all()
         for item in item_set:
             f_seq_item = get_or_none(
-                sq_models.FilterSequence,
+                ddm_models.FilterSequence,
                 question_item=item
             )
 
@@ -781,17 +781,17 @@ class FileUploadItem(models.Model):
         questionnaire = self.file_upload_question.page.questionnaire
 
         # Get all submissions.
-        submissions = sq_models.QuestionnaireSubmission.objects.filter(
+        submissions = ddm_models.QuestionnaireSubmission.objects.filter(
             questionnaire=questionnaire)
-        variable = sq_models.Variable.objects.get(
+        variable = ddm_models.Variable.objects.get(
             questionnaire=questionnaire, name=self.variable_name)
 
         # Get all associated upload ids.
-        upload_ids = sq_models.QuestionnaireResponse.objects.filter(
+        upload_ids = ddm_models.QuestionnaireResponse.objects.filter(
             submission__in=submissions, variable=variable).values_list(
             'answer', flat=True)
 
-        data = sq_models.UploadedData.objects.filter(upload_id__in=upload_ids)
+        data = ddm_models.UploadedData.objects.filter(upload_id__in=upload_ids)
         data = serializers.serialize('json', data)
         return data
 
@@ -836,14 +836,14 @@ class FileFeedback(Question):
         """
         related_fq = self.related_filequestion
 
-        upload = get_or_none(sq_models.QuestionnaireResponse,
+        upload = get_or_none(ddm_models.QuestionnaireResponse,
                              submission=submission,
                              variable=related_fq.variable)
 
         if upload is not None:
             upload_id = upload.answer
 
-            raw_data = get_or_none(sq_models.UploadedData, upload_id=upload_id)
+            raw_data = get_or_none(ddm_models.UploadedData, upload_id=upload_id)
 
             if raw_data is None:
                 file_data_list = []
@@ -880,7 +880,7 @@ class FileFeedback(Question):
         if not self.need_to_confirm:
             return True
 
-        confirmation = sq_models.QuestionnaireResponse.objects.filter(
+        confirmation = ddm_models.QuestionnaireResponse.objects.filter(
             submission=submission,
             variable__name=self.variable_name
         ).first()
@@ -905,7 +905,7 @@ class FileFeedback(Question):
         """
 
         var_name = self.related_filequestion.variable_name
-        related_response = sq_models.QuestionnaireResponse.objects.filter(
+        related_response = ddm_models.QuestionnaireResponse.objects.filter(
             submission=submission,
             variable__name=var_name
         ).first()
@@ -931,7 +931,7 @@ class FileFeedback(Question):
         # Check if the uploaded data can be kept or must be deleted.
         if has_confirmed and upload_id is not None:
             # Delete the related UploadedDataTemp instance.
-            related_entry = get_or_none(sq_models.UploadedDataTemp,
+            related_entry = get_or_none(ddm_models.UploadedDataTemp,
                                         upload_id=upload_id)
             if related_entry is not None:
                 related_entry.delete()
@@ -939,15 +939,15 @@ class FileFeedback(Question):
         elif not has_confirmed and upload_id is not None:
             # Check if an UploadedDataTemp instance related to the upload id
             # exists.
-            related_temp_entry = get_or_none(sq_models.UploadedDataTemp,
+            related_temp_entry = get_or_none(ddm_models.UploadedDataTemp,
                                              upload_id=upload_id)
             if related_temp_entry is None:
                 # Create an UploadedDataTemp instance if it does not yet exist
                 # (this is necessary, if the back button is activated).
-                sq_models.UploadedDataTemp.objects.create(
+                ddm_models.UploadedDataTemp.objects.create(
                     questionnaire=submission.questionnaire,
                     upload_id=upload_id,
-                    time=datetime.now(tz=SQ_TIMEZONE)
+                    time=datetime.now(tz=ddm_TIMEZONE)
                 )
         return
 

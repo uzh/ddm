@@ -23,7 +23,7 @@ from ddm.models import (
 # Generic
 # ----------------------------------------------------------------------
 class QuestionBaseCreate(LoginRequiredMixin, SurquestContextMixin, CreateView):
-    template_name = 'surquest/admin/questions/create.html'
+    template_name = 'ddm/admin/questions/create.html'
     menu_levels = ['questionnaires', 'ind_questionnaire', 'page']
     url_para_page = 'p'
     view_name = None
@@ -47,7 +47,7 @@ class QuestionBaseCreate(LoginRequiredMixin, SurquestContextMixin, CreateView):
 
 
 class QuestionBaseUpdate(SurquestContextMixin, SurquestUpdateMixin, UpdateView):
-    template_name = 'surquest/admin/questions/update.html'
+    template_name = 'ddm/admin/questions/update.html'
     view_name = None
 
     def __init__(self, *args, **kwargs):

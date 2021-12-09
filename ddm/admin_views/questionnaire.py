@@ -17,7 +17,7 @@ class QuestionnaireList(LoginRequiredMixin, SurquestContextMixin, ListView):
     """
 
     model = Questionnaire
-    template_name = 'surquest/admin/questionnaires/questionnaire_list.html'
+    template_name = 'ddm/admin/questionnaires/questionnaire_list.html'
 
 
 class QuestionnaireCreate(LoginRequiredMixin, SurquestContextMixin, CreateView):
@@ -26,7 +26,7 @@ class QuestionnaireCreate(LoginRequiredMixin, SurquestContextMixin, CreateView):
 
     model = Questionnaire
     fields = ['name', 'description', 'slug']
-    template_name = 'surquest/admin/questionnaires/create.html'
+    template_name = 'ddm/admin/questionnaires/create.html'
 
 
 class QuestionnaireDelete(LoginRequiredMixin, SurquestContextMixin, DeleteView):
@@ -35,7 +35,7 @@ class QuestionnaireDelete(LoginRequiredMixin, SurquestContextMixin, DeleteView):
 
     model = Questionnaire
     success_url = reverse_lazy('questionnaire-list')
-    template_name = 'surquest/admin/questionnaires/delete.html'
+    template_name = 'ddm/admin/questionnaires/delete.html'
     view_name = 'questionnaire-delete'
 
 
@@ -54,7 +54,7 @@ class QuestionnaireGeneralSettingsUpdate(SurquestContextMixin,
     """
 
     model = Questionnaire
-    template_name = 'surquest/admin/questionnaires/general_settings.html'
+    template_name = 'ddm/admin/questionnaires/general_settings.html'
     view_name = 'questionnaire-settings'
 
     fields = [
@@ -101,7 +101,7 @@ class QuestionnaireStructureUpdate(SurquestContextMixin, SurquestUpdateMixin,
     """
 
     model = Questionnaire
-    template_name = 'surquest/admin/questionnaires/structure.html'
+    template_name = 'ddm/admin/questionnaires/structure.html'
     form_class = QuestionnaireStructureForm
     inline_formsets = [
         {'label': None, 'formset': PageInlineFormSet}
@@ -123,7 +123,7 @@ class QuestionnaireTriggerList(SurquestContextMixin, SurquestUpdateMixin,
     """
 
     model = Questionnaire
-    template_name = 'surquest/admin/questionnaires/trigger_list.html'
+    template_name = 'ddm/admin/questionnaires/trigger_list.html'
     form_class = QuestionnaireStructureForm
     inline_formsets = [
         {'label': None, 'formset': TriggerInlineFormSet}
@@ -145,7 +145,7 @@ class QuestionnaireResponseView(SurquestContextMixin, TemplateView):
     """View to display responses belonging to the current questionnaire.
     """
 
-    template_name = 'surquest/admin/questionnaires/responses.html'
+    template_name = 'ddm/admin/questionnaires/responses.html'
     view_name = 'questionnaire-responses'
 
     def get_context_data(self, *args, **kwargs):
@@ -190,7 +190,7 @@ class ExternalVariablesList(SurquestContextMixin, SurquestUpdateMixin, UpdateVie
         {'label': None, 'formset': external_variable_formset}
     ]
     template_name = (
-        'surquest/admin/questionnaires/external_variables_list.html'
+        'ddm/admin/questionnaires/external_variables_list.html'
     )
     view_name = 'externalvariables-list'
 
@@ -205,7 +205,7 @@ class UploadedDataView(SurquestContextMixin, TemplateView):
     """View to display uploaded data belonging to the current questionnaire.
     """
 
-    template_name = 'surquest/admin/questionnaires/uploaded_data.html'
+    template_name = 'ddm/admin/questionnaires/uploaded_data.html'
     view_name = 'uploaded-data'
 
     def get_context_data(self, *args, **kwargs):

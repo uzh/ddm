@@ -20,14 +20,14 @@
 
         {% for field in form.visible_fields %}
           {% if field.name == fieldset_field %}
-            {% include "surquest/admin/forms/form_field.html" %}
+            {% include "ddm/admin/forms/form_field.html" %}
           {% endif %}
         {% endfor %}
 
       {% endfor %}
 
     {% elif fieldset.type == 'inline_form' %}
-      {% include 'surquest/admin/forms/inline_form.html' with inline_formset=fieldset %}
+      {% include 'ddm/admin/forms/inline_form.html' with inline_formset=fieldset %}
     {% endif %}
 
   </div>

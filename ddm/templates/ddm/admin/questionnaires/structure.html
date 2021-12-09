@@ -1,9 +1,9 @@
-{% extends "surquest/admin/base.html" %}
+{% extends "ddm/admin/base.html" %}
 {% load i18n admin_urls static admin_modify ddm_tags %}
 
 {% block side_nav %}
-  {% include 'surquest/admin/navigation/side_navigation/level_1_questionnaires.html' %}
-  {% include 'surquest/admin/navigation/side_navigation/level_2_questionnaire.html' %}
+  {% include 'ddm/admin/navigation/side_navigation/level_1_questionnaires.html' %}
+  {% include 'ddm/admin/navigation/side_navigation/level_2_questionnaire.html' %}
 {% endblock side_nav %}
 
 {% block page_title %}
@@ -17,7 +17,7 @@
 {% block content %}
 
   <div class="sq-dropup">
-    {% include 'surquest/admin/controls/button_add_page.html' %}
+    {% include 'ddm/admin/controls/button_add_page.html' %}
   </div>
 
   <div id="main-content">
@@ -90,5 +90,5 @@
 {% block extra_js %}
   <script src="https://cdnjs.cloudflare.com/ajax/libs/TableDnD/0.9.1/jquery.tablednd.js" integrity="sha256-d3rtug+Hg1GZPB7Y/yTcRixO/wlI78+2m08tosoRn7A=" crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-  <script src="{% static 'surquest/js/questionnaire-structure.js' %}"></script>
+  <script src="{% static 'ddm/js/questionnaire-structure.js' %}"></script>
 {% endblock %}

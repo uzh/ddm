@@ -14,7 +14,7 @@ from ddm.models import (
 
 
 class TriggerCreateMixin(object):
-    template_name = 'surquest/admin/triggers/create.html'
+    template_name = 'ddm/admin/triggers/create.html'
     view_name = None
 
     def __init__(self, *args, **kwargs):
@@ -45,7 +45,7 @@ class TriggerCreateMixin(object):
 
 
 class TriggerUpdateMixin(object):
-    template_name = 'surquest/admin/triggers/update.html'
+    template_name = 'ddm/admin/triggers/update.html'
     view_name = None
 
     def __init__(self, *args, **kwargs):

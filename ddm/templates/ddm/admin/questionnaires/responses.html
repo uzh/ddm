@@ -2,8 +2,8 @@
 {% load i18n admin_urls static admin_modify ddm_tags %}
 
 {% block side_nav %}
-  {% include 'surquest/admin/navigation/side_navigation/level_1_questionnaires.html' %}
-  {% include 'surquest/admin/navigation/side_navigation/level_2_questionnaire.html' %}
+  {% include 'ddm/admin/navigation/side_navigation/level_1_questionnaires.html' %}
+  {% include 'ddm/admin/navigation/side_navigation/level_2_questionnaire.html' %}
 {% endblock side_nav %}
 
 {% block page_title %}
@@ -70,6 +70,6 @@
 
 {% block extra_js %}
   {{ block.super }}
-  <script src="{% static 'surquest/js/file-download.js' %}"></script>
-  <script src="{% static 'surquest/js/delete-responses.js' %}"></script>
+  <script src="{% static 'ddm/js/file-download.js' %}"></script>
+  <script src="{% static 'ddm/js/delete-responses.js' %}"></script>
 {% endblock %}

@@ -1,9 +1,9 @@
-{% extends "surquest/admin/forms/base_form.html" %}
+{% extends "ddm/admin/forms/base_form.html" %}
 {% load i18n admin_urls static admin_modify ddm_tags %}
 
 {% block side_nav %}
-  {% include 'surquest/admin/navigation/side_navigation/level_1_questionnaires.html' %}
-  {% include 'surquest/admin/navigation/side_navigation/level_2_questionnaire.html' %}
+  {% include 'ddm/admin/navigation/side_navigation/level_1_questionnaires.html' %}
+  {% include 'ddm/admin/navigation/side_navigation/level_2_questionnaire.html' %}
 {% endblock side_nav %}
 
 {% block page_title %}
@@ -16,5 +16,5 @@
 
 {% block form_submit %}
   {{ block.super }}
-  {% include 'surquest/admin/controls/button_add_trigger.html' %}
+  {% include 'ddm/admin/controls/button_add_trigger.html' %}
 {% endblock form_submit %}

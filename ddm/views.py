@@ -42,14 +42,14 @@ class QuestionnaireThankYou(TemplateView):
     """Simple template view displaying a thank you page
     """
 
-    template_name = "surquest/questionnaire/thankyou.html"
+    template_name = "ddm/questionnaire/thankyou.html"
 
 
 class QuestionnaireAlreadyCompleted(TemplateView):
     """Simple template view displaying an "already completed" notification
     """
 
-    template_name = "surquest/questionnaire/already_completed.html"
+    template_name = "ddm/questionnaire/already_completed.html"
 
 
 # Helper function for other views

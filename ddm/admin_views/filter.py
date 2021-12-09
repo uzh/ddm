@@ -11,7 +11,7 @@ from ddm.models import (
 
 @login_required
 def update_filter(request, filter_target, target_id):
-    template = 'surquest/admin/questions/filters.html'
+    template = 'ddm/admin/questions/filters.html'
 
     if filter_target == 'q':
         target_item = None

@@ -8,7 +8,7 @@ from ddm.models import Questionnaire, Question, EndPage, QuestionPage
 
 
 class PageCreateMixin(object):
-    template_name = 'surquest/admin/pages/create.html'
+    template_name = 'ddm/admin/pages/create.html'
     view_name = None
 
     def __init__(self, *args, **kwargs):
@@ -26,7 +26,7 @@ class PageCreateMixin(object):
 
 
 class PageUpdateMixin(object):
-    template_name = 'surquest/admin/pages/update.html'
+    template_name = 'ddm/admin/pages/update.html'
     view_name = None
 
     def __init__(self, *args, **kwargs):
@@ -86,7 +86,7 @@ class QuestionPageDelete(LoginRequiredMixin, SurquestContextMixin,
     """
     """
     model = QuestionPage
-    template_name = 'surquest/admin/pages/delete.html'
+    template_name = 'ddm/admin/pages/delete.html'
     view_name = model.DEFAULT_PAGE_TYPE + '-delete'
 
     def get_success_url(self):
@@ -137,7 +137,7 @@ class EndPageDelete(LoginRequiredMixin, SurquestContextMixin,
     """
     """
     model = EndPage
-    template_name = 'surquest/admin/pages/delete.html'
+    template_name = 'ddm/admin/pages/delete.html'
     view_name = model.DEFAULT_PAGE_TYPE + '-delete'
 
     def get_success_url(self):

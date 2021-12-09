@@ -909,32 +909,26 @@ class FileFeedback(Question):
         Update data entries.
         Keep if confirmed, mark for deletion if not confirmed.
         """
-
         upload_id = self.get_upload_id(submission)
 
-        has_confirmed = self.check_confirmation(submission)
+        # Check if upload needed to be confirmed.
+        if self.need_to_confirm:
+            has_confirmed = self.check_confirmation(submission)
 
-        # Check if the uploaded data can be kept or must be deleted.
-        if has_confirmed and upload_id is not None:
-            # Delete the related UploadedDataTemp instance.
-            related_entry = get_or_none(ddm_models.UploadedDataTemp,
-                                        upload_id=upload_id)
-            if related_entry is not None:
-                related_entry.delete()
+            if not has_confirmed and upload_id is not None:
+                # Delete uploaded data and delete related UploadedDataTemp instance.
+                uploaded_data = get_or_none(ddm_models.UploadedData,
+                                            upload_id=upload_id)
+                if uploaded_data is not None:
+                    uploaded_data.delete()
 
-        elif not has_confirmed and upload_id is not None:
-            # Check if an UploadedDataTemp instance related to the upload id
-            # exists.
-            related_temp_entry = get_or_none(ddm_models.UploadedDataTemp,
-                                             upload_id=upload_id)
-            if related_temp_entry is None:
-                # Create an UploadedDataTemp instance if it does not yet exist
-                # (this is necessary, if the back button is activated).
-                ddm_models.UploadedDataTemp.objects.create(
-                    questionnaire=submission.questionnaire,
-                    upload_id=upload_id,
-                    time=datetime.now(tz=ddm_TIMEZONE)
-                )
+        # In any case, delete data temp entry.
+        if upload_id is not None:
+            temp_entry = get_or_none(ddm_models.UploadedDataTemp,
+                                     upload_id=upload_id)
+            if temp_entry is not None:
+                temp_entry.delete()
+
         return
 
 

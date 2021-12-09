@@ -397,7 +397,7 @@ def display_questionnaire(request, slug):
     """
 
     # Define which template will be used to display the questionnaire.
-    template = 'surquest/questionnaire/display.html'
+    template = 'ddm/questionnaire/display.html'
 
     # Initialize a context variable.
     context = {}
@@ -409,14 +409,14 @@ def display_questionnaire(request, slug):
     # If the questionnaire does not contain any pages,
     # render an 'inactive' template.
     if not questionnaire.page_set.all().exists():
-        template = 'surquest/questionnaire/inactive.html'
+        template = 'ddm/questionnaire/inactive.html'
         return render(request, template)
 
     if request.method == 'GET':
 
         # Check if the questionnaire is currently active.
         if not questionnaire.active:
-            template = 'surquest/questionnaire/inactive.html'
+            template = 'ddm/questionnaire/inactive.html'
             return render(request, template)
 
         # Retrieve the submission instance related to the questionnaire.
@@ -424,7 +424,7 @@ def display_questionnaire(request, slug):
 
         # Check if the questionnaire has already been completed.
         if submission.completed:
-            template = 'surquest/questionnaire/already_completed.html'
+            template = 'ddm/questionnaire/already_completed.html'
             return render(request, template)
 
         # Check if access to the questionnaire is granted.
@@ -599,7 +599,7 @@ def display_questionnaire(request, slug):
 
                 else:
                     # Render the thank you template.
-                    template = 'surquest/questionnaire/thankyou.html'
+                    template = 'ddm/questionnaire/thankyou.html'
                     return render(request, template)
 
             else:

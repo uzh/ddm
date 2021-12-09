@@ -288,7 +288,7 @@ public_patterns = [
 ]
 
 urlpatterns = [
-    path('admin/surquest/', include(admin_patterns)),
+    path('admin/ddm/', include(admin_patterns)),
     path('', include(public_patterns)),
     path('ddm/', include(ddm_admin_patterns)),
     path('ddm/questionnaires/<int:q>/questions/', include(ddm_question_patterns)),

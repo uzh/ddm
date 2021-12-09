@@ -9,10 +9,10 @@
   <title>{% block title %}SurQuest | Admin Panel{% endblock title %}</title>
 
   <!-- Stylesheets -->
-  <link href='{% static "surquest/css/admin-base.css" %}' rel='stylesheet'>
-  <link href='{% static "surquest/css/bootstrap4/bootstrap.min.css" %}' rel='stylesheet'>
+  <link href='{% static "ddm/css/admin-base.css" %}' rel='stylesheet'>
+  <link href='{% static "ddm/css/bootstrap4/bootstrap.min.css" %}' rel='stylesheet'>
 
-  <link rel="icon" href="{% static 'surquest/img/surquest_v0-2_icon.svg' %}">
+  <link rel="icon" href="{% static 'ddm/img/surquest_v0-2_icon.svg' %}">
 
   {% block extra_head %}{% endblock %}
 
@@ -26,7 +26,7 @@
   <div class='sq-interface d-flex bg-light'>
 
     <div class='sq-side-nav d-flex flex-column'>
-      {% include 'surquest/admin/navigation/side_navigation/level_0_header.html' %}
+      {% include 'ddm/admin/navigation/side_navigation/level_0_header.html' %}
       {% block side_nav %}{% endblock side_nav %}
     </div>
 
@@ -76,8 +76,8 @@
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
   <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js'></script>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/TableDnD/0.9.1/jquery.tablednd.js' integrity='sha256-d3rtug+Hg1GZPB7Y/yTcRixO/wlI78+2m08tosoRn7A=' crossorigin='anonymous'></script>
-  <script src='{% static "surquest/js/bootstrap4/bootstrap.bundle.min.js" %}'></script>
-  <script src='{% static "surquest/js/questionnaire-admin.js" %}'></script>
+  <script src='{% static "ddm/js/bootstrap4/bootstrap.bundle.min.js" %}'></script>
+  <script src='{% static "ddm/js/questionnaire-admin.js" %}'></script>
 
   {% block extra_js %}{% endblock %}
 

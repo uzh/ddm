@@ -1,4 +1,4 @@
-{% load static surquest_tags %}
+{% load static ddm_tags %}
 
 {% if q.variable_name in filtered_vars %}
   <input type="hidden" id="q-{{ q.pk }}-confirmation" name="{{ q.variable_name }}" value="{{ missing_filtered_value }}">

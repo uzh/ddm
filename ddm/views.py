@@ -10,7 +10,7 @@ from lxml import html
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import (
     HttpResponse, HttpResponseNotFound, HttpResponseRedirect, Http404,
-    JsonResponse
+    JsonResponse, StreamingHttpResponse
 )
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.csrf import csrf_protect
@@ -1228,6 +1228,15 @@ def process_view(request):
         raise Http404()
 
 
+class Echo:
+    """An object that implements just the write method of the file-like
+    interface.
+    """
+    def write(self, value):
+        """Write the value by returning it, instead of storing in a buffer."""
+        return value
+
+
 @csrf_protect
 def export_file(request):
     """Exports requested data as .csv file.
@@ -1238,7 +1247,6 @@ def export_file(request):
     Returns:
         JsonResponse/HttpResponseNotFound:
     """
-    success = False
     if request.method == 'POST':
 
         data_source = request.POST['data_source']
@@ -1246,42 +1254,49 @@ def export_file(request):
         if data_source == 'questionnaire':
             q_id = request.POST['q_id']
             q = Questionnaire.objects.get(pk=q_id)
-            q_vars = q.get_var_names(for_overview=True)
 
+            # Create a list of response dictionaries.
             q_subs = q.questionnairesubmission_set.all()
             raw_data = []
             for sub in q_subs:
                 raw_data.append(
                     sub.get_related_responses(submission_fields=True))
 
+            # Create a dictionary containing header:header key:value pairs.
+            q_vars = q.get_var_names(for_overview=True)
             q_vars += ['sub_session_id', 'sub_id',
                        'sub_time_started', 'sub_time_submitted',
                        'sub_completion_time', 'sub_completed',
                        'sub_user_agent', 'sub_last_submitted_page']
-            data_fields = q_vars
+            dict_header = {k: k for k in q_vars}
+            raw_data.insert(0, dict_header)
 
-            if data_fields is not None and raw_data is not None:
-                response = HttpResponse(content_type='text/csv')
-                writer = csv.writer(response)
+            # Initialize a generator.
+            data_gen = (r for r in raw_data)
 
-                writer.writerow(data_fields)
-                for entry in raw_data:
-                    clean_data = []
-                    for field in data_fields:
-                        if field in entry:
-                            clean_data.append(entry[field])
-                        else:
-                            clean_data.append('NA')
-                    writer.writerow(clean_data)
+            # Initialize streaming response.
+            pseudo_buffer = Echo()
+            writer = csv.DictWriter(
+                pseudo_buffer, fieldnames=q_vars,
+                restval='NA', extrasaction='ignore')
+            writer.writeheader()
+            response = StreamingHttpResponse(
+                (writer.writerow(row) for row in data_gen),
+                content_type='text/csv')
 
-                filename = (
+            # Prepare response.
+            filename = (
                     data_source +
                     '_export_' +
                     datetime.now(tz=SQ_TIMEZONE).strftime("%Y%m%d_%H%M%S") +
                     '.csv'
-                )
+            )
+            response['filename'] = filename
 
-                success = True
+            cont_disp = ('attachment; filename=' + filename)
+            response['Content-Disposition'] = cont_disp
+
+            return response
 
         elif data_source == 'fileupload':
             ul_item_id = request.POST['q_id']
@@ -1297,11 +1312,8 @@ def export_file(request):
             )
 
             response = JsonResponse(json_data, safe=False)
-            success = True
-
-        if success:
             response['Content-Disposition'] = (
-                'attachment; filename="' + filename + '"')
+                    'attachment; filename="' + filename + '"')
             response['success'] = True
             response['filename'] = filename
             return response

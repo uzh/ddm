@@ -3,6 +3,9 @@ import json
 import zipfile
 
 from datetime import datetime
+from dateutil import parser
+from fuzzywuzzy import fuzz
+from lxml import html
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import (
@@ -18,7 +21,7 @@ from ddm.models import (
     Questionnaire, QuestionnaireResponse, Question,
     QuestionnaireSubmission, QuestionnaireAccessToken,
     Page, Variable, MultiChoiceQuestion,
-    UploadedData, FileUploadItem, FileUploadQuestion
+    UploadedData, UploadedDataTemp, FileUploadItem, FileUploadQuestion
 )
 from ddm.settings import SQ_TIMEZONE
 from ddm.tools import fill_variable_placeholder, get_or_none
@@ -624,7 +627,7 @@ def questionnaire_admission(request, slug):
 
     questionnaire = get_object_or_404(Questionnaire, slug=slug)
     q_session_identifier = 'quest-' + str(questionnaire.pk)
-    template = 'surquest/questionnaire/admission.html'
+    template = 'ddm/questionnaire/admission.html'
 
     if request.method == 'GET':
         # Check if the questionnaire is active.
@@ -676,14 +679,14 @@ def questionnaire_admission(request, slug):
 
             else:
                 error_message = (
-                    'Der Zugangscode "{}" wurde bereits verwendet und ist '
-                    'nicht länger aktiv.'.format(submitted_token)
+                    'Der Zugangscode "{submitted_token}" wurde bereits verwendet und ist '
+                    'nicht länger aktiv.'
                 )
 
         else:
             error_message = (
-                'Der Zugangscode "{}" ist leider '
-                'ungültig.'.format(submitted_token)
+                'Der Zugangscode "{submitted_token}" ist leider '
+                'ungültig.'
             )
 
         context = {'error_message': error_message}
@@ -703,7 +706,7 @@ def questionnaire_continue(request, slug):
 
     questionnaire = get_object_or_404(Questionnaire, slug=slug)
     q_session_identifier = 'quest-' + str(questionnaire.pk)
-    template = 'surquest/questionnaire/continuation.html'
+    template = 'ddm/questionnaire/continuation.html'
 
     if request.method == 'GET':
         # Check if the questionnaire is active.
@@ -758,14 +761,14 @@ def questionnaire_continue(request, slug):
 
             else:
                 error_message = (
-                    'Der Zugangscode "{}" wurde bereits verwendet und ist '
-                    'nicht länger aktiv.'.format(submitted_token)
+                    f'Der Zugangscode "{submitted_token}" wurde bereits verwendet und ist '
+                    'nicht länger aktiv.'
                 )
 
         else:
             error_message = (
-                'Der Zugangscode "{}" ist leider '
-                'ungültig.'.format(submitted_token)
+                f'Der Zugangscode "{submitted_token}" ist leider '
+                'ungültig.'
             )
 
         context = {'error_message': error_message}
@@ -779,6 +782,117 @@ def process_view(request):
     TODO: Update function description
     Function that processes a submitted file
     """
+
+    def process_json_file(file_content, file_upload_item):
+        process_status = {
+            'message': None,
+            'status': 'Not processed'
+        }
+
+        # Validate field names.
+        if not file_upload_item.fields_are_valid(file_content):
+            message = (
+                'Die hochgeladene Datei enthält Datenfelder, die nicht '
+                'unterstützt werden. Bitte überprüfen Sie, ob die '
+                'ausgewählte Datei der geforderten Datei entspricht.'
+            )
+            process_status['message'] = message
+            process_status['status'] = 'failed_ul'
+            return None, process_status
+
+        extracted_data = file_upload_item.extract_data(file_content)
+        process_status['status'] = 'complete_ul'
+        return extracted_data, process_status
+
+    def process_html_file(file_content):
+        process_status = {
+            'message': None,
+            'status': 'Not processed'
+        }
+        extracted_data = []
+        html_tree = html.fromstring(file_content)
+
+        # Check if tree is not empty
+        i = 0
+        out_of_drange = 0
+        if len(html_tree) > 0:
+            cutoff_date = parser.parse('2021-06-01T00:00:00.000')
+
+            elements = html_tree.xpath('.//div[@class="mdl-grid"]')
+            for element in elements:
+                i += 1
+
+                # get relevant div
+                main_div = element.xpath(
+                    './/div[contains(@class, "content-cell") and '
+                    'not(contains(@class, "mdl-typography--caption")) and '
+                    'not(contains(@class, "mdl-typography--text-right"))]'
+                )
+
+                # extract date
+                if len(main_div) > 0:
+                    date_infos = main_div[0].xpath('text()')
+                    if len(date_infos) > 0:
+                        date_raw = date_infos[-1]
+                        try:
+                            date = parser.parse(date_raw, ignoretz=True, dayfirst=True)
+                        except ValueError as e:
+                            # print("HTML: Value error bei parser.parse.")
+                            # log?
+                            continue
+                        if date < cutoff_date:
+                            out_of_drange += 1
+                            continue
+                    else:
+                        continue
+
+                    # Extract title and titleUrl.
+                    url_infos = main_div[0].xpath('.//a[1]')
+                    title_infos = main_div[0].xpath('descendant-or-self::*[count(preceding-sibling::br) < 1 and not(self::br)]/text()[count(preceding-sibling::br) < 1 and not(self::br)]')
+
+                    if len(url_infos) > 0:
+                        title_url_text = url_infos[0].xpath('@href')
+                        if len(title_url_text) > 0:
+                            title_url = title_url_text[0]
+                        else:
+                            title_url = 'NA'
+                    else:
+                        title_url = 'NA'
+
+                    if len(title_infos) > 0:
+                        title_text = ' '.join(title_infos)
+
+                        if len(title_text) > 0:
+                            title = title_text
+                        else:
+                            title = 'NA'
+                    else:
+                        continue
+
+                    extracted_data.append(
+                        {'title': title, 'titleUrl': title_url, 'time': date_raw})
+        else:
+            message = 'Die enthaltene Datei entspricht nicht der erwarteten Struktur.'
+            process_status['message'] = message
+            process_status['status'] = 'failed_ul'
+
+        if len(extracted_data) == 0:
+            data_row = {'status': 'no data in file'}
+            extracted_data.append(data_row)
+
+            if i > 0 and out_of_drange == i:
+                message = (
+                    'Es wurden keine Daten extrahiert – Die Datei enthielt '
+                    'keine Daten zu Aktivitäten, die nach dem 01.06.2021 '
+                    'aufgezeichnet wurden.'
+                )
+                process_status['message'] = message
+                process_status['status'] = 'failed_ul'
+            else:
+                process_status['status'] = 'failed_ul'
+        else:
+            process_status['status'] = 'complete_ul'
+        return extracted_data, process_status
 
     def process_single_file(file_upload_item, file, submission, data, response,
                             content_extracted=False):
@@ -797,9 +911,10 @@ def process_view(request):
             file_type = file_upload_item.check_filetype(file.content_type)
             if file_type is None:
                 message = (
-                    'Das Format der hochgeladenen Datei wird nicht '
-                    'unterstützt. Bitte überprüfen Sie die ausgewählte Datei '
-                    'und versuchen Sie es erneut.'
+                    'Das Format der hochgeladenen Daten wird nicht '
+                    'unterstützt - möglicherweise haben Sie beim Datenexport "HTML" anstelle von "JSON" ausgewählt. '
+                    'Bitte überprüfen Sie das Format der Dateien im ZIP-File und fordern Sie Ihre Daten gegebenenfalls '
+                    'erneut von Google im JSON-Format an.'
                 )
                 data['message'] = message
                 return data
@@ -848,19 +963,35 @@ def process_view(request):
         )
 
         # TODO: Check this part:
-        # save entry to take consent into account
+        # If consent is required to store data, store upload_id in Temp table
         if file_upload_item.file_upload_question.requires_consent:
             # register upload id in temporary table until consent is given
             # if consent is not given, the registered upload files will be
             # deleted after a specified time (e.g. 48 hours)
-            # UploadedDataTemp.objects.create(
-            #     questionnaire=sub.questionnaire,
-            #     upload_id=upload_id,
-            #     time=datetime.now(tz=SQ_TIMEZONE)
-            # )
+            UploadedDataTemp.objects.create(
+                questionnaire=submission.questionnaire,
+                upload_id=upload_id,
+                time=datetime.now(tz=SQ_TIMEZONE)
+            )
             pass
 
         # Update the response object.
+        ## Check if a previous data upload exists for this response.
+        if response.answer != '':
+            previous_ul_id = response.answer
+
+            previous_upload = get_or_none(
+                UploadedData, upload_id=previous_ul_id,
+                questionnaire=submission.questionnaire)
+            if previous_upload is not None:
+                previous_upload.delete()
+
+            previous_temp_entry = get_or_none(
+                UploadedDataTemp, upload_id=previous_ul_id,
+                questionnaire=submission.questionnaire)
+            if previous_temp_entry is not None:
+                previous_temp_entry.delete()
+
         response.answer = upload_id
         response.save()
 
@@ -871,7 +1002,7 @@ def process_view(request):
     def read_zip_or_none(zip_file, content):
         try:
             extracted_content = zip_file.read(content)
-            extracted_content = json.loads(extracted_content.decode("utf-8"))
+            extracted_content = json.loads(extracted_content.decode("utf-8-sig"))
             return extracted_content
         except KeyError:
             return None
@@ -891,8 +1022,9 @@ def process_view(request):
 
         return response
 
+
     if request.method == 'POST':
-        data = {
+        status = {
             'status': 'failed_ul',
             'message': None,
             'upload_id': None,
@@ -912,17 +1044,18 @@ def process_view(request):
         # Check if exactly one file is appended.
         files = request.FILES
 
+        # Check if exactly one file has been uploaded
         if len(files) != 1:
             if len(files) > 1:
-                data['message'] = (
+                status['message'] = (
                     'More than 1 file submitted. Only 1 file can be '
                     'submitted at once.'
                 )
             else:
                 msg = 'Es wurde keine Datei ausgewählt.'
-                data['message'] = msg
+                status['message'] = msg
 
-            return JsonResponse(data)
+            return JsonResponse(status)
 
         file = files['file']
 
@@ -933,11 +1066,11 @@ def process_view(request):
                 message = (
                     'Es ist ein interner Fehler aufgetreten.'
                 )
-                data['message'] = message
-                return JsonResponse(data)
+                status['message'] = message
+                return JsonResponse(status)
 
             if upload_question.upload_mode == FileUploadQuestion.SF:
-                data['upload_mode'] = 'single file'
+                status['upload_mode'] = 'single file'
 
                 file_uploader = file_uploader_set[0]
 
@@ -946,10 +1079,10 @@ def process_view(request):
 
                 # Process the file.
                 data = process_single_file(
-                    file_uploader, file, submission, data, response)
+                    file_uploader, file, submission, status, response)
 
             elif upload_question.upload_mode == FileUploadQuestion.ZIP:
-                data['upload_mode'] = 'multiple files'
+                status['upload_mode'] = 'multiple files'
 
                 # Check if the uploaded file is a .zip file.
                 if not zipfile.is_zipfile(file):
@@ -958,8 +1091,8 @@ def process_view(request):
                         'Bitte überprüfen Sie die ausgewählte Datei und '
                         'versuchen Sie es erneut.'
                     )
-                    data['message'] = message
-                    return JsonResponse(data)
+                    status['message'] = message
+                    return JsonResponse(status)
                 else:
                     zip_file = zipfile.ZipFile(file, 'r')
 
@@ -971,51 +1104,125 @@ def process_view(request):
                     response.answer = submission.questionnaire.missing_not_answered
                     response.save()
 
-                    # Keep track of the success/failure for all files.
-                    filename = file_uploader.expected_filename
-                    data['uploaded_files'][filename] = 'failed'
-
                     # Take multiple filenames into account.
+                    filename = file_uploader.expected_filename
                     expected_filenames = filename.split(';')
+                    ref_name = expected_filenames[0]
                     expected_filenames = [fname.lower() for fname in expected_filenames]
 
-                    for path in zip_file.namelist():
+                    status['uploaded_files'][ref_name] = 'failed'
+                    for fname in expected_filenames:
+                        depth = fname.count('/')
 
-                        if path.split('/')[-1].lower() in expected_filenames:
+                        # Account for 'folder/file' structures in expected_filenames
+                        for path in zip_file.namelist():
+                            reduced_path = path.rsplit('/', depth + 1)
+                            reduced_path = '/'.join(reduced_path[depth:]).lower()
 
-                            # Try to extract the file.
-                            target_file = read_zip_or_none(zip_file, path)
-                            if target_file is None:
-                                pass
+                            if len(reduced_path) == 0 or reduced_path.endswith('/'): #TODO: here the accepted file endings could also already be checked.
+                                continue
+
+                            if fuzz.ratio(fname, reduced_path) > 85:
+
+                                # Try to extract the file.
+                                if path.endswith('.json') and fname.endswith('.json'):
+                                    file_content = zip_file.read(path)
+                                    file_content = json.loads(file_content.decode("utf-8-sig"))
+                                    extracted_data, file_status = process_json_file(file_content, file_uploader)
+
+                                elif path.endswith('.html') and fname.endswith('.html'):
+                                    with zip_file.open(path, 'r') as f:
+                                        file_content = f.read().decode('utf-8-sig')
+                                    extracted_data, file_status = process_html_file(file_content)
+
+                                else:
+                                    # include error message
+                                    continue
+
+                                # Handle extracted data.
+                                if file_status['status'] == 'complete_ul':
+                                    # Create an upload id.
+                                    upload_id = tools.generate_id(10)
+                                    while UploadedData.objects.filter(upload_id=upload_id).exists():
+                                        upload_id = tools.generate_id(10)
+
+                                    # Save the extracted data.
+                                    UploadedData.objects.create(
+                                        questionnaire=submission.questionnaire,
+                                        upload_id=upload_id,
+                                        data=extracted_data,
+                                        upload_time=datetime.now(tz=SQ_TIMEZONE)
+                                    )
+
+                                    # Update the response object.
+                                    # Check if a previous data upload exists for this response.
+                                    if response.answer != '':
+                                        previous_ul_id = response.answer
+
+                                        previous_upload = get_or_none(
+                                            UploadedData, upload_id=previous_ul_id,
+                                            questionnaire=submission.questionnaire)
+                                        if previous_upload is not None:
+                                            previous_upload.delete()
+
+                                        previous_temp_entry = get_or_none(
+                                            UploadedDataTemp, upload_id=previous_ul_id,
+                                            questionnaire=submission.questionnaire)
+                                        if previous_temp_entry is not None:
+                                            previous_temp_entry.delete()
+
+                                    response.answer = upload_id
+                                    response.save()
+
+                                    status['status'] = 'complete_ul'
+                                    status['upload_id'] = upload_id
+
+                                if file_status['status'] == 'complete_ul':
+                                    status['uploaded_files'][ref_name] = 'success'
+                                    break
+                                else:
+                                    status['message'] = file_status['message']
+
                             else:
-                                processing_status = process_single_file(
-                                    file_uploader,
-                                    target_file,
-                                    submission,
-                                    data,
-                                    response,
-                                    content_extracted=True
-                                )
-                                if processing_status['status'] == 'complete_ul':
-                                    del data['uploaded_files'][file_uploader.expected_filename]
-                                    data['uploaded_files'][path.split('/')[-1]] = 'success'
+                                continue
+
+                        if status['uploaded_files'][ref_name] == 'success':
+                            break
 
                 # Check if all requested files have been successfully uploaded.
                 successes = []
-                for file, status in data['uploaded_files'].items():
-                    if status != 'success':
+                for file, s in status['uploaded_files'].items():
+                    if s != 'success':
                         successes.append(0)
                     else:
                         successes.append(1)
 
                 if sum(successes) == len(successes):
-                    data['status'] = 'complete_ul'
+                    status['status'] = 'complete_ul'
                 elif sum(successes) > 0:
-                    data['status'] = 'partial_ul'
-                elif sum(successes) == 0:
-                    data['status'] = 'failed_ul'
+                    status['status'] = 'partial_ul'
+                    if status['message'] is None:
+                        status['message'] = (
+                            'In der hochgeladenen ZIP-Datei war nur eines der beiden Datenfiles enthalten. '
+                            '<br><br>Die von Ihnen hochgeladene ZIP-Datei enthielt die folgenden Ordner und Dateien:'
+                            f'<br>{[f for f in zip_file.namelist() if "." in f]}'
+                        )
 
-        return JsonResponse(data)
+                elif sum(successes) == 0:
+                    if status['message'] is None:
+                        status['message'] = (
+                            '<b>Beim Auslesen der Daten ist ein Fehler aufgetreten</b> <br> '
+                            'Mögliche Gründe sind:<br>'
+                            '- Die falsche ZIP-Datei wurde ausgewählt <br>'
+                            '- Das Format der hochgeladenen Daten wird nicht unterstützt. <br>'
+                            '- Die hochgeladenen Daten sind in einer Sprache, die von der Applikation nicht erkannt '
+                            'wird.<br><br>'
+                            'Die von Ihnen hochgeladene ZIP-Datei enthielt die folgenden Ordner und Dateien:'
+                            f'<br>{[f for f in zip_file.namelist() if "." in f]}'
+                        )
+                    status['status'] = 'failed_ul'
+
+        return JsonResponse(status)
 
     if request.method == 'GET':
         raise Http404()

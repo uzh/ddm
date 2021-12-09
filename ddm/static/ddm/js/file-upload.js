@@ -1,5 +1,5 @@
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function submitFile(postUrl, inputId) {
@@ -69,7 +69,7 @@ function submitFile(postUrl, inputId) {
 						filenode.classList.add('surquest-success-addendum');
 						let text = 'Die Datei "'.concat(key).concat('" wurde erfolgreich hochgeladen');
 						filenode.innerHTML = text;
-					    msg_box.append(filenode);
+						msg_box.append(filenode);
 					});
 					let filenode = document.createElement('P');
 					filenode.innerHTML = 'Alle Dateien wurden erfolgreich ausgelesen';
@@ -84,7 +84,7 @@ function submitFile(postUrl, inputId) {
 				$('#q'.concat(inputId).concat('-upload')).addClass('surquest-hidden');
 				$('#q'.concat(inputId)).val(data.status);
 				if ( $('#q'.concat(inputId).concat('-invalid')).length ) {
-				    $('#q'.concat(inputId).concat('-invalid')).remove();
+					$('#q'.concat(inputId).concat('-invalid')).remove();
 				}
 
 			} else if (data.status == 'partial_ul') {
@@ -93,22 +93,29 @@ function submitFile(postUrl, inputId) {
 					let success_count = 0;
 					Object.keys(data.uploaded_files).forEach(function(key) {
 						let filenode = document.createElement('P');
+						let text;
 
 						if (data.uploaded_files[key] == 'success') {
 							filenode.classList.add('surquest-success-addendum');
-							let text = 'Die Datei "'.concat(key).concat('" wurde erfolgreich hochgeladen');
+							text = 'Die Datei "'.concat(key).concat('" wurde erfolgreich hochgeladen');
 							success_count = success_count + 1;
 						} else {
 							filenode.classList.add('surquest-fail-addendum');
-							let text = 'Die Datei "'.concat(key).concat('" konnte nicht hochgeladen werden');
+							text = 'Die Datei "'.concat(key).concat('" konnte nicht hochgeladen werden');
 						}
 						filenode.innerHTML = text;
-					    msg_box.append(filenode);
+						msg_box.append(filenode);
 					});
 					let filenode = document.createElement('P');
 					filenode.innerHTML = ''.concat(success_count).concat(' von ').concat(Object.keys(data.uploaded_files).length).concat(' Dateien wurden erfolgreich hochgeladen');
 					filenode.classList.add('sq-msg-box-title');
 					msg_box.prepend(filenode);
+
+					filenode = document.createElement('P');
+					filenode.classList.add('surquest-fail-addendum');
+					filenode.innerHTML = '<br>'.concat(data.message);
+					msg_box.append(filenode)
+
 					msg_box.removeClass('surquest-hidden');
 				}
 				$('#q'.concat(inputId)).val(data.status);
@@ -119,23 +126,29 @@ function submitFile(postUrl, inputId) {
 					let success_count = 0;
 					Object.keys(data.uploaded_files).forEach(function(key) {
 						let filenode = document.createElement('P');
+						let text;
 
 						if (data.uploaded_files[key] == 'success') {
 							filenode.classList.add('surquest-success-addendum');
-							let text = 'Die Datei "'.concat(key).concat('" wurde erfolgreich hochgeladen');
+							text = 'Die Datei "'.concat(key).concat('" wurde erfolgreich hochgeladen');
 							success_count = success_count + 1;
 						} else {
 							filenode.classList.add('surquest-fail-addendum');
-							let text = 'Die Datei "'.concat(key).concat('" konnte nicht hochgeladen werden');
+							text = 'Die Datei "'.concat(key).concat('" konnte nicht hochgeladen werden');
 						}
 						filenode.innerHTML = text;
-					    msg_box.append(filenode);
+						msg_box.append(filenode);
 					});
-					var filenode = document.createElement('P');
+					let filenode = document.createElement('P');
 					filenode.innerHTML = ''.concat(success_count).concat(' von ').concat(Object.keys(data.uploaded_files).length).concat(' Dateien wurden erfolgreich hochgeladen');
 					filenode.classList.add('sq-msg-box-title');
 					msg_box.prepend(filenode);
 					msg_box.removeClass('surquest-hidden');
+
+					if (data.status == 'failed_ul') {
+						let errorMessage = '<div id="q'.concat(inputId).concat('-invalid" class="').concat('surquest-invalid-ul-errorbox').concat('">').concat(data.message).concat('</div>');
+						msg_box.after(errorMessage);
+					}
 
 				} else {
 					let invalidInfoClass = 'surquest-invalid-upload-infobox';
@@ -152,13 +165,13 @@ function submitFile(postUrl, inputId) {
 		error: function (request, status, error) {
 			let invalidInfoClass = 'surquest-invalid-upload-infobox';
 			if ( $('.'.concat(invalidInfoClass) ).length ) {
-					$('.'.concat(invalidInfoClass)).remove()
+				$('.'.concat(invalidInfoClass)).remove()
 			}
 			let errorMessage = 'Bei der Verarbeitung der hochgeladenen Datei auf dem Server ist ein Fehler aufgetreten.'
 			let errorDiv = '<div id="q'.concat(inputId).concat('-invalid" class="').concat(invalidInfoClass).concat('">').concat(errorMessage).concat('</div>');
 			$('#sq-fileupload-info').after(errorDiv);
 			overlay.css('display', 'none');
-	    }
+		}
 	});
 }
 
@@ -176,18 +189,18 @@ function checkFileUpload(inputId) {
 		if (proceed == true) {
 			event.returnValue = true;
 			form.appendChild(hidden_input);
-		  	form.submit();
-		  	return true;
+			form.submit();
+			return true;
 		} else {
-		  	return false;
+			return false;
 		}
 	} else if (upload_status == 'failed_ul') {
 		let proceed = confirm("ACHTUNG: \nDer Upload Ihrer Daten ist fehlgeschlagen. \n\nSind Sie sicher, dass Sie fortfahren möchten? Sie haben anschliessend keine Möglichkeit mehr, auf diese Seite zurückzukehren. \n\nWenn Sie dennoch fortfahren möchten, klicken Sie auf 'OK'.");
 		if (proceed == true) {
 			event.returnValue = true;
-		  	form.appendChild(hidden_input);
-		  	form.submit();
-		  	return true;
+			form.appendChild(hidden_input);
+			form.submit();
+			return true;
 		} else {
 			return false;
 		}

@@ -829,22 +829,25 @@ class FileFeedback(Question):
             raw_data = get_or_none(ddm_models.UploadedData, upload_id=upload_id)
 
             if raw_data is None:
-                file_data_list = []
-                table_fields = []
+                table_fields = ['Response']
+                file_data_list = [['No Data Extracted.']]
             else:
-                json_data = json.loads(raw_data.data)
+                json_data = raw_data.data
                 file_data_list = [list(row.values()) for row in json_data]
-                table_fields = related_fq.get_field_names(related_fq.extraction_fields)
+                if len(json_data) == 0:
+                    table_fields = ['Response']
+                    file_data_list = [['No Data Extracted.']]
+                else:
+                    table_fields = [k for k in json_data[0].keys()]
 
-            table_data = {
-                'data': file_data_list,
-                'table_fields': table_fields
-            }
         else:
-            table_data = {
-                'data': [],
-                'table_fields': []
-            }
+            table_fields = ['Response']
+            file_data_list = [['No Data Extracted.']]
+
+        table_data = {
+            'table_fields': table_fields,
+            'data': file_data_list
+        }
         return table_data
 
     def check_confirmation(self, submission):

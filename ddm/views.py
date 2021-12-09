@@ -39,14 +39,14 @@ class QuestionnaireOverview(LoginRequiredMixin, TemplateView):
 
 
 class QuestionnaireThankYou(TemplateView):
-    """Simple template view displaying a thank you page
+    """Simple template view displaying a thank you page.
     """
 
     template_name = "ddm/questionnaire/thankyou.html"
 
 
 class QuestionnaireAlreadyCompleted(TemplateView):
-    """Simple template view displaying an "already completed" notification
+    """Simple template view displaying an "already completed" notification.
     """
 
     template_name = "ddm/questionnaire/already_completed.html"

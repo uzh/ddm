@@ -15,7 +15,6 @@ from polymorphic.models import PolymorphicModel
 # Here, to avoid circular dependency errors, a general import is used instead of
 # an explicit import.
 import ddm.models as ddm_models
-from ddm.settings import SQ_TIMEZONE
 from ddm.tools import cipher_variable, get_or_none, VARIABLE_VALIDATOR
 
 
@@ -747,23 +746,7 @@ class FileUploadItem(models.Model):
         data = []
 
         if len(file_content) > 0:
-            for row in file_content:
-                data_row = {}
-
-                for field in fields_to_extract:
-                    if field in row:
-                        data_row[field] = row[field]
-
-                        # TODO: Clean the snippet below as this is not a general solution, only a quick fix.
-                        # add extra control to extract youtube video id from url
-                        if field == 'titleUrl':
-                            video_id = row[field].split('=')[-1]
-                            data_row['video_id'] = video_id
-
-                    else:
-                        data_row[field] = 'NA'
-
-                data.append(data_row)
+            data = [{f: r.get(f, 'NA') for f in fields_to_extract} for r in file_content]
         else:
             data_row = {'status': 'no data in file'}
             data.append(data_row)

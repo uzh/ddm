@@ -22,7 +22,8 @@ settings.configure(
         'django.contrib.sites',
         'django.contrib.staticfiles',
         'sekizai',
-        'ddm.apps.DdmConfig'
+        'ddm.apps.DdmConfig',
+        'ckeditor'
     ],
     MIDDLEWARE=[
         'django.middleware.security.SecurityMiddleware',

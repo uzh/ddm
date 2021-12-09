@@ -1,4 +1,4 @@
-{% extends 'surquest/admin/base.html' %}
+{% extends 'ddm/admin/base.html' %}
 {% load i18n admin_urls static admin_modify ddm_tags %}
 
 {% block form %}
@@ -15,7 +15,7 @@
       {% if fieldsets %}
 
         {% for fieldset in fieldsets %}
-          {% include 'surquest/admin/forms/form_fieldset.html' %}
+          {% include 'ddm/admin/forms/form_fieldset.html' %}
         {% endfor %}
 
       {% else %}
@@ -29,13 +29,13 @@
         {% endfor %}
 
         {% for field in form.visible_fields %}
-          {% include 'surquest/admin/forms/form_field.html' %}
+          {% include 'ddm/admin/forms/form_field.html' %}
         {% endfor %}
 
       {% endif %}
 
       {% for inline_formset in inline_formsets %}
-        {% include 'surquest/admin/forms/inline_form.html' %}
+        {% include 'ddm/admin/forms/inline_form.html' %}
       {% endfor %}
 
     {% endblock form_content %}

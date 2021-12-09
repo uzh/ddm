@@ -1,4 +1,4 @@
-{% extends "surquest/questionnaire/base_questionnaire.html" %}
+{% extends "ddm/questionnaire/base_questionnaire.html" %}
 {% load static ddm_tags %}
 
 {% block title %}Umfrage: {{ questionnaire.name }}{% endblock %}
@@ -13,31 +13,31 @@
     {% for q in questions %}
       <div class="surquest-question page-{{ q.page }}">
         {% if q.question_type == 'singlechoicequestion' %}
-          {% include 'surquest/questions/display/single_choice_question.html' %}
+          {% include 'ddm/questions/display/single_choice_question.html' %}
 
         {% elif q.question_type == 'multichoicequestion' %}
-          {% include 'surquest/questions/display/multi_choice_question.html' %}
+          {% include 'ddm/questions/display/multi_choice_question.html' %}
 
         {% elif q.question_type == 'matrixquestion' %}
-          {% include 'surquest/questions/display/matrix_question.html' %}
+          {% include 'ddm/questions/display/matrix_question.html' %}
 
         {% elif q.question_type == 'differentialquestion' %}
-          {% include 'surquest/questions/display/differential_question.html' %}
+          {% include 'ddm/questions/display/differential_question.html' %}
 
         {% elif q.question_type == 'openquestion' %}
-          {% include 'surquest/questions/display/open_question.html' %}
+          {% include 'ddm/questions/display/open_question.html' %}
 
         {% elif q.question_type == 'listquestion' %}
-          {% include 'surquest/questions/display/list_question.html' %}
+          {% include 'ddm/questions/display/list_question.html' %}
 
         {% elif q.question_type == 'transitionquestion' %}
-          {% include 'surquest/questions/display/transition_question.html' %}
+          {% include 'ddm/questions/display/transition_question.html' %}
 
         {% elif q.question_type == 'filefeedback' %}
-          {% include 'surquest/questions/display/file_feedback.html' %}
+          {% include 'ddm/questions/display/file_feedback.html' %}
 
         {% elif q.question_type == 'fileuploadquestion' %}
-          {% include 'surquest/questions/display/file_question.html' %}
+          {% include 'ddm/questions/display/file_question.html' %}
 
         {% endif %}
       </div>
@@ -62,7 +62,7 @@
 {% endblock content %}
 
 {% block extra_js %}
-	<script src="{% static 'surquest/js/multistep-form.js' %}"></script>
-	<script src="{% static 'surquest/js/file-upload.js' %}"></script>
-	<script src="{% static 'surquest/js/questionnaire-tools.js' %}"></script>
+	<script src="{% static 'ddm/js/multistep-form.js' %}"></script>
+	<script src="{% static 'ddm/js/file-upload.js' %}"></script>
+	<script src="{% static 'ddm/js/questionnaire-tools.js' %}"></script>
 {% endblock %}

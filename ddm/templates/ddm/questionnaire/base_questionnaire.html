@@ -9,8 +9,8 @@
   <title>{% block title %}{% page_attribute page_title %} - {{ request.site.name }}{% endblock title %}</title>
 
   <!-- Bootstrap -->
-  <link href="{% static 'surquest/css/bootstrap4/bootstrap.min.css' %}" rel="stylesheet">
-  <link href="{% static 'surquest/css/questionnaire.css' %}" rel="stylesheet">
+  <link href="{% static 'ddm/css/bootstrap4/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'ddm/css/questionnaire.css' %}" rel="stylesheet">
 
   {% block extra_head %}{% endblock %}
 
@@ -41,7 +41,7 @@
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="{% static 'surquest/js/bootstrap4/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'ddm/js/bootstrap4/bootstrap.bundle.min.js' %}"></script>
 
 {% block extra_js %}{% endblock %}
 

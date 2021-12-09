@@ -312,12 +312,11 @@ class QuestionnaireSubmission(models.Model):
         """
         Closes submission and calculates and sets final parameters.
         """
-        time_submitted = datetime.now(tz=SQ_TIMEZONE)
-        self.time_submitted = time_submitted
+        self.time_submitted = datetime.now(tz=SQ_TIMEZONE)
         self.completed = True
         self.user_agent = post_data['user_agent'][:200]
 
-        # calculate time to completion
+        # Calculate time to completion.
         time_difference = self.time_submitted - self.time_started
         completion_time = time_difference / timedelta(seconds=1)
         self.completion_time = completion_time

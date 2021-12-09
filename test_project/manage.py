@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 
 import django
+import json
 import sys
 
 from django.conf import settings
 from django.core.management import execute_from_command_line
+
+# Import local test settings.
+test_config = json.load(open('test_config.json'))
 
 sys.path.append('..')
 
@@ -52,16 +56,16 @@ settings.configure(
     ROOT_URLCONF='urls',
     DATABASES={
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'ddm_test_env',
-            'USER': 'ddm_test_env_user',
-            'PASSWORD': 'password',
-            'HOST': 'localhost',
-            'PORT': '5432',
+            'ENGINE': test_config['DB_ENGINE'],
+            'NAME': test_config['DB_NAME'],
+            'USER': test_config['DB_USER'],
+            'PASSWORD': test_config['DB_PASSWORD'],
+            'HOST': test_config['DB_HOST'],
+            'PORT': test_config['DB_PORT'],
         }
     },
     DEBUG=True,
-    SECRET_KEY='!=scxg8@6z1e09jd_(^++_5im_&q-*gn4ym+=5b5^zi3q@0++%',
+    SECRET_KEY=test_config['SECRET_KEY'],
     SITE_ID=1,
     STATIC_URL='/static/'
 )

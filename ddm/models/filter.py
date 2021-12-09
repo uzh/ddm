@@ -195,10 +195,9 @@ class FilterCondition(models.Model):
                                submission=submission, variable=var)
 
         if response is None:
-            # TODO: raise exception
-            return False
-
-        answer = response.answer
+            answer = 'NA'
+        else:
+            answer = response.answer
 
         if hasattr(self.filter_question, 'encrypt'):
             answer = cipher_variable(answer, 'decrypt')

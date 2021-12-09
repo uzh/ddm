@@ -41,5 +41,14 @@ To migrate the models to your local database, run: \
 To run test, run: \
 `(venv) SomePath/ddm/test_project> manage.py test`
 
+
+## Requirements
+
+### Django Settings
+
+#### Time zone
+For ddm to work, time zone support must be enabled in the Django settings:\
+`USE_TZ = True`
+
 ## Notes
 [^1]: For an overview on how to setup a local database for Django, see (the tutorial on digital ocean) [https://www.digitalocean.com/community/tutorials/how-to-create-a-django-app-and-connect-it-to-a-database#step-1-%E2%80%94-creating-the-database].

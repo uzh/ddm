@@ -68,7 +68,8 @@ settings.configure(
     DEBUG=True,
     SECRET_KEY=test_config['SECRET_KEY'],
     SITE_ID=1,
-    STATIC_URL='/static/'
+    STATIC_URL='/static/',
+    USE_TZ=True,
 )
 
 django.setup()

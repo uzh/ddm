@@ -18,6 +18,7 @@ class Questionnaire(models.Model):
     # Questionnaire access options:
     slug = models.SlugField(verbose_name='Questionnaire Slug')
     active = models.BooleanField(default=False)
+    enable_continuation = models.BooleanField(default=False)
 
     PUBLIC = 'public'
     TOKEN = 'token'
@@ -31,8 +32,6 @@ class Questionnaire(models.Model):
         default='Public'
     )
     # TODO: Add options for tokens: Function to generate tokens
-
-    enable_continuation = models.BooleanField(default=False)
 
     # Questionnaire standard values:
     missing_not_answered = models.IntegerField(
@@ -72,11 +71,10 @@ class Questionnaire(models.Model):
 
     def get_questions(self):
         """
-        Returns a set of all related questions
+        Returns a set of all related questions.
         """
         page_list = list(self.page_set.all().values_list('pk', flat=True))
         questions = Question.objects.filter(page__id__in=page_list)
-
         return questions
 
     def get_page_indices(self):

@@ -11,6 +11,7 @@ class Page(PolymorphicModel):
 
     name = models.CharField(max_length=255)
     index = models.PositiveIntegerField(default=1)
+    show_back_button = models.BooleanField(default=False)
 
     PAGE_TYPE_QUESTION = 'questionpage'
     PAGE_TYPE_END = 'endpage'
@@ -24,8 +25,6 @@ class Page(PolymorphicModel):
         choices=PAGE_TYPES,
         default=DEFAULT_PAGE_TYPE
     )
-
-    show_back_button = models.BooleanField(default=False)
 
     class Meta:
         constraints = [

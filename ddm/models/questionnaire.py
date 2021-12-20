@@ -5,7 +5,7 @@ from django.db import models
 from django.forms.models import model_to_dict
 from django.urls import reverse
 
-from ddm.models import Question
+from ddm.models import Question, FileUploadQuestion
 from ddm.settings import SQ_TIMEZONE
 from ddm.tools import VARIABLE_VALIDATOR
 
@@ -69,13 +69,15 @@ class Questionnaire(models.Model):
         session_id = 'quest-' + str(self.pk)
         return session_id
 
-    def get_questions(self):
-        """
-        Returns a set of all related questions.
-        """
-        page_list = list(self.page_set.all().values_list('pk', flat=True))
-        questions = Question.objects.filter(page__id__in=page_list)
-        return questions
+    def get_missing_values(self, as_string=False):
+        missing_values = [
+            self.missing_not_answered,
+            self.missing_not_seen,
+            self.missing_invalid
+        ]
+        if as_string:
+            missing_values = [str(v) for v in missing_values]
+        return missing_values
 
     def get_page_indices(self):
         """
@@ -84,57 +86,56 @@ class Questionnaire(models.Model):
         """
         return list(self.page_set.values_list('index', flat=True))
 
+    def get_questions(self):
+        """
+        Returns a set of all related questions.
+        """
+        page_list = list(self.page_set.all().values_list('pk', flat=True))
+        questions = Question.objects.filter(page__id__in=page_list)
+        return questions
+
     def get_var_names(self, excluded_questions=None, excluded_externals=None,
                       excluded_triggers=None, include_external=True,
                       include_trigger=True, for_overview=False):
         """
-        Returns a list of all variable names associated
-        with the questionnaire.
+        Returns a list of all variable names associated with the questionnaire.
         """
         var_names = []
 
         # Get the variable names of all questions and question items.
-        questions = self.get_questions().order_by('page__index', 'index')
+        questions = self.get_questions()
+        for question in questions.order_by('page__index', 'index'):
 
-        for question in questions:
-            if (excluded_questions is not None
-                    and question.pk in excluded_questions):
+            if (excluded_questions is not None and
+                    question.pk in excluded_questions):
                 continue
-            else:
-                # Handle FileUploadQuestions.
-                try:
-                    file_uploads = question.fileuploaditem_set.all()
-                    var_names.append(question.variable_name)
-                    for fu in file_uploads:
-                        var_names.append(fu.variable_name)
 
-                except AttributeError:
-                    if hasattr(question, 'variable_name'):
-                        var_names.append(question.variable_name)
+            if isinstance(question, FileUploadQuestion):
+                for file_ul in question.fileuploaditem_set.all():
+                    var_names.append(file_ul.variable_name)
 
-                        if for_overview:
-                            continue
+            if hasattr(question, 'variable_name'):
+                var_names.append(question.variable_name)
+                if for_overview:
+                    continue
 
-                    question_items = question.questionitem_set.all().order_by('index')
-                    for item in question_items:
-                        var_names.append(item.variable_name)
+            for item in question.questionitem_set.all().order_by('index'):
+                var_names.append(item.variable_name)
 
         # Get all variable names of associated external variables.
         if include_external:
-            external_vars = self.externalvariable_set.all()
-            for var in external_vars:
-                if (excluded_externals is not None
-                        and var.pk in excluded_externals):
+            for var in self.externalvariable_set.all():
+                if (excluded_externals is not None and
+                        var.pk in excluded_externals):
                     continue
                 else:
                     var_names.append(var.variable_name)
 
         # Get all variable names of associated trigger variables.
         if include_trigger:
-            triggers = self.trigger_set.all()
-            for trigger in triggers:
-                if (excluded_triggers is not None
-                        and trigger.pk in excluded_triggers):
+            for trigger in self.trigger_set.all():
+                if (excluded_triggers is not None and
+                        trigger.pk in excluded_triggers):
                     continue
                 else:
                     if hasattr(trigger, 'variable_name'):
@@ -144,39 +145,26 @@ class Questionnaire(models.Model):
 
         return var_names
 
-    def get_var_selection_for_filter(self, target_question):
+    def get_variables_for_filter(self, target_question):
         """
         Returns a list of tuples containing (variable_name, description)
         excluding the variable names associated with a given target
         question.
         Used in the show_associated_filters() view.
         """
-        var_selection = [('', '---------')]
-        questions = self.get_questions().order_by('page__index', 'index')
+        var_selection = []
 
-        for question in questions:
+        # Get the variable names of questions and question items.
+        for question in self.get_questions().order_by('page__index', 'index'):
             if question.pk == target_question.pk:
-                next
+                continue
 
             if hasattr(question, 'variable_name'):
-                if isinstance(question.name, str):
-                    question_name = question.name[:50]
-                else:
-                    question_name = question.names
-
+                question_name = question.name[:50]
                 description = f'{question.variable_name}: {question_name}'
                 var_selection.append((question.variable_name, description))
-
-                try:
-                    file_uploads = question.fileuploaditem_set.all()
-                    for fu in file_uploads:
-                        description = f'{fu.variable_name}'
-                        var_selection.append((fu.variable_name, description))
-                except AttributeError:
-                    pass
             else:
-                question_items = question.questionitem_set.all().order_by('index')
-                for item in question_items:
+                for item in question.questionitem_set.all().order_by('index'):
                     if isinstance(item.answer, str):
                         item_answer = item.answer[:50]
                     else:
@@ -185,9 +173,13 @@ class Questionnaire(models.Model):
                     description = f'{item.variable_name}: {item_answer}'
                     var_selection.append((item.variable_name, description))
 
-        # Get the variable names of associated external variables.
-        external_vars = self.externalvariable_set.all()
-        for var in external_vars:
+            if isinstance(question, FileUploadQuestion):
+                for file_ul in question.fileuploaditem_set.all():
+                    description = f'{file_ul.variable_name}'
+                    var_selection.append((file_ul.variable_name, description))
+
+        # Get the variable names of external variables.
+        for var in self.externalvariable_set.all():
             description = f'{var.variable_name}: {var.related_parameter}'
             var_selection.append((var.variable_name, description))
 
@@ -216,18 +208,6 @@ class Questionnaire(models.Model):
         }
 
         return sub_stats
-
-    def get_missing_values(self, as_string=False):
-        missing_values = []
-        if as_string:
-            missing_values.append(str(self.missing_not_answered))
-            missing_values.append(str(self.missing_not_seen))
-            missing_values.append(str(self.missing_invalid))
-        else:
-            missing_values.append(self.missing_not_answered)
-            missing_values.append(self.missing_not_seen)
-            missing_values.append(self.missing_invalid)
-        return missing_values
 
 
 # ----------------------------------------------------------------------
@@ -292,10 +272,9 @@ class QuestionnaireSubmission(models.Model):
         """
         Returns a dictionary of variable_name response_value pairs.
         """
-        related_responses = self.questionnaireresponse_set.all()
         response_values = {}
 
-        for response in related_responses:
+        for response in self.questionnaireresponse_set.all():
             var_name = response.variable.name
             response_values[var_name] = response.answer
 

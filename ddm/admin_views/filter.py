@@ -41,14 +41,14 @@ def update_filter(request, filter_target, target_id):
         'target_question_type': target_question.question_type,
     }
 
-    # Get the list of available variables for this particular filter and add it
-    # to the context.
-    filter_variables = questionnaire.get_var_selection_for_filter(
-        target_question)
+    # Get the available variables for this filter and add it to the context.
+    var_choices = questionnaire.get_variables_for_filter(target_question)
+    # Add entry if non has been selected.
+    var_choices.insert(0, ('', '---------'))
     filter_formset = modelformset_factory(
         FilterCondition, FilterForm, can_delete=True, formset=FilterFormset)
     formset = filter_formset(queryset=filter_conditions,
-                             form_kwargs={'variable_choices': filter_variables,
+                             form_kwargs={'variable_choices': var_choices,
                                           'target_question': target_question,
                                           'target_question_item': target_item})
     context['formset'] = formset
@@ -70,7 +70,7 @@ def update_filter(request, filter_target, target_id):
         # Handle the filter condition formset.
         form = filter_formset(request.POST,
                               form_kwargs={
-                                  'variable_choices': filter_variables,
+                                  'variable_choices': var_choices,
                                   'target_question': target_question,
                                   'target_question_item': target_item,
                               })

@@ -3,7 +3,6 @@ import random
 
 from datetime import datetime, timedelta
 
-from django.contrib.postgres.fields import JSONField
 from django.core.mail import send_mail
 from django.core.validators import validate_email
 from django.db import models
@@ -491,4 +490,4 @@ class TriggerTask(models.Model):
     execution_type = models.CharField(
         max_length=50,
     )
-    execution_info = JSONField(null=True, blank=True)
+    execution_info = models.JSONField(null=True, blank=True)

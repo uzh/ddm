@@ -1,4 +1,3 @@
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 
 
@@ -8,7 +7,7 @@ class UploadedData(models.Model):
         on_delete=models.CASCADE
     )
     upload_id = models.CharField(max_length=10)
-    data = JSONField(
+    data = models.JSONField(
         null=True,
         blank=True
     )

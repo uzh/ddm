@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.forms.models import model_to_dict
 from django.urls import reverse
@@ -311,7 +310,7 @@ class QuestionnaireAccessToken(models.Model):
     )
     token = models.CharField(max_length=30)
     active = models.BooleanField(default=True)
-    data = JSONField(null=True, blank=True)
+    data = models.JSONField(null=True, blank=True)
 
 
 # ----------------------------------------------------------------------

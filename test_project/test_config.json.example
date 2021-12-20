@@ -1,9 +1,5 @@
 {
   "SECRET_KEY": "local_key",
-  "DB_ENGINE": "django.db.backends.postgresql",
-  "DB_NAME": "local_database_name",
-  "DB_USER": "local_database_user_name",
-  "DB_PASSWORD": "local_database_password",
-  "DB_HOST": "localhost",
-  "DB_PORT": "5432"
+  "DB_ENGINE": "django.db.backends.sqlite3",
+  "DB_NAME": "ddm_test_env",
 }

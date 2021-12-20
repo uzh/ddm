@@ -59,10 +59,6 @@ settings.configure(
         'default': {
             'ENGINE': test_config['DB_ENGINE'],
             'NAME': test_config['DB_NAME'],
-            'USER': test_config['DB_USER'],
-            'PASSWORD': test_config['DB_PASSWORD'],
-            'HOST': test_config['DB_HOST'],
-            'PORT': test_config['DB_PORT'],
         }
     },
     DEBUG=True,

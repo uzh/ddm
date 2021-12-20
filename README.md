@@ -42,7 +42,7 @@ To apply existing migrations to your local database, run:
 - **Run Unit Tests** \
 To run unit tests, use:
 ```
-(venv) SomePath/ddm/test_project> manage.py test
+(venv) SomePath/ddm/test_project> manage.py test ddm
 ```
 
 

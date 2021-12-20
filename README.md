@@ -15,7 +15,7 @@ Activate your local virtual environment and install the following requirements
 (venv) SomePath/ddm> pip install -r test_project/requirements.txt
 ```
 2. To setup the django project, first make a copy of *test_project/test_config.json.example* and rename it to *test_project/test_config.json*. \
-In this new file, replace the placeholders with your local credentials.[^1]
+In this new file, you can optionally replace the placeholders with your local credentials.[^1]
 3. Now you should be good to go.
 
 
@@ -35,7 +35,7 @@ To create new migrations based on the changes made to the models, run: *(note th
 ```
 
 - **Apply migrations** \
-To apply existing migrations to your local database, run:
+To apply existing migrations to your local database, run:[^2]
 ```
 (venv) SomePath/ddm/test_project> manage.py migrate
 ```
@@ -55,4 +55,8 @@ For ddm to work, time zone support must be enabled in the Django settings:
 `USE_TZ = True`
 
 
-[^1]: For an overview on how to setup a local database for Django, see (the tutorial on digital ocean) [https://www.digitalocean.com/community/tutorials/how-to-create-a-django-app-and-connect-it-to-a-database#step-1-%E2%80%94-creating-the-database].
+[^1]: By default, the test project uses SQLite as a database backend. 
+
+[^2]: If you are running a version of Python < 3.9, you might have to manually 
+enable the JSON1 extension on SQLite for the migration to work properly. For an 
+explanation on how to do this visit https://code.djangoproject.com/wiki/JSON1Extension.

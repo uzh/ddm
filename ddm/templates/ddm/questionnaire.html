@@ -1,0 +1,7 @@
+{% load render_bundle from webpack_loader %}
+
+<div id="qapp">
+    <qapp></qapp>
+</div>
+{% render_bundle 'chunk-vendors' %}
+{% render_bundle 'vue_questionnaire' %}

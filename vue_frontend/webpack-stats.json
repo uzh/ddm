@@ -3,27 +3,27 @@
   "assets": {
     "img/logo.png": {
       "name": "img/logo.png",
-      "path": "/home/witlox/src/ddm/django_vue_mpa/static/vue/img/logo.png",
+      "path": "/home/witlox/src/ddm/ddm/static/img/logo.png",
       "publicPath": "http://localhost:8080/img/logo.png"
     },
     "js/chunk-vendors.js": {
       "name": "js/chunk-vendors.js",
-      "path": "/home/witlox/src/ddm/django_vue_mpa/static/vue/js/chunk-vendors.js",
+      "path": "/home/witlox/src/ddm/ddm/static/js/chunk-vendors.js",
       "publicPath": "http://localhost:8080/js/chunk-vendors.js"
     },
     "js/vue_questionnaire.js": {
       "name": "js/vue_questionnaire.js",
-      "path": "/home/witlox/src/ddm/django_vue_mpa/static/vue/js/vue_questionnaire.js",
+      "path": "/home/witlox/src/ddm/ddm/static/js/vue_questionnaire.js",
       "publicPath": "http://localhost:8080/js/vue_questionnaire.js"
     },
     "js/vue_uploader.js": {
       "name": "js/vue_uploader.js",
-      "path": "/home/witlox/src/ddm/django_vue_mpa/static/vue/js/vue_uploader.js",
+      "path": "/home/witlox/src/ddm/ddm/static/js/vue_uploader.js",
       "publicPath": "http://localhost:8080/js/vue_uploader.js"
     },
     "favicon.ico": {
       "name": "favicon.ico",
-      "path": "/home/witlox/src/ddm/django_vue_mpa/static/vue/favicon.ico",
+      "path": "/home/witlox/src/ddm/ddm/static/favicon.ico",
       "publicPath": "http://localhost:8080/favicon.ico"
     }
   },

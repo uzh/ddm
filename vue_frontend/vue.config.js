@@ -18,7 +18,7 @@ module.exports = {
     publicPath: process.env.NODE_ENV === 'production'
         ? ''
         : 'http://localhost:8080/',
-    outputDir: '../django_vue_mpa/static/vue/',
+    outputDir: '../ddm/static/',
 
     chainWebpack: config => {
 

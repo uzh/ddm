@@ -2,6 +2,7 @@
 
 import django
 import json
+import os
 import sys
 
 from django.conf import settings
@@ -23,7 +24,8 @@ settings.configure(
         'django.contrib.staticfiles',
         'sekizai',
         'ddm.apps.DdmConfig',
-        'ckeditor'
+        'ckeditor',
+        'webpack_loader',
     ],
     MIDDLEWARE=[
         'django.middleware.security.SecurityMiddleware',
@@ -67,6 +69,23 @@ settings.configure(
     STATIC_URL='/static/',
     USE_TZ=True,
 )
+
+VUE_FRONTEND_DIR = os.path.join(os.path.dirname(os.getcwd()), 'vue_frontend')
+webpack_stats = os.path.join(VUE_FRONTEND_DIR, 'webpack-stats.json')
+assert os.path.exists(webpack_stats)
+
+# "C:\Files\Arbeit\Projekte\Data Donation Lab\Code\DDM\ddm\vue_frontend\webpack-stats.json"
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'CACHE': not settings.DEBUG,
+        #'BUNDLE_DIR_NAME': 'vue/',  # must end with slash
+        'STATS_FILE': webpack_stats,
+        'POLL_INTERVAL': 0.1,
+        'TIMEOUT': None,
+        'IGNORE': [r'.+\.hot-update.js', r'.+\.map']
+    }
+}
 
 django.setup()
 

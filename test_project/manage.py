@@ -12,6 +12,10 @@ from django.core.management import execute_from_command_line
 test_config = json.load(open('test_config.json'))
 
 sys.path.append('..')
+PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DDM_DIR = os.path.join(PROJECT_DIR, 'ddm')
+VUE_FRONTEND_DIR = os.path.join(PROJECT_DIR, 'vue_frontend')
+print(f'PROJECT_DIR: {PROJECT_DIR}')
 
 settings.configure(
     INSTALLED_APPS=[
@@ -68,24 +72,20 @@ settings.configure(
     SITE_ID=1,
     STATIC_URL='/static/',
     USE_TZ=True,
+    STATICFILES_DIRS=(
+        os.path.join(DDM_DIR, 'static'),
+    ),
+    WEBPACK_LOADER={
+        'DEFAULT': {
+            #'CACHE': not settings.DEBUG,
+            'BUNDLE_DIR_NAME': 'bundles/',
+            'STATS_FILE': os.path.join(VUE_FRONTEND_DIR, 'webpack-stats.json'),
+            'POLL_INTERVAL': 0.1,
+            'TIMEOUT': None,
+            'IGNORE': [r'.+\.hot-update.js', r'.+\.map']
+        }
+    },
 )
-
-VUE_FRONTEND_DIR = os.path.join(os.path.dirname(os.getcwd()), 'vue_frontend')
-webpack_stats = os.path.join(VUE_FRONTEND_DIR, 'webpack-stats.json')
-assert os.path.exists(webpack_stats)
-
-# "C:\Files\Arbeit\Projekte\Data Donation Lab\Code\DDM\ddm\vue_frontend\webpack-stats.json"
-
-WEBPACK_LOADER = {
-    'DEFAULT': {
-        'CACHE': not settings.DEBUG,
-        #'BUNDLE_DIR_NAME': 'vue/',  # must end with slash
-        'STATS_FILE': webpack_stats,
-        'POLL_INTERVAL': 0.1,
-        'TIMEOUT': None,
-        'IGNORE': [r'.+\.hot-update.js', r'.+\.map']
-    }
-}
 
 django.setup()
 

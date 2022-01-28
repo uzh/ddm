@@ -6,16 +6,10 @@ from django.urls import path
 from django.views.generic.base import TemplateView
 
 
-class VueView(TemplateView):
-    """View that is integrated into the admin panel.
-    """
-    template_name = 'ddm/questionnaire.html'
-
-
 urlpatterns = [
     path(r'admin/', admin.site.urls),
     path('', include('ddm.urls')),
-    path('vq', VueView.as_view(), name='vq'),
+    path(r'vq/', TemplateView.as_view(template_name='ddm/test.html'), name='vq'),
 ]
 
 if settings.DEBUG:

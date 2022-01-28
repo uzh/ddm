@@ -1,0 +1,16 @@
+{% load render_bundle from webpack_loader %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Django Vue</title>
+</head>
+<body>
+<div>
+    <p>Test Page</p>
+</div>
+<div id="qapp">
+    <qapp></qapp>
+</div>
+{% render_bundle 'vue_questionnaire' %}
+</body>
+</html>

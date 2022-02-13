@@ -9,7 +9,7 @@ const pages = {
     'vue_questionnaire': {
         entry: './src/questionnaire.js',
         chunks: ['chunk-vendors']
-    },
+    }
 }
 
 module.exports = {

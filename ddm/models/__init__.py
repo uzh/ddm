@@ -19,3 +19,5 @@ from .triggers import (
     Trigger, TokenGenerator, VariablesFromData, EmailTrigger,
     CleanUploadDataTrigger, TriggerTask
 )
+
+from .data_donations import DonationBlueprint

@@ -11,7 +11,7 @@
 </div>
 
 <div class="container">
-    <form method="POST">
+    <form id="uploader-form" method="POST">
         {% csrf_token %}
         <div id="uapp"
              class="container"
@@ -19,9 +19,6 @@
             <uapp></uapp>
         </div>
         {% render_bundle 'vue_uploader' %}
-        <div class="row float-right">
-            <button class="btn btn-success fs-5 w-25" type="submit">Daten übermitteln</button>
-        </div>
     </form>
 </div>
 

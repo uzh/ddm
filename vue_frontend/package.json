@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "jszip": "^3.7.1",
     "vue": "^3.0.0",
     "webpack-bundle-tracker": "^1.4.0"
   },

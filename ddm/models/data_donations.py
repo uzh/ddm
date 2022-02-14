@@ -16,7 +16,7 @@ class DonationBlueprint(models.Model):
     exp_file_format = models.CharField(
         max_length=10,
         choices=FileFormats.choices,
-        default=FileFormats.JSON_TYPE,
+        default=FileFormats.JSON_FORMAT,
     )
 
     exp_fields = models.JSONField()

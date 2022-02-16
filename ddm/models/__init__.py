@@ -21,3 +21,5 @@ from .triggers import (
 )
 
 from .data_donations import DonationBlueprint, ZippedBlueprint, DataDonation
+
+from .projects import DonationProject

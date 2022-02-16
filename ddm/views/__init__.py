@@ -8,3 +8,5 @@ from .questionnaire import (
 )
 
 from .data_donation import DataUpload
+
+from .project import ProjectEntry

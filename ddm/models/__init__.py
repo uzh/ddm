@@ -20,4 +20,4 @@ from .triggers import (
     CleanUploadDataTrigger, TriggerTask
 )
 
-from .data_donations import DonationBlueprint, ZippedBlueprint
+from .data_donations import DonationBlueprint, ZippedBlueprint, DataDonation

@@ -10,6 +10,9 @@ from django.utils.decorators import method_decorator
 from ddm.models import DonationBlueprint, ZippedBlueprint
 import zipfile
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 @method_decorator(cache_page(0), name='dispatch')
 class DataUpload(TemplateView):
@@ -39,40 +42,35 @@ class DataUpload(TemplateView):
         self.process_uploads(request.FILES)
         return render(request, 'ddm/test.html', status=204)
 
-    def validate_request_files(self, files):
+    @staticmethod
+    def process_uploads(files):
         # Check if expected file in request.FILES.
         try:
             file = files['post_data']
         except MultiValueDictKeyError as err:
-            print(err.args)
+            logger.error(f'Did not receive expected file. {err}')
+            return
 
         # Check if file is a zip file.
         if not zipfile.is_zipfile(file):
-            # TODO: raise/log error
-            print('Received file is not a zip file.')
-            pass
+            logger.error('Received file is not a zip file.')
+            return
 
         # Check if zip file contains expected file.
         unzipped_file = zipfile.ZipFile(file, 'r')
         if 'ul_data.json' not in unzipped_file.namelist():
-            # TODO: raise/log error
-            print('"ul_data.json" not in namelist.')
-            pass
+            logger.error('"ul_data.json" is not in namelist.')
+            return
 
-        return unzipped_file
-
-    def process_uploads(self, files):
-        unzipped_file = self.validate_request_files(files)
+        # Process donation data.
         file_data = json.loads(unzipped_file.read('ul_data.json').decode('utf-8'))
-
         for ul in file_data.keys():
             bp_id = ul
             bp_data = file_data[ul]
             try:
                 bp = DonationBlueprint.objects.get(pk=bp_id)
             except DonationBlueprint.DoesNotExist as e:
-                # TODO: Log this error somewhere
-                print(f'{e} – With id={bp_id} does not exist')
-                continue
+                logger.error(f'{e} – Donation blueprint with id={bp_id} does not exist')
+                return
 
             bp.process_donation(bp_data)

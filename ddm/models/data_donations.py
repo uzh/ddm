@@ -1,4 +1,8 @@
 from django.db import models
+from django.utils import timezone
+
+import logging
+logger = logging.getLogger(__name__)
 
 
 class ZippedBlueprint(models.Model):
@@ -22,6 +26,7 @@ class ZippedBlueprint(models.Model):
         return config
 
 
+# TODO: Add validation on save to ensure that regex_path != None when zip_blueprint != None
 class DonationBlueprint(models.Model):
     name = models.CharField(
         max_length=250
@@ -67,33 +72,48 @@ class DonationBlueprint(models.Model):
         return config
 
     def process_donation(self, data):
-        print("Process bp")
         if self.validate_donation(data):
-            self.save_donation(data)
+            self.create_donation(data)
         else:
-            # TODO: Handle  problem
-            pass
+            logger.error(f'Donation not processed by blueprint {self.pk}')
+
         return
 
     @staticmethod
     def validate_donation(data):
         # Check if all expected fields are in response.
         response_fields = ['consent', 'extracted_data', 'status']
-
         if not all(k in data for k in response_fields):
-            # TODO: raise/log expection
+            logger.error(
+                'Donation data does not contain the expected information. '
+                f'Expected key: {response_fields}; '
+                f'Present fields: {data.keys()}.'
+            )
             return False
-        else:
-            # TODO: Add other validation steps?
-            print("Blueprint donation valid.")
-            return True
 
-    def save_donation(self, data):
-        # TODO: Create a Data Donation Response object
-        pass
+        # TODO: Add other validation steps? - e.g., validation of extracted fields
+        return True
+
+    def create_donation(self, data):
+        DataDonation.objects.create(
+            blueprint=self,
+            time=timezone.now().isoformat(),
+            consent=data['consent'],
+            status=data['status'],
+            data=data['extracted_data']
+        )
+        return
 
 
 class DataDonation(models.Model):
-    blueprint = None  # FK to Donation Blueprint
+    project = None  # FK to project
+    blueprint = models.ForeignKey(
+        DonationBlueprint,
+        null=True,
+        on_delete=models.SET_NULL
+    )
     id = None  # Uploader ID
+    time = models.DateTimeField()
+    consent = models.BooleanField(default=False)
+    status = models.JSONField()
     data = models.JSONField()

@@ -1,40 +1,28 @@
 <template>
 
-  <div class="bg-info p-2 mb-2 rounded">
-    <h4>Variable overview (development)</h4>
-    <div>zipped: {{ zipped }}</div>
-    <div>blueprints: {{ blueprints }}</div>
-    <div>post_data: {{ post_data }}</div>
-  </div>
-
   <!-- File Upload Section (either single file or zip level). -->
-
   <div class="ul-block container mb-3" :class="{ 'ul-success': extraction_complete}">
     <div class="ul-row row float-left bg-dark text-white pt-2 rounded-top">
       <div class="col-sm">
-        <h4>Upload File {{ ul_id }}</h4>
+        <h4>Upload File {{ comp_id }}</h4>
       </div>
       <div class="col-sm">
-        <input
-            :name="'ul-' + ul_id"
-            type="file"
-            @change="processFile"
-            :class="{ 'd-none': extraction_complete}"
-        >
+        <input :name="'ul-' + comp_id"
+               type="file"
+               @change="processFile"
+               :class="{ 'd-none': extraction_complete}">
         <p class="float-right" :class="{ 'd-none': !extraction_complete }">
           <span class="badge bg-success fs-6">Upload abgeschlossen.</span>
         </p>
       </div>
     </div>
 
-
     <!-- Create div for each blueprint -->
-    <div
-        v-for="bp in blueprints"
-        :key="bp"
-        :set="bp_index = bp.id.toString()"
-        class="row rounded"
-        > <!-- :class="{ 'd-none': !post_data[bp_index].status.ul_complete }" -->
+    <div v-for="bp in blueprints"
+         :key="bp"
+         :set="bp_index = bp.id.toString()"
+         class="row rounded">
+      <!-- :class="{ 'd-none': !post_data[bp_index].status.ul_complete }" -->
 
       <!-- Upload Feedback Section (single file level). -->
       <div class="ul-feedback col bg-primary">
@@ -47,7 +35,7 @@
             <tr>
               <th v-for="field in bp.f_extract" :key="field">{{ field }}</th>
             </tr>
-            <tr v-for="row in post_data[bp_index].extracted_data" :key="row">
+            <tr v-for="row in post_data[bp.id.toString()].extracted_data" :key="row">
               <td v-for="v in row" :key="v">{{ v }}</td>
             </tr>
           </table>
@@ -57,15 +45,17 @@
 
       <!-- Consent Section (single file level). -->
       <div class="ul-consent col bg-light">
-        <input class="form-check-input" type="checkbox" v-model="post_data[bp_index].consent" :id="'ul-consent-' + bp_index">
-        <label class="form-check-label" :for="'ul-consent-' + bp_index">
+        <input class="form-check-input"
+               :id="'ul-consent-' + bp_index"
+               type="checkbox"
+               @change="emitToParent"
+               v-model="post_data[bp.id.toString()].consent">
+        <label class="form-check-label"
+               :for="'ul-consent-' + bp_index">
           Ich bin damit einverstanden, diese Daten zu übermitteln.
         </label>
       </div>
     </div>
-
-    <!-- Hidden input holding the post data (single file level).
-    <input :name="'data-ul-' + bp_index" :value="get_post_data()" class="d-none" >-->
 
   </div>
 
@@ -78,23 +68,22 @@ export default {
   name: "ProcessFile",
   props: {
     zipped: Boolean,
-    blueprints: Array
+    blueprints: Array,
+    comp_id: Number
   },
+  emits: ["changedData"],
   data() {
     return {
       row_data: [],
-      ul_id: -1, // move to result array?
       extraction_complete: false, // move to result array?
       post_data: {}
     }
   },
   created() {
-    // Check if ul_id should be handled here.
-
     // Create dictionary to hold post data.
     this.blueprints.forEach(bp => {
       let id = bp.id;
-      this.post_data[id.toString()] = {
+      let bp_data = {
         filename: null,
         consent: false,
         extracted_data: [],
@@ -103,73 +92,49 @@ export default {
           errors: []
         }
       }
+      this.post_data[id.toString()] = bp_data
     })
-  },
-  computed: {
-    // get_post_data(bp_index) {
-    //   console.log(bp_index);
-    //   let bp_data = this.post_data[bp_index];
-    //
-    //   let ul_data = [];
-    //   if (bp_data.consent) {
-    //     ul_data = bp_data.extracted_data;
-    //   }
-    //   return JSON.stringify({
-    //     id: bp_index,
-    //     status: bp_data.status,
-    //     consent: bp_data.consent,
-    //     data: ul_data
-    //   })
-    // }
+    this.emitToParent();
   },
   methods: {
     processFile(event) {
       let vm = this;
       const files = event.target.files;
 
-        // check if zip
+        // Check if is zip.
         if (vm.zipped && files.length === 1) {
           let zip = new JSZip();
           zip.loadAsync(files[0]).then(function (z) {
             vm.blueprints.forEach(bp => {
               let re = new RegExp(bp.regex_path);
-              let re_match = z.file(re);
-              console.log(re_match);
-              if (re_match !== null) {
-                z.file(re).async("string").then(c => {
-                  vm.processContent(c, bp);
-                }).catch({
 
-                })
-              }
+              z.file(re).forEach(f => {
+                f.async("string").then(c => {
+                  vm.processContent(c, bp);
+                }) // TODO: Catch error.
+              })
+
             })
           }).catch({
-            // selection of which file they're trying to upload
-            // raise error
+            // TODO: raise error
           })
         } else if (!this.zipped && files.length === 1) {
-          // selection of which file they're trying to upload
-          // let reader = new FileReader();
-          // reader.onload = function(event) {
+          // TODO: Add selection of which file they're trying to upload
           let bp = vm.blueprints[0]
-          vm.processContent(files[0], bp);
-          // }
-          // reader.readAsText(files[0]);
+          vm.processSingleFile(files[0], bp)
+
         } else {
-          // selection of which files they're trying to upload
-          // raise error to you
+          // TODO: raise error to you
         }
+      vm.emitToParent();
     },
 
-    processContent(file, bp) {
+    processContent(content, bp) {
       let vm = this;
-      let bp_post = vm.post_data[bp.id.toString()]
+      let bp_post = vm.post_data[bp.id.toString()];
 
-      let reader = new FileReader();
-      reader.onload = function(event) {
         if (bp.format === 'json') {
 
-          let content = event.target.result;
           let fileContent = JSON.parse(content);
           fileContent.forEach(entry => {
 
@@ -183,17 +148,33 @@ export default {
               bp_post.extracted_data.push(entry);
 
             } else {
-              // Add error message.
+              // Add error message TODO: adjust this to something meaningful.
               bp_post.status.errors.push('some error');
             }
           })
         }
-      }
-      reader.readAsText(file);
 
       // TODO: update status
     },
-  }
+    processSingleFile(file, bp) {
+      let vm = this;
+      let reader = new FileReader();
+      reader.onload = function(event) {
+        let content = event.target.result;
+        vm.processContent(content, bp);
+      }
+      reader.readAsText(file);
+    },
+    emitToParent() {
+      let emit_data = JSON.parse(JSON.stringify(this.post_data));
+      Object.keys(emit_data).forEach(key => {
+        if (!emit_data[key].consent) {
+          emit_data[key].extracted_data = []
+        }
+      })
+      this.$emit('changedData', emit_data);
+    },
+  },
 }
 </script>
 

@@ -3,11 +3,12 @@ import json
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
 from django.utils.safestring import SafeString
-from django.template import RequestContext
 from django.views.decorators.cache import cache_page
+from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.decorators import method_decorator
 
 from ddm.models import DonationBlueprint, ZippedBlueprint
+import zipfile
 
 
 @method_decorator(cache_page(0), name='dispatch')
@@ -35,34 +36,43 @@ class DataUpload(TemplateView):
         return json.dumps(ul_configs)
 
     def post(self, request, *args, **kwargs):
-        post_data = request.POST
-        print(post_data)
-        print(request.FILES)
-        self.process_uploads(post_data)
-        return render(RequestContext(request), 'ddm/test.html')
+        self.process_uploads(request.FILES)
+        return render(request, 'ddm/test.html', status=204)
 
-    def process_uploads(self, post_data):
-        """
-        Expected:
-        request.POST['data-ul'] = [
-            {
-            'id': [Integer]
-            'filename': [String: name of extracted file],
-            'consent': [Boolean],
-            'extracted_data': [LIST/ARRAY]
-            'status': [dicitonary]
-            }, (repeated)
-        ]
+    def validate_request_files(self, files):
+        # Check if expected file in request.FILES.
+        try:
+            file = files['post_data']
+        except MultiValueDictKeyError as err:
+            print(err.args)
 
-        """
-        ul_keys = [k for k in post_data.keys() if 'data-ul-' in k]
-        for k in ul_keys:
-            ul_response = json.loads(post_data[k])
+        # Check if file is a zip file.
+        if not zipfile.is_zipfile(file):
+            # TODO: raise/log error
+            print('Received file is not a zip file.')
+            pass
+
+        # Check if zip file contains expected file.
+        unzipped_file = zipfile.ZipFile(file, 'r')
+        if 'ul_data.json' not in unzipped_file.namelist():
+            # TODO: raise/log error
+            print('"ul_data.json" not in namelist.')
+            pass
+
+        return unzipped_file
+
+    def process_uploads(self, files):
+        unzipped_file = self.validate_request_files(files)
+        file_data = json.loads(unzipped_file.read('ul_data.json').decode('utf-8'))
+
+        for ul in file_data.keys():
+            bp_id = ul
+            bp_data = file_data[ul]
             try:
-                bp = DonationBlueprint.objects.get(pk=ul_response['id'])
+                bp = DonationBlueprint.objects.get(pk=bp_id)
             except DonationBlueprint.DoesNotExist as e:
                 # TODO: Log this error somewhere
-                print(f'{e} With id={ul_response["id"]}')
+                print(f'{e} – With id={bp_id} does not exist')
                 continue
 
-            bp.process_donation(ul_response['data'])
+            bp.process_donation(bp_data)

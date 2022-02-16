@@ -1,33 +1,22 @@
 <template>
   <h1>Uploader App</h1>
-  <!--
-  ul_config = [
-    {'ul_type': 'zip',
-     'blueprints': [
-       {'id': 1, 'format': 'json', 'f_expected': ['field_A', 'field__B'], 'f_extract: ['field_A'], 'regex_path':"regex"},
-       {...}
-    },
-    {'ul_type': 'singlefile',
-    'blueprints': [{'id': 1, 'format': 'json', 'f_expected': ['field_A', 'field__B'], 'f_extract': ['field_A'], 'regex_path':''}
-    ]}
-     ]
-  ]
-  -->
-
-  <div>ul_config: {{ ul_config }}</div>
+  <div>POST DATA: {{ post_data }}</div>
+  <div>Action URL: {{ actionurl }}</div>
+  <div><br><br></div>
 
   <FileUploader
       v-for="(uploadConfig, id) in ul_config"
       :key="id"
+      :comp_id="id"
       :zipped="uploadConfig.ul_type === 'zip'"
       :blueprints="uploadConfig.blueprints"
+      @changedData="updatePostData"
   ></FileUploader>
 
-  <input id="zipped-ul" name="zipped-ul" class="d-none">
   <div class="row float-right">
     <button
         class="btn btn-success fs-5 w-25"
-        type="submit"
+        type="button"
         @click="zipData"
     >Daten übermitteln</button>
   </div>
@@ -44,41 +33,57 @@ export default {
   },
   props: {
     uploadconfig: String,
+    actionurl: String,
   },
   data() {
     return {
       ul_config: JSON.parse(this.uploadconfig),
+      post_data: {},
     }
   },
   methods: {
+    updatePostData(data) {
+      Object.keys(data).forEach(key => {
+        this.post_data[key] = data[key]
+      })
+    },
     zipData() {
-      let ul_data_inputs = document.querySelectorAll('input[name^=data-ul-]');
-      window.alert("something happened.")
-      let ul_data = [];
-      for (let i=0; i < ul_data_inputs.length; i++) {
-        let ul = ul_data_inputs[i];
-        ul_data.push(ul.value);
-      }
+      // Disable file inputs.
+      let file_inputs = document.querySelectorAll("input[type=file]")
+      file_inputs.forEach(fi => {
+        fi.disabled = true;
+      })
 
-      // zip and include in input
+      // Zip uploaded and processed data and attach it to form.
+      let form = new FormData(document.getElementById("uploader-form"));
       let zip = new JSZip();
-      zip.file("ul_data.json", ul_data);
-      let content = zip.generate({
-        type: "blob",
-        compression: "DEFLATE"
-      });
 
-      // let ul_form = document.getElementById("uploader-form");
-      let form = new FormData() // FormData(ul_form);
-      form.append("zipped_data", content, "data.zip");
+      console.log(JSON.parse(JSON.stringify(Array.from(this.post_data))));
 
-      let httpRequest = new XMLHttpRequest();
-      httpRequest.send(form);
-      return(false);
+      zip.file("ul_data.json", JSON.stringify(this.post_data))
+          .generateAsync({type: "blob"})
+          .then(blob => {
+            form.append("post_data", blob);
+            for(let pair of form.entries()) {
+              console.log(pair[1]);
+            }
+
+            let myReader = new FileReader();
+            myReader.onload = function(event){
+              console.log(event);
+              console.log(JSON.stringify(myReader.result));
+            };
+            myReader.readAsText(blob);
+
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", this.actionurl);
+            xhr.send(form);
+
+            // fetch(this.actionurl,
+            //     {method: "POST", body: form})
+            return true;
+          })
     }
-  },
-  mounted() {
-    document.getElementById("uploader-form").addEventListener("submit", this.zipData, false);
   }
 }
 </script>

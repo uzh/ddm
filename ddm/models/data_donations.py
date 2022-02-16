@@ -67,6 +67,7 @@ class DonationBlueprint(models.Model):
         return config
 
     def process_donation(self, data):
+        print("Process bp")
         if self.validate_donation(data):
             self.save_donation(data)
         else:
@@ -74,10 +75,21 @@ class DonationBlueprint(models.Model):
             pass
         return
 
-    def validate_donation(self, data):
-        pass
+    @staticmethod
+    def validate_donation(data):
+        # Check if all expected fields are in response.
+        response_fields = ['consent', 'extracted_data', 'status']
+
+        if not all(k in data for k in response_fields):
+            # TODO: raise/log expection
+            return False
+        else:
+            # TODO: Add other validation steps?
+            print("Blueprint donation valid.")
+            return True
 
     def save_donation(self, data):
+        # TODO: Create a Data Donation Response object
         pass
 
 

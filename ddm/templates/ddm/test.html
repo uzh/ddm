@@ -11,11 +11,13 @@
 </div>
 
 <div class="container">
-    <form id="uploader-form" method="POST">
+    {{ request.build_absolute_uri }}
+    <form id="uploader-form" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <div id="uapp"
              class="container"
-             data-uploadconfig='{{ul_configs}}'>
+             data-uploadconfig='{{ ul_configs }}'
+             data-actionurl='{{ request.build_absolute_uri }}'>
             <uapp></uapp>
         </div>
         {% render_bundle 'vue_uploader' %}

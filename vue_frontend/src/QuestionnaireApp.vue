@@ -1,6 +1,34 @@
 <template>
   <div>VUE Qapp</div>
   <div>{{qconfig}}</div>
+
+  <!-- for page in qconfig:
+    <div class="page">
+
+    for question on page:
+      if question is SingleChoice
+      <SingleChoiceQuestion
+        :id
+        :question_text (as html?)
+        :choices
+        :choiceOrder
+      >
+
+      if question is MultiChoice
+      <MultiChoiceQuestion
+      >
+
+      and so on...
+
+    </div>
+  -->
+
+  <!--
+  SingleChoiceQuestion:
+  :
+
+  -->
+
 </template>
 
 <script>

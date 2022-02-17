@@ -7,6 +7,6 @@ from .questionnaire import (
     questionnaire_continue, questionnaire_admission, display_questionnaire
 )
 
-from .data_donation import DataUpload
+from .project import ProjectEntry, ProjectBaseView
 
-from .project import ProjectEntry
+from .data_donation import DataUpload

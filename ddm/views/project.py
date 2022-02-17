@@ -15,15 +15,15 @@ class ProjectBaseView(DetailView):
         'project-exit'
     ]
     view_name = None
+    current_step = None
     project_session = None
 
     def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
+        self.set_values()
         request = self.register_project_in_session(request)
         request = self.register_participant_in_session(request)
 
-        # TODO: This approach is inefficient => Change this.
-        print(self.project_session)
+        # TODO: This approach might be inefficient => Check this.
         target = self.get_target()
 
         context = self.get_context_data(object=self.object)
@@ -35,7 +35,12 @@ class ProjectBaseView(DetailView):
             context['session'] = request.session['projects']
             return self.render_to_response(context)
         else:
-            return redirect(target)
+            return redirect(target, slug=self.object.slug)
+
+    def set_values(self):
+        self.object = self.get_object()
+        self.current_step = self.steps.index(self.view_name)
+        return
 
     def set_step_complete(self):
         self.project_session['steps'][self.view_name]['state'] = 'completed'
@@ -118,16 +123,21 @@ class ProjectBaseView(DetailView):
         request.session['projects'][f'{self.object.pk}'] = self.project_session
         return request
 
+    def post(self, request, *arges, **kwargs):
+        self.set_values()
+        self.set_project_session(request)
+        self.set_step_complete()
+        return redirect(self.steps[self.current_step + 1],
+                        slug=self.object.slug)
+
 
 class ProjectEntry(ProjectBaseView):
     template_name = 'ddm/project/entry_page.html'
     view_name = 'project-entry'
 
     def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self.set_project_session(request)
+        super().post(request, **kwargs)
+        print("child post")
         print(request.session['projects'])
-        self.set_step_complete()
-        current_step = self.steps.index(self.view_name)
-        print(request.session['projects'])
-        return redirect(self.steps[current_step + 1])
+        return redirect(self.steps[self.current_step + 1],
+                        slug=self.object.slug)

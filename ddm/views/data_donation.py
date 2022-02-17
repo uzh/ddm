@@ -1,13 +1,13 @@
 import json
 
 from django.shortcuts import render
-from django.views.generic.base import TemplateView
 from django.utils.safestring import SafeString
 from django.views.decorators.cache import cache_page
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.decorators import method_decorator
 
 from ddm.models import DonationBlueprint, ZippedBlueprint
+from ddm.views import ProjectBaseView
 import zipfile
 
 import logging
@@ -15,8 +15,9 @@ logger = logging.getLogger(__name__)
 
 
 @method_decorator(cache_page(0), name='dispatch')
-class DataUpload(TemplateView):
+class DataUpload(ProjectBaseView):
     template_name = 'ddm/test.html'
+    view_name = 'data-donation'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -39,6 +40,7 @@ class DataUpload(TemplateView):
         return json.dumps(ul_configs)
 
     def post(self, request, *args, **kwargs):
+        super().post(request, **kwargs)
         self.process_uploads(request.FILES)
         return render(request, 'ddm/test.html', status=204)
 

@@ -2,6 +2,12 @@
   <div>VUE Qapp</div>
   <div>{{qconfig}}</div>
 
+  <SimpleQuestion
+    :qid="'SunQuestion'"
+    :question="'is the sun hot?'" @answerChanged="updateAnswers"
+  ></SimpleQuestion>
+
+  {{ this.answers }}
   <!-- for page in qconfig:
     for question in questionnaire:
       if question is SingleChoice
@@ -24,16 +30,26 @@
 </template>
 
 <script>
+import SimpleQuestion from "./components/SimpleQuestion.vue"
 
 export default {
   name: 'QApp',
   components: {
+    SimpleQuestion
   },
   props: {
     qconfig: String,
   },
   data() {
     return {
+      answers: {
+
+      }
+    }
+  },
+  methods: {
+    updateAnswers(e) {
+      this.answers[e.name] = e.value;
     }
   }
 }

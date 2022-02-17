@@ -23,17 +23,15 @@ class ProjectBaseView(DetailView):
         request = self.register_participant_in_session(request)
 
         # TODO: This approach is inefficient => Change this.
+        print(self.project_session)
         target = self.get_target()
 
         context = self.get_context_data(object=self.object)
         context['part_id'] = self.project_session['participant_id']
 
         if target == self.view_name:
-            print('pass')
             self.project_session['steps'][self.view_name]['state'] = 'started'
-            print(self.project_session)
-            print(request.session['projects'][f'{self.object.pk}'])
-            print(target)
+            request.session['projects'][f'{self.object.pk}'] = self.project_session.copy()
             context['session'] = request.session['projects']
             return self.render_to_response(context)
         else:
@@ -45,22 +43,41 @@ class ProjectBaseView(DetailView):
 
     def get_target(self):
         # Check if project has already been started.
-        if self.project_session['steps'][self.view_name]['state'] == 'not started':
-            # Check if it is the first step:
-            if self.steps.index(self.view_name) == 0:
-                target = self.view_name
-            else:
-                target = self.search_target(self.view_name)
+        if self.project_session['steps'][self.view_name]['state'] == 'started':
+            target = self.view_name
+        elif self.project_session['steps'][self.view_name]['state'] == 'not started':  # Search backwards.
+            target = self.search_target_backward(self.view_name)
+        elif self.project_session['steps'][self.view_name]['state'] == 'completed':  # Search forwards.
+            target = self.search_target_forward(self.view_name)
+            pass
         return target
 
-    def search_target(self, view_name):
-        prev_view = self.steps.index(view_name)
-        if self.project_session['steps'][self.view_name]['state'] == 'completed':
+    def search_target_backward(self, view_name):
+        curr_view_index = self.steps.index(view_name)
+        if curr_view_index == 0:
             target = view_name
-        elif self.project_session['steps'][self.view_name]['state'] == 'started':
-            target = prev_view
         else:
-            target = self.search_target(prev_view)
+            comp_view = self.steps[curr_view_index - 1]
+            comp_view_state = self.project_session['steps'][comp_view]['state']
+            if comp_view_state == 'completed':
+                target = view_name
+            elif comp_view_state == 'started':
+                target = comp_view
+            else:
+                target = self.search_target_backward(comp_view)
+        return target
+
+    def search_target_forward(self, view_name):
+        curr_view_index = self.steps.index(view_name)
+        if curr_view_index == len(self.steps) - 1:
+            target = view_name
+        else:
+            comp_view = self.steps[curr_view_index + 1]
+            comp_view_state = self.project_session['steps'][comp_view]['state']
+            if comp_view_state != 'completed':
+                target = comp_view
+            else:
+                target = self.search_target_forward(comp_view)
         return target
 
     def register_project_in_session(self, request):
@@ -74,10 +91,16 @@ class ProjectBaseView(DetailView):
                 'completed': False,
                 'participant_id': None
             }
-        self.project_session = request.session['projects'][f'{self.object.pk}']
-        for step in self.steps:
-            self.project_session['steps'][step] = {'state': 'not started'}
+            for step in self.steps:
+                request.session['projects'][f'{self.object.pk}']['steps'][step] = {
+                    'state': 'not started'
+                }
+        self.set_project_session(request)
         return request
+
+    def set_project_session(self, request):
+        self.project_session = request.session['projects'][f'{self.object.pk}']
+        return
 
     def register_participant_in_session(self, request):
         participant_id = self.project_session['participant_id']
@@ -101,6 +124,10 @@ class ProjectEntry(ProjectBaseView):
     view_name = 'project-entry'
 
     def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.set_project_session(request)
+        print(request.session['projects'])
         self.set_step_complete()
         current_step = self.steps.index(self.view_name)
+        print(request.session['projects'])
         return redirect(self.steps[current_step + 1])

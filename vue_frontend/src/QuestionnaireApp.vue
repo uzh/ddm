@@ -1,31 +1,55 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld :msg="mssg"/>
-  <HelloWorld :msg="msg"/>
-<!--  <QuestionnaireList messssage="somemess"/>-->
-  <p>Message: {{ this.msg }}</p>
-  <p>Message2: {{ msg }}</p>
-  <p>Message3: {{ mssg }}</p>
+  <div>VUE Qapp</div>
+  <div>{{qconfig}}</div>
+
+  <SimpleQuestion
+    :qid="'SunQuestion'"
+    :question="'is the sun hot?'" @answerChanged="updateAnswers"
+  ></SimpleQuestion>
+
+  {{ this.answers }}
+  <!-- for page in qconfig:
+    for question in questionnaire:
+      if question is SingleChoice
+      <SingleChoiceQuestion
+        :id
+        :question_text (as html?)
+        :choices
+        :choiceOrder
+      >
+
+      if question is MultiChoice
+      <MultiChoiceQuestion
+      >
+
+      and so on...
+
+    </div>
+  -->
+
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-// import QuestionnaireList from './components/questionnaire-list.vue'
-// module.exports = {
-//   props: ['msage']
-// }
+import SimpleQuestion from "./components/SimpleQuestion.vue"
+
 export default {
   name: 'QApp',
   components: {
-     HelloWorld,
-  //   QuestionnaireList
+    SimpleQuestion
   },
   props: {
-    msg: String,
+    qconfig: String,
   },
   data() {
     return {
-      mssg: 'abcd'
+      answers: {
+
+      }
+    }
+  },
+  methods: {
+    updateAnswers(e) {
+      this.answers[e.name] = e.value;
     }
   }
 }

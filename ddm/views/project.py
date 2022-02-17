@@ -140,3 +140,8 @@ class ProjectEntry(ProjectBaseView):
         print(request.session['projects'])
         return redirect(self.steps[self.current_step + 1],
                         slug=self.object.slug)
+
+
+class ProjectExit(ProjectBaseView):
+    template_name = 'ddm/questionnaire/thankyou.html'
+    view_name = 'project-exit'

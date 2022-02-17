@@ -11,11 +11,16 @@
     <h1>Questionnaire</h1>
 </div>
 
-<div id="qapp"
-     data-qconfig='{{ q_config }}'
->
-    <qapp></qapp>
-</div>
+<form method="POST">
+    {% csrf_token %}
+    <div id="qapp"
+         data-qconfig='{{ q_config }}'
+    >
+        <qapp></qapp>
+    </div>
+
+    <input type="submit" value="Weiter">
+</form>
 {% render_bundle 'vue_questionnaire' %}
 
 </body>

@@ -27,6 +27,12 @@
     </div>
   -->
 
+  <button
+      class="btn btn-success fs-5 w-25"
+      type="button"
+      @click="zipData"
+  >Daten übermitteln</button>
+
 </template>
 
 <script>

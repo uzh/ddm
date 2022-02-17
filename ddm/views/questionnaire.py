@@ -13,10 +13,12 @@ from ddm.models import (
 )
 from ddm.settings import SQ_TIMEZONE
 from ddm.tools import fill_variable_placeholder, get_or_none
+from ddm.views import ProjectBaseView
 
 
-class QuestionnaireDisplay(TemplateView):
+class QuestionnaireDisplay(ProjectBaseView):
     template_name = 'ddm/questionnaire.html'
+    view_name = 'questionnaire'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

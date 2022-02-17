@@ -180,17 +180,27 @@
       "name": "6d87e43e81409a72154b.hot-update.json",
       "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\6d87e43e81409a72154b.hot-update.json",
       "publicPath": "http://localhost:8080/6d87e43e81409a72154b.hot-update.json"
+    },
+    "vue_questionnaire.f4acaec2d6ad5fd0d6af.hot-update.js": {
+      "name": "vue_questionnaire.f4acaec2d6ad5fd0d6af.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.f4acaec2d6ad5fd0d6af.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.f4acaec2d6ad5fd0d6af.hot-update.js"
+    },
+    "f4acaec2d6ad5fd0d6af.hot-update.json": {
+      "name": "f4acaec2d6ad5fd0d6af.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\f4acaec2d6ad5fd0d6af.hot-update.json",
+      "publicPath": "http://localhost:8080/f4acaec2d6ad5fd0d6af.hot-update.json"
     }
   },
   "chunks": {
     "vue_uploader": [
       "js/chunk-vendors.js",
-      "js/vue_uploader.js",
-      "vue_uploader.6d87e43e81409a72154b.hot-update.js"
+      "js/vue_uploader.js"
     ],
     "vue_questionnaire": [
       "js/chunk-vendors.js",
-      "js/vue_questionnaire.js"
+      "js/vue_questionnaire.js",
+      "vue_questionnaire.f4acaec2d6ad5fd0d6af.hot-update.js"
     ]
   },
   "publicPath": "http://localhost:8080/",

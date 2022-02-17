@@ -58,30 +58,21 @@ export default {
       let form = new FormData(document.getElementById("uploader-form"));
       let zip = new JSZip();
 
-      console.log(JSON.parse(JSON.stringify(Array.from(this.post_data))));
-
       zip.file("ul_data.json", JSON.stringify(this.post_data))
           .generateAsync({type: "blob"})
           .then(blob => {
             form.append("post_data", blob);
-            for(let pair of form.entries()) {
-              console.log(pair[1]);
-            }
 
-            let myReader = new FileReader();
-            myReader.onload = function(event){
-              console.log(event);
-              console.log(JSON.stringify(myReader.result));
-            };
-            myReader.readAsText(blob);
-
-            let xhr = new XMLHttpRequest();
-            xhr.open("POST", this.actionurl);
-            xhr.send(form);
-
-            // fetch(this.actionurl,
-            //     {method: "POST", body: form})
-            return true;
+            fetch(this.actionurl, {method: "POST", body: form})
+                .then(response => {
+                  console.log(response)
+                  if (response.redirected) {
+                    window.location.href = response.url;
+                  }
+                })
+                .catch(err => {
+                  console.info(err);
+                });
           })
     }
   }

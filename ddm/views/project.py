@@ -1,4 +1,4 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.utils import timezone
 from django.views.generic.detail import DetailView
 
@@ -137,7 +137,6 @@ class ProjectEntry(ProjectBaseView):
 
     def post(self, request, *args, **kwargs):
         super().post(request, **kwargs)
-        print("child post")
         print(request.session['projects'])
         return redirect(self.steps[self.current_step + 1],
                         slug=self.object.slug)

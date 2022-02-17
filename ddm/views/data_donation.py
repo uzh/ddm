@@ -1,6 +1,7 @@
 import json
 
-from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.shortcuts import reverse
 from django.utils.safestring import SafeString
 from django.views.decorators.cache import cache_page
 from django.utils.datastructures import MultiValueDictKeyError
@@ -42,7 +43,9 @@ class DataUpload(ProjectBaseView):
     def post(self, request, *args, **kwargs):
         super().post(request, **kwargs)
         self.process_uploads(request.FILES)
-        return render(request, 'ddm/test.html', status=204)
+        redirect_url = reverse(self.steps[self.current_step + 1],
+                               kwargs={'slug': self.object.slug})
+        return HttpResponseRedirect(redirect_url)
 
     @staticmethod
     def process_uploads(files):
@@ -66,6 +69,7 @@ class DataUpload(ProjectBaseView):
 
         # Process donation data.
         file_data = json.loads(unzipped_file.read('ul_data.json').decode('utf-8'))
+        print(file_data)
         for ul in file_data.keys():
             bp_id = ul
             bp_data = file_data[ul]

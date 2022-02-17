@@ -17,7 +17,13 @@ class ProjectEntry(DetailView):
         #  redirected. => maybe define these functions in a project baseview
 
         context = self.get_context_data(object=self.object)
-        context['part_id'] = request.session['projects'][f'{self.object.pk}']['part_id']
+        context['part_id'] = request.session['projects'][f'{self.object.pk}']['step']['part_id']
+
+
+        #r.s.['proj'][proj_id][steps] = [1,2,3]
+        r.s.['part'][part_id][steps][1] = {state: final}
+
+
         return self.render_to_response(context)
 
     def register_project_in_session(self, request):

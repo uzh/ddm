@@ -1,7 +1,7 @@
 <template>
   <form>
     <div class="qa">
-      <Label :ref_for="qid">{{ question }}</Label>
+      <label :ref_for="qid">{{ question }}</label>
       <select :id="qid" :name="qid" class="form-control" @change="answerChanged($event)">
       <option selected disabled>Choose</option>
         <option value="yes">yes</option>
@@ -25,7 +25,7 @@ export default {
   methods: {
     answerChanged(event) {
       this.answer = event.target.value;
-      this.$emit('answerChanged', event.target);
+      this.$emit('answerChanged', {id: this.qid, answers: this.answer});
     }
   }
 };

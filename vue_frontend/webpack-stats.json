@@ -190,6 +190,641 @@
       "name": "f4acaec2d6ad5fd0d6af.hot-update.json",
       "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\f4acaec2d6ad5fd0d6af.hot-update.json",
       "publicPath": "http://localhost:8080/f4acaec2d6ad5fd0d6af.hot-update.json"
+    },
+    "vue_questionnaire.af237985e08bfdcd9209.hot-update.js": {
+      "name": "vue_questionnaire.af237985e08bfdcd9209.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.af237985e08bfdcd9209.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.af237985e08bfdcd9209.hot-update.js"
+    },
+    "af237985e08bfdcd9209.hot-update.json": {
+      "name": "af237985e08bfdcd9209.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\af237985e08bfdcd9209.hot-update.json",
+      "publicPath": "http://localhost:8080/af237985e08bfdcd9209.hot-update.json"
+    },
+    "vue_questionnaire.5c44e14ddeba436647c7.hot-update.js": {
+      "name": "vue_questionnaire.5c44e14ddeba436647c7.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.5c44e14ddeba436647c7.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.5c44e14ddeba436647c7.hot-update.js"
+    },
+    "5c44e14ddeba436647c7.hot-update.json": {
+      "name": "5c44e14ddeba436647c7.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\5c44e14ddeba436647c7.hot-update.json",
+      "publicPath": "http://localhost:8080/5c44e14ddeba436647c7.hot-update.json"
+    },
+    "vue_questionnaire.66c5a2ec89866ae99864.hot-update.js": {
+      "name": "vue_questionnaire.66c5a2ec89866ae99864.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.66c5a2ec89866ae99864.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.66c5a2ec89866ae99864.hot-update.js"
+    },
+    "66c5a2ec89866ae99864.hot-update.json": {
+      "name": "66c5a2ec89866ae99864.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\66c5a2ec89866ae99864.hot-update.json",
+      "publicPath": "http://localhost:8080/66c5a2ec89866ae99864.hot-update.json"
+    },
+    "vue_questionnaire.d75b1e439b192ec8abf4.hot-update.js": {
+      "name": "vue_questionnaire.d75b1e439b192ec8abf4.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.d75b1e439b192ec8abf4.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.d75b1e439b192ec8abf4.hot-update.js"
+    },
+    "d75b1e439b192ec8abf4.hot-update.json": {
+      "name": "d75b1e439b192ec8abf4.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\d75b1e439b192ec8abf4.hot-update.json",
+      "publicPath": "http://localhost:8080/d75b1e439b192ec8abf4.hot-update.json"
+    },
+    "vue_questionnaire.25c10b88dd27764f2a61.hot-update.js": {
+      "name": "vue_questionnaire.25c10b88dd27764f2a61.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.25c10b88dd27764f2a61.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.25c10b88dd27764f2a61.hot-update.js"
+    },
+    "25c10b88dd27764f2a61.hot-update.json": {
+      "name": "25c10b88dd27764f2a61.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\25c10b88dd27764f2a61.hot-update.json",
+      "publicPath": "http://localhost:8080/25c10b88dd27764f2a61.hot-update.json"
+    },
+    "vue_questionnaire.d0d6043f9212988ca4b2.hot-update.js": {
+      "name": "vue_questionnaire.d0d6043f9212988ca4b2.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.d0d6043f9212988ca4b2.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.d0d6043f9212988ca4b2.hot-update.js"
+    },
+    "d0d6043f9212988ca4b2.hot-update.json": {
+      "name": "d0d6043f9212988ca4b2.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\d0d6043f9212988ca4b2.hot-update.json",
+      "publicPath": "http://localhost:8080/d0d6043f9212988ca4b2.hot-update.json"
+    },
+    "vue_questionnaire.407730de7c99468141ff.hot-update.js": {
+      "name": "vue_questionnaire.407730de7c99468141ff.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.407730de7c99468141ff.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.407730de7c99468141ff.hot-update.js"
+    },
+    "407730de7c99468141ff.hot-update.json": {
+      "name": "407730de7c99468141ff.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\407730de7c99468141ff.hot-update.json",
+      "publicPath": "http://localhost:8080/407730de7c99468141ff.hot-update.json"
+    },
+    "vue_questionnaire.71c47f16ec8cbad8083e.hot-update.js": {
+      "name": "vue_questionnaire.71c47f16ec8cbad8083e.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.71c47f16ec8cbad8083e.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.71c47f16ec8cbad8083e.hot-update.js"
+    },
+    "71c47f16ec8cbad8083e.hot-update.json": {
+      "name": "71c47f16ec8cbad8083e.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\71c47f16ec8cbad8083e.hot-update.json",
+      "publicPath": "http://localhost:8080/71c47f16ec8cbad8083e.hot-update.json"
+    },
+    "vue_questionnaire.fbd1e5e0c7d6e5f2dd4c.hot-update.js": {
+      "name": "vue_questionnaire.fbd1e5e0c7d6e5f2dd4c.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.fbd1e5e0c7d6e5f2dd4c.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.fbd1e5e0c7d6e5f2dd4c.hot-update.js"
+    },
+    "fbd1e5e0c7d6e5f2dd4c.hot-update.json": {
+      "name": "fbd1e5e0c7d6e5f2dd4c.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\fbd1e5e0c7d6e5f2dd4c.hot-update.json",
+      "publicPath": "http://localhost:8080/fbd1e5e0c7d6e5f2dd4c.hot-update.json"
+    },
+    "vue_questionnaire.520edfb76fafbf783709.hot-update.js": {
+      "name": "vue_questionnaire.520edfb76fafbf783709.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.520edfb76fafbf783709.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.520edfb76fafbf783709.hot-update.js"
+    },
+    "520edfb76fafbf783709.hot-update.json": {
+      "name": "520edfb76fafbf783709.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\520edfb76fafbf783709.hot-update.json",
+      "publicPath": "http://localhost:8080/520edfb76fafbf783709.hot-update.json"
+    },
+    "vue_questionnaire.c33b1433f49ccc385e1e.hot-update.js": {
+      "name": "vue_questionnaire.c33b1433f49ccc385e1e.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.c33b1433f49ccc385e1e.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.c33b1433f49ccc385e1e.hot-update.js"
+    },
+    "c33b1433f49ccc385e1e.hot-update.json": {
+      "name": "c33b1433f49ccc385e1e.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\c33b1433f49ccc385e1e.hot-update.json",
+      "publicPath": "http://localhost:8080/c33b1433f49ccc385e1e.hot-update.json"
+    },
+    "vue_questionnaire.35a18d99d46d9fa16cd6.hot-update.js": {
+      "name": "vue_questionnaire.35a18d99d46d9fa16cd6.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.35a18d99d46d9fa16cd6.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.35a18d99d46d9fa16cd6.hot-update.js"
+    },
+    "35a18d99d46d9fa16cd6.hot-update.json": {
+      "name": "35a18d99d46d9fa16cd6.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\35a18d99d46d9fa16cd6.hot-update.json",
+      "publicPath": "http://localhost:8080/35a18d99d46d9fa16cd6.hot-update.json"
+    },
+    "vue_questionnaire.b1badf09a6f5f2c0c389.hot-update.js": {
+      "name": "vue_questionnaire.b1badf09a6f5f2c0c389.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.b1badf09a6f5f2c0c389.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.b1badf09a6f5f2c0c389.hot-update.js"
+    },
+    "b1badf09a6f5f2c0c389.hot-update.json": {
+      "name": "b1badf09a6f5f2c0c389.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\b1badf09a6f5f2c0c389.hot-update.json",
+      "publicPath": "http://localhost:8080/b1badf09a6f5f2c0c389.hot-update.json"
+    },
+    "vue_questionnaire.457ebaaa42ba77e6acde.hot-update.js": {
+      "name": "vue_questionnaire.457ebaaa42ba77e6acde.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.457ebaaa42ba77e6acde.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.457ebaaa42ba77e6acde.hot-update.js"
+    },
+    "457ebaaa42ba77e6acde.hot-update.json": {
+      "name": "457ebaaa42ba77e6acde.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\457ebaaa42ba77e6acde.hot-update.json",
+      "publicPath": "http://localhost:8080/457ebaaa42ba77e6acde.hot-update.json"
+    },
+    "vue_questionnaire.2c0c2ace5b45e7712669.hot-update.js": {
+      "name": "vue_questionnaire.2c0c2ace5b45e7712669.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.2c0c2ace5b45e7712669.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.2c0c2ace5b45e7712669.hot-update.js"
+    },
+    "2c0c2ace5b45e7712669.hot-update.json": {
+      "name": "2c0c2ace5b45e7712669.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\2c0c2ace5b45e7712669.hot-update.json",
+      "publicPath": "http://localhost:8080/2c0c2ace5b45e7712669.hot-update.json"
+    },
+    "vue_questionnaire.66b40c56a0243ceb19fd.hot-update.js": {
+      "name": "vue_questionnaire.66b40c56a0243ceb19fd.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.66b40c56a0243ceb19fd.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.66b40c56a0243ceb19fd.hot-update.js"
+    },
+    "66b40c56a0243ceb19fd.hot-update.json": {
+      "name": "66b40c56a0243ceb19fd.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\66b40c56a0243ceb19fd.hot-update.json",
+      "publicPath": "http://localhost:8080/66b40c56a0243ceb19fd.hot-update.json"
+    },
+    "vue_questionnaire.c3ca9141e4c980ba71e8.hot-update.js": {
+      "name": "vue_questionnaire.c3ca9141e4c980ba71e8.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.c3ca9141e4c980ba71e8.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.c3ca9141e4c980ba71e8.hot-update.js"
+    },
+    "c3ca9141e4c980ba71e8.hot-update.json": {
+      "name": "c3ca9141e4c980ba71e8.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\c3ca9141e4c980ba71e8.hot-update.json",
+      "publicPath": "http://localhost:8080/c3ca9141e4c980ba71e8.hot-update.json"
+    },
+    "vue_questionnaire.60d35b8816a8b868bdff.hot-update.js": {
+      "name": "vue_questionnaire.60d35b8816a8b868bdff.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.60d35b8816a8b868bdff.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.60d35b8816a8b868bdff.hot-update.js"
+    },
+    "60d35b8816a8b868bdff.hot-update.json": {
+      "name": "60d35b8816a8b868bdff.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\60d35b8816a8b868bdff.hot-update.json",
+      "publicPath": "http://localhost:8080/60d35b8816a8b868bdff.hot-update.json"
+    },
+    "vue_questionnaire.c0b01e892bfae59517bc.hot-update.js": {
+      "name": "vue_questionnaire.c0b01e892bfae59517bc.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.c0b01e892bfae59517bc.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.c0b01e892bfae59517bc.hot-update.js"
+    },
+    "c0b01e892bfae59517bc.hot-update.json": {
+      "name": "c0b01e892bfae59517bc.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\c0b01e892bfae59517bc.hot-update.json",
+      "publicPath": "http://localhost:8080/c0b01e892bfae59517bc.hot-update.json"
+    },
+    "vue_questionnaire.728fa036b2d9197e6c6f.hot-update.js": {
+      "name": "vue_questionnaire.728fa036b2d9197e6c6f.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.728fa036b2d9197e6c6f.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.728fa036b2d9197e6c6f.hot-update.js"
+    },
+    "728fa036b2d9197e6c6f.hot-update.json": {
+      "name": "728fa036b2d9197e6c6f.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\728fa036b2d9197e6c6f.hot-update.json",
+      "publicPath": "http://localhost:8080/728fa036b2d9197e6c6f.hot-update.json"
+    },
+    "vue_questionnaire.f397441130710688f598.hot-update.js": {
+      "name": "vue_questionnaire.f397441130710688f598.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.f397441130710688f598.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.f397441130710688f598.hot-update.js"
+    },
+    "f397441130710688f598.hot-update.json": {
+      "name": "f397441130710688f598.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\f397441130710688f598.hot-update.json",
+      "publicPath": "http://localhost:8080/f397441130710688f598.hot-update.json"
+    },
+    "vue_questionnaire.57dcf2522d6134385e53.hot-update.js": {
+      "name": "vue_questionnaire.57dcf2522d6134385e53.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.57dcf2522d6134385e53.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.57dcf2522d6134385e53.hot-update.js"
+    },
+    "57dcf2522d6134385e53.hot-update.json": {
+      "name": "57dcf2522d6134385e53.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\57dcf2522d6134385e53.hot-update.json",
+      "publicPath": "http://localhost:8080/57dcf2522d6134385e53.hot-update.json"
+    },
+    "vue_questionnaire.798cb8a248e32239df74.hot-update.js": {
+      "name": "vue_questionnaire.798cb8a248e32239df74.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.798cb8a248e32239df74.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.798cb8a248e32239df74.hot-update.js"
+    },
+    "798cb8a248e32239df74.hot-update.json": {
+      "name": "798cb8a248e32239df74.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\798cb8a248e32239df74.hot-update.json",
+      "publicPath": "http://localhost:8080/798cb8a248e32239df74.hot-update.json"
+    },
+    "vue_questionnaire.124e9f5e8d0b03f97c6a.hot-update.js": {
+      "name": "vue_questionnaire.124e9f5e8d0b03f97c6a.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.124e9f5e8d0b03f97c6a.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.124e9f5e8d0b03f97c6a.hot-update.js"
+    },
+    "124e9f5e8d0b03f97c6a.hot-update.json": {
+      "name": "124e9f5e8d0b03f97c6a.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\124e9f5e8d0b03f97c6a.hot-update.json",
+      "publicPath": "http://localhost:8080/124e9f5e8d0b03f97c6a.hot-update.json"
+    },
+    "vue_questionnaire.70472c34f1d614c3fd5a.hot-update.js": {
+      "name": "vue_questionnaire.70472c34f1d614c3fd5a.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.70472c34f1d614c3fd5a.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.70472c34f1d614c3fd5a.hot-update.js"
+    },
+    "70472c34f1d614c3fd5a.hot-update.json": {
+      "name": "70472c34f1d614c3fd5a.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\70472c34f1d614c3fd5a.hot-update.json",
+      "publicPath": "http://localhost:8080/70472c34f1d614c3fd5a.hot-update.json"
+    },
+    "vue_questionnaire.829230590562e68cc528.hot-update.js": {
+      "name": "vue_questionnaire.829230590562e68cc528.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.829230590562e68cc528.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.829230590562e68cc528.hot-update.js"
+    },
+    "829230590562e68cc528.hot-update.json": {
+      "name": "829230590562e68cc528.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\829230590562e68cc528.hot-update.json",
+      "publicPath": "http://localhost:8080/829230590562e68cc528.hot-update.json"
+    },
+    "vue_questionnaire.aeb0b93cfb98dc435a9e.hot-update.js": {
+      "name": "vue_questionnaire.aeb0b93cfb98dc435a9e.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.aeb0b93cfb98dc435a9e.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.aeb0b93cfb98dc435a9e.hot-update.js"
+    },
+    "aeb0b93cfb98dc435a9e.hot-update.json": {
+      "name": "aeb0b93cfb98dc435a9e.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\aeb0b93cfb98dc435a9e.hot-update.json",
+      "publicPath": "http://localhost:8080/aeb0b93cfb98dc435a9e.hot-update.json"
+    },
+    "vue_questionnaire.e76210cebfa6774a01e5.hot-update.js": {
+      "name": "vue_questionnaire.e76210cebfa6774a01e5.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.e76210cebfa6774a01e5.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.e76210cebfa6774a01e5.hot-update.js"
+    },
+    "e76210cebfa6774a01e5.hot-update.json": {
+      "name": "e76210cebfa6774a01e5.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\e76210cebfa6774a01e5.hot-update.json",
+      "publicPath": "http://localhost:8080/e76210cebfa6774a01e5.hot-update.json"
+    },
+    "vue_questionnaire.bc17c281614c277eb1d1.hot-update.js": {
+      "name": "vue_questionnaire.bc17c281614c277eb1d1.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.bc17c281614c277eb1d1.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.bc17c281614c277eb1d1.hot-update.js"
+    },
+    "bc17c281614c277eb1d1.hot-update.json": {
+      "name": "bc17c281614c277eb1d1.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\bc17c281614c277eb1d1.hot-update.json",
+      "publicPath": "http://localhost:8080/bc17c281614c277eb1d1.hot-update.json"
+    },
+    "vue_questionnaire.62e6fa2c57a667b5332b.hot-update.js": {
+      "name": "vue_questionnaire.62e6fa2c57a667b5332b.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.62e6fa2c57a667b5332b.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.62e6fa2c57a667b5332b.hot-update.js"
+    },
+    "62e6fa2c57a667b5332b.hot-update.json": {
+      "name": "62e6fa2c57a667b5332b.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\62e6fa2c57a667b5332b.hot-update.json",
+      "publicPath": "http://localhost:8080/62e6fa2c57a667b5332b.hot-update.json"
+    },
+    "vue_questionnaire.ea019b060c4c6db3231c.hot-update.js": {
+      "name": "vue_questionnaire.ea019b060c4c6db3231c.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.ea019b060c4c6db3231c.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.ea019b060c4c6db3231c.hot-update.js"
+    },
+    "ea019b060c4c6db3231c.hot-update.json": {
+      "name": "ea019b060c4c6db3231c.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\ea019b060c4c6db3231c.hot-update.json",
+      "publicPath": "http://localhost:8080/ea019b060c4c6db3231c.hot-update.json"
+    },
+    "vue_questionnaire.ebf54c539dbba1d2fcb3.hot-update.js": {
+      "name": "vue_questionnaire.ebf54c539dbba1d2fcb3.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.ebf54c539dbba1d2fcb3.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.ebf54c539dbba1d2fcb3.hot-update.js"
+    },
+    "ebf54c539dbba1d2fcb3.hot-update.json": {
+      "name": "ebf54c539dbba1d2fcb3.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\ebf54c539dbba1d2fcb3.hot-update.json",
+      "publicPath": "http://localhost:8080/ebf54c539dbba1d2fcb3.hot-update.json"
+    },
+    "vue_questionnaire.4cef72de20ffbd27fc21.hot-update.js": {
+      "name": "vue_questionnaire.4cef72de20ffbd27fc21.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.4cef72de20ffbd27fc21.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.4cef72de20ffbd27fc21.hot-update.js"
+    },
+    "4cef72de20ffbd27fc21.hot-update.json": {
+      "name": "4cef72de20ffbd27fc21.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\4cef72de20ffbd27fc21.hot-update.json",
+      "publicPath": "http://localhost:8080/4cef72de20ffbd27fc21.hot-update.json"
+    },
+    "vue_questionnaire.6d53f858c1dabe587d4a.hot-update.js": {
+      "name": "vue_questionnaire.6d53f858c1dabe587d4a.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.6d53f858c1dabe587d4a.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.6d53f858c1dabe587d4a.hot-update.js"
+    },
+    "6d53f858c1dabe587d4a.hot-update.json": {
+      "name": "6d53f858c1dabe587d4a.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\6d53f858c1dabe587d4a.hot-update.json",
+      "publicPath": "http://localhost:8080/6d53f858c1dabe587d4a.hot-update.json"
+    },
+    "vue_questionnaire.b64b1e052cf731026a12.hot-update.js": {
+      "name": "vue_questionnaire.b64b1e052cf731026a12.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.b64b1e052cf731026a12.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.b64b1e052cf731026a12.hot-update.js"
+    },
+    "b64b1e052cf731026a12.hot-update.json": {
+      "name": "b64b1e052cf731026a12.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\b64b1e052cf731026a12.hot-update.json",
+      "publicPath": "http://localhost:8080/b64b1e052cf731026a12.hot-update.json"
+    },
+    "vue_questionnaire.39ba51727bdf6cdb7f95.hot-update.js": {
+      "name": "vue_questionnaire.39ba51727bdf6cdb7f95.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.39ba51727bdf6cdb7f95.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.39ba51727bdf6cdb7f95.hot-update.js"
+    },
+    "39ba51727bdf6cdb7f95.hot-update.json": {
+      "name": "39ba51727bdf6cdb7f95.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\39ba51727bdf6cdb7f95.hot-update.json",
+      "publicPath": "http://localhost:8080/39ba51727bdf6cdb7f95.hot-update.json"
+    },
+    "vue_questionnaire.b778e57831f086668473.hot-update.js": {
+      "name": "vue_questionnaire.b778e57831f086668473.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.b778e57831f086668473.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.b778e57831f086668473.hot-update.js"
+    },
+    "b778e57831f086668473.hot-update.json": {
+      "name": "b778e57831f086668473.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\b778e57831f086668473.hot-update.json",
+      "publicPath": "http://localhost:8080/b778e57831f086668473.hot-update.json"
+    },
+    "vue_questionnaire.6c73e1ea3798da9ca5cf.hot-update.js": {
+      "name": "vue_questionnaire.6c73e1ea3798da9ca5cf.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.6c73e1ea3798da9ca5cf.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.6c73e1ea3798da9ca5cf.hot-update.js"
+    },
+    "6c73e1ea3798da9ca5cf.hot-update.json": {
+      "name": "6c73e1ea3798da9ca5cf.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\6c73e1ea3798da9ca5cf.hot-update.json",
+      "publicPath": "http://localhost:8080/6c73e1ea3798da9ca5cf.hot-update.json"
+    },
+    "vue_questionnaire.bb6679da26c35d7f44ac.hot-update.js": {
+      "name": "vue_questionnaire.bb6679da26c35d7f44ac.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.bb6679da26c35d7f44ac.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.bb6679da26c35d7f44ac.hot-update.js"
+    },
+    "bb6679da26c35d7f44ac.hot-update.json": {
+      "name": "bb6679da26c35d7f44ac.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\bb6679da26c35d7f44ac.hot-update.json",
+      "publicPath": "http://localhost:8080/bb6679da26c35d7f44ac.hot-update.json"
+    },
+    "vue_questionnaire.942ee5e7e7b3ea55a801.hot-update.js": {
+      "name": "vue_questionnaire.942ee5e7e7b3ea55a801.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.942ee5e7e7b3ea55a801.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.942ee5e7e7b3ea55a801.hot-update.js"
+    },
+    "942ee5e7e7b3ea55a801.hot-update.json": {
+      "name": "942ee5e7e7b3ea55a801.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\942ee5e7e7b3ea55a801.hot-update.json",
+      "publicPath": "http://localhost:8080/942ee5e7e7b3ea55a801.hot-update.json"
+    },
+    "vue_questionnaire.1259abfa31094b969ec2.hot-update.js": {
+      "name": "vue_questionnaire.1259abfa31094b969ec2.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.1259abfa31094b969ec2.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.1259abfa31094b969ec2.hot-update.js"
+    },
+    "1259abfa31094b969ec2.hot-update.json": {
+      "name": "1259abfa31094b969ec2.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\1259abfa31094b969ec2.hot-update.json",
+      "publicPath": "http://localhost:8080/1259abfa31094b969ec2.hot-update.json"
+    },
+    "vue_questionnaire.f4daa27f7b1f85173e70.hot-update.js": {
+      "name": "vue_questionnaire.f4daa27f7b1f85173e70.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.f4daa27f7b1f85173e70.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.f4daa27f7b1f85173e70.hot-update.js"
+    },
+    "f4daa27f7b1f85173e70.hot-update.json": {
+      "name": "f4daa27f7b1f85173e70.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\f4daa27f7b1f85173e70.hot-update.json",
+      "publicPath": "http://localhost:8080/f4daa27f7b1f85173e70.hot-update.json"
+    },
+    "vue_questionnaire.aee6e5536b0664a06da5.hot-update.js": {
+      "name": "vue_questionnaire.aee6e5536b0664a06da5.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.aee6e5536b0664a06da5.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.aee6e5536b0664a06da5.hot-update.js"
+    },
+    "aee6e5536b0664a06da5.hot-update.json": {
+      "name": "aee6e5536b0664a06da5.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\aee6e5536b0664a06da5.hot-update.json",
+      "publicPath": "http://localhost:8080/aee6e5536b0664a06da5.hot-update.json"
+    },
+    "vue_questionnaire.33e35c64d06d0aacce46.hot-update.js": {
+      "name": "vue_questionnaire.33e35c64d06d0aacce46.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.33e35c64d06d0aacce46.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.33e35c64d06d0aacce46.hot-update.js"
+    },
+    "33e35c64d06d0aacce46.hot-update.json": {
+      "name": "33e35c64d06d0aacce46.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\33e35c64d06d0aacce46.hot-update.json",
+      "publicPath": "http://localhost:8080/33e35c64d06d0aacce46.hot-update.json"
+    },
+    "vue_questionnaire.4ea4dceff39a72abb7bc.hot-update.js": {
+      "name": "vue_questionnaire.4ea4dceff39a72abb7bc.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.4ea4dceff39a72abb7bc.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.4ea4dceff39a72abb7bc.hot-update.js"
+    },
+    "4ea4dceff39a72abb7bc.hot-update.json": {
+      "name": "4ea4dceff39a72abb7bc.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\4ea4dceff39a72abb7bc.hot-update.json",
+      "publicPath": "http://localhost:8080/4ea4dceff39a72abb7bc.hot-update.json"
+    },
+    "vue_questionnaire.27ca9c12181c131375e4.hot-update.js": {
+      "name": "vue_questionnaire.27ca9c12181c131375e4.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.27ca9c12181c131375e4.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.27ca9c12181c131375e4.hot-update.js"
+    },
+    "27ca9c12181c131375e4.hot-update.json": {
+      "name": "27ca9c12181c131375e4.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\27ca9c12181c131375e4.hot-update.json",
+      "publicPath": "http://localhost:8080/27ca9c12181c131375e4.hot-update.json"
+    },
+    "vue_questionnaire.89816620eb0624d305ac.hot-update.js": {
+      "name": "vue_questionnaire.89816620eb0624d305ac.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.89816620eb0624d305ac.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.89816620eb0624d305ac.hot-update.js"
+    },
+    "89816620eb0624d305ac.hot-update.json": {
+      "name": "89816620eb0624d305ac.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\89816620eb0624d305ac.hot-update.json",
+      "publicPath": "http://localhost:8080/89816620eb0624d305ac.hot-update.json"
+    },
+    "vue_questionnaire.87275c19e0f762c056e2.hot-update.js": {
+      "name": "vue_questionnaire.87275c19e0f762c056e2.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.87275c19e0f762c056e2.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.87275c19e0f762c056e2.hot-update.js"
+    },
+    "87275c19e0f762c056e2.hot-update.json": {
+      "name": "87275c19e0f762c056e2.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\87275c19e0f762c056e2.hot-update.json",
+      "publicPath": "http://localhost:8080/87275c19e0f762c056e2.hot-update.json"
+    },
+    "vue_questionnaire.4f8ef46575f7cf5c6b20.hot-update.js": {
+      "name": "vue_questionnaire.4f8ef46575f7cf5c6b20.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.4f8ef46575f7cf5c6b20.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.4f8ef46575f7cf5c6b20.hot-update.js"
+    },
+    "4f8ef46575f7cf5c6b20.hot-update.json": {
+      "name": "4f8ef46575f7cf5c6b20.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\4f8ef46575f7cf5c6b20.hot-update.json",
+      "publicPath": "http://localhost:8080/4f8ef46575f7cf5c6b20.hot-update.json"
+    },
+    "vue_questionnaire.1fe551938acd0e5afd71.hot-update.js": {
+      "name": "vue_questionnaire.1fe551938acd0e5afd71.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.1fe551938acd0e5afd71.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.1fe551938acd0e5afd71.hot-update.js"
+    },
+    "1fe551938acd0e5afd71.hot-update.json": {
+      "name": "1fe551938acd0e5afd71.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\1fe551938acd0e5afd71.hot-update.json",
+      "publicPath": "http://localhost:8080/1fe551938acd0e5afd71.hot-update.json"
+    },
+    "vue_questionnaire.c4117e18e7e004dfd0e2.hot-update.js": {
+      "name": "vue_questionnaire.c4117e18e7e004dfd0e2.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.c4117e18e7e004dfd0e2.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.c4117e18e7e004dfd0e2.hot-update.js"
+    },
+    "c4117e18e7e004dfd0e2.hot-update.json": {
+      "name": "c4117e18e7e004dfd0e2.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\c4117e18e7e004dfd0e2.hot-update.json",
+      "publicPath": "http://localhost:8080/c4117e18e7e004dfd0e2.hot-update.json"
+    },
+    "vue_questionnaire.a73ca3b61466fa2616c9.hot-update.js": {
+      "name": "vue_questionnaire.a73ca3b61466fa2616c9.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.a73ca3b61466fa2616c9.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.a73ca3b61466fa2616c9.hot-update.js"
+    },
+    "a73ca3b61466fa2616c9.hot-update.json": {
+      "name": "a73ca3b61466fa2616c9.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\a73ca3b61466fa2616c9.hot-update.json",
+      "publicPath": "http://localhost:8080/a73ca3b61466fa2616c9.hot-update.json"
+    },
+    "vue_questionnaire.2fa243a339133c8005ca.hot-update.js": {
+      "name": "vue_questionnaire.2fa243a339133c8005ca.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.2fa243a339133c8005ca.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.2fa243a339133c8005ca.hot-update.js"
+    },
+    "2fa243a339133c8005ca.hot-update.json": {
+      "name": "2fa243a339133c8005ca.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\2fa243a339133c8005ca.hot-update.json",
+      "publicPath": "http://localhost:8080/2fa243a339133c8005ca.hot-update.json"
+    },
+    "vue_questionnaire.d62b6f00f1e8b414e5fd.hot-update.js": {
+      "name": "vue_questionnaire.d62b6f00f1e8b414e5fd.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.d62b6f00f1e8b414e5fd.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.d62b6f00f1e8b414e5fd.hot-update.js"
+    },
+    "d62b6f00f1e8b414e5fd.hot-update.json": {
+      "name": "d62b6f00f1e8b414e5fd.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\d62b6f00f1e8b414e5fd.hot-update.json",
+      "publicPath": "http://localhost:8080/d62b6f00f1e8b414e5fd.hot-update.json"
+    },
+    "vue_questionnaire.6a630835823920327627.hot-update.js": {
+      "name": "vue_questionnaire.6a630835823920327627.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.6a630835823920327627.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.6a630835823920327627.hot-update.js"
+    },
+    "6a630835823920327627.hot-update.json": {
+      "name": "6a630835823920327627.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\6a630835823920327627.hot-update.json",
+      "publicPath": "http://localhost:8080/6a630835823920327627.hot-update.json"
+    },
+    "vue_questionnaire.58f43d3994b6b03cd2d6.hot-update.js": {
+      "name": "vue_questionnaire.58f43d3994b6b03cd2d6.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.58f43d3994b6b03cd2d6.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.58f43d3994b6b03cd2d6.hot-update.js"
+    },
+    "58f43d3994b6b03cd2d6.hot-update.json": {
+      "name": "58f43d3994b6b03cd2d6.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\58f43d3994b6b03cd2d6.hot-update.json",
+      "publicPath": "http://localhost:8080/58f43d3994b6b03cd2d6.hot-update.json"
+    },
+    "vue_questionnaire.2f17d34b8d7c4eade18b.hot-update.js": {
+      "name": "vue_questionnaire.2f17d34b8d7c4eade18b.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.2f17d34b8d7c4eade18b.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.2f17d34b8d7c4eade18b.hot-update.js"
+    },
+    "2f17d34b8d7c4eade18b.hot-update.json": {
+      "name": "2f17d34b8d7c4eade18b.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\2f17d34b8d7c4eade18b.hot-update.json",
+      "publicPath": "http://localhost:8080/2f17d34b8d7c4eade18b.hot-update.json"
+    },
+    "chunk-vendors.12ff395802803548128b.hot-update.js": {
+      "name": "chunk-vendors.12ff395802803548128b.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\chunk-vendors.12ff395802803548128b.hot-update.js",
+      "publicPath": "http://localhost:8080/chunk-vendors.12ff395802803548128b.hot-update.js"
+    },
+    "vue_questionnaire.12ff395802803548128b.hot-update.js": {
+      "name": "vue_questionnaire.12ff395802803548128b.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.12ff395802803548128b.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.12ff395802803548128b.hot-update.js"
+    },
+    "12ff395802803548128b.hot-update.json": {
+      "name": "12ff395802803548128b.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\12ff395802803548128b.hot-update.json",
+      "publicPath": "http://localhost:8080/12ff395802803548128b.hot-update.json"
+    },
+    "vue_questionnaire.4f89b353b67e28126d9e.hot-update.js": {
+      "name": "vue_questionnaire.4f89b353b67e28126d9e.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.4f89b353b67e28126d9e.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.4f89b353b67e28126d9e.hot-update.js"
+    },
+    "4f89b353b67e28126d9e.hot-update.json": {
+      "name": "4f89b353b67e28126d9e.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\4f89b353b67e28126d9e.hot-update.json",
+      "publicPath": "http://localhost:8080/4f89b353b67e28126d9e.hot-update.json"
+    },
+    "vue_questionnaire.766ccb1b0689f9cde390.hot-update.js": {
+      "name": "vue_questionnaire.766ccb1b0689f9cde390.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.766ccb1b0689f9cde390.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.766ccb1b0689f9cde390.hot-update.js"
+    },
+    "766ccb1b0689f9cde390.hot-update.json": {
+      "name": "766ccb1b0689f9cde390.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\766ccb1b0689f9cde390.hot-update.json",
+      "publicPath": "http://localhost:8080/766ccb1b0689f9cde390.hot-update.json"
+    },
+    "vue_questionnaire.c9f2d1b96e03e6b55305.hot-update.js": {
+      "name": "vue_questionnaire.c9f2d1b96e03e6b55305.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.c9f2d1b96e03e6b55305.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.c9f2d1b96e03e6b55305.hot-update.js"
+    },
+    "c9f2d1b96e03e6b55305.hot-update.json": {
+      "name": "c9f2d1b96e03e6b55305.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\c9f2d1b96e03e6b55305.hot-update.json",
+      "publicPath": "http://localhost:8080/c9f2d1b96e03e6b55305.hot-update.json"
+    },
+    "vue_questionnaire.03d15f5f072992a61031.hot-update.js": {
+      "name": "vue_questionnaire.03d15f5f072992a61031.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.03d15f5f072992a61031.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.03d15f5f072992a61031.hot-update.js"
+    },
+    "03d15f5f072992a61031.hot-update.json": {
+      "name": "03d15f5f072992a61031.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\03d15f5f072992a61031.hot-update.json",
+      "publicPath": "http://localhost:8080/03d15f5f072992a61031.hot-update.json"
+    },
+    "vue_questionnaire.7c3e756af98a73e2f1e9.hot-update.js": {
+      "name": "vue_questionnaire.7c3e756af98a73e2f1e9.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.7c3e756af98a73e2f1e9.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.7c3e756af98a73e2f1e9.hot-update.js"
+    },
+    "7c3e756af98a73e2f1e9.hot-update.json": {
+      "name": "7c3e756af98a73e2f1e9.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\7c3e756af98a73e2f1e9.hot-update.json",
+      "publicPath": "http://localhost:8080/7c3e756af98a73e2f1e9.hot-update.json"
     }
   },
   "chunks": {
@@ -200,10 +835,10 @@
     "vue_questionnaire": [
       "js/chunk-vendors.js",
       "js/vue_questionnaire.js",
-      "vue_questionnaire.f4acaec2d6ad5fd0d6af.hot-update.js"
+      "vue_questionnaire.7c3e756af98a73e2f1e9.hot-update.js"
     ]
   },
   "publicPath": "http://localhost:8080/",
   "error": "ModuleError",
-  "message": "Module Error (from ./node_modules/eslint-loader/index.js):\n\nC:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\src\\UploaderApp.vue\n  58:11  error  'form2' is assigned a value but never used  no-unused-vars\n  79:49  error  'url' is not defined                        no-undef\n\n✖ 2 problems (2 errors, 0 warnings)\n"
+  "message": "Module Error (from ./node_modules/eslint-loader/index.js):\n\nC:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\src\\QuestionnaireApp.vue\n  89:27  error  Parsing error: Unexpected token, expected \",\"\n\n  23 |     updateAnswers(e) {\n  24 |       console.log('Update Answers:');\n> 25 |       console.log(e.answers;\n     |                            ^\n  26 |       this.answers[e.id] = e.answers;\n  27 |     }\n  28 |   }\n\n✖ 1 problem (1 error, 0 warnings)\n"
 }

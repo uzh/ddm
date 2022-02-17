@@ -24,7 +24,7 @@ class DataUpload(TemplateView):
         return context
 
     def get_ul_configs(self):
-        # TODO: Adjust to only get BPs associated with project.
+        # TODO: Adjust to only get BPs associated with project. With SLUG in view url -> maybe use detailview
         ul_configs = []
         zipped_bps = ZippedBlueprint.objects.all()
         for bp in zipped_bps:

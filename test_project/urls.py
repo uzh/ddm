@@ -8,7 +8,7 @@ from django.views.generic import ListView
 
 import json
 from ddm.models import Questionnaire
-from ddm.views import DataUpload
+from ddm.views import DataUpload, QuestionnaireDisplay
 class TestView(ListView):
     model = Questionnaire
     template_name = 'ddm/test.html'
@@ -30,7 +30,8 @@ urlpatterns = [
     path(r'admin/', admin.site.urls),
     path('', include('ddm.urls')),
     #path(r'vq/', TemplateView.as_view(template_name='ddm/test.html'), name='vq'),
-    path(r'vq/', DataUpload.as_view())
+    path(r'vq/', DataUpload.as_view()),
+    path(r'quest/', QuestionnaireDisplay.as_view())
 ]
 
 if settings.DEBUG:

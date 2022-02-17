@@ -1,31 +1,19 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld :msg="mssg"/>
-  <HelloWorld :msg="msg"/>
-<!--  <QuestionnaireList messssage="somemess"/>-->
-  <p>Message: {{ this.msg }}</p>
-  <p>Message2: {{ msg }}</p>
-  <p>Message3: {{ mssg }}</p>
+  <div>VUE Qapp</div>
+  <div>{{qconfig}}</div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-// import QuestionnaireList from './components/questionnaire-list.vue'
-// module.exports = {
-//   props: ['msage']
-// }
+
 export default {
   name: 'QApp',
   components: {
-     HelloWorld,
-  //   QuestionnaireList
   },
   props: {
-    msg: String,
+    qconfig: String,
   },
   data() {
     return {
-      mssg: 'abcd'
     }
   }
 }

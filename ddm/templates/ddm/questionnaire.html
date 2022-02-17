@@ -1,7 +1,26 @@
 {% load render_bundle from webpack_loader %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Django Vue</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+<body>
 
-<div id="qapp">
+<div>
+    <h1>Questionnaire</h1>
+</div>
+
+<div id="qapp"
+     data-qconfig='{{ q_config }}'
+>
     <qapp></qapp>
 </div>
-{% render_bundle 'chunk-vendors' %}
 {% render_bundle 'vue_questionnaire' %}
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossOrigin="anonymous"></script>
+</html>

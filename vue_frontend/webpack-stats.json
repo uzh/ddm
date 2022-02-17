@@ -25,6 +25,26 @@
       "name": "favicon.ico",
       "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\favicon.ico",
       "publicPath": "http://localhost:8080/favicon.ico"
+    },
+    "vue_questionnaire.a7cec16bf2eae119f18f.hot-update.js": {
+      "name": "vue_questionnaire.a7cec16bf2eae119f18f.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.a7cec16bf2eae119f18f.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.a7cec16bf2eae119f18f.hot-update.js"
+    },
+    "a7cec16bf2eae119f18f.hot-update.json": {
+      "name": "a7cec16bf2eae119f18f.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\a7cec16bf2eae119f18f.hot-update.json",
+      "publicPath": "http://localhost:8080/a7cec16bf2eae119f18f.hot-update.json"
+    },
+    "vue_questionnaire.884f61bbf81f2af865e8.hot-update.js": {
+      "name": "vue_questionnaire.884f61bbf81f2af865e8.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.884f61bbf81f2af865e8.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.884f61bbf81f2af865e8.hot-update.js"
+    },
+    "884f61bbf81f2af865e8.hot-update.json": {
+      "name": "884f61bbf81f2af865e8.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\884f61bbf81f2af865e8.hot-update.json",
+      "publicPath": "http://localhost:8080/884f61bbf81f2af865e8.hot-update.json"
     }
   },
   "chunks": {
@@ -34,8 +54,11 @@
     ],
     "vue_questionnaire": [
       "js/chunk-vendors.js",
-      "js/vue_questionnaire.js"
+      "js/vue_questionnaire.js",
+      "vue_questionnaire.884f61bbf81f2af865e8.hot-update.js"
     ]
   },
-  "publicPath": "http://localhost:8080/"
+  "publicPath": "http://localhost:8080/",
+  "error": "ModuleError",
+  "message": "Module Error (from ./node_modules/eslint-loader/index.js):\n\nC:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\src\\QuestionnaireApp.vue\n  1:1  error  The template requires child element  vue/valid-template-root\n\n✖ 1 problem (1 error, 0 warnings)\n"
 }

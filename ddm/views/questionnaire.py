@@ -15,6 +15,15 @@ from ddm.settings import SQ_TIMEZONE
 from ddm.tools import fill_variable_placeholder, get_or_none
 
 
+class QuestionnaireDisplay(TemplateView):
+    template_name = 'ddm/questionnaire.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['q_config'] = {'some_var': 'some_var'}
+        return context
+
+
 class QuestionnaireOverview(LoginRequiredMixin, TemplateView):
     """View that is integrated into the admin panel.
     """

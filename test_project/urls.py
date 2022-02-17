@@ -9,8 +9,8 @@ from ddm.views import DataUpload, ProjectEntry
 urlpatterns = [
     path(r'admin/', admin.site.urls),
     path('', include('ddm.urls')),
-    path(r'vq/', DataUpload.as_view()),  # TODO: Move this to the DDM module.
-    path('<slug:slug>/', ProjectEntry.as_view(), name='project-entry')
+    path(r'vq/', DataUpload.as_view(), name='data-donation'),  # TODO: Move this to the DDM module.
+    path('<slug:slug>/', ProjectEntry.as_view(), name='project-entry') # TODO: Move this to the DDM module.
 ]
 
 if settings.DEBUG:

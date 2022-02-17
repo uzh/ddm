@@ -3,9 +3,7 @@
   <div>{{qconfig}}</div>
 
   <!-- for page in qconfig:
-    <div class="page">
-
-    for question on page:
+    for question in questionnaire:
       if question is SingleChoice
       <SingleChoiceQuestion
         :id
@@ -21,12 +19,6 @@
       and so on...
 
     </div>
-  -->
-
-  <!--
-  SingleChoiceQuestion:
-  :
-
   -->
 
 </template>

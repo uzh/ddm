@@ -20,7 +20,10 @@ class QuestionnaireDisplay(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['q_config'] = {'some_var': 'some_var'}
+        context['q_config'] = [
+            {'questions': [], 'answers': []},
+            {'questions': [], 'answers': []}
+        ]
         return context
 
 

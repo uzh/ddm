@@ -27,12 +27,12 @@ class QuestionBase(PolymorphicModel):
         on_delete=models.CASCADE
     )
 
-    DEFAULT_TYPE = QuestionType.GENERIC
+    DEFAULT_QUESTION_TYPE = QuestionType.GENERIC
     question_type = models.CharField(
         max_length=20,
         blank=False,
         choices=QuestionType.choices,
-        default=DEFAULT_TYPE
+        default=DEFAULT_QUESTION_TYPE
     )
 
     name = models.CharField(max_length=255)
@@ -113,8 +113,26 @@ class MultiChoiceQuestion(QuestionBase):
 class OpenQuestion(QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.OPEN
 
-    display = None  # TODO: Add display choices, i.e., 'large', 'small'.
     max_length = None  # TODO: Define max length. Maybe add regex option?
+    display = None  # TODO: Add display choices, i.e., 'large', 'small'.
+
+    def get_config(self):
+        config = super().get_config()
+        config['options']['max_length'] = self.max_length
+        config['options']['display'] = self.display
+        return config
+
+
+class MatrixQuestion(QuestionBase):
+    DEFAULT_QUESTION_TYPE = QuestionType.MATRIX
+
+
+class SemanticDifferential(QuestionBase):
+    DEFAULT_QUESTION_TYPE = QuestionType.SEMANTIC_DIFF
+
+
+class Transition(QuestionBase):
+    DEFAULT_QUESTION_TYPE = QuestionType.TRANSITION
 
 
 class QuestionItem(models.Model):

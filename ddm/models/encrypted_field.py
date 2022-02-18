@@ -21,17 +21,25 @@ class EncryptedField(TextField):
         Besides the 'regular' TextField options, there are 3 things to note:
         1st: blank and null are True by default
         2nd: if a 'secret' is specified it will be used for encryption, otherwise the settings SECRET_KEY
+        3rd: if a 'salt' is specified it will be used for encryption, otherwise system default
         """
         kwargs['blank'] = True
         kwargs['null'] = True
-        salt = settings.SALT_VALUE if hasattr(settings, 'SALT_VALUE') else ''
-        self.signer = signing.TimestampSigner(key=settings.SECRET_KEY, salt=salt) if 'secret' not in kwargs else signing.TimestampSigner(key=kwargs['secret'], salt=salt)
+        if 'salt' in kwargs:
+            self.signer = signing.TimestampSigner(salt=kwargs['salt']) if 'secret' not in kwargs or not kwargs['secret'] else signing.TimestampSigner(key=kwargs['secret'], salt=kwargs['salt'])
+        else:
+            self.signer = signing.TimestampSigner() if 'secret' not in kwargs or not kwargs['secret'] else signing.TimestampSigner(key=kwargs['secret'])
         super().__init__(*args, **kwargs)  
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
-        del kwargs["blank"]
-        del kwargs["null"]
+        del kwargs['blank']
+        del kwargs['null']
+        if 'secret' in kwargs:
+            del kwargs['secret']
+        if 'salt' in kwargs:
+            del kwargs['salt']
+        del self.signer
         return name, path, args, kwargs  
     
     def get_prep_value(self, value):

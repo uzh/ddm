@@ -1,3 +1,5 @@
+import random
+
 from ckeditor.fields import RichTextField
 from django.db import models
 from django.forms import model_to_dict
@@ -82,15 +84,37 @@ class QuestionBase(PolymorphicModel):
             'scale': [],
             'options': {}
         }
+        return config
+
+    def validate_answer(self):
+        return
+
+
+class ItemMixin(models.Model):
+    randomize_items = models.BooleanField(default=False)
+
+    class Meta:
+        abstract = True
+
+    def get_config(self):
+        config = super().get_config()
         config = self.add_item_config(config)
-        config = self.add_scale_config(config)
         return config
 
     def add_item_config(self, config):
         items = QuestionItem.objects.filter(question=self)
         for item in items:
             config['items'].append(item.serialize_to_config())
-        # TODO: Add randomization.
+
+        if self.randomize_items:
+            random.shuffle(config['items'])
+        return config
+
+
+class ScaleMixin:
+    def get_config(self):
+        config = super().get_config()
+        config = self.add_scale_config(config)
         return config
 
     def add_scale_config(self, config):
@@ -99,15 +123,12 @@ class QuestionBase(PolymorphicModel):
             config['scale'].append(point.serialize_to_config())
         return config
 
-    def validate_answer(self):
-        return
 
-
-class SingleChoiceQuestion(QuestionBase):
+class SingleChoiceQuestion(ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.SINGLE_CHOICE
 
 
-class MultiChoiceQuestion(QuestionBase):
+class MultiChoiceQuestion(ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.MULTI_CHOICE
 
 
@@ -133,11 +154,11 @@ class OpenQuestion(QuestionBase):
         return config
 
 
-class MatrixQuestion(QuestionBase):
+class MatrixQuestion(ScaleMixin, ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.MATRIX
 
 
-class SemanticDifferential(QuestionBase):
+class SemanticDifferential(ScaleMixin, ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.SEMANTIC_DIFF
 
 

@@ -1,20 +1,6 @@
 import json
-from datetime import datetime
 
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render, redirect
-from django.views.generic.base import TemplateView
-
-from ddm import tools
-from ddm.models import (
-    Questionnaire, QuestionnaireResponse, Question,
-    QuestionnaireSubmission, QuestionnaireAccessToken,
-    Page, Variable, MultiChoiceQuestion, FileUploadQuestion,
-    QuestionBase
-)
-from ddm.settings import SQ_TIMEZONE
-from ddm.tools import fill_variable_placeholder, get_or_none
+from ddm.models import QuestionBase
 from ddm.views import ProjectBaseView
 
 

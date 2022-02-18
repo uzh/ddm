@@ -155,7 +155,7 @@ class QScalePoint(models.Model):
         ]
 
     question = models.ForeignKey(
-        'MatrixQuestion',
+        QuestionBase,
         on_delete=models.CASCADE
     )
     index = models.IntegerField()

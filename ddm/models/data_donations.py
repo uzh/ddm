@@ -1,15 +1,18 @@
 from django.db import models
 from django.utils import timezone
 
+from ddm.models import DonationProject
+
 import logging
 logger = logging.getLogger(__name__)
 
 
 class ZippedBlueprint(models.Model):
-    name = models.CharField(
-        max_length=250
+    name = models.CharField(max_length=250)
+    project = models.ForeignKey(
+        DonationProject,
+        on_delete=models.CASCADE
     )
-    project = None
 
     def get_blueprints(self):
         blueprints = DonationBlueprint.objects.filter(zip_blueprint=self)
@@ -28,23 +31,13 @@ class ZippedBlueprint(models.Model):
 
 # TODO: Add validation on save to ensure that regex_path != None when zip_blueprint != None
 class DonationBlueprint(models.Model):
-    name = models.CharField(
-        max_length=250
+    project = models.ForeignKey(
+        DonationProject,
+        on_delete=models.CASCADE
     )
-    project = None  # Relation to DonationProject
+
+    name = models.CharField(max_length=250)
     instructions = None
-
-    zip_blueprint = models.ForeignKey(
-        ZippedBlueprint,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL
-    )
-
-    regex_path = models.TextField(
-        null=True,
-        blank=True
-    )
 
     class FileFormats(models.TextChoices):
         JSON_FORMAT = 'json'
@@ -60,6 +53,18 @@ class DonationBlueprint(models.Model):
 
     expected_fields = models.JSONField()
     extracted_fields = models.JSONField()
+
+    # Configuration if related to ZippedBlueprint:
+    zip_blueprint = models.ForeignKey(
+        ZippedBlueprint,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+    regex_path = models.TextField(
+        null=True,
+        blank=True
+    )
 
     def get_config(self):
         config = {

@@ -90,6 +90,7 @@ class QuestionBase(PolymorphicModel):
         items = QuestionItem.objects.filter(question=self)
         for item in items:
             config['items'].append(item.serialize_to_config())
+        # TODO: Add randomization.
         return config
 
     def add_scale_config(self, config):
@@ -114,7 +115,16 @@ class OpenQuestion(QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.OPEN
 
     max_length = None  # TODO: Define max length. Maybe add regex option?
-    display = None  # TODO: Add display choices, i.e., 'large', 'small'.
+
+    class DisplayOptions(models.TextChoices):
+        SMALL = 'small', 'Small'
+        LARGE = 'large', 'Large'
+    display = models.CharField(
+        max_length=20,
+        blank=False,
+        choices=DisplayOptions.choices,
+        default=DisplayOptions.LARGE
+    )
 
     def get_config(self):
         config = super().get_config()
@@ -184,3 +194,7 @@ class ScalePoint(models.Model):
     )
     value = models.IntegerField()
     add_border = models.BooleanField(default=False)
+
+    def serialize_to_config(self):
+        scale_config = model_to_dict(self, exclude=['question', 'add_border'])
+        return scale_config

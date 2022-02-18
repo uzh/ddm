@@ -14,11 +14,11 @@
       <tbody>
       <template v-for="(item, id) in items" :key="id">
         <tr>
-          <th>{{ item.label_left }}</th>
+          <th>{{ item.label }}</th>
           <th v-for="(point, id) in scale" :key="id">
             <label><input type="radio" :name="item.id" :value="point.value" @change="answerChanged($event)"></label>
           </th>
-          <th>{{ item.label_right }}</th>
+          <th>{{ item.label_alt }}</th>
         </tr>
       </template>
       </tbody>

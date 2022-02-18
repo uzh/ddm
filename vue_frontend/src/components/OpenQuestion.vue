@@ -2,8 +2,8 @@
   <div>
     <div>{{ text }}</div>
     <div>
-      <input v-if="options.display == 'regular'" type="text" :name="qid" @change="answerChanged($event)">
-      <textarea v-if="options.display == 'big'" type="text" :name="qid" @change="answerChanged($event)"></textarea>
+      <input v-if="options.display == 'small'" type="text" :name="qid" @change="answerChanged($event)">
+      <textarea v-if="options.display == 'large'" type="text" :name="qid" @change="answerChanged($event)"></textarea>
     </div>
   </div>
 </template>

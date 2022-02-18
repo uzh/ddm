@@ -2,7 +2,7 @@ from .questions import (
     Question, TransitionQuestion, SingleChoiceQuestion, OpenQuestion,
     MultiChoiceQuestion, MatrixQuestion, DifferentialQuestion, ListQuestion,
     FileUploadQuestion, FileUploadItem, FileFeedback,
-    QuestionItem, QuestionScale
+    QuestionScale, QuestionItem
 )
 from .uploads import UploadedData, UploadedDataTemp
 from .pages import Page, QuestionPage, EndPage
@@ -23,3 +23,5 @@ from .triggers import (
 from .projects import DonationProject, Participant
 
 from .data_donations import DonationBlueprint, ZippedBlueprint, DataDonation
+
+from .questions_alt import QuestionBase, QItem

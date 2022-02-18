@@ -10,7 +10,8 @@ from ddm import tools
 from ddm.models import (
     Questionnaire, QuestionnaireResponse, Question,
     QuestionnaireSubmission, QuestionnaireAccessToken,
-    Page, Variable, MultiChoiceQuestion, FileUploadQuestion
+    Page, Variable, MultiChoiceQuestion, FileUploadQuestion,
+    QuestionBase
 )
 from ddm.settings import SQ_TIMEZONE
 from ddm.tools import fill_variable_placeholder, get_or_none
@@ -23,28 +24,37 @@ class QuestionnaireDisplay(ProjectBaseView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # get question config
         q_config = [
-            {'question': 1, 'type': 'single-choice', 'text': 'Choose one!',
-             'items': [{'label': 'Single Choice 1', 'value': 1, 'index': 1, 'random': False},
-                       {'label': 'Single Choice 2', 'value': 2, 'index': 2, 'random': False}]},
-            {'question': 2, 'type': 'multi-choice', 'text': 'Choose the ones you like!',
-             'items': [{'id': 1, 'label': 'Multi Choice 1', 'index': 1, 'random': False},
-                       {'id': 2, 'label': 'Multi Choice 2', 'index': 2, 'random': False}]},
-            {'question': 3, 'type': 'open', 'text': 'Write a sentence.', 'max_length': None, 'display': 'regular'},
+            {'question': 1, 'type': 'single_choice', 'text': 'Choose one!',
+             'items': [{'id': 1, 'label': 'Single Choice 1', 'value': 1, 'index': 1, 'random': False},
+                       {'id': 2, 'label': 'Single Choice 2', 'value': 2, 'index': 2, 'random': False}]},
+            {'question': 2, 'type': 'multi_choice', 'text': 'Choose the ones you like!',
+             'items': [{'id': 3, 'label': 'Multi Choice 1', 'index': 1, 'random': False},
+                       {'id': 4, 'label': 'Multi Choice 2', 'index': 2, 'random': False}]},
+            {'question': 3, 'type': 'open', 'text': 'Write a sentence.',
+             'options': {'max_length': None, 'display': 'regular'}},
             {'question': 4, 'type': 'matrix', 'text': 'Text for a matrix question!',
-             'items': [{'id': 1, 'label': 'Matrix Item 1', 'index': 1, 'random': False},
-                       {'id': 2, 'label': 'Matrix Item 2', 'index': 2, 'random': False}],
+             'items': [{'id': 5, 'label': 'Matrix Item 1', 'index': 1, 'random': False},
+                       {'id': 6, 'label': 'Matrix Item 2', 'index': 2, 'random': False}],
              'scale': [{'label': 'Scale Point A', 'index': 1, 'value': 1},
                        {'label': 'Scale Point B', 'index': 2, 'value': 2}]},
-            {'question': 5, 'type': 'semantic-diff', 'text': 'Text for a semantic differential!',
-             'items': [{'id': 1, 'label_left': 'Diff 1 Left', 'label_right': 'Diff 1 right', 'index': 1, 'random': False},
-                       {'id': 2, 'label_left': 'Diff 2 Left', 'label_right': 'Diff 2 right', 'index': 2, 'random': False}],
+            {'question': 5, 'type': 'semantic_diff', 'text': 'Text for a semantic differential!',
+             'items': [{'id': 7, 'label_left': 'Diff 1 Left', 'label_right': 'Diff 1 right', 'index': 1, 'random': False},
+                       {'id': 8, 'label_left': 'Diff 2 Left', 'label_right': 'Diff 2 right', 'index': 2, 'random': False}],
              'scale': [{'label': 'Scale Point 1', 'index': 1, 'value': 1},
                        {'label': 'Scale Point 2', 'index': 2, 'value': 2}]},
             {'question': 6, 'type': 'transition', 'text': 'This is just some text. No action required!'}
         ]
         context['q_config'] = json.dumps(q_config)
         return context
+
+    def get_question_config(self):
+        q_config = []
+        questions = QuestionBase.objects.filter(project=self.object)
+        for question in questions:
+            q_config.append(question.get_config())
+        return q_config
 
 
 class QuestionnaireOverview(LoginRequiredMixin, TemplateView):

@@ -1,5 +1,5 @@
-from .projects import DonationProject, Participant
+from .projects import DonationProject, Participant, QuestionnaireAnswers
 
 from .data_donations import DonationBlueprint, ZippedBlueprint, DataDonation
 
-from .questions_alt import QuestionBase, QItem
+from .questions import QuestionBase, QuestionItem

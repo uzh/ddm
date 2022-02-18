@@ -87,13 +87,13 @@ class QuestionBase(PolymorphicModel):
         return config
 
     def add_item_config(self, config):
-        items = QItem.objects.filter(question=self)
+        items = QuestionItem.objects.filter(question=self)
         for item in items:
             config['items'].append(item.serialize_to_config())
         return config
 
     def add_scale_config(self, config):
-        scale_points = QScalePoint.objects.filter(question=self)
+        scale_points = ScalePoint.objects.filter(question=self)
         for point in scale_points:
             config['scale'].append(point.serialize_to_config())
         return config
@@ -102,22 +102,22 @@ class QuestionBase(PolymorphicModel):
         return
 
 
-class SingleChoiceQuestionAlt(QuestionBase):
+class SingleChoiceQuestion(QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.SINGLE_CHOICE
 
 
-class MultiChoiceQuestionAlt(QuestionBase):
+class MultiChoiceQuestion(QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.MULTI_CHOICE
 
 
-class MultiChoiceQuestionAlt(QuestionBase):
+class OpenQuestion(QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.OPEN
 
     display = None  # TODO: Add display choices, i.e., 'large', 'small'.
     max_length = None  # TODO: Define max length. Maybe add regex option?
 
 
-class QItem(models.Model):
+class QuestionItem(models.Model):
     class Meta:
         ordering = ['index']
 
@@ -144,7 +144,7 @@ class QItem(models.Model):
         return item_config
 
 
-class QScalePoint(models.Model):
+class ScalePoint(models.Model):
     class Meta:
         ordering = ['index']
         constraints = [
@@ -166,11 +166,3 @@ class QScalePoint(models.Model):
     )
     value = models.IntegerField()
     add_border = models.BooleanField(default=False)
-
-
-# TODO: Move to projects.py
-class QuestionnaireAnswers(models.Model):
-    # Will only ever be deleted, when the project is deleted.
-    project = 0
-    blueprint = 0
-    participant = 0

@@ -26,13 +26,15 @@ class DataUpload(ProjectBaseView):
         return context
 
     def get_ul_configs(self):
-        # TODO: Adjust to only get BPs associated with project. With SLUG in view url -> maybe use detailview
         ul_configs = []
-        zipped_bps = ZippedBlueprint.objects.all()
+
+        zipped_bps = ZippedBlueprint.objects.filter(project=self.object)
         for bp in zipped_bps:
             ul_configs.append(bp.get_config())
 
-        blueprints = DonationBlueprint.objects.filter(zip_blueprint__isnull=True)
+        blueprints = DonationBlueprint.objects.filter(
+            project=self.object,
+            zip_blueprint__isnull=True)
         for bp in blueprints:
             ul_configs.append({
                 'ul_type': 'singlefile',

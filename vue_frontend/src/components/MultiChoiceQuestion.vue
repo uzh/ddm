@@ -1,7 +1,6 @@
 <template>
   <div>
     <div>{{ text }}</div>
-    <div>{{ qid }}</div>
     <template v-for="(item, id) in items" :key="id">
       <div>
         <label>
@@ -10,7 +9,6 @@
         </label>
       </div>
     </template>
-
   </div>
 </template>
 

@@ -1,17 +1,25 @@
 <template>
   <div>
     <div>{{ text }}</div>
-    <div>{{ qid }}</div>
     <template v-for="(item, id) in items" :key="id">
       <div>
         <label>
-          <input type="radio" :name="qid" :value="item.value" @change="answerChanged($event)">
+          <input type="radio" :dataid="qid" :name="'q-' + qid" :value="item.value" @change="answerChanged($event)">
           {{ item.label }}
         </label>
       </div>
     </template>
-
   </div>
+
+  <!-- Additional display option as dropdown select:
+  <div>
+    <div :ref_for="qid">{{ text }}</div>
+    <select :id="qid" :name="qid" class="form-control" @change="answerChanged($event)">
+      <option selected disabled>Choose</option>
+      <option v-for="(item, id) in items" :key="id" :value="item.value">{{ item.label }}</option>
+    </select>
+  </div>
+  -->
 </template>
 
 <script>

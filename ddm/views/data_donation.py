@@ -49,8 +49,7 @@ class DataUpload(ProjectBaseView):
                                kwargs={'slug': self.object.slug})
         return HttpResponseRedirect(redirect_url)
 
-    @staticmethod
-    def process_uploads(files):
+    def process_uploads(self, files):
         # Check if expected file in request.FILES.
         try:
             file = files['post_data']
@@ -71,7 +70,6 @@ class DataUpload(ProjectBaseView):
 
         # Process donation data.
         file_data = json.loads(unzipped_file.read('ul_data.json').decode('utf-8'))
-        print(file_data)
         for ul in file_data.keys():
             bp_id = ul
             bp_data = file_data[ul]
@@ -81,4 +79,4 @@ class DataUpload(ProjectBaseView):
                 logger.error(f'{e} – Donation blueprint with id={bp_id} does not exist')
                 return
 
-            bp.process_donation(bp_data)
+            bp.process_donation(bp_data, self.participant)

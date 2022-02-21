@@ -1,3 +1,4 @@
+import json
 import random
 
 from ckeditor.fields import RichTextField
@@ -6,7 +7,7 @@ from django.forms import model_to_dict
 from django.template import Context, Template
 
 from polymorphic.models import PolymorphicModel
-from ddm.models import DonationProject, DonationBlueprint
+from ddm.models import DonationProject, DonationBlueprint, DataDonation
 
 
 class QuestionType(models.TextChoices):
@@ -40,7 +41,6 @@ class QuestionBase(PolymorphicModel):
     name = models.CharField(max_length=255)
     index = models.PositiveIntegerField(default=1)
 
-    # TODO: Make sure this updates responses if is changed.
     variable_name = models.SlugField(
         max_length=50,
         null=False
@@ -65,17 +65,12 @@ class QuestionBase(PolymorphicModel):
     def __str__(self):
         return self.name
 
-    def materialize_text(self, particpant_id):
-        template = Template(self.question_text)
-        # get blueprint.donatedate and participant
-        context = Context({'stuff': 'bla'})
-        return template.render(context)
+    def get_config(self, participant_id):
+        config = self.create_config()
+        config = self.render_config_content(config, participant_id)
+        return config
 
-    def populate_items(self):
-        # similar to materialize: loop over items
-        return
-
-    def get_config(self):
+    def create_config(self):
         config = {
             'question': self.pk,
             'type': self.question_type,
@@ -85,6 +80,23 @@ class QuestionBase(PolymorphicModel):
             'options': {}
         }
         return config
+
+    def render_config_content(self, config, participant):
+        data_donation = DataDonation.objects.get(
+            participant=participant,
+            blueprint=self.blueprint
+        )
+        context_data = data_donation.data  # TODO: Not yet rendering HTML stuff.
+        config['text'] = self.render_text(config['text'], context_data)
+        for index, item in enumerate(config['items']):
+            item['label'] = self.render_text(item['label'], context_data)
+            item['label_alt'] = self.render_text(item['label_alt'], context_data)
+        return config
+
+    @staticmethod
+    def render_text(text, context):
+        template = Template(text)
+        return template.render(Context({'data': context}))
 
     def validate_answer(self):
         return
@@ -96,8 +108,8 @@ class ItemMixin(models.Model):
     class Meta:
         abstract = True
 
-    def get_config(self):
-        config = super().get_config()
+    def create_config(self):
+        config = super().create_config()
         config = self.add_item_config(config)
         return config
 
@@ -112,8 +124,8 @@ class ItemMixin(models.Model):
 
 
 class ScaleMixin:
-    def get_config(self):
-        config = super().get_config()
+    def create_config(self):
+        config = super().create_config()
         config = self.add_scale_config(config)
         return config
 
@@ -147,8 +159,8 @@ class OpenQuestion(QuestionBase):
         default=DisplayOptions.LARGE
     )
 
-    def get_config(self):
-        config = super().get_config()
+    def create_config(self):
+        config = super().create_config()
         config['options']['max_length'] = self.max_length
         config['options']['display'] = self.display
         return config

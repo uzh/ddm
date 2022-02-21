@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
-from ddm.models import DonationProject
+from ddm.models import DonationProject, Participant
 
 import logging
 logger = logging.getLogger(__name__)
@@ -76,9 +76,9 @@ class DonationBlueprint(models.Model):
         }
         return config
 
-    def process_donation(self, data):
+    def process_donation(self, data, participant):
         if self.validate_donation(data):
-            self.create_donation(data)
+            self.create_donation(data, participant)
         else:
             logger.error(f'Donation not processed by blueprint {self.pk}')
 
@@ -99,9 +99,11 @@ class DonationBlueprint(models.Model):
         # TODO: Add other validation steps? - e.g., validation of extracted fields
         return True
 
-    def create_donation(self, data):
+    def create_donation(self, data, participant):
         DataDonation.objects.create(
+            project=self.project,
             blueprint=self,
+            participant=participant,
             time=timezone.now().isoformat(),
             consent=data['consent'],
             status=data['status'],
@@ -111,13 +113,19 @@ class DonationBlueprint(models.Model):
 
 
 class DataDonation(models.Model):
-    project = None  # FK to project
+    project = models.ForeignKey(
+        DonationProject,
+        on_delete=models.CASCADE
+    )
     blueprint = models.ForeignKey(
         DonationBlueprint,
         null=True,
         on_delete=models.SET_NULL
     )
-    id = None  # Uploader ID
+    participant = models.ForeignKey(
+        Participant,
+        on_delete=models.CASCADE
+    )
     time = models.DateTimeField()
     consent = models.BooleanField(default=False)
     status = models.JSONField()

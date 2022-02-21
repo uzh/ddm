@@ -18,5 +18,5 @@ class QuestionnaireDisplay(ProjectBaseView):
         q_config = []
         questions = QuestionBase.objects.filter(project=self.object)
         for question in questions:
-            q_config.append(question.get_config())
+            q_config.append(question.get_config(self.participant))
         return q_config

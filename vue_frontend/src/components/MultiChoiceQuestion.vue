@@ -26,6 +26,7 @@ export default {
     this.items.forEach(i => {
       this.answer[i.id] = false;
     })
+    this.$emit('answerChanged', {id: this.qid, answers: this.answer});
   },
   methods: {
     answerChanged(event) {

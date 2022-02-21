@@ -1,5 +1,7 @@
 from django.db import models
 
+from ddm.models import DonationBlueprint
+
 
 class DonationProject(models.Model):
     name = models.CharField(
@@ -24,8 +26,21 @@ class Participant(models.Model):
     completed = models.BooleanField(default=False)
 
 
-class QuestionnaireAnswers(models.Model):
+class QuestionnaireResponse(models.Model):
     # Will only ever be deleted, when the project is deleted.
-    project = 0
-    blueprint = 0
-    participant = 0
+    project = models.ForeignKey(
+        DonationProject,
+        on_delete=models.CASCADE
+    )
+    blueprint = models.ForeignKey(
+        DonationBlueprint,
+        on_delete=models.SET_NULL,
+        null=True
+    )
+    participant = models.ForeignKey(
+        Participant,
+        on_delete=models.CASCADE
+    )
+
+    time_submitted = models.DateTimeField()
+    responses = models.JSONField

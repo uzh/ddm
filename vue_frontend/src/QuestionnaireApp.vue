@@ -73,6 +73,14 @@
 
   {{ this.answers }}
 
+  <div class="row float-right">
+    <button
+        class="btn btn-success fs-5 w-25"
+        type="button"
+        @click="submitData"
+    >Weiter</button>
+  </div>
+
 </template>
 
 <script>
@@ -95,18 +103,33 @@ export default {
   },
   props: {
     qconfig: String,
+    actionurl: String,
   },
   data() {
     return {
       q_config: JSON.parse(this.qconfig),
-      answers: {
-
-      }
+      answers: {}
     }
   },
   methods: {
     updateAnswers(e) {
       this.answers[e.id] = e.answers;
+    },
+    submitData() {
+      let form = new FormData()
+      form.append("post_data", JSON.stringify(this.answers));
+      let csrf = document.querySelector("input[name='csrfmiddlewaretoken']");
+      form.append("csrfmiddlewaretoken", csrf.value);
+      fetch(this.actionurl, {method: "POST", body: form})
+          .then(response => {
+            console.log(response)
+            if (response.redirected) {
+              window.location.href = response.url;
+            }
+          })
+          .catch(err => {
+            console.info(err);
+          });
     }
   }
 }

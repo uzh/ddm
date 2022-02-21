@@ -32,6 +32,10 @@ export default {
       answer: ''
     }
   },
+  created() {
+    this.answer = -99;
+    this.$emit('answerChanged', {id: this.qid, answers: this.answer});
+  },
   methods: {
     answerChanged(event) {
       this.answer = event.target.value;

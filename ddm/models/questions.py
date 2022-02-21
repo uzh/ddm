@@ -98,7 +98,7 @@ class QuestionBase(PolymorphicModel):
         template = Template(text)
         return template.render(Context({'data': context}))
 
-    def validate_answer(self):
+    def validate_response(self, response):
         return
 
 
@@ -139,9 +139,18 @@ class ScaleMixin:
 class SingleChoiceQuestion(ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.SINGLE_CHOICE
 
+    def validate_response(self, response):
+        # check if response is in item.values() and default values
+        return
+
 
 class MultiChoiceQuestion(ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.MULTI_CHOICE
+
+    def validate_response(self, response):
+        # 1 Check if response for every item is present
+        # check if response is True/False or in default values
+        return
 
 
 class OpenQuestion(QuestionBase):
@@ -165,13 +174,27 @@ class OpenQuestion(QuestionBase):
         config['options']['display'] = self.display
         return config
 
+    def validate_response(self, response):
+        # Maybe check if is string?
+        return
+
 
 class MatrixQuestion(ScaleMixin, ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.MATRIX
 
+    def validate_response(self, response):
+        # 1 Check if response for every item is present
+        # check if response is in scale values or in default values
+        return
 
 class SemanticDifferential(ScaleMixin, ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.SEMANTIC_DIFF
+
+    def validate_response(self, response):
+        # TODO: Include this in scale mixin?
+        # 1 Check if response for every item is present
+        # check if response is in scale values or in default values
+        return
 
 
 class Transition(QuestionBase):

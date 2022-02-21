@@ -15,8 +15,11 @@ export default {
   emits: ['answerChanged'],
   data: function() {
     return {
-      answer: ''
+      answer: '-99'
     }
+  },
+  created() {
+    this.$emit('answerChanged', {id: this.qid, answers: this.answer});
   },
   methods: {
     answerChanged(event) {

@@ -41,6 +41,7 @@ export default {
     this.items.forEach(i => {
       this.answer[i.id] = -99;
     })
+    this.$emit('answerChanged', {id: this.qid, answers: this.answer});
   },
   methods: {
     answerChanged(event) {

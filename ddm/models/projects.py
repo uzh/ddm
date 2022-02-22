@@ -1,7 +1,5 @@
 from django.db import models
 
-from ddm.models import DonationBlueprint
-
 
 class DonationProject(models.Model):
     name = models.CharField(
@@ -31,11 +29,6 @@ class QuestionnaireResponse(models.Model):
     project = models.ForeignKey(
         DonationProject,
         on_delete=models.CASCADE
-    )
-    blueprint = models.ForeignKey(
-        DonationBlueprint,
-        on_delete=models.SET_NULL,
-        null=True
     )
     participant = models.ForeignKey(
         Participant,

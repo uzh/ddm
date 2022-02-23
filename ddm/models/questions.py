@@ -187,6 +187,7 @@ class MatrixQuestion(ScaleMixin, ItemMixin, QuestionBase):
         # check if response is in scale values or in default values
         return
 
+
 class SemanticDifferential(ScaleMixin, ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.SEMANTIC_DIFF
 

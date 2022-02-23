@@ -30,14 +30,14 @@ class QuestionnaireDisplay(ProjectBaseView):
 
     def post(self, request, *args, **kwargs):
         super().post(request, **kwargs)
-        self.process_responses(request.POST['post_data'])
+        self.process_response(request.POST['post_data'])
         redirect_url = reverse(self.steps[self.current_step],   # + 1],
                                kwargs={'slug': self.object.slug})
         return HttpResponseRedirect(redirect_url)
 
-    def process_responses(self, responses):
-        responses = json.loads(responses)
-        for question_id in responses:
+    def process_response(self, response):
+        response = json.loads(response)
+        for question_id in response:
             try:
                 question = QuestionBase.objects.get(pk=int(question_id))
             except QuestionBase.doesNotExist as e:
@@ -49,14 +49,13 @@ class QuestionnaireDisplay(ProjectBaseView):
                              f'questionnaire post_data: {e}')
                 continue
 
-            # TODO: Add method to question models: question.validate_response(responses)
+            # TODO: Add method to question models: question.validate_response(response)
 
-            self.save_response(response)
+        self.save_response(response)
 
     def save_response(self, response):
         QuestionnaireResponse.objects.create(
             project=self.object,
-            blueprint=None,
             participant=self.participant,
             time_submitted=timezone.now().isoformat(),  # TODO: Check if .isoformat() is needed when saving into datetime field
             responses=response

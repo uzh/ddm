@@ -36,4 +36,4 @@ class QuestionnaireResponse(models.Model):
     )
 
     time_submitted = models.DateTimeField()
-    responses = models.JSONField
+    data = models.JSONField()

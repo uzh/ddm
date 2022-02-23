@@ -1,4 +1,3 @@
-import json
 import random
 
 from ckeditor.fields import RichTextField
@@ -8,6 +7,9 @@ from django.template import Context, Template
 
 from polymorphic.models import PolymorphicModel
 from ddm.models import DonationProject, DonationBlueprint, DataDonation
+
+import logging
+logger = logging.getLogger(__name__)
 
 
 class QuestionType(models.TextChoices):
@@ -122,6 +124,27 @@ class ItemMixin(models.Model):
             random.shuffle(config['items'])
         return config
 
+    def validate_response(self, response):
+        # Validate that all items have a response.
+        item_ids = [str(i) for i in list(self.questionitem_set.all().values_list('id', flat=True))]
+        if not sorted(item_ids) == sorted(response.keys()):
+            if len(item_ids) > len(response.keys()):
+                logger.error(
+                    f'Some responses are missing for {self.DEFAULT_QUESTION_TYPE} with ID {self.id}.'
+                    f'Got no response for items {[i for i in item_ids if i not in response.keys()]}.'
+                )
+            elif len(item_ids) < len(response.keys()):
+                logger.error(
+                    f'Got unexpected response keys for {self.DEFAULT_QUESTION_TYPE} with ID {self.id}.'
+                    f'Unexpected keys: {[k for k in response.keys() if k not in item_ids]}.'
+                )
+            else:
+                logger.error(
+                    f'Response does not match the expected items. '
+                    f'Items: {sorted(item_ids)}; Keys: {sorted(response.keys())}.'
+                )
+        return
+
 
 class ScaleMixin:
     def create_config(self):
@@ -135,13 +158,29 @@ class ScaleMixin:
             config['scale'].append(point.serialize_to_config())
         return config
 
+    def validate_response(self, response):
+        super().validate_response(response)
+        # Validate response values
+        valid_values = list(self.scalepoint_set.all().values_list('value', flat=True))
+        valid_values.append(-99)
+        for k, val in response.items():
+            if val not in valid_values:
+                logger.error(f'Got invalid response "{k}: {val}" for multi '
+                             f'choice question with ID {self.id}.')
+        return
+
 
 class SingleChoiceQuestion(ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.SINGLE_CHOICE
 
     def validate_response(self, response):
-        # TODO:
-        # check if response is in item.values() and default values
+        # Get item values
+        valid_values = list(self.questionitem_set.all().values_list('value', flat=True))
+        # Append default (missing) value
+        valid_values.append(-99)
+        if response not in valid_values:
+            logger.error(f'Got invalid response "{response}" for single choice '
+                         f'question with ID {self.id}.')
         return
 
 
@@ -149,9 +188,13 @@ class MultiChoiceQuestion(ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.MULTI_CHOICE
 
     def validate_response(self, response):
-        # TODO:
-        # 1 Check if response for every item is present
-        # check if response is True/False or in default values
+        super().validate_response(response)
+        # Validate response values
+        valid_values = [0, 1, -99]
+        for k, val in response.items():
+            if val not in valid_values:
+                logger.error(f'Got invalid response "{k}: {val}" for '
+                             f'{self.DEFAULT_QUESTION_TYPE} with ID {self.id}.')
         return
 
 
@@ -177,29 +220,16 @@ class OpenQuestion(QuestionBase):
         return config
 
     def validate_response(self, response):
-        # TODO:
-        # Maybe check if is string?
+        # TODO: Maybe check if is string?
         return
 
 
 class MatrixQuestion(ScaleMixin, ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.MATRIX
 
-    def validate_response(self, response):
-        # TODO:
-        # 1 Check if response for every item is present
-        # check if response is in scale values or in default values
-        return
-
 
 class SemanticDifferential(ScaleMixin, ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.SEMANTIC_DIFF
-
-    def validate_response(self, response):
-        # TODO: Include this in scale mixin?
-        # 1 Check if response for every item is present
-        # check if response is in scale values or in default values
-        return
 
 
 class Transition(QuestionBase):

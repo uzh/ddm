@@ -49,7 +49,7 @@ class QuestionnaireDisplay(ProjectBaseView):
                              f'questionnaire post_data: {e}')
                 continue
 
-            # TODO: Add method to question models: question.validate_response(response)
+            question.validate_response(response[question_id])
 
         self.save_response(response)
 

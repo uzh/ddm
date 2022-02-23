@@ -1,6 +1,4 @@
 <template>
-  <h2>VUE Qapp</h2>
-
   <template v-for="(question, id) in q_config" :key="id">
 
     <div v-if="question.type == 'single_choice'">

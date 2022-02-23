@@ -1,0 +1,17 @@
+{% extends "ddm/public/base.html" %}
+{% load render_bundle from webpack_loader %}
+
+{% block content %}
+<div>
+    <form method="POST">
+        {% csrf_token %}
+        <div id="qapp"
+             data-qconfig='{{ q_config }}'
+             data-actionurl='{{ request.build_absolute_uri }}'
+        >
+            <qapp></qapp>
+        </div>
+    </form>
+    {% render_bundle 'vue_questionnaire' %}
+</div>
+{% endblock content %}

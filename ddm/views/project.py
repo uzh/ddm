@@ -126,7 +126,7 @@ class ProjectBaseView(DetailView):
 
 
 class ProjectEntry(ProjectBaseView):
-    template_name = 'ddm/project/entry_page.html'
+    template_name = 'ddm/public/entry_page.html'
     view_name = 'project-entry'
 
     def post(self, request, *args, **kwargs):

@@ -20,6 +20,16 @@
       "name": "favicon.ico",
       "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\favicon.ico",
       "publicPath": "http://localhost:8080/favicon.ico"
+    },
+    "vue_questionnaire.5cf96bdc2dfb63d4d909.hot-update.js": {
+      "name": "vue_questionnaire.5cf96bdc2dfb63d4d909.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_questionnaire.5cf96bdc2dfb63d4d909.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_questionnaire.5cf96bdc2dfb63d4d909.hot-update.js"
+    },
+    "5cf96bdc2dfb63d4d909.hot-update.json": {
+      "name": "5cf96bdc2dfb63d4d909.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\5cf96bdc2dfb63d4d909.hot-update.json",
+      "publicPath": "http://localhost:8080/5cf96bdc2dfb63d4d909.hot-update.json"
     }
   },
   "chunks": {
@@ -29,7 +39,8 @@
     ],
     "vue_questionnaire": [
       "js/chunk-vendors.js",
-      "js/vue_questionnaire.js"
+      "js/vue_questionnaire.js",
+      "vue_questionnaire.5cf96bdc2dfb63d4d909.hot-update.js"
     ]
   },
   "publicPath": "http://localhost:8080/"

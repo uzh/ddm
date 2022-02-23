@@ -1,0 +1,36 @@
+{% load static i18n sekizai_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %} - {{ request.site.name }}{% endblock title %}</title>
+
+    <link href="{% static 'ddm/css/bootstrap4/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'ddm/css/questionnaire.css' %}" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="container py-3 surquest-questionnaire-header">
+    {% block questionnaire-header %}
+    <div>
+        <img style="float: right" src="{% static 'ddm/img/uzh_logo.svg' %}">
+    </div>
+    <div>
+        <img src="{% static 'ddm/img/ikmz_logo.svg' %}">
+    </div>
+    {% endblock %}
+</div>
+
+<div class="container py-3">
+    {% block content %}{% endblock %}
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="{% static 'ddm/js/bootstrap4/bootstrap.bundle.min.js' %}"></script>
+
+</body>
+</html>

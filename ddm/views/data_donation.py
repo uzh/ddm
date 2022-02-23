@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 @method_decorator(cache_page(0), name='dispatch')
 class DataUpload(ProjectBaseView):
-    template_name = 'ddm/test.html'
+    template_name = 'ddm/public/data_donation.html'
     view_name = 'data-donation'
 
     def get_context_data(self, **kwargs):

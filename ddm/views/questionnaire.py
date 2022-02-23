@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class QuestionnaireDisplay(ProjectBaseView):
-    template_name = 'ddm/questionnaire.html'
+    template_name = 'ddm/public/questionnaire.html'
     view_name = 'questionnaire'
 
     def get_context_data(self, **kwargs):
@@ -22,6 +22,7 @@ class QuestionnaireDisplay(ProjectBaseView):
         return context
 
     def get_question_config(self):
+        # TODO: Only get questions with associated data uploaded.
         q_config = []
         questions = QuestionBase.objects.filter(project=self.object)
         for question in questions:

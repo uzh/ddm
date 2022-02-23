@@ -57,6 +57,6 @@ class QuestionnaireDisplay(ProjectBaseView):
         QuestionnaireResponse.objects.create(
             project=self.object,
             participant=self.participant,
-            time_submitted=timezone.now().isoformat(),  # TODO: Check if .isoformat() is needed when saving into datetime field
-            responses=response
+            time_submitted=timezone.now(),
+            data=response
         )

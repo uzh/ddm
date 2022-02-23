@@ -140,6 +140,7 @@ class SingleChoiceQuestion(ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.SINGLE_CHOICE
 
     def validate_response(self, response):
+        # TODO:
         # check if response is in item.values() and default values
         return
 
@@ -148,6 +149,7 @@ class MultiChoiceQuestion(ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.MULTI_CHOICE
 
     def validate_response(self, response):
+        # TODO:
         # 1 Check if response for every item is present
         # check if response is True/False or in default values
         return
@@ -175,6 +177,7 @@ class OpenQuestion(QuestionBase):
         return config
 
     def validate_response(self, response):
+        # TODO:
         # Maybe check if is string?
         return
 
@@ -183,6 +186,7 @@ class MatrixQuestion(ScaleMixin, ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.MATRIX
 
     def validate_response(self, response):
+        # TODO:
         # 1 Check if response for every item is present
         # check if response is in scale values or in default values
         return

@@ -2,81 +2,77 @@
   <template v-for="(question, id) in q_config" :key="id">
 
     <div v-if="question.type == 'single_choice'">
-      <h4>Single Choice Question:</h4>
       <SingleChoiceQuestion
           :qid="question.question"
           :text="question.text"
           :items="question.items"
           @answerChanged="updateAnswers"
+          class="question-container"
       ></SingleChoiceQuestion>
-      <p>{{ question }}</p>
     </div>
 
     <div v-if="question.type == 'multi_choice'">
-      <h4>Multi Choice Question:</h4>
       <MultiChoiceQuestion
           :qid="question.question"
           :text="question.text"
           :items="question.items"
           @answerChanged="updateAnswers"
+          class="question-container"
       ></MultiChoiceQuestion>
-      <p>{{ question }}</p>
     </div>
 
     <div v-if="question.type == 'open'">
-      <h4>Open Question:</h4>
       <OpenQuestion
           :qid="question.question"
           :text="question.text"
           :options="question.options"
           @answerChanged="updateAnswers"
+          class="question-container"
       ></OpenQuestion>
-      <p>{{ question }}</p>
     </div>
 
     <div v-if="question.type == 'matrix'">
-      <h4>Matrix Question:</h4>
       <MatrixQuestion
           :qid="question.question"
           :text="question.text"
           :items="question.items"
           :scale="question.scale"
           @answerChanged="updateAnswers"
+          class="question-container"
       ></MatrixQuestion>
-      <p>{{ question }}</p>
     </div>
 
     <div v-if="question.type == 'semantic_diff'">
-      <h4>Semantic Differential:</h4>
       <SemanticDifferential
           :qid="question.question"
           :text="question.text"
           :items="question.items"
           :scale="question.scale"
           @answerChanged="updateAnswers"
+          class="question-container"
       ></SemanticDifferential>
-      <p>{{ question }}</p>
     </div>
 
     <div v-if="question.type == 'transition'">
-      <h4>Transition Text:</h4>
       <TransitionQuestion
           :text="question.text"
           @answerChanged="updateAnswers"
+          class="question-container"
       ></TransitionQuestion>
-      <p>{{ question }}</p>
     </div>
 
   </template>
 
   {{ this.answers }}
 
-  <div class="row float-right">
-    <button
-        class="btn btn-success fs-5 w-25"
-        type="button"
-        @click="submitData"
-    >Weiter</button>
+  <div class="row">
+    <div class="col">
+      <button
+          class="btn btn-secondary fs-5 w-25 float-end"
+          type="button"
+          @click="submitData"
+      >Weiter</button>
+    </div>
   </div>
 
 </template>
@@ -138,8 +134,10 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+  text-align: left;
   margin-top: 60px;
+}
+.question-container {
+  margin-bottom: 50px;
 }
 </style>

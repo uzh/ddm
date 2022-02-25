@@ -1,28 +1,28 @@
 <template>
   <div>
 
-    <div>{{ text }}</div>
+    <div class="surquest-question-text">{{ text }}</div>
 
-    <table>
-      <thead>
-      <tr>
-        <th></th>
-        <th v-for="(point, id) in scale" :key="id">{{ point.label }}</th>
-        <th></th>
-      </tr>
-      </thead>
-      <tbody>
-      <template v-for="(item, id) in items" :key="id">
+    <div class="surquest-gq-response">
+      <table class="dq-table">
+        <thead>
         <tr>
-          <th>{{ item.label }}</th>
-          <th v-for="(point, id) in scale" :key="id">
-            <label><input type="radio" :name="item.id" :value="point.value" @change="answerChanged($event)"></label>
-          </th>
-          <th>{{ item.label_alt }}</th>
+          <th></th>
+          <th v-for="(point, id) in scale" :key="id">{{ point.label }}</th>
+          <th></th>
         </tr>
-      </template>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+        <tr v-for="(item, id) in items" :key="id">
+          <td class="mq-table-td-item dq-table-td-item-left">{{ item.label }}</td>
+          <td v-for="(point, id) in scale" :key="id" class="dq-table-td-input">
+            <label><input type="radio" :name="item.id" :value="point.value" @change="answerChanged($event)"></label>
+          </td>
+          <td class="mq-table-td-item dq-table-td-item-right">{{ item.label_alt }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
 
   </div>
 </template>

@@ -1,10 +1,10 @@
 <template>
   <div>
 
-    <div>{{ text }}</div>
+    <div class="surquest-question-text">{{ text }}</div>
 
-    <table>
-      <thead>
+    <table class="mq-table">
+      <thead class="mq-header">
       <tr>
         <th></th>
         <th v-for="(point, id) in scale" :key="id">{{ point.label }}</th>
@@ -13,10 +13,10 @@
       <tbody>
       <template v-for="(item, id) in items" :key="id">
         <tr>
-          <th>{{ item.label }}</th>
-          <th v-for="(point, id) in scale" :key="id">
+          <td class="mq-table-td-item">{{ item.label }}</td>
+          <td v-for="(point, id) in scale" :key="id" class="mq-table-td-input">
             <label><input type="radio" :name="item.id" :value="point.value" @change="answerChanged($event)"></label>
-          </th>
+          </td>
         </tr>
       </template>
       </tbody>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>{{ text }}</div>
+    <div class="surquest-question-text">{{ text }}</div>
   </div>
 </template>
 

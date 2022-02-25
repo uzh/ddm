@@ -1,5 +1,10 @@
 {% extends "ddm/public/base.html" %}
+{% load static %}
 {% load render_bundle from webpack_loader %}
+
+{% block extrahead %}
+    <link href="{% static 'ddm/css/questionnaire.css' %}" rel="stylesheet">
+{% endblock extrahead %}
 
 {% block content %}
 <div>
@@ -8,6 +13,7 @@
         <div id="qapp"
              data-qconfig='{{ q_config }}'
              data-actionurl='{{ request.build_absolute_uri }}'
+             class="text-black"
         >
             <qapp></qapp>
         </div>

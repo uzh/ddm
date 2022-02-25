@@ -1,8 +1,4 @@
 <template>
-  <h1>Uploader App</h1>
-  <div>POST DATA: {{ post_data }}</div>
-  <div>Action URL: {{ actionurl }}</div>
-  <div><br><br></div>
 
   <FileUploader
       v-for="(uploadConfig, id) in ul_config"
@@ -13,12 +9,14 @@
       @changedData="updatePostData"
   ></FileUploader>
 
-  <div class="row float-right">
-    <button
-        class="btn btn-success fs-5 w-25"
-        type="button"
-        @click="zipData"
-    >Daten übermitteln</button>
+  <div class="row">
+    <div class="col">
+      <button
+          class="btn btn-secondary fs-5 w-25 float-end"
+          type="button"
+          @click="zipData"
+      >Daten übermitteln</button>
+    </div>
   </div>
 </template>
 

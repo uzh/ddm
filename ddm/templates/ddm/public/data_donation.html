@@ -6,7 +6,7 @@
     <form id="uploader-form" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <div id="uapp"
-             class="container"
+             class="container text-black"
              data-uploadconfig='{{ ul_configs }}'
              data-actionurl='{{ request.build_absolute_uri }}'>
             <uapp></uapp>

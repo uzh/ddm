@@ -1,0 +1,40 @@
+.text-orange {
+    color: #de5300;
+}
+.text-orange:hover {
+    color: #ff5f00;
+}
+.bg-success-light {
+    background-color: #55ff5517;
+}
+.consent-checkbox {
+    width: 1.3rem;
+    height: 1.3rem;
+}
+.consent-checkbox:checked {
+    background-color: #198754;
+    border-color: #198754;
+}
+.upload-other {
+    cursor: pointer;
+    color: #7f887f;
+    text-decoration: none;
+    margin-left: 3rem;
+}
+.upload-other:hover {
+    color: #5a5f5a;
+}
+.select-file-btn {
+    background: #eaeaea;
+    line-height: 1;
+    color: black;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: 1px solid grey;
+    margin-left: 2rem;
+    padding: 0.4rem;
+    border-radius: 0.25rem;
+}
+.select-file-btn:hover {
+    background: #d5d5d5;
+}

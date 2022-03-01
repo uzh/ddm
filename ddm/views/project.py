@@ -136,5 +136,5 @@ class ProjectEntry(ProjectBaseView):
 
 
 class ProjectExit(ProjectBaseView):
-    template_name = 'ddm/questionnaire/thankyou.html'
+    template_name = 'ddm/public/end.html'
     view_name = 'project-exit'

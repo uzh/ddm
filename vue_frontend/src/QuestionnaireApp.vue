@@ -69,10 +69,10 @@
   <div class="row">
     <div class="col">
       <button
-          class="btn btn-secondary fs-5 w-25 float-end"
+          class="flow-btn"
           type="button"
           @click="next"
-      >Weiter</button>
+      >Weiter&nbsp;&nbsp;&#8250;</button>
     </div>
   </div>
 
@@ -157,7 +157,6 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
-  margin-top: 60px;
 }
 .question-container {
   margin-bottom: 50px;

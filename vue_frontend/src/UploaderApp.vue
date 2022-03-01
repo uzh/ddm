@@ -12,10 +12,10 @@
   <div class="row">
     <div class="col">
       <button
-          class="btn btn-secondary fs-5 w-25 float-end"
+          class="flow-btn"
           type="button"
           @click="zipData"
-      >Daten übermitteln</button>
+      >Daten übermitteln&nbsp;&nbsp;&#8250;</button>
     </div>
   </div>
 </template>
@@ -83,6 +83,5 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>

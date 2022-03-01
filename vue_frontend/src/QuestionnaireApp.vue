@@ -1,76 +1,77 @@
 <template>
   <template v-for="(question, id) in q_config" :key="id">
+    <div v-show="curr_index == question.index">
 
-    <div v-if="question.type == 'single_choice'">
-      <SingleChoiceQuestion
-          :qid="question.question"
-          :text="question.text"
-          :items="question.items"
-          @answerChanged="updateAnswers"
-          class="question-container"
-      ></SingleChoiceQuestion>
-    </div>
+      <template v-if="question.type == 'single_choice'">
+        <SingleChoiceQuestion
+            :qid="question.question"
+            :text="question.text"
+            :items="question.items"
+            @answerChanged="updateAnswers"
+            class="question-container"
+        ></SingleChoiceQuestion>
+      </template>
 
-    <div v-if="question.type == 'multi_choice'">
-      <MultiChoiceQuestion
-          :qid="question.question"
-          :text="question.text"
-          :items="question.items"
-          @answerChanged="updateAnswers"
-          class="question-container"
-      ></MultiChoiceQuestion>
-    </div>
+      <template v-if="question.type == 'multi_choice'">
+        <MultiChoiceQuestion
+            :qid="question.question"
+            :text="question.text"
+            :items="question.items"
+            @answerChanged="updateAnswers"
+            class="question-container"
+        ></MultiChoiceQuestion>
+      </template>
 
-    <div v-if="question.type == 'open'">
-      <OpenQuestion
-          :qid="question.question"
-          :text="question.text"
-          :options="question.options"
-          @answerChanged="updateAnswers"
-          class="question-container"
-      ></OpenQuestion>
-    </div>
+      <template v-if="question.type == 'open'">
+        <OpenQuestion
+            :qid="question.question"
+            :text="question.text"
+            :options="question.options"
+            @answerChanged="updateAnswers"
+            class="question-container"
+        ></OpenQuestion>
+      </template>
 
-    <div v-if="question.type == 'matrix'">
-      <MatrixQuestion
-          :qid="question.question"
-          :text="question.text"
-          :items="question.items"
-          :scale="question.scale"
-          @answerChanged="updateAnswers"
-          class="question-container"
-      ></MatrixQuestion>
-    </div>
+      <template v-if="question.type == 'matrix'">
+        <MatrixQuestion
+            :qid="question.question"
+            :text="question.text"
+            :items="question.items"
+            :scale="question.scale"
+            @answerChanged="updateAnswers"
+            class="question-container"
+        ></MatrixQuestion>
+      </template>
 
-    <div v-if="question.type == 'semantic_diff'">
-      <SemanticDifferential
-          :qid="question.question"
-          :text="question.text"
-          :items="question.items"
-          :scale="question.scale"
-          @answerChanged="updateAnswers"
-          class="question-container"
-      ></SemanticDifferential>
-    </div>
+      <template v-if="question.type == 'semantic_diff'">
+        <SemanticDifferential
+            :qid="question.question"
+            :text="question.text"
+            :items="question.items"
+            :scale="question.scale"
+            @answerChanged="updateAnswers"
+            class="question-container"
+        ></SemanticDifferential>
+      </template>
 
-    <div v-if="question.type == 'transition'">
-      <TransitionQuestion
-          :text="question.text"
-          @answerChanged="updateAnswers"
-          class="question-container"
-      ></TransitionQuestion>
+      <template v-if="question.type == 'transition'">
+        <TransitionQuestion
+            :text="question.text"
+            @answerChanged="updateAnswers"
+            class="question-container"
+        ></TransitionQuestion>
+      </template>
+
     </div>
 
   </template>
-
-  {{ this.answers }}
 
   <div class="row">
     <div class="col">
       <button
           class="btn btn-secondary fs-5 w-25 float-end"
           type="button"
-          @click="submitData"
+          @click="next"
       >Weiter</button>
     </div>
   </div>
@@ -102,18 +103,39 @@ export default {
   data() {
     return {
       q_config: JSON.parse(this.qconfig),
-      answers: {}
+      answers: {},
+      curr_index: 1,
+      max_index: 1
     }
+  },
+  created() {
+    this.setMaxIndex();
   },
   methods: {
     updateAnswers(e) {
       this.answers[e.id] = e.answers;
     },
+    setMaxIndex() {
+      let indices = [];
+      this.q_config.forEach(q =>
+          indices.push(q.index)
+      )
+      this.max_index = Math.max(...indices);
+    },
+    next() {
+      if (this.curr_index == this.max_index) {
+        this.submitData();
+      } else {
+        this.curr_index += 1;
+      }
+    },
     submitData() {
       let form = new FormData()
       form.append("post_data", JSON.stringify(this.answers));
+
       let csrf = document.querySelector("input[name='csrfmiddlewaretoken']");
       form.append("csrfmiddlewaretoken", csrf.value);
+
       fetch(this.actionurl, {method: "POST", body: form})
           .then(response => {
             console.log(response)

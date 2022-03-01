@@ -1,13 +1,11 @@
 {% extends "ddm/public/base.html" %}
 
 {% block content %}
-<div>
-    <p>Project Entry Page of:</p>
-    <h2>{{ project.name }}</h2>
-    <h3>Participant ID: {{ part_id }}</h3>
-    <h3>Project Session: {{ session }}</h3>
+<div style="margin-top: 50px;">
 
     <p>Introduction Page</p>
+
+    <p> Welcome to this data donation study.</p>
 
     <form method="POST">
         {% csrf_token %}

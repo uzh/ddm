@@ -76,6 +76,7 @@ class QuestionBase(PolymorphicModel):
         config = {
             'question': self.pk,
             'type': self.question_type,
+            'index': self.index,
             'text': self.text,
             'items': [],
             'scale': [],

@@ -161,7 +161,6 @@ class ScaleMixin:
 
     def validate_response(self, response):
         super().validate_response(response)
-        # Validate response values
         valid_values = list(self.scalepoint_set.all().values_list('value', flat=True))
         valid_values.append(-99)
         for k, val in response.items():
@@ -175,9 +174,7 @@ class SingleChoiceQuestion(ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.SINGLE_CHOICE
 
     def validate_response(self, response):
-        # Get item values
         valid_values = list(self.questionitem_set.all().values_list('value', flat=True))
-        # Append default (missing) value
         valid_values.append(-99)
         if response not in valid_values:
             logger.error(f'Got invalid response "{response}" for single choice '
@@ -190,7 +187,6 @@ class MultiChoiceQuestion(ItemMixin, QuestionBase):
 
     def validate_response(self, response):
         super().validate_response(response)
-        # Validate response values
         valid_values = [0, 1, -99]
         for k, val in response.items():
             if val not in valid_values:

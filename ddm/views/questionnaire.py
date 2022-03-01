@@ -1,10 +1,10 @@
 import json
 
 from django.http import HttpResponseRedirect
-from django.shortcuts import reverse
+from django.shortcuts import reverse, redirect
 from django.utils import timezone
 
-from ddm.models import QuestionBase, QuestionnaireResponse
+from ddm.models import QuestionBase, QuestionnaireResponse, DataDonation
 from ddm.views import ProjectBaseView
 
 import logging
@@ -15,6 +15,15 @@ class QuestionnaireDisplay(ProjectBaseView):
     template_name = 'ddm/public/questionnaire.html'
     view_name = 'questionnaire'
 
+    def render_to_response(self, context, **response_kwargs):
+        if not len(context['q_config']) > 2:
+            self.project_session['steps'][self.view_name]['state'] = 'completed'
+            curr_step = self.steps.index(self.view_name)
+            target = self.steps[curr_step + 1]
+            return redirect(target, slug=self.object.slug)
+        else:
+            return super().render_to_response(context, **response_kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         q_config = self.get_question_config()
@@ -22,17 +31,28 @@ class QuestionnaireDisplay(ProjectBaseView):
         return context
 
     def get_question_config(self):
-        # TODO: Only get questions with associated data uploaded.
         q_config = []
         questions = QuestionBase.objects.filter(project=self.object)
         for question in questions:
-            q_config.append(question.get_config(self.participant))
+            try:
+                donation = DataDonation.objects.get(
+                    blueprint=question.blueprint,
+                    participant=self.participant
+                )
+                if donation.data:
+                    q_config.append(question.get_config(self.participant))
+            except QuestionBase.doesNotExist:
+                logger.error(
+                    f'No donation found for participant {self.participant.pk} '
+                    f'and blueprint {question.blueprint.pk}.'
+                )
+
         return q_config
 
     def post(self, request, *args, **kwargs):
         super().post(request, **kwargs)
         self.process_response(request.POST['post_data'])
-        redirect_url = reverse(self.steps[self.current_step],   # + 1],
+        redirect_url = reverse(self.steps[self.current_step],
                                kwargs={'slug': self.object.slug})
         return HttpResponseRedirect(redirect_url)
 
@@ -41,13 +61,14 @@ class QuestionnaireDisplay(ProjectBaseView):
         for question_id in response:
             try:
                 question = QuestionBase.objects.get(pk=int(question_id))
-            except QuestionBase.doesNotExist as e:
-                logger.error(f'{e} – Question with id={question_id} '
-                             'does not exist')
+            except QuestionBase.doesNotExist:
+                logger.error(f'Question with id={question_id} does not exist.')
                 continue
             except ValueError:
-                logger.error('Received invalid question_id in '
-                             f'questionnaire post_data: {e}')
+                logger.error(
+                    f'Received invalid question_id ({question_id}) in '
+                    f'questionnaire post_data.'
+                )
                 continue
 
             question.validate_response(response[question_id])

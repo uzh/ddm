@@ -267,7 +267,10 @@ export default {
           bp_post.extracted_data = new_extracted_data;
         }
 
-      // TODO: update status
+      // Update status
+      if (bp_post.status.errors.length == 0) {
+        bp_post.status.ul_complete = true;
+      }
     },
     processSingleFile(file, bp) {
       let vm = this;

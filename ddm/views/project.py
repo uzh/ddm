@@ -48,7 +48,7 @@ class ProjectBaseView(DetailView):
         self.state = self.project_session['steps'][self.view_name]['state']
 
         # Set Participant
-        self.register_participant(request)
+        self.register_participant()
         return
 
     def register_project(self, request):
@@ -64,7 +64,7 @@ class ProjectBaseView(DetailView):
             }
         return
 
-    def register_participant(self, request):
+    def register_participant(self):
         participant_id = self.project_session['participant_id']
         try:
             self.participant = Participant.objects.get(pk=participant_id)

@@ -76,7 +76,8 @@ class DataUpload(ProjectBaseView):
             try:
                 bp = DonationBlueprint.objects.get(pk=bp_id)
             except DonationBlueprint.DoesNotExist as e:
-                logger.error(f'{e} – Donation blueprint with id={bp_id} does not exist')
+                logger.error(
+                    f'{e} – Donation blueprint with id={bp_id} does not exist')
                 return
 
             bp.process_donation(bp_data, self.participant)

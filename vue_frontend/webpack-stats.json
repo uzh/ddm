@@ -120,18 +120,45 @@
       "name": "b0433292c32ce90811e1.hot-update.json",
       "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\b0433292c32ce90811e1.hot-update.json",
       "publicPath": "http://localhost:8080/b0433292c32ce90811e1.hot-update.json"
+    },
+    "chunk-vendors.834fd699389447af9d9a.hot-update.js": {
+      "name": "chunk-vendors.834fd699389447af9d9a.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\chunk-vendors.834fd699389447af9d9a.hot-update.js",
+      "publicPath": "http://localhost:8080/chunk-vendors.834fd699389447af9d9a.hot-update.js"
+    },
+    "vue_uploader.834fd699389447af9d9a.hot-update.js": {
+      "name": "vue_uploader.834fd699389447af9d9a.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_uploader.834fd699389447af9d9a.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_uploader.834fd699389447af9d9a.hot-update.js"
+    },
+    "834fd699389447af9d9a.hot-update.json": {
+      "name": "834fd699389447af9d9a.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\834fd699389447af9d9a.hot-update.json",
+      "publicPath": "http://localhost:8080/834fd699389447af9d9a.hot-update.json"
+    },
+    "vue_uploader.850bbed63c711b102dcd.hot-update.js": {
+      "name": "vue_uploader.850bbed63c711b102dcd.hot-update.js",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\vue_uploader.850bbed63c711b102dcd.hot-update.js",
+      "publicPath": "http://localhost:8080/vue_uploader.850bbed63c711b102dcd.hot-update.js"
+    },
+    "850bbed63c711b102dcd.hot-update.json": {
+      "name": "850bbed63c711b102dcd.hot-update.json",
+      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\850bbed63c711b102dcd.hot-update.json",
+      "publicPath": "http://localhost:8080/850bbed63c711b102dcd.hot-update.json"
     }
   },
   "chunks": {
     "vue_uploader": [
       "js/chunk-vendors.js",
-      "js/vue_uploader.js"
+      "js/vue_uploader.js",
+      "vue_uploader.850bbed63c711b102dcd.hot-update.js"
     ],
     "vue_questionnaire": [
       "js/chunk-vendors.js",
-      "js/vue_questionnaire.js",
-      "vue_questionnaire.b0433292c32ce90811e1.hot-update.js"
+      "js/vue_questionnaire.js"
     ]
   },
-  "publicPath": "http://localhost:8080/"
+  "publicPath": "http://localhost:8080/",
+  "error": "ModuleError",
+  "message": "Module Error (from ./node_modules/eslint-loader/index.js):\n\nC:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\src\\components\\FileUploader.vue\n  271:18  error  Parsing error: Unexpected token\n\n  92 |         }\n  93 |       // TODO: update status\n> 94 |       if (bp_post.)\n     |                   ^\n  95 |     },\n  96 |     processSingleFile(file, bp) {\n  97 |       let vm = this;\n\n✖ 1 problem (1 error, 0 warnings)\n"
 }

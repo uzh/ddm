@@ -1,4 +1,5 @@
 from django.db import models
+from ckeditor.fields import RichTextField
 
 
 class DonationProject(models.Model):
@@ -9,6 +10,9 @@ class DonationProject(models.Model):
         verbose_name='External Project Slug',
         unique=True
     )
+    intro_text = RichTextField(null=True, blank=True)
+    outro_text = RichTextField(null=True, blank=True)
+
     # owner = None  # TODO: Add FK to Owner.
 
 

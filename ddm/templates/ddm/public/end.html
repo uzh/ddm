@@ -3,9 +3,14 @@
 {% block content %}
 <div>
 
-    <h1>Herzlichen Dank!</h1>
-
-    <p>Sie sind am Ende der Studie angelangt und können dieses Fenster nun schliessen.</p>
+    <div>
+        {% if object.outro_text == None %}
+            <h1>Herzlichen Dank!</h1>
+            <p>Sie sind am Ende der Studie angelangt und können dieses Fenster nun schliessen.</p>
+        {% else %}
+            {{ object.outro_text }}
+        {% endif %}
+    </div>
 
 </div>
 {% endblock content %}

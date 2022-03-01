@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="surquest-question-text">{{ text }}</div>
+    <div class="surquest-question-text" v-html="text"></div>
     <div class="surquest-gq-response surquest-cq-response">
       <div v-for="(item, id) in items" :key="id" class="surquest-choice-item form-check">
         <label class="form-check-label rb-cb-label">

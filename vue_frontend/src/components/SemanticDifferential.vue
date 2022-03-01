@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <div class="surquest-question-text">{{ text }}</div>
+    <div class="surquest-question-text" v-html="text"></div>
 
     <div class="surquest-gq-response">
       <table class="dq-table">

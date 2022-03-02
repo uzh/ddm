@@ -7,6 +7,7 @@
       :zipped="uploadConfig.ul_type === 'zip'"
       :name="uploadConfig.name"
       :blueprints="uploadConfig.blueprints"
+      :instructions="uploadConfig.instructions"
       @changedData="updatePostData"
   ></FileUploader>
 

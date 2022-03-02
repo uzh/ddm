@@ -18,7 +18,10 @@
         </h3>
 
         <div :id="'acc-instr-body-'+comp_id" class="accordion-collapse collapse show" aria-labelledby="headingOne" :data-bs-parent="'#ul-acc-'+comp_id">
-          <div class="accordion-body">Tatsächliche Instruktionen</div>
+          <div class="accordion-body">
+            <DonationInstructions v-if="instructions.length > 0" :instructions="instructions" :comp_id="comp_id"></DonationInstructions>
+            <div v-else>Es wurden keine Instruktionen definiert.</div>
+          </div>
         </div>
 
       </div>
@@ -164,14 +167,17 @@
 
 <script>
 import JSZip from "jszip";
+import DonationInstructions from "./DonationInstructions";
 
 export default {
   name: "ProcessFile",
+  components: {DonationInstructions},
   props: {
     zipped: Boolean,
     blueprints: Array,
     comp_id: Number,
-    name: name
+    name: String,
+    instructions: Array
   },
   emits: ["changedData"],
   data() {

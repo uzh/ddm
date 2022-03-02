@@ -30,7 +30,12 @@ class DataUpload(ProjectBaseView):
 
         zipped_bps = ZippedBlueprint.objects.filter(project=self.object)
         for bp in zipped_bps:
-            ul_configs.append(bp.get_config())
+            ul_configs.append({
+                'ul_type': 'zip',
+                'name': bp.name,
+                'blueprints': bp.get_configs(),
+                'instructions': bp.get_instructions()
+            })
 
         blueprints = DonationBlueprint.objects.filter(
             project=self.object,
@@ -39,7 +44,8 @@ class DataUpload(ProjectBaseView):
             ul_configs.append({
                 'ul_type': 'singlefile',
                 'name': bp.name,
-                'blueprints': [bp.get_config()]
+                'blueprints': [bp.get_config()],
+                'instructions': bp.get_instructions()
             })
         return json.dumps(ul_configs)
 

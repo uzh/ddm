@@ -20,16 +20,15 @@ class ZippedBlueprint(models.Model):
         blueprints = DonationBlueprint.objects.filter(zip_blueprint=self)
         return blueprints
 
-    def get_config(self):
-        config = {
-            'name': self.name,
-            'ul_type': 'zip',
-            'blueprints': []
-        }
+    def get_configs(self):
+        bp_configs = []
         blueprints = self.get_blueprints()
         for bp in blueprints:
-            config['blueprints'].append(bp.get_config())
-        return config
+            bp_configs.append(bp.get_config())
+        return bp_configs
+
+    def get_instructions(self):
+        return [{'index': i.index, 'text': i.text} for i in self.donationinstruction_set.all()]
 
 
 # TODO: For admin section: Add validation on save to ensure that regex_path != None when zip_blueprint != None
@@ -76,9 +75,12 @@ class DonationBlueprint(models.Model):
             'format': self.exp_file_format,
             'f_expected': self.expected_fields,
             'f_extract': self.extracted_fields,
-            'regex_path': self.regex_path
+            'regex_path': self.regex_path,
         }
         return config
+
+    def get_instructions(self):
+        return [{'index': i.index, 'text': i.text} for i in self.donationinstruction_set.all()]
 
     def process_donation(self, data, participant):
         if self.validate_donation(data):

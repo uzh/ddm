@@ -1,3 +1,5 @@
+from ckeditor.fields import RichTextField
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
@@ -131,3 +133,46 @@ class DataDonation(models.Model):
     consent = models.BooleanField(default=False)
     status = models.JSONField()
     data = models.JSONField()
+
+
+class DonationInstruction(models.Model):
+    text = RichTextField(null=True, blank=True)
+    index = models.PositiveIntegerField(default=1)
+    blueprint = models.ForeignKey(
+        DonationBlueprint,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
+    zip_blueprint = models.ForeignKey(
+        ZippedBlueprint,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
+
+    class Meta:
+        ordering = ['index']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['index', 'blueprint'],
+                name='unique_index_per_blueprint'
+            ),
+            models.UniqueConstraint(
+                fields=['index', 'zip_blueprint'],
+                name='unique_index_per_zipblueprint'
+            ),
+        ]
+
+    def clean(self):
+        if not self.blueprint and not self.zip_blueprint:
+            raise ValidationError(
+                'Must be linked to either a DonationBlueprint or '
+                'a ZippedBlueprint.'
+            )
+        if self.blueprint and self.zip_blueprint:
+            raise ValidationError(
+                'Must be linked to either a DonationBlueprint or '
+                'a ZippedBlueprint, but not both.'
+            )
+        super().clean()

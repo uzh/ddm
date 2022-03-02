@@ -5,6 +5,7 @@
       :key="id"
       :comp_id="id"
       :zipped="uploadConfig.ul_type === 'zip'"
+      :name="uploadConfig.name"
       :blueprints="uploadConfig.blueprints"
       @changedData="updatePostData"
   ></FileUploader>

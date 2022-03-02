@@ -3,7 +3,7 @@
   <div class="mb-5">
     <div class="float-left bg-dark text-white pt-2 ps-2 pb-1 rounded-top">
       <div class="col-sm">
-        <h4>Upload File {{ comp_id }}</h4>
+        <h4>Upload {{ name }}</h4>
       </div>
     </div>
 
@@ -47,8 +47,6 @@
               Datei Auswählen
             </label>
             </span>
-
-
           </p>
 
           <div class="clearfix" :class="{ 'd-none': !processing }">
@@ -172,7 +170,8 @@ export default {
   props: {
     zipped: Boolean,
     blueprints: Array,
-    comp_id: Number
+    comp_id: Number,
+    name: name
   },
   emits: ["changedData"],
   data() {

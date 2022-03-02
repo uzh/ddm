@@ -20,6 +20,7 @@ class ZippedBlueprint(models.Model):
 
     def get_config(self):
         config = {
+            'name': self.name,
             'ul_type': 'zip',
             'blueprints': []
         }
@@ -69,6 +70,7 @@ class DonationBlueprint(models.Model):
     def get_config(self):
         config = {
             'id': self.pk,
+            'name': self.name,
             'format': self.exp_file_format,
             'f_expected': self.expected_fields,
             'f_extract': self.extracted_fields,

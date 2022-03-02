@@ -38,6 +38,7 @@ class DataUpload(ProjectBaseView):
         for bp in blueprints:
             ul_configs.append({
                 'ul_type': 'singlefile',
+                'name': bp.name,
                 'blueprints': [bp.get_config()]
             })
         return json.dumps(ul_configs)

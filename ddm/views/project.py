@@ -23,7 +23,6 @@ class ProjectBaseView(DetailView):
     def get(self, request, *args, **kwargs):
         self.initialize_values(request)
 
-        # TODO: This approach might be inefficient => Check this.
         target = self.get_target()
         if target == self.view_name:
             context = self.get_context_data(object=self.object)

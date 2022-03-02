@@ -30,7 +30,7 @@ class ZippedBlueprint(models.Model):
         return config
 
 
-# TODO: Add validation on save to ensure that regex_path != None when zip_blueprint != None
+# TODO: For admin section: Add validation on save to ensure that regex_path != None when zip_blueprint != None
 class DonationBlueprint(models.Model):
     project = models.ForeignKey(
         DonationProject,
@@ -83,7 +83,6 @@ class DonationBlueprint(models.Model):
             self.create_donation(data, participant)
         else:
             logger.error(f'Donation not processed by blueprint {self.pk}')
-
         return
 
     @staticmethod

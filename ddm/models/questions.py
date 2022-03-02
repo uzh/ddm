@@ -89,7 +89,7 @@ class QuestionBase(PolymorphicModel):
             participant=participant,
             blueprint=self.blueprint
         )
-        context_data = data_donation.data  # TODO: Not yet rendering HTML stuff.
+        context_data = data_donation.data
         config['text'] = self.render_text(config['text'], context_data)
         for index, item in enumerate(config['items']):
             item['label'] = self.render_text(item['label'], context_data)
@@ -198,8 +198,6 @@ class MultiChoiceQuestion(ItemMixin, QuestionBase):
 class OpenQuestion(QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.OPEN
 
-    max_length = None  # TODO: Define max length. Maybe add regex option?
-
     class DisplayOptions(models.TextChoices):
         SMALL = 'small', 'Small'
         LARGE = 'large', 'Large'
@@ -217,7 +215,7 @@ class OpenQuestion(QuestionBase):
         return config
 
     def validate_response(self, response):
-        # TODO: Maybe check if is string?
+        # TODO: Think about if it's necessary to add some validation steps here.
         return
 
 

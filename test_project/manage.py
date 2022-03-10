@@ -2,6 +2,7 @@
 
 import django
 import json
+import os
 import sys
 
 from django.conf import settings
@@ -11,6 +12,10 @@ from django.core.management import execute_from_command_line
 test_config = json.load(open('test_config.json'))
 
 sys.path.append('..')
+PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DDM_DIR = os.path.join(PROJECT_DIR, 'ddm')
+VUE_FRONTEND_DIR = os.path.join(PROJECT_DIR, 'vue_frontend')
+print(f'PROJECT_DIR: {PROJECT_DIR}')
 
 settings.configure(
     INSTALLED_APPS=[
@@ -23,14 +28,15 @@ settings.configure(
         'django.contrib.staticfiles',
         'sekizai',
         'ddm.apps.DdmConfig',
-        'ckeditor'
+        'ckeditor',
+        'webpack_loader',
     ],
     MIDDLEWARE=[
+        'django.middleware.csrf.CsrfViewMiddleware',
         'django.middleware.security.SecurityMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.middleware.locale.LocaleMiddleware',
         'django.middleware.common.CommonMiddleware',
-        'django.middleware.csrf.CsrfViewMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.contrib.sites.middleware.CurrentSiteMiddleware',
@@ -53,6 +59,7 @@ settings.configure(
             },
         },
     ],
+    SESSION_SAVE_EVERY_REQUEST=True,
     ALLOWED_HOSTS=['localhost', '127.0.0.1'],
     ROOT_URLCONF='urls',
     DATABASES={
@@ -66,6 +73,19 @@ settings.configure(
     SITE_ID=1,
     STATIC_URL='/static/',
     USE_TZ=True,
+    STATICFILES_DIRS=(
+        os.path.join(DDM_DIR, 'static'),
+    ),
+    WEBPACK_LOADER={
+        'DEFAULT': {
+            #'CACHE': not settings.DEBUG,
+            'BUNDLE_DIR_NAME': 'bundles/',
+            'STATS_FILE': os.path.join(VUE_FRONTEND_DIR, 'webpack-stats.json'),
+            'POLL_INTERVAL': 0.1,
+            'TIMEOUT': None,
+            'IGNORE': [r'.+\.hot-update.js', r'.+\.map']
+        }
+    },
 )
 
 django.setup()

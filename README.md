@@ -54,9 +54,23 @@ To run unit tests, use:
 For ddm to work, time zone support must be enabled in the Django settings: 
 `USE_TZ = True`
 
-
 [^1]: By default, the test project uses SQLite as a database backend. 
 
 [^2]: If you are running a version of Python < 3.9, you might have to manually 
 enable the JSON1 extension on SQLite for the migration to work properly. For an 
 explanation on how to do this visit https://code.djangoproject.com/wiki/JSON1Extension.
+
+## Vue development
+To run our app in development mode, we’ll need to serve both Django’s dev server and the webpack development server. From the vue_frontend directory, run:
+```
+npm run serve
+```
+And, in a separate terminal in the Django root directory, run the Django development server, e.g.
+```
+./manage.py runserver
+```
+Point your browser to your Django app (e.g. http://localhost:8000) and check out the defined vue pages.
+
+### Vue production deployment
+When it’s time to deploy, or when we simply want to omit running our Vue dev server, we can build our Vue project in production mode. Cancel the `npm run serve` process if it's running and instead run `npm run build`. 
+The optimized bundles will be built in and placed into our Django static file location, and webpack-stats.json will be updated to reflect this new configuration. The vue builds should end up in the static folder of the django module (ddm/static).

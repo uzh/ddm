@@ -1,20 +1,21 @@
-from django.models import TextField
+from django.db.models import TextField
 from django.conf import settings
 from django.core import signing
 from base64 import b64decode, b64encode
+import json
 
 
 class EncryptedField(TextField):
     class JSONSerializer:
         def dumps(self, obj):
             return json.dumps(obj, separators=(",", ":")).encode("latin-1")
+
         def loads(self, data):
             return json.loads(data.decode("latin-1"))
 
     """ This Field encrypts data using symmetric encryption and stores the output as BASE64 in a TextField """
 
     description = "Store data in an encrypted field"  
-
 
     def __init__(self, *args, **kwargs):
         """
@@ -43,10 +44,10 @@ class EncryptedField(TextField):
         return name, path, args, kwargs  
     
     def get_prep_value(self, value):
-        return b64encode(self.signer.sign_object(value, serializer=JSONSerializer, compress=True)) 
+        return b64encode(self.signer.sign_object(value, serializer=self.JSONSerializer, compress=True))
     
     def from_db_value(self, value, expression, connection):
-        return b64decode(self.signer.unsign_object(value, serializer=JSONSerializer, compress=True)) if value else None
+        return b64decode(self.signer.unsign_object(value, serializer=self.JSONSerializer, compress=True)) if value else None
     
     def to_python(self, value):
-        return b64decode(self.signer.unsign_object(value, serializer=JSONSerializer, compress=True)) if value else None
+        return b64decode(self.signer.unsign_object(value, serializer=self.JSONSerializer, compress=True)) if value else None

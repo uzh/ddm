@@ -1,6 +1,13 @@
 # Data Donation Module (ddm)
 Currently under development.
 
+## Install DDM in Your own Project
+
+1. Add "ddm" to your INSTALLED_APPS setting: `INSTALLED_APPS = [..., 'ddm',]`
+2. Include the ddm URLconf in your projects urls.py: `url(r'^ddm/', include('ddm.urls')),`.
+3. Run `python manage.py migrate` to create the ddm models.
+
+
 ## Development Guidelines
 ### Local Project for Development and Testing
 The repository includes a django test project that can be used for local development and testing.

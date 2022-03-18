@@ -1,5 +1,6 @@
 import json
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.shortcuts import reverse, redirect
 from django.utils import timezone
@@ -41,7 +42,7 @@ class QuestionnaireDisplay(ProjectBaseView):
                 )
                 if donation.data:
                     q_config.append(question.get_config(self.participant))
-            except QuestionBase.doesNotExist:
+            except ObjectDoesNotExist:
                 logger.error(
                     f'No donation found for participant {self.participant.pk} '
                     f'and blueprint {question.blueprint.pk}.'

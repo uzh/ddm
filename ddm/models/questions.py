@@ -210,7 +210,6 @@ class OpenQuestion(QuestionBase):
 
     def create_config(self):
         config = super().create_config()
-        config['options']['max_length'] = self.max_length
         config['options']['display'] = self.display
         return config
 

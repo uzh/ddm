@@ -1,0 +1,14 @@
+<div class='sq-dropup float-right'>
+
+  <button id='sq-dropup-button' type='button' class='sq-btn sq-dropup-button' onclick='changeDropup("sq-dropup-button")' data-toggle='dropdown'>
+    Add Trigger&nbsp;&nbsp;&nbsp;<span>&#9656;</span>
+  </button>
+
+  <div id='sq-dropup-content' class='sq-dropup-content'>
+    {% for type in triggers %}
+        <a class='sq-dropup-item' href='{% url type.0|add:"-create" q=questionnaire.id %}'>{{ type.1 }}</a>
+    {% empty %}
+    {% endfor %}
+  </div>
+
+</div>

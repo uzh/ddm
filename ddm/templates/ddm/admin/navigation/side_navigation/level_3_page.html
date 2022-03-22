@@ -1,0 +1,14 @@
+{% load i18n admin_urls static admin_modify ddm_tags %}
+
+<div class="sq-nav-lvl-3">
+  <div class="sq-nav-card-top">Page "{{ page.name }}"</div>
+
+  <a href="{% url page.page_type|add:'-update' pk=page.id q=questionnaire.id %}">
+    <div class="sq-nav-card {% if request.resolver_match.url_name == page.page_type|add:'-update' %}sq-nav-card-active{% endif %}">Settings & Questions</div>
+  </a>
+
+  <a href="{% url page.page_type|add:'-delete' pk=page.id q=questionnaire.id %}">
+    <div class="sq-nav-card {% if request.resolver_match.url_name == page.page_type|add:'-delete' %}sq-nav-card-active{% endif %}">Delete Page</div>
+  </a>
+
+</div>

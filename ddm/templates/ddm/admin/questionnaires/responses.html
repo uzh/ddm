@@ -1,0 +1,75 @@
+{% extends "ddm/admin/base.html" %}
+{% load i18n admin_urls static admin_modify ddm_tags %}
+
+{% block side_nav %}
+  {% include 'ddm/admin/navigation/side_navigation/level_1_questionnaires.html' %}
+  {% include 'ddm/admin/navigation/side_navigation/level_2_questionnaire.html' %}
+{% endblock side_nav %}
+
+{% block page_title %}
+  Responses
+{% endblock page_title %}
+
+{% block page_subtitle %}
+  {{ questionnaire.name }}
+{% endblock page_subtitle %}
+
+{% block content %}
+
+  <div class="sq-overview-main-container">
+    <h3>Response Statistics</h3>
+    <div class="sq-overview-stats-container">
+      <p>Total reponses: {{ sub_stats.total }}</p>
+      <p>Completed responses: {{ sub_stats.completed }}</p>
+      <p>Completion rate: {{ sub_stats.completion_rate }} %</p>
+      <button id="file-export-button" class="sq-btn" type="button" onclick="requestFile('{% url "file-export" %}', 'questionnaire', {{ questionnaire.pk }})">Export Data as csv</button>
+      {% csrf_token %}
+    </div>
+
+    <div>
+      <h3>Detailed Responses</h3>
+      <p class="sq-info-response-overview">Only the last 10 submissions are displayed.</p>
+    </div>
+
+    <div class="sq-response-table-container">
+      <table class="sq-response-table">
+        <thead>
+        <tr>
+          {% for var in questionnaire_vars %}
+            <th>{{ var }}</th>
+          {% endfor %}
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for sub in sub_data %}
+          <tr>
+            {% for var in questionnaire_vars %}
+              {% if var in sub %}
+                {% for var_name, value in sub.items %}
+                  {% if var_name == var %}
+                    <td>{{ value }}</td>
+                  {% endif %}
+                {% endfor %}
+              {% else %}
+                <td>-</td>
+              {% endif %}
+            {% endfor %}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div>
+    <button id="delete-responses-button" class="sq-btn" type="button" onclick="delete_responses('{% url "delete-responses" %}', {{ questionnaire.pk }})">Delete all Questionnaire responses</button>
+  </div>
+
+{% endblock %}
+
+{% block extra_js %}
+  {{ block.super }}
+  <script src="{% static 'ddm/js/file-download.js' %}"></script>
+  <script src="{% static 'ddm/js/delete-responses.js' %}"></script>
+{% endblock %}

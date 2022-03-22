@@ -1,0 +1,24 @@
+{% extends "ddm/public/base.html" %}
+
+{% block content %}
+<div>
+
+    <div>
+        {% if object.intro_text == None %}
+            <h1>Willkommen zu dieser Studie</h1>
+            <p>Hier wird eine Beschreibung der Studie stehen.</p>
+        {% else %}
+            {{ object.intro_text }}
+        {% endif %}
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input
+                class="flow-btn"
+                type="submit"
+                value="Weiter&nbsp;&nbsp;&#8250;"
+        />
+    </form>
+</div>
+{% endblock content %}

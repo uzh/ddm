@@ -1,0 +1,46 @@
+{% extends "ddm/admin/base.html" %}
+{% load i18n admin_urls static admin_modify ddm_tags %}
+
+{% block side_nav %}
+  {% include 'ddm/admin/navigation/side_navigation/level_1_questionnaires.html' %}
+  {% include 'ddm/admin/navigation/side_navigation/level_2_questionnaire.html' %}
+{% endblock side_nav %}
+
+{% block page_title %}
+  Uploaded Data
+{% endblock page_title %}
+
+{% block page_subtitle %}
+  {{ questionnaire.name }}
+{% endblock page_subtitle %}
+
+{% block content %}
+  {% csrf_token %}
+  <div id="subnav-menu">
+    {% for q in file_upload_questions %}
+      <a href="#" onclick="openTab('fu-{{ q.pk }}')">
+        <div id="fu-{{ q.pk }}-nc" class="nav-card subnav-card">{{ q.name }}</div>
+      </a>
+    {% endfor %}
+  </div>
+
+  {% for q in file_upload_questions %}
+    <div id="fu-{{ q.pk }}" class="sq-tab" style="display:none">
+      {% for upload_item in q.fileuploaditem_set.all %}
+        <div>
+          Upload Item "{{ upload_item.variable_name }}":
+          <button id="file-export-button" class="sq-btn" type="button" onclick="requestFile('{% url "file-export" %}', 'fileupload', {{ upload_item.pk }})">Export Data as json</button>
+        </div>
+      {% endfor %}
+    </div>
+  {% empty %}
+    <p>This questionnaire does not contain any file uploads.</p>
+  {% endfor %}
+
+{% endblock %}
+
+{% block extra_js %}
+  {{ block.super }}
+  <script src="{% static 'ddm/js/file-download.js' %}"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+{% endblock %}

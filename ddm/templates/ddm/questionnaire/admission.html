@@ -1,0 +1,20 @@
+{% extends "ddm/questionnaire/base_questionnaire.html" %}
+{% load static %}
+
+{% block title %}Umfrage{% endblock %}
+
+{% block content %}
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <p class="surquest-question-text">Hier bitte den Zugangscode eingeben:</p>
+
+    <div>
+      <input type="text" id="access_token" name="access_token" value="">
+      <span class="surquest-invalid-infobox">{{ error_message }}</span>
+    </div>
+    <div class="surquest-controls">
+      <input class="surquest-controls-button" type="submit" id="submit_access_token" name="submit" value="Absenden">
+    </div>
+  </form>
+
+{% endblock content %}

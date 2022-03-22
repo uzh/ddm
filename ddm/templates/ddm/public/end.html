@@ -1,0 +1,24 @@
+{% extends "ddm/public/base.html" %}
+
+{% block content %}
+<div>
+
+    <div>
+        {% if object.outro_text == None %}
+            <h1>Herzlichen Dank!</h1>
+            <p>Sie sind am Ende der Studie angelangt und können dieses Fenster nun schliessen.</p>
+        {% else %}
+            {{ object.outro_text }}
+        {% endif %}
+    </div>
+
+</div>
+{% endblock content %}
+
+{% block public-footer %}
+<div class="row align-items-center">
+    <div class="col text-center">
+        <a href="#" class="text-orange">Kontakt</a>
+    </div>
+</div>
+{% endblock public-footer %}

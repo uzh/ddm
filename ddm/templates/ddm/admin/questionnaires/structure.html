@@ -1,0 +1,94 @@
+{% extends "ddm/admin/base.html" %}
+{% load i18n admin_urls static admin_modify ddm_tags %}
+
+{% block side_nav %}
+  {% include 'ddm/admin/navigation/side_navigation/level_1_questionnaires.html' %}
+  {% include 'ddm/admin/navigation/side_navigation/level_2_questionnaire.html' %}
+{% endblock side_nav %}
+
+{% block page_title %}
+  Pages & Questions
+{% endblock page_title %}
+
+{% block page_subtitle %}
+  {{ questionnaire.name }}
+{% endblock page_subtitle %}
+
+{% block content %}
+
+  <div class="sq-dropup">
+    {% include 'ddm/admin/controls/button_add_page.html' %}
+  </div>
+
+  <div id="main-content">
+    <form method="post" class="sq-form">
+      {% csrf_token %}
+      <div class="sq-hidden-form">
+        {{ form.as_p }}
+      </div>
+
+      {% for inline_formset in inline_formsets %}
+        {{ inline_formset.formset.management_form }}
+
+        {% for form in inline_formset.formset.forms %}
+          {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+          {% endfor %}
+        {% endfor %}
+
+        <div class="sortable-container">
+          <div class="sortable-head">
+            <div class="sortable-header">
+              {% for field in inline_formset.formset.forms.0.visible_fields %}
+                {% if field != 'questionnaire' %}
+                  <div class="header-box-narrow">{{ field.label }}</div>
+                {% endif %}
+              {% endfor %}
+
+              <div class="header-box-last">&nbsp</div>
+            </div>
+          </div>
+
+          <div class="sortable-pages">
+            {% for form in inline_formset.formset.forms %}
+              <div class="sortable-page-container">
+                <div class="sortable-row">
+                  {% for field in form.visible_fields %}
+                    <div class="{% if field.name == 'DELETE' %}row-box-narrow {% else %} row-box-wide {% endif %} {% if field.field.widget.attrs.readonly %}readonly {% endif %}field-{{ field.name }}">
+                      {{ field.errors }}
+                      {{ field }}
+                    </div>
+                  {% endfor %}
+                  <div class="row-box-narrow"><a href="{{ form.instance.get_absolute_url }}">Edit Page</a></div>
+                  <div class="drag-handle page-handle" draggable="true">&#8597;</div>
+                </div>
+
+                <div class="additional-row sortable-questions">
+                  {% for question in form.id.value|get_questions %}
+                    <div class="additional-rows">
+                      <div class="additional-box">{{ question.name }}</div>
+                      <div class="additional-box">{{ question.get_question_type_display }}</div>
+                      <div class="additional-box field-q-index">{{ question.index }}</div>
+                      <div class="additional-box"><a href="{{ question.get_absolute_url }}">Edit Question</a></div>
+                      <div class="drag-handle question-handle" draggable="true">&#8597;</div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+
+      <input class="sq-btn sq-btn-main" type="submit" value="Save">
+
+    </form>
+  </div>
+
+{% endblock %}
+
+{% block extra_js %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/TableDnD/0.9.1/jquery.tablednd.js" integrity="sha256-d3rtug+Hg1GZPB7Y/yTcRixO/wlI78+2m08tosoRn7A=" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script src="{% static 'ddm/js/questionnaire-structure.js' %}"></script>
+{% endblock %}

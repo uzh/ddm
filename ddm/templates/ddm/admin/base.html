@@ -1,0 +1,89 @@
+{% load static i18n sekizai_tags %}
+<!DOCTYPE html>
+<html class='d-flex' lang='{{ LANGUAGE_CODE }}'>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <title>{% block title %}SurQuest | Admin Panel{% endblock title %}</title>
+
+  <!-- Stylesheets -->
+  <link href='{% static "ddm/css/admin-base.css" %}' rel='stylesheet'>
+  <link href='{% static "ddm/css/bootstrap4/bootstrap.min.css" %}' rel='stylesheet'>
+
+  <link rel="icon" href="{% static 'ddm/img/surquest_v0-2_icon.svg' %}">
+
+  {% block extra_head %}{% endblock %}
+
+  {% render_block 'css' %}
+
+</head>
+<body class='sq-body'>
+
+<div class='sq-body-container h-100 w-100 d-flex flex-column'>
+
+  <div class='sq-interface d-flex bg-light'>
+
+    <div class='sq-side-nav d-flex flex-column'>
+      {% include 'ddm/admin/navigation/side_navigation/level_0_header.html' %}
+      {% block side_nav %}{% endblock side_nav %}
+    </div>
+
+    <div class='sq-main h-100'>
+      <div class='sq-main-head'>
+        <h2>
+          {% block page_title %}{% endblock page_title %}
+        </h2>
+
+        <div class='sq-main-subtitle'>
+          {% block page_subtitle %}{% endblock page_subtitle %}
+        </div>
+      </div>
+
+      <div class='sq-main-breadcrumbs'>
+        {% if questionnaire or page or question %}
+          <p>
+            {% if questionnaire %}
+              <a href=' {% url "questionnaire-structure" questionnaire.id %} '>Questionnaire '{{ questionnaire.name }}'</a>
+            {% endif %}
+
+            {% if page %}
+              &nbsp; &rsaquo; &nbsp; <a href='{% with viewname=page.page_type|add:"-update" %} {% url viewname q=questionnaire.id pk=page.id %} {% endwith %} '>Page '{{ page.name }}'</a>
+            {% endif %}
+
+            {% if question %}
+              &nbsp; &rsaquo; &nbsp; <a href='{% with viewname=question.question_type|add:"-update" %} {% url viewname q=questionnaire.id pk=question.id %} {% endwith %} '>Question '{{ question.name }}'</a>
+            {% endif %}
+          </p>
+        {% endif %}
+      </div>
+
+      <div class='sq-main-content'>
+        {% block content %}{% endblock %}
+
+        {% block form %}{% endblock %}
+
+        {% block content_after %}{% endblock %}
+
+      </div>
+
+    </div>
+  </div>
+
+  <div class='sq-footer'></div>
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/TableDnD/0.9.1/jquery.tablednd.js' integrity='sha256-d3rtug+Hg1GZPB7Y/yTcRixO/wlI78+2m08tosoRn7A=' crossorigin='anonymous'></script>
+  <script src='{% static "ddm/js/bootstrap4/bootstrap.bundle.min.js" %}'></script>
+  <script src='{% static "ddm/js/questionnaire-admin.js" %}'></script>
+
+  {% block extra_js %}{% endblock %}
+
+  {% render_block 'js' %}
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+{% load i18n admin_urls static admin_modify ddm_tags %}
+
+<div class="sq-nav-lvl-2">
+  <div class="sq-nav-card-top">{{ questionnaire.name }}</div>
+
+  <a href="{% url 'questionnaire-settings' questionnaire.id %}">
+    <div class="sq-nav-card {% if request.resolver_match.url_name == 'questionnaire-settings' %}sq-nav-card-active{% endif %}">General Settings</div>
+  </a>
+
+  <a href="{% url 'questionnaire-structure' questionnaire.id %}">
+    <div class="sq-nav-card {% if request.resolver_match.url_name == 'questionnaire-structure' %}sq-nav-card-active{% endif %}">Pages & Questions</div>
+  </a>
+
+  <a href="{% url 'questionnaire-triggers' questionnaire.id %}">
+    <div class="sq-nav-card {% if request.resolver_match.url_name == 'questionnaire-triggers' %}sq-nav-card-active{% endif %}">Triggers</div>
+  </a>
+
+  <a href="{% url 'externalvariables-list' questionnaire.id %}">
+    <div class="sq-nav-card {% if request.resolver_match.url_name == 'externalvariables-list' %}sq-nav-card-active{% endif %}">External Variables</div>
+  </a>
+
+  <a href="{% url 'questionnaire-responses' questionnaire.id %}">
+    <div class="sq-nav-card {% if request.resolver_match.url_name == 'questionnaire-responses' %}sq-nav-card-active{% endif %}">Responses</div>
+  </a>
+
+  <a href="{% url 'uploaded-data' questionnaire.id %}">
+    <div class="sq-nav-card {% if request.resolver_match.url_name == 'uploaded-data' %}sq-nav-card-active{% endif %}">Uploaded Data</div>
+  </a>
+
+  <a href="{% url 'questionnaire-delete' questionnaire.id %}">
+    <div class="sq-nav-card {% if request.resolver_match.url_name == 'questionnaire-delete' %}sq-nav-card-active{% endif %}">Delete Questionnaire</div>
+  </a>
+
+</div>
+

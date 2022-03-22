@@ -1,0 +1,14 @@
+{% load i18n admin_urls static admin_modify ddm_tags %}
+
+<div class="sq-nav-lvl-4">
+  <div class="sq-nav-card-top">Question "{{ question.name }}"</div>
+
+  <a href="{% url question.question_type|add:'-update' pk=question.id q=questionnaire.id %}">
+    <div class="sq-nav-card {% if request.resolver_match.url_name == question.question_type|add:'-update' %}sq-nav-card-active{% endif %}">Settings & Question Items</div>
+  </a>
+
+  <a href="{% url 'filter-update' target_id=question.id filter_target='q' %}">
+    <div class="sq-nav-card {% if request.resolver_match.url_name == 'filter-update' %}sq-nav-card-active{% endif %}">Question Filters</div>
+  </a>
+
+</div>

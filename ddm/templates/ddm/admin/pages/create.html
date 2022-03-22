@@ -1,0 +1,14 @@
+{% extends "ddm/admin/forms/base_form.html" %}
+{% load i18n admin_urls static admin_modify ddm_tags %}
+
+{% block side_nav %}
+  {% include 'ddm/admin/navigation/side_navigation/level_1_questionnaires.html' %}
+  {% include 'ddm/admin/navigation/side_navigation/level_2_questionnaire.html' %}
+  <div class="sq-nav-lvl-3">
+    <div class="sq-nav-card-top sq-nav-card-active">Create New Page"</div>
+  </div>
+{% endblock side_nav %}
+
+{% block page_title %}
+  Create New {{ view.model.get_page_type_display }}
+{% endblock page_title %}

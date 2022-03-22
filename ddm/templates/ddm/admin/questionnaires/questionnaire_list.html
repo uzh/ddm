@@ -1,0 +1,47 @@
+{% extends "ddm/admin/base.html" %}
+{% load i18n admin_urls static admin_modify ddm_tags %}
+
+{% block side_nav %}
+  {% include 'ddm/admin/navigation/side_navigation/level_1_questionnaires.html' %}
+{% endblock side_nav %}
+
+{% block page_title %}
+  Questionnaires
+{% endblock page_title %}
+
+{% block content %}
+
+  <div id="main-content">
+
+    <table class="table table-sm table-striped sq-table">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Slug</th>
+        <th>Active</th>
+        <th>Created</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for q in object_list %}
+        <tr>
+          <td><b><a href="{% url 'questionnaire-settings' q.pk %}">{{ q.name }}</a></b></td>
+          <td>{{ q.slug }}</td>
+          <td>{{ q.active }}</td>
+          <td>{{ q.date_created }}</td>
+          <td><a href="{% url 'questionnaire-settings' q.pk %}">Edit Questionnaire</a></td>
+        </tr>
+      {% empty %}
+        <tr><td>No questionnaires yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+
+    <form class="q-admin-form" action="{% url 'questionnaire-create' %}">
+      <input type="submit" class="sq-btn sq-btn-main" value="Create new Questionnaire" />
+    </form>
+
+  </div>
+
+{% endblock %}

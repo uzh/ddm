@@ -1,0 +1,10 @@
+{% load i18n admin_urls static admin_modify ddm_tags %}
+
+<div class="sq-nav-lvl-5">
+  <div class="sq-nav-card-top">Question Item</div>
+
+      <a href="{% url 'filter-update' target_id=question_item.id filter_target='qi' %}">
+        <div class="sq-nav-card {% if request.resolver_match.url_name == 'filter-update' %}sq-nav-card-active{% endif %}">{{ i.nav_name }}</div>
+      </a>
+
+</div>

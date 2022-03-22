@@ -1,0 +1,34 @@
+<div class="sq-form-fieldset-container">
+  <div class="sq-form-fieldset-information">
+    <div class="sq-form-fieldset-title">{{ fieldset.name }}</div>
+    <div class="sq-form-fieldset-description">{{ fieldset.description }}</div>
+  </div>
+
+  <div class="sq-form-fieldset-fields">
+
+    {% if fieldset.type == 'basic_form' %}
+
+      {% for fieldset_field in fieldset.fields %}
+
+        {% for hidden in form.hidden_fields %}
+          {{ hidden }}
+        {% endfor %}
+
+        {% for error in form.non_field_errors %}
+          <li><strong>{{ error|escape }}</strong></li>
+        {% endfor %}
+
+        {% for field in form.visible_fields %}
+          {% if field.name == fieldset_field %}
+            {% include "ddm/admin/forms/form_field.html" %}
+          {% endif %}
+        {% endfor %}
+
+      {% endfor %}
+
+    {% elif fieldset.type == 'inline_form' %}
+      {% include 'ddm/admin/forms/inline_form.html' with inline_formset=fieldset %}
+    {% endif %}
+
+  </div>
+</div>

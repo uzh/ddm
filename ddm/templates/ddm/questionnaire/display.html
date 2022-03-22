@@ -1,0 +1,68 @@
+{% extends "ddm/questionnaire/base_questionnaire.html" %}
+{% load static ddm_tags %}
+
+{% block title %}Umfrage: {{ questionnaire.name }}{% endblock %}
+
+{% block extra_head %}{% endblock %}
+
+{% block content %}
+  <form id ="question-form" method="post" class="needs-validation" novalidate>
+    {% csrf_token %}
+    <input type="hidden" id="user-agent" name="user_agent" value="">
+
+    {% for q in questions %}
+      <div class="surquest-question page-{{ q.page }}">
+        {% if q.question_type == 'singlechoicequestion' %}
+          {% include 'ddm/questions/display/single_choice_question.html' %}
+
+        {% elif q.question_type == 'multichoicequestion' %}
+          {% include 'ddm/questions/display/multi_choice_question.html' %}
+
+        {% elif q.question_type == 'matrixquestion' %}
+          {% include 'ddm/questions/display/matrix_question.html' %}
+
+        {% elif q.question_type == 'differentialquestion' %}
+          {% include 'ddm/questions/display/differential_question.html' %}
+
+        {% elif q.question_type == 'openquestion' %}
+          {% include 'ddm/questions/display/open_question.html' %}
+
+        {% elif q.question_type == 'listquestion' %}
+          {% include 'ddm/questions/display/list_question.html' %}
+
+        {% elif q.question_type == 'transitionquestion' %}
+          {% include 'ddm/questions/display/transition_question.html' %}
+
+        {% elif q.question_type == 'filefeedback' %}
+          {% include 'ddm/questions/display/file_feedback.html' %}
+
+        {% elif q.question_type == 'fileuploadquestion' %}
+          {% include 'ddm/questions/display/file_question.html' %}
+
+        {% endif %}
+      </div>
+    {% endfor %}
+    <div class="surquest-progress-container">
+      <div class="surquest-progress-bar" style="width:{{ progress|add:0 }}%;"></div>
+    </div>
+
+    <div class="surquest-controls">
+      {% if show_back_button %}
+        <div style="float:left;">
+          <input class="surquest-controls-button" id="submitQstnr" type="submit" name="submit-back" value="Zurück">
+        </div>
+      {% endif %}
+
+      <div style="float:right;">
+        <input class="surquest-controls-button" id="submitQstnr" type="submit" name="submit-next" value="{% if questions.0.page.page_type == 'endpage' %}Abschliessen{% else %}Weiter{% endif %}" {% for q in questions %}{% if q.question_type == 'fileuploadquestion' %}onclick="event.preventDefault(); checkFileUpload('{{ q.pk }}')"{% endif %}{% endfor %}>
+      </div>
+    </div>
+  </form>
+
+{% endblock content %}
+
+{% block extra_js %}
+	<script src="{% static 'ddm/js/multistep-form.js' %}"></script>
+	<script src="{% static 'ddm/js/file-upload.js' %}"></script>
+	<script src="{% static 'ddm/js/questionnaire-tools.js' %}"></script>
+{% endblock %}

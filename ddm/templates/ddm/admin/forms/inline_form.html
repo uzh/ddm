@@ -1,0 +1,78 @@
+{% load i18n admin_urls static admin_modify ddm_tags %}
+
+
+<div class='sq-form-fieldset-container'>
+
+  <div class='sq-form-fieldset-fields'>
+    {{ inline_formset.formset.management_form }}
+
+    {% for form in inline_formset.formset.forms %}
+      {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+      {% endfor %}
+      {% if form.errors %}
+        <div class='sq-form-errors'>There were some errors when submitting the form. Please check below for error messages.</div>
+      {% endif %}
+    {% endfor %}
+
+
+    <table class='sq-form-inline-table table table-sm sq-table'>
+      <thead>
+      <tr>
+        {% for field in inline_formset.formset.forms.0.visible_fields %}
+          {% if field != 'questionnaire' %}
+            <th>{{ field.label }}</th>
+          {% endif %}
+        {% endfor %}
+
+        {% if show_edit_link %}
+          <th></th>
+        {% endif %}
+        {% if show_filter_link %}
+          <th></th>
+        {% endif %}
+      </tr>
+      </thead>
+
+      <tbody>
+      {% for form in inline_formset.formset.forms %}
+
+        {% for error in form.non_field_errors %}
+          <li><strong>{{ error|escape }}</strong></li>
+        {% endfor %}
+
+        <tr id='row-page-{{ form.instance.pk }}'>
+          {% for field in form.visible_fields %}
+            <td class='{% if field.field.widget.attrs.readonly %}readonly {% endif %}field-{{ field.name }}'>
+              {{ field }}
+              <div class='sq-form-field-error'>{{ field.errors }}</div>
+            </td>
+          {% endfor %}
+
+          {% if show_edit_link %}
+            <td>
+              <a href='{{ form.instance.get_absolute_url }}'>{% if edit_link_label %}{{ edit_link_label }}{% else %}Edit{% endif %}</a>
+            </td>
+          {% endif %}
+          {% if show_filter_link %}
+            <td>
+              <a href='{% if form.instance.pk != None %}{% url "filter-update" filter_target="qi" target_id=form.instance.pk %}{% endif %}'>{% if form.instance.pk != None %}{% if edit_link_label %}{{ edit_link_label }}{% else %}Item Filter{% endif %}{% endif %}</a>
+            </td>
+          {% endif %}
+
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+
+    {% if inline_formset.formset.extra > 0 %}
+      <button class='inline-add-item-btn sq-btn'>+ Add another</button>
+    {% endif %}
+
+    {% for form in inline_formset.formset.forms %}
+    {% empty %}
+      <div class='sq-empty-table-msg'>No associated objects found.</div>
+    {% endfor %}
+
+  </div>
+</div>

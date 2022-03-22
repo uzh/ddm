@@ -1,0 +1,48 @@
+{% extends 'ddm/admin/base.html' %}
+{% load i18n admin_urls static admin_modify ddm_tags %}
+
+{% block form %}
+
+  <form method='post' class='sq-form'>
+    {% csrf_token %}
+    {{ form.media }}
+
+    {% block form_content %}
+      {% if form.errors %}
+        <div class='sq-form-errors'>There were some errors when submitting the form. Please check below for error messages.</div>
+      {% endif %}
+
+      {% if fieldsets %}
+
+        {% for fieldset in fieldsets %}
+          {% include 'ddm/admin/forms/form_fieldset.html' %}
+        {% endfor %}
+
+      {% else %}
+
+        {% for hidden in form.hidden_fields %}
+          {{ hidden }}
+        {% endfor %}
+
+        {% for error in form.non_field_errors %}
+          <li><strong>{{ error|escape }}</strong></li>
+        {% endfor %}
+
+        {% for field in form.visible_fields %}
+          {% include 'ddm/admin/forms/form_field.html' %}
+        {% endfor %}
+
+      {% endif %}
+
+      {% for inline_formset in inline_formsets %}
+        {% include 'ddm/admin/forms/inline_form.html' %}
+      {% endfor %}
+
+    {% endblock form_content %}
+
+    {% block form_submit %}
+      <input type='submit' class='sq-btn sq-btn-main' value='Save'>
+    {% endblock form_submit%}
+  </form>
+
+{% endblock %}

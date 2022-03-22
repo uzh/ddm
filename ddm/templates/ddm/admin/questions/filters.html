@@ -1,0 +1,77 @@
+{% extends "ddm/admin/base.html" %}
+{% load i18n admin_urls static admin_modify %}
+
+{% block side_nav %}
+  {% include 'ddm/admin/navigation/side_navigation/level_1_questionnaires.html' %}
+  {% include 'ddm/admin/navigation/side_navigation/level_2_questionnaire.html' %}
+  {% include 'ddm/admin/navigation/side_navigation/level_3_page.html' %}
+  {% include 'ddm/admin/navigation/side_navigation/level_4_question.html' %}
+{% endblock side_nav %}
+
+{% block page_title %}
+  {% if question_item %}
+    Update Item-Level Filter &nbsp;|&nbsp; Item "{{ question_item.variable_name }}"
+  {% else %}
+    Update Question-Level Filter
+  {% endif %}
+{% endblock page_title %}
+
+{% block page_subtitle %}
+  {{ question.name }}
+{% endblock page_subtitle %}
+
+{% block content %}
+  <div id="content-main">
+	  <form method="POST" class="sq-form">
+		  {% csrf_token %}
+		  {{ formset.management_form }}
+		  <div class="sq-form-fieldset-title">Filter Conditions</div>
+		  <table class="table table-sm sq-table">
+        <thead>
+        {% for form in formset.forms %}
+          {% if forloop.first %}
+            {% for field in form.visible_fields %}
+              <th>{{ field.label }}</th>
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+        </thead>
+        <tbody>
+        {% for form in formset.forms %}
+          <tr>
+            {% for field in form.visible_fields %}
+              <td {% if forloop.first %}class="sq-filter-td-first"{% endif %}>{{ field }}</td>
+            {% endfor %}
+            {% for field in form.hidden_fields %}
+              {{ field }}
+            {% endfor %}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% if formset.non_form_errors %}
+        {{ formset.non_form_errors }}
+      {% endif %}
+
+      <div>
+        <b>Filter Sequence</b>
+        <p>
+          Here you can combine the individual filters defined further up and construct the actual filter logic that will be checked by the application.<br/>
+          For this, you first have to decide, if the question/question item should be shown or hidden if the filter sequence evaluates to be true.<br/>
+          To define the actual logic, you can make use of the two logical operators AND() and OR(). The individual filter conditions can be referenced by the filter name.
+        </p>
+        <p>
+          <b>Example:</b> If we want both filter conditions 'f_1' and 'f_2' to be true in order to show the question/question item, we would first set the logic to 'show if' and define the sequence as follows: 'AND(f_1, f_2)'
+        </p>
+      </div>
+      {{ form.non_form_errors }}
+
+      {% for field in filter_sequence_form %}
+        {% include "ddm/admin/forms/form_field.html" %}
+      {% endfor %}
+
+      <button type="submit" class="sq-btn">Save</button>
+    </form>
+  </div>
+
+{% endblock %}

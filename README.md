@@ -29,24 +29,28 @@ In this new file, you can optionally replace the placeholders with your local cr
 ### Commands
 Through this setup, the regular django commands are now available:
 
-- **Run Development Server** \
+**Run Development Server**
+
 To start the development server use the following command:
 ```
 (venv) SomePath/ddm> cd test_project
 (venv) SomePath/ddm/test_project> manage.py runserver
 ```
-- **Create Database Migrations** \
+**Create Database Migrations**
+
 To create new migrations based on the changes made to the models, run: *(note that this is only necessary, if you are actively developing, NOT if you are just checking out the project)*
 ```
 (venv) SomePath/ddm/test_project> manage.py makemigrations
 ```
 
-- **Apply migrations** \
+**Apply migrations**
+
 To apply existing migrations to your local database, run:[^2]
 ```
 (venv) SomePath/ddm/test_project> manage.py migrate
 ```
-- **Run Unit Tests** \
+**Run Unit Tests**
+
 To run unit tests, use:
 ```
 (venv) SomePath/ddm/test_project> manage.py test ddm

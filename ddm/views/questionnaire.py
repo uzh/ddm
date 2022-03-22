@@ -63,7 +63,7 @@ class QuestionnaireDisplay(ProjectBaseView):
         try:
             post_data = json.loads(response['post_data'])
         except MultiValueDictKeyError:
-            logger.error(f'POST did not contain expected field "post_data".')
+            logger.error(f'POST did not contain expected key "post_data".')
             return
 
         for question_id in post_data:

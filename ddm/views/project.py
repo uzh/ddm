@@ -137,3 +137,6 @@ class ProjectEntry(ProjectBaseView):
 class ProjectExit(ProjectBaseView):
     template_name = 'ddm/public/end.html'
     view_name = 'project-exit'
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)

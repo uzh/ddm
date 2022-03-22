@@ -137,9 +137,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# Custom files
-/test_project/test_config.json
-
 # Local sqlite database
 /test_project/ddm_test_env
 

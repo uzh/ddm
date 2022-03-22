@@ -1,4 +1,4 @@
-# This workflow will first test and if successful upload a Python Package using Twine when a push is tagged with v*.
+# This workflow will first test and if successful upload a Python Package using Twine.
 
 name: Upload Python Package
 

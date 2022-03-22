@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.shortcuts import reverse, redirect
 from django.utils import timezone
+from django.utils.datastructures import MultiValueDictKeyError
 
 from ddm.models import QuestionBase, QuestionnaireResponse, DataDonation
 from ddm.views import ProjectBaseView
@@ -17,6 +18,7 @@ class QuestionnaireDisplay(ProjectBaseView):
     view_name = 'questionnaire'
 
     def render_to_response(self, context, **response_kwargs):
+        # Check if there are any questions to display.
         if not len(context['q_config']) > 2:
             self.project_session['steps'][self.view_name]['state'] = 'completed'
             curr_step = self.steps.index(self.view_name)
@@ -52,14 +54,19 @@ class QuestionnaireDisplay(ProjectBaseView):
 
     def post(self, request, *args, **kwargs):
         super().post(request, **kwargs)
-        self.process_response(request.POST['post_data'])
-        redirect_url = reverse(self.steps[self.current_step],
+        self.process_response(request.POST)
+        redirect_url = reverse(self.steps[self.current_step + 1],
                                kwargs={'slug': self.object.slug})
         return HttpResponseRedirect(redirect_url)
 
     def process_response(self, response):
-        response = json.loads(response)
-        for question_id in response:
+        try:
+            post_data = json.loads(response['post_data'])
+        except MultiValueDictKeyError:
+            logger.error(f'POST did not contain expected field "post_data".')
+            return
+
+        for question_id in post_data:
             try:
                 question = QuestionBase.objects.get(pk=int(question_id))
             except QuestionBase.doesNotExist:

@@ -9,10 +9,13 @@ from django.conf import settings
 from django.core.management import execute_from_command_line
 
 
-sys.path.append('..')
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DDM_DIR = os.path.join(PROJECT_DIR, 'ddm')
 VUE_FRONTEND_DIR = os.path.join(PROJECT_DIR, 'vue_frontend')
+
+sys.path.append('..')
+sys.path.append(PROJECT_DIR)
+sys.path.append(DDM_DIR)
 
 # Import local test settings.
 test_config = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_config.json')))

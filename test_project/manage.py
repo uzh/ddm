@@ -8,14 +8,14 @@ import sys
 from django.conf import settings
 from django.core.management import execute_from_command_line
 
-# Import local test settings.
-test_config = json.load(open(os.path.join(os.path.abspath(__file__), 'test_config.json')))
 
 sys.path.append('..')
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DDM_DIR = os.path.join(PROJECT_DIR, 'ddm')
 VUE_FRONTEND_DIR = os.path.join(PROJECT_DIR, 'vue_frontend')
 
+# Import local test settings.
+test_config = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_config.json')))
 
 settings.configure(
     INSTALLED_APPS=[

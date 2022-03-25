@@ -7,7 +7,7 @@ on:
       - v*
 
 jobs:
-  build:
+  build-test:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
@@ -30,14 +30,14 @@ jobs:
         python test_project/manage.py test ddm
 
   merge-dev:
-    needs: build
+    needs: build-test
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: everlytic/branch-merge@1.1.2
         with:
-          github_token: ${{ github.token }}
+          github_token: ${{ secrets.PERSONAL_WORKFLOW_TOKEN }}
           source_ref: 'develop'
           target_branch: 'main'
           commit_message_template: '[Automated] Merged {source_ref} into target {target_branch}'

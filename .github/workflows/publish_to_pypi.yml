@@ -1,3 +1,5 @@
+# Runs a build test every time a commit is pushed to branch 'main'.
+
 name: Test and Publish Python Package
 
 on:

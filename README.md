@@ -4,8 +4,9 @@ Currently under development.
 ## Install DDM in Your own Project
 
 1. Add "ddm" to your INSTALLED_APPS setting: `INSTALLED_APPS = [..., 'ddm',]`
-2. Include the ddm URLconf in your projects urls.py: `url(r'^ddm/', include('ddm.urls')),`.
-3. Run `python manage.py migrate` to create the ddm models.
+2. Add "ckeditor" to your INSTALLED_APPS setting: `INSTALLED_APPS = [..., 'ddm', 'ckeditor']`. You might have to install `django-ckeditor` for this to work.
+3. Include the ddm URLconf in your projects urls.py: `url(r'^ddm/', include('ddm.urls')),`.
+4. Run `python manage.py migrate` to create the ddm models.
 
 
 ## Development Guidelines

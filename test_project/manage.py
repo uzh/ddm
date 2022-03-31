@@ -19,6 +19,29 @@ sys.path.append(DDM_DIR)
 # Import local test settings.
 test_config = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_config.json')))
 
+# Define Database Configuration.
+
+if os.environ.get('DB') in ['mysql', 'postgres']:
+    DB_CONFIG = {
+        'default': {
+            'ENGINE': os.environ.get('DB_ENGINE'),
+            'NAME': os.environ.get('DB_NAME'),
+            'USER': os.environ.get('DB_USER'),
+            'PASSWORD': os.environ.get('DB_PASSWORD'),
+            'HOST': 'localhost',
+            'PORT': os.environ.get('DB_PORT')
+        }
+    }
+else:
+    DB_CONFIG = {
+        'default': {
+            'ENGINE': test_config['DB_ENGINE'],
+            'NAME': test_config['DB_NAME'],
+        }
+    }
+
+
+# Initialize Settings.
 settings.configure(
     INSTALLED_APPS=[
         'django.contrib.admin',
@@ -64,12 +87,7 @@ settings.configure(
     SESSION_SAVE_EVERY_REQUEST=True,
     ALLOWED_HOSTS=['localhost', '127.0.0.1'],
     ROOT_URLCONF='urls',
-    DATABASES={
-        'default': {
-            'ENGINE': test_config['DB_ENGINE'],
-            'NAME': test_config['DB_NAME'],
-        }
-    },
+    DATABASES=DB_CONFIG,
     DEBUG=True,
     SECRET_KEY=test_config['SECRET_KEY'],
     SITE_ID=1,
@@ -89,20 +107,6 @@ settings.configure(
         }
     },
 )
-
-if os.environ.get('DB') in ['mysql', 'postgres']:
-    settings.configure(
-        DATABASES={
-            'default': {
-                'ENGINE': os.environ.get('DB_ENGINE'),
-                'NAME': os.environ.get('DB_NAME'),
-                'USER': os.environ.get('DB_USER'),
-                'PASSWORD': os.environ.get('DB_PASSWORD'),
-                'HOST': 'localhost',
-                'PORT': os.environ.get('DB_PORT')
-            }
-        }
-    )
 
 django.setup()
 

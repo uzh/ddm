@@ -4,7 +4,7 @@ from ckeditor.fields import RichTextField
 
 class DonationProject(models.Model):
     name = models.CharField(
-        max_length=30,
+        max_length=50,
     )
     slug = models.SlugField(
         verbose_name='External Project Slug',

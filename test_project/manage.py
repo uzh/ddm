@@ -28,7 +28,7 @@ if os.environ.get('DB') in ['mysql', 'postgres']:
             'NAME': os.environ.get('DB_NAME'),
             'USER': os.environ.get('DB_USER'),
             'PASSWORD': os.environ.get('DB_PASSWORD'),
-            'HOST': 'localhost',
+            'HOST': '127.0.0.1',
             'PORT': os.environ.get('DB_PORT')
         }
     }

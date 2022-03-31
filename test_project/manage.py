@@ -90,6 +90,20 @@ settings.configure(
     },
 )
 
+if os.environ.get('DB') in ['mysql', 'postgres']:
+    settings.configure(
+        DATABASES={
+            'default': {
+                'ENGINE': os.environ.get('DB_ENGINE'),
+                'NAME': os.environ.get('DB_NAME'),
+                'USER': os.environ.get('DB_USER'),
+                'PASSWORD': os.environ.get('DB_PASSWORD'),
+                'HOST': 'localhost',
+                'PORT': os.environ.get('DB_PORT')
+            }
+        }
+    )
+
 django.setup()
 
 execute_from_command_line(sys.argv)

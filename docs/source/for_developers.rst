@@ -91,6 +91,60 @@ and webpack-stats.json will be updated to reflect this new configuration.
 The vue builds should end up in the static folder of the django module (ddm/static).
 
 
+CI/CD
+=====
+
+This project uses github actions for automated testing and CI tasks.
+
+
+Actions
+-------
+
+A **push to develop** triggers build tests for the following configurations:
+
+- Python: [3.6, 3.7, 3.8]
+- Database: [sqlite, postgres, mysql]
+
+A **tag (vX.X.X) push to develop** triggers build tests (see above). If the tests are successful
+develop is automatically merged into main.
+
+A **push to main** triggers build tests and if the tests are successful, automatically
+bumps the version number (patch number) and builds a new PyPi package.
+The tests have the same configurations as on develop.
+
+A **pull request to main created by dependabot** will automatically update the
+affected dependencies and merge into main.
+
+
+Pipeline
+--------
+
+A **tag ("vX.X.X") push to develop** triggers the following pipeline:
+
+1. Run tests on develop.
+2. Merge develop into main.
+3. Run tests on main.
+4. Create PyPi package.
+
+A **pull request to main created by dependabot** triggers the following pipeline:
+
+1. Update dependencies.
+2. Merge into main.
+3. Run tests on main.
+4. Create PyPi package.
+
+
+Release
+-------
+
+A new **release** is created manually and includes:
+
+- Bumping the minor or major part of the version.
+- Updating setup.cfg.
+
+
+
+
 .. rubric:: Notes
 
 .. [1] If you are running a version of Python < 3.9, you might have to manually enable the JSON1 extension on SQLite for the migration to work properly. For an explanation on how to do this visit https://code.djangoproject.com/wiki/JSON1Extension.

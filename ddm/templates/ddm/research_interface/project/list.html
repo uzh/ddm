@@ -1,0 +1,31 @@
+{% extends 'ddm/research_interface/base.html' %}
+
+{% block main %}
+<h1>Donation Projects</h1>
+
+<div>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Slug</th>
+            <th></th>
+        </tr>
+        {% for project in object_list %}
+        <tr>
+            <td>{{ project.name }}</td>
+            <td>{{ project.slug }}</td>
+            <td><a href="{{ project.get_absolute_url }}">Show Project</a></td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td>No projects found.</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div>
+    <a href="{% url 'project-create' %}"><b>+</b>&nbsp;&nbsp;Create New Project</a>
+</div>
+
+{% endblock %}

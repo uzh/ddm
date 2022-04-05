@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from ckeditor.fields import RichTextField
 
 
@@ -14,6 +15,9 @@ class DonationProject(models.Model):
     outro_text = RichTextField(null=True, blank=True)
 
     # owner = None  # TODO: Add FK to Owner.
+
+    def get_absolute_url(self):
+        return reverse('project-detail', args=[str(self.id)])
 
 
 class Participant(models.Model):

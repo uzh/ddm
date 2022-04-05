@@ -6,3 +6,4 @@ from .questions import (
     QuestionBase, QuestionItem, SingleChoiceQuestion, MultiChoiceQuestion,
     OpenQuestion, MatrixQuestion, SemanticDifferential, Transition, ScalePoint
 )
+from .encrypted_field import Encryption

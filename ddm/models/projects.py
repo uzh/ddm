@@ -13,6 +13,8 @@ class DonationProject(models.Model):
     intro_text = RichTextField(null=True, blank=True)
     outro_text = RichTextField(null=True, blank=True)
 
+    # public_key = models.TextField()
+
     # owner = None  # TODO: Add FK to Owner.
 
 

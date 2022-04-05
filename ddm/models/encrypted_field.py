@@ -1,53 +1,50 @@
 from django.db.models import TextField
 from django.conf import settings
-from django.core import signing
-from base64 import b64decode, b64encode
+
+from Crypto.Cipher import PKCS1_OAEP
+from Crypto.Hash import HMAC
+from Crypto.PublicKey import RSA
+from struct import pack
+
+import binascii
+import base64
 import json
 
 
-class EncryptedField(TextField):
-    class JSONSerializer:
-        def dumps(self, obj):
-            return json.dumps(obj, separators=(",", ":")).encode("latin-1")
+class Encryption:
 
-        def loads(self, data):
-            return json.loads(data.decode("latin-1"))
+    class PRNG(object):
+        def __init__(self, seed):
+            self.index = 0
+            self.seed = seed
+            self.buffer = b""
 
-    """ This Field encrypts data using symmetric encryption and stores the output as BASE64 in a TextField """
+        def __call__(self, n):
+            while len(self.buffer) < n:
+                self.buffer += HMAC.new(self.seed + pack("<I", self.index)).digest()
+                self.index += 1
+            result, self.buffer = self.buffer[:n], self.buffer[n:]
+            return result
 
-    description = "Store data in an encrypted field"  
-
-    def __init__(self, *args, **kwargs):
-        """
-        Besides the 'regular' TextField options, there are 3 things to note:
-        1st: blank and null are True by default
-        2nd: if a 'secret' is specified it will be used for encryption, otherwise the settings SECRET_KEY
-        3rd: if a 'salt' is specified it will be used for encryption, otherwise system default
-        """
-        kwargs['blank'] = True
-        kwargs['null'] = True
-        if 'salt' in kwargs:
-            self.signer = signing.TimestampSigner(salt=kwargs['salt']) if 'secret' not in kwargs or not kwargs['secret'] else signing.TimestampSigner(key=kwargs['secret'], salt=kwargs['salt'])
+    def __init__(self, secret, salt, public_key=None):
+        self.counter = 0
+        if public_key:
+            self.public_key = public_key
         else:
-            self.signer = signing.TimestampSigner() if 'secret' not in kwargs or not kwargs['secret'] else signing.TimestampSigner(key=kwargs['secret'])
-        super().__init__(*args, **kwargs)  
+            seed_128 = HMAC.new(bytes(secret, 'utf-8') + bytes(salt, 'utf-8')).digest()
+            self.rsa = RSA.generate(2048, randfunc=Encryption.PRNG(seed_128))
+            self.public_key = self.rsa.publickey().exportKey()
 
-    def deconstruct(self):
-        name, path, args, kwargs = super().deconstruct()
-        del kwargs['blank']
-        del kwargs['null']
-        if 'secret' in kwargs:
-            del kwargs['secret']
-        if 'salt' in kwargs:
-            del kwargs['salt']
-        del self.signer
-        return name, path, args, kwargs  
-    
-    def get_prep_value(self, value):
-        return b64encode(self.signer.sign_object(value, serializer=self.JSONSerializer, compress=True))
-    
-    def from_db_value(self, value, expression, connection):
-        return b64decode(self.signer.unsign_object(value, serializer=self.JSONSerializer, compress=True)) if value else None
-    
-    def to_python(self, value):
-        return b64decode(self.signer.unsign_object(value, serializer=self.JSONSerializer, compress=True)) if value else None
+    def encrypt(self, value):
+        """ save encrypted data to the database, either use a supplied 'public_key' or generate the material dynamically  """
+        rsa_material = RSA.importKey(self.public_key)
+        cipher = PKCS1_OAEP.new(rsa_material)
+        return base64.b64encode(cipher.encrypt(bytes(json.dumps(value), 'utf-8')))
+
+    def decrypt(self, value):
+        """ fetch encrypted data from the database, try to decode the stored data, None if decryption fails """
+        cipher = PKCS1_OAEP.new(self.rsa)
+        try:
+            return json.loads(cipher.decrypt(base64.b64decode(value)).decode('utf-8'))
+        except binascii.Error:
+            return None

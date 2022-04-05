@@ -1,13 +1,11 @@
 from django.test import TestCase
-from ddm.models import EncryptedField
+from ddm.models import Encryption
 
 
 class TestEncryptedFieldIsolated(TestCase):
-    def test_get_prep_value(self):
-        pass
-
-    def test_from_db_value(self):
-        pass
-
-    def test_to_python(self):
-        pass
+    def test_encrypt_decrypt(self):
+        text = 'teststring'
+        enc = Encryption(secret="foo", salt="bar")
+        enc_text = enc.encrypt(text)
+        self.assertNotEqual(text, enc_text)
+        self.assertEqual(text, enc.decrypt(enc_text))

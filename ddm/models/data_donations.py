@@ -5,6 +5,7 @@ from django.utils import timezone
 
 from ddm.models import DonationProject, Participant
 
+from datetime import datetime
 import logging
 logger = logging.getLogger(__name__)
 
@@ -134,7 +135,8 @@ class DataDonation(models.Model):
     time = models.DateTimeField()
     consent = models.BooleanField(default=False)
     status = models.JSONField()
-    data = models.JSONField()
+
+    data = models.TextField()
 
 
 class DonationInstruction(models.Model):

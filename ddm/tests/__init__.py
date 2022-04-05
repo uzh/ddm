@@ -1,0 +1,1 @@
+from .encrypted_field import TestEncryptedFieldIsolated

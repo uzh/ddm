@@ -1,1 +1,1 @@
-from .encrypted_field import TestEncryptedFieldIsolated
+from .encryption import TestEncryptedFieldIsolated, TestModelEncryption

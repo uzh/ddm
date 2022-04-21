@@ -1,5 +1,9 @@
-from django.db import models
 from ckeditor.fields import RichTextField
+from django.conf import settings
+from django.db import models
+from django.utils import timezone
+
+from ddm.models import Encryption
 
 
 class DonationProject(models.Model):
@@ -13,7 +17,8 @@ class DonationProject(models.Model):
     intro_text = RichTextField(null=True, blank=True)
     outro_text = RichTextField(null=True, blank=True)
 
-    # public_key = models.TextField()
+    date_created = models.DateTimeField(default=timezone.now)
+    public_key = models.TextField(null=True, default=None)
 
     # owner = None  # TODO: Add FK to Owner.
 
@@ -40,6 +45,21 @@ class QuestionnaireResponse(models.Model):
         Participant,
         on_delete=models.CASCADE
     )
+    time_submitted = models.DateTimeField(default=timezone.now)
+    data = models.TextField()
 
-    time_submitted = models.DateTimeField()
-    data = models.JSONField()
+    def save(self, *args, **kwargs):
+        self.data = Encryption(
+            secret=settings.SECRET_KEY,
+            salt=str(self.time_submitted),
+            public_key=self.project.public_key
+        ).encrypt(self.data)
+        super().save(*args, **kwargs)
+
+    def get_decrypted_data(self):
+        decrypted_data = Encryption(
+            secret=settings.SECRET_KEY,
+            salt=str(self.time_submitted),
+            public_key=self.project.public_key
+        ).decrypt(self.data)
+        return decrypted_data

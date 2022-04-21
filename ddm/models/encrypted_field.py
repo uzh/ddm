@@ -36,13 +36,19 @@ class Encryption:
             self.public_key = self.rsa.publickey().exportKey()
 
     def encrypt(self, value):
-        """ save encrypted data to the database, either use a supplied 'public_key' or generate the material dynamically  """
+        """
+        Save encrypted data to the database, either use a supplied 'public_key'
+        or generate the material dynamically.
+        """
         rsa_material = RSA.importKey(self.public_key)
         cipher = PKCS1_OAEP.new(rsa_material)
         return base64.b64encode(cipher.encrypt(bytes(json.dumps(value), 'utf-8')))
 
     def decrypt(self, value):
-        """ fetch encrypted data from the database, try to decode the stored data, None if decryption fails """
+        """
+        Fetch encrypted data from the database, try to decode the stored data,
+        None if decryption fails.
+        """
         cipher = PKCS1_OAEP.new(self.rsa)
         try:
             return json.loads(cipher.decrypt(base64.b64decode(value)).decode('utf-8'))

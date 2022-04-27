@@ -11,10 +11,13 @@ class DonationProject(models.Model):
         verbose_name='External Project Slug',
         unique=True
     )
-    intro_text = RichTextField(null=True, blank=True)
-    outro_text = RichTextField(null=True, blank=True)
+    intro_text = RichTextField(null=True, blank=True, verbose_name="Welcome Page Text")
+    outro_text = RichTextField(null=True, blank=True, verbose_name="End Page Text")
 
     # owner = None  # TODO: Add FK to Owner.
+
+    def __str__(self):
+        return self.name
 
     def get_absolute_url(self):
         return reverse('project-detail', args=[str(self.id)])

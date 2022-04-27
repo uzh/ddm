@@ -1,0 +1,38 @@
+{% extends 'ddm/project_admin/base.html' %}
+
+{% block page_title %}Donation Instructions{% endblock %}
+
+{% block main_heading %}Instructions for {{ blueprint_type }} "{{ blueprint.name }}"{% endblock %}
+
+{% block main_body %}
+<p>Number of pages: {{ instructions | length }}</p>
+
+{% for page in instructions %}
+<table class="table mb-4">
+  <tr>
+    <td style="width: 16.66%">
+      <h4>Page {{ page.index }}</h4>
+      <a href="{% url 'instruction-edit' blueprint.project.pk blueprint.get_slug blueprint.pk page.pk %}">Edit instruction page</a><br>
+      <a href="{% url 'instruction-delete' blueprint.project.pk blueprint.get_slug blueprint.pk page.pk %}">Delete instruction page</a>
+    </td>
+    <td>
+      <b>Instruction Text:</b>
+      {{ page.text | safe }}
+    </td>
+  </tr>
+</table>
+
+{% endfor %}
+
+<div>
+  <p><a class="btn btn-secondary" href="{% url 'instruction-create' blueprint.project.pk blueprint.get_slug blueprint.pk %}"><b>+</b>&nbsp;&nbsp;Add instruction page</a></p>
+</div>
+
+{% endblock %}
+
+{% block breadcrumbs %}
+Back to:
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' project_pk %}">Project Cockpit</a> /
+<a href="{% url 'blueprint-list' blueprint.project.pk %}">Donation Blueprints</a>
+{% endblock %}

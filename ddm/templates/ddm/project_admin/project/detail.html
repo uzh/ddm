@@ -1,0 +1,95 @@
+{% extends 'ddm/project_admin/base.html' %}
+
+{% block page_title %}Project Overview{% endblock %}
+
+{% block main_heading %}{{ object.name }}: Cockpit{% endblock %}
+
+{% block main_body %}
+<hr>
+<div class="container mb-4">
+  <h2>Details</h2>
+  <table class="table table-borderless">
+    <tr>
+      <td>Name:</td>
+      <td>{{ object.name }}</td>
+    </tr>
+    <tr>
+      <td>Slug:</td>
+      <td>{{ object.slug }}</td>
+    </tr>
+    <tr>
+      <td>Public Access:</td>
+      <td><a href="{% url 'project-entry' object.slug %}">{{ request.scheme }}://{{ request.get_host }}{% url 'project-entry' object.slug %}</a></td>
+    </tr>
+  </table>
+  <p><a class="btn btn-secondary" href="{% url 'project-edit' object.pk %}">Edit Project Details</a></p>
+</div>
+
+<hr>
+<div class="container mb-4">
+  <h2>Project Setup</h2>
+  <div class="container mt-4 mb-5">
+    <div class="row d-flex align-items-stretch">
+      <a class="card-link btn btn-secondary" href="{% url 'welcome-page-edit' object.pk %}">
+        <div class="project-setup-card">
+          <div><h3 class="text-center">Welcome Page</h3></div>
+          <div><i class="bi bi-door-open fs-1"></i></div>
+        </div>
+      </a>
+      <div class="project-setup-filler">
+        <i class="bi bi-arrow-right-short fs-1"></i>
+      </div>
+      <a class="card-link btn btn-secondary" href="{% url 'blueprint-list' object.pk %}">
+        <div class="project-setup-card">
+          <h3 class="text-center">Data Donation</h3>
+          <i class="bi bi-box2-heart fs-1"></i>
+        </div>
+      </a>
+      <div class="project-setup-filler">
+        <i class="bi bi-arrow-right-short fs-1"></i>
+      </div>
+      <a class="card-link btn btn-secondary" href="{% url 'questionnaire-overview' object.pk %}">
+        <div class="project-setup-card">
+          <h3 class="text-center">Questionnaire</h3>
+          <i class="bi bi-pencil-square fs-1"></i>
+        </div>
+      </a>
+      <div class="project-setup-filler">
+        <i class="bi bi-arrow-right-short fs-1"></i>
+      </div>
+      <a class="card-link btn btn-secondary" href="{% url 'end-page-edit' object.pk %}">
+        <div class="project-setup-card">
+          <h3 class="text-center">End Page</h3>
+          <i class="bi bi-door-closed fs-1"></i>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<hr>
+<div class="container mb-4">
+  <h2>Data Center</h2>
+  <h4>Statistics</h4>
+  <div>
+    <p>Show some statistics</p>
+  </div>
+  <h4>Download Section</h4>
+  <div>
+    <p>Provide option/instructions to download the collected data.</p>
+  </div>
+</div>
+
+<hr>
+<div class="container mb-4">
+  <h2>Danger Zone</h2>
+  <p class="pt-4"><a class="btn-a btn-danger" href="{% url 'project-delete' object.pk %}">Delete Project</a></p>
+</div>
+
+{% endblock %}
+
+
+{% block breadcrumbs %}
+Back to:
+<a href="{% url 'project-list' %}">Projects</a>
+{% endblock %}

@@ -4,9 +4,15 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 2px solid grey;
-    border-radius: .25rem;
     cursor: pointer;
+}
+
+.card-link {
+    display: flex;
+    flex: 1 0 0%;
+    flex-direction: column;
+    display: block;
+    text-decoration: None;
 }
 
 .project-setup-filler {

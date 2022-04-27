@@ -1,0 +1,14 @@
+{% extends 'ddm/project_admin/generic/page_with_form.html' %}
+
+{% block page_title %}Create Instruction Page for {{ blueprint_type }} "{{ blueprint.name }}"{% endblock %}
+
+{% block main_heading %}Create New Donation Blueprint{% endblock %}
+
+{% block submit_label %}Create instruction page{% endblock %}
+
+{% block breadcrumbs %}
+Back to:
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' blueprint.project.pk %}">Project Cockpit</a> /
+<a href="{% url 'blueprint-list' blueprint.project.pk %}">Donation Blueprints</a>
+{% endblock %}

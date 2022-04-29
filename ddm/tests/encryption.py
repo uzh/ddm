@@ -32,6 +32,11 @@ class TestModelEncryption(TestCase):
             project=cls.project,
             start_time=timezone.now()
         )
+        cls.custom_project = DonationProject.objects.create(
+            name='Test Project Custom',
+            slug='test-project-custom',
+            secret='test1234'
+        )
 
     def test_data_donation_encryption_default(self):
         raw_data = '["somedata": "somevalue"]'
@@ -55,3 +60,26 @@ class TestModelEncryption(TestCase):
         )
         self.assertNotEqual(raw_data, qr.data)
         self.assertEqual(raw_data, qr.get_decrypted_data())
+
+    def test_data_donation_encryption_custom(self):
+        raw_data = '["somedata": "somevalue"]'
+        dd = DataDonation.objects.create(
+            project=self.custom_project,
+            blueprint=self.blueprint,
+            participant=self.participant,
+            consent=True,
+            status='some status',
+            data=raw_data,
+        )
+        self.assertNotEqual(raw_data, dd.data)
+        self.assertEqual(raw_data, dd.get_decrypted_data(secret='test1234'))
+
+    def test_questionnaire_response_encryption_custom(self):
+        raw_data = '["somedata": "somevalue"]'
+        qr = QuestionnaireResponse.objects.create(
+            project=self.custom_project,
+            participant=self.participant,
+            data=raw_data
+        )
+        self.assertNotEqual(raw_data, qr.data)
+        self.assertEqual(raw_data, qr.get_decrypted_data(secret='test1234'))

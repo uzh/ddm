@@ -138,18 +138,21 @@ class DataDonation(models.Model):
 
     def save(self, *args, **kwargs):
         self.data = Encryption(
-            secret=settings.SECRET_KEY,
-            salt=str(self.time_submitted),
             public_key=self.project.public_key
         ).encrypt(self.data)
         super().save(*args, **kwargs)
 
-    def get_decrypted_data(self):
-        decrypted_data = Encryption(
-            secret=settings.SECRET_KEY,
-            salt=str(self.time_submitted),
-            public_key=self.project.public_key
-        ).decrypt(self.data)
+    def get_decrypted_data(self, secret=None):
+        if not secret:
+            decrypted_data = Encryption(
+                secret=settings.SECRET_KEY,
+                salt=str(self.project.date_created)
+            ).decrypt(self.data)
+        else:
+            decrypted_data = Encryption(
+                secret=secret,
+                salt=str(self.project.date_created)
+            ).decrypt(self.data)
         return decrypted_data
 
 

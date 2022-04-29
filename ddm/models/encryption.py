@@ -26,7 +26,7 @@ class Encryption:
             result, self.buffer = self.buffer[:n], self.buffer[n:]
             return result
 
-    def __init__(self, secret, salt, public_key=None):
+    def __init__(self, secret=None, salt=None, public_key=None):
         self.counter = 0
         if public_key:
             self.public_key = public_key

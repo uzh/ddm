@@ -1,9 +1,10 @@
 from ckeditor.fields import RichTextField
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
-from ddm.models import DonationProject, Participant
+from ddm.models import DonationProject, Participant, Encryption
 
 import logging
 logger = logging.getLogger(__name__)
@@ -109,7 +110,6 @@ class DonationBlueprint(models.Model):
             project=self.project,
             blueprint=self,
             participant=participant,
-            time=timezone.now().isoformat(),
             consent=data['consent'],
             status=data['status'],
             data=data['extracted_data']
@@ -131,10 +131,29 @@ class DataDonation(models.Model):
         Participant,
         on_delete=models.CASCADE
     )
-    time = models.DateTimeField()
+    time_submitted = models.DateTimeField(default=timezone.now)
     consent = models.BooleanField(default=False)
     status = models.JSONField()
-    data = models.JSONField()
+    data = models.TextField()
+
+    def save(self, *args, **kwargs):
+        self.data = Encryption(
+            public_key=self.project.public_key
+        ).encrypt(self.data)
+        super().save(*args, **kwargs)
+
+    def get_decrypted_data(self, secret=None):
+        if not secret:
+            decrypted_data = Encryption(
+                secret=settings.SECRET_KEY,
+                salt=str(self.project.date_created)
+            ).decrypt(self.data)
+        else:
+            decrypted_data = Encryption(
+                secret=secret,
+                salt=str(self.project.date_created)
+            ).decrypt(self.data)
+        return decrypted_data
 
 
 class DonationInstruction(models.Model):

@@ -63,7 +63,7 @@ class BaseViewsTestCase(TestCase):
             project=self.project,
             blueprint=self.dbp,
             participant=participant,
-            time=timezone.now(),
+            time_submitted=timezone.now(),
             consent=True,
             status='{}',
             data='{}'

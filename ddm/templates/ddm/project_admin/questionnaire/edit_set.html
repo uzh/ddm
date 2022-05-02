@@ -1,0 +1,51 @@
+{% extends 'ddm/project_admin/generic/page_with_form.html' %}
+
+{% block page_title %}Edit {{ context_title }}{% endblock %}
+
+{% block main_heading %}Edit {{ context_title }} for "{{ question.name }}"{% endblock %}
+
+{% block main_form %}
+<form method="post">
+  {% csrf_token %}
+  <table class="table mt-4">
+    {{ formset.management_form }}
+
+    {% for form in formset.forms %}
+
+    {% if forloop.first %}
+    <thead>
+    <tr>
+      {% for field in form.visible_fields %}<th>{{ field.label }}</th>{% endfor %}
+    </tr>
+    </thead>
+    {% endif %}
+
+    <tbody>
+    <tr>
+      {% for field in form.visible_fields %}
+      <td>
+        {% if forloop.first %}
+        {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+        {% endfor %}
+        {% endif %}
+        {{ field.errors.as_ul }}
+        {{ field }}
+      </td>
+      {% endfor %}
+    </tr>
+    </tbody>
+
+    {% endfor %}
+  </table>
+  <input class="btn btn-secondary" type="submit" value="Update {{ context_title }}">
+</form>
+{% endblock %}
+
+{% block breadcrumbs %}
+Back to:
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' project_pk %}">Project Cockpit</a> /
+<a href="{% url 'questionnaire-overview' project_pk %}">Questionnaire</a> /
+<a href="{% url 'question-edit' project_pk question.question_type question.pk %}">Question</a>
+{% endblock %}

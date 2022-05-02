@@ -1,0 +1,55 @@
+.project-setup-card {
+    display: flex;
+    flex: 1 0 0%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.card-link {
+    display: flex;
+    flex: 1 0 0%;
+    flex-direction: column;
+    display: block;
+    text-decoration: None;
+}
+
+.project-setup-filler {
+    display: flex;
+    flex: 0 0 auto;
+    width: 8.33333333%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-a {
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    border: 1px solid black;
+    border-radius: .25rem;
+}
+.btn-a:hover {
+    background-color: black;
+    color: white;
+}
+.btn-danger {
+    background-color: #e19898 !important;
+    color: darkred !important;
+    border: 1px solid darkred !important;
+}
+.btn-danger:hover {
+    background-color: darkred !important;
+    color: white !important;
+}

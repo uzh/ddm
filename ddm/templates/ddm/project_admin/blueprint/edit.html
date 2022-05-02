@@ -1,0 +1,14 @@
+{% extends 'ddm/project_admin/generic/page_with_form.html' %}
+
+{% block page_title %}Edit Blueprint{% endblock %}
+
+{% block main_heading %}Edit Blueprint "{{ object.name }}"{% endblock %}
+
+{% block submit_label %}Save Blueprint{% endblock %}
+
+{% block breadcrumbs %}
+Back to:
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' project_pk %}">Project Cockpit</a> /
+<a href="{% url 'blueprint-list' project_pk %}">Donation Blueprints</a>
+{% endblock %}

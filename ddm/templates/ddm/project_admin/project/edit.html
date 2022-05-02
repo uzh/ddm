@@ -1,0 +1,13 @@
+{% extends 'ddm/project_admin/generic/page_with_form.html' %}
+
+{% block page_title %}Edit Project{% endblock %}
+
+{% block main_heading %}Edit "{{ object.name }}"{% endblock %}
+
+{% block submit_label %}Update Project{% endblock %}
+
+{% block breadcrumbs %}
+Back to:
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' object.pk %}">Project Cockpit</a>
+{% endblock %}

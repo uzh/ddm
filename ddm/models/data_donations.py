@@ -2,6 +2,7 @@ from ckeditor.fields import RichTextField
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 
 from ddm.models import DonationProject, Participant, Encryption
@@ -16,6 +17,15 @@ class ZippedBlueprint(models.Model):
         DonationProject,
         on_delete=models.CASCADE
     )
+
+    def __str__(self):
+        return self.name
+
+    def get_slug(self):
+        return 'zip-blueprint'
+
+    def get_absolute_url(self):
+        return reverse('zipped-blueprint-edit', args=[str(self.project_id), str(self.id)])
 
     def get_blueprints(self):
         blueprints = DonationBlueprint.objects.filter(zip_blueprint=self)
@@ -40,7 +50,6 @@ class DonationBlueprint(models.Model):
     )
 
     name = models.CharField(max_length=250)
-    instructions = None
 
     class FileFormats(models.TextChoices):
         JSON_FORMAT = 'json'
@@ -52,6 +61,7 @@ class DonationBlueprint(models.Model):
         max_length=10,
         choices=FileFormats.choices,
         default=FileFormats.JSON_FORMAT,
+        verbose_name='Expected File Format'
     )
 
     expected_fields = models.JSONField()
@@ -69,6 +79,15 @@ class DonationBlueprint(models.Model):
         blank=True
     )
 
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('blueprint-edit', args=[str(self.project_id), str(self.id)])
+
+    def get_slug(self):
+        return 'blueprint'
+
     def get_config(self):
         config = {
             'id': self.pk,
@@ -82,6 +101,9 @@ class DonationBlueprint(models.Model):
 
     def get_instructions(self):
         return [{'index': i.index, 'text': i.text} for i in self.donationinstruction_set.all()]
+
+    def get_associated_questions(self):
+        return self.questionbase_set.all()
 
     def process_donation(self, data, participant):
         if self.validate_donation(data):

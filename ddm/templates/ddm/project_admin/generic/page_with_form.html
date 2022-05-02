@@ -1,0 +1,28 @@
+{% extends 'ddm/project_admin/base.html' %}
+
+{% block page_title %}Create {{ object_type }}{% endblock %}
+
+{% block main_heading %}{{ heading }}{% endblock %}
+
+{% block main_body %}
+<div>
+  {% block main_top %}{% endblock %}
+</div>
+
+<div>
+  {% block main_form %}
+  <form method='post'>
+    {% csrf_token %}
+    {{ form.media }}
+    <table class="table table-borderless">{{ form.as_table }}</table>
+    <input class="btn btn-secondary" type="submit" value="{% block submit_label %}Submit Form{% endblock %}">
+  </form>
+  {% endblock %}
+</div>
+
+<div>
+  {% block main_bottom %}{% endblock %}
+</div>
+{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}

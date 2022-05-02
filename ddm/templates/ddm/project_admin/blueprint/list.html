@@ -1,0 +1,82 @@
+{% extends 'ddm/project_admin/base.html' %}
+
+{% block page_title %}Data Donation Setup{% endblock %}
+
+{% block main_heading %}Data Donation Blueprints{% endblock %}
+
+{% block main_body %}
+<h3>Donation Blueprints</h3>
+<div>
+  <table class="table">
+    <tr>
+      <th>Name</th>
+      <th>Assigned to</th>
+      <th>Instructions</th>
+      <th></th>
+      <th></th>
+    </tr>
+    {% for blueprint in donation_blueprints %}
+    <tr>
+      <td>{{ blueprint.name }}</td>
+      <td>{{ blueprint.zip_blueprint }}</td>
+      <td>
+        {% if blueprint.get_instructions %}
+        <a href="{% url 'instruction-overview' blueprint.project.pk 'blueprint' blueprint.pk %}">show instructions</a>
+        {% else %}
+        No instructions – <a href="{% url 'instruction-create' blueprint.project.pk 'blueprint' blueprint.pk %}">create instructions</a>
+        {% endif %}
+      </td>
+      <td><a href="{{ blueprint.get_absolute_url }}">edit blueprint</a></td>
+      <td><a href="{% url 'blueprint-delete' blueprint.project.pk blueprint.pk %}">delete blueprint</a></td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td>No blueprints created yet.</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div>
+  <a class="btn btn-secondary" href="{% url 'blueprint-create' project_pk %}"><b>+</b>&nbsp;&nbsp;Create new blueprint</a>
+</div>
+
+
+<h3 class="mt-5">Zipped Donation Blueprints</h3>
+<div>
+  <table class="table">
+    <tr>
+      <th>Name</th>
+      <th>Instructions</th>
+      <th></th>
+      <th></th>
+    </tr>
+    {% for blueprint in zipped_blueprints %}
+    <tr>
+      <td>{{ blueprint.name }}</td>
+      <td>
+        {% if blueprint.get_instructions %}
+        <a href="{% url 'instruction-overview' blueprint.project.pk 'zip-blueprint' blueprint.pk %}">show instructions</a>
+        {% else %}
+        <a href="{% url 'instruction-create' blueprint.project.pk 'zip-blueprint' blueprint.pk %}">create instructions</a>
+        {% endif %}
+      </td>
+      <td><a href="{{ blueprint.get_absolute_url }}">edit zipped blueprint</a></td>
+      <td><a href="{% url 'zipped-blueprint-delete' blueprint.project.pk blueprint.pk %}">delete blueprint</a></td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td>No zipped blueprints created yet.</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<p><a class="btn btn-secondary" href="{% url 'zipped-blueprint-create' project_pk %}"><b>+</b>&nbsp;&nbsp;Create new zipped blueprint</a></p>
+{% endblock %}
+
+{% block breadcrumbs %}
+Back to:
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' project_pk %}">Project Cockpit</a>
+{% endblock %}

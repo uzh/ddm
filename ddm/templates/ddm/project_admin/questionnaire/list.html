@@ -1,0 +1,77 @@
+{% extends 'ddm/project_admin/base.html' %}
+
+{% block page_title %}Questionnaire Setup{% endblock %}
+
+{% block main_heading %}Questionnaire{% endblock %}
+
+{% block main_body %}
+<h3>Donation Blueprints</h3>
+<div>
+  <table class="table">
+    <tr>
+      <th style="width: 16%">Blueprint</th>
+      <th>Questions</th>
+    </tr>
+    {% for blueprint in donation_blueprints %}
+    <tr>
+      <td>{{ blueprint.name }}</td>
+      <td>
+        {% for question in blueprint.get_associated_questions %}
+        <div>
+          <p>Name: {{ question.name }}</p>
+          <p>Type: {{ question.question_type }}</p>
+          <p>
+            <a href="{% url 'question-edit' project_pk question.question_type question.pk %}">Edit Question</a> |
+            <a href="{% url 'question-delete' project_pk question.question_type question.pk %}">Delete Question</a>
+          </p>
+          {% if not forloop.last %}<hr>{% endif %}
+        </div>
+        {% empty %}
+        <div>
+          <p>No questions created.</p>
+        </div>
+        {% endfor %}
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td>No blueprints created yet.</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div>
+  <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal"><b>+</b>&nbsp;&nbsp;Create new question</button>
+</div>
+
+<div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Choose type of question:</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% for question_type in question_types %}
+        {% if question_type.0 != 'generic' %}
+        <p><a href="{% url 'question-create' project_pk question_type.0 %}">{{ question_type.1 }}</a></p>
+        {% endif %}
+        {% empty %}
+        <p>No question types defined.</p>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block breadcrumbs %}
+Back to:
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' project_pk %}">Project Cockpit</a>
+{% endblock %}

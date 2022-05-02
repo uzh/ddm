@@ -1,9 +1,11 @@
 from ckeditor.fields import RichTextField
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 
-from ddm.models import DonationProject, Participant
+from ddm.models import DonationProject, Participant, Encryption
 
 import logging
 logger = logging.getLogger(__name__)
@@ -15,6 +17,15 @@ class ZippedBlueprint(models.Model):
         DonationProject,
         on_delete=models.CASCADE
     )
+
+    def __str__(self):
+        return self.name
+
+    def get_slug(self):
+        return 'zip-blueprint'
+
+    def get_absolute_url(self):
+        return reverse('zipped-blueprint-edit', args=[str(self.project_id), str(self.id)])
 
     def get_blueprints(self):
         blueprints = DonationBlueprint.objects.filter(zip_blueprint=self)
@@ -39,7 +50,6 @@ class DonationBlueprint(models.Model):
     )
 
     name = models.CharField(max_length=250)
-    instructions = None
 
     class FileFormats(models.TextChoices):
         JSON_FORMAT = 'json'
@@ -51,6 +61,7 @@ class DonationBlueprint(models.Model):
         max_length=10,
         choices=FileFormats.choices,
         default=FileFormats.JSON_FORMAT,
+        verbose_name='Expected File Format'
     )
 
     expected_fields = models.JSONField()
@@ -68,6 +79,15 @@ class DonationBlueprint(models.Model):
         blank=True
     )
 
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('blueprint-edit', args=[str(self.project_id), str(self.id)])
+
+    def get_slug(self):
+        return 'blueprint'
+
     def get_config(self):
         config = {
             'id': self.pk,
@@ -81,6 +101,9 @@ class DonationBlueprint(models.Model):
 
     def get_instructions(self):
         return [{'index': i.index, 'text': i.text} for i in self.donationinstruction_set.all()]
+
+    def get_associated_questions(self):
+        return self.questionbase_set.all()
 
     def process_donation(self, data, participant):
         if self.validate_donation(data):
@@ -109,7 +132,6 @@ class DonationBlueprint(models.Model):
             project=self.project,
             blueprint=self,
             participant=participant,
-            time=timezone.now().isoformat(),
             consent=data['consent'],
             status=data['status'],
             data=data['extracted_data']
@@ -131,10 +153,29 @@ class DataDonation(models.Model):
         Participant,
         on_delete=models.CASCADE
     )
-    time = models.DateTimeField()
+    time_submitted = models.DateTimeField(default=timezone.now)
     consent = models.BooleanField(default=False)
     status = models.JSONField()
-    data = models.JSONField()
+    data = models.TextField()
+
+    def save(self, *args, **kwargs):
+        self.data = Encryption(
+            public_key=self.project.public_key
+        ).encrypt(self.data)
+        super().save(*args, **kwargs)
+
+    def get_decrypted_data(self, secret=None):
+        if not secret:
+            decrypted_data = Encryption(
+                secret=settings.SECRET_KEY,
+                salt=str(self.project.date_created)
+            ).decrypt(self.data)
+        else:
+            decrypted_data = Encryption(
+                secret=secret,
+                salt=str(self.project.date_created)
+            ).decrypt(self.data)
+        return decrypted_data
 
 
 class DonationInstruction(models.Model):

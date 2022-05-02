@@ -1,6 +1,6 @@
-# Data Donation Module (ddm)
-
-> **_NOTE:_**  This package is currently under active development.
+#################
+DDM Documentation
+#################
 
 **DDM** (Data Donation Module) is a Django application that helps researchers to
 setup data donation projects and to collect data donations for academic research.
@@ -9,5 +9,15 @@ This is part of a larger initiative from the University of Zurich and the Digita
 Society Initiative to strengthen the exchange about the topic of data donations and
 promote this data collection approach. For more information, visit https://datadonation.uzh.ch.
 
-Documentation: https://data-donation-module.readthedocs.io/en/latest/ \
-PyPi: https://pypi.org/project/django-ddm/
+.. note::
+
+   This project is currently under active development.
+
+********
+Contents
+********
+
+.. toctree::
+
+   getting_started
+   for_developers

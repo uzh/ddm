@@ -1,0 +1,42 @@
+{% extends 'ddm/project_admin/generic/page_with_form.html' %}
+
+{% block page_title %}Edit {{ question_type }}{% endblock %}
+
+{% block main_heading %}Edit {{ question_type }} "{{ object.name }}"{% endblock %}
+
+{% block submit_label %}Update Question{% endblock %}
+
+
+{% block main_bottom %}
+{% if object.question_type != "open" and object.question_type != "transition"  %}
+<div>
+  <p><b>Items</b></p>
+  {% for item in object.questionitem_set.all %}
+  <p>{{ item.label }}</p>
+  {% empty %}
+  <p>No items found.</p>
+  {% endfor %}
+  <p><a href="{% url 'question-items' project_pk object.question_type object.pk %}">Edit items</a></p>
+</div>
+{% endif %}
+
+{% if object.question_type == "semantic_diff" or object.question_type == "matrix"  %}
+<div>
+  <p><b>Scale</b></p>
+  {% for point in object.scalepoint_set.all %}
+  <p>{{ point.label }}; {{ point.index }}; {{ point.value }}</p>
+  {% empty %}
+  <p>No scale points defined.</p>
+  {% endfor %}
+  <p><a href="{% url 'question-scale' project_pk object.question_type object.pk %}">Edit scale points</a></p>
+</div>
+{% endif %}
+{% endblock %}
+
+
+{% block breadcrumbs %}
+Back to:
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' project_pk %}">Project Cockpit</a> /
+<a href="{% url 'questionnaire-overview' project_pk %}">Questionnaire</a>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'ddm/project_admin/generic/page_with_form.html' %}
+
+{% block page_title %}Create New Project{% endblock %}
+
+{% block main_heading %}Create Donation Project {{ object.name }}{% endblock %}
+
+{% block submit_label %}Create Project{% endblock %}
+
+{% block breadcrumbs %}
+Back to:
+<a href="{% url 'project-list' %}">Projects</a>
+{% endblock %}

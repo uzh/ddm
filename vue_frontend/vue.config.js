@@ -19,7 +19,7 @@ module.exports = {
     publicPath: process.env.NODE_ENV === 'production'
         ? ''
         : 'http://localhost:8080/',
-    outputDir: path.resolve('../ddm/static/'),
+    outputDir: path.resolve('../ddm/static/ddm/'),
 
     chainWebpack: config => {
 

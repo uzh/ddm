@@ -48,16 +48,17 @@ class BaseViewsTestCase(TestCase):
         self.exit_url_no = reverse('project-exit', args=[self.project_no.slug])
 
         # URLs for non-existing project.
-        self.entry_url_bad = reverse('project-entry', args=['nope'])
-        self.dd_url_bad = reverse('data-donation', args=['nope'])
-        self.quest_url_bad = reverse('questionnaire', args=['nope'])
-        self.exit_url_bad = reverse('project-exit', args=['nope'])
+        self.entry_url_invalid = reverse('project-entry', args=['nope'])
+        self.dd_url_invalid = reverse('data-donation', args=['nope'])
+        self.quest_url_invalid = reverse('questionnaire', args=['nope'])
+        self.exit_url_invalid = reverse('project-exit', args=['nope'])
 
-        # Initialize client and add projects to session.
+    def initialize_project_and_session(self):
         self.client = Client()
         self.client.get(self.entry_url)
         self.client.get(self.entry_url_no)
 
+    def create_data_donation(self):
         # Create a data donation for project 1.
         participant_id = self.client.session['projects'][f'{self.project.pk}']['participant_id']
         participant = Participant.objects.get(pk=int(participant_id))
@@ -77,16 +78,33 @@ class TestEntryView(BaseViewsTestCase):
     def setUp(self):
         super().setUp()
 
-    def test_project_entry_GET(self):
-        good_response = self.client.get(self.entry_url)
-        bad_response = self.client.get(self.entry_url_bad)
+    def test_project_entry_view_registers_project(self):
+        self.client.get(self.entry_url)
+        session = self.client.session
+        expected_keys = ['steps', 'data', 'completed', 'participant_id']
+        assert set(expected_keys).issubset(set(session['projects'][f'{self.project.pk}'].keys()))
 
-        self.assertEqual(good_response.status_code, 200)
-        self.assertEqual(bad_response.status_code, 404)
-        self.assertTemplateUsed(good_response, 'ddm/public/entry_page.html')
+    def test_project_entry_view_registers_participant(self):
+        nr_participants_before = len(Participant.objects.all())
+        self.client.get(self.entry_url)
+        self.assertGreater(len(Participant.objects.all()), nr_participants_before)
+        self.assertIsNotNone(self.client.session['projects'][f'{self.project.pk}']['participant_id'])
+
+    def test_project_entry_view_GET_valid_url(self):
+        response = self.client.get(self.entry_url)
+        project_session = self.client.session['projects'][f'{self.project.pk}']
+        self.assertEqual(project_session['steps']['project-entry']['state'], 'started')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'ddm/public/entry_page.html')
+
+    def test_project_entry_view_GET_invalid_url(self):
+        response = self.client.get(self.entry_url_invalid)
+        self.assertEqual(response.status_code, 404)
 
     def test_project_entry_POST(self):
         response = self.client.post(self.entry_url)
+        project_session = self.client.session['projects'][f'{self.project.pk}']
+        self.assertEqual(project_session['steps']['project-entry']['state'], 'completed')
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.dd_url)
 
@@ -95,18 +113,20 @@ class TestDonationView(BaseViewsTestCase):
 
     def setUp(self):
         super().setUp()
-
+        self.initialize_project_and_session()
+        self.create_data_donation()
         session = self.client.session
         session['projects'][f'{self.project.pk}']['steps']['project-entry']['state'] = 'completed'
         session.save()
 
-    def test_data_donation_GET(self):
-        good_response = self.client.get(self.dd_url)
-        bad_response = self.client.get(self.dd_url_bad)
+    def test_data_donation_GET_valid_url(self):
+        response = self.client.get(self.dd_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'ddm/public/data_donation.html')
 
-        self.assertEqual(good_response.status_code, 200)
-        self.assertEqual(bad_response.status_code, 404)
-        self.assertTemplateUsed(good_response, 'ddm/public/data_donation.html')
+    def test_data_donation_GET_invalid_url(self):
+        response = self.client.get(self.dd_url_invalid)
+        self.assertEqual(response.status_code, 404)
 
     def test_data_donation_POST_redirect(self):
         response = self.client.post(self.dd_url)
@@ -118,8 +138,8 @@ class TestQuestionnaireView(BaseViewsTestCase):
 
     def setUp(self):
         super().setUp()
-
-        # Manipulate sessions.
+        self.initialize_project_and_session()
+        self.create_data_donation()
         session = self.client.session
         session['projects'][f'{self.project.pk}']['steps']['project-entry']['state'] = 'completed'
         session['projects'][f'{self.project.pk}']['steps']['data-donation']['state'] = 'completed'
@@ -127,13 +147,14 @@ class TestQuestionnaireView(BaseViewsTestCase):
         session['projects'][f'{self.project_no.pk}']['steps']['data-donation']['state'] = 'completed'
         session.save()
 
-    def test_questionnaire_GET_questionnaire_defined(self):
-        good_response = self.client.get(self.quest_url)
-        bad_response = self.client.get(self.quest_url_bad)
+    def test_questionnaire_GET_valid_url(self):
+        response = self.client.get(self.quest_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'ddm/public/questionnaire.html')
 
-        self.assertEqual(good_response.status_code, 200)
-        self.assertEqual(bad_response.status_code, 404)
-        self.assertTemplateUsed(good_response, 'ddm/public/questionnaire.html')
+    def test_questionnaire_GET_invalid_url(self):
+        response = self.client.get(self.quest_url_invalid)
+        self.assertEqual(response.status_code, 404)
 
     def test_questionnaire_GET_no_questionnaire(self):
         good_response = self.client.get(self.quest_url_no)
@@ -149,20 +170,21 @@ class TestExitView(BaseViewsTestCase):
 
     def setUp(self):
         super().setUp()
-
+        self.initialize_project_and_session()
         session = self.client.session
         session['projects'][f'{self.project.pk}']['steps']['project-entry']['state'] = 'completed'
         session['projects'][f'{self.project.pk}']['steps']['data-donation']['state'] = 'completed'
         session['projects'][f'{self.project.pk}']['steps']['questionnaire']['state'] = 'completed'
         session.save()
 
-    def test_project_exit_GET(self):
-        good_response = self.client.get(self.exit_url)
-        bad_response = self.client.get(self.exit_url_bad)
+    def test_project_exit_GET_valid_url(self):
+        response = self.client.get(self.exit_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'ddm/public/end.html')
 
-        self.assertEqual(good_response.status_code, 200)
-        self.assertEqual(bad_response.status_code, 404)
-        self.assertTemplateUsed(good_response, 'ddm/public/end.html')
+    def test_project_exit_GET_invalid_url(self):
+        response = self.client.get(self.exit_url_invalid)
+        self.assertEqual(response.status_code, 404)
 
     def test_project_exit_POST(self):
         response = self.client.post(self.exit_url)
@@ -213,9 +235,6 @@ class BaseTestCaseAdminViews:
         cls.user_name = 'test-user'
         cls.user_pw = 'test-password'
         User.objects.create_superuser(cls.user_name, 'test@test.com', cls.user_pw)
-
-    def setUp(self):
-        self.client = Client()
 
     def test_logged_in_returns_200(self):
         self.client.login(username=self.user_name, password=self.user_pw)

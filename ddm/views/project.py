@@ -27,6 +27,7 @@ class ProjectBaseView(DetailView):
         if target == self.view_name:
             context = self.get_context_data(object=self.object)
             self.project_session['steps'][self.view_name]['state'] = 'started'
+            request.session.modified = True
             return self.render_to_response(context)
         else:
             return redirect(target, slug=self.object.slug)
@@ -48,6 +49,7 @@ class ProjectBaseView(DetailView):
 
         # Set Participant
         self.register_participant()
+        request.session.modified = True
         return
 
     def register_project(self, request):
@@ -120,6 +122,7 @@ class ProjectBaseView(DetailView):
     def post(self, request, *arges, **kwargs):
         self.initialize_values(request)
         self.set_step_complete()
+        request.session.modified = True
         return redirect(self.steps[self.current_step + 1],
                         slug=self.object.slug)
 

@@ -19,7 +19,7 @@ module.exports = {
     publicPath: process.env.NODE_ENV === 'production'
         ? ''
         : 'http://localhost:8080/',
-    outputDir: path.resolve('../ddm/static/ddm/'),
+    outputDir: path.resolve('../ddm/static/ddm/vue'),
 
     chainWebpack: config => {
 
@@ -43,7 +43,7 @@ module.exports = {
 
         config
             .plugin('BundleTracker')
-            .use(BundleTracker, [{filename: '../vue_frontend/webpack-stats.json'}]);
+            .use(BundleTracker, [{filename: '../ddm/static/ddm/vue/webpack-stats.json'}]);
 
         config.resolve.alias
             .set('__STATIC__', 'static')

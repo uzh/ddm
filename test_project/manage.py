@@ -100,7 +100,7 @@ settings.configure(
         'DEFAULT': {
             #'CACHE': not settings.DEBUG,
             'BUNDLE_DIR_NAME': 'bundles/',
-            'STATS_FILE': os.path.join(VUE_FRONTEND_DIR, 'webpack-stats.json'),
+            'STATS_FILE': os.path.join(DDM_DIR, 'static', 'ddm', 'vue', 'webpack-stats.json'),
             'POLL_INTERVAL': 0.1,
             'TIMEOUT': None,
             'IGNORE': [r'.+\.hot-update.js', r'.+\.map']

@@ -21,7 +21,7 @@ class DonationProject(models.Model):
     date_created = models.DateTimeField(default=timezone.now)
 
     secret_key = settings.SECRET_KEY
-    public_key = models.TextField()
+    public_key = models.BinaryField()
     super_secret = models.BooleanField(default=False)
 
     # owner = None  # TODO: Add FK to Owner.

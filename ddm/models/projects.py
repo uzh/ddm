@@ -72,7 +72,7 @@ class QuestionnaireResponse(models.Model):
         on_delete=models.CASCADE
     )
     time_submitted = models.DateTimeField(default=timezone.now)
-    data = models.TextField()
+    data = models.BinaryField()
 
     def save(self, *args, **kwargs):
         self.data = Encryption(

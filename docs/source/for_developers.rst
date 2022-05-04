@@ -102,11 +102,17 @@ Actions
 
 A **push to develop** triggers build tests for the following configurations:
 
-- Python: [3.6, 3.7, 3.8]
-- Database: [sqlite, postgres, mysql]
+- Python: [3.6, 3.10.4]
+- Database: [sqlite, mysql]
 
 A **tag (vX.X.X) push to develop** triggers build tests (see above). If the tests are successful
 develop is automatically merged into main.
+
+.. warning::
+    Please make sure that pushed tags are in sync with package versions on PyPi.
+
+    If the build-tests of a pushed tag fail, delete the tag and push the fixed
+    version again with the same tag until the tests run through.
 
 A **push to main** triggers build tests and if the tests are successful, automatically
 bumps the version number (patch number) and builds a new PyPi package.

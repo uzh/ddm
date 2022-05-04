@@ -98,7 +98,7 @@ settings.configure(
     WEBPACK_LOADER={
         'DEFAULT': {
             #'CACHE': not settings.DEBUG,
-            'BUNDLE_DIR_NAME': 'bundles/',
+            'BUNDLE_DIR_NAME': 'ddm/vue/',
             'STATS_FILE': os.path.join(DDM_DIR, 'static', 'ddm', 'vue', 'webpack-stats.json'),
             'POLL_INTERVAL': 0.1,
             'TIMEOUT': None,

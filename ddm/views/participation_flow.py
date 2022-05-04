@@ -304,8 +304,7 @@ class QuestionnaireView(ParticipationFlowBaseView):
                     f'questionnaire post_data.'
                 )
                 continue
-
-            question.validate_response(response[question_id])
+            question.validate_response(post_data[question_id])
 
         self.save_response(response)
 

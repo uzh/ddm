@@ -1,16 +1,13 @@
 from django.urls import path, include
 
 from ddm.views import project_admin
-from ddm.views import (
-    DataUpload, ProjectEntry, QuestionnaireDisplay, ProjectExit
-)
+from ddm.views import participation_flow
 
-
-participation_patterns = [
-    path(r'intro/', ProjectEntry.as_view(), name='project-entry'),
-    path(r'data-donation/', DataUpload.as_view(), name='data-donation'),
-    path(r'questionnaire/', QuestionnaireDisplay.as_view(), name='questionnaire'),
-    path(r'end/', ProjectExit.as_view(), name='project-exit')
+participation_flow_patterns = [
+    path(r'intro/', participation_flow.EntryView.as_view(), name='project-entry'),
+    path(r'data-donation/', participation_flow.DataDonationView.as_view(), name='data-donation'),
+    path(r'questionnaire/', participation_flow.QuestionnaireView.as_view(), name='questionnaire'),
+    path(r'end/', participation_flow.ExitView.as_view(), name='project-exit')
 ]
 
 question_patterns = [
@@ -53,6 +50,6 @@ project_admin_patterns = [
 ]
 
 urlpatterns = [
-    path(r'<slug:slug>/', include(participation_patterns)),
+    path(r'<slug:slug>/', include(participation_flow_patterns)),
     path(r'projects/', include(project_admin_patterns))
 ]

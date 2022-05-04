@@ -323,5 +323,7 @@ class ExitView(ParticipationFlowBaseView):
     view_name = 'project-exit'
 
     def post(self, request, *args, **kwargs):
-        super().post(request, **kwargs)
+        self.initialize_values(request)
+        self.project_session['steps'][self.view_name]['state'] = 'completed'
+        request.session.modified = True
         return self.get(request, *args, **kwargs)

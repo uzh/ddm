@@ -6,7 +6,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from ddm.models import (
     QuestionBase, QuestionType, SingleChoiceQuestion, MultiChoiceQuestion,
     OpenQuestion, MatrixQuestion, SemanticDifferential, Transition, QuestionItem,
-    ScalePoint
+    ScalePoint, DonationBlueprint
 )
 from . import ProjectBlueprintList
 
@@ -62,6 +62,7 @@ class QuestionFormMixin(ProjectMixin):
         context = super().get_context_data(**kwargs)
         question_type_label = QuestionType(self.kwargs['question_type']).label
         context.update({'question_type': question_type_label})
+        context['form'].fields['blueprint'].queryset = DonationBlueprint.objects.filter(project_id=self.kwargs['project_pk'])
         return context
 
 

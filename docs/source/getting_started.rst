@@ -6,25 +6,33 @@ Getting Started
 Use DDM in Your Django Project
 ******************************
 
-1. Add "ddm" to INSTALLED_APPS in your settings.py::
+1. Install the necessary dependencies::
 
-    INSTALLED_APPS = [..., 'ddm',]
+    pip install django-ckeditor pycryptodome django-ckeditor django-polymorphic django-webpack-loader
 
-2. Install ``django-ckeditor`` ::
+2. Add the necessary entries to INSTALLED_APPS in your settings.py::
 
-    pip install
+    INSTALLED_APPS = [..., 'ddm', 'ckeditor', 'webpack_loader']
 
-3. Add "ckeditor" to INSTALLED_APPS in your settings.py::
+3. Add the following configuration for webpack-loader to your settings.py::
 
-    INSTALLED_APPS = [..., 'ddm', 'ckeditor'].
+    WEBPACK_LOADER = {
+        'DEFAULT': {
+            'CACHE': True,
+            'BUNDLE_DIR_NAME': 'ddm/vue/',
+            'STATS_FILE': os.path.join(STATIC_ROOT, 'ddm/vue/webpack-stats.json'),
+            'POLL_INTERVAL': 0.1,
+            'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
+        }
+    }
 
-3. Include the ddm URLconf in your projects urls.py::
+4. Include the ddm URLconf in your projects urls.py::
 
     url(r'^ddm/', include('ddm.urls')),
 
-4. Add time zone support mto your settings.py::
+5. Add time zone support mto your settings.py::
 
     USE_TZ = True
 
-5. Run ``python manage.py migrate`` to create the ddm models in your database.
-6. Test if everything works as expected and you are good to go!
+6. Run ``python manage.py migrate`` to create the ddm models in your database.
+7. Test if everything works as expected and you are good to go!

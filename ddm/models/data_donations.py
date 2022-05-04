@@ -156,7 +156,7 @@ class DataDonation(models.Model):
     time_submitted = models.DateTimeField(default=timezone.now)
     consent = models.BooleanField(default=False)
     status = models.JSONField()
-    data = models.TextField()
+    data = models.BinaryField()
 
     def save(self, *args, **kwargs):
         self.data = Encryption(

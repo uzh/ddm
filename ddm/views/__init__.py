@@ -1,3 +1,3 @@
-from .project import ProjectEntry, ProjectExit, ProjectBaseView
-from .data_donation import DataUpload
-from .questionnaire import QuestionnaireDisplay
+from .participation_flow import (
+    EntryView, DataDonationView, QuestionnaireView, ExitView
+)

@@ -89,7 +89,7 @@ class QuestionBase(PolymorphicModel):
             participant=participant,
             blueprint=self.blueprint
         )
-        context_data = data_donation.data
+        context_data = data_donation.get_decrypted_data()
         config['text'] = self.render_text(config['text'], context_data)
         for index, item in enumerate(config['items']):
             item['label'] = self.render_text(item['label'], context_data)

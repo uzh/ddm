@@ -1,4 +1,4 @@
-{% load static i18n sekizai_tags %}
+{% load static i18n %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
 <head>
@@ -13,10 +13,6 @@
   <link href="{% static 'ddm/css/questionnaire.css' %}" rel="stylesheet">
 
   {% block extra_head %}{% endblock %}
-
-  {% render_block "css" %}
-
-  {{ ALDRYN_SNAKE.render_head }}
 
 </head>
 <body>
@@ -42,8 +38,6 @@
 <script src="{% static 'ddm/js/bootstrap4/bootstrap.bundle.min.js' %}"></script>
 
 {% block extra_js %}{% endblock %}
-
-{% render_block "js" %}
 
 </body>
 </html>

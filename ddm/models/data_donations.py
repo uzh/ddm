@@ -7,6 +7,8 @@ from django.utils import timezone
 
 from ddm.models import DonationProject, Participant, Encryption
 
+import json
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -159,22 +161,26 @@ class DataDonation(models.Model):
     data = models.BinaryField()
 
     def save(self, *args, **kwargs):
-        self.data = Encryption(
-            public_key=self.project.public_key
-        ).encrypt(self.data)
+        # TODO: Enable encryption again:
+        # self.data = Encryption(
+        #     public_key=self.project.public_key
+        # ).encrypt(self.data)
+        self.data = json.dumps(self.data).encode('utf8')
         super().save(*args, **kwargs)
 
     def get_decrypted_data(self, secret=None):
-        if not secret:
-            decrypted_data = Encryption(
-                secret=settings.SECRET_KEY,
-                salt=str(self.project.date_created)
-            ).decrypt(self.data)
-        else:
-            decrypted_data = Encryption(
-                secret=secret,
-                salt=str(self.project.date_created)
-            ).decrypt(self.data)
+        # TODO: Enable encryption again:
+        # if not secret:
+        #     decrypted_data = Encryption(
+        #         secret=settings.SECRET_KEY,
+        #         salt=str(self.project.date_created)
+        #     ).decrypt(self.data)
+        # else:
+        #     decrypted_data = Encryption(
+        #         secret=secret,
+        #         salt=str(self.project.date_created)
+        #     ).decrypt(self.data)
+        decrypted_data = json.loads(self.data.decode('utf8'))
         return decrypted_data
 
 

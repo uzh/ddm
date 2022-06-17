@@ -1,4 +1,4 @@
-{% load static i18n sekizai_tags %}
+{% load static i18n %}
 <!DOCTYPE html>
 <html class='d-flex' lang='{{ LANGUAGE_CODE }}'>
 <head>
@@ -15,8 +15,6 @@
   <link rel="icon" href="{% static 'ddm/img/surquest_v0-2_icon.svg' %}">
 
   {% block extra_head %}{% endblock %}
-
-  {% render_block 'css' %}
 
 </head>
 <body class='sq-body'>
@@ -80,8 +78,6 @@
   <script src='{% static "ddm/js/questionnaire-admin.js" %}'></script>
 
   {% block extra_js %}{% endblock %}
-
-  {% render_block 'js' %}
 
 </div>
 

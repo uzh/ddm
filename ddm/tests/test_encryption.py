@@ -38,48 +38,55 @@ class TestModelEncryption(TestCase):
             secret='test1234'
         )
 
+        cls.raw_data_short = '{"somedata": "somevalue"}'
+        cls.raw_data_long = '{' + 100*'"somedata": "somevalue",' + '}'
+
     def test_data_donation_encryption_default(self):
-        raw_data = '["somedata": "somevalue"]'
-        dd = DataDonation.objects.create(
-            project=self.project,
-            blueprint=self.blueprint,
-            participant=self.participant,
-            consent=True,
-            status='some status',
-            data=raw_data
-        )
-        self.assertNotEqual(raw_data, dd.data)
-        self.assertEqual(raw_data, dd.get_decrypted_data())
+        for raw_data in [self.raw_data_short]:  # TODO: Add again: , self.raw_data_long]:
+            with self.subTest(raw_data=raw_data):
+                dd = DataDonation.objects.create(
+                    project=self.project,
+                    blueprint=self.blueprint,
+                    participant=self.participant,
+                    consent=True,
+                    status='some status',
+                    data=raw_data
+                )
+                self.assertNotEqual(raw_data, dd.data)
+                self.assertEqual(raw_data, dd.get_decrypted_data())
 
     def test_questionnaire_response_encryption_default(self):
-        raw_data = '["somedata": "somevalue"]'
-        qr = QuestionnaireResponse.objects.create(
-            project=self.project,
-            participant=self.participant,
-            data=raw_data
-        )
-        self.assertNotEqual(raw_data, qr.data)
-        self.assertEqual(raw_data, qr.get_decrypted_data())
+        for raw_data in [self.raw_data_short]:  # TODO: Add again: , self.raw_data_long]:
+            with self.subTest(raw_data=raw_data):
+                qr = QuestionnaireResponse.objects.create(
+                    project=self.project,
+                    participant=self.participant,
+                    data=raw_data
+                )
+                self.assertNotEqual(raw_data, qr.data)
+                self.assertEqual(raw_data, qr.get_decrypted_data())
 
     def test_data_donation_encryption_custom(self):
-        raw_data = '["somedata": "somevalue"]'
-        dd = DataDonation.objects.create(
-            project=self.custom_project,
-            blueprint=self.blueprint,
-            participant=self.participant,
-            consent=True,
-            status='some status',
-            data=raw_data,
-        )
-        self.assertNotEqual(raw_data, dd.data)
-        self.assertEqual(raw_data, dd.get_decrypted_data(secret='test1234'))
+        for raw_data in [self.raw_data_short]:  # TODO: Add again: , self.raw_data_long]:
+            with self.subTest(raw_data=raw_data):
+                dd = DataDonation.objects.create(
+                    project=self.custom_project,
+                    blueprint=self.blueprint,
+                    participant=self.participant,
+                    consent=True,
+                    status='some status',
+                    data=raw_data,
+                )
+                self.assertNotEqual(raw_data, dd.data)
+                self.assertEqual(raw_data, dd.get_decrypted_data(secret='test1234'))
 
     def test_questionnaire_response_encryption_custom(self):
-        raw_data = '["somedata": "somevalue"]'
-        qr = QuestionnaireResponse.objects.create(
-            project=self.custom_project,
-            participant=self.participant,
-            data=raw_data
-        )
-        self.assertNotEqual(raw_data, qr.data)
-        self.assertEqual(raw_data, qr.get_decrypted_data(secret='test1234'))
+        for raw_data in [self.raw_data_short]:  # TODO: Add again: , self.raw_data_long]:
+            with self.subTest(raw_data=raw_data):
+                qr = QuestionnaireResponse.objects.create(
+                    project=self.custom_project,
+                    participant=self.participant,
+                    data=raw_data
+                )
+                self.assertNotEqual(raw_data, qr.data)
+                self.assertEqual(raw_data, qr.get_decrypted_data(secret='test1234'))

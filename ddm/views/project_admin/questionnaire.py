@@ -92,6 +92,14 @@ class QuestionEdit(LoginRequiredMixin, QuestionFormMixin, UpdateView):
     template_name = 'ddm/project_admin/questionnaire/edit.html'
     fields = '__all__'
 
+    def get_success_url(self):
+        success_kwargs = {
+            'project_pk': self.kwargs['project_pk'],
+            'question_type': self.kwargs['question_type'],
+            'pk': self.kwargs['pk']
+        }
+        return reverse('question-edit', kwargs=success_kwargs)
+
 
 class QuestionDelete(LoginRequiredMixin, ProjectMixin, DeleteView):
     """ View to delete question. """

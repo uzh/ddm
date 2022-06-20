@@ -17,8 +17,8 @@ module.exports = {
     filenameHashing: false,
     productionSourceMap: false,
     publicPath: process.env.NODE_ENV === 'production'
-        ? ''
-        : 'http://localhost:8080/',
+        ? '/static/ddm/vue/'
+        : '/static/ddm/vue/',
     outputDir: path.resolve('../ddm/static/ddm/vue'),
 
     chainWebpack: config => {
@@ -43,7 +43,11 @@ module.exports = {
 
         config
             .plugin('BundleTracker')
-            .use(BundleTracker, [{filename: '../ddm/static/ddm/vue/webpack-stats.json'}]);
+            .use(BundleTracker, [{
+                filename: '../ddm/static/ddm/vue/webpack-stats.json',
+                path: '../ddm/static/ddm/vue',
+                relativePath: true
+            }]);
 
         config.resolve.alias
             .set('__STATIC__', 'static')

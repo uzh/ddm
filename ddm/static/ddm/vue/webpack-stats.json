@@ -3,34 +3,46 @@
   "assets": {
     "js/chunk-vendors.js": {
       "name": "js/chunk-vendors.js",
-      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\ddm\\vue\\js\\chunk-vendors.js",
-      "publicPath": "http://localhost:8080/js/chunk-vendors.js"
+      "path": "js\\chunk-vendors.js",
+      "publicPath": "/static/ddm/vue/js/chunk-vendors.js"
+    },
+    "css/vue_questionnaire.css": {
+      "name": "css/vue_questionnaire.css",
+      "path": "css\\vue_questionnaire.css",
+      "publicPath": "/static/ddm/vue/css/vue_questionnaire.css"
     },
     "js/vue_questionnaire.js": {
       "name": "js/vue_questionnaire.js",
-      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\ddm\\vue\\js\\vue_questionnaire.js",
-      "publicPath": "http://localhost:8080/js/vue_questionnaire.js"
+      "path": "js\\vue_questionnaire.js",
+      "publicPath": "/static/ddm/vue/js/vue_questionnaire.js"
+    },
+    "css/vue_uploader.css": {
+      "name": "css/vue_uploader.css",
+      "path": "css\\vue_uploader.css",
+      "publicPath": "/static/ddm/vue/css/vue_uploader.css"
     },
     "js/vue_uploader.js": {
       "name": "js/vue_uploader.js",
-      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\ddm\\vue\\js\\vue_uploader.js",
-      "publicPath": "http://localhost:8080/js/vue_uploader.js"
+      "path": "js\\vue_uploader.js",
+      "publicPath": "/static/ddm/vue/js/vue_uploader.js"
     },
     "favicon.ico": {
       "name": "favicon.ico",
-      "path": "C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\ddm\\static\\ddm\\vue\\favicon.ico",
-      "publicPath": "http://localhost:8080/favicon.ico"
+      "path": "favicon.ico",
+      "publicPath": "/static/ddm/vue/favicon.ico"
     }
   },
   "chunks": {
     "vue_uploader": [
       "js/chunk-vendors.js",
+      "css/vue_uploader.css",
       "js/vue_uploader.js"
     ],
     "vue_questionnaire": [
       "js/chunk-vendors.js",
+      "css/vue_questionnaire.css",
       "js/vue_questionnaire.js"
     ]
   },
-  "publicPath": "http://localhost:8080/"
+  "publicPath": "/static/ddm/vue/"
 }

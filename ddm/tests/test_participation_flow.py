@@ -96,7 +96,7 @@ class TestEntryView(ParticipationFlowBaseTestCase):
         self.assertTemplateUsed(response, 'ddm/public/entry_page.html')
 
     def test_project_entry_view_GET_invalid_url(self):
-        response = self.client.get(self.entry_url_invalid)
+        response = self.client.get(self.entry_url_invalid, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_project_entry_POST(self):
@@ -123,7 +123,7 @@ class TestDonationView(ParticipationFlowBaseTestCase):
         self.assertTemplateUsed(response, 'ddm/public/data_donation.html')
 
     def test_data_donation_GET_invalid_url(self):
-        response = self.client.get(self.dd_url_invalid)
+        response = self.client.get(self.dd_url_invalid, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_data_donation_POST_redirect(self):
@@ -151,7 +151,7 @@ class TestQuestionnaireView(ParticipationFlowBaseTestCase):
         self.assertTemplateUsed(response, 'ddm/public/questionnaire.html')
 
     def test_questionnaire_GET_invalid_url(self):
-        response = self.client.get(self.quest_url_invalid)
+        response = self.client.get(self.quest_url_invalid, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_questionnaire_GET_no_questionnaire(self):
@@ -181,7 +181,7 @@ class TestExitView(ParticipationFlowBaseTestCase):
         self.assertTemplateUsed(response, 'ddm/public/end.html')
 
     def test_project_exit_GET_invalid_url(self):
-        response = self.client.get(self.exit_url_invalid)
+        response = self.client.get(self.exit_url_invalid, follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_project_exit_POST(self):

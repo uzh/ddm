@@ -1,10 +1,10 @@
-from Crypto.Cipher import PKCS1_OAEP
+from Crypto.Cipher import PKCS1_OAEP, AES
 from Crypto.Hash import HMAC
 from Crypto.PublicKey import RSA
+from Crypto.Random import get_random_bytes
 from io import BytesIO
 from struct import pack
 
-import binascii
 import base64
 import json
 
@@ -40,8 +40,8 @@ class Encryption:
         """
         session_key = get_random_bytes(16)
         cipher_aes = AES.new(session_key, AES.MODE_EAX)
-        cipher_data, tag = cipher_aes.encrypt_and_digest(bytes(json.dumps(value), 'utf-8')
-        cipher_rsa  = PKCS1_OAEP.new(RSA.importKey(self.public_key))
+        cipher_data, tag = cipher_aes.encrypt_and_digest(bytes(json.dumps(value), 'utf-8'))
+        cipher_rsa = PKCS1_OAEP.new(RSA.importKey(self.public_key))
         encrypted_session_key = cipher_rsa.encrypt(session_key)
         payload = encrypted_session_key + cipher_aes.nonce + tag + cipher_data
         return base64.encodebytes(payload)
@@ -55,9 +55,8 @@ class Encryption:
         encrypted_session_key = value_bytes.read(self.rsa.size_in_bytes())
         nonce = value_bytes.read(16)
         tag = value_bytes.read(16)
-        cipherdata = encrypted_bytes.read()
-        session_key = PKCS1_OAEP.new(self.rsa.exportKey()).decrypt(encrypted_session_key)
+        cipher_data = value_bytes.read()
+        session_key = PKCS1_OAEP.new(self.rsa).decrypt(encrypted_session_key)
         cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
-        decrypted = cipher_aes.decrypt_and_verify(cipherdata, tag)
-        return json.loads(decrypted).decode('utf-8')
-
+        decrypted = cipher_aes.decrypt_and_verify(cipher_data, tag)
+        return json.loads(decrypted.decode('utf-8'))

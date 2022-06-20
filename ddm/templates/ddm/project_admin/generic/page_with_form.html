@@ -15,7 +15,7 @@
     {% csrf_token %}
     {{ form.media }}
     <table class="table table-borderless">{{ form.as_table }}</table>
-    <input class="btn btn-secondary" type="submit" value="{% block submit_label %}Submit Form{% endblock %}">
+    <input class="ddm-btn" type="submit" value="{% block submit_label %}Submit Form{% endblock %}">
   </form>
   {% endblock %}
 </div>

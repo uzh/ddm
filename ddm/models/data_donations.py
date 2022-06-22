@@ -161,26 +161,22 @@ class DataDonation(models.Model):
     data = models.BinaryField()
 
     def save(self, *args, **kwargs):
-        # TODO: Enable encryption again:
-        # self.data = Encryption(
-        #     public_key=self.project.public_key
-        # ).encrypt(self.data)
-        self.data = json.dumps(self.data).encode('utf8')
+        self.data = Encryption(
+            public_key=self.project.public_key
+        ).encrypt(self.data)
         super().save(*args, **kwargs)
 
     def get_decrypted_data(self, secret=None):
-        # TODO: Enable encryption again:
-        # if not secret:
-        #     decrypted_data = Encryption(
-        #         secret=settings.SECRET_KEY,
-        #         salt=str(self.project.date_created)
-        #     ).decrypt(self.data)
-        # else:
-        #     decrypted_data = Encryption(
-        #         secret=secret,
-        #         salt=str(self.project.date_created)
-        #     ).decrypt(self.data)
-        decrypted_data = json.loads(self.data.decode('utf8'))
+        if not secret:
+            decrypted_data = Encryption(
+                secret=settings.SECRET_KEY,
+                salt=str(self.project.date_created)
+            ).decrypt(self.data)
+        else:
+            decrypted_data = Encryption(
+                secret=secret,
+                salt=str(self.project.date_created)
+            ).decrypt(self.data)
         return decrypted_data
 
 

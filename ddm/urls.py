@@ -49,7 +49,16 @@ project_admin_patterns = [
     path(r'<int:project_pk>/donation-blueprints/', include(blueprint_patterns)),
 ]
 
+authentication_patterns = [
+    path(r'login/', project_admin.DdmLoginView.as_view(), name='ddm-login'),
+    path(r'logout/', project_admin.DdmLogoutView.as_view(), name='ddm-logout'),
+    path(r'register/', project_admin.DdmRegisterResearchProfileView.as_view(), name='ddm-register'),
+    path(r'create-user/', project_admin.DdmCreateUserView.as_view(), name='ddm-create-user'),
+    path(r'no-permission/', project_admin.DdmNoPermissionView.as_view(), name='ddm-no-permission'),
+]
+
 urlpatterns = [
     path(r'<slug:slug>/', include(participation_flow_patterns)),
-    path(r'projects/', include(project_admin_patterns))
+    path(r'projects/', include(project_admin_patterns)),
+    path(r'auth/', include(authentication_patterns)),
 ]

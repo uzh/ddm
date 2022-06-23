@@ -3,25 +3,10 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from ddm.models import ResearchProfile, DonationProject
 from ddm.views.project_admin.auth import email_is_valid, user_is_owner
+from ddm.tests.base import TestData
 
 
-@override_settings(DDM_SETTINGS={'EMAIL_PERMISSION_CHECK':  r'.*(\.|@)mail\.com$', })
-class TestAuthenticationFlow(TestCase):
-    def setUp(self):
-        self.credentials_without_profile = {
-            'username': 'no_prof', 'password': '123', 'email': 'u1@mail.com'}
-        self.user_without_profile = User.objects.create_user(**self.credentials_without_profile)
-
-        self.credentials_with_profile = {
-            'username': 'with_prof', 'password': '123', 'email': 'u2@mail.com'}
-        self.user_with_profile = User.objects.create_user(**self.credentials_with_profile)
-        self.user_profile = ResearchProfile.objects.create(user=self.user_with_profile)
-
-        self.credentials_no_permission = {
-            'username': 'no_par', 'password': '123', 'email': 'u1@liam.com'}
-        User.objects.create_user(**self.credentials_no_permission)
-
-        self.login_url = reverse('ddm-login')
+class TestAuthenticationFlow(TestData, TestCase):
 
     def test_email_is_valid(self):
         valid_email = 'abc@mail.com'
@@ -31,55 +16,55 @@ class TestAuthenticationFlow(TestCase):
 
     def test_login_redirect_without_profile(self):
         response = self.client.post(
-            self.login_url,
-            data=self.credentials_without_profile,
+            reverse('ddm-login'),
+            data=self.users['no_profile']['credentials'],
             follow=True
         )
         self.assertRedirects(response, reverse('ddm-register'))
 
     def test_login_redirect_with_profile(self):
         response = self.client.post(
-            self.login_url,
-            data=self.credentials_with_profile,
+            reverse('ddm-login'),
+            data=self.users['base']['credentials'],
             follow=True
         )
         self.assertRedirects(response, reverse('project-list'))
 
     def test_register_redirect_with_profile(self):
-        self.client.login(**self.credentials_with_profile)
+        self.client.login(**self.users['base']['credentials'])
         response = self.client.get(reverse('ddm-register'), follow=True)
         self.assertRedirects(response, reverse('project-list'))
 
     def test_register_redirect_after_registration_form_valid(self):
-        self.client.login(**self.credentials_without_profile)
+        self.client.login(**self.users['no_profile']['credentials'])
         response = self.client.post(
             reverse('ddm-register'),
-            data={'confirmed': True, 'user': self.user_without_profile.pk},
+            data={'confirmed': True, 'user': self.users['no_profile']['user'].pk},
             follow=True
         )
         self.assertRedirects(response, reverse('project-list'))
 
     def test_register_redirect_after_registration_form_invalid(self):
-        self.client.login(**self.credentials_without_profile)
+        self.client.login(**self.users['no_profile']['credentials'])
         response = self.client.post(
             reverse('ddm-register'),
-            data={'confirmed': False, 'user': self.user_without_profile.pk},
+            data={'confirmed': False, 'user': self.users['no_profile']['user'].pk},
             follow=True
         )
         self.assertRedirects(response, reverse('ddm-no-permission'))
 
     def test_register_view_creates_research_profile(self):
-        self.assertFalse(ResearchProfile.objects.filter(user=self.user_without_profile).exists())
-        self.client.login(**self.credentials_without_profile)
+        self.assertFalse(ResearchProfile.objects.filter(user=self.users['no_profile']['user']).exists())
+        self.client.login(**self.users['no_profile']['credentials'])
         self.client.post(
             reverse('ddm-register'),
-            data={'confirmed': True, 'user': self.user_without_profile.pk},
+            data={'confirmed': True, 'user': self.users['no_profile']['user'].pk},
             follow=True
         )
-        self.assertTrue(ResearchProfile.objects.filter(user=self.user_without_profile).exists())
+        self.assertTrue(ResearchProfile.objects.filter(user=self.users['no_profile']['user']).exists())
 
     def test_ddm_no_permission_view_200(self):
-        self.client.login(**self.credentials_no_permission)
+        self.client.login(**self.users['no_permission']['credentials'])
         response = self.client.get(
             reverse('ddm-no-permission'), follow=True)
         self.assertEqual(response.status_code, 200)
@@ -90,19 +75,19 @@ class TestAuthenticationFlow(TestCase):
         self.assertRedirects(response, reverse('ddm-login'))
 
     def test_ddm_no_permission_view_redirect_to_project_list(self):
-        self.client.login(**self.credentials_with_profile)
+        self.client.login(**self.users['base']['credentials'])
         response = self.client.get(
             reverse('ddm-no-permission'), follow=True)
         self.assertRedirects(response, reverse('project-list'))
 
     def test_creat_user_view_redirect_authenticated_with_profile(self):
-        self.client.login(**self.credentials_with_profile)
+        self.client.login(**self.users['base']['credentials'])
         response = self.client.get(
             reverse('ddm-create-user'), follow=True)
         self.assertRedirects(response, reverse('project-list'))
 
     def test_creat_user_view_redirect_authenticated_without_profile(self):
-        self.client.login(**self.credentials_without_profile)
+        self.client.login(**self.users['no_profile']['credentials'])
         response = self.client.get(
             reverse('ddm-create-user'), follow=True)
         self.assertRedirects(response, reverse('ddm-register'))
@@ -125,6 +110,6 @@ class TestAuthenticationFlow(TestCase):
         self.assertRedirects(response, reverse('ddm-login'))
 
     def test_user_is_owner(self):
-        dp = DonationProject.objects.create(name='test-project', slug='test', owner=self.user_profile)
-        self.assertTrue(user_is_owner(self.user_with_profile, dp.pk))
-        self.assertFalse(user_is_owner(self.user_without_profile, dp.pk))
+        dp = DonationProject.objects.create(name='test-project', slug='test', owner=self.users['base']['profile'])
+        self.assertTrue(user_is_owner(self.users['base']['user'], dp.pk))
+        self.assertFalse(user_is_owner(self.users['no_profile']['user'], dp.pk))

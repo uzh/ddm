@@ -54,6 +54,8 @@ settings.configure(
         'ddm.apps.DdmConfig',
         'ckeditor',
         'webpack_loader',
+        'rest_framework',
+        'rest_framework.authtoken',
     ],
     MIDDLEWARE=[
         'django.middleware.csrf.CsrfViewMiddleware',
@@ -105,7 +107,7 @@ settings.configure(
     },
     DDM_SETTINGS={
         'EMAIL_PERMISSION_CHECK':  r'.*(\.|@)uzh\.ch$',
-    }
+    },
 )
 
 django.setup()

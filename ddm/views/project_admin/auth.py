@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import HttpResponseRedirect, HttpResponseNotFound
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import reverse, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
@@ -77,7 +77,7 @@ class DdmAuthMixin:
                     else:
                         project_pk = self.kwargs['pk']
                     if not user_is_owner(request.user, project_pk) and not request.user.is_superuser:
-                        return HttpResponseNotFound()
+                        raise Http404()
         return super().dispatch(request, *args, **kwargs)
 
 

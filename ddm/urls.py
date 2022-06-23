@@ -2,6 +2,7 @@ from django.urls import path, include
 
 from ddm.views import project_admin
 from ddm.views import participation_flow
+from ddm.views.download import DownloadProjectDataView
 
 participation_flow_patterns = [
     path(r'intro/', participation_flow.EntryView.as_view(), name='project-entry'),
@@ -61,4 +62,5 @@ urlpatterns = [
     path(r'<slug:slug>/', include(participation_flow_patterns)),
     path(r'projects/', include(project_admin_patterns)),
     path(r'auth/', include(authentication_patterns)),
+    path(r'<int:pk>/download/', DownloadProjectDataView.as_view(), name='download-api')
 ]

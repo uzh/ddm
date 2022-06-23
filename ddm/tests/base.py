@@ -39,6 +39,14 @@ class TestData(TestCase):
             'user': base_user2,
             'profile': base_user2_profile}
 
+        base_user3_credentials = {'username': 'base_user3', 'password': '123', 'email': 'base3@mail.com'}
+        base_user3 = User.objects.create_user(**base_user3_credentials)
+        base_user3_profile = ResearchProfile.objects.create(user=base_user3)
+        cls.users['base3'] = {
+            'credentials': base_user3_credentials,
+            'user': base_user3,
+            'profile': base_user3_profile}
+
         user_wo_profile_credentials = {'username': 'no_prof', 'password': '123', 'email': 'noprof@mail.com'}
         user_wo_profile = User.objects.create_user(**user_wo_profile_credentials)
         cls.users['no_profile'] = {

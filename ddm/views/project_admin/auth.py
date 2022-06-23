@@ -13,13 +13,13 @@ from ddm.models import ResearchProfile, DonationProject
 
 import re
 
-"""
-Password requirements etc. are controlled through the basic settings of the Django application.
-Must be set in DDL: https://docs.djangoproject.com/en/3.2/topics/auth/passwords/#password-validation
-"""
-
 
 def email_is_valid(email_string):
+    """
+    Check if an email address complies with the pattern specified in
+    DDM_SETTINGS['EMAIL_PERMISSION_CHECK'].
+    If this setting is not defined, returns True.
+    """
     if hasattr(settings, 'DDM_SETTINGS'):
         if 'EMAIL_PERMISSION_CHECK' in settings.DDM_SETTINGS:
             match = re.match(settings.DDM_SETTINGS['EMAIL_PERMISSION_CHECK'],
@@ -29,16 +29,23 @@ def email_is_valid(email_string):
     return True
 
 
-def user_is_permitted(request):
-    if request.user.is_superuser:
+def user_is_permitted(user):
+    """
+    Check if a user has access permission.
+    """
+    if user.is_superuser:
         return True
-    elif request.user.is_authenticated and email_is_valid(request.user.email):
+    elif user.is_authenticated and email_is_valid(user.email):
         return True
     else:
         return False
 
 
 def user_is_owner(user, project_pk):
+    """
+    Check if a given user is the owner of the project with the ID provided in
+    project_pk.
+    """
     donation_project = DonationProject.objects.get(pk=project_pk)
     if donation_project.owner.user == user:
         return True
@@ -48,18 +55,18 @@ def user_is_owner(user, project_pk):
 
 class DdmAuthMixin:
     """
-    Mixin for Class Based Views that handles redirects
-    - unauthenticated users => login page
-    - users without research profiles => registration page
-    - users without authorization (e.g., due to e-mail restriction) => no permission page
-    - users without owner-rights => 404
+    Mixin for Class Based Views that handles redirects as follows:
+    - unauthenticated users => login page.
+    - users without research profiles => registration page.
+    - users without authorization (e.g., due to e-mail restriction) => no permission page.
+    - users without owner-rights => 404.
     """
     def dispatch(self, request, *args, **kwargs):
         if request.method == 'GET':
             # Check if user is authenticated.
             if not request.user.is_authenticated:
                 return redirect('ddm-login')
-            elif not user_is_permitted(request):
+            elif not user_is_permitted(request.user):
                 return redirect('ddm-no-permission')
             elif not ResearchProfile.objects.filter(user=request.user).exists():
                 return redirect('ddm-register')
@@ -75,6 +82,12 @@ class DdmAuthMixin:
 
 
 class DdmLoginView(auth_views.LoginView):
+    """
+    View that wraps a custom template around Django's default Login view.
+    Logged-in users are redirected to:
+    * project overview if user has a research profile
+    * profile registration page is user does not have a research profile
+    """
     template_name = 'ddm/project_admin/generic/page_with_form.html'
 
     def dispatch(self, request, *args, **kwargs):
@@ -95,6 +108,13 @@ class DdmLoginView(auth_views.LoginView):
 
 
 class DdmRegisterResearchProfileView(CreateView):
+    """
+    View to create a research profile for a user.
+    Implements the following redirects:
+    * Logged-in users with a research profile are redirected to the project list.
+    * Unauthenticated users are redirected to the login page.
+    * Users without permission rights are redirected to the no-permission view.
+    """
     model = ResearchProfile
     form_class = ResearchProfileConfirmationForm
     template_name = 'ddm/project_admin/generic/page_with_form.html'
@@ -104,7 +124,7 @@ class DdmRegisterResearchProfileView(CreateView):
         if request.method == 'GET':
             if not request.user.is_authenticated:
                 return redirect('ddm-login')
-            elif not user_is_permitted(request):
+            elif not user_is_permitted(request.user):
                 return redirect('ddm-no-permission')
             elif ResearchProfile.objects.filter(user=request.user).exists():
                 return redirect('project-list')
@@ -120,6 +140,12 @@ class DdmRegisterResearchProfileView(CreateView):
 
 
 class DdmCreateUserView(SuccessMessageMixin, CreateView):
+    """
+    View to register a user profile.
+    Implements the following redirects:
+    * Logged-in users with a research profile are redirected to the project list.
+    * Logged-in users without a research profile are redirected to profile registration.
+    """
     model = User
     form_class = DdmUserCreationForm
     template_name = 'ddm/project_admin/generic/page_with_form.html'
@@ -137,19 +163,29 @@ class DdmCreateUserView(SuccessMessageMixin, CreateView):
 
 
 class DdmNoPermissionView(TemplateView):
+    """
+    View to inform users that they do not have the needed permission rights.
+    Implements the following redirects:
+    * Unauthenticated users are redirected to the login page.
+    * Logged-in users with permission and a research profile are redirected to the project list.
+    """
     template_name = 'ddm/project_admin/auth/no_permission.html'
 
     def dispatch(self, request, *args, **kwargs):
         if request.method == 'GET':
             if not request.user.is_authenticated:
                 return redirect('ddm-login')
-            elif (user_is_permitted(request) and
+            elif (user_is_permitted(request.user) and
                   ResearchProfile.objects.filter(user=request.user).exists()):
                 return redirect('project-list')
         return super().dispatch(request, *args, **kwargs)
 
 
 class DdmLogoutView(auth_views.LogoutView):
+    """
+    View that wraps a custom template around Django's default Logout view.
+    Unauthenticated users are redirected to the login page.
+    """
     template_name = 'ddm/project_admin/generic/page_with_form.html'
 
     def dispatch(self, request, *args, **kwargs):

@@ -30,7 +30,9 @@ def email_is_valid(email_string):
 
 
 def user_is_permitted(request):
-    if request.user.is_authenticated and email_is_valid(request.user.email):
+    if request.user.is_superuser:
+        return True
+    elif request.user.is_authenticated and email_is_valid(request.user.email):
         return True
     else:
         return False
@@ -67,7 +69,7 @@ class DdmAuthMixin:
                         project_pk = self.kwargs['project_pk']
                     else:
                         project_pk = self.kwargs['pk']
-                    if not user_is_owner(request.user, project_pk):
+                    if not user_is_owner(request.user, project_pk) and not request.user.is_superuser:
                         return HttpResponseNotFound()
         return super().dispatch(request, *args, **kwargs)
 

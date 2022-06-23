@@ -1,9 +1,40 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
-from ddm.models import ResearchProfile
-from ddm.views.project_admin import auth
+from ddm.models import ResearchProfile, DonationProject
+from ddm.auth import email_is_valid
+
+
+class ProjectCreateForm(forms.ModelForm):
+    secret = forms.CharField(min_length=10, max_length=150, required=False)
+
+    class Meta:
+        model = DonationProject
+        fields = ['name', 'slug', 'super_secret', 'owner']
+        widgets = {'owner': forms.HiddenInput()}
+
+    field_order = ['name', 'slug', 'super_secret', 'secret']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'initial' in kwargs:
+            self.fields['owner'].initial = kwargs['initial']['owner']
+
+    def clean(self):
+        super_secret = self.data.get('super_secret', False)
+        secret = self.data.get('secret', None)
+        if super_secret and secret in ['', None]:
+            raise ValidationError('Super secret project needs a secret.')
+        super().clean()
+
+    def save(self, commit=True):
+        project = super().save(commit=False)
+        if project.super_secret:
+            project.secret_key = self.data['secret']
+        project.save()
+        return project
 
 
 class DdmUserCreationForm(UserCreationForm):
@@ -15,7 +46,7 @@ class DdmUserCreationForm(UserCreationForm):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        if not auth.email_is_valid(email):
+        if not email_is_valid(email):
             raise forms.ValidationError(
                 'Only researchers with a valid UZH e-mail address can register.'
             )
@@ -39,7 +70,7 @@ class ResearchProfileConfirmationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['user'].initial = kwargs['initial']['user']
+        self.fields['user'].initial = kwargs['initial']['user']  # TODO: Check that this cannot be altered by another user.
         self.fields['confirmed'].initial = True
         self.fields['confirmed'].widget = forms.HiddenInput()
 

@@ -3,8 +3,6 @@ from ckeditor.fields import RichTextField
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
 
@@ -21,7 +19,7 @@ class ResearchProfile(models.Model):
     )
     active = models.BooleanField(default=True)
     created = models.DateTimeField('date registered', default=timezone.now)
-    ignore_email_restriction = models.BooleanField(default=False)
+    ignore_email_restriction = models.BooleanField(default=False)  # TODO: Account for this in permission check logic.
 
     def get_token(self):
         return Token.objects.filter(user=self.user).first()
@@ -35,20 +33,9 @@ class ResearchProfile(models.Model):
 
 class DonationProject(models.Model):
     name = models.CharField(max_length=50)
-    slug = models.SlugField(
-        verbose_name='External Project Slug',
-        unique=True
-    )
-    intro_text = RichTextField(
-        null=True,
-        blank=True,
-        verbose_name='Welcome Page Text'
-    )
-    outro_text = RichTextField(
-        null=True,
-        blank=True,
-        verbose_name='End Page Text'
-    )
+    slug = models.SlugField(unique=True, verbose_name='External Project Slug')
+    intro_text = RichTextField(null=True, blank=True, verbose_name='Welcome Page Text')
+    outro_text = RichTextField(null=True, blank=True, verbose_name='End Page Text')
 
     date_created = models.DateTimeField(default=timezone.now)
 
@@ -100,13 +87,6 @@ class DonationProject(models.Model):
     @secret.setter
     def secret(self, value):
         self.secret_key = value
-
-
-@receiver(pre_save, sender=DonationProject)
-def my_callback(sender, instance, *args, **kwargs):
-    if not instance.public_key:
-        instance.public_key = Encryption(instance.secret_key, str(instance.date_created)).public_key
-        instance.super_secret = True
 
 
 class Participant(models.Model):

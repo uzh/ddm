@@ -3,6 +3,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
+from ddm.forms import ProjectCreateForm
 from ddm.models import DonationProject, ResearchProfile
 from ddm.views.project_admin.auth import DdmAuthMixin
 
@@ -20,7 +21,12 @@ class ProjectCreate(DdmAuthMixin, CreateView):
     """ View to create a new donation project. """
     model = DonationProject
     template_name = 'ddm/project_admin/project/create.html'
-    fields = ['name', 'slug']
+    form_class = ProjectCreateForm
+
+    def get_initial(self):
+        self.initial = super().get_initial()
+        self.initial.update({'owner': ResearchProfile.objects.get(user=self.request.user)})
+        return self.initial
 
     def form_valid(self, form):
         form.instance.owner = ResearchProfile.objects.get(user=self.request.user)

@@ -7,7 +7,6 @@ from django.utils import timezone
 
 from ddm.models import DonationProject, Participant, Encryption
 
-import json
 
 import logging
 logger = logging.getLogger(__name__)

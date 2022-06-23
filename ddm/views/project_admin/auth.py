@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
@@ -8,49 +7,9 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.views.generic.base import TemplateView
 
+from ddm.auth import user_is_permitted, user_is_owner
 from ddm.forms import ResearchProfileConfirmationForm, DdmUserCreationForm
-from ddm.models import ResearchProfile, DonationProject
-
-import re
-
-
-def email_is_valid(email_string):
-    """
-    Check if an email address complies with the pattern specified in
-    DDM_SETTINGS['EMAIL_PERMISSION_CHECK'].
-    If this setting is not defined, returns True.
-    """
-    if hasattr(settings, 'DDM_SETTINGS'):
-        if 'EMAIL_PERMISSION_CHECK' in settings.DDM_SETTINGS:
-            match = re.match(settings.DDM_SETTINGS['EMAIL_PERMISSION_CHECK'],
-                             email_string)
-            if not match:
-                return False
-    return True
-
-
-def user_is_permitted(user):
-    """
-    Check if a user has access permission.
-    """
-    if user.is_superuser:
-        return True
-    elif user.is_authenticated and email_is_valid(user.email):
-        return True
-    else:
-        return False
-
-
-def user_is_owner(user, project_pk):
-    """
-    Check if a given user is the owner of the project with the ID provided in
-    project_pk.
-    """
-    donation_project = DonationProject.objects.get(pk=project_pk)
-    if donation_project.owner.user == user:
-        return True
-    else:
-        return False
+from ddm.models import ResearchProfile
 
 
 class DdmAuthMixin:
@@ -92,7 +51,7 @@ class DdmLoginView(auth_views.LoginView):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            if ResearchProfile.objects.filter(user=self.request.user).exists():
+            if ResearchProfile.objects.filter(user=request.user).exists():
                 return reverse('project-list')
             else:
                 return redirect('ddm-register')
@@ -187,6 +146,7 @@ class DdmLogoutView(auth_views.LogoutView):
     Unauthenticated users are redirected to the login page.
     """
     template_name = 'ddm/project_admin/generic/page_with_form.html'
+    next_page = reverse_lazy('ddm-login')
 
     def dispatch(self, request, *args, **kwargs):
         if request.method == 'GET':

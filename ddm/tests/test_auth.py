@@ -2,7 +2,7 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.contrib.auth.models import User
 from ddm.models import ResearchProfile, DonationProject
-from ddm.views.project_admin.auth import email_is_valid, user_is_owner
+from ddm.auth import email_is_valid, user_is_owner
 from ddm.tests.base import TestData
 
 

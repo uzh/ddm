@@ -1,4 +1,4 @@
-from .encryption import Encryption
+from .encryption import *
 from .projects import (
     DonationProject, Participant, QuestionnaireResponse, ResearchProfile
 )

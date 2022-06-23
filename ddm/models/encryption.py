@@ -2,11 +2,25 @@ from Crypto.Cipher import PKCS1_OAEP, AES
 from Crypto.Hash import HMAC
 from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes
+from django.db import models
 from io import BytesIO
 from struct import pack
 
 import base64
 import json
+
+
+class ModelWithEncryptedData(models.Model):
+
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        self.data = Encryption(public_key=self.project.public_key).encrypt(self.data)
+        super().save(*args, **kwargs)
+
+    def get_decrypted_data(self):
+        return Encryption(secret=self.project.secret_key, salt=str(self.project.date_created)).decrypt(self.data)
 
 
 class Encryption:

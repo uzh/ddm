@@ -8,7 +8,9 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
 
-from ddm.models import Encryption
+from ddm.models import Encryption, ModelWithEncryptedData
+
+from rest_framework.authtoken.models import Token
 
 
 class ResearchProfile(models.Model):
@@ -20,17 +22,15 @@ class ResearchProfile(models.Model):
     active = models.BooleanField(default=True)
     created = models.DateTimeField('date registered', default=timezone.now)
     ignore_email_restriction = models.BooleanField(default=False)
-    api_key = models.CharField(
-        max_length=16,
-        unique=True,
-        null=True,
-        blank=True
-    )
-    api_secret = models.CharField(
-        max_length=64,
-        null=True,
-        blank=True
-    )  # This is a hash of the one-time key.
+
+    def get_token(self):
+        return Token.objects.filter(user=self.user).first()
+
+    def create_token(self):
+        token = self.get_token()
+        if token:
+            token.delete()
+        return Token.objects.create(user=self.user)
 
 
 class DonationProject(models.Model):
@@ -52,7 +52,6 @@ class DonationProject(models.Model):
 
     date_created = models.DateTimeField(default=timezone.now)
 
-    secret_key = settings.SECRET_KEY
     public_key = models.BinaryField()
     super_secret = models.BooleanField(default=False)
 
@@ -67,6 +66,13 @@ class DonationProject(models.Model):
         related_name='project_collaborators'
     )
 
+    def __init__(self, *args, **kwargs):
+        self.secret_key = settings.SECRET_KEY
+        if 'secret_key' in kwargs:
+            self.secret_key = kwargs['secret_key']
+            kwargs.pop('secret_key')
+        super().__init__(*args, **kwargs)
+
     def __str__(self):
         return self.name
 
@@ -78,6 +84,9 @@ class DonationProject(models.Model):
             if self.owner is None:
                 raise ValidationError(
                     'DonationProject.owner cannot be null on create.')
+
+            if self.super_secret:
+                self.public_key = Encryption(self.secret, str(self.date_created)).public_key
         else:
             if self.owner in self.collaborators.all():
                 raise ValidationError(
@@ -96,16 +105,12 @@ class DonationProject(models.Model):
 @receiver(pre_save, sender=DonationProject)
 def my_callback(sender, instance, *args, **kwargs):
     if not instance.public_key:
-        instance.public_key = Encryption(
-            instance.secret_key, str(instance.date_created)).public_key
+        instance.public_key = Encryption(instance.secret_key, str(instance.date_created)).public_key
         instance.super_secret = True
 
 
 class Participant(models.Model):
-    project = models.ForeignKey(
-        DonationProject,
-        on_delete=models.CASCADE
-    )
+    project = models.ForeignKey(DonationProject, on_delete=models.CASCADE)
 
     # Participation statistics.
     start_time = models.DateTimeField()
@@ -113,34 +118,9 @@ class Participant(models.Model):
     completed = models.BooleanField(default=False)
 
 
-class QuestionnaireResponse(models.Model):
+class QuestionnaireResponse(ModelWithEncryptedData):
     # Will only ever be deleted, when the project is deleted.
-    project = models.ForeignKey(
-        DonationProject,
-        on_delete=models.CASCADE
-    )
-    participant = models.ForeignKey(
-        Participant,
-        on_delete=models.CASCADE
-    )
+    project = models.ForeignKey(DonationProject, on_delete=models.CASCADE)
+    participant = models.ForeignKey(Participant, on_delete=models.CASCADE)
     time_submitted = models.DateTimeField(default=timezone.now)
     data = models.BinaryField()
-
-    def save(self, *args, **kwargs):
-        self.data = Encryption(
-            public_key=self.project.public_key
-        ).encrypt(self.data)
-        super().save(*args, **kwargs)
-
-    def get_decrypted_data(self, secret=None):
-        if not secret:
-            decrypted_data = Encryption(
-                secret=settings.SECRET_KEY,
-                salt=str(self.project.date_created)
-            ).decrypt(self.data)
-        else:
-            decrypted_data = Encryption(
-                secret=secret,
-                salt=str(self.project.date_created)
-            ).decrypt(self.data)
-        return decrypted_data

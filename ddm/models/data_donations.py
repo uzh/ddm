@@ -1,11 +1,11 @@
 from ckeditor.fields import RichTextField
-from django.conf import settings
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 
-from ddm.models import DonationProject, Participant, Encryption
+from ddm.models import DonationProject, Participant, ModelWithEncryptedData
 
 
 import logging
@@ -140,7 +140,7 @@ class DonationBlueprint(models.Model):
         return
 
 
-class DataDonation(models.Model):
+class DataDonation(ModelWithEncryptedData):
     project = models.ForeignKey(
         DonationProject,
         on_delete=models.CASCADE
@@ -158,25 +158,6 @@ class DataDonation(models.Model):
     consent = models.BooleanField(default=False)
     status = models.JSONField()
     data = models.BinaryField()
-
-    def save(self, *args, **kwargs):
-        self.data = Encryption(
-            public_key=self.project.public_key
-        ).encrypt(self.data)
-        super().save(*args, **kwargs)
-
-    def get_decrypted_data(self, secret=None):
-        if not secret:
-            decrypted_data = Encryption(
-                secret=settings.SECRET_KEY,
-                salt=str(self.project.date_created)
-            ).decrypt(self.data)
-        else:
-            decrypted_data = Encryption(
-                secret=secret,
-                salt=str(self.project.date_created)
-            ).decrypt(self.data)
-        return decrypted_data
 
 
 class DonationInstruction(models.Model):

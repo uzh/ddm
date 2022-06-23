@@ -16,7 +16,12 @@ class ModelWithEncryptedData(models.Model):
         abstract = True
 
     def save(self, *args, **kwargs):
-        self.data = Encryption(public_key=self.project.public_key).encrypt(self.data)
+        print()
+        self.data = Encryption(
+            secret=self.project.secret_key,
+            salt=str(self.project.date_created),
+            public_key=self.project.public_key
+        ).encrypt(self.data)
         super().save(*args, **kwargs)
 
     def get_decrypted_data(self):

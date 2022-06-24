@@ -70,5 +70,5 @@ urlpatterns = [
     path(r'projects/', include(project_admin_patterns)),
     path(r'auth/', include(authentication_patterns)),
     path(r'profile/', include(profile_patterns)),
-    path(r'<int:pk>/download/', DownloadProjectDataView.as_view(), name='download-api')
+    path(r'<int:pk>/download/', DownloadProjectDataView.as_view(), name='ddm-download-api')
 ]

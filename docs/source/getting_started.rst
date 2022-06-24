@@ -6,13 +6,20 @@ Getting Started
 Use DDM in Your Django Project
 ******************************
 
-1. Install the necessary dependencies::
+1. Install the Django DDM package::
 
-    pip install django-ckeditor pycryptodome django-ckeditor django-polymorphic django-webpack-loader
+    pip install django-ddm
 
 2. Add the necessary entries to INSTALLED_APPS in your settings.py::
 
-    INSTALLED_APPS = [..., 'ddm', 'ckeditor', 'webpack_loader']
+    INSTALLED_APPS = [
+        ...,
+        'ddm',
+        'ckeditor',
+        'webpack_loader',
+        'rest_framework',
+        'rest_framework.authtoken',
+    ]
 
 3. Add the following configuration for webpack-loader to your settings.py::
 
@@ -35,4 +42,4 @@ Use DDM in Your Django Project
     USE_TZ = True
 
 6. Run ``python manage.py migrate`` to create the ddm models in your database.
-7. Test if everything works as expected and you are good to go!
+7. You should now be good to go.

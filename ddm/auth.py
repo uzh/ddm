@@ -2,7 +2,7 @@ import re
 
 from django.conf import settings
 
-from ddm.models import DonationProject
+from ddm.models import DonationProject, ResearchProfile
 
 
 def email_is_valid(email_string):
@@ -26,10 +26,14 @@ def user_is_permitted(user):
     """
     if user.is_superuser:
         return True
-    elif user.is_authenticated and email_is_valid(user.email):
-        return True
-    else:
-        return False
+    elif user.is_authenticated:
+        profile = ResearchProfile.objects.filter(user=user).first()
+        if profile:
+            if profile.ignore_email_restriction:
+                return True
+        if email_is_valid(user.email):
+            return True
+    return False
 
 
 def user_is_owner(user, project_pk):

@@ -19,7 +19,7 @@ class ResearchProfile(models.Model):
     )
     active = models.BooleanField(default=True)
     created = models.DateTimeField('date registered', default=timezone.now)
-    ignore_email_restriction = models.BooleanField(default=False)  # TODO: Account for this in permission check logic.
+    ignore_email_restriction = models.BooleanField(default=False)
 
     def get_token(self):
         return Token.objects.filter(user=self.user).first()

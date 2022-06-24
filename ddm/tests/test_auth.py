@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from ddm.models import ResearchProfile, DonationProject
-from ddm.auth import email_is_valid, user_is_owner
+from ddm.auth import email_is_valid, user_is_owner, user_is_permitted
 from ddm.tests.base import TestData
 
 
@@ -16,6 +16,22 @@ class TestAuthenticationFlow(TestData, TestCase):
         invalid_email = 'abc@liam.com'
         self.assertTrue(email_is_valid(valid_email))
         self.assertFalse(email_is_valid(invalid_email))
+
+    def test_user_is_permitted_without_permission(self):
+        self.assertFalse(user_is_permitted(self.users['no_permission']['user']))
+
+    def test_user_is_permitted_with_ignore_email_restriction_true(self):
+        self.users['no_permission']['profile'].ignore_email_restriction = True
+        self.users['no_permission']['profile'].save()
+        self.assertTrue(user_is_permitted(self.users['no_permission']['user']))
+        self.users['no_permission']['profile'].ignore_email_restriction = False
+        self.users['no_permission']['profile'].save()
+
+    def test_user_is_owner(self):
+        dp = DonationProject.objects.create(name='test-project', slug='test',
+                                            owner=self.users['base']['profile'])
+        self.assertTrue(user_is_owner(self.users['base']['user'], dp.pk))
+        self.assertFalse(user_is_owner(self.users['no_profile']['user'], dp.pk))
 
     def test_login_redirect_without_profile(self):
         response = self.client.post(
@@ -111,8 +127,3 @@ class TestAuthenticationFlow(TestData, TestCase):
     def test_logout_view_redirect_not_logged_in(self):
         response = self.client.get(reverse('ddm-logout'), follow=True)
         self.assertRedirects(response, reverse('ddm-login'))
-
-    def test_user_is_owner(self):
-        dp = DonationProject.objects.create(name='test-project', slug='test', owner=self.users['base']['profile'])
-        self.assertTrue(user_is_owner(self.users['base']['user'], dp.pk))
-        self.assertFalse(user_is_owner(self.users['no_profile']['user'], dp.pk))

@@ -99,19 +99,19 @@ class TestAuthenticationFlow(TestData, TestCase):
             reverse('ddm-no-permission'), follow=True)
         self.assertRedirects(response, reverse('project-list'))
 
-    def test_creat_user_view_redirect_authenticated_with_profile(self):
+    def test_create_user_view_redirect_authenticated_with_profile(self):
         self.client.login(**self.users['base']['credentials'])
         response = self.client.get(
             reverse('ddm-create-user'), follow=True)
         self.assertRedirects(response, reverse('project-list'))
 
-    def test_creat_user_view_redirect_authenticated_without_profile(self):
+    def test_create_user_view_redirect_authenticated_without_profile(self):
         self.client.login(**self.users['no_profile']['credentials'])
         response = self.client.get(
             reverse('ddm-create-user'), follow=True)
         self.assertRedirects(response, reverse('ddm-register'))
 
-    def test_creat_user_view_creates_user_and_profile(self):
+    def test_create_user_view_creates_user_and_profile(self):
         self.assertFalse(User.objects.filter(email='new@mail.com').exists())
         self.assertFalse(ResearchProfile.objects.filter(user__email='new@mail.com').exists())
         response = self.client.post(

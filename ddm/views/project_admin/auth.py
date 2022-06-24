@@ -1,5 +1,5 @@
 from django.contrib.auth import views as auth_views
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import reverse, redirect
@@ -10,6 +10,9 @@ from django.views.generic.base import TemplateView
 from ddm.auth import user_is_permitted, user_is_owner
 from ddm.forms import ResearchProfileConfirmationForm, DdmUserCreationForm
 from ddm.models import ResearchProfile
+
+
+User = get_user_model()
 
 
 class DdmAuthMixin:

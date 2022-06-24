@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.utils import timezone
 
@@ -6,6 +6,9 @@ from ddm.models import (
     ResearchProfile, DonationProject, DonationBlueprint, ZippedBlueprint,
     DonationInstruction, MatrixQuestion, SingleChoiceQuestion, OpenQuestion, Participant
 )
+
+
+User = get_user_model()
 
 
 @override_settings(DDM_SETTINGS={'EMAIL_PERMISSION_CHECK':  r'.*(\.|@)mail\.com$', })

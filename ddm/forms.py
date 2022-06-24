@@ -1,10 +1,13 @@
 from django import forms
+from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 from ddm.models import ResearchProfile, DonationProject
 from ddm.auth import email_is_valid
+
+
+User = get_user_model()
 
 
 class ProjectCreateForm(forms.ModelForm):

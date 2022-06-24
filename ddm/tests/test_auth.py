@@ -1,9 +1,12 @@
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from django.urls import reverse
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from ddm.models import ResearchProfile, DonationProject
 from ddm.auth import email_is_valid, user_is_owner
 from ddm.tests.base import TestData
+
+
+User = get_user_model()
 
 
 class TestAuthenticationFlow(TestData, TestCase):

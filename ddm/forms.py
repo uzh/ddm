@@ -70,10 +70,12 @@ class ResearchProfileConfirmationForm(forms.ModelForm):
     class Meta:
         model = ResearchProfile
         fields = ['user']
+        widgets = {'user': forms.HiddenInput()}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['user'].initial = kwargs['initial']['user']  # TODO: Check that this cannot be altered by another user and make hidden input.
+        self.expected_user_id = kwargs['initial']['user']
+        self.fields['user'].initial = self.expected_user_id
         self.fields['confirmed'].initial = True
         self.fields['confirmed'].widget = forms.HiddenInput()
 
@@ -82,3 +84,11 @@ class ResearchProfileConfirmationForm(forms.ModelForm):
             return self.cleaned_data['confirmed']
         else:
             return False
+
+    def save(self):
+        """
+        Ensure that user.id is not changed manually (e.g., by altering the HTML).
+        """
+        if self.cleaned_data['user'].pk != self.expected_user_id:
+            raise ValidationError('User is not set as expected.', code='not allowed')
+        return super().save()

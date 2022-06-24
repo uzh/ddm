@@ -1,0 +1,19 @@
+{% extends 'ddm/project_admin/base.html' %}
+
+{% block page_title %}Profile Overview{% endblock %}
+
+{% block main_heading %}Profile Overview{% endblock %}
+
+{% block main_body %}
+<div>
+  <p>Username: {{ object.username }}</p>
+  <p>Email: {{ object.email }}</p>
+  <p><a href="{% url 'ddm-change-pw' %}">Change Password</a></p>
+  <br>
+  <p>Active: {{ profile.active }}</p>
+  <p>Profile created on: {{ profile.created|date }}</p>
+  <p>E-Mail Restriction ignored: {{ profile.ignore_email_restriction }}</p>
+</div>
+{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}

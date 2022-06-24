@@ -1,4 +1,3 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import inlineformset_factory
 from django.urls import reverse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -8,7 +7,7 @@ from ddm.models import (
     OpenQuestion, MatrixQuestion, SemanticDifferential, Transition, QuestionItem,
     ScalePoint, DonationBlueprint
 )
-from . import ProjectBlueprintList
+from . import ProjectBlueprintList, DdmAuthMixin
 
 
 class ProjectMixin:
@@ -66,7 +65,7 @@ class QuestionFormMixin(ProjectMixin):
         return context
 
 
-class QuestionCreate(LoginRequiredMixin, QuestionFormMixin, CreateView):
+class QuestionCreate(DdmAuthMixin, QuestionFormMixin, CreateView):
     """ View to create question. """
     template_name = 'ddm/project_admin/questionnaire/create.html'
 
@@ -86,7 +85,7 @@ class QuestionCreate(LoginRequiredMixin, QuestionFormMixin, CreateView):
         return reverse('questionnaire-overview', kwargs={'project_pk': self.kwargs['project_pk']})
 
 
-class QuestionEdit(LoginRequiredMixin, QuestionFormMixin, UpdateView):
+class QuestionEdit(DdmAuthMixin, QuestionFormMixin, UpdateView):
     """ View to edit question. """
     model = QuestionBase
     template_name = 'ddm/project_admin/questionnaire/edit.html'
@@ -101,7 +100,7 @@ class QuestionEdit(LoginRequiredMixin, QuestionFormMixin, UpdateView):
         return reverse('question-edit', kwargs=success_kwargs)
 
 
-class QuestionDelete(LoginRequiredMixin, ProjectMixin, DeleteView):
+class QuestionDelete(DdmAuthMixin, ProjectMixin, DeleteView):
     """ View to delete question. """
     model = QuestionBase
     template_name = 'ddm/project_admin/questionnaire/delete.html'
@@ -158,7 +157,7 @@ class InlineFormsetMixin(ProjectMixin):
         return reverse('question-edit', kwargs=success_kwargs)
 
 
-class ItemEdit(LoginRequiredMixin, InlineFormsetMixin, UpdateView):
+class ItemEdit(DdmAuthMixin, InlineFormsetMixin, UpdateView):
     """ View to edit the items associated with a question. """
     model = QuestionBase
     formset_model = QuestionItem
@@ -166,7 +165,7 @@ class ItemEdit(LoginRequiredMixin, InlineFormsetMixin, UpdateView):
     context_title = 'Items'
 
 
-class ScaleEdit(LoginRequiredMixin, InlineFormsetMixin, UpdateView):
+class ScaleEdit(DdmAuthMixin, InlineFormsetMixin, UpdateView):
     """ View to edit the scale associated with a question. """
     model = QuestionBase
     formset_model = ScalePoint

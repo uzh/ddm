@@ -117,7 +117,7 @@ class TestAuthenticationFlow(TestData, TestCase):
         response = self.client.post(
             reverse('ddm-create-user'),
             data={'username': 'new_user', 'email': 'new@mail.com',
-                  'password1': 'abc', 'password2': 'abc'},
+                  'password1': 'Z-6THLAqmd7H5gyUs.8dZt', 'password2': 'Z-6THLAqmd7H5gyUs.8dZt'},
             follow=True
         )
         self.assertTrue(User.objects.filter(email='new@mail.com').exists())

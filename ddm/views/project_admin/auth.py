@@ -55,7 +55,7 @@ class DdmLoginView(auth_views.LoginView):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             if ResearchProfile.objects.filter(user=request.user).exists():
-                return reverse('project-list')
+                return redirect('project-list')
             else:
                 return redirect('ddm-register')
         return super().dispatch(request, *args, **kwargs)

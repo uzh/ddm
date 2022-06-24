@@ -70,7 +70,7 @@ class ResearchProfileConfirmationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['user'].initial = kwargs['initial']['user']  # TODO: Check that this cannot be altered by another user.
+        self.fields['user'].initial = kwargs['initial']['user']  # TODO: Check that this cannot be altered by another user and make hidden input.
         self.fields['confirmed'].initial = True
         self.fields['confirmed'].widget = forms.HiddenInput()
 

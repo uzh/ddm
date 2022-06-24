@@ -33,7 +33,4 @@ class TestProjectCreateForm(TestCase):
                      'super_secret': True, 'secret': '',
                      'owner': self.user_profile}
         form = ProjectCreateForm(post_data)
-        print(form.errors.as_data())
-
-        ValidationError(['Super secret project needs a secret.'])
-        self.assertFalse(form.is_valid())  # TODO: Check if a
+        self.assertFalse(form.is_valid())

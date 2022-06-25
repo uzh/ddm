@@ -1,10 +1,11 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from django.urls import reverse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
 from ddm.models import DonationBlueprint, ZippedBlueprint, DonationInstruction
+
+from ddm.views.project_admin import DdmAuthMixin
 
 
 class BlueprintMixin:
@@ -18,7 +19,7 @@ class BlueprintMixin:
         return reverse('blueprint-list', kwargs={'project_pk': self.kwargs['project_pk']})
 
 
-class ProjectBlueprintList(LoginRequiredMixin, BlueprintMixin, ListView):
+class ProjectBlueprintList(DdmAuthMixin, BlueprintMixin, ListView):
     """ View to list all donation blueprints associated with a project. """
     model = DonationBlueprint
     context_object_name = 'donation_blueprints'
@@ -36,7 +37,7 @@ class ProjectBlueprintList(LoginRequiredMixin, BlueprintMixin, ListView):
         return queryset
 
 
-class BlueprintCreate(LoginRequiredMixin, BlueprintMixin, CreateView):
+class BlueprintCreate(DdmAuthMixin, BlueprintMixin, CreateView):
     """ View to create a new donation blueprint. """
     model = DonationBlueprint
     template_name = 'ddm/project_admin/blueprint/create.html'
@@ -47,7 +48,7 @@ class BlueprintCreate(LoginRequiredMixin, BlueprintMixin, CreateView):
         return super().form_valid(form)
 
 
-class BlueprintEdit(LoginRequiredMixin, BlueprintMixin, UpdateView):
+class BlueprintEdit(DdmAuthMixin, BlueprintMixin, UpdateView):
     """ View to edit the details of an existing donation blueprint. """
     model = DonationBlueprint
     template_name = 'ddm/project_admin/blueprint/edit.html'
@@ -58,17 +59,18 @@ class BlueprintEdit(LoginRequiredMixin, BlueprintMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'].fields['zip_blueprint'].queryset = ZippedBlueprint.objects.filter(project_id=self.kwargs['project_pk'])
+        zbp_queryset = ZippedBlueprint.objects.filter(project_id=self.kwargs['project_pk'])
+        context['form'].fields['zip_blueprint'].queryset = zbp_queryset
         return context
 
 
-class BlueprintDelete(LoginRequiredMixin, BlueprintMixin, DeleteView):
+class BlueprintDelete(DdmAuthMixin, BlueprintMixin, DeleteView):
     """ View to delete an existing donation blueprint. """
     model = DonationBlueprint
     template_name = 'ddm/project_admin/blueprint/delete.html'
 
 
-class ZippedBlueprintCreate(LoginRequiredMixin, BlueprintMixin, CreateView):
+class ZippedBlueprintCreate(DdmAuthMixin, BlueprintMixin, CreateView):
     """ View to create a new zipped blueprint. """
     model = ZippedBlueprint
     template_name = 'ddm/project_admin/blueprint/create.html'
@@ -79,14 +81,14 @@ class ZippedBlueprintCreate(LoginRequiredMixin, BlueprintMixin, CreateView):
         return super().form_valid(form)
 
 
-class ZippedBlueprintEdit(LoginRequiredMixin, BlueprintMixin, UpdateView):
+class ZippedBlueprintEdit(DdmAuthMixin, BlueprintMixin, UpdateView):
     """ View to edit the details of an existing zipped blueprint. """
     model = ZippedBlueprint
     template_name = 'ddm/project_admin/blueprint/edit.html'
     fields = ['name']
 
 
-class ZippedBlueprintDelete(LoginRequiredMixin, BlueprintMixin, DeleteView):
+class ZippedBlueprintDelete(DdmAuthMixin, BlueprintMixin, DeleteView):
     """ View to delete an existing zipped blueprint. """
     model = ZippedBlueprint
     template_name = 'ddm/project_admin/blueprint/delete.html'
@@ -117,7 +119,7 @@ class InstructionMixin:
         return reverse('instruction-overview', kwargs=kwargs)
 
 
-class InstructionOverview(LoginRequiredMixin, InstructionMixin, ListView):
+class InstructionOverview(DdmAuthMixin, InstructionMixin, ListView):
     """ View to create a new instruction page. """
     model = DonationInstruction
     context_object_name = 'instructions'
@@ -135,7 +137,7 @@ class InstructionOverview(LoginRequiredMixin, InstructionMixin, ListView):
         return queryset
 
 
-class InstructionCreate(LoginRequiredMixin, InstructionMixin, CreateView):
+class InstructionCreate(DdmAuthMixin, InstructionMixin, CreateView):
     """ View to create an instruction page. """
     model = DonationInstruction
     template_name = 'ddm/project_admin/instructions/create.html'
@@ -167,14 +169,14 @@ class InstructionCreate(LoginRequiredMixin, InstructionMixin, CreateView):
         return initial
 
 
-class InstructionEdit(LoginRequiredMixin, InstructionMixin, UpdateView):
+class InstructionEdit(DdmAuthMixin, InstructionMixin, UpdateView):
     """ View to edit an instruction page. """
     model = DonationInstruction
     template_name = 'ddm/project_admin/instructions/edit.html'
     fields = ['text', 'index']
 
 
-class InstructionDelete(LoginRequiredMixin, InstructionMixin, DeleteView):
+class InstructionDelete(DdmAuthMixin, InstructionMixin, DeleteView):
     """ View to delete an instruction page. """
     model = DonationInstruction
     template_name = 'ddm/project_admin/instructions/delete.html'

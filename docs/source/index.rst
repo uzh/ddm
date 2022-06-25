@@ -21,3 +21,4 @@ Contents
 
    getting_started
    for_developers
+   encryption

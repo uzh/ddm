@@ -1,7 +1,9 @@
+from django.contrib.auth import views as auth_views
 from django.urls import path, include
 
 from ddm.views import project_admin
 from ddm.views import participation_flow
+from ddm.views.download import DownloadProjectDataView
 
 participation_flow_patterns = [
     path(r'intro/', participation_flow.EntryView.as_view(), name='project-entry'),
@@ -49,7 +51,24 @@ project_admin_patterns = [
     path(r'<int:project_pk>/donation-blueprints/', include(blueprint_patterns)),
 ]
 
+authentication_patterns = [
+    path(r'login/', project_admin.DdmLoginView.as_view(), name='ddm-login'),
+    path(r'logout/', project_admin.DdmLogoutView.as_view(), name='ddm-logout'),
+    path(r'register/', project_admin.DdmRegisterResearchProfileView.as_view(), name='ddm-register'),
+    path(r'create-user/', project_admin.DdmCreateUserView.as_view(), name='ddm-create-user'),
+    path(r'no-permission/', project_admin.DdmNoPermissionView.as_view(), name='ddm-no-permission'),
+]
+
+profile_patterns = [
+    path(r'', project_admin.ProfileDetailView.as_view(), name='ddm-profile-detail'),
+    path(r'change-password/', project_admin.ProfileChangePasswordView.as_view(), name='ddm-change-pw'),
+    path(r'password-changed/', project_admin.ProfilePasswordChangedView.as_view(), name='ddm-pw-changed'),
+]
+
 urlpatterns = [
     path(r'<slug:slug>/', include(participation_flow_patterns)),
-    path(r'projects/', include(project_admin_patterns))
+    path(r'projects/', include(project_admin_patterns)),
+    path(r'auth/', include(authentication_patterns)),
+    path(r'profile/', include(profile_patterns)),
+    path(r'<int:pk>/download/', DownloadProjectDataView.as_view(), name='ddm-download-api')
 ]

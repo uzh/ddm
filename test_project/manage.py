@@ -54,6 +54,8 @@ settings.configure(
         'ddm.apps.DdmConfig',
         'ckeditor',
         'webpack_loader',
+        'rest_framework',
+        'rest_framework.authtoken',
     ],
     MIDDLEWARE=[
         'django.middleware.csrf.CsrfViewMiddleware',
@@ -95,7 +97,7 @@ settings.configure(
     ),
     WEBPACK_LOADER={
         'DEFAULT': {
-            #'CACHE': not settings.DEBUG,
+            # 'CACHE': not settings.DEBUG,
             'BUNDLE_DIR_NAME': 'ddm/vue/',
             'STATS_FILE': os.path.join(DDM_DIR, 'static', 'ddm', 'vue', 'webpack-stats.json'),
             'POLL_INTERVAL': 0.1,
@@ -103,6 +105,15 @@ settings.configure(
             'IGNORE': [r'.+\.hot-update.js', r'.+\.map']
         }
     },
+    DDM_SETTINGS={
+        'EMAIL_PERMISSION_CHECK':  r'.*(\.|@)uzh\.ch$',
+    },
+    AUTH_PASSWORD_VALIDATORS=[
+        {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
+        {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', },
+        {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator', },
+        {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
+    ]
 )
 
 django.setup()

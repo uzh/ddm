@@ -37,3 +37,35 @@
     background: #ffffff;
     z-index: 100;
 }
+
+.ddm-message {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 2px 10px 2px 10px;
+    font-size: 0.9rem;
+    margin-top: 20px;
+}
+
+.ddm-message-container {
+    padding-left: 2%;
+    padding-right: 2%;
+}
+
+.ddm-message-container .success {
+    background: #c9eae8;
+    border-color: #009c94;
+    color: #009c94;
+}
+
+.ddm-message-close {
+    color: #009c94 !important;
+}
+
+.ddm-message-close:hover {
+    color: #005752 !important;
+}
+
+.ddm-breadcrumbs {
+    font-size: 0.85rem !important;
+    color: gray;
+}

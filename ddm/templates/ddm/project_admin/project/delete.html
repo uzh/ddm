@@ -2,7 +2,7 @@
 
 {% block page_title %}Delete Project{% endblock %}
 
-{% block main_heading %}Delete "{{ object.name }}"{% endblock %}
+{% block main_heading %}Delete the Project "{{ object.name }}"{% endblock %}
 
 {% block main_form %}
 <form method='post'>
@@ -35,7 +35,7 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-Back to:
 <a href="{% url 'project-list' %}">Projects</a> /
-<a href="{% url 'project-detail' object.pk %}">Project Cockpit</a>
+<a href="{% url 'project-detail' object.pk %}">"{{ object.name|truncatechars:15 }}" Project</a> /
+Delete
 {% endblock %}

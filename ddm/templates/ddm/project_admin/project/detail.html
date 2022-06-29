@@ -2,13 +2,13 @@
 
 {% block page_title %}Project Overview{% endblock %}
 
-{% block main_heading %}{{ object.name }}: Cockpit{% endblock %}
+{% block main_heading %}{{ object.name }}: Project Control Center{% endblock %}
 
 {% block main_body %}
 <hr>
 <div class="container mb-4">
   <h2>Details</h2>
-  <table class="table table-borderless">
+  <table class="table table-borderless table-sm">
     <tr>
       <td>Name:</td>
       <td>{{ object.name }}</td>
@@ -20,6 +20,10 @@
     <tr>
       <td>Public Access:</td>
       <td><a href="{% url 'project-entry' object.slug %}">{{ request.scheme }}://{{ request.get_host }}{% url 'project-entry' object.slug %}</a></td>
+    </tr>
+    <tr>
+      <td>Project Type:</td>
+      <td>{% if object.super_secret %}Super Secret Project{% else %}Regular Project{% endif %}</td>
     </tr>
   </table>
   <p><a class="ddm-btn" href="{% url 'project-edit' object.pk %}">Edit Project Details</a></p>
@@ -90,6 +94,6 @@
 
 
 {% block breadcrumbs %}
-Back to:
-<a href="{% url 'project-list' %}">Projects</a>
+<a href="{% url 'project-list' %}">Projects</a> /
+"{{ object.name|truncatechars:15 }}" Project
 {% endblock %}

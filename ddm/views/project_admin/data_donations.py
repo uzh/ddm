@@ -3,8 +3,7 @@ from django.urls import reverse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
-from ddm.models import DonationBlueprint, ZippedBlueprint, DonationInstruction
-
+from ddm.models import DonationBlueprint, ZippedBlueprint, DonationInstruction, DonationProject
 from ddm.views.project_admin import DdmAuthMixin
 
 
@@ -13,6 +12,7 @@ class BlueprintMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({'project_pk': self.kwargs['project_pk']})
+        context.update({'project': DonationProject.objects.get(pk=self.kwargs['project_pk'])})
         return context
 
     def get_success_url(self):
@@ -98,6 +98,7 @@ class InstructionMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({'project_pk': self.kwargs['project_pk']})
+        context.update({'project': DonationProject.objects.get(pk=self.kwargs['project_pk'])})
         if self.kwargs['blueprint_type'] == 'blueprint':
             blueprint = DonationBlueprint.objects.get(id=self.kwargs['blueprint_pk'])
             blueprint_type = 'blueprint'

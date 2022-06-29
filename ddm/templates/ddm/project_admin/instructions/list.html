@@ -31,8 +31,8 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-Back to:
 <a href="{% url 'project-list' %}">Projects</a> /
-<a href="{% url 'project-detail' project_pk %}">Project Cockpit</a> /
-<a href="{% url 'blueprint-list' blueprint.project.pk %}">Donation Blueprints</a>
+<a href="{% url 'project-detail' project_pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'blueprint-list' blueprint.project.pk %}">"{{ blueprint.name|truncatechars:15 }}" Blueprint</a> /
+Instructions
 {% endblock %}

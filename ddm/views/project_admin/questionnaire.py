@@ -5,7 +5,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from ddm.models import (
     QuestionBase, QuestionType, SingleChoiceQuestion, MultiChoiceQuestion,
     OpenQuestion, MatrixQuestion, SemanticDifferential, Transition, QuestionItem,
-    ScalePoint, DonationBlueprint
+    ScalePoint, DonationBlueprint, DonationProject
 )
 from . import ProjectBlueprintList, DdmAuthMixin
 
@@ -15,6 +15,7 @@ class ProjectMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({'project_pk': self.kwargs['project_pk']})
+        context.update({'project': DonationProject.objects.get(pk=self.kwargs['project_pk'])})
         return context
 
 
@@ -147,15 +148,6 @@ class InlineFormsetMixin(ProjectMixin):
             excluded_fields = ()
         return excluded_fields
 
-    def get_success_url(self):
-        question = self.get_object()
-        success_kwargs = {
-            'project_pk': self.kwargs['project_pk'],
-            'question_type': question.question_type,
-            'pk': question.pk
-        }
-        return reverse('question-edit', kwargs=success_kwargs)
-
 
 class ItemEdit(DdmAuthMixin, InlineFormsetMixin, UpdateView):
     """ View to edit the items associated with a question. """
@@ -164,6 +156,15 @@ class ItemEdit(DdmAuthMixin, InlineFormsetMixin, UpdateView):
     template_name = 'ddm/project_admin/questionnaire/edit_set.html'
     context_title = 'Items'
 
+    def get_success_url(self):
+        question = self.get_object()
+        success_kwargs = {
+            'project_pk': self.kwargs['project_pk'],
+            'question_type': question.question_type,
+            'pk': question.pk
+        }
+        return reverse('question-items', kwargs=success_kwargs)
+
 
 class ScaleEdit(DdmAuthMixin, InlineFormsetMixin, UpdateView):
     """ View to edit the scale associated with a question. """
@@ -171,3 +172,12 @@ class ScaleEdit(DdmAuthMixin, InlineFormsetMixin, UpdateView):
     formset_model = ScalePoint
     template_name = 'ddm/project_admin/questionnaire/edit_set.html'
     context_title = 'Scale Points'
+
+    def get_success_url(self):
+        question = self.get_object()
+        success_kwargs = {
+            'project_pk': self.kwargs['project_pk'],
+            'question_type': question.question_type,
+            'pk': question.pk
+        }
+        return reverse('question-scale', kwargs=success_kwargs)

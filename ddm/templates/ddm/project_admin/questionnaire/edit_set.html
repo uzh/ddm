@@ -43,9 +43,10 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-Back to:
 <a href="{% url 'project-list' %}">Projects</a> /
-<a href="{% url 'project-detail' project_pk %}">Project Cockpit</a> /
+<a href="{% url 'project-detail' project_pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
 <a href="{% url 'questionnaire-overview' project_pk %}">Questionnaire</a> /
-<a href="{% url 'question-edit' project_pk question.question_type question.pk %}">Question</a>
+<a href="{% url 'question-edit' project_pk question.question_type question.pk %}">Question</a> /
+Items
 {% endblock %}
+

@@ -1,0 +1,19 @@
+{% load static i18n %}
+
+<nav class="navbar navbar-expand-lg navbar-light">
+  <a class="ddm-nav-icon" href="{% url 'project-list' %}">
+    <img alt="Data Donation Module" height="40" alt=""
+       src="{% static 'ddm/img/logos/DDM_Logo_Schwarz.svg' %}">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="ddm-nav-icon" href="{% url 'ddm-profile-detail' %}"><i class="bi bi-person-circle"></i></a>
+      </li>
+    </ul>
+  </div>
+</nav>

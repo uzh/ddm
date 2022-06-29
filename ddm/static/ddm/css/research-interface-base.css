@@ -23,3 +23,17 @@
     justify-content: center;
     align-items: center;
 }
+
+.ddm-nav-icon {
+    color: black !important;
+    font-size: 30px;
+}
+
+.ddm-header {
+    box-shadow: -10vw 2px #d36a45, 10vw 4px #fff, 0px 3px #c6c6c678, 10vw 6px #009c94, 10vw 7px #c6c6c678;
+    /* position: fixed; */
+    top: 0;
+    width: 100%;
+    background: #ffffff;
+    z-index: 100;
+}

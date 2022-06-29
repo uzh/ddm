@@ -56,12 +56,12 @@ class ProjectDelete(DdmAuthMixin, DeleteView):
 class WelcomePageEdit(DdmAuthMixin, UpdateView):
     """ View to edit the welcome page. """
     model = DonationProject
-    template_name = 'ddm/project_admin/project/edit.html'
+    template_name = 'ddm/project_admin/project/edit-welcome.html'
     fields = ['intro_text']
 
 
 class EndPageEdit(DdmAuthMixin, UpdateView):
     """ View to edit the welcome page. """
     model = DonationProject
-    template_name = 'ddm/project_admin/project/edit.html'
+    template_name = 'ddm/project_admin/project/edit-end.html'
     fields = ['outro_text']

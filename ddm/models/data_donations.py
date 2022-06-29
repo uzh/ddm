@@ -1,6 +1,9 @@
+import json
+
 from ckeditor.fields import RichTextField
 
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -10,6 +13,14 @@ from ddm.models import DonationProject, Participant, ModelWithEncryptedData
 
 import logging
 logger = logging.getLogger(__name__)
+
+COMMA_SEPARATED_STRINGS_VALIDATOR = RegexValidator(
+    r'^((["][^"]+["]))(\s*,\s*((["][^"]+["])))*[,\s]*$',
+    message=(
+        'Field must contain one or multiple comma separated strings. '
+        'Strings must be enclosed in double quotes ("string").'
+    )
+)
 
 
 class ZippedBlueprint(models.Model):
@@ -65,8 +76,16 @@ class DonationBlueprint(models.Model):
         verbose_name='Expected File Format'
     )
 
-    expected_fields = models.JSONField()
-    extracted_fields = models.JSONField()
+    expected_fields = models.TextField(
+        null=False,
+        blank=False,
+        validators=[COMMA_SEPARATED_STRINGS_VALIDATOR]
+    )
+    extracted_fields = models.TextField(
+        null=True,
+        blank=True,
+        validators=[COMMA_SEPARATED_STRINGS_VALIDATOR]
+    )
 
     # Configuration if related to ZippedBlueprint:
     zip_blueprint = models.ForeignKey(
@@ -75,10 +94,7 @@ class DonationBlueprint(models.Model):
         blank=True,
         on_delete=models.SET_NULL
     )
-    regex_path = models.TextField(
-        null=True,
-        blank=True
-    )
+    regex_path = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -94,8 +110,8 @@ class DonationBlueprint(models.Model):
             'id': self.pk,
             'name': self.name,
             'format': self.exp_file_format,
-            'f_expected': self.expected_fields,
-            'f_extract': self.extracted_fields,
+            'f_expected': json.loads("[" + str(self.expected_fields) + "]"),
+            'f_extract': json.loads("[" + str(self.extracted_fields) + "]"),
             'regex_path': self.regex_path,
         }
         return config

@@ -1,4 +1,5 @@
 {% extends 'ddm/project_admin/base.html' %}
+{% load static %}
 
 {% block page_title %}Project Overview{% endblock %}
 
@@ -81,6 +82,7 @@
   <h4>Download Section</h4>
   <div>
     <p>Provide option/instructions to download the collected data.</p>
+    <p><button onclick="downloadData('{% url "ddm-download-api" object.pk %}', 'project_{{ object.pk }}_data')" class="ddm-btn">Download Data</button></p>
   </div>
 </div>
 
@@ -96,4 +98,10 @@
 {% block breadcrumbs %}
 <a href="{% url 'project-list' %}">Projects</a> /
 "{{ object.name|truncatechars:15 }}" Project
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="{% static 'ddm/js/download-data.js' %}"></script>
 {% endblock %}

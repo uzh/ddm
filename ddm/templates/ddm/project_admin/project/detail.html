@@ -81,8 +81,7 @@
   </div>
   <h4>Download Section</h4>
   <div>
-    <p>Provide option/instructions to download the collected data.</p>
-    <p><button onclick="downloadData('{% url "ddm-download-api" object.pk %}', 'project_{{ object.pk }}_data')" class="ddm-btn">Download Data</button></p>
+    <p><button onclick="downloadData('{% url "ddm-download-api" object.pk %}', 'project_{{ object.pk }}_data')" class="ddm-btn">Download Data as JSON</button></p>
   </div>
 </div>
 

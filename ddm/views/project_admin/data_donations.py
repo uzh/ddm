@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
+from ddm.forms import BlueprintEditForm
 from ddm.models import DonationBlueprint, ZippedBlueprint, DonationInstruction, DonationProject
 from ddm.views.project_admin import DdmAuthMixin
 
@@ -55,10 +56,7 @@ class BlueprintEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, UpdateVie
     """ View to edit the details of an existing donation blueprint. """
     model = DonationBlueprint
     template_name = 'ddm/project_admin/blueprint/edit.html'
-    fields = [
-        'name', 'exp_file_format', 'expected_fields', 'extracted_fields',
-        'zip_blueprint', 'regex_path'
-    ]
+    form_class = BlueprintEditForm
     success_message = 'Blueprint "%(name)s" was successfully updated.'
 
     def get_context_data(self, **kwargs):

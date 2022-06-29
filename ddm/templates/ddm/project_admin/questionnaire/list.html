@@ -27,12 +27,10 @@
       <td>
         {% for question in blueprint.get_associated_questions %}
         <div>
-          <p>Name: {{ question.name }}</p>
-          <p>Type: {{ question.question_type }}</p>
-          <p>
-            <a href="{% url 'question-edit' project_pk question.question_type question.pk %}">Edit Question</a> |
-            <a href="{% url 'question-delete' project_pk question.question_type question.pk %}">Delete Question</a>
-          </p>
+          Name: {{ question.name }}<br>
+          Type: {{ question.get_question_type_display }}<br>
+          <a href="{% url 'question-edit' project_pk question.question_type question.pk %}">Edit Question</a> |
+          <a href="{% url 'question-delete' project_pk question.question_type question.pk %}">Delete Question</a>
           {% if not forloop.last %}<hr>{% endif %}
         </div>
         {% empty %}

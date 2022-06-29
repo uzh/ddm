@@ -12,8 +12,8 @@
   <tr>
     <td style="width: 16.66%">
       <h4>Page {{ page.index }}</h4>
-      <a href="{% url 'instruction-edit' blueprint.project.pk blueprint.get_slug blueprint.pk page.pk %}">Edit instruction page</a><br>
-      <a href="{% url 'instruction-delete' blueprint.project.pk blueprint.get_slug blueprint.pk page.pk %}">Delete instruction page</a>
+      <a href="{% url 'instruction-edit' blueprint.project.pk blueprint.get_slug blueprint.pk page.pk %}">Edit Instruction Page</a><br>
+      <a href="{% url 'instruction-delete' blueprint.project.pk blueprint.get_slug blueprint.pk page.pk %}">Delete Instruction Page</a>
     </td>
     <td>
       <b>Instruction Text:</b>
@@ -25,7 +25,7 @@
 {% endfor %}
 
 <div>
-  <p><a class="ddm-btn" href="{% url 'instruction-create' blueprint.project.pk blueprint.get_slug blueprint.pk %}"><b>+</b>&nbsp;&nbsp;Add instruction page</a></p>
+  <p><a class="ddm-btn" href="{% url 'instruction-create' blueprint.project.pk blueprint.get_slug blueprint.pk %}"><b>+</b>&nbsp;&nbsp;Add Instruction Page</a></p>
 </div>
 
 {% endblock %}

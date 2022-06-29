@@ -69,3 +69,20 @@
     font-size: 0.85rem !important;
     color: gray;
 }
+
+.ddm-main {
+    margin-bottom: 60px;
+}
+
+.ddm-form input,
+.ddm-form textarea {
+    border-radius: 3px;
+    border: 1px solid gray;
+    padding: 2px 5px 2px 5px;
+}
+
+.ddm-form input:focus,
+.ddm-form textarea:focus {
+    outline: 2px solid #009c94;
+    border-color: white;
+}

@@ -21,13 +21,13 @@
       <td>{{ blueprint.zip_blueprint }}</td>
       <td>
         {% if blueprint.get_instructions %}
-        <a href="{% url 'instruction-overview' blueprint.project.pk 'blueprint' blueprint.pk %}">show instructions</a>
+        <a href="{% url 'instruction-overview' blueprint.project.pk 'blueprint' blueprint.pk %}">Show Instructions</a>
         {% else %}
-        No instructions – <a href="{% url 'instruction-create' blueprint.project.pk 'blueprint' blueprint.pk %}">create instructions</a>
+        No instructions – <a href="{% url 'instruction-create' blueprint.project.pk 'blueprint' blueprint.pk %}">Create Instructions</a>
         {% endif %}
       </td>
-      <td><a href="{{ blueprint.get_absolute_url }}">edit blueprint</a></td>
-      <td><a href="{% url 'blueprint-delete' blueprint.project.pk blueprint.pk %}">delete blueprint</a></td>
+      <td><a href="{{ blueprint.get_absolute_url }}">Edit Blueprint</a></td>
+      <td><a href="{% url 'blueprint-delete' blueprint.project.pk blueprint.pk %}">Delete Blueprint</a></td>
     </tr>
     {% empty %}
     <tr>
@@ -38,7 +38,7 @@
 </div>
 
 <div>
-  <a class="ddm-btn" href="{% url 'blueprint-create' project_pk %}"><b>+</b>&nbsp;&nbsp;Create new blueprint</a>
+  <a class="ddm-btn" href="{% url 'blueprint-create' project_pk %}"><b>+</b>&nbsp;&nbsp;Create new Blueprint</a>
 </div>
 
 
@@ -56,23 +56,23 @@
       <td>{{ blueprint.name }}</td>
       <td>
         {% if blueprint.get_instructions %}
-        <a href="{% url 'instruction-overview' blueprint.project.pk 'zip-blueprint' blueprint.pk %}">show instructions</a>
+        <a href="{% url 'instruction-overview' blueprint.project.pk 'zip-blueprint' blueprint.pk %}">Show Instructions</a>
         {% else %}
-        <a href="{% url 'instruction-create' blueprint.project.pk 'zip-blueprint' blueprint.pk %}">create instructions</a>
+        <a href="{% url 'instruction-create' blueprint.project.pk 'zip-blueprint' blueprint.pk %}">Create Instructions</a>
         {% endif %}
       </td>
-      <td><a href="{{ blueprint.get_absolute_url }}">edit zipped blueprint</a></td>
-      <td><a href="{% url 'zipped-blueprint-delete' blueprint.project.pk blueprint.pk %}">delete blueprint</a></td>
+      <td><a href="{{ blueprint.get_absolute_url }}">Edit Zipped Blueprint</a></td>
+      <td><a href="{% url 'zipped-blueprint-delete' blueprint.project.pk blueprint.pk %}">Delete Blueprint</a></td>
     </tr>
     {% empty %}
     <tr>
-      <td>No zipped blueprints created yet.</td>
+      <td>No Zipped Blueprints created yet.</td>
     </tr>
     {% endfor %}
   </table>
 </div>
 
-<p><a class="ddm-btn" href="{% url 'zipped-blueprint-create' project_pk %}"><b>+</b>&nbsp;&nbsp;Create new zipped blueprint</a></p>
+<p><a class="ddm-btn" href="{% url 'zipped-blueprint-create' project_pk %}"><b>+</b>&nbsp;&nbsp;Create new Zipped Blueprint</a></p>
 {% endblock %}
 
 {% block breadcrumbs %}

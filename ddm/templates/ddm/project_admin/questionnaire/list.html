@@ -5,6 +5,15 @@
 {% block main_heading %}Questionnaire{% endblock %}
 
 {% block main_body %}
+
+{% if not donation_blueprints %}
+<div>
+  <p>
+    Questions can only be created in relation to a donation blueprint and no donation blueprints have been defined yet.
+    <a href="{% url 'blueprint-list' project_pk %}">Create a donation blueprint &rarr;</a>
+  </p>
+</div>
+{% else %}
 <h3>Donation Blueprints</h3>
 <div>
   <table class="table">
@@ -67,7 +76,7 @@
     </div>
   </div>
 </div>
-
+{% endif %}
 {% endblock %}
 
 {% block breadcrumbs %}

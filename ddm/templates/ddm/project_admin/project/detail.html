@@ -6,89 +6,97 @@
 {% block main_heading %}{{ object.name }}: Project Overview{% endblock %}
 
 {% block main_body %}
-<hr>
-<div class="container mb-4">
-  <h2>Details</h2>
-  <table class="table table-borderless table-sm">
-    <tr>
-      <td>Name:</td>
-      <td>{{ object.name }}</td>
-    </tr>
-    <tr>
-      <td>Slug:</td>
-      <td>{{ object.slug }}</td>
-    </tr>
-    <tr>
-      <td>Public Access:</td>
-      <td><a href="{% url 'project-entry' object.slug %}" target="_blank">{{ request.scheme }}://{{ request.get_host }}{% url 'project-entry' object.slug %}</a></td>
-    </tr>
-    <tr>
-      <td>Project Type:</td>
-      <td>{% if object.super_secret %}Super Secret Project{% else %}Regular Project{% endif %}</td>
-    </tr>
-  </table>
-  <p><a class="ddm-btn" href="{% url 'project-edit' object.pk %}">Edit Project Details</a></p>
+
+<div class="ddm-admin-section">
+  <div class="ddm-admin-section-header">Details</div>
+  <div class="ddm-admin-section-body">
+    <table class="table table-borderless table-sm">
+      <tr>
+        <td>Name:</td>
+        <td>{{ object.name }}</td>
+      </tr>
+      <tr>
+        <td>Slug:</td>
+        <td>{{ object.slug }}</td>
+      </tr>
+      <tr>
+        <td>Public Access:</td>
+        <td><a href="{% url 'project-entry' object.slug %}" target="_blank">{{ request.scheme }}://{{ request.get_host }}{% url 'project-entry' object.slug %}</a></td>
+      </tr>
+      <tr>
+        <td>Project Type:</td>
+        <td>{% if object.super_secret %}Super Secret Project{% else %}Regular Project{% endif %}</td>
+      </tr>
+    </table>
+    <p><a class="ddm-btn" href="{% url 'project-edit' object.pk %}">Edit Project Details</a></p>
+  </div>
 </div>
 
-<hr>
-<div class="container mb-4">
-  <h2>Project Setup</h2>
-  <div class="container mt-4 mb-5">
-    <div class="row d-flex align-items-stretch">
-      <a class="card-link ddm-btn" href="{% url 'welcome-page-edit' object.pk %}">
-        <div class="project-setup-card">
-          <div><h3 class="text-center">Welcome Page</h3></div>
-          <div><i class="bi bi-door-open fs-1"></i></div>
+
+<div class="ddm-admin-section">
+  <div class="ddm-admin-section-header">Project Configuration</div>
+  <div class="ddm-admin-section-body">
+    <div class="container">
+      <div class="row d-flex align-items-stretch">
+        <a class="card-link ddm-btn" href="{% url 'welcome-page-edit' object.pk %}">
+          <div class="project-setup-card">
+            <div><h3 class="text-center">Welcome Page</h3></div>
+            <div><i class="bi bi-door-open fs-1"></i></div>
+          </div>
+        </a>
+        <div class="project-setup-filler">
+          <i class="bi bi-caret-right-fill fs-2"></i>
         </div>
-      </a>
-      <div class="project-setup-filler">
-        <i class="bi bi-caret-right-fill fs-2"></i>
+        <a class="card-link ddm-btn" href="{% url 'blueprint-list' object.pk %}">
+          <div class="project-setup-card">
+            <h3 class="text-center">Data Donation</h3>
+            <i class="bi bi-box2-heart fs-1"></i>
+          </div>
+        </a>
+        <div class="project-setup-filler">
+          <i class="bi bi-caret-right-fill fs-2"></i>
+        </div>
+        <a class="card-link ddm-btn" href="{% url 'questionnaire-overview' object.pk %}">
+          <div class="project-setup-card">
+            <h3 class="text-center">Questionnaire</h3>
+            <i class="bi bi-pencil-square fs-1"></i>
+          </div>
+        </a>
+        <div class="project-setup-filler">
+          <i class="bi bi-caret-right-fill fs-2"></i>
+        </div>
+        <a class="card-link ddm-btn" href="{% url 'end-page-edit' object.pk %}">
+          <div class="project-setup-card">
+            <h3 class="text-center">End Page</h3>
+            <i class="bi bi-door-closed fs-1"></i>
+          </div>
+        </a>
       </div>
-      <a class="card-link ddm-btn" href="{% url 'blueprint-list' object.pk %}">
-        <div class="project-setup-card">
-          <h3 class="text-center">Data Donation</h3>
-          <i class="bi bi-box2-heart fs-1"></i>
-        </div>
-      </a>
-      <div class="project-setup-filler">
-        <i class="bi bi-caret-right-fill fs-2"></i>
-      </div>
-      <a class="card-link ddm-btn" href="{% url 'questionnaire-overview' object.pk %}">
-        <div class="project-setup-card">
-          <h3 class="text-center">Questionnaire</h3>
-          <i class="bi bi-pencil-square fs-1"></i>
-        </div>
-      </a>
-      <div class="project-setup-filler">
-        <i class="bi bi-caret-right-fill fs-2"></i>
-      </div>
-      <a class="card-link ddm-btn" href="{% url 'end-page-edit' object.pk %}">
-        <div class="project-setup-card">
-          <h3 class="text-center">End Page</h3>
-          <i class="bi bi-door-closed fs-1"></i>
-        </div>
-      </a>
     </div>
   </div>
 </div>
 
-<hr>
-<div class="container mb-4">
-  <h2>Data Center</h2>
-  <h4>Statistics</h4>
-  <div>
-    <p>Show some statistics</p>
-  </div>
-  <h4>Download Section</h4>
-  <div>
-    <p><button onclick="downloadData('{% url "ddm-download-api" object.pk %}', 'project_{{ object.pk }}_data')" class="ddm-btn">Download Data as JSON</button></p>
+
+<div class="ddm-admin-section">
+  <div class="ddm-admin-section-header">Data Center</div>
+  <div class="ddm-admin-section-body">
+    <h4>Statistics</h4>
+    <div>
+      <p>Show some statistics</p>
+    </div>
+    <h4>Download Section</h4>
+    <div>
+      <p><button onclick="downloadData('{% url "ddm-download-api" object.pk %}', 'project_{{ object.pk }}_data')" class="ddm-btn">Download Data as JSON</button></p>
+    </div>
   </div>
 </div>
 
-<hr>
-<div class="container mb-4">
-  <h2>Danger Zone</h2>
-  <p class="pt-4"><a class="ddm-btn ddm-btn-red" href="{% url 'project-delete' object.pk %}">Delete Project</a></p>
+
+<div class="ddm-admin-section">
+  <div class="ddm-admin-section-header">Danger Zone</div>
+  <div class="ddm-admin-section-body">
+    <a class="ddm-btn ddm-btn-red" href="{% url 'project-delete' object.pk %}">Delete Project</a>
+  </div>
 </div>
 
 {% endblock %}
@@ -101,6 +109,5 @@
 
 {% block scripts %}
 {{ block.super }}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="{% static 'ddm/js/download-data.js' %}"></script>
 {% endblock %}

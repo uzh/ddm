@@ -3,7 +3,7 @@ import json
 from ckeditor.fields import RichTextField
 
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -178,7 +178,7 @@ class DataDonation(ModelWithEncryptedData):
 
 class DonationInstruction(models.Model):
     text = RichTextField(null=True, blank=True)
-    index = models.PositiveIntegerField(default=1)
+    index = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
     blueprint = models.ForeignKey(
         DonationBlueprint,
         null=True,
@@ -205,7 +205,15 @@ class DonationInstruction(models.Model):
             ),
         ]
 
+    def get_query_object(self):
+        if self.blueprint:
+            query_object = self.blueprint
+        else:
+            query_object = self.zip_blueprint
+        return query_object
+
     def clean(self):
+        # Ensure that instruction is correctly linked to one blueprint type.
         if not self.blueprint and not self.zip_blueprint:
             raise ValidationError(
                 'Must be linked to either a DonationBlueprint or '
@@ -216,4 +224,62 @@ class DonationInstruction(models.Model):
                 'Must be linked to either a DonationBlueprint or '
                 'a ZippedBlueprint, but not both.'
             )
+
+        # Ensure that index of instruction page is not greater than set of existing instructions + 1.
+        n_instructions = self.get_query_object().donationinstruction_set.count()
+        if self.pk:
+            if self.index > n_instructions:
+                raise ValidationError(
+                    f'Index must be in range 1 to {n_instructions}.'
+                )
+        else:
+            if self.index > (n_instructions + 1):
+                raise ValidationError(
+                    f'Index must be in range 1 to {n_instructions + 1}.'
+                )
         super().clean()
+
+    def save(self, *args, **kwargs):
+        if kwargs.pop('ignore_index_check', False):
+            return super().save()
+
+        # TODO: Optimize and prettify the following part:
+        initial_index = DonationInstruction.objects.get(pk=self.pk).index if self.pk else None
+        index_taken = self.get_query_object().donationinstruction_set.filter(index=self.index).exclude(pk=self.pk).exists()
+        if index_taken and (self.index != initial_index):
+
+            # Account for unique constraint by doing a "proxy"-save to free index.
+            target_index = self.index
+            self.index = self.get_query_object().donationinstruction_set.count() + 5
+            super().save()
+
+            # Change indices of involved objects:
+            queryset = self.get_query_object().donationinstruction_set.exclude(pk=self.pk)
+            if initial_index is None:
+                queryset = queryset.filter(index__gte=target_index).order_by('-index')
+                for q in queryset:
+                    q.index += 1
+                for q in queryset:
+                    q.save(ignore_index_check=True)
+            elif target_index < initial_index:
+                queryset = queryset.filter(index__gte=target_index, index__lt=initial_index).order_by('-index')
+                for q in queryset:
+                    q.index += 1
+                for q in queryset:
+                    q.save(ignore_index_check=True)
+            elif target_index > initial_index:
+                queryset = queryset.filter(index__gt=initial_index, index__lte=target_index).order_by('index')
+                for q in queryset:
+                    q.index -= 1
+                for q in queryset:
+                    q.save(ignore_index_check=True)
+
+            # Revert "proxy"-save.
+            self.index = target_index
+            return super().save()
+
+        return super().save()
+
+    def delete(self, *args, **kwargs):
+        """ This model has a post_delete signal processor (see signals.py). """
+        super().delete(*args, **kwargs)

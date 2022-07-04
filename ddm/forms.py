@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 
-from ddm.models import ResearchProfile, DonationProject
+from ddm.models import ResearchProfile, DonationProject, DonationBlueprint, DonationInstruction
 from ddm.auth import email_is_valid
 
 
@@ -92,3 +92,26 @@ class ResearchProfileConfirmationForm(forms.ModelForm):
         if self.cleaned_data['user'].pk != self.expected_user_id:
             raise ValidationError('User is not set as expected.', code='not allowed')
         return super().save()
+
+
+class BlueprintEditForm(forms.ModelForm):
+
+    class Meta:
+        model = DonationBlueprint
+        fields = ['name', 'exp_file_format', 'expected_fields', 'extracted_fields',
+                  'zip_blueprint', 'regex_path']
+        widgets = {
+            'expected_fields': forms.Textarea(attrs={'rows': 3}),
+            'extracted_fields': forms.Textarea(attrs={'rows': 3}),
+            'regex_path': forms.Textarea(attrs={'rows': 3}),
+        }
+
+    def clean(self):
+        zip_relation = self.data.get('zip_blueprint', False)
+        regex = self.data.get('regex_path', None)
+        if zip_relation and regex in ['', None]:
+            raise ValidationError(
+                'Donation Blueprints that belong to a zip blueprint must define '
+                'a regex pattern.'
+            )
+        super().clean()

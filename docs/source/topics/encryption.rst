@@ -9,6 +9,7 @@ Encryption in transit and at rest
 
 Encryption in transit
 =========================================
+
 It is site-level responsibility to setup encryption in transit, like SSL/TLS for all communication between clients and the server.
 For some hints on how this should be setup, start with the `Django docs <https://docs.djangoproject.com/en/4.0/topics/security/#ssl-https>`_.
 We minimize the amount of potential data that is processed on the server, by doing most of the filtering client-side.
@@ -16,6 +17,7 @@ Do take into account that ideally the connection from system to the database is 
 
 Encryption at rest
 =========================================
+
 The module stores all data in encrypted fields in the database, the encryption/decryption procedure is described below.
 Each project has a unique `salt` that is generated when creating the project.
 In the Django site settings, we use the *SECRET_KEY* as the default passphrase for encryption.
@@ -25,7 +27,9 @@ A project specific password will limit the functionality of the module for a giv
 
 Encryption and decryption process
 ---------------------------------
+
 | **1. Steps**
+
 We use a hybrid asymmetric/symmetric encryption approach, due to the size limitation of the pure asymmetric approach.
 The following steps occur in the encryption process
 - generate a public key and store it in the project (if none exists)
@@ -41,6 +45,7 @@ The following steps occur in the decryption process
 - decrypt the data using the decrypted session key symmetrically
 
 | **2. Asymmetric Key Generation and process**
+
 For encryption we only need the public key;
 - Check if we have a public key that is saved for the project
 - if not, we should have gotten a passphrase and a salt with which we can generate a public key.
@@ -54,7 +59,8 @@ For decryption we need the private key;
 - This random number generator is used to generate our `RSA <https://en.wikipedia.org/wiki/RSA_(cryptosystem)>`_ key.
 - We then use `PKCS#1 OAEP <https://tools.ietf.org/html/rfc8017>`_ for wrapping the OAEP padding. 
 
-| **2. Symmetric Key Generation and process**
+| **3. Symmetric Key Generation and process**
+
 There are significant limitations on the size of the data that can be encrypted using asymmetric algorithms and severe performance penalties.
 This is why we combine this with symmetric encryption. 
 In our case we use `AES <https://en.wikipedia.org/wiki/Advanced_Encryption_Standard>`_ to encrypt the actual data.

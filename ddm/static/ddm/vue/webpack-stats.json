@@ -1,46 +1,39 @@
 {
   "status": "done",
   "assets": {
-    "js/chunk-vendors.js": {
-      "name": "js/chunk-vendors.js",
-      "path": "js\\chunk-vendors.js",
-      "publicPath": "/static/ddm/vue/js/chunk-vendors.js"
-    },
-    "css/vue_questionnaire.css": {
-      "name": "css/vue_questionnaire.css",
-      "path": "css\\vue_questionnaire.css",
-      "publicPath": "/static/ddm/vue/css/vue_questionnaire.css"
+    "js/vue_uploader.js": {
+      "name": "js/vue_uploader.js",
+      "path": "js\\vue_uploader.js",
+      "publicPath": "/static/ddm/vue/js/vue_uploader.js"
     },
     "js/vue_questionnaire.js": {
       "name": "js/vue_questionnaire.js",
       "path": "js\\vue_questionnaire.js",
       "publicPath": "/static/ddm/vue/js/vue_questionnaire.js"
     },
-    "css/vue_uploader.css": {
-      "name": "css/vue_uploader.css",
-      "path": "css\\vue_uploader.css",
-      "publicPath": "/static/ddm/vue/css/vue_uploader.css"
-    },
-    "js/vue_uploader.js": {
-      "name": "js/vue_uploader.js",
-      "path": "js\\vue_uploader.js",
-      "publicPath": "/static/ddm/vue/js/vue_uploader.js"
+    "js/chunk-vendors.js": {
+      "name": "js/chunk-vendors.js",
+      "path": "js\\chunk-vendors.js",
+      "publicPath": "/static/ddm/vue/js/chunk-vendors.js"
     },
     "favicon.ico": {
       "name": "favicon.ico",
       "path": "favicon.ico",
       "publicPath": "/static/ddm/vue/favicon.ico"
+    },
+    "index.html": {
+      "name": "index.html",
+      "path": "index.html",
+      "publicPath": "/static/ddm/vue/index.html"
     }
   },
   "chunks": {
     "vue_uploader": [
       "js/chunk-vendors.js",
-      "css/vue_uploader.css",
       "js/vue_uploader.js"
     ],
     "vue_questionnaire": [
       "js/chunk-vendors.js",
-      "css/vue_questionnaire.css",
       "js/vue_questionnaire.js"
     ]
   },

@@ -1,3 +1,5 @@
+from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import inlineformset_factory
 from django.urls import reverse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -5,7 +7,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from ddm.models import (
     QuestionBase, QuestionType, SingleChoiceQuestion, MultiChoiceQuestion,
     OpenQuestion, MatrixQuestion, SemanticDifferential, Transition, QuestionItem,
-    ScalePoint, DonationBlueprint
+    ScalePoint, DonationBlueprint, DonationProject
 )
 from . import ProjectBlueprintList, DdmAuthMixin
 
@@ -15,6 +17,7 @@ class ProjectMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({'project_pk': self.kwargs['project_pk']})
+        context.update({'project': DonationProject.objects.get(pk=self.kwargs['project_pk'])})
         return context
 
 
@@ -61,13 +64,15 @@ class QuestionFormMixin(ProjectMixin):
         context = super().get_context_data(**kwargs)
         question_type_label = QuestionType(self.kwargs['question_type']).label
         context.update({'question_type': question_type_label})
-        context['form'].fields['blueprint'].queryset = DonationBlueprint.objects.filter(project_id=self.kwargs['project_pk'])
+        context['form'].fields['blueprint'].queryset = DonationBlueprint.objects.filter(
+            project_id=self.kwargs['project_pk'])
         return context
 
 
-class QuestionCreate(DdmAuthMixin, QuestionFormMixin, CreateView):
+class QuestionCreate(SuccessMessageMixin, DdmAuthMixin, QuestionFormMixin, CreateView):
     """ View to create question. """
     template_name = 'ddm/project_admin/questionnaire/create.html'
+    success_message = 'New %(question_type)s was created.'
 
     def get_initial(self):
         initial = super().get_initial()
@@ -84,12 +89,19 @@ class QuestionCreate(DdmAuthMixin, QuestionFormMixin, CreateView):
     def get_success_url(self):
         return reverse('questionnaire-overview', kwargs={'project_pk': self.kwargs['project_pk']})
 
+    def get_success_message(self, cleaned_data):
+        return self.success_message % dict(
+            cleaned_data,
+            question_type=self.QUESTION_CLASSES[self.kwargs['question_type']].DEFAULT_QUESTION_TYPE.label
+        )
 
-class QuestionEdit(DdmAuthMixin, QuestionFormMixin, UpdateView):
+
+class QuestionEdit(SuccessMessageMixin, DdmAuthMixin, QuestionFormMixin, UpdateView):
     """ View to edit question. """
     model = QuestionBase
     template_name = 'ddm/project_admin/questionnaire/edit.html'
     fields = '__all__'
+    success_message = 'Question "%(name)s" was successfully updated.'
 
     def get_success_url(self):
         success_kwargs = {
@@ -104,9 +116,14 @@ class QuestionDelete(DdmAuthMixin, ProjectMixin, DeleteView):
     """ View to delete question. """
     model = QuestionBase
     template_name = 'ddm/project_admin/questionnaire/delete.html'
+    success_message = 'Question "%s" was deleted.'
 
     def get_success_url(self):
         return reverse('questionnaire-overview', kwargs={'project_pk': self.kwargs['project_pk']})
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, self.success_message % self.get_object().name)
+        return super().delete(request, *args, **kwargs)
 
 
 class InlineFormsetMixin(ProjectMixin):
@@ -147,6 +164,15 @@ class InlineFormsetMixin(ProjectMixin):
             excluded_fields = ()
         return excluded_fields
 
+
+class ItemEdit(SuccessMessageMixin, DdmAuthMixin, InlineFormsetMixin, UpdateView):
+    """ View to edit the items associated with a question. """
+    model = QuestionBase
+    formset_model = QuestionItem
+    template_name = 'ddm/project_admin/questionnaire/edit_set.html'
+    context_title = 'Items'
+    success_message = 'Question items updated.'
+
     def get_success_url(self):
         question = self.get_object()
         success_kwargs = {
@@ -154,20 +180,22 @@ class InlineFormsetMixin(ProjectMixin):
             'question_type': question.question_type,
             'pk': question.pk
         }
-        return reverse('question-edit', kwargs=success_kwargs)
+        return reverse('question-items', kwargs=success_kwargs)
 
 
-class ItemEdit(DdmAuthMixin, InlineFormsetMixin, UpdateView):
-    """ View to edit the items associated with a question. """
-    model = QuestionBase
-    formset_model = QuestionItem
-    template_name = 'ddm/project_admin/questionnaire/edit_set.html'
-    context_title = 'Items'
-
-
-class ScaleEdit(DdmAuthMixin, InlineFormsetMixin, UpdateView):
+class ScaleEdit(SuccessMessageMixin, DdmAuthMixin, InlineFormsetMixin, UpdateView):
     """ View to edit the scale associated with a question. """
     model = QuestionBase
     formset_model = ScalePoint
     template_name = 'ddm/project_admin/questionnaire/edit_set.html'
     context_title = 'Scale Points'
+    success_message = 'Question scale updated.'
+
+    def get_success_url(self):
+        question = self.get_object()
+        success_kwargs = {
+            'project_pk': self.kwargs['project_pk'],
+            'question_type': question.question_type,
+            'pk': question.pk
+        }
+        return reverse('question-scale', kwargs=success_kwargs)

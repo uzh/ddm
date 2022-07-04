@@ -5,6 +5,15 @@
 {% block main_heading %}Questionnaire{% endblock %}
 
 {% block main_body %}
+
+{% if not donation_blueprints %}
+<div>
+  <p>
+    Questions can only be created in relation to a donation blueprint and no donation blueprints have been defined yet.
+    <a href="{% url 'blueprint-list' project_pk %}">Create a donation blueprint &rarr;</a>
+  </p>
+</div>
+{% else %}
 <h3>Donation Blueprints</h3>
 <div>
   <table class="table">
@@ -18,12 +27,10 @@
       <td>
         {% for question in blueprint.get_associated_questions %}
         <div>
-          <p>Name: {{ question.name }}</p>
-          <p>Type: {{ question.question_type }}</p>
-          <p>
-            <a href="{% url 'question-edit' project_pk question.question_type question.pk %}">Edit Question</a> |
-            <a href="{% url 'question-delete' project_pk question.question_type question.pk %}">Delete Question</a>
-          </p>
+          Name: {{ question.name }}<br>
+          Type: {{ question.get_question_type_display }}<br>
+          <a href="{% url 'question-edit' project_pk question.question_type question.pk %}">Edit Question</a> |
+          <a href="{% url 'question-delete' project_pk question.question_type question.pk %}">Delete Question</a>
           {% if not forloop.last %}<hr>{% endif %}
         </div>
         {% empty %}
@@ -42,7 +49,7 @@
 </div>
 
 <div>
-  <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal"><b>+</b>&nbsp;&nbsp;Create new question</button>
+  <button type="button" class="ddm-btn" data-bs-toggle="modal" data-bs-target="#exampleModal"><b>+</b>&nbsp;&nbsp;Create new question</button>
 </div>
 
 <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -62,16 +69,16 @@
         {% endfor %}
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="ddm-btn" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
-
+{% endif %}
 {% endblock %}
 
 {% block breadcrumbs %}
-Back to:
 <a href="{% url 'project-list' %}">Projects</a> /
-<a href="{% url 'project-detail' project_pk %}">Project Cockpit</a>
+<a href="{% url 'project-detail' project_pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+Questionnaire
 {% endblock %}

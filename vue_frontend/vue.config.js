@@ -21,6 +21,22 @@ module.exports = {
         : '/static/ddm/vue/',
     outputDir: path.resolve('../ddm/static/ddm/vue'),
 
+    devServer: {
+        client: {
+            webSocketURL: {
+                hostname: "localhost",
+                pathname: "/ws",
+                port: 8080,
+            },
+        },
+        hot: "only",
+        static: {
+            watch: true,
+        },
+        https: false,
+        headers: {"Access-Control-Allow-Origin": ["*"]},
+    },
+
     chainWebpack: config => {
 
         config.optimization
@@ -51,15 +67,5 @@ module.exports = {
 
         config.resolve.alias
             .set('__STATIC__', 'static')
-
-        config.devServer
-            .public('http://localhost:8080')
-            .host('localhost')
-            .port(8080)
-            .hotOnly(true)
-            .watchOptions({poll: 1000})
-            .https(false)
-            .headers({"Access-Control-Allow-Origin": ["*"]})
-
     }
 };

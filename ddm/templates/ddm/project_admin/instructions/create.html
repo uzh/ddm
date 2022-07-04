@@ -4,11 +4,11 @@
 
 {% block main_heading %}Create New Donation Blueprint{% endblock %}
 
-{% block submit_label %}Create instruction page{% endblock %}
+{% block submit_label %}Create Instruction Page{% endblock %}
 
 {% block breadcrumbs %}
-Back to:
 <a href="{% url 'project-list' %}">Projects</a> /
-<a href="{% url 'project-detail' blueprint.project.pk %}">Project Cockpit</a> /
-<a href="{% url 'blueprint-list' blueprint.project.pk %}">Donation Blueprints</a>
+<a href="{% url 'project-detail' blueprint.project.pk %}">"{{ blueprint.project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'blueprint-list' blueprint.project.pk %}">"{{ blueprint.name|truncatechars:15 }}" Blueprint</a> /
+Create Instruction Page
 {% endblock %}

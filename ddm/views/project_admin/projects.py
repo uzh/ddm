@@ -1,3 +1,5 @@
+from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -17,11 +19,12 @@ class ProjectList(DdmAuthMixin, ListView):
         return DonationProject.objects.filter(owner__user=self.request.user)
 
 
-class ProjectCreate(DdmAuthMixin, CreateView):
+class ProjectCreate(SuccessMessageMixin, DdmAuthMixin, CreateView):
     """ View to create a new donation project. """
     model = DonationProject
     template_name = 'ddm/project_admin/project/create.html'
     form_class = ProjectCreateForm
+    success_message = 'Project was created successfully.'
 
     def get_initial(self):
         self.initial = super().get_initial()
@@ -39,11 +42,12 @@ class ProjectDetail(DdmAuthMixin, DetailView):
     template_name = 'ddm/project_admin/project/detail.html'
 
 
-class ProjectEdit(DdmAuthMixin, UpdateView):
+class ProjectEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     """ View to edit the details of an existing donation project. """
     model = DonationProject
     template_name = 'ddm/project_admin/project/edit.html'
     fields = ['name', 'slug']
+    success_message = 'Project details successfully updated.'
 
 
 class ProjectDelete(DdmAuthMixin, DeleteView):
@@ -51,17 +55,24 @@ class ProjectDelete(DdmAuthMixin, DeleteView):
     model = DonationProject
     template_name = 'ddm/project_admin/project/delete.html'
     success_url = reverse_lazy('project-list')
+    success_message = 'Project was deleted.'
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, self.success_message)
+        return super().delete(request, *args, **kwargs)
 
 
-class WelcomePageEdit(DdmAuthMixin, UpdateView):
+class WelcomePageEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     """ View to edit the welcome page. """
     model = DonationProject
-    template_name = 'ddm/project_admin/project/edit.html'
+    template_name = 'ddm/project_admin/project/edit-welcome.html'
     fields = ['intro_text']
+    success_message = 'Welcome Page successfully updated.'
 
 
-class EndPageEdit(DdmAuthMixin, UpdateView):
+class EndPageEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     """ View to edit the welcome page. """
     model = DonationProject
-    template_name = 'ddm/project_admin/project/edit.html'
+    template_name = 'ddm/project_admin/project/edit-end.html'
     fields = ['outro_text']
+    success_message = 'End Page successfully updated.'

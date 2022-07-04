@@ -5,24 +5,26 @@
 {% block main_heading %}{{ heading }}{% endblock %}
 
 {% block main_body %}
-<div>
-  {% block main_top %}{% endblock %}
+
+{% block main_top %}{% endblock %}
+
+<div class="ddm-form ddm-admin-section">
+  <div class="ddm-admin-section-header">{% block main_form_header %}{% endblock %}</div>
+
+  <div class="ddm-admin-section-body">
+    {% block main_form %}
+    <form method='post'>
+      {% csrf_token %}
+      {{ form.media }}
+      <table class="table table-borderless">{{ form.as_table }}</table>
+      <input class="ddm-btn" type="submit" value="{% block submit_label %}Submit Form{% endblock %}">
+    </form>
+    {% endblock %}
+  </div>
 </div>
 
-<div>
-  {% block main_form %}
-  <form method='post'>
-    {% csrf_token %}
-    {{ form.media }}
-    <table class="table table-borderless">{{ form.as_table }}</table>
-    <input class="btn btn-secondary" type="submit" value="{% block submit_label %}Submit Form{% endblock %}">
-  </form>
-  {% endblock %}
-</div>
+{% block main_bottom %}{% endblock %}
 
-<div>
-  {% block main_bottom %}{% endblock %}
-</div>
 {% endblock %}
 
 {% block breadcrumbs %}{% endblock %}

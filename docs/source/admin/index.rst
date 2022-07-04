@@ -1,10 +1,15 @@
-###############
+############
+Admin Manual
+############
+
+This section of the documentation is direceted at server administrators that want to set up django-ddm for institutional
+or personal use.
+
 Getting Started
-###############
+***************
 
-
-Use DDM in Your Django Project
-******************************
+.. todo::
+    Extend section with general steps to set up Django.
 
 1. Install the Django DDM package::
 
@@ -41,5 +46,11 @@ Use DDM in Your Django Project
 
     USE_TZ = True
 
-6. Run ``python manage.py migrate`` to create the ddm models in your database.
-7. You should now be good to go.
+6. Optionally, an e-mail address restriction can be defined in settings.py. Only users whose e-mail address matches the defined regex pattern will be allowed to set up data donation projects::
+
+    DDM_SETTINGS={
+        'EMAIL_PERMISSION_CHECK':  r'.*(\.|@)somedomain\.com$',
+    },
+
+7. Run ``python manage.py migrate`` to create the ddm models in your database.
+8. You should now be good to go.

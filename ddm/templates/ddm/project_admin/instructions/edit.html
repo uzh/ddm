@@ -4,12 +4,12 @@
 
 {% block main_heading %}Edit Instruction Page for {{ blueprint_type }} "{{ blueprint.name }}"{% endblock %}
 
-{% block submit_label %}Save instruction page{% endblock %}
+{% block submit_label %}Save Instruction Page{% endblock %}
 
 {% block breadcrumbs %}
-Back to:
 <a href="{% url 'project-list' %}">Projects</a> /
-<a href="{% url 'project-detail' project_pk %}">Project Cockpit</a> /
-<a href="{% url 'blueprint-list' project_pk %}">Donation Blueprints</a> /
-<a href="{% url 'instruction-overview' project_pk blueprint.get_slug blueprint.pk %}">Instruction Overview</a>
+<a href="{% url 'project-detail' project_pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'blueprint-list' blueprint.project.pk %}">"{{ blueprint.name|truncatechars:15 }}" Blueprint</a> /
+<a href="{% url 'instruction-overview' project_pk blueprint.get_slug blueprint.pk %}">Instructions</a> /
+Edit Instruction Page
 {% endblock %}

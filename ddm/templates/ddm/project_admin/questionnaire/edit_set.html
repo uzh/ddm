@@ -7,8 +7,8 @@
 {% block main_form %}
 <form method="post">
   {% csrf_token %}
+  {{ formset.management_form }}
   <table class="table mt-4">
-    {{ formset.management_form }}
 
     {% for form in formset.forms %}
 
@@ -20,7 +20,6 @@
     </thead>
     {% endif %}
 
-    <tbody>
     <tr>
       {% for field in form.visible_fields %}
       <td>
@@ -34,18 +33,18 @@
       </td>
       {% endfor %}
     </tr>
-    </tbody>
 
     {% endfor %}
   </table>
-  <input class="btn btn-secondary" type="submit" value="Update {{ context_title }}">
+  <input class="ddm-btn" type="submit" value="Update {{ context_title }}">
 </form>
 {% endblock %}
 
 {% block breadcrumbs %}
-Back to:
 <a href="{% url 'project-list' %}">Projects</a> /
-<a href="{% url 'project-detail' project_pk %}">Project Cockpit</a> /
+<a href="{% url 'project-detail' project_pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
 <a href="{% url 'questionnaire-overview' project_pk %}">Questionnaire</a> /
-<a href="{% url 'question-edit' project_pk question.question_type question.pk %}">Question</a>
+<a href="{% url 'question-edit' project_pk question.question_type question.pk %}">Question</a> /
+Items
 {% endblock %}
+

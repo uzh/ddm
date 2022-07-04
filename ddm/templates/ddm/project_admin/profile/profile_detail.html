@@ -14,6 +14,10 @@
   <p>Profile created on: {{ profile.created|date }}</p>
   <p>E-Mail Restriction ignored: {{ profile.ignore_email_restriction }}</p>
 </div>
+
+<div>
+  <a href="{% url 'project-list' %}">To my projects</a>
+</div>
 {% endblock %}
 
 {% block breadcrumbs %}

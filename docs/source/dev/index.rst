@@ -1,8 +1,8 @@
-##############
-For Developers
-##############
+################
+Developer Manual
+################
 
-This pages is addressed at developers contributing to the ddm package.
+This part of the documentation is directed at developers contributing to the django-ddm package.
 
 Development Guidelines
 **********************
@@ -14,6 +14,7 @@ The repository includes a django test project that can be used for local develop
 Setup
 -----
 | **1. Install required packages**
+
 Activate your local virtual environment and install the following requirements (the requirements still need to be defined - files are currently empty)::
 
     (venv) SomePath/ddm> pip install -r requirements.txt

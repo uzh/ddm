@@ -73,18 +73,20 @@ class DonationBlueprint(models.Model):
         max_length=10,
         choices=FileFormats.choices,
         default=FileFormats.JSON_FORMAT,
-        verbose_name='Expected File Format'
+        verbose_name='Expected file format',
     )
 
     expected_fields = models.TextField(
         null=False,
         blank=False,
-        validators=[COMMA_SEPARATED_STRINGS_VALIDATOR]
+        validators=[COMMA_SEPARATED_STRINGS_VALIDATOR],
+        help_text='Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").'
     )
     extracted_fields = models.TextField(
         null=True,
         blank=True,
-        validators=[COMMA_SEPARATED_STRINGS_VALIDATOR]
+        validators=[COMMA_SEPARATED_STRINGS_VALIDATOR],
+        help_text='Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").'
     )
 
     # Configuration if related to ZippedBlueprint:
@@ -92,7 +94,8 @@ class DonationBlueprint(models.Model):
         ZippedBlueprint,
         null=True,
         blank=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
+        verbose_name='Zip container',
     )
     regex_path = models.TextField(null=True, blank=True)
 

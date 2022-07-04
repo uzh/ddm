@@ -1,0 +1,63 @@
+@font-face {
+    font-family: 'Nunito Sans';
+    src: url('../fonts/NunitoSans/NunitoSans-Bold.ttf');
+    font-style: normal;
+    font-weight: 700;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Nunito Sans', sans-serif !important;
+    font-weight: bold !important;
+}
+
+a {
+    color: #007e75 !important;
+}
+a:visited {
+    color: #007e75 !important;
+}
+a:hover {
+    color: #009c94 !important;
+}
+
+footer {
+    font-size: 0.8rem;
+}
+
+.wy-menu a {
+    color: #1a1a1a !important;
+}
+
+img.logo {
+    width: 200px !important;
+    height: auto !important;
+}
+
+.btn {
+    box-shadow: none !important;
+
+}
+
+.wy-nav-side {
+    background: #009c94 !important;
+}
+
+.wy-side-nav-search {
+    background: #009c94 !important;
+    padding-top: 40px !important;
+}
+.wy-menu-vertical li.current > a:hover {
+    color: #1a1a1a !important;
+    background: none;
+}
+.wy-menu-vertical li.current a:hover {
+    color: #1a1a1a !important;
+}
+
+.wy-menu-vertical .toctree-l1 a:hover {
+    color: white !important;
+}
+
+.rst-content .warning .admonition-title {
+    background: #d36a45;
+}

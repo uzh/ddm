@@ -50,7 +50,7 @@ class DdmLoginView(auth_views.LoginView):
     * project overview if user has a research profile
     * profile registration page is user does not have a research profile
     """
-    template_name = 'ddm/project_admin/generic/page_with_form.html'
+    template_name = 'ddm/project_admin/auth/login.html'
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -110,7 +110,7 @@ class DdmCreateUserView(SuccessMessageMixin, CreateView):
     """
     model = User
     form_class = DdmUserCreationForm
-    template_name = 'ddm/project_admin/generic/page_with_form.html'
+    template_name = 'ddm/project_admin/auth/create_user.html'
     success_url = reverse_lazy('ddm-login')
     success_message = 'Your profile was created successfully!'
 

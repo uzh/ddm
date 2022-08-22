@@ -1,5 +1,7 @@
 {% extends "ddm/public/base.html" %}
 {% load render_bundle from webpack_loader %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
 
 {% block content %}
 <div class="container">
@@ -8,7 +10,9 @@
     <div id="uapp"
          class="container text-black"
          data-uploadconfig='{{ ul_configs }}'
-         data-actionurl='{{ request.build_absolute_uri }}'>
+         data-actionurl='{{ request.build_absolute_uri }}'
+         data-language='{{ LANGUAGE_CODE|slice:"0:2"}}'
+    >
       <uapp></uapp>
     </div>
     {% render_bundle 'vue_uploader' %}

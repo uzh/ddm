@@ -1,5 +1,5 @@
-from django.contrib.auth import views as auth_views
 from django.urls import path, include
+from django.views.i18n import JavaScriptCatalog
 
 from ddm.views import project_admin
 from ddm.views import participation_flow
@@ -70,5 +70,5 @@ urlpatterns = [
     path(r'projects/', include(project_admin_patterns)),
     path(r'auth/', include(authentication_patterns)),
     path(r'profile/', include(profile_patterns)),
-    path(r'<int:pk>/download/', DownloadProjectDataView.as_view(), name='ddm-download-api')
+    path(r'<int:pk>/download/', DownloadProjectDataView.as_view(), name='ddm-download-api'),
 ]

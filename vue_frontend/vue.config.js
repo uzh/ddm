@@ -16,9 +16,11 @@ module.exports = {
     pages: pages,
     filenameHashing: false,
     productionSourceMap: false,
+
     publicPath: process.env.NODE_ENV === 'production'
         ? '/static/ddm/vue/'
         : '/static/ddm/vue/',
+
     outputDir: path.resolve('../ddm/static/ddm/vue'),
 
     devServer: {
@@ -66,6 +68,26 @@ module.exports = {
             }]);
 
         config.resolve.alias
-            .set('__STATIC__', 'static')
+            .set('__STATIC__', 'static');
+
+        config.module
+            .rule('i18n')
+            .resourceQuery(/blockType=i18n/)
+            .type('javascript/auto')
+            .use('i18n')
+                .loader('@intlify/vue-i18n-loader')
+                .end();
+    },
+
+    pluginOptions: {
+      i18n: {
+        locale: 'en',
+        fallbackLocale: 'en',
+        localeDir: 'locales',
+        enableLegacy: true,
+        runtimeOnly: false,
+        compositionOnly: true,
+        fullInstall: true
+      }
     }
 };

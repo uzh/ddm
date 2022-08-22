@@ -1,0 +1,40 @@
+{
+  "en": {
+    "instructions": "Instructions",
+    "no-instructions-defined": "No instructions defined",
+    "upload-file": "Upload File",
+    "upload-different-file": "Upload a different file",
+    "upload-success": "Upload was successful",
+    "choose-different-file": "select a different file",
+    "choose-file": "Select file",
+    "file-is-being-uploaded": "file is being uploaded",
+    "extracted-files": "Extracted files",
+    "no-data-extracted": "No data extracted yet",
+    "not-yet-uploaded": "Not yet uploaded",
+    "upload-success-short": "Upload successful",
+    "show-extracted-data": "Show extracted data",
+    "submit-agree": "I agree to submit this data",
+    "extracted-data": "Extracted Data",
+    "extracted-data-intro": "The following data has been extracted and will be transmitted to the researchers with your consent",
+    "file": "file"
+  },
+  "de": {
+    "instructions": "Instruktionen",
+    "no-instructions-defined": "Es wurden keine Instruktionen definiert",
+    "upload-file": "Datei hochladen",
+    "upload-different-file": "Andere Datei hochladen",
+    "upload-success": "Upload erfolgreich abgeschlossen",
+    "choose-different-file": "eine andere Datei auswählen",
+    "choose-file": "Datei auswählen",
+    "file-is-being-uploaded": "Datei wird hochgeladen",
+    "extracted-files": "Ausgelesene Dateien",
+    "no-data-extracted": "Es wurden noch keine Daten ausgelesen",
+    "not-yet-uploaded": "Noch nicht hochgeladen",
+    "upload-success-short": "Upload erfolgreich",
+    "show-extracted-data": "Ausgelesene Daten ansehen",
+    "submit-agree": "Ich bin damit einverstanden, diese Daten zu übermitteln",
+    "extracted-data": "Ausgelesene Daten",
+    "extracted-data-intro": "Die folgenden Daten wurden ausgelesen und werden bei Ihrer Zustimmung an die Forschenden übermittelt",
+    "file": "Datei"
+  }
+}

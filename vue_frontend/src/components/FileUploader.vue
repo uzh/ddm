@@ -1,3 +1,5 @@
+<i18n src="../translations/file_uploader.json"></i18n>
+
 <template>
 
   <div class="mb-5">
@@ -13,19 +15,19 @@
         <!-- Instruction Section -->
         <h3 class="accordion-header" :id="'acc-instr-head-'+comp_id">
           <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#acc-instr-body-'+comp_id" aria-expanded="true" :aria-controls="'acc-instr-body-'+comp_id">
-            <b>Instruktionen</b>
+            <b>{{ $t('instructions') }}</b>
           </button>
         </h3>
 
         <div :id="'acc-instr-body-'+comp_id" class="accordion-collapse collapse show" aria-labelledby="headingOne" :data-bs-parent="'#ul-acc-'+comp_id">
           <div class="accordion-body">
             <DonationInstructions v-if="instructions.length > 0" :instructions="instructions" :comp_id="comp_id"></DonationInstructions>
-            <div v-else>Es wurden keine Instruktionen definiert.</div>
+            <div v-else>{{ $t('no-instructions-defined') }}.</div>
           </div>
         </div>
 
       </div>
-  </div>
+    </div>
 
     <!-- Data Upload Section -->
     <div class="accordion-body border" :class="{ 'ul-success': extraction_complete}">
@@ -33,12 +35,12 @@
 
         <div class="col">
           <p class="accordion-header mb-0">
-            <span :class="{ 'd-none': !upload_enabled & extraction_complete | processing | extraction_complete }"><b>Datei hochladen:</b></span>
-            <span :class="{ 'd-none': !upload_enabled & extraction_complete | processing | !extraction_complete }"><b>Andere Datei hochladen:</b></span>
+            <span :class="{ 'd-none': !upload_enabled & extraction_complete | processing | extraction_complete }"><b>{{ $t('upload-file') }}:</b></span>
+            <span :class="{ 'd-none': !upload_enabled & extraction_complete | processing | !extraction_complete }"><b>{{ $t('upload-different-file') }}</b></span>
 
-            <span class="fs-6 text-success" :class="{ 'd-none': upload_enabled & extraction_complete | processing | !extraction_complete }"><b>Upload erfolgreich abgeschlossen</b></span>
+            <span class="fs-6 text-success" :class="{ 'd-none': upload_enabled & extraction_complete | processing | !extraction_complete }"><b>{{ $t('upload-success') }}</b></span>
             <span :class="{ 'd-none': upload_enabled & extraction_complete | processing | !extraction_complete }">
-              <a @click="upload_enabled = !upload_enabled" class="upload-other">eine andere Datei auswählen</a>
+              <a @click="upload_enabled = !upload_enabled" class="upload-other">{{ $t('choose-different-file') }}</a>
             </span>
 
             <span :class="{ 'd-none': !upload_enabled | processing }">
@@ -47,7 +49,7 @@
                      type="file"
                      @change="processFile"
                      class="d-none">
-              Datei Auswählen
+              {{ $t('choose-file') }}
             </label>
             </span>
           </p>
@@ -55,7 +57,7 @@
           <div class="clearfix" :class="{ 'd-none': !processing }">
             <p>
               <span class="spinner-border float-right me-3" role="status"><span class="sr-only"></span></span>
-              Datei wird hochgeladen...
+              {{ $t('file-is-being-uploaded') }}...
             </p>
           </div>
 
@@ -67,7 +69,7 @@
     <!-- Upload Feedback Section -->
     <div class="accordion-body border">
       <div class="pb-2">
-        <b>Ausgelesene Dateien:</b> <span :class="{ 'd-none': extraction_complete }">Es wurden noch keine Daten ausgelesen.</span>
+        <b>{{ $t('extracted-files') }}:</b> <span :class="{ 'd-none': extraction_complete }">{{ $t('no-data-extracted') }}.</span>
       </div>
 
       <div
@@ -79,15 +81,14 @@
         >
           <div class="col">
             <p>
-              Datei {{ bp.id }}:
-              <span :class="{ 'd-none': extraction_complete }">Noch nicht hochgeladen</span>
-              <span :class="{ 'd-none': !extraction_complete }">Erfolgreich hochgeladen</span>
+              {{ $t('file') }} {{ bp.id }}:
+              <span :class="{ 'd-none': extraction_complete }">{{ $t('not-yet-uploaded') }}</span>
+              <span :class="{ 'd-none': !extraction_complete }">{{ $t('upload-success-short') }}</span>
             </p>
           </div>
 
           <div class="col" :class="{ 'd-none': !extraction_complete }">
-            <a class="text-orange text-decoration-none" role="button" data-bs-toggle="modal" :href="'#bp-fb-'+bp_index" :aria-controls="'bp-fb-'+bp_index">Ausgelesene
-              Daten ansehen &#8599;</a>
+            <a class="text-orange text-decoration-none" role="button" data-bs-toggle="modal" :href="'#bp-fb-'+bp_index" :aria-controls="'bp-fb-'+bp_index">{{ $t('show-extracted-data') }} &#8599;</a>
           </div>
 
           <div class="col-6 text-end" :class="{ 'd-none': !extraction_complete }">
@@ -99,7 +100,7 @@
                        type="checkbox"
                        @change="emitToParent"
                        v-model="post_data[bp.id.toString()].consent">
-                &nbsp;Ich bin damit einverstanden, diese Daten zu übermitteln
+                &nbsp;{{ $t('submit-agree') }}
               </label>
             </p>
           </div>
@@ -122,12 +123,12 @@
     <div class="modal-dialog fb-modal">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Feedback for XY</h5>
+          <h5 class="modal-title">{{ $t('extracted-data') }}</h5>
         </div>
 
         <div class="modal-body">
           <div class="modal-body-intro">
-            <p>Die folgenden Daten wurden ausgelesen und werden bei Ihrer Zustimmung an die Forschenden übermittelt:</p>
+            <p>{{ $t('extracted-data-intro') }}:</p>
           </div>
           <div class="modal-body-data">
             <table :id="'ul-result-' + bp_index" class="table table-striped fs-6 text">
@@ -150,7 +151,7 @@
                    type="checkbox"
                    @change="emitToParent"
                    v-model="post_data[bp.id.toString()].consent">
-              &nbsp;Ich bin damit einverstanden, diese Daten zu übermitteln
+              &nbsp;{{ $t('submit-agree') }}
             </label>
           </div>
           <div>

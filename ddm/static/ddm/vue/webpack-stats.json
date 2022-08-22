@@ -25,17 +25,86 @@
       "name": "index.html",
       "path": "index.html",
       "publicPath": "/static/ddm/vue/index.html"
+    },
+    "index.html.py": {
+      "name": "index.html.py",
+      "path": "index.html.py",
+      "publicPath": "/static/ddm/vue/index.html.py"
+    },
+    "vue_uploader.f88beb29a85709c6.hot-update.js": {
+      "name": "vue_uploader.f88beb29a85709c6.hot-update.js",
+      "path": "vue_uploader.f88beb29a85709c6.hot-update.js",
+      "publicPath": "/static/ddm/vue/vue_uploader.f88beb29a85709c6.hot-update.js"
+    },
+    "vue_questionnaire.f88beb29a85709c6.hot-update.js": {
+      "name": "vue_questionnaire.f88beb29a85709c6.hot-update.js",
+      "path": "vue_questionnaire.f88beb29a85709c6.hot-update.js",
+      "publicPath": "/static/ddm/vue/vue_questionnaire.f88beb29a85709c6.hot-update.js"
+    },
+    "vue_uploader.f88beb29a85709c6.hot-update.json": {
+      "name": "vue_uploader.f88beb29a85709c6.hot-update.json",
+      "path": "vue_uploader.f88beb29a85709c6.hot-update.json",
+      "publicPath": "/static/ddm/vue/vue_uploader.f88beb29a85709c6.hot-update.json"
+    },
+    "vue_questionnaire.f88beb29a85709c6.hot-update.json": {
+      "name": "vue_questionnaire.f88beb29a85709c6.hot-update.json",
+      "path": "vue_questionnaire.f88beb29a85709c6.hot-update.json",
+      "publicPath": "/static/ddm/vue/vue_questionnaire.f88beb29a85709c6.hot-update.json"
+    },
+    "vue_uploader.d830ddb2dfc1d5a3.hot-update.js": {
+      "name": "vue_uploader.d830ddb2dfc1d5a3.hot-update.js",
+      "path": "vue_uploader.d830ddb2dfc1d5a3.hot-update.js",
+      "publicPath": "/static/ddm/vue/vue_uploader.d830ddb2dfc1d5a3.hot-update.js"
+    },
+    "vue_questionnaire.d830ddb2dfc1d5a3.hot-update.js": {
+      "name": "vue_questionnaire.d830ddb2dfc1d5a3.hot-update.js",
+      "path": "vue_questionnaire.d830ddb2dfc1d5a3.hot-update.js",
+      "publicPath": "/static/ddm/vue/vue_questionnaire.d830ddb2dfc1d5a3.hot-update.js"
+    },
+    "vue_uploader.d830ddb2dfc1d5a3.hot-update.json": {
+      "name": "vue_uploader.d830ddb2dfc1d5a3.hot-update.json",
+      "path": "vue_uploader.d830ddb2dfc1d5a3.hot-update.json",
+      "publicPath": "/static/ddm/vue/vue_uploader.d830ddb2dfc1d5a3.hot-update.json"
+    },
+    "vue_questionnaire.d830ddb2dfc1d5a3.hot-update.json": {
+      "name": "vue_questionnaire.d830ddb2dfc1d5a3.hot-update.json",
+      "path": "vue_questionnaire.d830ddb2dfc1d5a3.hot-update.json",
+      "publicPath": "/static/ddm/vue/vue_questionnaire.d830ddb2dfc1d5a3.hot-update.json"
+    },
+    "vue_uploader.7e828e93e45f3ae4.hot-update.js": {
+      "name": "vue_uploader.7e828e93e45f3ae4.hot-update.js",
+      "path": "vue_uploader.7e828e93e45f3ae4.hot-update.js",
+      "publicPath": "/static/ddm/vue/vue_uploader.7e828e93e45f3ae4.hot-update.js"
+    },
+    "vue_questionnaire.7e828e93e45f3ae4.hot-update.js": {
+      "name": "vue_questionnaire.7e828e93e45f3ae4.hot-update.js",
+      "path": "vue_questionnaire.7e828e93e45f3ae4.hot-update.js",
+      "publicPath": "/static/ddm/vue/vue_questionnaire.7e828e93e45f3ae4.hot-update.js"
+    },
+    "vue_uploader.7e828e93e45f3ae4.hot-update.json": {
+      "name": "vue_uploader.7e828e93e45f3ae4.hot-update.json",
+      "path": "vue_uploader.7e828e93e45f3ae4.hot-update.json",
+      "publicPath": "/static/ddm/vue/vue_uploader.7e828e93e45f3ae4.hot-update.json"
+    },
+    "vue_questionnaire.7e828e93e45f3ae4.hot-update.json": {
+      "name": "vue_questionnaire.7e828e93e45f3ae4.hot-update.json",
+      "path": "vue_questionnaire.7e828e93e45f3ae4.hot-update.json",
+      "publicPath": "/static/ddm/vue/vue_questionnaire.7e828e93e45f3ae4.hot-update.json"
     }
   },
   "chunks": {
     "vue_uploader": [
       "js/chunk-vendors.js",
-      "js/vue_uploader.js"
+      "js/vue_uploader.js",
+      "vue_uploader.7e828e93e45f3ae4.hot-update.js"
     ],
     "vue_questionnaire": [
       "js/chunk-vendors.js",
-      "js/vue_questionnaire.js"
+      "js/vue_questionnaire.js",
+      "vue_questionnaire.7e828e93e45f3ae4.hot-update.js"
     ]
   },
-  "publicPath": "/static/ddm/vue/"
+  "publicPath": "/static/ddm/vue/",
+  "error": "ModuleNotFoundError",
+  "message": "Module not found: Error: Can't resolve '../translations/file_uploader.json?vue&type=custom&index=0&blockType=i18n&issuerPath=C%3A%5CFiles%5CArbeit%5CProjekte%5CData%20Donation%20Lab%5CCode%5CDDM%5Cddm%5Cvue_frontend%5Csrc%5Ccomponents%5CFileUploader.vue' in 'C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\src\\components'"
 }

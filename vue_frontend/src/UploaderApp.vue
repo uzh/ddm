@@ -1,3 +1,14 @@
+<i18n>
+{
+  "en": {
+    "next-btn-label": "Submit Data"
+  },
+  "de": {
+    "next-btn-label": "Daten übermitteln"
+  }
+}
+</i18n>
+
 <template>
 
   <FileUploader
@@ -17,9 +28,10 @@
           class="flow-btn"
           type="button"
           @click="zipData"
-      >Daten übermitteln&nbsp;&nbsp;&#8250;</button>
+      >{{ $t('next-btn-label') }}&nbsp;&nbsp;&#8250;</button>
     </div>
   </div>
+
 </template>
 
 <script>
@@ -34,11 +46,19 @@ export default {
   props: {
     uploadconfig: String,
     actionurl: String,
+    language: String,
   },
   data() {
+    this.$i18n.locale = this.language;
     return {
       ul_config: JSON.parse(this.uploadconfig),
       post_data: {},
+      locale: 'en',
+    }
+  },
+  watch: {
+    locale (val){
+      this.$i18n.locale = val
     }
   },
   methods: {
@@ -75,7 +95,8 @@ export default {
                 });
           })
     }
-  }
+  },
+
 }
 </script>
 

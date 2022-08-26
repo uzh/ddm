@@ -24,7 +24,6 @@
 
   <div class="row">
     <div class="col">
-      {{ this.language }}
       <button
           class="flow-btn"
           type="button"

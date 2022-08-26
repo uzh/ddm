@@ -3,7 +3,7 @@ import UApp from './UploaderApp.vue'
 import { createI18n } from 'vue-i18n'
 
 const i18n = new createI18n({
-
+    fallbackLocale: 'en',
 })
 
 const selector = "#uapp";

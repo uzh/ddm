@@ -1,9 +1,12 @@
 {% extends "ddm/public/base.html" %}
-{% load render_bundle from webpack_loader %}
 {% load i18n %}
+{% load render_bundle from webpack_loader %}
 {% get_current_language as LANGUAGE_CODE %}
 
 {% block content %}
+direct: {{ get_available_languages }} <br>
+LANGCODE: {{ LANGUAGE_CODE }} <br>
+kjasdfjkhjfdk: {{ LANGUAGE_CODE|slice:"0:2"}}
 <div class="container">
   <form id="uploader-form" method="POST" enctype="multipart/form-data">
     {% csrf_token %}

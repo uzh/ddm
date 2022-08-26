@@ -213,37 +213,44 @@ export default {
       vm.processing = true;
       const files = event.target.files;
 
-        // Check if is zip.
-        if (vm.zipped && files.length === 1) {
-          let zip = new JSZip();
-          zip.loadAsync(files[0]).then(function (z) {
-            vm.blueprints.forEach(bp => {
-              let re = new RegExp(bp.regex_path);
+      if (vm.zipped && files.length === 1) { // Procedure if supplied file is expected to be a zip-folder.
 
-              z.file(re).forEach(f => {
-                f.async("string").then(c => {
-                  vm.processContent(c, bp);
-                }) // TODO: Catch error.
-              })
+        JSZip.loadAsync(files[0]).then(function (z) {
+          // For each blueprint, identify the expected file in the zip-folder.
+          vm.blueprints.forEach(bp => {
+            let re = new RegExp(bp.regex_path);
 
+            // For each file in the zip-folder, check if its filename matches the name expected by the current blueprint.
+            z.file(re).forEach(f => {
+              f.async("string").then(c => {
+                // If a match is found, extract data from file.
+                vm.processContent(c, bp);
+              }).catch(
+                  // TODO: Catch error?
+              )
             })
-          }).catch({
-            // TODO: raise error
-          })
-        } else if (!this.zipped && files.length === 1) {
-          // TODO: Add selection of which file they're trying to upload
-          let bp = vm.blueprints[0]
-          vm.processSingleFile(files[0], bp)
 
-        } else {
-          // TODO: raise error to you
-        }
+          })
+        }).catch(
+          // TODO: raise error 'Not a zip file but zip expected'
+          console.log('Error: "Not a zip file but zip expected"')
+        )
+      } else if (!this.zipped && files.length === 1) { // Procedure if supplied file is expected to be a single file.
+        // TODO: Add selection of which file they're trying to upload if multiple (i.e. a zip-upload) is expected.
+        let bp = vm.blueprints[0]
+        vm.processSingleFile(files[0], bp)
+
+      } else { // Procedure if files.length != 1
+        // TODO: raise error to you - is this error possible?
+        console.log('Error: "More than one file uploaded, but expected one."')
+      }
+
       vm.emitToParent();
       setTimeout(() => {
         vm.extraction_complete = true;
         vm.processing = false;
         vm.upload_enabled = false;
-        }, 2000);
+        }, 1000);
     },
 
     processContent(content, bp) {
@@ -251,27 +258,27 @@ export default {
       let bp_post = vm.post_data[bp.id.toString()];
       let new_extracted_data = []
 
-        if (bp.format === 'json') {
+      if (bp.format === 'json') {
 
-          let fileContent = JSON.parse(content);
-          fileContent.forEach(entry => {
-
-            if (bp.f_expected.every(element => Object.keys(entry).includes(element))) {
-              // Pop unused keys and add to result.
-              for (let key in entry) {
-                if (bp.f_extract.indexOf(key) < 0) {
-                  delete entry[key];
-                }
+        let fileContent = JSON.parse(content);
+        fileContent.forEach(entry => {
+          if (bp.f_expected.every(element => Object.keys(entry).includes(element))) {
+            // Pop unused keys and add to result.
+            for (let key in entry) {
+              if (bp.f_extract.indexOf(key) < 0) {
+                delete entry[key];
               }
-              new_extracted_data.push(entry);
-
-            } else {
-              // Add error message TODO: adjust this to something meaningful.
-              bp_post.status.errors.push('some error');
             }
-          })
-          bp_post.extracted_data = new_extracted_data;
-        }
+            new_extracted_data.push(entry);
+
+          } else {
+            // Add error message TODO: adjust this to something meaningful.
+            console.log('Error: _')
+            bp_post.status.errors.push('some error');
+          }
+        })
+        bp_post.extracted_data = new_extracted_data;
+      }
 
       // Update status
       if (bp_post.status.errors.length == 0) {

@@ -92,12 +92,18 @@ settings.configure(
     SITE_ID=1,
     STATIC_URL='/static/',
     USE_TZ=True,
+    USE_I18N=True,
+    LANGUAGES=[
+        ('en', 'English'),
+        ('de', 'Deutsch')
+    ],
+    LANGUAGE_CODE='en',
     STATICFILES_DIRS=(
         os.path.join(DDM_DIR, 'static'),
     ),
     WEBPACK_LOADER={
         'DEFAULT': {
-            # 'CACHE': not settings.DEBUG,
+            'CACHE': True,
             'BUNDLE_DIR_NAME': 'ddm/vue/',
             'STATS_FILE': os.path.join(DDM_DIR, 'static', 'ddm', 'vue', 'webpack-stats.json'),
             'POLL_INTERVAL': 0.1,

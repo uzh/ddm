@@ -24,6 +24,7 @@
 
   <div class="row">
     <div class="col">
+      {{ this.language }}
       <button
           class="flow-btn"
           type="button"
@@ -53,7 +54,7 @@ export default {
     return {
       ul_config: JSON.parse(this.uploadconfig),
       post_data: {},
-      locale: 'en',
+      locale: this.language,
     }
   },
   watch: {

@@ -30,119 +30,19 @@
       "name": "index.html.py",
       "path": "index.html.py",
       "publicPath": "/static/ddm/vue/index.html.py"
-    },
-    "vue_uploader.1123f96e3400c613.hot-update.js": {
-      "name": "vue_uploader.1123f96e3400c613.hot-update.js",
-      "path": "vue_uploader.1123f96e3400c613.hot-update.js",
-      "publicPath": "/static/ddm/vue/vue_uploader.1123f96e3400c613.hot-update.js"
-    },
-    "vue_questionnaire.1123f96e3400c613.hot-update.js": {
-      "name": "vue_questionnaire.1123f96e3400c613.hot-update.js",
-      "path": "vue_questionnaire.1123f96e3400c613.hot-update.js",
-      "publicPath": "/static/ddm/vue/vue_questionnaire.1123f96e3400c613.hot-update.js"
-    },
-    "vue_uploader.1123f96e3400c613.hot-update.json": {
-      "name": "vue_uploader.1123f96e3400c613.hot-update.json",
-      "path": "vue_uploader.1123f96e3400c613.hot-update.json",
-      "publicPath": "/static/ddm/vue/vue_uploader.1123f96e3400c613.hot-update.json"
-    },
-    "vue_questionnaire.1123f96e3400c613.hot-update.json": {
-      "name": "vue_questionnaire.1123f96e3400c613.hot-update.json",
-      "path": "vue_questionnaire.1123f96e3400c613.hot-update.json",
-      "publicPath": "/static/ddm/vue/vue_questionnaire.1123f96e3400c613.hot-update.json"
-    },
-    "vue_uploader.4f1b0e335ca99b8a.hot-update.js": {
-      "name": "vue_uploader.4f1b0e335ca99b8a.hot-update.js",
-      "path": "vue_uploader.4f1b0e335ca99b8a.hot-update.js",
-      "publicPath": "/static/ddm/vue/vue_uploader.4f1b0e335ca99b8a.hot-update.js"
-    },
-    "vue_questionnaire.4f1b0e335ca99b8a.hot-update.js": {
-      "name": "vue_questionnaire.4f1b0e335ca99b8a.hot-update.js",
-      "path": "vue_questionnaire.4f1b0e335ca99b8a.hot-update.js",
-      "publicPath": "/static/ddm/vue/vue_questionnaire.4f1b0e335ca99b8a.hot-update.js"
-    },
-    "vue_uploader.4f1b0e335ca99b8a.hot-update.json": {
-      "name": "vue_uploader.4f1b0e335ca99b8a.hot-update.json",
-      "path": "vue_uploader.4f1b0e335ca99b8a.hot-update.json",
-      "publicPath": "/static/ddm/vue/vue_uploader.4f1b0e335ca99b8a.hot-update.json"
-    },
-    "vue_questionnaire.4f1b0e335ca99b8a.hot-update.json": {
-      "name": "vue_questionnaire.4f1b0e335ca99b8a.hot-update.json",
-      "path": "vue_questionnaire.4f1b0e335ca99b8a.hot-update.json",
-      "publicPath": "/static/ddm/vue/vue_questionnaire.4f1b0e335ca99b8a.hot-update.json"
-    },
-    "vue_uploader.7657a9f9e95953fe.hot-update.js": {
-      "name": "vue_uploader.7657a9f9e95953fe.hot-update.js",
-      "path": "vue_uploader.7657a9f9e95953fe.hot-update.js",
-      "publicPath": "/static/ddm/vue/vue_uploader.7657a9f9e95953fe.hot-update.js"
-    },
-    "vue_questionnaire.7657a9f9e95953fe.hot-update.js": {
-      "name": "vue_questionnaire.7657a9f9e95953fe.hot-update.js",
-      "path": "vue_questionnaire.7657a9f9e95953fe.hot-update.js",
-      "publicPath": "/static/ddm/vue/vue_questionnaire.7657a9f9e95953fe.hot-update.js"
-    },
-    "vue_uploader.7657a9f9e95953fe.hot-update.json": {
-      "name": "vue_uploader.7657a9f9e95953fe.hot-update.json",
-      "path": "vue_uploader.7657a9f9e95953fe.hot-update.json",
-      "publicPath": "/static/ddm/vue/vue_uploader.7657a9f9e95953fe.hot-update.json"
-    },
-    "vue_questionnaire.7657a9f9e95953fe.hot-update.json": {
-      "name": "vue_questionnaire.7657a9f9e95953fe.hot-update.json",
-      "path": "vue_questionnaire.7657a9f9e95953fe.hot-update.json",
-      "publicPath": "/static/ddm/vue/vue_questionnaire.7657a9f9e95953fe.hot-update.json"
-    },
-    "vue_uploader.4123aa3195770afa.hot-update.js": {
-      "name": "vue_uploader.4123aa3195770afa.hot-update.js",
-      "path": "vue_uploader.4123aa3195770afa.hot-update.js",
-      "publicPath": "/static/ddm/vue/vue_uploader.4123aa3195770afa.hot-update.js"
-    },
-    "vue_questionnaire.4123aa3195770afa.hot-update.js": {
-      "name": "vue_questionnaire.4123aa3195770afa.hot-update.js",
-      "path": "vue_questionnaire.4123aa3195770afa.hot-update.js",
-      "publicPath": "/static/ddm/vue/vue_questionnaire.4123aa3195770afa.hot-update.js"
-    },
-    "vue_uploader.4123aa3195770afa.hot-update.json": {
-      "name": "vue_uploader.4123aa3195770afa.hot-update.json",
-      "path": "vue_uploader.4123aa3195770afa.hot-update.json",
-      "publicPath": "/static/ddm/vue/vue_uploader.4123aa3195770afa.hot-update.json"
-    },
-    "vue_questionnaire.4123aa3195770afa.hot-update.json": {
-      "name": "vue_questionnaire.4123aa3195770afa.hot-update.json",
-      "path": "vue_questionnaire.4123aa3195770afa.hot-update.json",
-      "publicPath": "/static/ddm/vue/vue_questionnaire.4123aa3195770afa.hot-update.json"
-    },
-    "vue_uploader.7a4c6087411d96e3.hot-update.js": {
-      "name": "vue_uploader.7a4c6087411d96e3.hot-update.js",
-      "path": "vue_uploader.7a4c6087411d96e3.hot-update.js",
-      "publicPath": "/static/ddm/vue/vue_uploader.7a4c6087411d96e3.hot-update.js"
-    },
-    "vue_questionnaire.7a4c6087411d96e3.hot-update.js": {
-      "name": "vue_questionnaire.7a4c6087411d96e3.hot-update.js",
-      "path": "vue_questionnaire.7a4c6087411d96e3.hot-update.js",
-      "publicPath": "/static/ddm/vue/vue_questionnaire.7a4c6087411d96e3.hot-update.js"
-    },
-    "vue_uploader.7a4c6087411d96e3.hot-update.json": {
-      "name": "vue_uploader.7a4c6087411d96e3.hot-update.json",
-      "path": "vue_uploader.7a4c6087411d96e3.hot-update.json",
-      "publicPath": "/static/ddm/vue/vue_uploader.7a4c6087411d96e3.hot-update.json"
-    },
-    "vue_questionnaire.7a4c6087411d96e3.hot-update.json": {
-      "name": "vue_questionnaire.7a4c6087411d96e3.hot-update.json",
-      "path": "vue_questionnaire.7a4c6087411d96e3.hot-update.json",
-      "publicPath": "/static/ddm/vue/vue_questionnaire.7a4c6087411d96e3.hot-update.json"
     }
   },
   "chunks": {
     "vue_uploader": [
       "js/chunk-vendors.js",
-      "js/vue_uploader.js",
-      "vue_uploader.7a4c6087411d96e3.hot-update.js"
+      "js/vue_uploader.js"
     ],
     "vue_questionnaire": [
       "js/chunk-vendors.js",
-      "js/vue_questionnaire.js",
-      "vue_questionnaire.7a4c6087411d96e3.hot-update.js"
+      "js/vue_questionnaire.js"
     ]
   },
-  "publicPath": "/static/ddm/vue/"
+  "publicPath": "/static/ddm/vue/",
+  "error": "ModuleBuildError",
+  "message": "Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\src\\components\\FileUploader.vue: Unexpected token, expected \",\" (123:78)\n\n  121 |               console.log(r);\n  122 |               // TODO: Show error message: this.$t('error-not-zip') in a model or similar\n> 123 |             }).catch(e => console.error(`Could not post error message, ${e}`));\n      |                                                                               ^\n  124 |           )\n  125 |     },\n  126 |\n    at instantiate (C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\node_modules\\@babel\\parser\\lib\\index.js:72:32)\n    at constructor (C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\node_modules\\@babel\\parser\\lib\\index.js:358:12)\n    at Object.raise (C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\node_modules\\@babel\\parser\\lib\\index.js:3341:19)\n    at Object.unexpected (C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\node_modules\\@babel\\parser\\lib\\index.js:3379:16)\n    at Object.expect (C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\node_modules\\@babel\\parser\\lib\\index.js:4008:28)\n    at Object.parseCallExpressionArguments (C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\node_modules\\@babel\\parser\\lib\\index.js:12851:14)\n    at Object.parseCoverCallAndAsyncArrowHead (C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\node_modules\\@babel\\parser\\lib\\index.js:12766:29)\n    at Object.parseSubscript (C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\node_modules\\@babel\\parser\\lib\\index.js:12691:19)\n    at Object.parseSubscripts (C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\node_modules\\@babel\\parser\\lib\\index.js:12660:19)\n    at Object.parseExprSubscripts (C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\node_modules\\@babel\\parser\\lib\\index.js:12649:17)"
 }

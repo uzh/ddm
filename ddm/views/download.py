@@ -41,8 +41,8 @@ class DownloadProjectDataView(APIView):
         Return a dictionary object containing the data donations and
         questionnaire responses.
         """
-        parameter = self.kwargs['pk']
-        project = DonationProject.objects.get(pk=parameter)
+        project_id = self.kwargs['pk']
+        project = DonationProject.objects.get(pk=project_id)
         if not user_is_allowed_to_download(request.user, project):
             raise Http404()
 
@@ -50,6 +50,7 @@ class DownloadProjectDataView(APIView):
             secret = None if 'super_secret' not in request.headers else request.headers['super_secret']
 
             if not secret:
+                # TODO: Add this to admin log.
                 return HttpResponseBadRequest('super_secret required but not found in headers.')
 
             project.secret_key = secret

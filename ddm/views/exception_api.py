@@ -1,32 +1,31 @@
-from ddm.models.exceptions import *
+from ddm.models import DonationProject, ExceptionLogEntry, Participant
+from django.utils import timezone
+from rest_framework import permissions
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
 
 class ExceptionAPI(APIView):
 
-    def get(self, request, format=None, *args, **kwargs):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, format=None, *args, **kwargs):
         """
-        Return a dictionary object containing the error message.
-
-        The following variables must be supplied with an API query:
-        - status_code: The code identifier of the raised exception
-        - project_id: The identifier of the project in which the exception was encountered
-        - participant_id: The id of the participant that encountered the exception
+        Except an error message and log it
         """
-        # Authenticate request somehow; e.g.: ensure that project and participant exist in db - seems unsure though
+        print("reached this")
+        project_id = self.kwargs['pk']
+        project = DonationProject.objects.get(pk=project_id)
 
-        # Get requested exception class.
-        exception_code = self.kwargs.get('status_code', None)
-        exception_class = DDM_EXCEPTIONS.get(exception_code, DDMBaseException)
+        participant_id = request.session['projects'][f'{project_id}']['participant_id']
+        participant = Participant.objects.get(pk=participant_id)
 
-        # Register the error on server side. (async?)
-        # register_exception(exception_class)
-        # or:
-        # exception_class.register_with_project(project_id)
+        ExceptionLogEntry.objects.create(
+            date=timezone.now(),
+            project=project,
+            participant=participant,
+            exception_type=request.data['status_code'],
+            message=request.data['message']
+        )
 
-        # Return exception information to vue.
-        excpetion_information = {
-            'description': exception_class.description,
-            'message': exception_class.message
-        }
-        return excpetion_information
+        return Response(None, status=201)

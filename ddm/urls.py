@@ -1,9 +1,9 @@
 from django.urls import path, include
-from django.views.i18n import JavaScriptCatalog
 
-from ddm.views import project_admin
-from ddm.views import participation_flow
+from ddm.views import project_admin, participation_flow
+from ddm.views.exception_api import ExceptionAPI
 from ddm.views.download import DownloadProjectDataView
+
 
 participation_flow_patterns = [
     path(r'intro/', participation_flow.EntryView.as_view(), name='project-entry'),
@@ -71,4 +71,5 @@ urlpatterns = [
     path(r'auth/', include(authentication_patterns)),
     path(r'profile/', include(profile_patterns)),
     path(r'<int:pk>/download/', DownloadProjectDataView.as_view(), name='ddm-download-api'),
+    path(r'<int:pk>/exceptions', ExceptionAPI.as_view(), name='ddm-exceptions-api'),
 ]

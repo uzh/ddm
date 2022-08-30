@@ -15,10 +15,11 @@
       v-for="(uploadConfig, id) in ul_config"
       :key="id"
       :comp_id="id"
-      :zipped="uploadConfig.ul_type === 'zip'"
+      :expects_zip="uploadConfig.ul_type === 'zip'"
       :name="uploadConfig.name"
       :blueprints="uploadConfig.blueprints"
       :instructions="uploadConfig.instructions"
+      :exceptionurl="this.exceptionurl"
       @changedData="updatePostData"
   ></FileUploader>
 
@@ -46,6 +47,7 @@ export default {
   props: {
     uploadconfig: String,
     actionurl: String,
+    exceptionurl: String,
     language: String,
   },
   data() {

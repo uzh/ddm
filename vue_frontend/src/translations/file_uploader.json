@@ -16,7 +16,9 @@
     "submit-agree": "I agree to submit this data",
     "extracted-data": "Extracted Data",
     "extracted-data-intro": "The following data has been extracted and will be transmitted to the researchers with your consent",
-    "file": "file"
+    "file": "file",
+    "error-multiple-files": "More than one file uploaded, but only one is expected.",
+    "error-not-zip": "A zip-file is expected but another file type was uploaded."
   },
   "de": {
     "instructions": "Instruktionen",
@@ -35,6 +37,8 @@
     "submit-agree": "Ich bin damit einverstanden, diese Daten zu übermitteln",
     "extracted-data": "Ausgelesene Daten",
     "extracted-data-intro": "Die folgenden Daten wurden ausgelesen und werden bei Ihrer Zustimmung an die Forschenden übermittelt",
-    "file": "Datei"
+    "file": "Datei",
+    "error-multiple-files": "Mehr als eine Datei hochgeladen, aber nur eine wird erwartet",
+    "error-not-zip": "Es wird eine Zip-Datei erwartet, aber es wurde ein anderer Dateityp hochgeladen."
   }
 }

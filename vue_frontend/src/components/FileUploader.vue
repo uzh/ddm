@@ -169,16 +169,19 @@
 <script>
 import JSZip from "jszip";
 import DonationInstructions from "./DonationInstructions";
+import axios from "axios";
+
 
 export default {
   name: "ProcessFile",
   components: {DonationInstructions},
   props: {
-    zipped: Boolean,
+    expects_zip: Boolean,
     blueprints: Array,
     comp_id: Number,
     name: String,
-    instructions: Array
+    instructions: Array,
+    exceptionurl: String
   },
   emits: ["changedData"],
   data() {
@@ -208,54 +211,116 @@ export default {
     this.emitToParent();
   },
   methods: {
+    // exceptionHandler(fn){
+    //   return function(){
+    //     try{
+    //       return fn.apply(this, arguments);
+    //     }catch(ex){
+    //       axios.post(this.exceptionurl, {
+    //         'status_code': 418,
+    //         'message': this.$t('error-multiple-files', 'en')
+    //       }).then(r => {
+    //         console.log(r)
+    //         // TODO: Show error message: this.$t('error-multiple-files') in a model or similar
+    //       }).catch(e => console.error(`Could not post error message, ${e}`));
+    //     }
+    //   };
+    // },
+
+    /**
+     * Entry function to extract data from uploaded file.
+     * @param event
+     */
     processFile(event) {
-      let vm = this;
-      vm.processing = true;
+      let fu = this;
+      fu.processing = true;
       const files = event.target.files;
 
-      if (vm.zipped && files.length === 1) { // Procedure if supplied file is expected to be a zip-folder.
-
-        JSZip.loadAsync(files[0]).then(function (z) {
-          // For each blueprint, identify the expected file in the zip-folder.
-          vm.blueprints.forEach(bp => {
-            let re = new RegExp(bp.regex_path);
-
-            // For each file in the zip-folder, check if its filename matches the name expected by the current blueprint.
-            z.file(re).forEach(f => {
-              f.async("string").then(c => {
-                // If a match is found, extract data from file.
-                vm.processContent(c, bp);
-              }).catch(
-                  // TODO: Catch error?
-              )
-            })
-
-          })
-        }).catch(
-          // TODO: raise error 'Not a zip file but zip expected'
-          console.log('Error: "Not a zip file but zip expected"')
-        )
-      } else if (!this.zipped && files.length === 1) { // Procedure if supplied file is expected to be a single file.
+      if (fu.expects_zip && files.length === 1) {             // Procedure if supplied file is expected to be a zip-folder.
+        fu.processZipFile(files[0], fu.blueprints)
+      } else if (!this.expects_zip && files.length === 1) {   // Procedure if supplied file is expected to be a single file.
         // TODO: Add selection of which file they're trying to upload if multiple (i.e. a zip-upload) is expected.
-        let bp = vm.blueprints[0]
-        vm.processSingleFile(files[0], bp)
+        fu.processSingleFile(files[0], fu.blueprints[0])
 
       } else { // Procedure if files.length != 1
-        // TODO: raise error to you - is this error possible?
-        console.log('Error: "More than one file uploaded, but expected one."')
+        axios.post(fu.exceptionurl, {
+          'status_code': 418,
+          'message': this.$t('error-multiple-files', 'en')
+        }).then(r => {
+          console.log(r)
+          // TODO: Show error message: this.$t('error-multiple-files') in a model or similar
+        }).catch(e => console.error(`Could not post error message, ${e}`));
       }
 
-      vm.emitToParent();
+      fu.emitToParent();
       setTimeout(() => {
-        vm.extraction_complete = true;
-        vm.processing = false;
-        vm.upload_enabled = false;
+        fu.extraction_complete = true;
+        fu.processing = false;
+        fu.upload_enabled = false;
         }, 1000);
     },
 
+    /**
+     * Manage zip-file upload.
+     * @param files
+     * @param bp
+     */
+    processZipFile(files) {
+      let fu = this;
+      var myError = '';
+      JSZip.loadAsync(files)
+          .then(z => {                                    // For each blueprint, identify the expected file in the zip-folder.
+            fu.blueprints.forEach(bp => {                 // For each file in the zip-folder, check if its filename matches the name expected by the current blueprint.
+              let re = new RegExp(bp.regex_path);
+              z.file(re).forEach(f => {
+                f.async("string")
+                    .then(c => fu.processContent(c, bp))
+                    .catch( // remove catches
+                        // TODO: Catch error?
+                        // TODO: Handle no match?)
+                    )
+              })
+            })
+          }).catch(
+            // TODO: raise error 'Not a zip file but zip expected'
+            // console.log('Error: "Not a zip file but zip expected"');
+            myError = 'error-not-zip'
+          )
+      if (myError !== '') {
+        axios.post(fu.exceptionurl, {
+          'status_code': 418,
+          'message': fu.$t(myError, 'en')
+        }).then(r => {
+          console.log(r);
+          // TODO: Show error message: this.$t('error-not-zip') in a model or similar
+        }).catch(e => console.error(`Could not post error message, ${e}`));
+      }
+
+    },
+
+    /**
+     * Manage single file upload.
+     * @param file
+     * @param bp
+     */
+    processSingleFile(file, bp) {
+      let fu = this;
+      let reader = new FileReader();
+      reader.onload = function(event) {
+        let content = event.target.result;
+        fu.processContent(content, bp);
+      }
+      reader.readAsText(file);
+    },
+
+    /**
+     *
+     * @param content
+     * @param bp
+     */
     processContent(content, bp) {
-      let vm = this;
-      let bp_post = vm.post_data[bp.id.toString()];
+      let fu = this;
+      let bp_post = fu.post_data[bp.id.toString()];
       let new_extracted_data = []
 
       if (bp.format === 'json') {
@@ -285,15 +350,7 @@ export default {
         bp_post.status.ul_complete = true;
       }
     },
-    processSingleFile(file, bp) {
-      let vm = this;
-      let reader = new FileReader();
-      reader.onload = function(event) {
-        let content = event.target.result;
-        vm.processContent(content, bp);
-      }
-      reader.readAsText(file);
-    },
+
     emitToParent() {
       let emit_data = JSON.parse(JSON.stringify(this.post_data));
       Object.keys(emit_data).forEach(key => {

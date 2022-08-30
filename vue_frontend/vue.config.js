@@ -20,6 +20,7 @@ module.exports = {
     outputDir: path.resolve('../ddm/static/ddm/vue'),
 
     devServer: {
+        hot: false,
         devMiddleware: {
             writeToDisk: true, // Write files to disk in dev mode, so Django can serve the assets
         }

@@ -49,6 +49,7 @@ project_admin_patterns = [
     path(r'<int:pk>/end-page/', project_admin.EndPageEdit.as_view(), name='end-page-edit'),
     path(r'<int:project_pk>/questionnaire/', include(question_patterns)),
     path(r'<int:project_pk>/donation-blueprints/', include(blueprint_patterns)),
+    path(r'<int:project_pk>/exceptions/', project_admin.ExceptionList.as_view(), name='project-exceptions'),
 ]
 
 authentication_patterns = [

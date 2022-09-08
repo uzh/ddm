@@ -1,5 +1,5 @@
 {
-  "status": "done",
+  "status": "error",
   "assets": {
     "js/vue_uploader.js": {
       "name": "js/vue_uploader.js",
@@ -43,6 +43,6 @@
     ]
   },
   "publicPath": "/static/ddm/vue/",
-  "error": "ModuleBuildError",
-  "message": "Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\src\\components\\FileUploader.vue: Unexpected token, expected \",\" (123:78)\n\n  121 |               console.log(r);\n  122 |               // TODO: Show error message: this.$t('error-not-zip') in a model or similar\n> 123 |             }).catch(e => console.error(`Could not post error message, ${e}`));\n      |                                                                               ^\n  124 |           )\n  125 |     },\n  126 |\n    at instantiate (C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\node_modules\\@babel\\parser\\lib\\index.js:72:32)\n    at constructor (C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\node_modules\\@babel\\parser\\lib\\index.js:358:12)\n    at Object.raise (C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\node_modules\\@babel\\parser\\lib\\index.js:3341:19)\n    at Object.unexpected (C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\node_modules\\@babel\\parser\\lib\\index.js:3379:16)\n    at Object.expect (C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\node_modules\\@babel\\parser\\lib\\index.js:4008:28)\n    at Object.parseCallExpressionArguments (C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\node_modules\\@babel\\parser\\lib\\index.js:12851:14)\n    at Object.parseCoverCallAndAsyncArrowHead (C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\node_modules\\@babel\\parser\\lib\\index.js:12766:29)\n    at Object.parseSubscript (C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\node_modules\\@babel\\parser\\lib\\index.js:12691:19)\n    at Object.parseSubscripts (C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\node_modules\\@babel\\parser\\lib\\index.js:12660:19)\n    at Object.parseExprSubscripts (C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\node_modules\\@babel\\parser\\lib\\index.js:12649:17)"
+  "error": "ModuleError",
+  "message": "Module Error (from ./node_modules/vue-loader/dist/templateLoader.js):\n\nVueCompilerError: v-if/v-else-if is missing expression.\nat C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\src\\components\\FileUploader.vue:41:19\n39 |              <span :class=\"{ 'd-none': !upload_enabled & extraction_complete | processing | !extraction_complete }\"><b>{{ $t('upload-different-file') }}</b></span>\n40 |  \n41 |              <span v-if=\"\"></span>\n   |                    ^^^^^^^\n42 |              <span v-else></span>\n43 |  \n"
 }

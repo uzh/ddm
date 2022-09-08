@@ -13,7 +13,6 @@ class ExceptionAPI(APIView):
         """
         Except an error message and log it
         """
-        print("reached this")
         project_id = self.kwargs['pk']
         project = DonationProject.objects.get(pk=project_id)
 

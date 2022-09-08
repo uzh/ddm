@@ -568,7 +568,7 @@ eval("// style-loader: Adds some css to the DOM by adding a <style> tag\n\n// lo
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "1750e47f99e318fb"; }
+/******/ 		__webpack_require__.h = function() { return "4f39c705f3065ac6"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/global */
@@ -660,7 +660,7 @@ eval("// style-loader: Adds some css to the DOM by adding a <style> tag\n\n// lo
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
 /******/ 	__webpack_require__.O(undefined, ["chunk-vendors"], function() { return __webpack_require__("./node_modules/whatwg-fetch/fetch.js"); })
-/******/ 	__webpack_require__.O(undefined, ["chunk-vendors"], function() { return __webpack_require__("./node_modules/webpack-dev-server/client/index.js?protocol=ws&hostname=192.168.1.26&port=8080&pathname=%2Fws&logging=none&reconnect=10"); })
+/******/ 	__webpack_require__.O(undefined, ["chunk-vendors"], function() { return __webpack_require__("./node_modules/webpack-dev-server/client/index.js?protocol=ws&hostname=localhost&port=8080&pathname=%2Fws&logging=none&reconnect=10"); })
 /******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["chunk-vendors"], function() { return __webpack_require__("./src/questionnaire.js"); })
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	

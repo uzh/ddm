@@ -2,17 +2,15 @@
 
 <template>
 
-  {{ ul_config }}
-
   <FileUploader
-      v-for="(uploadConfig, id) in ul_config"
+      v-for="(uploadConfig, id) in parsedUploadConfig"
       :key="id"
       :component-id="id"
       :expects-zip="uploadConfig.ul_type === 'zip'"
       :name="uploadConfig.name"
       :blueprints="uploadConfig.blueprints"
       :instructions="uploadConfig.instructions"
-      :exception-url="this.exceptionurl"
+      :exception-url="this.exceptionUrl"
       @changedData="updatePostData"
   ></FileUploader>
 
@@ -49,16 +47,16 @@ export default {
     FileUploader
   },
   props: {
-    uploadconfig: String,
-    actionurl: String,
-    exceptionurl: String,
+    uploadConfig: String,
+    actionUrl: String,
+    exceptionUrl: String,
     language: String,
   },
   data() {
     this.$i18n.locale = this.language;
     return {
-      ul_config: JSON.parse(this.uploadconfig),
-      post_data: {},
+      parsedUploadConfig: JSON.parse(this.uploadConfig),
+      postData: {},
       locale: this.language,
     }
   },
@@ -70,7 +68,7 @@ export default {
   methods: {
     updatePostData(data) {
       Object.keys(data).forEach(key => {
-        this.post_data[key] = data[key]
+        this.postData[key] = data[key]
       })
     },
     zipData() {
@@ -84,12 +82,12 @@ export default {
       let form = new FormData(document.getElementById("uploader-form"));
       let zip = new JSZip();
 
-      zip.file("ul_data.json", JSON.stringify(this.post_data))
+      zip.file("ul_data.json", JSON.stringify(this.postData))
           .generateAsync({type: "blob"})
           .then(blob => {
             form.append("post_data", blob);
 
-            fetch(this.actionurl, {method: "POST", body: form})
+            fetch(this.actionUrl, {method: "POST", body: form})
                 .then(response => {
                   console.log(response)
                   if (response.redirected) {

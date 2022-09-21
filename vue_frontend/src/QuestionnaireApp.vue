@@ -1,8 +1,8 @@
 <template>
-  <template v-for="(question, id) in q_config" :key="id">
-    <div v-show="curr_index == question.index">
+  <template v-for="(question, id) in parsedQuestConfig" :key="id">
+    <div v-show="currentIndex === question.index">
 
-      <template v-if="question.type == 'single_choice'">
+      <template v-if="question.type === 'single_choice'">
         <SingleChoiceQuestion
             :qid="question.question"
             :text="question.text"
@@ -12,7 +12,7 @@
         ></SingleChoiceQuestion>
       </template>
 
-      <template v-if="question.type == 'multi_choice'">
+      <template v-if="question.type === 'multi_choice'">
         <MultiChoiceQuestion
             :qid="question.question"
             :text="question.text"
@@ -22,7 +22,7 @@
         ></MultiChoiceQuestion>
       </template>
 
-      <template v-if="question.type == 'open'">
+      <template v-if="question.type === 'open'">
         <OpenQuestion
             :qid="question.question"
             :text="question.text"
@@ -32,7 +32,7 @@
         ></OpenQuestion>
       </template>
 
-      <template v-if="question.type == 'matrix'">
+      <template v-if="question.type === 'matrix'">
         <MatrixQuestion
             :qid="question.question"
             :text="question.text"
@@ -43,7 +43,7 @@
         ></MatrixQuestion>
       </template>
 
-      <template v-if="question.type == 'semantic_diff'">
+      <template v-if="question.type === 'semantic_diff'">
         <SemanticDifferential
             :qid="question.question"
             :text="question.text"
@@ -54,7 +54,7 @@
         ></SemanticDifferential>
       </template>
 
-      <template v-if="question.type == 'transition'">
+      <template v-if="question.type === 'transition'">
         <TransitionQuestion
             :text="question.text"
             @answerChanged="updateAnswers"
@@ -97,15 +97,15 @@ export default {
     TransitionQuestion
   },
   props: {
-    qconfig: String,
-    actionurl: String,
+    questionnaireConfig: String,
+    actionUrl: String,
   },
   data() {
     return {
-      q_config: JSON.parse(this.qconfig),
+      parsedQuestConfig: JSON.parse(this.questionnaireConfig),
       answers: {},
-      curr_index: 1,
-      max_index: 1
+      currentIndex: 1,
+      maxIndex: 1
     }
   },
   created() {
@@ -117,13 +117,13 @@ export default {
     },
     setMaxIndex() {
       let indices = [];
-      this.q_config.forEach(q =>
+      this.parsedQuestConfig.forEach(q =>
           indices.push(q.index)
       )
-      this.max_index = Math.max(...indices);
+      this.maxIndex = Math.max(...indices);
     },
     next() {
-      if (this.curr_index == this.max_index) {
+      if (this.currentIndex === this.maxIndex) {
         this.submitData();
       } else {
         this.curr_index += 1;
@@ -136,15 +136,15 @@ export default {
       let csrf = document.querySelector("input[name='csrfmiddlewaretoken']");
       form.append("csrfmiddlewaretoken", csrf.value);
 
-      fetch(this.actionurl, {method: "POST", body: form})
+      fetch(this.actionUrl, {method: "POST", body: form})
           .then(response => {
             console.log(response)
             if (response.redirected) {
               window.location.href = response.url;
             }
           })
-          .catch(err => {
-            console.info(err);
+          .catch(e => {
+            console.info(e);
           });
     }
   }

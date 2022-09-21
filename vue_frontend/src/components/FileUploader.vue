@@ -2,8 +2,6 @@
 
 <template>
 
-  COmponend ID: {{ componentId }}
-
   <div class="mb-5">
     <div class="float-left bg-dark text-white pt-2 ps-2 pb-1 rounded-top">
       <div class="col-sm">

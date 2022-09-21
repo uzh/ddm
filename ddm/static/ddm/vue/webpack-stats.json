@@ -1,10 +1,20 @@
 {
-  "status": "error",
+  "status": "done",
   "assets": {
+    "css/vue_uploader.css": {
+      "name": "css/vue_uploader.css",
+      "path": "css\\vue_uploader.css",
+      "publicPath": "/static/ddm/vue/css/vue_uploader.css"
+    },
     "js/vue_uploader.js": {
       "name": "js/vue_uploader.js",
       "path": "js\\vue_uploader.js",
       "publicPath": "/static/ddm/vue/js/vue_uploader.js"
+    },
+    "css/vue_questionnaire.css": {
+      "name": "css/vue_questionnaire.css",
+      "path": "css\\vue_questionnaire.css",
+      "publicPath": "/static/ddm/vue/css/vue_questionnaire.css"
     },
     "js/vue_questionnaire.js": {
       "name": "js/vue_questionnaire.js",
@@ -30,19 +40,34 @@
       "name": "index.html.py",
       "path": "index.html.py",
       "publicPath": "/static/ddm/vue/index.html.py"
+    },
+    "js/vue_uploader.js.map": {
+      "name": "js/vue_uploader.js.map",
+      "path": "js\\vue_uploader.js.map",
+      "publicPath": "/static/ddm/vue/js/vue_uploader.js.map"
+    },
+    "js/vue_questionnaire.js.map": {
+      "name": "js/vue_questionnaire.js.map",
+      "path": "js\\vue_questionnaire.js.map",
+      "publicPath": "/static/ddm/vue/js/vue_questionnaire.js.map"
+    },
+    "js/chunk-vendors.js.map": {
+      "name": "js/chunk-vendors.js.map",
+      "path": "js\\chunk-vendors.js.map",
+      "publicPath": "/static/ddm/vue/js/chunk-vendors.js.map"
     }
   },
   "chunks": {
     "vue_uploader": [
       "js/chunk-vendors.js",
+      "css/vue_uploader.css",
       "js/vue_uploader.js"
     ],
     "vue_questionnaire": [
       "js/chunk-vendors.js",
+      "css/vue_questionnaire.css",
       "js/vue_questionnaire.js"
     ]
   },
-  "publicPath": "/static/ddm/vue/",
-  "error": "ModuleError",
-  "message": "Module Error (from ./node_modules/vue-loader/dist/templateLoader.js):\n\nVueCompilerError: v-if/v-else-if is missing expression.\nat C:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\vue_frontend\\src\\components\\FileUploader.vue:41:19\n39 |              <span :class=\"{ 'd-none': !upload_enabled & extraction_complete | processing | !extraction_complete }\"><b>{{ $t('upload-different-file') }}</b></span>\n40 |  \n41 |              <span v-if=\"\"></span>\n   |                    ^^^^^^^\n42 |              <span v-else></span>\n43 |  \n"
+  "publicPath": "/static/ddm/vue/"
 }

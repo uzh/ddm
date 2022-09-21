@@ -11,8 +11,8 @@
   <form method="POST">
     {% csrf_token %}
     <div id="qapp"
-         data-qconfig='{{ q_config }}'
-         data-actionurl='{{ request.build_absolute_uri }}'
+         data-questionnaire-config='{{ q_config }}'
+         data-action-url='{{ request.build_absolute_uri }}'
          class="text-black"
     >
       <qapp></qapp>

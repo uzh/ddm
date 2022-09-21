@@ -36,6 +36,8 @@ class DonationProject(models.Model):
     slug = models.SlugField(unique=True, verbose_name='External Project Slug')
     intro_text = RichTextField(null=True, blank=True, verbose_name='Welcome Page Text')
     outro_text = RichTextField(null=True, blank=True, verbose_name='End Page Text')
+    contact_information = RichTextField(null=True, blank=False, verbose_name='Contact information')
+    data_protection_statement = RichTextField(null=True, blank=False, verbose_name='Data Protection Statement')
 
     date_created = models.DateTimeField(default=timezone.now)
 

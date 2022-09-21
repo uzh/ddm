@@ -1,11 +1,11 @@
 <template>
-  <div :id="'carousel-' + comp_id" class="carousel carousel-dark slide" data-bs-interval="false" data-bs-ride="carousel">
+  <div :id="'carousel-' + componentId" class="carousel carousel-dark slide" data-bs-interval="false" data-bs-ride="carousel">
     <div class="carousel-indicators">
       <button
           v-for="(i, index) in instructions"
           :key="index"
           type="button"
-          :data-bs-target="'#carousel-' + comp_id"
+          :data-bs-target="'#carousel-' + componentId"
           :data-bs-slide-to="index"
           :aria-label="'Step ' + index"
           :class="{ 'active': index === 0 }"
@@ -21,11 +21,11 @@
           v-html="i.text">
       </div>
     </div>
-    <button class="carousel-control-prev" type="button" :data-bs-target="'#carousel-' + comp_id" data-bs-slide="prev">
+    <button class="carousel-control-prev" type="button" :data-bs-target="'#carousel-' + componentId" data-bs-slide="prev">
       <span class="carousel-control-prev-icon" aria-hidden="true"></span>
       <span class="visually-hidden">Previous</span>
     </button>
-    <button class="carousel-control-next" type="button" :data-bs-target="'#carousel-' + comp_id" data-bs-slide="next">
+    <button class="carousel-control-next" type="button" :data-bs-target="'#carousel-' + componentId" data-bs-slide="next">
       <span class="carousel-control-next-icon" aria-hidden="true"></span>
       <span class="visually-hidden">Next</span>
     </button>
@@ -37,7 +37,7 @@ export default {
   name: "DonationInstructions",
   props: {
     instructions: Array,
-    comp_id: Number
+    componentId: Number
   },
   data() {
     return {}

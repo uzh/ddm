@@ -1,25 +1,18 @@
-<i18n>
-{
-  "en": {
-    "next-btn-label": "Submit Data"
-  },
-  "de": {
-    "next-btn-label": "Daten übermitteln"
-  }
-}
-</i18n>
+<i18n src="./translations/uploader_app.json"></i18n>
 
 <template>
+
+  {{ ul_config }}
 
   <FileUploader
       v-for="(uploadConfig, id) in ul_config"
       :key="id"
-      :comp_id="id"
-      :expects_zip="uploadConfig.ul_type === 'zip'"
+      :component-id="id"
+      :expects-zip="uploadConfig.ul_type === 'zip'"
       :name="uploadConfig.name"
       :blueprints="uploadConfig.blueprints"
       :instructions="uploadConfig.instructions"
-      :exceptionurl="this.exceptionurl"
+      :exception-url="this.exceptionurl"
       @changedData="updatePostData"
   ></FileUploader>
 
@@ -28,8 +21,19 @@
       <button
           class="flow-btn"
           type="button"
+          data-bs-toggle="modal"
+          data-bs-target="#overlayModal"
           @click="zipData"
-      >{{ $t('next-btn-label') }}&nbsp;&nbsp;&#8250;</button>
+      >{{ $t('next-btn-label') }}&nbsp;&nbsp;&#8250;</button> <!-- TODO: Add Overlay on submit, because it might take some time; also prevents double click on submit -->
+    </div>
+  </div>
+
+  <div class="modal custom-modal" id="overlayModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered custom-modal-container">
+      <div class="modal-content fs-1 text-center custom-modal-content">
+        <div class="p-3 modal-message">{{ $t('data-submit-wait') }}</div>
+        <div class="dot-floating"></div>
+      </div>
     </div>
   </div>
 
@@ -71,8 +75,8 @@ export default {
     },
     zipData() {
       // Disable file inputs.
-      let file_inputs = document.querySelectorAll("input[type=file]")
-      file_inputs.forEach(fi => {
+      let fileInputs = document.querySelectorAll("input[type=file]")
+      fileInputs.forEach(fi => {
         fi.disabled = true;
       })
 
@@ -108,5 +112,114 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+}
+.custom-modal-container {
+  width: 100%;
+  max-width: none;
+  animation: fade-in-right ease 0.6s forwards;
+}
+.custom-modal-content {
+  background: #212529 !important;
+  color: white !important;
+  border: none;
+  border-radius: 0px;
+  font-size: 2.5rem !important;
+  display: flex;
+  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding-bottom: 30px;
+  box-shadow: 0px 3px #ffffff17;
+}
+@keyframes fade-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.dot-floating {
+  position: relative;
+  width: 12px;
+  height: 12px;
+  border-radius: 6px;
+  background-color: #009c94;
+  color: #009c94;
+  animation: dotFloating 3s infinite cubic-bezier(0.15, 0.6, 0.9, 0.1);
+}
+
+.dot-floating::before, .dot-floating::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+}
+
+.dot-floating::before {
+  left: -14px;
+  width: 12px;
+  height: 12px;
+  border-radius: 6px;
+  background-color: #009c94;
+  color: #009c94;
+  animation: dotFloatingBefore 3s infinite ease-in-out;
+}
+
+.dot-floating::after {
+  left: -26px;
+  width: 12px;
+  height: 12px;
+  border-radius: 6px;
+  background-color: #009c94;
+  color: #009c94;
+  animation: dotFloatingAfter 3s infinite cubic-bezier(0.4, 0, 1, 1);
+}
+
+@keyframes dotFloating {
+  0% {
+    left: calc(-50% - 5px);
+  }
+  75% {
+    left: calc(50% + 105px);
+  }
+  100% {
+    left: calc(50% + 105px);
+  }
+}
+
+@keyframes dotFloatingBefore {
+  0% {
+    left: -50px;
+  }
+  50% {
+    left: -14px;
+  }
+  75% {
+    left: -50px;
+  }
+  100% {
+    left: -50px;
+  }
+}
+
+@keyframes dotFloatingAfter {
+  0% {
+    left: -100px;
+  }
+  50% {
+    left: -26px;
+  }
+  75% {
+    left: -100px;
+  }
+  100% {
+    left: -100px;
+  }
 }
 </style>

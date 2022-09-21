@@ -21,7 +21,9 @@
         <td>{{ blueprint.name }}</td>
         <td>{{ blueprint.zip_blueprint }}</td>
         <td>
-          {% if blueprint.get_instructions %}
+          {% if blueprint.zip_blueprint %}
+          Defined on zip container
+          {% elif blueprint.get_instructions %}
           <a href="{% url 'instruction-overview' blueprint.project.pk 'blueprint' blueprint.pk %}">Show Instructions</a>
           {% else %}
           No instructions – <a href="{% url 'instruction-create' blueprint.project.pk 'blueprint' blueprint.pk %}">Add Instructions</a>

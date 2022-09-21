@@ -157,3 +157,16 @@
 .ddm-admin-section-body tbody {
     border-top: none !important;
 }
+.small-font {
+    font-size: 0.9rem !important;
+}
+.small-inputs input,
+.small-inputs select {
+    font-size: 0.9rem !important;
+    padding: 0.1rem 0.3rem 0.1rem 0.3rem;
+}
+.small-inputs input:focus,
+.small-inputs select:focus {
+    border: 1px solid grey;
+    box-shadow: none;
+}

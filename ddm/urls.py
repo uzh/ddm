@@ -1,9 +1,9 @@
-from django.contrib.auth import views as auth_views
 from django.urls import path, include
 
-from ddm.views import project_admin
-from ddm.views import participation_flow
+from ddm.views import project_admin, participation_flow
+from ddm.views.exception_api import ExceptionAPI
 from ddm.views.download import DownloadProjectDataView
+
 
 participation_flow_patterns = [
     path(r'intro/', participation_flow.EntryView.as_view(), name='project-entry'),
@@ -49,6 +49,7 @@ project_admin_patterns = [
     path(r'<int:pk>/end-page/', project_admin.EndPageEdit.as_view(), name='end-page-edit'),
     path(r'<int:project_pk>/questionnaire/', include(question_patterns)),
     path(r'<int:project_pk>/donation-blueprints/', include(blueprint_patterns)),
+    path(r'<int:project_pk>/exceptions/', project_admin.ExceptionList.as_view(), name='project-exceptions'),
 ]
 
 authentication_patterns = [
@@ -70,5 +71,6 @@ urlpatterns = [
     path(r'projects/', include(project_admin_patterns)),
     path(r'auth/', include(authentication_patterns)),
     path(r'profile/', include(profile_patterns)),
-    path(r'<int:pk>/download/', DownloadProjectDataView.as_view(), name='ddm-download-api')
+    path(r'<int:pk>/download/', DownloadProjectDataView.as_view(), name='ddm-download-api'),
+    path(r'<int:pk>/exceptions', ExceptionAPI.as_view(), name='ddm-exceptions-api'),
 ]

@@ -1,0 +1,11 @@
+{% extends 'ddm/project_admin/generic/page_with_form.html' %}
+
+{% block page_title %}Create New User{% endblock %}
+
+{% block main_heading %}Create New DDM User{% endblock %}
+
+{% block submit_label %}Create User{% endblock %}
+
+{% block main_bottom %}
+<p>Already have user account? <a href="{% url 'ddm-login' %}">Go to the login page.</a></p>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'ddm/project_admin/generic/page_with_form.html' %}
+
+{% block page_title %}Login Page{% endblock %}
+
+{% block main_heading %}Data Donation Module: Login{% endblock %}
+
+{% block submit_label %}Login{% endblock %}
+
+{% block main_bottom %}
+<p>New user? <a href="{% url 'ddm-create-user' %}">Create a new profile</a></p>
+{% endblock %}

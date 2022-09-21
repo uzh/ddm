@@ -1,0 +1,64 @@
+{% extends 'ddm/project_admin/generic/page_with_form.html' %}
+
+{% block extrahead %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.21.0/bootstrap-table.min.css" integrity="sha512-MkfcmT4F14hakMqtLd5lCuNaXdgeznbYwseYG7zi9pmhkJI8WzRCHpD+JxsPxzMg6kLyeBlIo+/maPjMaTR9cQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.21.0/extensions/filter-control/bootstrap-table-filter-control.min.css" integrity="sha512-PH3qxl+JPBwdNrBJ96XEJkg6m0QOfcwCQ+J0WGeX7cdswUTuZchiMbOfKFhVg7UsArWIjrS2Huiztn2M5ZBqLw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js" integrity="sha512-Qlv6VSKh1gDKGoJbnyA5RMXYcvnpIqhO++MhIM2fStMcGT9i2T//tSwYFlcyoRRDcDZ+TYHpH8azBBCyhpSeqw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.26.0/tableExport.min.js" integrity="sha256-8k+gF3L9PHG0bYC50NpoTNBAKTUGy6A/pP3Zj2yUI7g=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.21.0/bootstrap-table.min.js" integrity="sha512-8JddYoIn6+h0+4MnsOOOdmeafsuaa3Dd09Ouom5zaN85QFPzLZrE7v6ICWO5wNWwLJAiOzmA6JL3QrPl5cjKtw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.21.0/extensions/filter-control/bootstrap-table-filter-control.min.js" integrity="sha512-WsGrj8AwmRAhe+HC+egj7wwp304Z8MR+B/cUOE7lI259LfCBivIlFwaKD56M9GYAULE6Rkvug/f7ww6YZaXBiA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.21.0/extensions/export/bootstrap-table-export.min.js" integrity="sha512-tpNXR6peBB3JocCaeOs3vlLYMIkdcolWoM4pWhjLJnF+RlRj8ato/oM5j5K3w/Ff/yUbSLhQjcbonayCpMmJVA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% endblock %}
+
+{% block page_title %}Project Exceptions{% endblock %}
+
+{% block main_heading %}Recorded Exceptions{% endblock %}
+
+{% block main_body %}
+<div class="ddm-admin-section">
+  <div class="ddm-admin-section-header"></div>
+  <div class="ddm-admin-section-body">
+    <p>
+      Below you can find an overview of the exceptions that your participants encountered during the donation phase
+    </p>
+
+    <table data-classes="table table-sm table-striped table-hover small-font small-inputs"
+           data-toggle="table"
+           data-filter-control="true"
+           data-show-export="true"
+           data-export-types="['csv', 'json']">
+      <thead>
+        <tr>
+          <th data-field="date" data-filter-control="input" data-sortable="true">Date</th>
+          <th data-field="participant" data-filter-control="select" data-sortable="true">Participant</th>
+          <th data-field="type" data-filter-control="select" data-sortable="true">Type</th>
+          <th data-field="message" data-filter-control="input" data-sortable="true">Message</th>
+        </tr>
+      </thead>
+
+      {% for e in exceptions %}
+      <tr>
+        <td>{{ e.date|date:"c" }}</td>
+        <td>{{ e.participant.pk }}</td>
+        <td>{{ e.exception_type }}</td>
+        <td>{{ e.message }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td>No exceptions recorded.</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' project.pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+Exceptions
+{% endblock %}

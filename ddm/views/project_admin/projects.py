@@ -6,7 +6,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
 from ddm.forms import ProjectCreateForm
-from ddm.models import DonationProject, ResearchProfile
+from ddm.models import DonationProject, ResearchProfile, ExceptionLogEntry
 from ddm.views.project_admin.auth import DdmAuthMixin
 
 
@@ -76,3 +76,28 @@ class EndPageEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     template_name = 'ddm/project_admin/project/edit-end.html'
     fields = ['outro_text']
     success_message = 'End Page successfully updated.'
+
+
+class ExceptionList(SuccessMessageMixin, DdmAuthMixin, ListView):
+    """ View that lists all exceptions related to a project. """
+    model = ExceptionLogEntry
+    template_name = 'ddm/project_admin/project/exceptions.html'
+    context_object_name = 'exceptions'
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        project_id = self.kwargs.get('project_pk')
+        if project_id is not None:
+            project = DonationProject.objects.get(pk=project_id)
+            qs = qs.filter(project=project).order_by('-date')
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        project_id = self.kwargs.get('project_pk')
+        if project_id is not None:
+            project = DonationProject.objects.get(pk=project_id)
+        else:
+            project = None
+        context.update({'project': project})
+        return context

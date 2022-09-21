@@ -309,4 +309,6 @@ yarn-error.log
 .history
 .ionide
 
-# Support for Project snippet scope
+# hot-update files of vue development server
+*.hot-update.js
+*.hot-update.json

@@ -1,3 +1,5 @@
+<i18n src="../translations/file_uploader.json"></i18n>
+
 <template>
 
   <div class="mb-5">
@@ -7,160 +9,184 @@
       </div>
     </div>
 
-    <div class="accordion" :id="'ul-acc-'+comp_id">
+    <!-- INSTRUCTIONS -->
+    <div class="accordion" :id="'ul-acc-'+componentId">
       <div class="accordion-item">
 
-        <!-- Instruction Section -->
-        <h3 class="accordion-header" :id="'acc-instr-head-'+comp_id">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#acc-instr-body-'+comp_id" aria-expanded="true" :aria-controls="'acc-instr-body-'+comp_id">
-            <b>Instruktionen</b>
+        <h3 class="accordion-header" :id="'acc-instr-head-'+componentId">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#acc-instr-body-'+componentId" aria-expanded="true" :aria-controls="'acc-instr-body-'+componentId">
+            <b>{{ $t('instructions') }}</b>
           </button>
         </h3>
 
-        <div :id="'acc-instr-body-'+comp_id" class="accordion-collapse collapse show" aria-labelledby="headingOne" :data-bs-parent="'#ul-acc-'+comp_id">
+        <div :id="'acc-instr-body-'+componentId" class="accordion-collapse collapse show" aria-labelledby="headingOne" :data-bs-parent="'#ul-acc-'+componentId">
           <div class="accordion-body">
-            <DonationInstructions v-if="instructions.length > 0" :instructions="instructions" :comp_id="comp_id"></DonationInstructions>
-            <div v-else>Es wurden keine Instruktionen definiert.</div>
+            <DonationInstructions v-if="instructions.length" :instructions="instructions" :component-id="componentId"></DonationInstructions>
+            <div v-else>{{ $t('no-instructions-defined') }}.</div>
           </div>
-        </div>
-
-      </div>
-  </div>
-
-    <!-- Data Upload Section -->
-    <div class="accordion-body border" :class="{ 'ul-success': extraction_complete}">
-      <div class="row">
-
-        <div class="col">
-          <p class="accordion-header mb-0">
-            <span :class="{ 'd-none': !upload_enabled & extraction_complete | processing | extraction_complete }"><b>Datei hochladen:</b></span>
-            <span :class="{ 'd-none': !upload_enabled & extraction_complete | processing | !extraction_complete }"><b>Andere Datei hochladen:</b></span>
-
-            <span class="fs-6 text-success" :class="{ 'd-none': upload_enabled & extraction_complete | processing | !extraction_complete }"><b>Upload erfolgreich abgeschlossen</b></span>
-            <span :class="{ 'd-none': upload_enabled & extraction_complete | processing | !extraction_complete }">
-              <a @click="upload_enabled = !upload_enabled" class="upload-other">eine andere Datei auswählen</a>
-            </span>
-
-            <span :class="{ 'd-none': !upload_enabled | processing }">
-              <label class="select-file-btn">
-              <input :name="'ul-' + comp_id"
-                     type="file"
-                     @change="processFile"
-                     class="d-none">
-              Datei Auswählen
-            </label>
-            </span>
-          </p>
-
-          <div class="clearfix" :class="{ 'd-none': !processing }">
-            <p>
-              <span class="spinner-border float-right me-3" role="status"><span class="sr-only"></span></span>
-              Datei wird hochgeladen...
-            </p>
-          </div>
-
         </div>
 
       </div>
     </div>
 
-    <!-- Upload Feedback Section -->
+    <!-- DATA UPLOAD -->
     <div class="accordion-body border">
-      <div class="pb-2">
-        <b>Ausgelesene Dateien:</b> <span :class="{ 'd-none': extraction_complete }">Es wurden noch keine Daten ausgelesen.</span>
+      <div class="row align-items-center">
+
+        <!-- Upload pending -->
+        <template v-if="uploadStatus === 'pending'">
+          <div class="col-auto ul-status-icon"><i class="bi bi-upload"></i></div>
+
+          <div class="col ul-status-description">
+            <p v-if="!uploadAttempts">{{ $t('upload-file') }}:</p>
+            <p v-else-if="uploadAttempts">{{ $t('upload-different-file') }}:</p>
+          </div>
+
+          <div class="col ul-status-message">
+            <label class="select-file-btn">
+              <input :name="'ul-' + componentId" type="file" @change="processFile" class="d-none">
+              {{ $t('choose-file') }}
+            </label>
+          </div>
+        </template>
+
+        <!-- Upload in progress -->
+        <template v-else-if="uploadStatus === 'processing'">
+          <div class="col-auto ul-status-icon">
+            <div class="clearfix">
+              <p><span class="spinner-border float-right me-3" role="status"><span class="sr-only"></span></span></p>
+            </div>
+          </div>
+
+          <div class="col ul-status-description">
+            <p>{{ $t('file-is-being-uploaded') }}</p>
+          </div>
+
+          <div class="col ul-status-message"></div>
+        </template>
+
+        <!-- Upload successful -->
+        <template v-else-if="uploadStatus === 'success'">
+          <div class="col-auto ul-status-icon"><i class="bi bi-file-check"></i></div>
+
+          <div class="col ul-status-description">
+            <p class="text-success fw-bold">{{ $t('upload-success') }}</p>
+            <p><a @click="uploadStatus = 'pending'" class="upload-other">{{ $t('choose-different-file') }}</a></p>
+          </div>
+
+          <div class="col ul-status-message"></div>
+        </template>
+
+        <!-- Upload partial -->
+        <template v-else-if="uploadStatus === 'partial'">
+          <div class="col-auto ul-status-icon"><i class="bi bi-exclamation-diamond text-warning"></i></div>
+
+          <div class="col-auto ul-status-description">
+            <p class="fw-bold">{{ $t('partial-upload-status') }}</p>
+            <p><a @click="uploadStatus = 'pending'" class="upload-other">{{ $t('choose-different-file') }}</a></p>
+          </div>
+
+          <div class="col ul-status-message">
+            <p>{{ $t('partial-upload-message') }}</p>
+          </div>
+        </template>
+
+        <!-- Upload failed -->
+        <template v-else-if="uploadStatus === 'failed'">
+          <div class="col-auto ul-status-icon"><i class="bi bi-exclamation-diamond text-danger"></i></div>
+
+          <div class="col-auto ul-status-description">
+            <p class="fw-bold">{{ $t('upload-failed') }}</p>
+            <p><a @click="uploadStatus = 'pending'" class="upload-other">{{ $t('choose-different-file') }}</a></p>
+          </div>
+
+          <div class="col ul-status-message">
+            <ul class="text-danger">
+              <li v-for="error in generalErrors" :key="error">{{ error }}</li>
+            </ul>
+          </div>
+        </template>
+
       </div>
 
-      <div
-          v-for="bp in blueprints"
-          :key="bp"
-          :set="bp_index = bp.id.toString()"
-          :id="'bp-entry-'+bp_index"
-          class="ul-status row border-top pt-2 pb-2"
+      <!-- UPLOAD FEEDBACK -->
+      <div class="ul-feedback-container row border-bottom mt-3">
+        <div class="col">
+        <template v-for="bp in blueprints"
+                :key="bp"
         >
-          <div class="col">
-            <p>
-              Datei {{ bp.id }}:
-              <span :class="{ 'd-none': extraction_complete }">Noch nicht hochgeladen</span>
-              <span :class="{ 'd-none': !extraction_complete }">Erfolgreich hochgeladen</span>
-            </p>
-          </div>
+        <div class="ul-status row align-items-center border-top pt-2 pb-2" :class="{ 'ul-success': blueprintData[bp.id.toString()].status === 'success', 'ul-failed': blueprintData[bp.id.toString()].status === 'failed'}">
 
-          <div class="col" :class="{ 'd-none': !extraction_complete }">
-            <a class="text-orange text-decoration-none" role="button" data-bs-toggle="modal" :href="'#bp-fb-'+bp_index" :aria-controls="'bp-fb-'+bp_index">Ausgelesene
-              Daten ansehen &#8599;</a>
-          </div>
+          <!-- Pending -->
+          <template v-if="blueprintData[bp.id.toString()].status === 'pending'">
+            <div class="col-auto bp-ul-icon"><i class="bi bi-file-earmark-fill text-grey"></i></div>
+            <div class="col-2 bp-description">{{ bp.name }}</div>
+            <div class="col bp-ul-status">{{ $t('not-yet-extracted') }}</div>
+            <div class="col bp-ul-data"></div>
+            <div class="col bp-ul-consent"></div>
+          </template>
 
-          <div class="col-6 text-end" :class="{ 'd-none': !extraction_complete }">
-            <p>
-              <label class="form-check-label"
-                     :for="'ul-consent-' + bp_index">
-                <input class="form-check-input consent-checkbox"
-                       :id="'ul-consent-' + bp_index"
-                       type="checkbox"
-                       @change="emitToParent"
-                       v-model="post_data[bp.id.toString()].consent">
-                &nbsp;Ich bin damit einverstanden, diese Daten zu übermitteln
-              </label>
-            </p>
-          </div>
+          <!-- Success -->
+          <template v-if="blueprintData[bp.id.toString()].status === 'success'">
+            <div class="col-auto bp-ul-icon"><i class="bi bi-file-earmark-check-fill text-success"></i></div>
+            <div class="col-2 bp-description">{{ bp.name }}</div>
+            <div class="col bp-ul-status">{{ $t('upload-success-short') }}</div>
+            <div class="col-auto bp-ul-data">
+              <a class="text-orange text-decoration-none" :id="'collapse-toggle-'+bp.id.toString()" data-bs-toggle="collapse" v-on:click="toggleCollapseLabel('collapse-toggle-'+bp.id.toString())" :href="'#bp-fb-'+bp.id.toString()" role="button" aria-expanded="false" :aria-controls="'bp-fb-'+bp.id.toString()"><span :id="'collapse-toggle-'+bp.id.toString()+'-label'">{{ $t('show-extracted-data') }}</span> <i class="bi bi-arrow-bar-down collapse-icon"></i></a>
+            </div>
+            <div class="col-auto bp-ul-consent">
+              <p>
+                <label class="form-check-label" :for="'ul-consent-' + bp.id.toString()">
+                  <input class="form-check-input consent-checkbox"
+                         :id="'ul-consent-' + bp.id.toString()"
+                         type="checkbox"
+                         @change="emitToParent"
+                         v-model="blueprintData[bp.id.toString()].consent">
+                  {{ $t('submit-agree') }}
+                </label>
+              </p>
+            </div>
+          </template>
+
+          <!-- Failed -->
+          <template v-if="blueprintData[bp.id.toString()].status === 'failed'">
+            <div class="col-auto bp-ul-icon"><i class="bi bi-file-earmark-x-fill text-danger"></i></div>
+            <div class="col-2 bp-description">{{ bp.name }}</div>
+            <div class="col bp-ul-status">
+              <template v-if="blueprintData[bp.id.toString()].errors.length">
+                <p v-for="e in blueprintData[bp.id.toString()].errors" :key="e">{{ e }}</p>
+              </template>
+              <p v-else>{{ $t('extraction-failed') }}</p>
+            </div>
+            <div class="col-auto bp-ul-data"></div>
+            <div class="col-auto bp-ul-consent"></div>
+          </template>
 
         </div>
-    </div>
-  </div>
 
 
-  <!-- Data Overview Modals -->
-  <div v-for="bp in blueprints"
-       :key="bp"
-       :set="bp_index = bp.id.toString()"
-       class="modal fade"
-       :id="'bp-fb-'+bp_index"
-       tabdindex="-1"
-       :aria-labelledby="'bp-fb-'+bp_index"
-       aria-hidden="true"
-  >
-    <div class="modal-dialog fb-modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Feedback for XY</h5>
-        </div>
-
-        <div class="modal-body">
-          <div class="modal-body-intro">
-            <p>Die folgenden Daten wurden ausgelesen und werden bei Ihrer Zustimmung an die Forschenden übermittelt:</p>
-          </div>
-          <div class="modal-body-data">
-            <table :id="'ul-result-' + bp_index" class="table table-striped fs-6 text">
+        <div v-if="blueprintData[bp.id.toString()].status === 'success'" :id="'bp-fb-'+bp.id.toString()" class="row bg-white collapse ul-data-collapsible">
+          <p>{{ $t('extracted-data-intro') }}:</p>
+          <div class="ul-data-container">
+            <table :id="'ul-result-' + bp.id.toString()" class="table table-sm">
+              <thead>
               <tr>
                 <th v-for="field in bp.f_extract" :key="field">{{ field }}</th>
               </tr>
-              <tr v-for="row in post_data[bp.id.toString()].extracted_data" :key="row">
+              </thead>
+              <tbody>
+              <tr v-for="row in blueprintData[bp.id.toString()].extracted_data" :key="row">
                 <td v-for="v in row" :key="v">{{ v }}</td>
               </tr>
+              </tbody>
             </table>
           </div>
         </div>
 
-        <div class="modal-footer">
-          <div>
-            <label class="form-check-label fs-5 me-4"
-                   :for="'ul-consent-' + bp_index">
-            <input class="form-check-input consent-checkbox mt-1"
-                   :id="'ul-consent--' + bp_index"
-                   type="checkbox"
-                   @change="emitToParent"
-                   v-model="post_data[bp.id.toString()].consent">
-              &nbsp;Ich bin damit einverstanden, diese Daten zu übermitteln
-            </label>
-          </div>
-          <div>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
-          </div>
+        </template>
         </div>
-
       </div>
     </div>
-
   </div>
 
 </template>
@@ -168,133 +194,237 @@
 <script>
 import JSZip from "jszip";
 import DonationInstructions from "./DonationInstructions";
+import axios from "axios";
+
 
 export default {
   name: "ProcessFile",
   components: {DonationInstructions},
   props: {
-    zipped: Boolean,
+    expectsZip: Boolean,
     blueprints: Array,
-    comp_id: Number,
+    instructions: Array,
+    componentId: Number,
     name: String,
-    instructions: Array
+    exceptionUrl: String
   },
   emits: ["changedData"],
   data() {
     return {
-      row_data: [],
-      extraction_complete: false, // move to result array?
-      post_data: {},
-      processing: false,
-      upload_enabled: true
+      blueprintData: {},
+      uploadStatus: 'pending',
+      uploadAttempts: 0,
+      generalErrors: [],
     }
   },
   created() {
     // Create dictionary to hold post data.
     this.blueprints.forEach(bp => {
       let id = bp.id;
-      let bp_data = {
-        filename: null,
+      let blueprintInfo = {
+        name_uploaded_file: null,
         consent: false,
         extracted_data: [],
-        status: {
-          ul_complete: false,
-          errors: []
-        }
+        status: 'pending',
+        errors: []
       }
-      this.post_data[id.toString()] = bp_data
+      this.blueprintData[id.toString()] = blueprintInfo
     })
+    this.resetErrorLog();
     this.emitToParent();
   },
   methods: {
+    toggleCollapseLabel(elementId) {
+      let element = document.getElementById(elementId);
+      let label = document.getElementById(elementId.concat('-label'));
+      let newLabel = '';
+      if (element.getAttribute('aria-expanded') === 'true') {
+        newLabel = this.$t('hide-extracted-data');
+        element.getElementsByTagName('i')[0].classList.add('rotate-down');
+      } else {
+        newLabel = this.$t('show-extracted-data');
+        element.getElementsByTagName('i')[0].classList.remove('rotate-down');
+      }
+      setTimeout(() => {
+        label.innerHTML = newLabel;
+      }, 300);
+    },
+
     processFile(event) {
-      let vm = this;
-      vm.processing = true;
+      let uploader = this;
+      uploader.uploadStatus = 'processing';
+      uploader.uploadAttempts += 1;
+      uploader.resetErrorLog();
       const files = event.target.files;
 
-        // Check if is zip.
-        if (vm.zipped && files.length === 1) {
-          let zip = new JSZip();
-          zip.loadAsync(files[0]).then(function (z) {
-            vm.blueprints.forEach(bp => {
-              let re = new RegExp(bp.regex_path);
-
-              z.file(re).forEach(f => {
-                f.async("string").then(c => {
-                  vm.processContent(c, bp);
-                }) // TODO: Catch error.
+      // Procedure if supplied file is expected to be a zip-folder.
+      if (uploader.expectsZip && files.length === 1) {
+        JSZip
+            .loadAsync(files[0])
+            .then(z => {
+              uploader.blueprints.forEach(blueprint => {
+                let re = new RegExp(blueprint.regex_path);
+                let reHasMatched = false;
+                z.file(re).forEach(f => {
+                  reHasMatched = true;
+                  f
+                      .async("string")
+                      .then(c => uploader.processContent(c, blueprint))
+                      .catch(e => {
+                        axios.post(uploader.exceptionUrl, {'status_code': 4199, 'message': e.message}).catch(e => console.error(`Could not post error message, ${e}`));
+                        uploader.recordError(uploader.$t('error-generic') + e.message, blueprint.id.toString());
+                      })
+                })
+                if (!reHasMatched) {
+                  axios.post(uploader.exceptionUrl, {'status_code': 418, 'message': uploader.$t('error-regex-not-matched')}).catch(e => console.error(`Could not post error message, ${e}`));
+                  uploader.recordError(uploader.$t('error-regex-not-matched'), blueprint.id.toString());
+                }
               })
-
             })
-          }).catch({
-            // TODO: raise error
-          })
-        } else if (!this.zipped && files.length === 1) {
-          // TODO: Add selection of which file they're trying to upload
-          let bp = vm.blueprints[0]
-          vm.processSingleFile(files[0], bp)
+            .catch(e => {
+              let myMess = '';
+              let statusCode = 0;
+              if (e.message.includes('zip') && e.message.includes('central')) {
+                myMess = uploader.$t('error-not-zip');
+                statusCode = 4101;
+              } else if (e.message.includes('Corrupted zip')) {
+                myMess = uploader.$t('error-zip-corrupted');
+                statusCode = 4102;
+              } else if (e.message.includes('Encrypted zip')) {
+                myMess = uploader.$t('error-zip-encrypted');
+                statusCode = 4103;
+              } else {
+                myMess = uploader.$t('error-generic') + e.message;
+                statusCode = 4198;
+              }
+              axios.post(uploader.exceptionUrl, {'status_code': statusCode, 'message': e.message}).catch(e => console.error(`Could not post error message, ${e}`));
+              uploader.recordError(myMess, 'general');
+        })
+      }
 
-        } else {
-          // TODO: raise error to you
+      // Procedure if supplied file is expected to be a single file.
+      else if (!uploader.expectsZip && files.length === 1) {
+
+        if (uploader.blueprints[0].format === 'json') {
+          if (!files[0].name.endsWith('.json')) {
+            axios.post(uploader.exceptionUrl, {'status_code': 4105, 'message': uploader.$t('error-wrong-file-type', 'en', {actualType: files[0].name.substr(files[0].name.lastIndexOf(".")), expectedType: '.json'})}).catch(e => console.error(`Could not post error message, ${e}`));
+            uploader.recordError(uploader.$t('error-wrong-file-type', {actualType: files[0].name.substr(files[0].name.lastIndexOf(".")), expectedType: '.json'}), uploader.blueprints[0].id.toString());
+          }
         }
-      vm.emitToParent();
+
+        // TODO: Add selection of which file they're trying to upload if multiple (i.e. a zip-upload) is expected.
+        let reader = new FileReader();
+        reader.onload = function(event) {
+          let content = event.target.result;
+          try {
+            uploader.processContent(content, uploader.blueprints[0]);
+          } catch(e) {
+            axios.post(uploader.exceptionUrl, {'status_code': 4199, 'message': e.message}).catch(e => console.error(`Could not post error message, ${e}`));
+            uploader.recordError(uploader.$t('error-generic') + e.message, uploader.blueprints[0].id.toString());
+          }
+        }
+        reader.readAsText(files[0]);
+      }
+
+      // Procedure if files.length != 1
+      else {
+        axios.post(uploader.exceptionUrl, {'status_code': 4104, 'message': uploader.$t('error-multiple-files', 'en')}).catch(e => console.error(`Could not post error message, ${e}`));
+        uploader.recordError(uploader.$t('error-multiple-files'), 'general');
+      }
+
       setTimeout(() => {
-        vm.extraction_complete = true;
-        vm.processing = false;
-        vm.upload_enabled = false;
-        }, 2000);
+        uploader.updateStatus();
+        uploader.emitToParent();
+        }, 1000);
     },
 
-    processContent(content, bp) {
-      let vm = this;
-      let bp_post = vm.post_data[bp.id.toString()];
-      let new_extracted_data = []
+    processContent(content, blueprint) {
+      let uploader = this;
+      let blueprintID = blueprint.id.toString();
+      let fileContent = null;
+      let extractedData = [];
 
-        if (bp.format === 'json') {
+      if (blueprint.format === 'json') {
+        try {
+          fileContent = JSON.parse(content);
+        } catch(e) {
+          axios.post(uploader.exceptionUrl, {'status_code': 4106, 'message': e.message}).catch(e => console.error(`Could not post error message, ${e}`));
+          uploader.recordError(uploader.$t('error-json-syntax'), uploader.blueprints[0].id.toString());
+        }
 
-          let fileContent = JSON.parse(content);
+        if (fileContent) {
+          let nMissingFields = 0;
           fileContent.forEach(entry => {
-
-            if (bp.f_expected.every(element => Object.keys(entry).includes(element))) {
+            if (blueprint.f_expected.every(element => Object.keys(entry).includes(element))) {
               // Pop unused keys and add to result.
               for (let key in entry) {
-                if (bp.f_extract.indexOf(key) < 0) {
-                  delete entry[key];
-                }
+                if (blueprint.f_extract.indexOf(key) < 0) delete entry[key];
               }
-              new_extracted_data.push(entry);
-
+              extractedData.push(entry);
             } else {
-              // Add error message TODO: adjust this to something meaningful.
-              bp_post.status.errors.push('some error');
+              nMissingFields += 1;
             }
           })
-          bp_post.extracted_data = new_extracted_data;
+          // Log extraction error
+          if (nMissingFields > 0) {
+            axios.post(uploader.exceptionUrl, {'status_code': 4201, 'message': `Expected fields missing in ${nMissingFields}/${fileContent.length} entries.`}).catch(e => console.error(`Could not post error message, ${e}`))
+            uploader.recordError(uploader.$t('error-expected-fields-missing'), blueprint.id.toString());
+          }
+          uploader.blueprintData[blueprintID].extracted_data = extractedData;
         }
+      }
+    },
 
-      // Update status
-      if (bp_post.status.errors.length == 0) {
-        bp_post.status.ul_complete = true;
-      }
-    },
-    processSingleFile(file, bp) {
-      let vm = this;
-      let reader = new FileReader();
-      reader.onload = function(event) {
-        let content = event.target.result;
-        vm.processContent(content, bp);
-      }
-      reader.readAsText(file);
-    },
     emitToParent() {
-      let emit_data = JSON.parse(JSON.stringify(this.post_data));
-      Object.keys(emit_data).forEach(key => {
-        if (!emit_data[key].consent) {
-          emit_data[key].extracted_data = []
+      // TODO: Emit extra information on the blueprint container level (e.g.: JSON.stringify({'errors_general': this.errorLog, 'ul_attempts': this.uploadAttempts, 'blueprints': this.blueprintData}))
+      let dataToEmit = JSON.parse(JSON.stringify(this.blueprintData));
+      Object.keys(dataToEmit).forEach(key => {
+        if (!dataToEmit[key].consent) {
+          dataToEmit[key].extracted_data = [];
         }
       })
-      this.$emit('changedData', emit_data);
+      this.$emit('changedData', dataToEmit);
     },
+
+    resetErrorLog() {
+      this.generalErrors = [];
+      for (let bp in this.blueprintData){
+        this.blueprintData[bp].errors = [];
+      }
+    },
+
+    recordError(e, target) {
+      if (target == 'general') {
+        this.generalErrors.push(e)
+      } else {
+        this.blueprintData[target].errors.push(e);
+      }
+    },
+
+    updateStatus() {
+      let bpErrorCount = 0;
+      let nBlueprints = Object.keys(this.blueprintData).length
+      for (let bp in this.blueprintData){
+        if (this.blueprintData[bp].errors.length) {
+          this.blueprintData[bp].status = 'failed';
+          bpErrorCount += 1;
+        } else {
+          this.blueprintData[bp].status = 'success';
+        }
+      }
+
+      if (!this.generalErrors.length && bpErrorCount === 0) {
+        this.uploadStatus = 'success';
+      } else if (!this.generalErrors.length && (bpErrorCount < nBlueprints)) {
+        this.uploadStatus = 'partial';
+      } else {
+        this.uploadStatus = 'failed';
+        for (let bp in this.blueprintData){
+          this.blueprintData[bp].status = 'failed';
+        }
+      }
+    }
+
   },
 }
 </script>
@@ -316,7 +446,7 @@ export default {
   border-bottom: none;
 }
 .accordion-button:not(.collapsed)::after {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
 }
 .accordion-item,
 .accordion-button,
@@ -333,6 +463,12 @@ export default {
 .ul-success {
   background-color: #55ff5517;
 }
+.ul-partial {
+  background-color: rgba(255, 170, 85, 0.09);
+}
+.ul-failed {
+  background-color: #f8d7da;
+}
 .fb-modal {
   max-width: 80%;
   height: 80%;
@@ -340,5 +476,48 @@ export default {
 .modal-body-data {
   overflow: auto;
   max-height: 400px;
+}
+.ul-status-icon {
+  font-size: 2.5rem;
+}
+.ul-status p,
+.ul-status-description p,
+.ul-status-message p,
+.ul-status-message ul {
+  margin: 0;
+}
+.text-grey {
+  color: #d0d0d0;
+}
+.bp-description {
+  font-weight: bold;
+}
+.ul-data-collapsible {
+  padding: 10px 0px 20px 30px;
+  font-size: 0.9rem;
+}
+.ul-data-container {
+  display: block;
+  max-height: 500px;
+  overflow-y: scroll;
+}
+.ul-data-container th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: white !important;
+  box-shadow: 0px 1px black;
+}
+.collapse-icon {
+  display: inline-block;
+  transition:all 0.3s ease-out;
+  transform: rotate(0deg);
+  -moz-transform:rotate(0deg);
+  -webkit-transform: rotate(0deg);
+}
+.rotate-down {
+  transform: rotate(180deg) !important;
+  -moz-transform:rotate(180deg) !important;
+  -webkit-transform: rotate(180deg) !important;
 }
 </style>

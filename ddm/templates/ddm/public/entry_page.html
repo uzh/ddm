@@ -1,12 +1,13 @@
 {% extends "ddm/public/base.html" %}
+{% load static i18n %}
 
 {% block content %}
 <div>
 
   <div>
     {% if object.intro_text == None %}
-    <h1>Willkommen zu dieser Studie</h1>
-    <p>Hier wird eine Beschreibung der Studie stehen.</p>
+    <h1>{% translate "Welcome to this study!" %}</h1>
+    <p>{% translate "Please define a description and welcome text for this project in the Project Hub." %}</p>
     {% else %}
     {{ object.intro_text | safe }}
     {% endif %}
@@ -17,7 +18,7 @@
     <input
         class="flow-btn"
         type="submit"
-        value="Weiter&nbsp;&nbsp;&#8250;"
+        value="{% translate 'Continue&nbsp;&nbsp;&#8250;' %}"
     />
   </form>
 </div>

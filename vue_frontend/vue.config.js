@@ -1,4 +1,4 @@
-const BundleTracker = require("webpack-bundle-tracker");
+const BundleTracker = require('webpack-bundle-tracker');
 const path = require('path');
 
 const pages = {
@@ -15,26 +15,15 @@ const pages = {
 module.exports = {
     pages: pages,
     filenameHashing: false,
-    productionSourceMap: false,
-    publicPath: process.env.NODE_ENV === 'production'
-        ? '/static/ddm/vue/'
-        : '/static/ddm/vue/',
+    runtimeCompiler: true,
+    publicPath: '/static/ddm/vue/',
     outputDir: path.resolve('../ddm/static/ddm/vue'),
 
     devServer: {
-        client: {
-            webSocketURL: {
-                hostname: "localhost",
-                pathname: "/ws",
-                port: 8080,
-            },
-        },
-        hot: "only",
-        static: {
-            watch: true,
-        },
-        https: false,
-        headers: {"Access-Control-Allow-Origin": ["*"]},
+        hot: false,
+        devMiddleware: {
+            writeToDisk: true, // Write files to disk in dev mode, so Django can serve the assets
+        }
     },
 
     chainWebpack: config => {
@@ -44,8 +33,8 @@ module.exports = {
                 cacheGroups: {
                     vendor: {
                         test: /[\\/]node_modules[\\/]/,
-                        name: "chunk-vendors",
-                        chunks: "all",
+                        name: 'chunk-vendors',
+                        chunks: 'all',
                         priority: 1
                     },
                 },
@@ -66,6 +55,26 @@ module.exports = {
             }]);
 
         config.resolve.alias
-            .set('__STATIC__', 'static')
+            .set('__STATIC__', 'static');
+
+        config.module
+            .rule('i18n')
+            .resourceQuery(/blockType=i18n/)
+            .type('javascript/auto')
+            .use('i18n')
+                .loader('@intlify/vue-i18n-loader')
+                .end();
+    },
+
+    pluginOptions: {
+      i18n: {
+        locale: 'en',
+        fallbackLocale: 'en',
+        localeDir: 'locales',
+        enableLegacy: true,
+        runtimeOnly: false,
+        compositionOnly: true,
+        fullInstall: true
+      }
     }
 };

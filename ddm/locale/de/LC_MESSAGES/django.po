@@ -1,0 +1,51 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-08-22 09:26+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\templates\ddm\public\base.html:45
+msgid "Contact"
+msgstr "Kontakt"
+
+#: .\templates\ddm\public\base.html:48
+msgid "What happens with my data?"
+msgstr "Was passiert mit meinen Daten?"
+
+#: .\templates\ddm\public\end.html:9
+msgid "Thank you very much!"
+msgstr "Herzlichen Dank!"
+
+#: .\templates\ddm\public\end.html:10
+msgid "You have reached the end of the study and can now close this window."
+msgstr "Sie haben das Ende der Studie erreicht und können dieses Fenster nun schliessen."
+
+#: .\templates\ddm\public\entry_page.html:9
+msgid "Welcome to this study!"
+msgstr "Herzlich willkommen zu dieser Studie!"
+
+#: .\templates\ddm\public\entry_page.html:10
+msgid ""
+"Please define a description and welcome text for this project in the Project "
+"Hub."
+msgstr ""
+"Bitte definieren Sie eine Beschreibung und einen Begrüßungstext für "
+"dieses Projekt im Project Hub."
+
+#: .\templates\ddm\public\entry_page.html:21
+msgid "Continue&nbsp;&nbsp;&#8250;"
+msgstr "Weiter&nbsp;&nbsp;&#8250;"

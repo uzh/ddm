@@ -80,6 +80,7 @@ settings.configure(
                     'django.contrib.messages.context_processors.messages',
                     'django.template.context_processors.static',
                     'django.template.context_processors.tz',
+                    'django.template.context_processors.i18n'
                 ],
             },
         },
@@ -92,12 +93,18 @@ settings.configure(
     SITE_ID=1,
     STATIC_URL='/static/',
     USE_TZ=True,
+    LANGUAGE_CODE='en',
+    USE_I18N=True,
+    LANGUAGES=[
+        ('en', 'English'),
+        ('de', 'Deutsch')
+    ],
     STATICFILES_DIRS=(
         os.path.join(DDM_DIR, 'static'),
     ),
     WEBPACK_LOADER={
         'DEFAULT': {
-            # 'CACHE': not settings.DEBUG,
+            'CACHE': True,
             'BUNDLE_DIR_NAME': 'ddm/vue/',
             'STATS_FILE': os.path.join(DDM_DIR, 'static', 'ddm', 'vue', 'webpack-stats.json'),
             'POLL_INTERVAL': 0.1,

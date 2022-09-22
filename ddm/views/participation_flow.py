@@ -323,8 +323,18 @@ class ExitView(ParticipationFlowBaseView):
     template_name = 'ddm/public/end.html'
     view_name = 'project-exit'
 
-    def post(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         self.initialize_values(request)
-        self.project_session['steps'][self.view_name]['state'] = 'completed'
-        request.session.modified = True
-        return self.get(request, *args, **kwargs)
+
+        target = self.get_target()
+        if target == self.view_name:
+            context = self.get_context_data(object=self.object)
+            self.project_session['steps'][self.view_name]['state'] = 'completed'
+            request.session.modified = True
+            if not self.participant.completed:
+                self.participant.end_time = timezone.now()
+                self.participant.completed = True
+                self.participant.save()
+            return self.render_to_response(context)
+        else:
+            return redirect(target, slug=self.object.slug)

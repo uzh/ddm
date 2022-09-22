@@ -99,7 +99,7 @@ class BlueprintEditForm(forms.ModelForm):
     class Meta:
         model = DonationBlueprint
         fields = ['name', 'exp_file_format', 'expected_fields', 'extracted_fields',
-                  'zip_blueprint', 'regex_path']
+                  'blueprint_container', 'regex_path']
         widgets = {
             'expected_fields': forms.Textarea(attrs={'rows': 3}),
             'extracted_fields': forms.Textarea(attrs={'rows': 3}),
@@ -107,11 +107,11 @@ class BlueprintEditForm(forms.ModelForm):
         }
 
     def clean(self):
-        zip_relation = self.data.get('zip_blueprint', False)
+        container_relation = self.data.get('blueprint_container', False)
         regex = self.data.get('regex_path', None)
-        if zip_relation and regex in ['', None]:
+        if container_relation and regex in ['', None]:
             raise ValidationError(
-                'Donation Blueprints that belong to a zip blueprint must define '
+                'Donation Blueprints that belong to a blueprint container must define '
                 'a regex pattern.'
             )
         super().clean()

@@ -6,7 +6,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
 from ddm.forms import BlueprintEditForm
-from ddm.models.core import DonationBlueprint, ZippedBlueprint, DonationInstruction, DonationProject
+from ddm.models.core import DonationBlueprint, BlueprintContainer, DonationInstruction, DonationProject
 from ddm.views.project_admin import DdmAuthMixin
 
 
@@ -31,7 +31,7 @@ class ProjectBlueprintList(DdmAuthMixin, BlueprintMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
-            'zipped_blueprints': ZippedBlueprint.objects.filter(project_id=self.kwargs['project_pk']),
+            'blueprint_containers': BlueprintContainer.objects.filter(project_id=self.kwargs['project_pk']),
         })
         return context
 
@@ -61,8 +61,8 @@ class BlueprintEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, UpdateVie
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        zbp_queryset = ZippedBlueprint.objects.filter(project_id=self.kwargs['project_pk'])
-        context['form'].fields['zip_blueprint'].queryset = zbp_queryset
+        zbp_queryset = BlueprintContainer.objects.filter(project_id=self.kwargs['project_pk'])
+        context['form'].fields['blueprint_container'].queryset = zbp_queryset
         return context
 
 
@@ -77,31 +77,31 @@ class BlueprintDelete(DdmAuthMixin, BlueprintMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-class ZippedBlueprintCreate(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, CreateView):
-    """ View to create a new zipped blueprint. """
-    model = ZippedBlueprint
+class BlueprintContainerCreate(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, CreateView):
+    """ View to create a new blueprint container. """
+    model = BlueprintContainer
     template_name = 'ddm/project_admin/blueprint/create.html'
     fields = ['name']
-    success_message = 'Zip Blueprint was created successfully.'
+    success_message = 'Blueprint Container was created successfully.'
 
     def form_valid(self, form):
         form.instance.project_id = self.kwargs['project_pk']
         return super().form_valid(form)
 
 
-class ZippedBlueprintEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, UpdateView):
-    """ View to edit the details of an existing zipped blueprint. """
-    model = ZippedBlueprint
+class BlueprintContainerEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, UpdateView):
+    """ View to edit the details of an existing blueprint container. """
+    model = BlueprintContainer
     template_name = 'ddm/project_admin/blueprint/edit.html'
     fields = ['name']
-    success_message = 'Zip blueprint "%(name)s" was successfully updated.'
+    success_message = 'Blueprint container "%(name)s" was successfully updated.'
 
 
-class ZippedBlueprintDelete(DdmAuthMixin, BlueprintMixin, DeleteView):
-    """ View to delete an existing zipped blueprint. """
-    model = ZippedBlueprint
+class BlueprintContainerDelete(DdmAuthMixin, BlueprintMixin, DeleteView):
+    """ View to delete an existing blueprint container. """
+    model = BlueprintContainer
     template_name = 'ddm/project_admin/blueprint/delete.html'
-    success_message = 'Zip blueprint "%s" was deleted.'
+    success_message = 'Blueprint container "%s" was deleted.'
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, self.success_message % self.get_object().name)
@@ -116,9 +116,9 @@ class InstructionMixin:
         if self.kwargs['blueprint_type'] == 'blueprint':
             blueprint = DonationBlueprint.objects.get(id=self.kwargs['blueprint_pk'])
             blueprint_type = 'blueprint'
-        elif self.kwargs['blueprint_type'] == 'zip-blueprint':
-            blueprint = ZippedBlueprint.objects.get(id=self.kwargs['blueprint_pk'])
-            blueprint_type = 'zipped Blueprint'
+        elif self.kwargs['blueprint_type'] == 'blueprint-container':
+            blueprint = BlueprintContainer.objects.get(id=self.kwargs['blueprint_pk'])
+            blueprint_type = 'blueprint container'
         else:
             raise Http404
         context.update({
@@ -145,8 +145,8 @@ class InstructionOverview(DdmAuthMixin, InstructionMixin, ListView):
         queryset = super().get_queryset()
         if self.kwargs['blueprint_type'] == 'blueprint':
             queryset = queryset.filter(blueprint_id=self.kwargs['blueprint_pk'])
-        elif self.kwargs['blueprint_type'] == 'zip-blueprint':
-            queryset = queryset.filter(zip_blueprint_id=self.kwargs['blueprint_pk'])
+        elif self.kwargs['blueprint_type'] == 'blueprint-container':
+            queryset = queryset.filter(blueprint_container_id=self.kwargs['blueprint_pk'])
         else:
             raise Http404
         return queryset
@@ -162,8 +162,8 @@ class InstructionCreate(SuccessMessageMixin, DdmAuthMixin, InstructionMixin, Cre
     def get_blueprint(self):
         if self.kwargs['blueprint_type'] == 'blueprint':
             blueprint = DonationBlueprint.objects.get(id=self.kwargs['blueprint_pk'])
-        elif self.kwargs['blueprint_type'] == 'zip-blueprint':
-            blueprint = ZippedBlueprint.objects.get(id=self.kwargs['blueprint_pk'])
+        elif self.kwargs['blueprint_type'] == 'blueprint-container':
+            blueprint = BlueprintContainer.objects.get(id=self.kwargs['blueprint_pk'])
         return blueprint
 
     def get_form_kwargs(self):
@@ -171,8 +171,8 @@ class InstructionCreate(SuccessMessageMixin, DdmAuthMixin, InstructionMixin, Cre
         blueprint = self.get_blueprint()
         if isinstance(blueprint, DonationBlueprint):
             kwargs['instance'] = DonationInstruction(blueprint=blueprint)
-        elif isinstance(blueprint, ZippedBlueprint):
-            kwargs['instance'] = DonationInstruction(zip_blueprint=blueprint)
+        elif isinstance(blueprint, BlueprintContainer):
+            kwargs['instance'] = DonationInstruction(blueprint_container=blueprint)
         return kwargs
 
     def get_initial(self):

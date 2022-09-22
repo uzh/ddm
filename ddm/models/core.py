@@ -139,7 +139,7 @@ COMMA_SEPARATED_STRINGS_VALIDATOR = RegexValidator(
 )
 
 
-class ZippedBlueprint(models.Model):
+class BlueprintContainer(models.Model):
     name = models.CharField(max_length=250)
     project = models.ForeignKey(
         'DonationProject',
@@ -150,13 +150,13 @@ class ZippedBlueprint(models.Model):
         return self.name
 
     def get_slug(self):
-        return 'zip-blueprint'
+        return 'blueprint-container'
 
     def get_absolute_url(self):
-        return reverse('zipped-blueprint-edit', args=[str(self.project_id), str(self.id)])
+        return reverse('blueprint-container-edit', args=[str(self.project_id), str(self.id)])
 
     def get_blueprints(self):
-        blueprints = DonationBlueprint.objects.filter(zip_blueprint=self)
+        blueprints = DonationBlueprint.objects.filter(blueprint_container=self)
         return blueprints
 
     def get_configs(self):
@@ -170,7 +170,7 @@ class ZippedBlueprint(models.Model):
         return [{'index': i.index, 'text': i.text} for i in self.donationinstruction_set.all()]
 
 
-# TODO: For admin section: Add validation on save to ensure that regex_path != None when zip_blueprint != None
+# TODO: For admin section: Add validation on save to ensure that regex_path != None when blueprint_container != None
 class DonationBlueprint(models.Model):
     project = models.ForeignKey(
         'DonationProject',
@@ -205,13 +205,13 @@ class DonationBlueprint(models.Model):
         help_text='Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").'
     )
 
-    # Configuration if related to ZippedBlueprint:
-    zip_blueprint = models.ForeignKey(
-        'ZippedBlueprint',
+    # Configuration if related to BlueprintContainer:
+    blueprint_container = models.ForeignKey(
+        'BlueprintContainer',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        verbose_name='Zip container',
+        verbose_name='Blueprint container',
     )
     regex_path = models.TextField(null=True, blank=True)
 
@@ -305,8 +305,8 @@ class DonationInstruction(models.Model):
         blank=True,
         on_delete=models.CASCADE
     )
-    zip_blueprint = models.ForeignKey(
-        'ZippedBlueprint',
+    blueprint_container = models.ForeignKey(
+        'BlueprintContainer',
         null=True,
         blank=True,
         on_delete=models.CASCADE
@@ -320,8 +320,8 @@ class DonationInstruction(models.Model):
                 name='unique_index_per_blueprint'
             ),
             models.UniqueConstraint(
-                fields=['index', 'zip_blueprint'],
-                name='unique_index_per_zipblueprint'
+                fields=['index', 'blueprint_container'],
+                name='unique_index_per_container'
             ),
         ]
 
@@ -329,20 +329,19 @@ class DonationInstruction(models.Model):
         if self.blueprint:
             query_object = self.blueprint
         else:
-            query_object = self.zip_blueprint
+            query_object = self.blueprint_container
         return query_object
 
     def clean(self):
         # Ensure that instruction is correctly linked to one blueprint type.
-        if not self.blueprint and not self.zip_blueprint:
+        if not self.blueprint and not self.blueprint_container:
             raise ValidationError(
-                'Must be linked to either a DonationBlueprint or '
-                'a ZippedBlueprint.'
+                'Must be linked to either a DonationBlueprint or a BlueprintContainer.'
             )
-        if self.blueprint and self.zip_blueprint:
+        if self.blueprint and self.blueprint_container:
             raise ValidationError(
                 'Must be linked to either a DonationBlueprint or '
-                'a ZippedBlueprint, but not both.'
+                'a BlueprintContainer, but not both.'
             )
 
         # Ensure that index of instruction page is not greater than set of existing instructions + 1.

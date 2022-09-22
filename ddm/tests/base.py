@@ -3,7 +3,7 @@ from django.test import TestCase, override_settings
 from django.utils import timezone
 
 from ddm.models.core import (
-    ResearchProfile, DonationProject, DonationBlueprint, ZippedBlueprint,
+    ResearchProfile, DonationProject, DonationBlueprint, BlueprintContainer,
     DonationInstruction, Participant
 )
 from ddm.models.questions import MatrixQuestion, SingleChoiceQuestion, OpenQuestion
@@ -81,8 +81,8 @@ class TestData(TestCase):
             expected_fields='"a", "b"',
             extracted_fields='"a"'
         )
-        cls.zip_bp = ZippedBlueprint.objects.create(
-            name='zipped blueprint',
+        cls.zip_bp = BlueprintContainer.objects.create(
+            name='blueprint container',
             project=cls.project_base
         )
 

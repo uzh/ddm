@@ -123,25 +123,25 @@ class BlueprintDeleteViewTests(BaseAdminViewTestMixin, TestData):
         self.url_no_perm = reverse('blueprint-delete', args=[self.project_no_perm.pk, self.don_bp.pk])
 
 
-class ZippedBlueprintCreateViewTests(BaseAdminViewTestMixin, TestData):
+class BlueprintContainerCreateViewTests(BaseAdminViewTestMixin, TestData):
     def setUp(self):
         super().setUp()
-        self.url = reverse('zipped-blueprint-create', args=[self.project_base.pk])
-        self.url_no_perm = reverse('zipped-blueprint-create', args=[self.project_no_perm.pk])
+        self.url = reverse('blueprint-container-create', args=[self.project_base.pk])
+        self.url_no_perm = reverse('blueprint-container-create', args=[self.project_no_perm.pk])
 
 
-class ZippedBlueprintEditViewTests(BaseAdminViewTestMixin, TestData):
+class BlueprintContainerEditViewTests(BaseAdminViewTestMixin, TestData):
     def setUp(self):
         super().setUp()
-        self.url = reverse('zipped-blueprint-edit', args=[self.project_base.pk, self.zip_bp.pk])
-        self.url_no_perm = reverse('zipped-blueprint-edit', args=[self.project_no_perm.pk, self.zip_bp.pk])
+        self.url = reverse('blueprint-container-edit', args=[self.project_base.pk, self.zip_bp.pk])
+        self.url_no_perm = reverse('blueprint-container-edit', args=[self.project_no_perm.pk, self.zip_bp.pk])
 
 
-class ZippedBlueprintDeleteViewTests(BaseAdminViewTestMixin, TestData):
+class BlueprintContainerDeleteViewTests(BaseAdminViewTestMixin, TestData):
     def setUp(self):
         super().setUp()
-        self.url = reverse('zipped-blueprint-delete', args=[self.project_base.pk, self.zip_bp.pk])
-        self.url_no_perm = reverse('zipped-blueprint-delete', args=[self.project_no_perm.pk, self.zip_bp.pk])
+        self.url = reverse('blueprint-container-delete', args=[self.project_base.pk, self.zip_bp.pk])
+        self.url_no_perm = reverse('blueprint-container-delete', args=[self.project_no_perm.pk, self.zip_bp.pk])
 
 
 class InstructionListViewTests(BaseAdminViewTestMixin, TestData):

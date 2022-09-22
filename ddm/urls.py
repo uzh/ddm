@@ -33,9 +33,9 @@ blueprint_patterns = [
     path(r'blueprint/create/', project_admin.BlueprintCreate.as_view(), name='blueprint-create'),
     path(r'blueprint/<int:pk>/edit/', project_admin.BlueprintEdit.as_view(), name='blueprint-edit'),
     path(r'blueprint/<int:pk>/delete/', project_admin.BlueprintDelete.as_view(), name='blueprint-delete'),
-    path(r'zip-blueprint/create/', project_admin.ZippedBlueprintCreate.as_view(), name='zipped-blueprint-create'),
-    path(r'zip-blueprint/<int:pk>/edit/', project_admin.ZippedBlueprintEdit.as_view(), name='zipped-blueprint-edit'),
-    path(r'zip-blueprint/<int:pk>/delete/', project_admin.ZippedBlueprintDelete.as_view(), name='zipped-blueprint-delete'),
+    path(r'blueprint-container/create/', project_admin.BlueprintContainerCreate.as_view(), name='blueprint-container-create'),
+    path(r'blueprint-container/<int:pk>/edit/', project_admin.BlueprintContainerEdit.as_view(), name='blueprint-container-edit'),
+    path(r'blueprint-container/<int:pk>/delete/', project_admin.BlueprintContainerDelete.as_view(), name='blueprint-container-delete'),
     path(r'<slug:blueprint_type>/<int:blueprint_pk>/instructions/', include(instruction_patterns)),
 ]
 

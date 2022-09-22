@@ -19,10 +19,10 @@
       {% for blueprint in donation_blueprints %}
       <tr>
         <td>{{ blueprint.name }}</td>
-        <td>{{ blueprint.zip_blueprint }}</td>
+        <td>{{ blueprint.blueprint_container }}</td>
         <td>
-          {% if blueprint.zip_blueprint %}
-          Defined on zip container
+          {% if blueprint.blueprint_container %}
+          Defined on container
           {% elif blueprint.get_instructions %}
           <a href="{% url 'instruction-overview' blueprint.project.pk 'blueprint' blueprint.pk %}">Show Instructions</a>
           {% else %}
@@ -44,7 +44,7 @@
 
 
 <div class="ddm-admin-section">
-  <div class="ddm-admin-section-header">Zip Containers</div>
+  <div class="ddm-admin-section-header">Blueprint Containers</div>
   <div class="ddm-admin-section-body">
     <table class="table">
       <tr>
@@ -53,26 +53,26 @@
         <th></th>
         <th></th>
       </tr>
-      {% for blueprint in zipped_blueprints %}
+      {% for blueprint in blueprint_containers %}
       <tr>
         <td>{{ blueprint.name }}</td>
         <td>
           {% if blueprint.get_instructions %}
-          <a href="{% url 'instruction-overview' blueprint.project.pk 'zip-blueprint' blueprint.pk %}">Show Instructions</a>
+          <a href="{% url 'instruction-overview' blueprint.project.pk 'blueprint-container' blueprint.pk %}">Show Instructions</a>
           {% else %}
-          <a href="{% url 'instruction-create' blueprint.project.pk 'zip-blueprint' blueprint.pk %}">Add Instructions</a>
+          <a href="{% url 'instruction-create' blueprint.project.pk 'blueprint-container' blueprint.pk %}">Add Instructions</a>
           {% endif %}
         </td>
-        <td><a href="{{ blueprint.get_absolute_url }}">Edit Zip Container</a></td>
-        <td><a href="{% url 'zipped-blueprint-delete' blueprint.project.pk blueprint.pk %}">Delete Container</a></td>
+        <td><a href="{{ blueprint.get_absolute_url }}">Edit Blueprint Container</a></td>
+        <td><a href="{% url 'blueprint-container-delete' blueprint.project.pk blueprint.pk %}">Delete Container</a></td>
       </tr>
       {% empty %}
       <tr>
-        <td>No Zip Containers created yet.</td>
+        <td>No Blueprint Containers created yet.</td>
       </tr>
       {% endfor %}
     </table>
-    <a class="ddm-btn" href="{% url 'zipped-blueprint-create' project_pk %}"><b>+</b>&nbsp;&nbsp;Create new Zip Container</a>
+    <a class="ddm-btn" href="{% url 'blueprint-container-create' project_pk %}"><b>+</b>&nbsp;&nbsp;Create new Blueprint Container</a>
   </div>
 </div>
 

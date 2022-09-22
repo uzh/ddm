@@ -13,7 +13,7 @@ from django.views.decorators.cache import cache_page
 
 from ddm.models.core import (
     DataDonation, DonationBlueprint, DonationProject, Participant,
-    QuestionnaireResponse, ZippedBlueprint
+    QuestionnaireResponse, BlueprintContainer
 )
 from ddm.models.questions import QuestionBase
 
@@ -181,18 +181,18 @@ class DataDonationView(ParticipationFlowBaseView):
     def get_blueprint_configs(self):
         blueprint_configs = []
 
-        zip_blueprints = ZippedBlueprint.objects.filter(project=self.object)
-        for blueprint in zip_blueprints:
+        blueprint_containers = BlueprintContainer.objects.filter(project=self.object)
+        for container in blueprint_containers:
             blueprint_configs.append({
                 'ul_type': 'zip',
-                'name': blueprint.name,
-                'blueprints': blueprint.get_configs(),
-                'instructions': blueprint.get_instructions()
+                'name': container.name,
+                'blueprints': container.get_configs(),
+                'instructions': container.get_instructions()
             })
 
         blueprints = DonationBlueprint.objects.filter(
             project=self.object,
-            zip_blueprint__isnull=True)
+            blueprint_container__isnull=True)
         for blueprint in blueprints:
             blueprint_configs.append({
                 'ul_type': 'singlefile',

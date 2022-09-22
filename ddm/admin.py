@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import reverse
-from ddm.models import DonationProject
+from ddm.models.core import DonationProject
 
 
 class DonationProjectAdmin(admin.ModelAdmin):

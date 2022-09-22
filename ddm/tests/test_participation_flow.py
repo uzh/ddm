@@ -2,7 +2,7 @@ from django.test import Client
 from django.urls import reverse
 from django.utils import timezone
 
-from ddm.models import DataDonation, Participant
+from ddm.models.core import DataDonation, Participant
 from ddm.tests.base import TestData
 
 

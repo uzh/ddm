@@ -1,6 +1,7 @@
 from django.test import TestCase
 
-from ddm.models import DataDonation, DonationProject, Encryption, QuestionnaireResponse
+from ddm.models.core import DataDonation, DonationProject, QuestionnaireResponse
+from ddm.models.encryption import Encryption
 from ddm.tests.base import TestData
 
 

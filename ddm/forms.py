@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 
-from ddm.models import ResearchProfile, DonationProject, DonationBlueprint, DonationInstruction
+from ddm.models.core import ResearchProfile, DonationProject, DonationBlueprint
 from ddm.auth import email_is_valid
 
 

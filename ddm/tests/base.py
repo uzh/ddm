@@ -2,10 +2,11 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.utils import timezone
 
-from ddm.models import (
+from ddm.models.core import (
     ResearchProfile, DonationProject, DonationBlueprint, ZippedBlueprint,
-    DonationInstruction, MatrixQuestion, SingleChoiceQuestion, OpenQuestion, Participant
+    DonationInstruction, Participant
 )
+from ddm.models.questions import MatrixQuestion, SingleChoiceQuestion, OpenQuestion
 
 
 User = get_user_model()

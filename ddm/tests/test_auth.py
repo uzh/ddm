@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from ddm.models import ResearchProfile, DonationProject
+from ddm.models.core import ResearchProfile, DonationProject
 from ddm.auth import email_is_valid, user_is_owner, user_is_permitted
 from ddm.tests.base import TestData
 

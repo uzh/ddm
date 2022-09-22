@@ -4,10 +4,11 @@ from django.forms import inlineformset_factory
 from django.urls import reverse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
-from ddm.models import (
+from ddm.models.core import DonationBlueprint, DonationProject
+from ddm.models.questions import (
     QuestionBase, QuestionType, SingleChoiceQuestion, MultiChoiceQuestion,
     OpenQuestion, MatrixQuestion, SemanticDifferential, Transition, QuestionItem,
-    ScalePoint, DonationBlueprint, DonationProject
+    ScalePoint
 )
 from . import ProjectBlueprintList, DdmAuthMixin
 

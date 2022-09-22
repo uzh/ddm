@@ -1,4 +1,4 @@
-from ddm.models import DonationInstruction
+from ddm.models.core import DonationInstruction
 from ddm.tests.base import TestData
 
 

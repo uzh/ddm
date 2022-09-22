@@ -6,7 +6,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
 from ddm.forms import BlueprintEditForm
-from ddm.models import DonationBlueprint, ZippedBlueprint, DonationInstruction, DonationProject
+from ddm.models.core import DonationBlueprint, ZippedBlueprint, DonationInstruction, DonationProject
 from ddm.views.project_admin import DdmAuthMixin
 
 

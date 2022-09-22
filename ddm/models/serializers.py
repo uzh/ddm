@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
-from ddm.models.data_donations import DataDonation
-from ddm.models.projects import DonationProject, QuestionnaireResponse
+from ddm.models.core import DataDonation, DonationProject, QuestionnaireResponse
 
 
 class ProjectSerializer(serializers.HyperlinkedModelSerializer):

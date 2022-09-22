@@ -3,7 +3,7 @@ from django.utils import timezone
 
 from rest_framework.test import APIClient
 
-from ddm.models import DataDonation, QuestionnaireResponse
+from ddm.models.core import DataDonation, QuestionnaireResponse
 from ddm.tests.base import TestData
 
 

@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from django.views.generic import DetailView
 
 from ddm.auth import user_is_permitted
-from ddm.models import ResearchProfile
+from ddm.models.core import ResearchProfile
 
 User = get_user_model()
 

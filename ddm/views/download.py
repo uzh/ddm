@@ -1,8 +1,7 @@
 from django.http import Http404, HttpResponseBadRequest
 from django.views.decorators.debug import sensitive_variables
 
-from ddm.models.data_donations import DataDonation
-from ddm.models.projects import DonationProject, QuestionnaireResponse, ResearchProfile
+from ddm.models.core import DataDonation, DonationProject, QuestionnaireResponse, ResearchProfile
 from ddm.models.serializers import DonationSerializer, ResponseSerializer, ProjectSerializer
 
 from rest_framework.views import APIView

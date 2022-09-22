@@ -11,10 +11,11 @@ from django.utils.safestring import SafeString
 from django.views.generic.detail import DetailView
 from django.views.decorators.cache import cache_page
 
-from ddm.models import (
-    DonationProject, Participant, DonationBlueprint, ZippedBlueprint,
-    QuestionBase, QuestionnaireResponse, DataDonation
+from ddm.models.core import (
+    DataDonation, DonationBlueprint, DonationProject, Participant,
+    QuestionnaireResponse, ZippedBlueprint
 )
+from ddm.models.questions import QuestionBase
 
 import logging
 logger = logging.getLogger(__name__)

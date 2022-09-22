@@ -1,5 +1,5 @@
 from django.urls import reverse
-from ddm.models import DonationProject
+from ddm.models.core import DonationProject
 from ddm.tests.base import TestData
 
 

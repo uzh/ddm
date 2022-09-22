@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 from ddm.forms import ProjectCreateForm
-from ddm.models import ResearchProfile
+from ddm.models.core import ResearchProfile
 
 
 User = get_user_model()

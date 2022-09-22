@@ -1,4 +1,5 @@
-from ddm.models import DonationProject, ExceptionLogEntry, Participant
+from ddm.models.core import DonationProject, Participant
+from ddm.models.exceptions import ExceptionLogEntry
 from django.utils import timezone
 from rest_framework import permissions
 from rest_framework.response import Response

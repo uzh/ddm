@@ -9,7 +9,7 @@ from django.views.generic.base import TemplateView
 
 from ddm.auth import user_is_permitted, user_is_owner
 from ddm.forms import ResearchProfileConfirmationForm, DdmUserCreationForm
-from ddm.models import ResearchProfile
+from ddm.models.core import ResearchProfile
 
 
 User = get_user_model()

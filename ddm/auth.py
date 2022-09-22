@@ -2,7 +2,7 @@ import re
 
 from django.conf import settings
 
-from ddm.models import DonationProject, ResearchProfile
+from ddm.models.core import DonationProject, ResearchProfile
 
 
 def email_is_valid(email_string):

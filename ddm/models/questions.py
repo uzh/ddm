@@ -6,7 +6,7 @@ from django.forms import model_to_dict
 from django.template import Context, Template
 
 from polymorphic.models import PolymorphicModel
-from ddm.models import DonationProject, DonationBlueprint, DataDonation
+from ddm.models.core import DataDonation
 
 import logging
 logger = logging.getLogger(__name__)
@@ -24,11 +24,11 @@ class QuestionType(models.TextChoices):
 
 class QuestionBase(PolymorphicModel):
     project = models.ForeignKey(
-        DonationProject,
+        'DonationProject',
         on_delete=models.CASCADE
     )
     blueprint = models.ForeignKey(
-        DonationBlueprint,
+        'DonationBlueprint',
         on_delete=models.CASCADE
     )
 
@@ -235,7 +235,7 @@ class QuestionItem(models.Model):
         ordering = ['index']
 
     question = models.ForeignKey(
-        QuestionBase,
+        'QuestionBase',
         on_delete=models.CASCADE
     )
     label = models.CharField(
@@ -268,7 +268,7 @@ class ScalePoint(models.Model):
         ]
 
     question = models.ForeignKey(
-        QuestionBase,
+        'QuestionBase',
         on_delete=models.CASCADE
     )
     index = models.IntegerField()

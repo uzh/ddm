@@ -81,8 +81,33 @@
   <div class="ddm-admin-section-header">Data Center</div>
   <div class="ddm-admin-section-body">
     <h4>Statistics</h4>
-    <div>
-      <p>Show some statistics</p>
+    <div class="row">
+      {% with stats=object.get_statistics %}
+      <div class="col text-center">
+        <p>n Started</p>
+        <p>{{ stats.n_started }}</p>
+      </div>
+      <div class="col text-center">
+        <p>n Completed</p>
+        <p>{{ stats.n_completed }}</p>
+      </div>
+      <div class="col text-center">
+        <p>Completion Rate</p>
+        <p>{{ stats.completion_rate }}</p>
+      </div>
+      <div class="col text-center">
+        <p>n Donations</p>
+        <p>{{ stats.n_donations }}</p>
+      </div>
+      <div class="col text-center">
+        <p>n Errors</p>
+        <p>{{ stats.n_errors }}</p>
+      </div>
+      <div class="col text-center">
+        <p>Average Completion Time</p>
+        <p>{{ stats.average_time.completion_time }}</p>
+      </div>
+      {% endwith %}
     </div>
     <h4>Download Section</h4>
     <div>

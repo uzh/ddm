@@ -2,7 +2,7 @@ from django.urls import path, include
 
 from ddm.views import project_admin, participation_flow
 from ddm.views.exception_api import ExceptionAPI
-from ddm.views.download import DownloadProjectDataView
+from ddm.views.download_api import DownloadProjectDataView
 
 
 participation_flow_patterns = [

@@ -160,10 +160,4 @@ class TestExitView(ParticipationFlowBaseTestCase):
         response = self.client.get(self.exit_url_invalid, follow=True)
         self.assertEqual(response.status_code, 404)
 
-    def test_project_exit_POST(self):
-        response = self.client.post(self.exit_url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'ddm/public/end.html')
-
-
 # TODO: Add Class TestViewsRerouting(TestCase)

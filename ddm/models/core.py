@@ -54,6 +54,12 @@ class DonationProject(models.Model):
     public_key = models.BinaryField()
     super_secret = models.BooleanField(default=False)
 
+    redirect_enabled = models.BooleanField(default=False, verbose_name='Redirect enabled')
+    redirect_target = models.CharField(max_length=2000, null=True, blank=True, verbose_name='Redirect target')
+
+    # extract_url_parameter = models.BooleanField(default=False, verbose_name='URL parameter extraction enabled')
+    # expected_url_parameter = models.CharField(max_length=500, null=True, blank=True, verbose_name='Expected URL parameter')
+
     owner = models.ForeignKey(
         'ResearchProfile',
         related_name='project_owner',
@@ -120,6 +126,8 @@ class Participant(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(null=True)
     completed = models.BooleanField(default=False)
+
+    # extra_data = models.JSONField()
 
 
 class QuestionnaireResponse(ModelWithEncryptedData):

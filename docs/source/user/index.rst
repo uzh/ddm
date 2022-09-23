@@ -44,6 +44,6 @@ Building upon the described data donation process, the DDM includes the followin
 * **Project**:
 * **Blueprints**:
     * *Donation Blueprint*:
-    * *Zip Container*:
+    * *Blueprint Container*:
     * *Instructions*:
 * **Questions**:

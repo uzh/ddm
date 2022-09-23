@@ -112,8 +112,9 @@ Project Settings
 
 | **Redirect Target (optional)**
 | If redirect is enabled for a project, data donors will be redirected to this URL at the end of the donation process.
-| The redirect URL can include a URL parameter that will be populated with the respective value belonging to a participant.
-  Use the following syntax to include URL parameters in the redirect target: ``https://redirect.url?param={{URLParameter}}``
+| The redirect URL can include variables that are populated with the respective values. Currently, the following variables are supported:
+| An extracted URL parameter (see above), the participant id (as ``ddm_participant_id``), or the project id (as ``ddm_project_id``).
+  Use the following syntax to include variables in the redirect target: e.g. ``https://redirect.url?param={{URLParameter}}&participant={{ddm_participant_id}}&project={{ddm_project_id}}``
 
 
 Define the Welcome Page
@@ -131,10 +132,10 @@ which data they want to extract from the donated data.
 There are two types of Donation Blueprints:
 
 a. Donation Blueprint
-b. Zip Container
+b. Blueprint Container
 
 The *Donation Blueprint* defines processing rules on the file level.
-The *Zip Container* is a container class, that can be used to bundle
+The *Blueprint Container* is a container class, that can be used to bundle
 multiple *Donation Blueprints* if participants upload a ZIP file instead of a single file.
 
 
@@ -163,18 +164,18 @@ The fields that will be extracted from a donated file, of the file contains the
 expected fields.
 This setting should be defined in the following format: "Field A", "Field B"
 
-**Zip blueprint:**
+**Blueprint Container:**
 This field is allowed to be undefined. [-- TODO: Add meaningful description --]
 
 **Regex path:**
 Here, the path where the file is expected to be located within a ZIP file is defined.
-Only necessary, if the Donation Blueprint is part of a Zipped Donation Blueprint.
+Only necessary, if the Donation Blueprint is part of a Blueprint Container.
 [-- TODO: Check if this has already been implemented correctly --]
 
 
 
-Zip Container
-+++++++++++++
+Blueprint Container
++++++++++++++++++++
 A container class, to bundle one or multiple *Donation Blueprints* if a ZIP file
 is expected as a donation.
 
@@ -191,13 +192,13 @@ Overwrites the name of the *Donation Blueprint* in the participant view.
 Instructions
 ++++++++++++
 
-Instructions can either be defined on the level of a *Donation Blueprint* or a *Zip Container*.
+Instructions can either be defined on the level of a *Donation Blueprint* or a *Blueprint Container*.
 
 Instructions consist of one or more instruction pages that can be freely edited by the researcher.
 Instructions will automatically be displayed in the participant-flow.
 
-If a *Donation Blueprint* is part of a *Zip Container*, the instructions defined
-on the *Zip Container* will take precedent over the instructions defined on the
+If a *Donation Blueprint* is part of a *Blueprint Container*, the instructions defined
+on the *Blueprint Container* will take precedent over the instructions defined on the
 Blueprint-level (i.e., the latter will not be shown).
 
 

@@ -357,7 +357,10 @@ class ExitView(ParticipationFlowBaseView):
         context = super().get_context_data(**kwargs)
         if self.object.redirect_enabled:
             template = Template(self.object.redirect_target)
-            context['redirect_target'] = template.render(Context(self.participant.extra_data['url_param']))
+            template_context = self.participant.extra_data['url_param']
+            template_context['ddm_participant_id'] = self.participant.pk
+            template_context['ddm_project_id'] = self.object.pk
+            context['redirect_target'] = template.render(Context(template_context))
         else:
             context['redirect_target'] = None
         return context

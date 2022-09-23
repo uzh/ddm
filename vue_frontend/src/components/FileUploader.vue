@@ -128,25 +128,57 @@
 
           <!-- Success -->
           <template v-if="blueprintData[bp.id.toString()].status === 'success'">
-            <div class="col-auto bp-ul-icon"><i class="bi bi-file-earmark-check-fill text-success"></i></div>
-            <div class="col-2 bp-description">{{ bp.name }}</div>
-            <div class="col bp-ul-status">{{ $t('upload-success-short') }}</div>
-            <div class="col-auto bp-ul-data">
-              <a class="text-orange text-decoration-none" :id="'collapse-toggle-'+bp.id.toString()" data-bs-toggle="collapse" v-on:click="toggleCollapseLabel('collapse-toggle-'+bp.id.toString())" :href="'#bp-fb-'+bp.id.toString()" role="button" aria-expanded="false" :aria-controls="'bp-fb-'+bp.id.toString()"><span :id="'collapse-toggle-'+bp.id.toString()+'-label'">{{ $t('show-extracted-data') }}</span> <i class="bi bi-arrow-bar-down collapse-icon"></i></a>
+            <div class="row pb-2">
+              <div class="col-auto bp-ul-icon"><i class="bi bi-file-earmark-check-fill text-success"></i></div>
+              <div class="col-2 bp-description">{{ bp.name }}</div>
+              <div class="col bp-ul-status">{{ $t('upload-success-short') }}</div>
+              <div class="col-auto bp-ul-data">
+                <a class="text-orange text-decoration-none" :id="'collapse-toggle-'+bp.id.toString()" data-bs-toggle="collapse" v-on:click="toggleCollapseLabel('collapse-toggle-'+bp.id.toString())" :href="'#bp-fb-'+bp.id.toString()" role="button" aria-expanded="true" :aria-controls="'bp-fb-'+bp.id.toString()"><span :id="'collapse-toggle-'+bp.id.toString()+'-label'">{{ $t('hide-extracted-data') }}</span> <i class="bi bi-arrow-bar-down collapse-icon rotate-down"></i></a>
+              </div>
             </div>
-            <div class="col-auto bp-ul-consent">
-              <p>
-                <label class="form-check-label" :for="'ul-consent-' + bp.id.toString()">
-                  <input class="form-check-input consent-checkbox"
-                         :id="'ul-consent-' + bp.id.toString()"
-                         type="checkbox"
-                         @change="emitToParent"
-                         v-model="blueprintData[bp.id.toString()].consent">
-                  {{ $t('submit-agree') }}
-                </label>
-              </p>
+
+            <div class="row ms-2">
+              <div :id="'bp-fb-'+bp.id.toString()" class="row bg-white ul-data-collapsible collapse show">
+                <p>{{ $t('extracted-data-intro') }}:</p>
+                <div class="ul-data-container">
+                  <table :id="'ul-result-' + bp.id.toString()" class="table table-sm">
+                    <thead>
+                    <tr>
+                      <th v-for="field in bp.f_extract" :key="field">{{ field }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="row in blueprintData[bp.id.toString()].extracted_data" :key="row">
+                      <td v-for="v in row" :key="v">{{ v }}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
+
+            <div class="row ms-2">
+              <div class="row bg-white pb-3 pt-3 pl-32">
+                <p class="fw-bold">{{ $t('donation-question') }}</p>
+                <div class="surquest-gq-response surquest-cq-response">
+                  <div class="surquest-choice-item form-check">
+                    <label class="form-check-label rb-cb-label" for="donate-agree">
+                      <input type="radio" id="donate-agree" value="true" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent">
+                       {{ $t('donation-agree') }}
+                    </label>
+                  </div>
+                  <div class="surquest-choice-item form-check">
+                    <label class="form-check-label rb-cb-label" for="donate-disagree">
+                      <input type="radio" id="donate-disagree" value="false" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent">
+                       {{ $t('donation-disagree') }}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </template>
+
 
           <!-- Failed -->
           <template v-if="blueprintData[bp.id.toString()].status === 'failed'">
@@ -164,25 +196,6 @@
 
         </div>
 
-
-        <div v-if="blueprintData[bp.id.toString()].status === 'success'" :id="'bp-fb-'+bp.id.toString()" class="row bg-white collapse ul-data-collapsible">
-          <p>{{ $t('extracted-data-intro') }}:</p>
-          <div class="ul-data-container">
-            <table :id="'ul-result-' + bp.id.toString()" class="table table-sm">
-              <thead>
-              <tr>
-                <th v-for="field in bp.f_extract" :key="field">{{ field }}</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr v-for="row in blueprintData[bp.id.toString()].extracted_data" :key="row">
-                <td v-for="v in row" :key="v">{{ v }}</td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
         </template>
         </div>
       </div>
@@ -198,7 +211,7 @@ import axios from "axios";
 
 
 export default {
-  name: "ProcessFile",
+  name: 'ProcessFile',
   components: {DonationInstructions},
   props: {
     expectsZip: Boolean,
@@ -208,7 +221,7 @@ export default {
     name: String,
     exceptionUrl: String
   },
-  emits: ["changedData"],
+  emits: ['changedData'],
   data() {
     return {
       blueprintData: {},
@@ -223,7 +236,7 @@ export default {
       let id = bp.id;
       let blueprintInfo = {
         name_uploaded_file: null,
-        consent: false,
+        consent: '',
         extracted_data: [],
         status: 'pending',
         errors: []
@@ -379,7 +392,7 @@ export default {
       // TODO: Emit extra information on the blueprint container level (e.g.: JSON.stringify({'errors_general': this.errorLog, 'ul_attempts': this.uploadAttempts, 'blueprints': this.blueprintData}))
       let dataToEmit = JSON.parse(JSON.stringify(this.blueprintData));
       Object.keys(dataToEmit).forEach(key => {
-        if (!dataToEmit[key].consent) {
+        if (dataToEmit[key].consent === 'false' | dataToEmit[key].consent === '') {
           dataToEmit[key].extracted_data = [];
         }
       })
@@ -493,7 +506,7 @@ export default {
   font-weight: bold;
 }
 .ul-data-collapsible {
-  padding: 10px 0px 20px 30px;
+  padding: 10px 0px 0px 32px;
   font-size: 0.9rem;
 }
 .ul-data-container {
@@ -519,5 +532,8 @@ export default {
   transform: rotate(180deg) !important;
   -moz-transform:rotate(180deg) !important;
   -webkit-transform: rotate(180deg) !important;
+}
+.pl-32 {
+  padding-left: 32px;
 }
 </style>

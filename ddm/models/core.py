@@ -10,6 +10,7 @@ from django.db import models
 from django.db.models import Avg, F
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 
 import ddm.models.exceptions as ddm_exceptions
 from ddm.models.encryption import Encryption, ModelWithEncryptedData
@@ -55,10 +56,25 @@ class DonationProject(models.Model):
     super_secret = models.BooleanField(default=False)
 
     redirect_enabled = models.BooleanField(default=False, verbose_name='Redirect enabled')
-    redirect_target = models.CharField(max_length=2000, null=True, blank=True, verbose_name='Redirect target')
+    redirect_target = models.CharField(
+        max_length=2000,
+        null=True, blank=True,
+        verbose_name='Redirect target',
+        help_text=mark_safe(
+            'Always include <i>http://</i> or <i>https://</i> in the redirect target. '
+            'If URL parameter extraction is enabled for this project, you can '
+            'include the extracted URL parameters in the redirect target as follows: '
+            '"https://redirect.me/?redirectpara=<b>{{URLParameter}}</b>".')
+    )
 
-    # extract_url_parameter = models.BooleanField(default=False, verbose_name='URL parameter extraction enabled')
-    # expected_url_parameter = models.CharField(max_length=500, null=True, blank=True, verbose_name='Expected URL parameter')
+    url_parameter_enabled = models.BooleanField(default=False, verbose_name='URL parameter extraction enabled')
+    expected_url_parameters = models.CharField(
+        max_length=500,
+        null=True, blank=True,
+        verbose_name='Expected URL parameter',
+        help_text='Separate multiple parameters with a semikolon (";"). '
+                  'Semikolons are not allowed as part of the expected url parameters.'
+    )
 
     owner = models.ForeignKey(
         'ResearchProfile',
@@ -118,6 +134,14 @@ class DonationProject(models.Model):
         }
         return statistics
 
+    def get_expected_url_parameters(self):
+        return self.expected_url_parameters.split(';')
+
+
+def get_extra_data_default():
+    """ Return default value for Participant.extra_data. """
+    return dict(url_param=dict())
+
 
 class Participant(models.Model):
     project = models.ForeignKey('DonationProject', on_delete=models.CASCADE)
@@ -127,7 +151,7 @@ class Participant(models.Model):
     end_time = models.DateTimeField(null=True)
     completed = models.BooleanField(default=False)
 
-    # extra_data = models.JSONField()
+    extra_data = models.JSONField(default=get_extra_data_default)
 
 
 class QuestionnaireResponse(ModelWithEncryptedData):

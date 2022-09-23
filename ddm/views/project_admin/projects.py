@@ -47,7 +47,10 @@ class ProjectEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     """ View to edit the details of an existing donation project. """
     model = DonationProject
     template_name = 'ddm/project_admin/project/edit.html'
-    fields = ['name', 'slug', 'contact_information', 'data_protection_statement', 'redirect_enabled', 'redirect_target']
+    fields = [
+        'name', 'slug', 'contact_information', 'data_protection_statement',
+        'redirect_enabled', 'redirect_target',
+        'url_parameter_enabled', 'expected_url_parameters']
     success_message = 'Project details successfully updated.'
 
 

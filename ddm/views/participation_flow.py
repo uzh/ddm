@@ -4,6 +4,7 @@ import zipfile
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, reverse
+from django.template import Context, Template
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.decorators import method_decorator
@@ -48,9 +49,14 @@ class ParticipationFlowBaseView(DetailView):
             context = self.get_context_data(object=self.object)
             self.project_session['steps'][self.view_name]['state'] = 'started'
             request.session.modified = True
+            self.extra_before_render(request)
             return self.render_to_response(context)
         else:
             return redirect(target, slug=self.object.slug)
+
+    def extra_before_render(self, request):
+        """ Placeholder for stage specific code executed before rendering the response. """
+        pass
 
     def initialize_values(self, request):
         self.object = self.get_object()
@@ -160,6 +166,29 @@ class ParticipationFlowBaseView(DetailView):
 class EntryView(ParticipationFlowBaseView):
     template_name = 'ddm/public/entry_page.html'
     view_name = 'project-entry'
+
+    def extra_before_render(self, request):
+        """ Extract URL parameters if this option has been enabled. """
+        if self.object.url_parameter_enabled:
+            # Only extract URL parameters on the first call of the view.
+            if not self.participant.extra_data['url_param']:
+                for param in self.object.get_expected_url_parameters():
+                    self.participant.extra_data['url_param'][param] = request.GET.get(param, None)
+                self.participant.save()
+        return
+
+    def get(self, request, *args, **kwargs):
+        self.initialize_values(request)
+
+        target = self.get_target()
+        if target == self.view_name:
+            context = self.get_context_data(object=self.object)
+            self.project_session['steps'][self.view_name]['state'] = 'started'
+            request.session.modified = True
+            self.extra_before_render(request)
+            return self.render_to_response(context)
+        else:
+            return redirect(target, slug=self.object.slug)
 
     def post(self, request, *args, **kwargs):
         super().post(request, **kwargs)
@@ -323,18 +352,22 @@ class ExitView(ParticipationFlowBaseView):
     template_name = 'ddm/public/end.html'
     view_name = 'project-exit'
 
-    def get(self, request, *args, **kwargs):
-        self.initialize_values(request)
-
-        target = self.get_target()
-        if target == self.view_name:
-            context = self.get_context_data(object=self.object)
-            self.project_session['steps'][self.view_name]['state'] = 'completed'
-            request.session.modified = True
-            if not self.participant.completed:
-                self.participant.end_time = timezone.now()
-                self.participant.completed = True
-                self.participant.save()
-            return self.render_to_response(context)
+    def get_context_data(self, **kwargs):
+        """ Inject url parameters in redirect target. """
+        context = super().get_context_data(**kwargs)
+        if self.object.redirect_enabled:
+            template = Template(self.object.redirect_target)
+            context['redirect_target'] = template.render(Context(self.participant.extra_data['url_param']))
         else:
-            return redirect(target, slug=self.object.slug)
+            context['redirect_target'] = None
+        return context
+
+    def extra_before_render(self, request):
+        """Set step to completed and update participant information."""
+        self.project_session['steps'][self.view_name]['state'] = 'completed'
+        request.session.modified = True
+        if not self.participant.completed:
+            self.participant.end_time = timezone.now()
+            self.participant.completed = True
+            self.participant.save()
+        return

@@ -160,4 +160,45 @@ class TestExitView(ParticipationFlowBaseTestCase):
         response = self.client.get(self.exit_url_invalid, follow=True)
         self.assertEqual(response.status_code, 404)
 
+
 # TODO: Add Class TestViewsRerouting(TestCase)
+class TestRedirect(ParticipationFlowBaseTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.initialize_project_and_session()
+        self.project_base.redirect_enabled = True
+        self.project_base.url_parameter_enabled = True
+        self.project_base.save()
+
+    def test_redirect_single_parameter(self):
+        self.project_base.expected_url_parameters = 'testparam'
+        self.project_base.redirect_target = 'http://test.test/?para={{testparam}}'
+        self.project_base.save()
+
+        self.client.get(self.entry_url + '?testparam=test')
+
+        session = self.client.session
+        session['projects'][f'{self.project_base.pk}']['steps']['project-entry']['state'] = 'completed'
+        session['projects'][f'{self.project_base.pk}']['steps']['data-donation']['state'] = 'completed'
+        session['projects'][f'{self.project_base.pk}']['steps']['questionnaire']['state'] = 'completed'
+        session.save()
+
+        response = self.client.get(self.exit_url)
+        self.assertEqual(response.context['redirect_target'], 'http://test.test/?para=test')
+
+    def test_redirect_multiple_parameters(self):
+        self.project_base.expected_url_parameters = 'testparam;testparam2'
+        self.project_base.redirect_target = 'http://test.test/?para={{testparam}}&para2={{testparam2}}'
+        self.project_base.save()
+
+        self.client.get(self.entry_url + '?testparam=test&testparam2=test2')
+
+        session = self.client.session
+        session['projects'][f'{self.project_base.pk}']['steps']['project-entry']['state'] = 'completed'
+        session['projects'][f'{self.project_base.pk}']['steps']['data-donation']['state'] = 'completed'
+        session['projects'][f'{self.project_base.pk}']['steps']['questionnaire']['state'] = 'completed'
+        session.save()
+
+        response = self.client.get(self.exit_url)
+        self.assertEqual(response.context['redirect_target'], 'http://test.test/?para=test&para2=test2')

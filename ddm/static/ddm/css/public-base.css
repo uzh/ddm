@@ -76,3 +76,6 @@
 .select-file-btn:hover {
     background: #d5d5d5;
 }
+.modal-close {
+    font-size: 0.8rem;
+}

@@ -170,3 +170,8 @@
     border: 1px solid grey;
     box-shadow: none;
 }
+.errorlist {
+    color: #ab0000;
+    background: #ff00000f;
+    border-radius: 5px;
+}

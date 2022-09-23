@@ -81,6 +81,41 @@ Create a Project
 .. todo::
     Add Content.
 
+Project Settings
+++++++++++++++++
+
+| **Name (required)**
+| Name of the project. Visible to data donors in the browser's title bar or a page's tab.
+
+| **Slug (required)**
+| Identifier that is used to expose the project to data donors (e.g, https://root.url/project-slug ).
+
+| **Contact Information (required)**
+| Contact information of the researcher responsible for the project.
+| Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.
+
+| **Data Protection Statement (required)**
+| Data protection statement that describes how the data is processed.
+| Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.
+
+| **URL parameter extraction enabled (optional)**
+| If enabled, the URL parameter(s) defined in the *expected URL parameter* setting will be extracted on the donation
+  entry page and saved (e.g., ``https://root.url/project-slug?param1=value`` will store 'value' as response to 'param1').
+
+| **Expected URL parameter (optional)**
+| Defines which URL parameters should be extracted on project entry (only effective if URL parameter extraction is enabled).
+| Multiple parameters can be defined by separating them with a semikolon (e.g., 'param1;param2;param3').
+
+| **Redirect Enabled (optional)**
+| If enabled, a redirect button will be displayed on the data donation end page that redirects
+  to the URL defined in the *redirect target* setting.
+
+| **Redirect Target (optional)**
+| If redirect is enabled for a project, data donors will be redirected to this URL at the end of the donation process.
+| The redirect URL can include a URL parameter that will be populated with the respective value belonging to a participant.
+  Use the following syntax to include URL parameters in the redirect target: ``https://redirect.url?param={{URLParameter}}``
+
+
 Define the Welcome Page
 -----------------------
 

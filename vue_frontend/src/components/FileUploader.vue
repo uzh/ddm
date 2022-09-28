@@ -369,11 +369,52 @@ export default {
           let nMissingFields = 0;
           fileContent.forEach(entry => {
             if (blueprint.f_expected.every(element => Object.keys(entry).includes(element))) {
-              // TODO: Do filtering stuff here.
-
-              // Pop unused keys and add to result.
+              // Apply filters, Pop unused keys and add to result.
               for (let key in entry) {
-                if (blueprint.f_extract.indexOf(key) < 0) delete entry[key];
+                let rules = blueprint.filter_rules.filter(rule => rule.field == key);
+                if (rules.length > 0) {
+                  rules.forEach(rule => {
+                    switch (rule.comparison_operator) {
+                      case '==': 
+                        if (key in entry) {
+                          if (entry[key] == rule.comparison_value) delete entry[key]; 
+                        }
+                        break;
+                      case '!=': 
+                        if (key in entry) {
+                          if (entry[key] != rule.comparison_value) delete entry[key]; 
+                        }
+                        break;
+                      case '>': 
+                        if (key in entry) {
+                          if (entry[key] > rule.comparison_value) delete entry[key]; 
+                        }
+                        break;
+                      case '<': 
+                        if (key in entry) {
+                          if (entry[key] < rule.comparison_value) delete entry[key]; 
+                        }
+                        break;
+                      case '>=': 
+                        if (key in entry) {
+                          if (entry[key] >= rule.comparison_value) delete entry[key]; 
+                        }
+                        break;
+                      case '<=': 
+                        if (key in entry) {
+                          if (entry[key] <= rule.comparison_value) delete entry[key]; 
+                        }
+                        break;
+                      case 'regex': 
+                        if (key in entry) {
+                          entry[key] = entry[key].replaceAll(rule.comparison_value, ''); 
+                        }
+                        break;
+                      default: break;
+                    }
+                  });
+                }
+                if ((blueprint.f_extract.indexOf(key) < 0) && (blueprint.filter_rules.map(rule => rule.field).indexOf(key) < 0) && (key in entry)) delete entry[key];
               }
               extractedData.push(entry);
             } else {

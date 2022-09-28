@@ -369,6 +369,8 @@ export default {
           let nMissingFields = 0;
           fileContent.forEach(entry => {
             if (blueprint.f_expected.every(element => Object.keys(entry).includes(element))) {
+              // TODO: Do filtering stuff here.
+
               // Pop unused keys and add to result.
               for (let key in entry) {
                 if (blueprint.f_extract.indexOf(key) < 0) delete entry[key];

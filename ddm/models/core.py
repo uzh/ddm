@@ -230,12 +230,12 @@ class DonationBlueprint(models.Model):
         validators=[COMMA_SEPARATED_STRINGS_VALIDATOR],
         help_text='Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").'
     )
-    extracted_fields = models.TextField(
-        null=True,
-        blank=True,
-        validators=[COMMA_SEPARATED_STRINGS_VALIDATOR],
-        help_text='Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").'
-    )
+    # extracted_fields = models.TextField(
+    #     null=True,
+    #     blank=True,
+    #     validators=[COMMA_SEPARATED_STRINGS_VALIDATOR],
+    #     help_text='Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").'
+    # )
 
     # Configuration if related to BlueprintContainer:
     blueprint_container = models.ForeignKey(
@@ -305,6 +305,67 @@ class DonationBlueprint(models.Model):
             data=data['extracted_data']
         )
         return
+
+
+class BlueprintProcessingRule(models.Model):
+    """
+    An operation that is executed on the specified blueprint field,
+    during the file upload in vue.
+    """
+    blueprint = models.ForeignKey(
+        'DonationBlueprint',
+        null=False,
+        blank=False,
+        on_delete=models.CASCADE
+    )
+
+    rule_name = models.CharField(max_length=250)
+
+    field = models.TextField()
+    execution_order = models.IntegerField()
+
+    # TODO: inclusive = models.BooleanField()  # Option to include or exclude data points, when there is an error in the operation.
+
+    class InputTypes(models.TextChoices):
+        NUMBER = 'number', 'Number'
+        DATE = 'date', 'Date'
+        STRING = 'string', 'String'
+
+    input_type = models.CharField(
+        max_length=10,
+        choices=InputTypes.choices,
+        default=InputTypes.STRING,
+    )
+
+    class ComparisonOperators(models.TextChoices):
+        EQUAL = '==', 'Equal (==)'
+        NOT_EQUAL = '!=', 'Not Equal (!=)'
+        GREATER = '>', 'Greater than (>)'
+        SMALLER = '<', 'Smaller than (<)'
+        GREATER_OR_EQUAL = '>=', 'Greater than or equal (>=)'
+        SMALLER_OR_EQUAL = '<=', 'Smaller than or equal (<=)'
+        REGEX = 'regex', 'Regex (removes matches)'
+
+    comparison_operator = models.CharField(
+        max_length=10,
+        choices=ComparisonOperators.choices,
+        default=ComparisonOperators.EQUAL,
+    )
+    comparison_value = models.TextField()
+
+    def get_rule_config(self):
+        """
+        Return config in the following form that can be used in the vue application:
+
+        blueprint[filter_rules] = [
+        {
+            'field': 'field_name',
+            'input_type': 'string' | 'date' | 'number',
+            'comparison_operator': '==' | '!=' | '>' | '<' | '>=' | '<=' | 'regex',
+            'comparison_value': '123' | Regex-String | None
+        }] (ordered)
+        """
+        pass
 
 
 class DataDonation(ModelWithEncryptedData):

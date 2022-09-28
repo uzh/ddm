@@ -211,6 +211,7 @@ class DataDonationView(ParticipationFlowBaseView):
         blueprint_configs = []
 
         blueprint_containers = BlueprintContainer.objects.filter(project=self.object)
+        # TODO: Add blueprintprocessingsteps here and below (~ line 227ff.).
         for container in blueprint_containers:
             blueprint_configs.append({
                 'ul_type': 'zip',

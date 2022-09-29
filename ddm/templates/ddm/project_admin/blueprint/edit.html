@@ -4,7 +4,109 @@
 
 {% block main_heading %}Edit Blueprint "{{ object.name }}"{% endblock %}
 
-{% block submit_label %}Save Blueprint{% endblock %}
+{% block main_form %}
+<form method='post'>
+  {% csrf_token %}
+  {{ form.media }}
+  {{ form.non_field_errors }}
+  <table class="table table-borderless">
+    {% for field in form %}
+      {% if field.name not in "expected_fields,extracted_fields" %}
+      <tr>
+        <th>{{ field.label_tag }}</th>
+        <td>
+          {{ field.errors }}
+          {{ field }}
+        </td>
+      </tr>
+      {% endif %}
+    {% endfor %}
+    <tr>
+      <td><h4>Data Extraction Settings</h4></td>
+    </tr>
+    {% for field in form %}
+    {% if field.name in "expected_fields,extracted_fields" %}
+    <tr>
+      <th>{{ field.label_tag }}</th>
+      <td>
+        {{ field.errors }}
+        {{ field }}
+      </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+  </table>
+
+  {{ formset.management_form }}
+  <table class="table">
+    {% for form in formset%}
+    {% if forloop.first %}
+    <tr>
+      {% for field in form.visible_fields %}
+      {% if field.name in 'name,field,execution_order,DELETE' %}
+      <th>{{ field.label }}</th>
+      {% endif %}
+      {% endfor %}
+      <th></th>
+      <th></th>
+    </tr>
+    {% endif %}
+
+    <tr>
+      {{ form.non_field_errors }}
+      {% for field in form.visible_fields %}
+      {% if field.name in 'name,field,execution_order,DELETE' %}
+      <td>
+        {{ field.errors }}
+        {{ field.value }}
+      </td>
+      {% endif %}
+      {% endfor %}
+
+      <td><a type="button" data-bs-toggle="modal" data-bs-target="#configuration-{{ forloop.counter }}">Configure Step</a></td>
+      <td><a href="#">Show Configuration&nbsp;&#8595;</a></td>
+
+      {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+      {% endfor %}
+    </tr>
+    <tr>
+      <td id="step-description-{{ forloop.counter0 }}" colspan="100%">Verbal description of step</td>
+    </tr>
+    {% endfor %}
+  </table>
+
+
+  {% for form in formset%}
+  <div class="modal" id="configuration-{{ forloop.counter }}" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <h4>Rule Configuration</h4>
+          {% for field in form %}
+          {% if field.name in 'name,field,execution_order,input_type,comparison_operator,comparison_value' %}
+          <div>
+            <p>{{ field.label }}</p>
+            <p>{{ field }}
+              {{ field.errors }}</p>
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+
+  <input class="ddm-btn" type="submit" value="Save Blueprint">
+</form>
+{% endblock %}
+
+
 
 {% block breadcrumbs %}
 <a href="{% url 'project-list' %}">Projects</a> /
@@ -12,3 +114,29 @@
 <a href="{% url 'blueprint-list' project_pk %}">Donation Blueprints</a> /
 Edit Blueprint
 {% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script>
+  $("[id^=id_processingrule_set-]").on("focusout", function() {
+    const current_id = $( this ).attr("id").match(/\d/)[0];
+    const id_prefix = "id_processingrule_set-" + current_id + "-";
+    const field = $("[id^=" + id_prefix + "field]").val();
+    const input_type = $("[id^=" + id_prefix + "input_type]").val()
+    const operator = $("[id^=" + id_prefix + "comparison_operator]").val()
+    const comp_value = $("[id^=" + id_prefix + "comparison_value]").val()
+
+    console.log( operator );
+    let msg = "";
+    if (operator == ""){
+      msg = "Keep field '" + field + "' in uploaded data."
+    } else if (operator == "regex") {
+      msg = "Delete parts of " + field + "-value that match the following regex expression: " + comp_value + "."
+    } else {
+      msg = "Delete row if current value of field '" + field + "' " + operator + " " + comp_value + "."
+    }
+    console.log( msg );
+    $("[id=step-description-" + current_id + "]").html(msg);
+  })
+</script>
+{% endblock scripts %}

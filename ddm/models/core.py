@@ -230,12 +230,13 @@ class DonationBlueprint(models.Model):
         validators=[COMMA_SEPARATED_STRINGS_VALIDATOR],
         help_text='Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").'
     )
-    # extracted_fields = models.TextField(
-    #     null=True,
-    #     blank=True,
-    #     validators=[COMMA_SEPARATED_STRINGS_VALIDATOR],
-    #     help_text='Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").'
-    # )
+    # TODO: Delete
+    extracted_fields = models.TextField(
+        null=True,
+        blank=True,
+        validators=[COMMA_SEPARATED_STRINGS_VALIDATOR],
+        help_text='Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").'
+    )
 
     # Configuration if related to BlueprintContainer:
     blueprint_container = models.ForeignKey(
@@ -257,13 +258,15 @@ class DonationBlueprint(models.Model):
         return 'blueprint'
 
     def get_config(self):
+        # TODO: Change 'f_expected' and 'f_extract' to something more meaningful
         config = {
             'id': self.pk,
             'name': self.name,
             'format': self.exp_file_format,
             'f_expected': json.loads("[" + str(self.expected_fields) + "]"),
-            'f_extract': json.loads("[" + str(self.extracted_fields) + "]"),
+            'f_extract': self.get_fields_to_extract(),
             'regex_path': self.regex_path,
+            'filter_rules': self.get_filter_rules()
         }
         return config
 
@@ -272,6 +275,15 @@ class DonationBlueprint(models.Model):
 
     def get_associated_questions(self):
         return self.questionbase_set.all()
+
+    def get_filter_rules(self):
+        return [r.get_rule_config() for r in self.processingrule_set.all().order_by('execution_order')]
+
+    def get_fields_to_extract(self):
+        fields = set()
+        for r in self.processingrule_set.all():
+            fields.add(r.field)
+        return list(fields)
 
     def process_donation(self, data, participant):
         if self.validate_donation(data):
@@ -307,10 +319,12 @@ class DonationBlueprint(models.Model):
         return
 
 
-class BlueprintProcessingRule(models.Model):
+class ProcessingRule(models.Model):
     """
-    An operation that is executed on the specified blueprint field,
+    A processing rule that is executed on the specified blueprint field,
     during the file upload in vue.
+    Filters or matches values.
+    TODO: Improve this description.
     """
     blueprint = models.ForeignKey(
         'DonationBlueprint',
@@ -319,7 +333,7 @@ class BlueprintProcessingRule(models.Model):
         on_delete=models.CASCADE
     )
 
-    rule_name = models.CharField(max_length=250)
+    name = models.CharField(max_length=250)
 
     field = models.TextField()
     execution_order = models.IntegerField()
@@ -348,24 +362,31 @@ class BlueprintProcessingRule(models.Model):
 
     comparison_operator = models.CharField(
         max_length=10,
+        blank=True,
+        null=True,
         choices=ComparisonOperators.choices,
-        default=ComparisonOperators.EQUAL,
+        default=None
     )
     comparison_value = models.TextField()
 
     def get_rule_config(self):
         """
-        Return config in the following form that can be used in the vue application:
+        Return a configuration dict for the processing rule.
 
         blueprint[filter_rules] = [
         {
             'field': 'field_name',
             'input_type': 'string' | 'date' | 'number',
-            'comparison_operator': '==' | '!=' | '>' | '<' | '>=' | '<=' | 'regex',
+            'comparison_operator': '==' | '!=' | '>' | '<' | '>=' | '<=' | 'regex' | None,
             'comparison_value': '123' | Regex-String | None
-        }] (ordered)
+        }]
         """
-        pass
+        return {
+            'field': self.field,
+            'input_type': self.input_type,
+            'comparison_operator': self.comparison_operator,
+            'comparison_value': self.comparison_value
+        }
 
 
 class DataDonation(ModelWithEncryptedData):

@@ -1,11 +1,11 @@
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
-from ddm.forms import BlueprintEditForm
+from ddm.forms import BlueprintEditForm, ProcessingRuleInlineFormset
 from ddm.models.core import DonationBlueprint, BlueprintContainer, DonationInstruction, DonationProject
 from ddm.views.project_admin import DdmAuthMixin
 
@@ -44,7 +44,7 @@ class BlueprintCreate(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, CreateV
     """ View to create a new donation blueprint. """
     model = DonationBlueprint
     template_name = 'ddm/project_admin/blueprint/create.html'
-    fields = ['name', 'exp_file_format', 'expected_fields', 'extracted_fields']
+    fields = ['name', 'exp_file_format']
     success_message = 'Blueprint was created successfully.'
 
     def form_valid(self, form):
@@ -61,9 +61,30 @@ class BlueprintEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, UpdateVie
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        zbp_queryset = BlueprintContainer.objects.filter(project_id=self.kwargs['project_pk'])
-        context['form'].fields['blueprint_container'].queryset = zbp_queryset
+        container_queryset = BlueprintContainer.objects.filter(project_id=self.kwargs['project_pk'])
+        context['form'].fields['blueprint_container'].queryset = container_queryset
+        context['formset'] = ProcessingRuleInlineFormset(instance=self.object)
         return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        formset = ProcessingRuleInlineFormset(self.request.POST, instance=self.object)
+        if form.is_valid() and formset.is_valid():
+            return self.form_valid(form, formset)
+        else:
+            print('form invalid')
+            return self.form_invalid(form, formset)
+
+    def form_valid(self, form, formset):
+        self.object = form.save()
+        formset.instance = self.object
+        formset.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+    def form_invalid(self, form, formset):
+        return self.render_to_response(self.get_context_data(form=form, formset=formset))
 
 
 class BlueprintDelete(DdmAuthMixin, BlueprintMixin, DeleteView):

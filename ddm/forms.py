@@ -2,10 +2,10 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
+from django.forms import inlineformset_factory, TextInput, Textarea
 
-from ddm.models.core import ResearchProfile, DonationProject, DonationBlueprint
+from ddm.models.core import ResearchProfile, DonationProject, DonationBlueprint, ProcessingRule
 from ddm.auth import email_is_valid
-
 
 User = get_user_model()
 
@@ -98,8 +98,8 @@ class BlueprintEditForm(forms.ModelForm):
 
     class Meta:
         model = DonationBlueprint
-        fields = ['name', 'exp_file_format', 'expected_fields', 'extracted_fields',
-                  'blueprint_container', 'regex_path']
+        fields = ['name', 'exp_file_format', 'blueprint_container', 'regex_path',
+                  'expected_fields', 'extracted_fields']
         widgets = {
             'expected_fields': forms.Textarea(attrs={'rows': 3}),
             'extracted_fields': forms.Textarea(attrs={'rows': 3}),
@@ -115,3 +115,22 @@ class BlueprintEditForm(forms.ModelForm):
                 'a regex pattern.'
             )
         super().clean()
+
+
+class ProcessingRuleForm(forms.ModelForm):
+
+    class Meta:
+        model = ProcessingRule
+        fields = '__all__'
+        widgets = {
+            'field': TextInput(),
+            # 'comparison_value': Textarea(attrs={'cols': 60, 'rows': 2})
+        }
+
+
+ProcessingRuleInlineFormset = inlineformset_factory(
+    DonationBlueprint,
+    ProcessingRule,
+    form=ProcessingRuleForm,
+    extra=0
+)

@@ -22,7 +22,7 @@
           data-bs-toggle="modal"
           data-bs-target="#overlayModal"
           @click="zipData"
-      >{{ $t('next-btn-label') }}&nbsp;&nbsp;&#8250;</button> <!-- TODO: Add Overlay on submit, because it might take some time; also prevents double click on submit -->
+      >{{ $t('next-btn-label') }}&nbsp;&nbsp;&#8250;</button>
     </div>
   </div>
 

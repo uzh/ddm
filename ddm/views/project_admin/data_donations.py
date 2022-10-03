@@ -59,6 +59,9 @@ class BlueprintEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, UpdateVie
     form_class = BlueprintEditForm
     success_message = 'Blueprint "%(name)s" was successfully updated.'
 
+    def get_success_url(self):
+        return self.request.path
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         container_queryset = BlueprintContainer.objects.filter(project_id=self.kwargs['project_pk'])
@@ -113,7 +116,7 @@ class BlueprintContainerCreate(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin
 class BlueprintContainerEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, UpdateView):
     """ View to edit the details of an existing blueprint container. """
     model = BlueprintContainer
-    template_name = 'ddm/project_admin/blueprint/edit.html'
+    template_name = 'ddm/project_admin/blueprint/edit_container.html'
     fields = ['name']
     success_message = 'Blueprint container "%(name)s" was successfully updated.'
 

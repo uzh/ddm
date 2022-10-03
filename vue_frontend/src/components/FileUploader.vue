@@ -144,7 +144,7 @@
                   <table :id="'ul-result-' + bp.id.toString()" class="table table-sm">
                     <thead>
                     <tr>
-                      <th v-for="field in bp.f_extract" :key="field">{{ field }}</th>
+                      <th v-for="field in Object.keys(blueprintData[bp.id.toString()].extracted_data[0])" :key="field">{{ field }}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -162,14 +162,14 @@
                 <p class="fw-bold">{{ $t('donation-question') }}</p>
                 <div class="surquest-gq-response surquest-cq-response">
                   <div class="surquest-choice-item form-check">
-                    <label class="form-check-label rb-cb-label" for="donate-agree">
-                      <input type="radio" id="donate-agree" value="true" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent">
+                    <label class="form-check-label rb-cb-label" :for="'donate-agree-'+bp.id.toString()">
+                      <input type="radio" :id="'donate-agree-'+bp.id.toString()" value="true" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent">
                        {{ $t('donation-agree') }}
                     </label>
                   </div>
                   <div class="surquest-choice-item form-check">
-                    <label class="form-check-label rb-cb-label" for="donate-disagree">
-                      <input type="radio" id="donate-disagree" value="false" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent">
+                    <label class="form-check-label rb-cb-label" :for="'donate-disagree-'+bp.id.toString()">
+                      <input type="radio" :id="'donate-disagree-'+bp.id.toString()" value="false" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent">
                        {{ $t('donation-disagree') }}
                     </label>
                   </div>
@@ -366,67 +366,105 @@ export default {
         }
 
         if (fileContent) {
-          let nMissingFields = 0;
+          let nEntriesWithMissingFields = 0;
+          let nEntriesFilteredOut = 0;
           fileContent.forEach(entry => {
-            if (blueprint.f_expected.every(element => Object.keys(entry).includes(element))) {
+            // Check if all expected fields are here
+            let missingFields = [];
+            if (!blueprint.f_expected.every(element => {
+              if (Object.keys(entry).includes(element)) {
+                return true;
+              } else {
+                missingFields.push(element)
+                nEntriesWithMissingFields += 1;
+                return false;
+              }})) {
+              // Go to next entry and record exception
+              axios.post(uploader.exceptionUrl, {'status_code': 4203, 'message': `Entry does not contain the expected field(s) "${missingFields.toString()}".`}).catch(e => console.error(`Could not post error message, ${e}`))
+              return;
+            }
+
+            if (blueprint.f_extract.every(element => Object.keys(entry).includes(element))) {
               // Apply filters, Pop unused keys and add to result.
-              for (let key in entry) {
-                let rules = blueprint.filter_rules.filter(rule => rule.field == key);
-                if (rules.length > 0) {
-                  rules.forEach(rule => {
-                    switch (rule.comparison_operator) {
-                      case '==': 
-                        if (key in entry) {
-                          if (entry[key] == rule.comparison_value) delete entry[key]; 
-                        }
-                        break;
-                      case '!=': 
-                        if (key in entry) {
-                          if (entry[key] != rule.comparison_value) delete entry[key]; 
-                        }
-                        break;
-                      case '>': 
-                        if (key in entry) {
-                          if (entry[key] > rule.comparison_value) delete entry[key]; 
-                        }
-                        break;
-                      case '<': 
-                        if (key in entry) {
-                          if (entry[key] < rule.comparison_value) delete entry[key]; 
-                        }
-                        break;
-                      case '>=': 
-                        if (key in entry) {
-                          if (entry[key] >= rule.comparison_value) delete entry[key]; 
-                        }
-                        break;
-                      case '<=': 
-                        if (key in entry) {
-                          if (entry[key] <= rule.comparison_value) delete entry[key]; 
-                        }
-                        break;
-                      case 'regex': 
-                        if (key in entry) {
-                          entry[key] = entry[key].replaceAll(rule.comparison_value, ''); 
-                        }
-                        break;
-                      default: break;
-                    }
-                  });
+              let result = {};
+              try {
+                for (let key in entry) {
+                  let rules = blueprint.filter_rules.filter(rule => rule.field === key);
+                  if (rules.length > 0) {
+                    rules.forEach(rule => {
+                      switch (rule.comparison_operator) {
+                        case '==':
+                          if (entry[key] !== rule.comparison_value) {
+                            result[key] = entry[key]
+                          } else {
+                            throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                          }
+                          break;
+                        case '!=':
+                          if (entry[key] === rule.comparison_value) {
+                            result[key] = entry[key]
+                          } else {
+                            throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                          }
+                          break;
+                        case '<=':
+                          if (entry[key] > rule.comparison_value) {
+                            result[key] = entry[key]
+                          } else {
+                            throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                          }
+                          break;
+                        case '>=':
+                          if (entry[key] < rule.comparison_value) {
+                            result[key] = entry[key]
+                          } else {
+                            throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                          }
+                          break;
+                        case '<':
+                          if (entry[key] >= rule.comparison_value) {
+                            result[key] = entry[key]
+                          } else {
+                            throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                          }
+                          break;
+                        case '>':
+                          if (entry[key] <= rule.comparison_value) {
+                            result[key] = entry[key]
+                          } else {
+                            throw `Field "${key}" matches filter value "${rule.comparison_value}".`
+                          }
+                          break;
+                        case 'regex':
+                          if (key in entry) {
+                            result[key] = entry[key].replaceAll(rule.comparison_value, '');
+                          }
+                          break;
+                        default: break;
+                      }
+                    });
+                  }
                 }
-                if ((blueprint.f_extract.indexOf(key) < 0) && (blueprint.filter_rules.map(rule => rule.field).indexOf(key) < 0) && (key in entry)) delete entry[key];
+                extractedData.push(result);
+              } catch (e) {
+                nEntriesFilteredOut += 1;
+                axios.post(uploader.exceptionUrl, {'status_code': 4206, 'message': `${e}`}).catch(e => console.error(`Could not post error message, ${e}`))
               }
-              extractedData.push(entry);
-            } else {
-              nMissingFields += 1;
             }
           })
-          // Log extraction error
-          if (nMissingFields > 0) {
-            axios.post(uploader.exceptionUrl, {'status_code': 4201, 'message': `Expected fields missing in ${nMissingFields}/${fileContent.length} entries.`}).catch(e => console.error(`Could not post error message, ${e}`))
-            uploader.recordError(uploader.$t('error-expected-fields-missing'), blueprint.id.toString());
-          }
           uploader.blueprintData[blueprintID].extracted_data = extractedData;
+          if (nEntriesWithMissingFields === fileContent.length) {
+            axios.post(uploader.exceptionUrl, {'status_code': 4201, 'message': `No data extracted: Expected fields missing in ${nEntriesWithMissingFields}/${fileContent.length} entries.`}).catch(e => console.error(`Could not post error message, ${e}`))
+            uploader.recordError(uploader.$t('error-all-expected-fields-missing'), blueprint.id.toString());
+          }
+          else if (nEntriesFilteredOut === fileContent.length) {
+            axios.post(uploader.exceptionUrl, {'status_code': 4204, 'message': `No data extracted: All entries (${nEntriesFilteredOut}/${fileContent.length}) were filtered out.`}).catch(e => console.error(`Could not post error message, ${e}`))
+            uploader.recordError(uploader.$t('error-all-fields-filtered-out'), blueprint.id.toString());
+          }
+          else if ((nEntriesWithMissingFields + nEntriesFilteredOut) === fileContent.length) {
+            axios.post(uploader.exceptionUrl, {'status_code': 4205, 'message': `No data extracted: Expected fields missing in ${nEntriesWithMissingFields}/${fileContent.length} entries and ${nEntriesFilteredOut}/${fileContent.length} filtered out.`}).catch(e => console.error(`Could not post error message, ${e}`))
+            uploader.recordError(uploader.$t('error-all-fields-filtered-out'), blueprint.id.toString());
+          }
         }
       }
     },
@@ -435,8 +473,14 @@ export default {
       // TODO: Emit extra information on the blueprint container level (e.g.: JSON.stringify({'errors_general': this.errorLog, 'ul_attempts': this.uploadAttempts, 'blueprints': this.blueprintData}))
       let dataToEmit = JSON.parse(JSON.stringify(this.blueprintData));
       Object.keys(dataToEmit).forEach(key => {
-        if (dataToEmit[key].consent === 'false' | dataToEmit[key].consent === '') {
+        if (dataToEmit[key].consent === '') {
+          dataToEmit[key].consent = false;
           dataToEmit[key].extracted_data = [];
+        }
+        else if (!dataToEmit[key].consent) {
+          dataToEmit[key].extracted_data = [];
+        } else {
+          dataToEmit[key].consent = true
         }
       })
       this.$emit('changedData', dataToEmit);

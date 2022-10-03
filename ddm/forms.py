@@ -99,10 +99,9 @@ class BlueprintEditForm(forms.ModelForm):
     class Meta:
         model = DonationBlueprint
         fields = ['name', 'exp_file_format', 'blueprint_container', 'regex_path',
-                  'expected_fields', 'extracted_fields']
+                  'expected_fields']
         widgets = {
             'expected_fields': forms.Textarea(attrs={'rows': 3}),
-            'extracted_fields': forms.Textarea(attrs={'rows': 3}),
             'regex_path': forms.Textarea(attrs={'rows': 3}),
         }
 
@@ -121,10 +120,10 @@ class ProcessingRuleForm(forms.ModelForm):
 
     class Meta:
         model = ProcessingRule
-        fields = '__all__'
+        fields = ['execution_order', 'name', 'field', 'comparison_operator', 'comparison_value']
         widgets = {
             'field': TextInput(),
-            # 'comparison_value': Textarea(attrs={'cols': 60, 'rows': 2})
+            'comparison_value': Textarea(attrs={'cols': 60, 'rows': 2})
         }
 
 

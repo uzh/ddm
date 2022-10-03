@@ -16,7 +16,6 @@ class ModelWithEncryptedData(models.Model):
         abstract = True
 
     def save(self, *args, **kwargs):
-        print()
         self.data = Encryption(
             secret=self.project.secret_key,
             salt=str(self.project.date_created),

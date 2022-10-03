@@ -38,24 +38,27 @@
   </table>
 
   {{ formset.management_form }}
-  <table class="table">
+  <table id="inlineform-table" class="table table-borderless">
+    <tr>
+      <td colspan="100%"><h5>Extraction Rules</h5></td>
+    </tr>
     {% for form in formset%}
     {% if forloop.first %}
-    <tr>
+    <tr class="border-bottom">
       {% for field in form.visible_fields %}
-      {% if field.name in 'name,field,execution_order,DELETE' %}
+      {% if field.name in 'name,field,execution_order' %}
       <th>{{ field.label }}</th>
       {% endif %}
       {% endfor %}
       <th></th>
-      <th></th>
+      <th>Delete</th>
     </tr>
     {% endif %}
 
     <tr>
       {{ form.non_field_errors }}
       {% for field in form.visible_fields %}
-      {% if field.name in 'name,field,execution_order,DELETE' %}
+      {% if field.name in 'name,field,execution_order' %}
       <td>
         {{ field.errors }}
         {{ field.value }}
@@ -63,44 +66,130 @@
       {% endif %}
       {% endfor %}
 
-      <td><a type="button" data-bs-toggle="modal" data-bs-target="#configuration-{{ forloop.counter }}">Configure Step</a></td>
-      <td><a href="#">Show Configuration&nbsp;&#8595;</a></td>
+      <td><a href="" type="button" data-bs-toggle="modal" data-bs-target="#configuration-{{ forloop.counter0 }}">Configure Step</a></td>
+
+      {% for field in form.visible_fields %}
+      {% if field.name in 'DELETE' %}
+      <td>
+        {{ field.errors }}
+        {{ field }}
+      </td>
+      {% endif %}
+      {% endfor %}
 
       {% for hidden in form.hidden_fields %}
       {{ hidden }}
       {% endfor %}
     </tr>
-    <tr>
-      <td id="step-description-{{ forloop.counter0 }}" colspan="100%">Verbal description of step</td>
+    <tr class="border-bottom bg-white">
+      <td colspan="100%"><b><i>Description: </i></b><span id="step-description-{{ forloop.counter0 }}">–</span></td>
     </tr>
     {% endfor %}
+
   </table>
 
+  <div class="mb-3 fs-4 ps-2">
+    <a id="add-inline-form" type="button"><i class="bi bi-plus-square"></i></a>
+  </div>
 
   {% for form in formset%}
-  <div class="modal" id="configuration-{{ forloop.counter }}" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+  <div class="modal" id="configuration-{{ forloop.counter0 }}" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-body">
           <h4>Rule Configuration</h4>
-          {% for field in form %}
-          {% if field.name in 'name,field,execution_order,input_type,comparison_operator,comparison_value' %}
-          <div>
-            <p>{{ field.label }}</p>
-            <p>{{ field }}
-              {{ field.errors }}</p>
-          </div>
+          <table class="table table-borderless">
+            {% for field in form %}
+            {% if field.name in 'name,field,execution_order,input_type,comparison_operator,comparison_value' %}
+            <tr>
+              <th>{{ field.label }}</th>
+              <td>
+                {{ field }}
+                {{ field.errors }}
+              </td>
+            </tr>
           {% endif %}
           {% endfor %}
+          </table>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+          <button type="button" class="ddm-btn" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="modal" id="configuration-template" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <h4>Rule Configuration</h4>
+          <table class="table table-borderless">
+            {% for field in form %}
+            {% if field.name in 'name,field,execution_order,input_type,comparison_operator,comparison_value' %}
+            <tr>
+              <th>{{ field.label }}</th>
+              <td>
+                {{ field }}
+                {{ field.errors }}
+              </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="ddm-btn" data-bs-dismiss="modal">OK</button>
         </div>
       </div>
     </div>
   </div>
   {% endfor %}
 
+  <table id="empty-form-placeholder" style="display:none">
+    <tr>
+      {% for field in formset.empty_form %}
+      {% if field.name in 'name,field,execution_order' %}
+      <td>
+        {{ field.errors }}
+        {{ field.value }}
+      </td>
+      {% endif %}
+      {% endfor %}
+
+      <td><a href="" type="button" data-bs-toggle="modal" data-bs-target="#configuration-__prefix__">Configure Step</a></td>
+
+      {% for field in formset.empty_form.visible_fields %}
+      {% if field.name in 'DELETE' %}
+      <td>
+        {{ field.errors }}
+        {{ field }}
+      </td>
+      {% endif %}
+      {% endfor %}
+
+      {% for hidden in formset.empty_form.hidden_fields %}
+      {{ hidden }}
+      {% endfor %}
+    </tr>
+    <tr class="border-bottom">
+      <td colspan="100%"><b><i>Description: </i></b><span id="step-description-__prefix__">Not yet defined</span></td>
+    </tr>
+  </table>
+
+  <table id="empty-form" style="display:none">
+    {% for field in formset.empty_form %}
+    {% if field.name in 'name,field,execution_order,input_type,comparison_operator,comparison_value' %}
+    <tr>
+      <th>{{ field.label }}</th>
+      <td>
+        {{ field }}
+        {{ field.errors }}
+      </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+  </table>
 
   <input class="ddm-btn" type="submit" value="Save Blueprint">
 </form>
@@ -118,25 +207,75 @@ Edit Blueprint
 {% block scripts %}
 {{ block.super }}
 <script>
-  $("[id^=id_processingrule_set-]").on("focusout", function() {
-    const current_id = $( this ).attr("id").match(/\d/)[0];
-    const id_prefix = "id_processingrule_set-" + current_id + "-";
+  updateRuleDescription = function(id) {
+    const id_prefix = "id_processingrule_set-" + id + "-";
     const field = $("[id^=" + id_prefix + "field]").val();
-    const input_type = $("[id^=" + id_prefix + "input_type]").val()
     const operator = $("[id^=" + id_prefix + "comparison_operator]").val()
     const comp_value = $("[id^=" + id_prefix + "comparison_value]").val()
 
-    console.log( operator );
     let msg = "";
-    if (operator == ""){
-      msg = "Keep field '" + field + "' in uploaded data."
-    } else if (operator == "regex") {
-      msg = "Delete parts of " + field + "-value that match the following regex expression: " + comp_value + "."
-    } else {
-      msg = "Delete row if current value of field '" + field + "' " + operator + " " + comp_value + "."
+    if (field !== "") {
+      if (operator === "" && field !== ""){
+        msg = "Keep field '" + field + "' in uploaded data."
+      } else if (operator === "regex") {
+        msg = "Delete parts of " + field + "-value that match the following regex expression: " + comp_value + "."
+      } else {
+        msg = "Delete row if current value of field '" + field + "' " + operator + " " + comp_value + "."
+      }
+      $("[id=step-description-" + id + "]").html(msg);
     }
-    console.log( msg );
-    $("[id=step-description-" + current_id + "]").html(msg);
-  })
+  };
+
+  $( document ).ready(function() {
+    // get all IDs
+    let IDs = new Set();
+    $("[id^=id_processingrule_set-]").each(function() {
+      if( /\d/.test($( this ).attr("id"))) {
+        IDs.add($( this ).attr("id").match(/\d/)[0]);
+      }
+    });
+    for (const id of IDs) {
+      updateRuleDescription(id);
+    }
+  });
+
+  updateFieldValue = function(id) {
+
+  }
+
+  $("body").on("focusout", "[id^=id_processingrule_set-]", function() {
+    const current_id = $( this ).attr("id").match(/\d/)[0];
+    updateRuleDescription(current_id);
+    updateFieldValue($(this).attr("id"));
+  });
+
+  $('#add-inline-form').on("click", function() {
+    let IDs = [];
+    $("[id^=id_processingrule_set-]").each(function() {
+      if( /\d/.test($( this ).attr("id"))) {
+        IDs.push($( this ).attr("id").match(/\d/)[0]);
+      }
+    });
+    let formIdx;
+    if (!IDs.length) {
+      formIdx = 1;
+    } else {
+      formIdx = Math.max(...IDs) + 1;
+    }
+    console.log(formIdx)
+
+    // Add new modal.
+    let newModal = $("[id^=configuration-]").first().clone();
+    newModal.attr("id", "configuration-" + formIdx );
+    newModal.find( "table" ).replaceWith($('#empty-form').html().replace(/__prefix__/g, formIdx));
+    $("[id^=configuration-]").last().after(newModal);
+
+    // Add new form placeholder.
+    let newPlaceholder = $("#empty-form-placeholder").find('tbody:first');
+    $('#inlineform-table > tbody:last-child').append(newPlaceholder.html().replace(/__prefix__/g, formIdx));
+
+    // Update management form.
+    $('#id_processingrule_set-TOTAL_FORMS').val(parseInt(formIdx) + 1);
+  });
 </script>
 {% endblock scripts %}

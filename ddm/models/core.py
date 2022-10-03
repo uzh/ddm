@@ -230,13 +230,6 @@ class DonationBlueprint(models.Model):
         validators=[COMMA_SEPARATED_STRINGS_VALIDATOR],
         help_text='Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").'
     )
-    # TODO: Delete
-    extracted_fields = models.TextField(
-        null=True,
-        blank=True,
-        validators=[COMMA_SEPARATED_STRINGS_VALIDATOR],
-        help_text='Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").'
-    )
 
     # Configuration if related to BlueprintContainer:
     blueprint_container = models.ForeignKey(
@@ -335,21 +328,10 @@ class ProcessingRule(models.Model):
 
     name = models.CharField(max_length=250)
 
-    field = models.TextField()
+    field = models.TextField(null=False, blank=False)
     execution_order = models.IntegerField()
 
     # TODO: inclusive = models.BooleanField()  # Option to include or exclude data points, when there is an error in the operation.
-
-    class InputTypes(models.TextChoices):
-        NUMBER = 'number', 'Number'
-        DATE = 'date', 'Date'
-        STRING = 'string', 'String'
-
-    input_type = models.CharField(
-        max_length=10,
-        choices=InputTypes.choices,
-        default=InputTypes.STRING,
-    )
 
     class ComparisonOperators(models.TextChoices):
         EQUAL = '==', 'Equal (==)'
@@ -371,19 +353,15 @@ class ProcessingRule(models.Model):
 
     def get_rule_config(self):
         """
-        Return a configuration dict for the processing rule.
-
-        blueprint[filter_rules] = [
+        Return a configuration dict for the processing rule:
         {
             'field': 'field_name',
-            'input_type': 'string' | 'date' | 'number',
             'comparison_operator': '==' | '!=' | '>' | '<' | '>=' | '<=' | 'regex' | None,
             'comparison_value': '123' | Regex-String | None
-        }]
+        }
         """
         return {
             'field': self.field,
-            'input_type': self.input_type,
             'comparison_operator': self.comparison_operator,
             'comparison_value': self.comparison_value
         }

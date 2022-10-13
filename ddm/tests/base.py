@@ -78,8 +78,7 @@ class TestData(TestCase):
         cls.don_bp = DonationBlueprint.objects.create(
             project=cls.project_base,
             name='donation blueprint',
-            expected_fields='"a", "b"',
-            extracted_fields='"a"'
+            expected_fields='"a", "b"'
         )
         cls.zip_bp = BlueprintContainer.objects.create(
             name='blueprint container',

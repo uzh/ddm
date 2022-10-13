@@ -10,6 +10,7 @@ Getting Started
 
 .. todo::
     Extend section with general steps to set up Django.
+    Add ckeditor settings.
 
 1. Install the Django DDM package::
 

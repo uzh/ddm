@@ -389,7 +389,7 @@ class DataDonation(ModelWithEncryptedData):
 
 # TODO: Outsource to separate model.py file when instruction database is added.
 class DonationInstruction(models.Model):
-    text = RichTextField(null=True, blank=True)
+    text = RichTextField(null=True, blank=True, config_name='ddm_ckeditor')
     index = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
     blueprint = models.ForeignKey(
         'DonationBlueprint',

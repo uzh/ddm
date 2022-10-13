@@ -349,7 +349,7 @@ class ProcessingRule(models.Model):
         choices=ComparisonOperators.choices,
         default=None
     )
-    comparison_value = models.TextField()
+    comparison_value = models.TextField(blank=True)
 
     def get_rule_config(self):
         """

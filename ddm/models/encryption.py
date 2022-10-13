@@ -24,7 +24,10 @@ class ModelWithEncryptedData(models.Model):
         super().save(*args, **kwargs)
 
     def get_decrypted_data(self):
-        return Encryption(secret=self.project.secret_key, salt=str(self.project.date_created)).decrypt(self.data)
+        if not self.project.super_secret:
+            return Encryption(secret=self.project.secret_key, salt=str(self.project.date_created)).decrypt(self.data)
+        else:
+            return None
 
 
 class Encryption:

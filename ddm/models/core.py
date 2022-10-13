@@ -127,7 +127,7 @@ class DonationProject(models.Model):
         statistics = {
             'n_started': participants.count(),
             'n_completed': participants.filter(completed=True).count(),
-            'completion_rate': participants.filter(completed=True).count() / participants.count(),
+            'completion_rate': participants.filter(completed=True).count() / participants.count() if participants.count() > 0 else 0,
             'n_donations': DataDonation.objects.filter(project=self).count(),
             'n_errors': ddm_exceptions.ExceptionLogEntry.objects.filter(project=self).count(),
             'average_time': str(participants.filter(completed=True).aggregate(v=Avg(F('end_time')-F('start_time')))['v']).split(".")[0]

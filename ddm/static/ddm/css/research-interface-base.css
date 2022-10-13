@@ -175,3 +175,9 @@
     background: #ff00000f;
     border-radius: 5px;
 }
+.page-item.active .page-link,
+.page-size,
+.btn-secondary {
+    background-color: #1a1a1a !important;
+    border: none !important;
+}

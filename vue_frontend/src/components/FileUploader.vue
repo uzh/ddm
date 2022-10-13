@@ -393,6 +393,9 @@ export default {
                   if (rules.length > 0) {
                     rules.forEach(rule => {
                       switch (rule.comparison_operator) {
+                        case null:
+                          result[key] = entry[key];
+                          break;
                         case '==':
                           if (entry[key] !== rule.comparison_value) {
                             result[key] = entry[key]

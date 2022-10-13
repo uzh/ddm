@@ -1,5 +1,7 @@
 {% extends 'ddm/project_admin/generic/page_with_form.html' %}
 
+{% load static %}
+
 {% block page_title %}Edit Blueprint{% endblock %}
 
 {% block main_heading %}Edit Blueprint "{{ object.name }}"{% endblock %}
@@ -57,14 +59,16 @@
 
     <tr>
       {{ form.non_field_errors }}
+      {% with loop_id=forloop.counter0 %}
       {% for field in form.visible_fields %}
       {% if field.name in 'name,field,execution_order' %}
-      <td>
+      <td id="{{ field.name }}-{{ loop_id }}">
         {{ field.errors }}
         {{ field.value }}
       </td>
       {% endif %}
       {% endfor %}
+      {% endwith %}
 
       <td><a href="" type="button" data-bs-toggle="modal" data-bs-target="#configuration-{{ forloop.counter0 }}">Configure Step</a></td>
 
@@ -108,12 +112,12 @@
                 {{ field.errors }}
               </td>
             </tr>
-          {% endif %}
-          {% endfor %}
+            {% endif %}
+            {% endfor %}
           </table>
         </div>
         <div class="modal-footer">
-          <button type="button" class="ddm-btn" data-bs-dismiss="modal">OK</button>
+          <button id="ddm-modal-ok-{{ forloop.counter0 }}" type="button" class="ddm-btn ddm-modal-ok" data-bs-dismiss="modal">OK</button>
         </div>
       </div>
     </div>
@@ -139,7 +143,7 @@
           </table>
         </div>
         <div class="modal-footer">
-          <button type="button" class="ddm-btn" data-bs-dismiss="modal">OK</button>
+          <button id="ddm-modal-ok-__prefix__" type="button" class="ddm-btn ddm-modal-ok" data-bs-dismiss="modal">OK</button>
         </div>
       </div>
     </div>
@@ -150,7 +154,7 @@
     <tr>
       {% for field in formset.empty_form %}
       {% if field.name in 'name,field,execution_order' %}
-      <td>
+      <td id="{{ field.name }}-__prefix__">
         {{ field.errors }}
         {{ field.value }}
       </td>
@@ -206,76 +210,5 @@ Edit Blueprint
 
 {% block scripts %}
 {{ block.super }}
-<script>
-  updateRuleDescription = function(id) {
-    const id_prefix = "id_processingrule_set-" + id + "-";
-    const field = $("[id^=" + id_prefix + "field]").val();
-    const operator = $("[id^=" + id_prefix + "comparison_operator]").val()
-    const comp_value = $("[id^=" + id_prefix + "comparison_value]").val()
-
-    let msg = "";
-    if (field !== "") {
-      if (operator === "" && field !== ""){
-        msg = "Keep field '" + field + "' in uploaded data."
-      } else if (operator === "regex") {
-        msg = "Delete parts of " + field + "-value that match the following regex expression: " + comp_value + "."
-      } else {
-        msg = "Delete row if current value of field '" + field + "' " + operator + " " + comp_value + "."
-      }
-      $("[id=step-description-" + id + "]").html(msg);
-    }
-  };
-
-  $( document ).ready(function() {
-    // get all IDs
-    let IDs = new Set();
-    $("[id^=id_processingrule_set-]").each(function() {
-      if( /\d/.test($( this ).attr("id"))) {
-        IDs.add($( this ).attr("id").match(/\d/)[0]);
-      }
-    });
-    for (const id of IDs) {
-      updateRuleDescription(id);
-    }
-  });
-
-  updateFieldValue = function(id) {
-
-  }
-
-  $("body").on("focusout", "[id^=id_processingrule_set-]", function() {
-    const current_id = $( this ).attr("id").match(/\d/)[0];
-    updateRuleDescription(current_id);
-    updateFieldValue($(this).attr("id"));
-  });
-
-  $('#add-inline-form').on("click", function() {
-    let IDs = [];
-    $("[id^=id_processingrule_set-]").each(function() {
-      if( /\d/.test($( this ).attr("id"))) {
-        IDs.push($( this ).attr("id").match(/\d/)[0]);
-      }
-    });
-    let formIdx;
-    if (!IDs.length) {
-      formIdx = 1;
-    } else {
-      formIdx = Math.max(...IDs) + 1;
-    }
-    console.log(formIdx)
-
-    // Add new modal.
-    let newModal = $("[id^=configuration-]").first().clone();
-    newModal.attr("id", "configuration-" + formIdx );
-    newModal.find( "table" ).replaceWith($('#empty-form').html().replace(/__prefix__/g, formIdx));
-    $("[id^=configuration-]").last().after(newModal);
-
-    // Add new form placeholder.
-    let newPlaceholder = $("#empty-form-placeholder").find('tbody:first');
-    $('#inlineform-table > tbody:last-child').append(newPlaceholder.html().replace(/__prefix__/g, formIdx));
-
-    // Update management form.
-    $('#id_processingrule_set-TOTAL_FORMS').val(parseInt(formIdx) + 1);
-  });
-</script>
+<script src="{% static 'ddm/js/blueprint-edit-ui-helpers.js' %}"></script>
 {% endblock scripts %}

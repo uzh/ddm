@@ -125,10 +125,40 @@
 <div class="ddm-admin-section">
   <div class="ddm-admin-section-header">Danger Zone</div>
   <div class="ddm-admin-section-body">
-    <a class="ddm-btn ddm-btn-red" href="{% url 'project-delete' object.pk %}">Delete Project</a>
+    <h4>Reset Project Data</h4>
+    <div>
+      <p><button class="ddm-btn ddm-btn-red" data-bs-toggle="modal" data-bs-target="#delete-data-confirm">Reset Project Data</button></p>
+    </div>
+    <h4>Delete Project</h4>
+    <div>
+      <p><button class="ddm-btn ddm-btn-red" href="{% url 'project-delete' object.pk %}">Delete Project</button></p>
+    </div>
   </div>
 </div>
 
+
+<div class="modal" id="delete-data-confirm" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h4>Careful!</h4>
+        <p>You are about to delete all collected data related to your project.</p>
+        This includes:
+        <ul>
+          <li>All data donations</li>
+          <li>All questionnaire responses</li>
+          <li>All participation statistics</li>
+        </ul>
+        <p>We strongly recommend downloading and storing a copy of your data before you continue with this procedure.</p>
+        <p>Are you sure you want to delete all data related to this project?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="ddm-btn" data-bs-dismiss="modal">Cancel</button>
+        <button id="delete-data-button" type="button" class="ddm-btn ddm-btn-red" data-bs-dismiss="modal" onclick="deleteData('{% url "ddm-download-api" object.pk %}', '{{csrf_token}}')">Yes, delete all data</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 
@@ -140,4 +170,5 @@
 {% block scripts %}
 {{ block.super }}
 <script src="{% static 'ddm/js/download-data.js' %}"></script>
+<script src="{% static 'ddm/js/delete-data.js' %}"></script>
 {% endblock %}

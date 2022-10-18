@@ -1,12 +1,12 @@
 from django.http import Http404, HttpResponseBadRequest
 from django.views.decorators.debug import sensitive_variables
 
-from ddm.models.core import DataDonation, DonationProject, QuestionnaireResponse, ResearchProfile
+from ddm.models.core import DataDonation, DonationProject, QuestionnaireResponse, ResearchProfile, Participant
 from ddm.models.serializers import DonationSerializer, ResponseSerializer, ProjectSerializer
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import authentication, permissions
+from rest_framework import authentication, permissions, status
 
 
 def user_is_allowed_to_download(user, project):
@@ -23,9 +23,9 @@ def user_is_allowed_to_download(user, project):
             return True
 
 
-class DownloadProjectDataView(APIView):
+class ProjectDataView(APIView):
     """
-    View to download project related data donations and questionnaire responses.
+    Download or delete data collected within a project.
 
     * Token authentication for remote calls.
     * Session authentication for browser access.
@@ -63,3 +63,23 @@ class DownloadProjectDataView(APIView):
             'responses': [ResponseSerializer(r).data for r in q_responses],
         }
         return Response(results)
+
+    def delete(self, request, format=None, *args, **kwargs):
+        """
+        Delete data donations and questionnaire requests associated with project.
+        """
+        project_id = self.kwargs['pk']
+        project = DonationProject.objects.get(pk=project_id)
+        if not user_is_allowed_to_download(request.user, project):
+            raise Http404()
+
+        # Delete all related objects.
+        Participant.objects.filter(project=project).delete()
+        n_deleted_donations = DataDonation.objects.filter(project=project).delete()[0]
+        n_deleted_responses = QuestionnaireResponse.objects.filter(project=project).delete()[0]
+
+        response_data = {
+            'Deleted Donations': n_deleted_donations,
+            'Deleted Responses': n_deleted_responses
+        }
+        return Response(status=status.HTTP_204_NO_CONTENT, data=response_data)

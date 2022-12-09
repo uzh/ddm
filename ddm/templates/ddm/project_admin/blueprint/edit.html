@@ -11,86 +11,89 @@
   {% csrf_token %}
   {{ form.media }}
   {{ form.non_field_errors }}
-  <table class="table table-borderless">
+
+  <div class="ddm-admin-form">
     {% for field in form %}
-      {% if field.name not in "expected_fields,extracted_fields" %}
+    {% if field.name not in "expected_fields,extracted_fields" %}
+    <p>
+      {{ field.label_tag }}
+      {{ field.errors }}
+      {{ field }}
+    </p>
+    {% endif %}
+    {% endfor %}
+  </div>
+
+  <div class="ddm-admin-form">
+    <h5>Data Extraction Settings</h5>
+  </div>
+
+  <div class="ddm-admin-form">
+    {% for field in form %}
+    {% if field.name in "expected_fields,extracted_fields" %}
+    <p>
+      {{ field.label_tag }}
+      {{ field.errors }}
+      {{ field }}
+    </p>
+    {% endif %}
+    {% endfor %}
+  </div>
+
+  {{ formset.management_form }}
+  <div class="ddm-admin-form">
+    <table id="inlineform-table" class="table table-borderless">
       <tr>
-        <th>{{ field.label_tag }}</th>
+        <td colspan="100%"><h6>Extraction Rules</h6></td>
+      </tr>
+      {% for form in formset%}
+      {% if forloop.first %}
+      <tr class="border-bottom">
+        {% for field in form.visible_fields %}
+        {% if field.name in 'name,field,execution_order' %}
+        <th>{{ field.label }}</th>
+        {% endif %}
+        {% endfor %}
+        <th></th>
+        <th>Delete</th>
+      </tr>
+      {% endif %}
+
+      <tr>
+        {{ form.non_field_errors }}
+        {% with loop_id=forloop.counter0 %}
+        {% for field in form.visible_fields %}
+        {% if field.name in 'name,field,execution_order' %}
+        <td id="{{ field.name }}-{{ loop_id }}">
+          {{ field.errors }}
+          {{ field.value }}
+        </td>
+        {% endif %}
+        {% endfor %}
+        {% endwith %}
+
+        <td><a href="" type="button" data-bs-toggle="modal" data-bs-target="#configuration-{{ forloop.counter0 }}">Configure Step</a></td>
+
+        {% for field in form.visible_fields %}
+        {% if field.name in 'DELETE' %}
         <td>
           {{ field.errors }}
           {{ field }}
         </td>
+        {% endif %}
+        {% endfor %}
+
+        {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+        {% endfor %}
       </tr>
-      {% endif %}
-    {% endfor %}
-    <tr>
-      <td><h4>Data Extraction Settings</h4></td>
-    </tr>
-    {% for field in form %}
-    {% if field.name in "expected_fields,extracted_fields" %}
-    <tr>
-      <th>{{ field.label_tag }}</th>
-      <td>
-        {{ field.errors }}
-        {{ field }}
-      </td>
-    </tr>
-    {% endif %}
-    {% endfor %}
-  </table>
-
-  {{ formset.management_form }}
-  <table id="inlineform-table" class="table table-borderless">
-    <tr>
-      <td colspan="100%"><h5>Extraction Rules</h5></td>
-    </tr>
-    {% for form in formset%}
-    {% if forloop.first %}
-    <tr class="border-bottom">
-      {% for field in form.visible_fields %}
-      {% if field.name in 'name,field,execution_order' %}
-      <th>{{ field.label }}</th>
-      {% endif %}
-      {% endfor %}
-      <th></th>
-      <th>Delete</th>
-    </tr>
-    {% endif %}
-
-    <tr>
-      {{ form.non_field_errors }}
-      {% with loop_id=forloop.counter0 %}
-      {% for field in form.visible_fields %}
-      {% if field.name in 'name,field,execution_order' %}
-      <td id="{{ field.name }}-{{ loop_id }}">
-        {{ field.errors }}
-        {{ field.value }}
-      </td>
-      {% endif %}
-      {% endfor %}
-      {% endwith %}
-
-      <td><a href="" type="button" data-bs-toggle="modal" data-bs-target="#configuration-{{ forloop.counter0 }}">Configure Step</a></td>
-
-      {% for field in form.visible_fields %}
-      {% if field.name in 'DELETE' %}
-      <td>
-        {{ field.errors }}
-        {{ field }}
-      </td>
-      {% endif %}
+      <tr class="border-bottom bg-white">
+        <td colspan="100%"><b><i>Description: </i></b><span id="step-description-{{ forloop.counter0 }}">–</span></td>
+      </tr>
       {% endfor %}
 
-      {% for hidden in form.hidden_fields %}
-      {{ hidden }}
-      {% endfor %}
-    </tr>
-    <tr class="border-bottom bg-white">
-      <td colspan="100%"><b><i>Description: </i></b><span id="step-description-{{ forloop.counter0 }}">–</span></td>
-    </tr>
-    {% endfor %}
-
-  </table>
+    </table>
+  </div>
 
   <div class="mb-3 fs-4 ps-2">
     <a id="add-inline-form" type="button"><i class="bi bi-plus-square"></i></a>
@@ -102,19 +105,17 @@
       <div class="modal-content">
         <div class="modal-body">
           <h4>Rule Configuration</h4>
-          <table class="table table-borderless">
+          <div class="ddm-admin-form">
             {% for field in form %}
             {% if field.name in 'name,field,execution_order,input_type,comparison_operator,comparison_value' %}
-            <tr>
-              <th>{{ field.label }}</th>
-              <td>
-                {{ field }}
-                {{ field.errors }}
-              </td>
-            </tr>
+            <p>
+              {{ field.label_tag }}
+              {{ field }}
+              {{ field.errors }}
+            </p>
             {% endif %}
             {% endfor %}
-          </table>
+          </div>
         </div>
         <div class="modal-footer">
           <button id="ddm-modal-ok-{{ forloop.counter0 }}" type="button" class="ddm-btn ddm-modal-ok" data-bs-dismiss="modal">OK</button>
@@ -128,19 +129,17 @@
       <div class="modal-content">
         <div class="modal-body">
           <h4>Rule Configuration</h4>
-          <table class="table table-borderless">
+          <div class="ddm-admin-form">
             {% for field in form %}
             {% if field.name in 'name,field,execution_order,input_type,comparison_operator,comparison_value' %}
-            <tr>
-              <th>{{ field.label }}</th>
-              <td>
-                {{ field }}
-                {{ field.errors }}
-              </td>
-            </tr>
+            <p>
+              {{ field.label_tag }}
+              {{ field }}
+              {{ field.errors }}
+            </p>
             {% endif %}
             {% endfor %}
-          </table>
+          </div>
         </div>
         <div class="modal-footer">
           <button id="ddm-modal-ok-__prefix__" type="button" class="ddm-btn ddm-modal-ok" data-bs-dismiss="modal">OK</button>

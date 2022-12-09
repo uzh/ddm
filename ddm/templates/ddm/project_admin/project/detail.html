@@ -7,8 +7,11 @@
 
 {% block main_body %}
 
+{# PROJECT DETAILS #}
 <div class="ddm-admin-section">
-  <div class="ddm-admin-section-header">Project Details</div>
+  <div class="ddm-admin-section-header">
+    Project Details <span class="inline-edit"><a href="{% url 'project-edit' object.pk %}"><i class="bi bi-pencil-square"></i> Edit</a></span>
+  </div>
   <div class="ddm-admin-section-body">
     <table class="table table-borderless table-sm">
       <tr>
@@ -28,55 +31,69 @@
         <td>{% if object.super_secret %}Super Secret Project{% else %}Regular Project{% endif %}</td>
       </tr>
     </table>
-    <p><a class="ddm-btn" href="{% url 'project-edit' object.pk %}">Edit Project Details</a></p>
   </div>
 </div>
 
 
+{# PROJECT CONFIGURATION #}
 <div class="ddm-admin-section">
   <div class="ddm-admin-section-header">Project Configuration</div>
   <div class="ddm-admin-section-body">
     <div class="container">
       <div class="row d-flex align-items-stretch">
-        <a class="card-link ddm-btn" href="{% url 'welcome-page-edit' object.pk %}">
-          <div class="project-setup-card">
-            <div><h3 class="text-center">Welcome Page</h3></div>
-            <div><i class="bi bi-door-open fs-1"></i></div>
-          </div>
-        </a>
-        <div class="project-setup-filler">
-          <i class="bi bi-caret-right-fill fs-2"></i>
+
+        <div class="project-setup-card text-center">
+          <a class="card-link" href="{% url 'welcome-page-edit' object.pk %}">
+            <div><i class="bi bi-chat-right-dots-fill ddm-if-icon"></i></div>
+            <div><h4>Briefing</h4></div>
+          </a>
+          <div><p>Define how you will greet and brief your participants.</p></div>
         </div>
-        <a class="card-link ddm-btn" href="{% url 'blueprint-list' object.pk %}">
-          <div class="project-setup-card">
-            <h3 class="text-center">Data Donation</h3>
-            <i class="bi bi-box2-heart fs-1"></i>
-          </div>
-        </a>
+
         <div class="project-setup-filler">
-          <i class="bi bi-caret-right-fill fs-2"></i>
+          <i class="bi bi-chevron-compact-right fs-2"></i>
         </div>
-        <a class="card-link ddm-btn" href="{% url 'questionnaire-overview' object.pk %}">
-          <div class="project-setup-card">
-            <h3 class="text-center">Questionnaire</h3>
-            <i class="bi bi-pencil-square fs-1"></i>
-          </div>
-        </a>
+
+        <div class="project-setup-card text-center">
+          <a class="card-link" href="{% url 'blueprint-list' object.pk %}">
+            <div><i class="bi bi-box-fill ddm-if-icon"></i></div>
+            <div><h4>Data Donation</h4></div>
+          </a>
+          <div><p>Configure the data donation and the donation instructions.</p></div>
+        </div>
+
         <div class="project-setup-filler">
-          <i class="bi bi-caret-right-fill fs-2"></i>
+          <i class="bi bi-chevron-compact-right fs-2"></i>
         </div>
-        <a class="card-link ddm-btn" href="{% url 'end-page-edit' object.pk %}">
-          <div class="project-setup-card">
-            <h3 class="text-center">End Page</h3>
-            <i class="bi bi-door-closed fs-1"></i>
-          </div>
-        </a>
+
+
+        <div class="project-setup-card text-center">
+          <a  class="card-link" href="{% url 'questionnaire-overview' object.pk %}">
+            <div><i class="bi bi-pencil-fill ddm-if-icon"></i></div>
+            <div><h4>Questionnaire</h4></div>
+          </a>
+          <div><p>Configure a questionnaire that is displayed after the data donation.</p></div>
+        </div>
+
+        <div class="project-setup-filler">
+          <i class="bi bi-chevron-compact-right fs-2"></i>
+        </div>
+
+        <div class="project-setup-card text-center">
+          <a class="card-link" href="{% url 'end-page-edit' object.pk %}">
+            <div><i class="bi bi-chat-right-dots-fill ddm-if-icon"></i></div>
+            <div><h4>Debriefing</h4></div>
+          </a>
+          <div><p>Define how you will debrief your participants.</p></div>
+        </div>
+
       </div>
     </div>
   </div>
 </div>
 
 
+{# DATA CENTER #}
 <div class="ddm-admin-section">
   <div class="ddm-admin-section-header">Data Center</div>
   <div class="ddm-admin-section-body">
@@ -112,7 +129,7 @@
     </div>
     <h4 class="mt-3">Download Section</h4>
     <div>
-      <p><button onclick="downloadData('{% url "ddm-download-api" object.pk %}', 'project_{{ object.pk }}_data')" class="ddm-btn">Download Data as JSON</button></p>
+      <p><a class="a-no-link" onclick="downloadData('{% url "ddm-download-api" object.pk %}', 'project_{{ object.pk }}_data')"><i class="bi bi-download"></i> Download Data as JSON</a></p>
     </div>
     <h4>Exception Log</h4>
     <div>
@@ -122,6 +139,7 @@
 </div>
 
 
+{# DANGER ZONE #}
 <div class="ddm-admin-section">
   <div class="ddm-admin-section-header">Danger Zone</div>
   <div class="ddm-admin-section-body">

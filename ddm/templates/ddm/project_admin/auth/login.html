@@ -1,11 +1,40 @@
-{% extends 'ddm/project_admin/generic/page_with_form.html' %}
+{% extends 'ddm/project_admin/base.html' %}
 
-{% block page_title %}Login Page{% endblock %}
+{% load static %}
 
-{% block main_heading %}Data Donation Module: Login{% endblock %}
+{% block page_title %}Data Donation Module: Login{% endblock %}
 
-{% block submit_label %}Login{% endblock %}
+{% block header %}{% endblock header %}
 
-{% block main_bottom %}
-<p>New user? <a href="{% url 'ddm-create-user' %}">Create a new profile</a></p>
+{% block main_body %}
+
+<div class="container row justify-content-center">
+  <div class="col-4 text-center mt-5">
+    <div class="row">
+      <img alt="Data Donation Module" height="100" alt="" src="{% static 'ddm/img/logos/DDM_Logo_Schwarz.svg' %}">
+    </div>
+
+    <div>
+      <h4>Data Donation Module</h4>
+      <p class="mt-4">Please log in with your account or create a new one.</p>
+    </div>
+
+    <div class="row justify-content-center">
+      <form method='post'>
+        {% csrf_token %}
+        {{ form.media }}
+
+        <div class="ddm-admin-form ddm-form auth-form">
+          {{ form.as_p }}
+          <input class="ddm-btn-large mt-3 w-75" type="submit" value="Login">
+        </div>
+      </form>
+    </div>
+
+    <div class="row mt-3 justify-content-center">
+      <a href="{% url 'ddm-create-user' %}">Create a new account</a>
+    </div>
+
+  </div>
+</div>
 {% endblock %}

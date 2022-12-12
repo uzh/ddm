@@ -170,5 +170,6 @@ export default {
 }
 .question-container {
   margin-bottom: 50px;
+  font-size: 1.15rem;
 }
 </style>

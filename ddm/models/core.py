@@ -213,7 +213,7 @@ class DonationBlueprint(models.Model):
 
     class FileFormats(models.TextChoices):
         JSON_FORMAT = 'json'
-        # CSV_FORMAT = 'csv',
+        CSV_FORMAT = 'csv'
         # HTML_FORMAT = 'html',
         # XLSX_FORMAT = 'xlsx',
 
@@ -222,6 +222,12 @@ class DonationBlueprint(models.Model):
         choices=FileFormats.choices,
         default=FileFormats.JSON_FORMAT,
         verbose_name='Expected file format',
+    )
+
+    csv_delimiter = models.CharField(
+        max_length=10,
+        default="",
+        blank=True
     )
 
     expected_fields = models.TextField(
@@ -259,7 +265,8 @@ class DonationBlueprint(models.Model):
             'f_expected': json.loads("[" + str(self.expected_fields) + "]"),
             'f_extract': self.get_fields_to_extract(),
             'regex_path': self.regex_path,
-            'filter_rules': self.get_filter_rules()
+            'filter_rules': self.get_filter_rules(),
+            'csv_delimiter': self.csv_delimiter
         }
         return config
 

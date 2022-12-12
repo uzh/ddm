@@ -208,6 +208,8 @@
 import JSZip from "jszip";
 import DonationInstructions from "./DonationInstructions";
 import axios from "axios";
+import Papa from 'papaparse';
+// import fs from "fs";
 
 
 export default {
@@ -325,6 +327,13 @@ export default {
           }
         }
 
+        if (uploader.blueprints[0].format === 'csv') {
+          if (!files[0].name.endsWith('.csv')) {
+            axios.post(uploader.exceptionUrl, {'status_code': 4105, 'message': uploader.$t('error-wrong-file-type', 'en', {actualType: files[0].name.substr(files[0].name.lastIndexOf(".")), expectedType: '.csv'})}).catch(e => console.error(`Could not post error message, ${e}`));
+            uploader.recordError(uploader.$t('error-wrong-file-type', {actualType: files[0].name.substr(files[0].name.lastIndexOf(".")), expectedType: '.csv'}), uploader.blueprints[0].id.toString());
+          }
+        }
+
         // TODO: Add selection of which file they're trying to upload if multiple (i.e. a zip-upload) is expected.
         let reader = new FileReader();
         reader.onload = function(event) {
@@ -357,6 +366,7 @@ export default {
       let fileContent = null;
       let extractedData = [];
 
+      // PARSING
       if (blueprint.format === 'json') {
         try {
           fileContent = JSON.parse(content);
@@ -364,110 +374,121 @@ export default {
           axios.post(uploader.exceptionUrl, {'status_code': 4106, 'message': e.message}).catch(e => console.error(`Could not post error message, ${e}`));
           uploader.recordError(uploader.$t('error-json-syntax'), uploader.blueprints[0].id.toString());
         }
+      }
 
-        if (fileContent) {
-          let nEntriesWithMissingFields = 0;
-          let nEntriesFilteredOut = 0;
-          fileContent.forEach(entry => {
-            // Check if all expected fields are here
-            let missingFields = [];
-            if (!blueprint.f_expected.every(element => {
-              if (Object.keys(entry).includes(element)) {
-                return true;
-              } else {
-                missingFields.push(element)
-                nEntriesWithMissingFields += 1;
-                return false;
-              }})) {
-              // Go to next entry and record exception
-              axios.post(uploader.exceptionUrl, {'status_code': 4203, 'message': `Entry does not contain the expected field(s) "${missingFields.toString()}".`}).catch(e => console.error(`Could not post error message, ${e}`))
-              return;
-            }
+      else if (blueprint.format === 'csv') {
+        try {
+          let parserResult = Papa.parse(content, {header: true, delimiter: blueprint.csv_delimiter });
+          fileContent = parserResult.data;
+        } catch(e) {
+          axios.post(uploader.exceptionUrl, {'status_code': 4106, 'message': e.message}).catch(e => console.error(`Could not post error message, ${e}`));
+          uploader.recordError(uploader.$t('error-json-syntax'), uploader.blueprints[0].id.toString());  // TODO: Check 'error-json-syntax'
+        }
+      }
 
-            if (blueprint.f_extract.every(element => Object.keys(entry).includes(element))) {
-              // Apply filters, Pop unused keys and add to result.
-              let result = {};
-              try {
-                for (let key in entry) {
-                  let rules = blueprint.filter_rules.filter(rule => rule.field === key);
-                  if (rules.length > 0) {
-                    rules.forEach(rule => {
-                      switch (rule.comparison_operator) {
-                        case null:
-                          result[key] = entry[key];
-                          break;
-                        case '==':
-                          if (entry[key] !== rule.comparison_value) {
-                            result[key] = entry[key]
-                          } else {
-                            throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
-                          }
-                          break;
-                        case '!=':
-                          if (entry[key] === rule.comparison_value) {
-                            result[key] = entry[key]
-                          } else {
-                            throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
-                          }
-                          break;
-                        case '<=':
-                          if (entry[key] > rule.comparison_value) {
-                            result[key] = entry[key]
-                          } else {
-                            throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
-                          }
-                          break;
-                        case '>=':
-                          if (entry[key] < rule.comparison_value) {
-                            result[key] = entry[key]
-                          } else {
-                            throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
-                          }
-                          break;
-                        case '<':
-                          if (entry[key] >= rule.comparison_value) {
-                            result[key] = entry[key]
-                          } else {
-                            throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
-                          }
-                          break;
-                        case '>':
-                          if (entry[key] <= rule.comparison_value) {
-                            result[key] = entry[key]
-                          } else {
-                            throw `Field "${key}" matches filter value "${rule.comparison_value}".`
-                          }
-                          break;
-                        case 'regex':
-                          if (key in entry) {
-                            result[key] = entry[key].replaceAll(rule.comparison_value, '');
-                          }
-                          break;
-                        default: break;
-                      }
-                    });
-                  }
+      // FILTERING
+      if (fileContent) {
+        let nEntriesWithMissingFields = 0;
+        let nEntriesFilteredOut = 0;
+        fileContent.forEach(entry => {
+          // Check if all expected fields are here
+          let missingFields = [];
+          if (!blueprint.f_expected.every(element => {
+            if (Object.keys(entry).includes(element)) {
+              return true;
+            } else {
+              missingFields.push(element)
+              nEntriesWithMissingFields += 1;
+              return false;
+            }})) {
+            // Go to next entry and record exception
+            axios.post(uploader.exceptionUrl, {'status_code': 4203, 'message': `Entry does not contain the expected field(s) "${missingFields.toString()}".`}).catch(e => console.error(`Could not post error message, ${e}`))
+            return;
+          }
+
+          if (blueprint.f_extract.every(element => Object.keys(entry).includes(element))) {
+            // Apply filters, Pop unused keys and add to result.
+            let result = {};
+            try {
+              for (let key in entry) {
+                let rules = blueprint.filter_rules.filter(rule => rule.field === key);
+                if (rules.length > 0) {
+                  rules.forEach(rule => {
+                    switch (rule.comparison_operator) {
+                      case null:
+                        result[key] = entry[key];
+                        break;
+                      case '==':
+                        if (entry[key] !== rule.comparison_value) {
+                          result[key] = entry[key]
+                        } else {
+                          throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                        }
+                        break;
+                      case '!=':
+                        if (entry[key] === rule.comparison_value) {
+                          result[key] = entry[key]
+                        } else {
+                          throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                        }
+                        break;
+                      case '<=':
+                        if (entry[key] > rule.comparison_value) {
+                          result[key] = entry[key]
+                        } else {
+                          throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                        }
+                        break;
+                      case '>=':
+                        if (entry[key] < rule.comparison_value) {
+                          result[key] = entry[key]
+                        } else {
+                          throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                        }
+                        break;
+                      case '<':
+                        if (entry[key] >= rule.comparison_value) {
+                          result[key] = entry[key]
+                        } else {
+                          throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                        }
+                        break;
+                      case '>':
+                        if (entry[key] <= rule.comparison_value) {
+                          result[key] = entry[key]
+                        } else {
+                          throw `Field "${key}" matches filter value "${rule.comparison_value}".`
+                        }
+                        break;
+                      case 'regex':
+                        if (key in entry) {
+                          result[key] = entry[key].replaceAll(rule.comparison_value, '');
+                        }
+                        break;
+                      default: break;
+                    }
+                  });
                 }
-                extractedData.push(result);
-              } catch (e) {
-                nEntriesFilteredOut += 1;
-                axios.post(uploader.exceptionUrl, {'status_code': 4206, 'message': `${e}`}).catch(e => console.error(`Could not post error message, ${e}`))
               }
+              extractedData.push(result);
+            } catch (e) {
+              nEntriesFilteredOut += 1;
+              axios.post(uploader.exceptionUrl, {'status_code': 4206, 'message': `${e}`}).catch(e => console.error(`Could not post error message, ${e}`))
             }
-          })
-          uploader.blueprintData[blueprintID].extracted_data = extractedData;
-          if (nEntriesWithMissingFields === fileContent.length) {
-            axios.post(uploader.exceptionUrl, {'status_code': 4201, 'message': `No data extracted: Expected fields missing in ${nEntriesWithMissingFields}/${fileContent.length} entries.`}).catch(e => console.error(`Could not post error message, ${e}`))
-            uploader.recordError(uploader.$t('error-all-expected-fields-missing'), blueprint.id.toString());
           }
-          else if (nEntriesFilteredOut === fileContent.length) {
-            axios.post(uploader.exceptionUrl, {'status_code': 4204, 'message': `No data extracted: All entries (${nEntriesFilteredOut}/${fileContent.length}) were filtered out.`}).catch(e => console.error(`Could not post error message, ${e}`))
-            uploader.recordError(uploader.$t('error-all-fields-filtered-out'), blueprint.id.toString());
-          }
-          else if ((nEntriesWithMissingFields + nEntriesFilteredOut) === fileContent.length) {
-            axios.post(uploader.exceptionUrl, {'status_code': 4205, 'message': `No data extracted: Expected fields missing in ${nEntriesWithMissingFields}/${fileContent.length} entries and ${nEntriesFilteredOut}/${fileContent.length} filtered out.`}).catch(e => console.error(`Could not post error message, ${e}`))
-            uploader.recordError(uploader.$t('error-all-fields-filtered-out'), blueprint.id.toString());
-          }
+        })
+        uploader.blueprintData[blueprintID].extracted_data = extractedData;
+        if (nEntriesWithMissingFields === fileContent.length) {
+          axios.post(uploader.exceptionUrl, {'status_code': 4201, 'message': `No data extracted: Expected fields missing in ${nEntriesWithMissingFields}/${fileContent.length} entries.`}).catch(e => console.error(`Could not post error message, ${e}`))
+          uploader.recordError(uploader.$t('error-all-expected-fields-missing'), blueprint.id.toString());
+        }
+        else if (nEntriesFilteredOut === fileContent.length) {
+          axios.post(uploader.exceptionUrl, {'status_code': 4204, 'message': `No data extracted: All entries (${nEntriesFilteredOut}/${fileContent.length}) were filtered out.`}).catch(e => console.error(`Could not post error message, ${e}`))
+          uploader.recordError(uploader.$t('error-all-fields-filtered-out'), blueprint.id.toString());
+        }
+        else if ((nEntriesWithMissingFields + nEntriesFilteredOut) === fileContent.length) {
+          axios.post(uploader.exceptionUrl, {'status_code': 4205, 'message': `No data extracted: Expected fields missing in ${nEntriesWithMissingFields}/${fileContent.length} entries and ${nEntriesFilteredOut}/${fileContent.length} filtered out.`}).catch(e => console.error(`Could not post error message, ${e}`))
+          uploader.recordError(uploader.$t('error-all-fields-filtered-out'), blueprint.id.toString());
         }
       }
     },

@@ -1,5 +1,6 @@
 {% extends "ddm/public/base.html" %}
-{% load static %}
+{% load i18n static %}
+{% get_current_language as LANGUAGE_CODE %}
 {% load render_bundle from webpack_loader %}
 
 {% block extrahead %}
@@ -13,6 +14,7 @@
     <div id="qapp"
          data-questionnaire-config='{{ q_config }}'
          data-action-url='{{ request.build_absolute_uri }}'
+         data-language='{{ LANGUAGE_CODE|slice:"0:2"}}'
          class="text-black"
     >
       <qapp></qapp>

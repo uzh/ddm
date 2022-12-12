@@ -1,3 +1,5 @@
+<i18n src="./translations/questionnaire_app.json"></i18n>
+
 <template>
   <template v-for="(question, id) in parsedQuestConfig" :key="id">
     <div v-show="currentIndex === question.index">
@@ -72,7 +74,7 @@
           class="flow-btn"
           type="button"
           @click="next"
-      >Weiter&nbsp;&nbsp;&#8250;</button>
+      >{{ $t('next-btn-label') }}&nbsp;&nbsp;&#8250;</button>
     </div>
   </div>
 
@@ -99,17 +101,25 @@ export default {
   props: {
     questionnaireConfig: String,
     actionUrl: String,
+    language: String,
   },
   data() {
+    this.$i18n.locale = this.language;
     return {
       parsedQuestConfig: JSON.parse(this.questionnaireConfig),
       answers: {},
       currentIndex: 1,
-      maxIndex: 1
+      maxIndex: 1,
+      locale: this.language,
     }
   },
   created() {
     this.setMaxIndex();
+  },
+  watch: {
+    locale (val){
+      this.$i18n.locale = val
+    }
   },
   methods: {
     updateAnswers(e) {

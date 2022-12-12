@@ -62,7 +62,7 @@ class TestModelEncryption(TestData):
                 self.assertNotEqual(raw_data, qr.data)
                 self.assertEqual(raw_data, qr.get_decrypted_data())
 
-    def test_data_donation_encryption_custom(self):
+    def test_data_donation_encryption_super_secret(self):
         for raw_data in [self.raw_data_short, self.raw_data_long]:
             with self.subTest(raw_data=raw_data):
                 dd = DataDonation.objects.create(
@@ -74,9 +74,13 @@ class TestModelEncryption(TestData):
                     data=raw_data,
                 )
                 self.assertNotEqual(raw_data, dd.data)
-                self.assertEqual(raw_data, dd.get_decrypted_data())
+                with self.assertRaises(KeyError):
+                    dd.get_decrypted_data()
+                with self.assertRaises(ValueError):
+                    dd.get_decrypted_data(secret='invalidSecret1234')
+                self.assertEqual(raw_data, dd.get_decrypted_data(secret='test1234'))
 
-    def test_questionnaire_response_encryption_custom(self):
+    def test_questionnaire_response_encryption_super_secret(self):
         for raw_data in [self.raw_data_short, self.raw_data_long]:
             with self.subTest(raw_data=raw_data):
                 qr = QuestionnaireResponse.objects.create(
@@ -85,4 +89,8 @@ class TestModelEncryption(TestData):
                     data=raw_data
                 )
                 self.assertNotEqual(raw_data, qr.data)
-                self.assertEqual(raw_data, qr.get_decrypted_data())
+                with self.assertRaises(KeyError):
+                    qr.get_decrypted_data()
+                with self.assertRaises(ValueError):
+                    qr.get_decrypted_data(secret='invalidSecret1234')
+                self.assertEqual(raw_data, qr.get_decrypted_data(secret='test1234'))

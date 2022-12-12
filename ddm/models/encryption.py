@@ -23,11 +23,14 @@ class ModelWithEncryptedData(models.Model):
         ).encrypt(self.data)
         super().save(*args, **kwargs)
 
-    def get_decrypted_data(self):
+    def get_decrypted_data(self, *args, **kwargs):
         if not self.project.super_secret:
             return Encryption(secret=self.project.secret_key, salt=str(self.project.date_created)).decrypt(self.data)
         else:
-            return None
+            try:
+                return Encryption(secret=kwargs['secret'], salt=str(self.project.date_created)).decrypt(self.data)
+            except KeyError:
+                raise KeyError('Super secret project expects the custom secret to be passed in the argument "secret".')
 
 
 class Encryption:

@@ -130,7 +130,7 @@
         <div class="modal-body">
           <h4>Rule Configuration</h4>
           <div class="ddm-admin-form">
-            {% for field in form %}
+            {% for field in formset.empty_form %}
             {% if field.name in 'name,field,execution_order,input_type,comparison_operator,comparison_value' %}
             <p>
               {{ field.label_tag }}
@@ -180,19 +180,17 @@
     </tr>
   </table>
 
-  <table id="empty-form" style="display:none">
+  <div id="empty-form" class="ddm-admin-form" style="display:none">
     {% for field in formset.empty_form %}
     {% if field.name in 'name,field,execution_order,input_type,comparison_operator,comparison_value' %}
-    <tr>
-      <th>{{ field.label }}</th>
-      <td>
-        {{ field }}
-        {{ field.errors }}
-      </td>
-    </tr>
+    <p>
+      {{ field.label }}
+      {{ field }}
+      {{ field.errors }}
+    </p>
     {% endif %}
     {% endfor %}
-  </table>
+  </div>
 
   <input class="ddm-btn" type="submit" value="Save Blueprint">
 </form>

@@ -40,7 +40,6 @@ updateFieldValue = function( id ) {
  */
 $( "body" ).on("click", "button[class*='ddm-modal-ok']", function() {
   const current_id = $(this).attr("id").match(/\d/)[0];
-  console.log("hit ok")
   updateRuleDescription(current_id);
   updateFieldValue(current_id);
 });
@@ -70,16 +69,18 @@ $("#add-inline-form").on("click", function() {
     }
   });
   let formIdx;
+  console.log(IDs)
   if ( !IDs.length ) {
     formIdx = 1;
   } else {
     formIdx = Math.max(...IDs) + 1;
   }
+  console.log(formIdx)
 
   // Add new modal.
   let newModal = $("[id^=configuration-]").first().clone();
   newModal.attr("id", "configuration-" + formIdx );
-  newModal.find( "table" ).replaceWith($("#empty-form").html().replace(/__prefix__/g, formIdx));
+  newModal.find( ".ddm-admin-form" ).replaceWith($("#empty-form").html().replace(/__prefix__/g, formIdx));
   newModal.find( "button" ).attr("id", "ddm-modal-ok-" + formIdx );
   $("[id^=configuration-]").last().after(newModal);
 

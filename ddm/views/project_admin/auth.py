@@ -53,7 +53,7 @@ class DdmRegisterResearchProfileView(CreateView):
     """
     model = ResearchProfile
     form_class = ResearchProfileConfirmationForm
-    template_name = 'ddm/project_admin/generic/page_with_form.html'
+    template_name = 'ddm/project_admin/auth/confirm_profile.html'
     success_url = reverse_lazy('project-list')
 
     def dispatch(self, request, *args, **kwargs):

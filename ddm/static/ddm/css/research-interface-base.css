@@ -22,8 +22,11 @@
 }
 
 .ddm-nav-icon {
-    color: black !important;
-    font-size: 30px;
+    color: #1a1a1a !important;
+    font-size: 1.5rem;
+}
+.ddm-nav-icon:hover {
+    color: #4b4b4b !important;
 }
 
 .ddm-header {
@@ -79,6 +82,8 @@
 
 .ddm-form input[type=text],
 .ddm-form input[type=number],
+.ddm-form input[type=password],
+.ddm-form input[type=email],
 .ddm-form textarea {
     border-radius: 3px;
     border: 1px solid #ddd;
@@ -221,4 +226,34 @@
 
 .ddm-admin-form h5, h6 {
     margin-top: 2rem;
+}
+.ddm-btn-large {
+    background: linear-gradient(142deg, rgb(0, 156, 148) 0%, rgba(0, 156, 148, 0.8) 100%);
+    border-radius: 20px;
+    padding: 10px;
+    color: white !important;
+    border: 0px;
+}
+.ddm-btn-large:hover {
+    -webkit-filter: brightness(70%);
+}
+.auth-form {
+    font-size: 1rem !important;
+}
+.auth-form input {
+    width: 75% !important;
+    display: inline !important;
+}
+.auth-form input {
+    display: block !important;
+    margin-left: auto;
+    margin-right: auto;
+}
+.auth-form ul {
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+    font-size: 0.8rem;
+    color: gray;
 }

@@ -53,17 +53,12 @@ project_admin_patterns = [
 ]
 
 authentication_patterns = [
-    path(r'login/', project_admin.DdmLoginView.as_view(), name='ddm-login'),
-    path(r'logout/', project_admin.DdmLogoutView.as_view(), name='ddm-logout'),
-    path(r'register/', project_admin.DdmRegisterResearchProfileView.as_view(), name='ddm-register'),
-    path(r'create-user/', project_admin.DdmCreateUserView.as_view(), name='ddm-create-user'),
+    path(r'researcher/', project_admin.DdmRegisterResearchProfileView.as_view(), name='ddm-researcher'),
     path(r'no-permission/', project_admin.DdmNoPermissionView.as_view(), name='ddm-no-permission'),
 ]
 
 profile_patterns = [
     path(r'', project_admin.ProfileDetailView.as_view(), name='ddm-profile-detail'),
-    path(r'change-password/', project_admin.ProfileChangePasswordView.as_view(), name='ddm-change-pw'),
-    path(r'password-changed/', project_admin.ProfilePasswordChangedView.as_view(), name='ddm-pw-changed'),
 ]
 
 urlpatterns = [

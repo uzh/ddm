@@ -1,11 +1,9 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory, TextInput, Textarea
 
 from ddm.models.core import ResearchProfile, DonationProject, DonationBlueprint, ProcessingRule
-from ddm.auth import email_is_valid
 
 User = get_user_model()
 
@@ -38,30 +36,6 @@ class ProjectCreateForm(forms.ModelForm):
             project.secret_key = self.data['secret']
         project.save()
         return project
-
-
-class DdmUserCreationForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-
-    class Meta:
-        model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
-
-    def clean_email(self):
-        email = self.cleaned_data['email']
-        if not email_is_valid(email):
-            raise forms.ValidationError(
-                'Only researchers with a valid UZH e-mail address can register.'
-            )
-        return email
-
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.email = self.cleaned_data['email']
-        if commit:
-            user.save()
-            ResearchProfile.objects.create(user=user)
-        return user
 
 
 class ResearchProfileConfirmationForm(forms.ModelForm):

@@ -9,30 +9,25 @@
 {% block main_body %}
 
 <div class="container row justify-content-center">
-  <div class="col-5 text-center mt-5">
+  <div class="col-4 text-center mt-5">
     <div class="row">
       <img alt="Data Donation Module" height="100" alt="" src="{% static 'ddm/img/logos/DDM_Logo_Schwarz.svg' %}">
     </div>
 
     <div>
-      <h4>Data Donation Module</h4>
-      <p class="mt-4">Fill out the form to create a new user account.</p>
+      <h4>Data Donation Module Logout</h4>
+      <p class="mt-4">Are you sure you want to log out?</p>
     </div>
 
     <div class="row justify-content-center">
       <form method='post'>
         {% csrf_token %}
-        {{ form.media }}
 
         <div class="ddm-admin-form ddm-form auth-form">
           {{ form.as_p }}
-          <input class="ddm-btn-large mt-3 w-75" type="submit" value="Create Account">
+          <input class="ddm-btn-large mt-3 w-75" type="submit" value="Logout">
         </div>
       </form>
-    </div>
-
-    <div class="row mt-3 justify-content-center">
-      <a href="{% url 'ddm-login' %}">Already have an account? Login here.</a>
     </div>
 
   </div>

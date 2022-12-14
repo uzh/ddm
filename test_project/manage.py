@@ -20,7 +20,6 @@ sys.path.append(DDM_DIR)
 test_config = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_config.json')))
 
 # Define Database Configuration.
-
 if os.environ.get('DB') in ['mysql', 'postgres']:
     DB_CONFIG = {
         'default': {
@@ -129,7 +128,9 @@ settings.configure(
             'toolbar': 'Full',
             'allowedContent': True
         },
-    }
+    },
+    LOGIN_REDIRECT_URL='/auth/researcher/',
+    LOGOUT_REDIRECT_URL='/login/'
 )
 
 django.setup()

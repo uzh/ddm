@@ -29,7 +29,7 @@ class BaseAdminViewTestMixin:
     def test_user_without_profile_logged_in_redirects_to_registration_view(self):
         self.client.login(**self.users['no_profile']['credentials'])
         response = self.client.get(self.url, follow=True)
-        self.assertRedirects(response, reverse('ddm-register'))
+        self.assertRedirects(response, reverse('ddm-register-researcher'))
 
     def test_user_without_permission_logged_in_redirects_to_no_permission_view(self):
         if self.url in [reverse('project-list'), reverse('project-create')]:
@@ -227,7 +227,7 @@ class QuestionCreateViewTests(BaseAdminViewTestMixin, TestData):
         for slug in self.question_type_slugs:
             url = reverse('question-create', args=[self.project_base.pk, slug])
             response = self.client.get(url, follow=True)
-            self.assertRedirects(response, reverse('ddm-register'))
+            self.assertRedirects(response, reverse('ddm-register-researcher'))
 
     def test_user_without_permission_logged_in_redirects_to_no_permission_view(self):
         self.client.login(**self.users['no_permission']['credentials'])

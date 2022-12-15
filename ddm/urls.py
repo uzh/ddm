@@ -53,7 +53,7 @@ project_admin_patterns = [
 ]
 
 authentication_patterns = [
-    path(r'researcher/', project_admin.DdmRegisterResearchProfileView.as_view(), name='ddm-researcher'),
+    path(r'register/', project_admin.DdmRegisterResearchProfileView.as_view(), name='ddm-register-researcher'),
     path(r'no-permission/', project_admin.DdmNoPermissionView.as_view(), name='ddm-no-permission'),
 ]
 

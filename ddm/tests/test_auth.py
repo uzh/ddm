@@ -33,31 +33,15 @@ class TestAuthenticationFlow(TestData, TestCase):
         self.assertTrue(user_is_owner(self.users['base']['user'], dp.pk))
         self.assertFalse(user_is_owner(self.users['no_profile']['user'], dp.pk))
 
-    def test_login_redirect_without_profile(self):
-        response = self.client.post(
-            reverse('ddm-login'),
-            data=self.users['no_profile']['credentials'],
-            follow=True
-        )
-        self.assertRedirects(response, reverse('ddm-register'))
-
-    def test_login_redirect_with_profile(self):
-        response = self.client.post(
-            reverse('ddm-login'),
-            data=self.users['base']['credentials'],
-            follow=True
-        )
-        self.assertRedirects(response, reverse('project-list'))
-
     def test_register_redirect_with_profile(self):
         self.client.login(**self.users['base']['credentials'])
-        response = self.client.get(reverse('ddm-register'), follow=True)
+        response = self.client.get(reverse('ddm-register-researcher'), follow=True)
         self.assertRedirects(response, reverse('project-list'))
 
     def test_register_redirect_after_registration_form_valid(self):
         self.client.login(**self.users['no_profile']['credentials'])
         response = self.client.post(
-            reverse('ddm-register'),
+            reverse('ddm-register-researcher'),
             data={'confirmed': True, 'user': self.users['no_profile']['user'].pk},
             follow=True
         )
@@ -66,7 +50,7 @@ class TestAuthenticationFlow(TestData, TestCase):
     def test_register_redirect_after_registration_form_invalid(self):
         self.client.login(**self.users['no_profile']['credentials'])
         response = self.client.post(
-            reverse('ddm-register'),
+            reverse('ddm-register-researcher'),
             data={'confirmed': False, 'user': self.users['no_profile']['user'].pk},
             follow=True
         )
@@ -76,7 +60,7 @@ class TestAuthenticationFlow(TestData, TestCase):
         self.assertFalse(ResearchProfile.objects.filter(user=self.users['no_profile']['user']).exists())
         self.client.login(**self.users['no_profile']['credentials'])
         self.client.post(
-            reverse('ddm-register'),
+            reverse('ddm-register-researcher'),
             data={'confirmed': True, 'user': self.users['no_profile']['user'].pk},
             follow=True
         )
@@ -88,42 +72,8 @@ class TestAuthenticationFlow(TestData, TestCase):
             reverse('ddm-no-permission'), follow=True)
         self.assertEqual(response.status_code, 200)
 
-    def test_ddm_no_permission_view_redirect_to_login(self):
-        response = self.client.get(
-            reverse('ddm-no-permission'), follow=True)
-        self.assertRedirects(response, reverse('ddm-login'))
-
     def test_ddm_no_permission_view_redirect_to_project_list(self):
         self.client.login(**self.users['base']['credentials'])
         response = self.client.get(
             reverse('ddm-no-permission'), follow=True)
         self.assertRedirects(response, reverse('project-list'))
-
-    def test_create_user_view_redirect_authenticated_with_profile(self):
-        self.client.login(**self.users['base']['credentials'])
-        response = self.client.get(
-            reverse('ddm-create-user'), follow=True)
-        self.assertRedirects(response, reverse('project-list'))
-
-    def test_create_user_view_redirect_authenticated_without_profile(self):
-        self.client.login(**self.users['no_profile']['credentials'])
-        response = self.client.get(
-            reverse('ddm-create-user'), follow=True)
-        self.assertRedirects(response, reverse('ddm-register'))
-
-    def test_create_user_view_creates_user_and_profile(self):
-        self.assertFalse(User.objects.filter(email='new@mail.com').exists())
-        self.assertFalse(ResearchProfile.objects.filter(user__email='new@mail.com').exists())
-        response = self.client.post(
-            reverse('ddm-create-user'),
-            data={'username': 'new_user', 'email': 'new@mail.com',
-                  'password1': 'Z-6THLAqmd7H5gyUs.8dZt', 'password2': 'Z-6THLAqmd7H5gyUs.8dZt'},
-            follow=True
-        )
-        self.assertTrue(User.objects.filter(email='new@mail.com').exists())
-        self.assertTrue(ResearchProfile.objects.filter(user__email='new@mail.com').exists())
-        self.assertRedirects(response, reverse('ddm-login'))
-
-    def test_logout_view_redirect_not_logged_in(self):
-        response = self.client.get(reverse('ddm-logout'), follow=True)
-        self.assertRedirects(response, reverse('ddm-login'))

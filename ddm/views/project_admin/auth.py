@@ -1,6 +1,4 @@
-from django.contrib.auth import views as auth_views
 from django.contrib.auth import get_user_model
-from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import reverse, redirect
 from django.urls import reverse_lazy
@@ -31,7 +29,7 @@ class DdmAuthMixin:
             elif not user_is_permitted(request.user):
                 return redirect('ddm-no-permission')
             elif not ResearchProfile.objects.filter(user=request.user).exists():
-                return redirect('ddm-register')
+                return redirect('ddm-register-researcher')
             else:
                 if request.path not in [reverse('project-list'), reverse('project-create')]:
                     if 'project_pk' in self.kwargs:

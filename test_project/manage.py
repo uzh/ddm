@@ -129,7 +129,7 @@ settings.configure(
             'allowedContent': True
         },
     },
-    LOGIN_REDIRECT_URL='/auth/researcher/',
+    LOGIN_REDIRECT_URL='/auth/register/',
     LOGOUT_REDIRECT_URL='/login/'
 )
 

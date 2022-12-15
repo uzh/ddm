@@ -57,15 +57,10 @@ authentication_patterns = [
     path(r'no-permission/', project_admin.DdmNoPermissionView.as_view(), name='ddm-no-permission'),
 ]
 
-profile_patterns = [
-    path(r'', project_admin.ProfileDetailView.as_view(), name='ddm-profile-detail'),
-]
-
 urlpatterns = [
     path(r'<slug:slug>/', include(participation_flow_patterns)),
     path(r'projects/', include(project_admin_patterns)),
     path(r'auth/', include(authentication_patterns)),
-    path(r'profile/', include(profile_patterns)),
     path(r'<int:pk>/download/', ProjectDataView.as_view(), name='ddm-download-api'),
     path(r'<int:pk>/exceptions', ExceptionAPI.as_view(), name='ddm-exceptions-api'),
 ]

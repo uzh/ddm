@@ -1,0 +1,45 @@
+{% extends 'ddm/admin/base.html' %}
+
+{% load static %}
+
+{% block page_title %}Data Donation Module: Login{% endblock %}
+
+{% block header %}{% endblock header %}
+
+{% block main_body %}
+<div class="container row justify-content-center">
+  <div class="col-6 text-center mt-5">
+    <div class="row">
+      <img alt="Data Donation Module" height="100" alt="" src="{% static 'ddm/img/logos/DDM_Logo_Schwarz.svg' %}">
+    </div>
+
+    <div>
+      <h4>Data Donation Module</h4>
+      <div class="mt-4">
+        {% block terms_of_use %}
+        Before you can continue to use DDM, please take note of the following:
+
+        <ul>
+          <li>The operator assumes no liability for the actions of its users.</li>
+          <li>the operator assumes no liability for XY.</li>
+        </ul>
+
+        By clicking on "I agree" below you agree with these terms of use.
+        {% endblock terms_of_use %}
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <form method='post'>
+        {% csrf_token %}
+
+        <div class="ddm-admin-form ddm-form auth-form">
+          {{ form.as_p }}
+          <input class="ddm-btn-large mt-3 w-75" type="submit" value="I agree">
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

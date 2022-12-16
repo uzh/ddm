@@ -14,7 +14,7 @@ from ddm.views.project_admin.auth import DdmAuthMixin
 class ProjectList(DdmAuthMixin, ListView):
     """ View to display a list of existing donation projects. """
     model = DonationProject
-    template_name = 'ddm/project_admin/project/list.html'
+    template_name = 'ddm/admin/project/list.html'
 
     def get_queryset(self):
         return DonationProject.objects.filter(owner__user=self.request.user)
@@ -23,7 +23,7 @@ class ProjectList(DdmAuthMixin, ListView):
 class ProjectCreate(SuccessMessageMixin, DdmAuthMixin, CreateView):
     """ View to create a new donation project. """
     model = DonationProject
-    template_name = 'ddm/project_admin/project/create.html'
+    template_name = 'ddm/admin/project/create.html'
     form_class = ProjectCreateForm
     success_message = 'Project was created successfully.'
 
@@ -40,13 +40,13 @@ class ProjectCreate(SuccessMessageMixin, DdmAuthMixin, CreateView):
 class ProjectDetail(DdmAuthMixin, DetailView):
     """ View to display landing page for project. """
     model = DonationProject
-    template_name = 'ddm/project_admin/project/detail.html'
+    template_name = 'ddm/admin/project/detail.html'
 
 
 class ProjectEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     """ View to edit the details of an existing donation project. """
     model = DonationProject
-    template_name = 'ddm/project_admin/project/edit.html'
+    template_name = 'ddm/admin/project/edit.html'
     fields = [
         'name', 'slug', 'contact_information', 'data_protection_statement',
         'url_parameter_enabled', 'expected_url_parameters',
@@ -58,7 +58,7 @@ class ProjectEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
 class ProjectDelete(DdmAuthMixin, DeleteView):
     """ View to display a list of existing donation projects. """
     model = DonationProject
-    template_name = 'ddm/project_admin/project/delete.html'
+    template_name = 'ddm/admin/project/delete.html'
     success_url = reverse_lazy('project-list')
     success_message = 'Project was deleted.'
 
@@ -70,7 +70,7 @@ class ProjectDelete(DdmAuthMixin, DeleteView):
 class WelcomePageEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     """ View to edit the welcome page. """
     model = DonationProject
-    template_name = 'ddm/project_admin/project/edit-welcome.html'
+    template_name = 'ddm/admin/project/edit-welcome.html'
     fields = ['intro_text']
     success_message = 'Welcome Page successfully updated.'
 
@@ -78,7 +78,7 @@ class WelcomePageEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
 class EndPageEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     """ View to edit the welcome page. """
     model = DonationProject
-    template_name = 'ddm/project_admin/project/edit-end.html'
+    template_name = 'ddm/admin/project/edit-end.html'
     fields = ['outro_text']
     success_message = 'End Page successfully updated.'
 
@@ -86,7 +86,7 @@ class EndPageEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
 class ExceptionList(SuccessMessageMixin, DdmAuthMixin, ListView):
     """ View that lists all exceptions related to a project. """
     model = ExceptionLogEntry
-    template_name = 'ddm/project_admin/project/exceptions.html'
+    template_name = 'ddm/admin/project/exceptions.html'
     context_object_name = 'exceptions'
 
     def get_queryset(self):

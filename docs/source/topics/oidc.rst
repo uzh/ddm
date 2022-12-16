@@ -23,7 +23,7 @@ For authentication to work properly make sure you have the following defined in 
         path('logout/', auth_views.LogoutView.as_view(), name='ddm-logout'),
     ]
 
-Either, you define your own template ('myapp/login.html') or you can reuse or customize the default DDM login template ('ddm/project_admin/auth/login.html' or 'ddm/project_admin/auth/login_oidc.html' if you use OIDC authentication).
+Either, you define your own template ('myapp/login.html') or you can reuse or customize the default DDM login template ('ddm/admin/auth/login.html' or 'ddm/admin/auth/login_oidc.html' if you use OIDC authentication).
 
 2. Proper redirect paths in your settings.py::
 

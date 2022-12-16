@@ -26,7 +26,7 @@ class ProjectBlueprintList(DdmAuthMixin, BlueprintMixin, ListView):
     """ View to list all donation blueprints associated with a project. """
     model = DonationBlueprint
     context_object_name = 'donation_blueprints'
-    template_name = 'ddm/project_admin/blueprint/list.html'
+    template_name = 'ddm/admin/blueprint/list.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -43,7 +43,7 @@ class ProjectBlueprintList(DdmAuthMixin, BlueprintMixin, ListView):
 class BlueprintCreate(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, CreateView):
     """ View to create a new donation blueprint. """
     model = DonationBlueprint
-    template_name = 'ddm/project_admin/blueprint/create.html'
+    template_name = 'ddm/admin/blueprint/create.html'
     fields = ['name', 'exp_file_format']
     success_message = 'Blueprint was created successfully.'
 
@@ -55,7 +55,7 @@ class BlueprintCreate(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, CreateV
 class BlueprintEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, UpdateView):
     """ View to edit the details of an existing donation blueprint. """
     model = DonationBlueprint
-    template_name = 'ddm/project_admin/blueprint/edit.html'
+    template_name = 'ddm/admin/blueprint/edit.html'
     form_class = BlueprintEditForm
     success_message = 'Blueprint "%(name)s" was successfully updated.'
 
@@ -93,7 +93,7 @@ class BlueprintEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, UpdateVie
 class BlueprintDelete(DdmAuthMixin, BlueprintMixin, DeleteView):
     """ View to delete an existing donation blueprint. """
     model = DonationBlueprint
-    template_name = 'ddm/project_admin/blueprint/delete.html'
+    template_name = 'ddm/admin/blueprint/delete.html'
     success_message = 'Blueprint "%s" was deleted.'
 
     def delete(self, request, *args, **kwargs):
@@ -104,7 +104,7 @@ class BlueprintDelete(DdmAuthMixin, BlueprintMixin, DeleteView):
 class BlueprintContainerCreate(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, CreateView):
     """ View to create a new blueprint container. """
     model = BlueprintContainer
-    template_name = 'ddm/project_admin/blueprint/create.html'
+    template_name = 'ddm/admin/blueprint/create.html'
     fields = ['name']
     success_message = 'Blueprint Container was created successfully.'
 
@@ -116,7 +116,7 @@ class BlueprintContainerCreate(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin
 class BlueprintContainerEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, UpdateView):
     """ View to edit the details of an existing blueprint container. """
     model = BlueprintContainer
-    template_name = 'ddm/project_admin/blueprint/edit_container.html'
+    template_name = 'ddm/admin/blueprint/edit_container.html'
     fields = ['name']
     success_message = 'Blueprint container "%(name)s" was successfully updated.'
 
@@ -124,7 +124,7 @@ class BlueprintContainerEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, 
 class BlueprintContainerDelete(DdmAuthMixin, BlueprintMixin, DeleteView):
     """ View to delete an existing blueprint container. """
     model = BlueprintContainer
-    template_name = 'ddm/project_admin/blueprint/delete.html'
+    template_name = 'ddm/admin/blueprint/delete.html'
     success_message = 'Blueprint container "%s" was deleted.'
 
     def delete(self, request, *args, **kwargs):
@@ -162,7 +162,7 @@ class InstructionOverview(DdmAuthMixin, InstructionMixin, ListView):
     """ View to create a new instruction page. """
     model = DonationInstruction
     context_object_name = 'instructions'
-    template_name = 'ddm/project_admin/instructions/list.html'
+    template_name = 'ddm/admin/instructions/list.html'
     fields = ['text', 'index']
 
     def get_queryset(self):
@@ -179,7 +179,7 @@ class InstructionOverview(DdmAuthMixin, InstructionMixin, ListView):
 class InstructionCreate(SuccessMessageMixin, DdmAuthMixin, InstructionMixin, CreateView):
     """ View to create an instruction page. """
     model = DonationInstruction
-    template_name = 'ddm/project_admin/instructions/create.html'
+    template_name = 'ddm/admin/instructions/create.html'
     fields = ['text', 'index']
     success_message = 'Instruction page was successfully created.'
 
@@ -212,7 +212,7 @@ class InstructionCreate(SuccessMessageMixin, DdmAuthMixin, InstructionMixin, Cre
 class InstructionEdit(SuccessMessageMixin, DdmAuthMixin, InstructionMixin, UpdateView):
     """ View to edit an instruction page. """
     model = DonationInstruction
-    template_name = 'ddm/project_admin/instructions/edit.html'
+    template_name = 'ddm/admin/instructions/edit.html'
     fields = ['text', 'index']
     success_message = 'Instruction page was successfully updated.'
 
@@ -220,7 +220,7 @@ class InstructionEdit(SuccessMessageMixin, DdmAuthMixin, InstructionMixin, Updat
 class InstructionDelete(DdmAuthMixin, InstructionMixin, DeleteView):
     """ View to delete an instruction page. """
     model = DonationInstruction
-    template_name = 'ddm/project_admin/instructions/delete.html'
+    template_name = 'ddm/admin/instructions/delete.html'
     success_message = 'Instruction page was deleted.'
 
     def delete(self, request, *args, **kwargs):

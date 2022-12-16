@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+</body>
+</html>{% extends 'ddm/admin/base.html' %}
+
+{% load static %}
+
+{% block page_title %}Data Donation Module: Login{% endblock %}
+
+{% block header %}{% endblock header %}
+
+{% block main_body %}
+
+<div class="container row justify-content-center">
+  <div class="col-4 text-center mt-5">
+    <div class="row">
+      <img alt="Data Donation Module" height="100" alt="" src="{% static 'ddm/img/logos/DDM_Logo_Schwarz.svg' %}">
+    </div>
+
+    <div>
+      <h4>Data Donation Module Login</h4>
+      <p class="mt-4">
+        {% block introduction %}
+        This instance of DDM uses an OIDC provider to authenticate users.
+        You can login or register an account by clicking on the button below.
+        {% endblock introduction %}
+      </p>
+    </div>
+
+    <div class="row mt-3 justify-content-center">
+      <a class="ddm-btn-large mt-3 w-75" href="{% url 'oidc_authentication_init' %}">{% block submit_label %}Login or register{% endblock submit_label %}</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

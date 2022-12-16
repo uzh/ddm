@@ -1,0 +1,61 @@
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DDM: {% block page_title %}Title{% endblock %}</title>
+
+  <link rel="stylesheet" href="{% static 'ddm/css/bootstrap/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'ddm/css/ddm-base.css' %}">
+  <link rel="stylesheet" href="{% static 'ddm/css/research-interface-base.css' %}">
+  <link rel="stylesheet" href="{% static 'ddm/css/bootstrap/bootstrap-icons.css' %}">
+  {% block extrahead %}{% endblock %}
+</head>
+
+<body class="research-interface">
+
+{% block header %}
+  <div class="ddm-header">
+    <div class="container fs-6 fw-light">
+    {% include "ddm/admin/components/header.html" %}
+    </div>
+  </div>
+{% endblock %}
+
+<div class="ddm-breadcrumbs container mt-3 mb-3 fw-light">
+  {% block breadcrumbs %}
+  {% endblock %}
+</div>
+
+<div class="ddm-message-container container">
+  {% if messages %}
+  {% for message in messages %}
+  <div id="message-{{ forloop.counter }}" class="ddm-message d-flex justify-content-between space-between {% if message.tags %} {{ message.tags }}{% endif %}">
+    <div>{{ message }}</div>
+    <div><a class="ddm-message-close" href="#" onclick="closeMessage('message-{{ forloop.counter }}');">&#128941;</a></div>
+  </div>
+  {% endfor %}
+  {% endif %}
+</div>
+
+<div class="ddm-main container mt-4">
+  <h1>{% block main_heading %}{% endblock %}</h1>
+
+  <div>
+    {% block main_body %}{% endblock %}
+  </div>
+</div>
+
+{% block footer %}
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'ddm/js/jquery-3.6.2.min.js' %}"></script>
+<script src="{% static 'ddm/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'ddm/js/project-admin-base.js' %}"></script>
+{% endblock %}
+
+</body>
+
+</html>

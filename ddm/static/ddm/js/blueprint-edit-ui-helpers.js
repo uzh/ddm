@@ -69,19 +69,18 @@ $("#add-inline-form").on("click", function() {
     }
   });
   let formIdx;
-  console.log(IDs)
   if ( !IDs.length ) {
     formIdx = 1;
   } else {
     formIdx = Math.max(...IDs) + 1;
   }
-  console.log(formIdx)
 
   // Add new modal.
   let newModal = $("[id^=configuration-]").first().clone();
   newModal.attr("id", "configuration-" + formIdx );
   newModal.find( ".ddm-admin-form" ).replaceWith($("#empty-form").html().replace(/__prefix__/g, formIdx));
   newModal.find( "button" ).attr("id", "ddm-modal-ok-" + formIdx );
+  newModal.find("input[id*='execution_order']").val(formIdx + 1);
   $("[id^=configuration-]").last().after(newModal);
 
   // Add new form placeholder.
@@ -90,4 +89,7 @@ $("#add-inline-form").on("click", function() {
 
   // Update management form.
   $("#id_processingrule_set-TOTAL_FORMS").val(parseInt(formIdx) + 1);
+
+  // Open modal.
+  newModal.modal("toggle");
 });

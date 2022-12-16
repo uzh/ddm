@@ -257,3 +257,7 @@
     font-size: 0.8rem;
     color: gray;
 }
+
+.django-ckeditor-widget {
+    display: block !important;
+}

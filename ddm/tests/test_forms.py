@@ -18,6 +18,7 @@ class TestProjectCreateForm(TestCase):
     def test_form_creates_normal_project(self):
         post_data = {'name': 'normal project', 'slug': 'normal-project',
                      'super_secret': False, 'secret': 'supersecretsecret',
+                     'contact_information': 'abc', 'data_protection_statement': 'abc',
                      'owner': self.user_profile}
         form = ProjectCreateForm(post_data)
         project = form.save()
@@ -26,6 +27,8 @@ class TestProjectCreateForm(TestCase):
     def test_form_creates_super_secret_project(self):
         post_data = {'name': 'secret-project', 'slug': 'secret-project',
                      'super_secret': True, 'secret': 'supersecretsecret',
+                     'secret_confirm': 'supersecretsecret',
+                     'contact_information': 'abc', 'data_protection_statement': 'abc',
                      'owner': self.user_profile}
         form = ProjectCreateForm(post_data)
         project = form.save()

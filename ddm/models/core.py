@@ -47,8 +47,28 @@ class DonationProject(models.Model):
     slug = models.SlugField(unique=True, verbose_name='External Project Slug')
     intro_text = RichTextField(null=True, blank=True, verbose_name='Welcome Page Text')
     outro_text = RichTextField(null=True, blank=True, verbose_name='End Page Text')
-    contact_information = RichTextField(null=True, blank=False, verbose_name='Contact information')
-    data_protection_statement = RichTextField(null=True, blank=False, verbose_name='Data Protection Statement')
+
+    contact_information = RichTextField(
+        null=True,
+        blank=False,
+        verbose_name='Contact information',
+        help_text=(
+            'Please provide the contact information of the person responsible '
+            'for the conduction of this study. The contact information will be '
+            'accessible for participants during the data donation.'
+        )
+    )
+
+    data_protection_statement = RichTextField(
+        null=True,
+        blank=False,
+        verbose_name='Data Protection Statement',
+        help_text=(
+            'Please provide a data protection statement for your data donation '
+            'collection. This should include the purpose for which the data is '
+            'collected, how it will be stored, and who will have access to the data.'
+        )
+    )
 
     date_created = models.DateTimeField(default=timezone.now)
 

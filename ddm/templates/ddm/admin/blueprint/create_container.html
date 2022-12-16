@@ -1,14 +1,14 @@
 {% extends 'ddm/admin/generic/page_with_form.html' %}
 
-{% block page_title %}Create New Donation Blueprint{% endblock %}
+{% block page_title %}Create New Blueprint Container{% endblock %}
 
-{% block main_heading %}Create New Donation Blueprint{% endblock %}
+{% block main_heading %}Create New Donation Blueprint Container{% endblock %}
 
-{% block submit_label %}Create Donation Blueprint{% endblock %}
+{% block submit_label %}Create Blueprint Container{% endblock %}
 
 {% block breadcrumbs %}
 <a href="{% url 'project-list' %}">Projects</a> /
 <a href="{% url 'project-detail' project_pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
 <a href="{% url 'blueprint-list' project_pk %}">Data Donation</a> /
-Create Donation Blueprint
+Create Blueprint Container
 {% endblock %}

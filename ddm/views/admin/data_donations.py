@@ -104,7 +104,7 @@ class BlueprintDelete(DdmAuthMixin, BlueprintMixin, DeleteView):
 class BlueprintContainerCreate(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, CreateView):
     """ View to create a new blueprint container. """
     model = BlueprintContainer
-    template_name = 'ddm/admin/blueprint/create.html'
+    template_name = 'ddm/admin/blueprint/create_container.html'
     fields = ['name']
     success_message = 'Blueprint Container was created successfully.'
 
@@ -124,7 +124,7 @@ class BlueprintContainerEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, 
 class BlueprintContainerDelete(DdmAuthMixin, BlueprintMixin, DeleteView):
     """ View to delete an existing blueprint container. """
     model = BlueprintContainer
-    template_name = 'ddm/admin/blueprint/delete.html'
+    template_name = 'ddm/admin/blueprint/delete_container.html'
     success_message = 'Blueprint container "%s" was deleted.'
 
     def delete(self, request, *args, **kwargs):

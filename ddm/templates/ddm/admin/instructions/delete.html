@@ -1,6 +1,6 @@
 {% extends 'ddm/admin/generic/page_with_form.html' %}
 
-{% block page_title %}Delete Instruction{% endblock %}
+{% block page_title %}Delete Instruction Page{% endblock %}
 
 {% block main_heading %}Delete Instruction Page{% endblock %}
 
@@ -42,7 +42,12 @@
 {% block breadcrumbs %}
 <a href="{% url 'project-list' %}">Projects</a> /
 <a href="{% url 'project-detail' project_pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
-<a href="{% url 'blueprint-list' blueprint.project.pk %}">"{{ blueprint.name|truncatechars:15 }}" Blueprint</a> /
+<a href="{% url 'blueprint-list' blueprint.project.pk %}">Data Donation</a> /
+{% if blueprint.get_slug == "blueprint-container" %}
+<a href="{% url 'blueprint-container-edit' blueprint.project.pk blueprint.pk %}">Blueprint Container "{{ blueprint.name|truncatechars:15 }}"</a> /
+{% else %}
+<a href="{% url 'blueprint-edit' blueprint.project.pk blueprint.pk %}">Donation Blueprint "{{ blueprint.name|truncatechars:15 }}"</a> /
+{% endif %}
 <a href="{% url 'instruction-overview' project_pk blueprint.get_slug blueprint.pk %}">Instructions</a> /
 Delete Instruction Page
 {% endblock %}

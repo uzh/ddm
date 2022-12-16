@@ -2,10 +2,18 @@
 
 {% block page_title %}Data Donation Setup{% endblock %}
 
-{% block main_heading %}Data Donation Blueprints{% endblock %}
+{% block main_heading %}Data Donation Setup{% endblock %}
 
 {% block main_body %}
 <div class="ddm-admin-section">
+  <div class="w-75">
+    <p>The data donation setup is built around so-called Donation Blueprints and Blueprint Containers.</p>
+    <p><b>Donation Blueprint:</b> A Donation Blueprint relates to a single file (e.g., a .json or a .csv file) and defines the data validation and data extraction steps for this file.</p>
+    <p><b>Blueprint Container:</b> Multiple Donation Blueprints can be bundled into a Blueprint Container if participants are expected to upload a zip-container that contains one or several relevant files.
+      If a Blueprint Container is uploaded, it will then try to match the files contained within the container to one of the Donation Blueprints.
+      If a match is found, the data in the file will be extracted based on the rules defined in the donation blueprint.
+    </p>
+  </div>
   <div class="ddm-admin-section-header">Donation Blueprints</div>
   <div class="ddm-admin-section-body">
     <table class="table">
@@ -81,5 +89,5 @@
 {% block breadcrumbs %}
 <a href="{% url 'project-list' %}">Projects</a> /
 <a href="{% url 'project-detail' project_pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
-Donation Blueprints
+Data Donation
 {% endblock %}

@@ -7,7 +7,7 @@ from django.views.generic.list import ListView
 
 from ddm.forms import BlueprintEditForm, ProcessingRuleInlineFormset
 from ddm.models.core import DonationBlueprint, BlueprintContainer, DonationInstruction, DonationProject
-from ddm.views.project_admin import DdmAuthMixin
+from ddm.views.admin import DdmAuthMixin
 
 
 class BlueprintMixin:

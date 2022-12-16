@@ -8,7 +8,7 @@ from django.views.generic.list import ListView
 from ddm.forms import ProjectCreateForm
 from ddm.models.core import DonationProject, ResearchProfile
 from ddm.models.exceptions import ExceptionLogEntry
-from ddm.views.project_admin.auth import DdmAuthMixin
+from ddm.views.admin.auth import DdmAuthMixin
 
 
 class ProjectList(DdmAuthMixin, ListView):

@@ -8,28 +8,20 @@
 <form method='post'>
   {% csrf_token %}
   <p>You are about to delete the following project:</p>
-  <div>
-    <table>
-      <tr>
-        <td>Name:</td>
-        <td>{{ object.name }}</td>
-      </tr>
-      <tr>
-        <td>Slug:</td>
-        <td>{{ object.slug }}</td>
-      </tr>
-      <tr>
-        <td>Intro Text:</td>
-        <td>{{ object.intro_text }}</td>
-      </tr>
-      <tr>
-        <td>Outro Text:</td>
-        <td>{{ object.outro_text }}</td>
-      </tr>
-    </table>
+  <div class="ddm-admin-form">
+    <p>
+      <label>Name:</label>
+      {{ object.name }}
+    </p>
+    <p>
+      <label>Slug:</label>
+      {{ object.slug }}
+    </p>
   </div>
-  <p>All collected data associated with this project will also be deleted. <b>This action cannot be reversed.</b></p>
-  <p>Are you sure you want to delete this project?</p>
+  <div class="mt-4">
+    <p>All collected data associated with this project will also be deleted. <b>This action cannot be reversed.</b></p>
+    <p>Are you sure you want to delete this project?</p>
+  </div>
   <input class="ddm-btn ddm-btn-red" type="submit" value="Delete project">
 </form>
 {% endblock %}

@@ -51,7 +51,11 @@ class QuestionBase(PolymorphicModel):
     text = RichTextField(null=True, blank=True)
     required = models.BooleanField(default=False)
 
+    # Fix for issue with django-polymorphic (see https://github.com/django-polymorphic/django-polymorphic/issues/34#issuecomment-1027866872)
+    non_polymorphic = models.Manager()
+
     class Meta:
+        base_manager_name = 'non_polymorphic'
         ordering = ['index']
         constraints = [
             models.UniqueConstraint(

@@ -45,7 +45,9 @@ class QuestionBase(PolymorphicModel):
 
     variable_name = models.SlugField(
         max_length=50,
-        null=False
+        null=False,
+        verbose_name='Variable name for storing response',
+        help_text='Will be used in the data export to identify responses to this question.'
     )
 
     text = RichTextField(null=True, blank=True)

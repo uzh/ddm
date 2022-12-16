@@ -1,17 +1,18 @@
 {% extends 'ddm/admin/generic/page_with_form.html' %}
+{% load static %}
 
 {% block extrahead %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.21.0/bootstrap-table.min.css" integrity="sha512-MkfcmT4F14hakMqtLd5lCuNaXdgeznbYwseYG7zi9pmhkJI8WzRCHpD+JxsPxzMg6kLyeBlIo+/maPjMaTR9cQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.21.0/extensions/filter-control/bootstrap-table-filter-control.min.css" integrity="sha512-PH3qxl+JPBwdNrBJ96XEJkg6m0QOfcwCQ+J0WGeX7cdswUTuZchiMbOfKFhVg7UsArWIjrS2Huiztn2M5ZBqLw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="{% static 'ddm/css/bootstrap/bootstrap-table.min.css' %}">
+<link rel="stylesheet" href="{% static 'ddm/css/bootstrap/bootstrap-table-filter-control.min.css' %}">
 {% endblock %}
 
 {% block scripts %}
 {{ block.super }}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js" integrity="sha512-Qlv6VSKh1gDKGoJbnyA5RMXYcvnpIqhO++MhIM2fStMcGT9i2T//tSwYFlcyoRRDcDZ+TYHpH8azBBCyhpSeqw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.26.0/tableExport.min.js" integrity="sha256-8k+gF3L9PHG0bYC50NpoTNBAKTUGy6A/pP3Zj2yUI7g=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.21.0/bootstrap-table.min.js" integrity="sha512-8JddYoIn6+h0+4MnsOOOdmeafsuaa3Dd09Ouom5zaN85QFPzLZrE7v6ICWO5wNWwLJAiOzmA6JL3QrPl5cjKtw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.21.0/extensions/filter-control/bootstrap-table-filter-control.min.js" integrity="sha512-WsGrj8AwmRAhe+HC+egj7wwp304Z8MR+B/cUOE7lI259LfCBivIlFwaKD56M9GYAULE6Rkvug/f7ww6YZaXBiA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.21.0/extensions/export/bootstrap-table-export.min.js" integrity="sha512-tpNXR6peBB3JocCaeOs3vlLYMIkdcolWoM4pWhjLJnF+RlRj8ato/oM5j5K3w/Ff/yUbSLhQjcbonayCpMmJVA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="{% static 'ddm/js/filesaver/FileSaver.min.js' %}"></script>
+<script src="{% static 'ddm/js/jquery/tableExport.min.js' %}"></script>
+<script src="{% static 'ddm/js/bootstrap/bootstrap-table.min.js' %}"></script>
+<script src="{% static 'ddm/js/bootstrap/bootstrap-table-filter-control.min.js' %}"></script>
+<script src="{% static 'ddm/js/bootstrap/bootstrap-table-export.min.js' %}"></script>
 {% endblock %}
 
 {% block page_title %}Project Exceptions{% endblock %}

@@ -1,3 +1,3 @@
 from .participation_flow import (
-    EntryView, DataDonationView, QuestionnaireView, ExitView
+    BriefingView, DataDonationView, QuestionnaireView, DebriefingView
 )

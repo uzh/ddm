@@ -30,10 +30,10 @@ class ParticipationFlowBaseView(DetailView):
     model = DonationProject
     context_object_name = 'project'
     steps = [
-        'project-entry',
+        'briefing',
         'data-donation',
         'questionnaire',
-        'project-exit'
+        'debriefing'
     ]
     view_name = None
     current_step = None
@@ -163,9 +163,9 @@ class ParticipationFlowBaseView(DetailView):
                         slug=self.object.slug)
 
 
-class EntryView(ParticipationFlowBaseView):
-    template_name = 'ddm/public/entry_page.html'
-    view_name = 'project-entry'
+class BriefingView(ParticipationFlowBaseView):
+    template_name = 'ddm/public/briefing.html'
+    view_name = 'briefing'
 
     def extra_before_render(self, request):
         """ Extract URL parameters if this option has been enabled. """
@@ -349,9 +349,9 @@ class QuestionnaireView(ParticipationFlowBaseView):
         )
 
 
-class ExitView(ParticipationFlowBaseView):
-    template_name = 'ddm/public/end.html'
-    view_name = 'project-exit'
+class DebriefingView(ParticipationFlowBaseView):
+    template_name = 'ddm/public/debriefing.html'
+    view_name = 'debriefing'
 
     def get_context_data(self, **kwargs):
         """ Inject url parameters in redirect target. """

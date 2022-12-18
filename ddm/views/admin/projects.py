@@ -67,18 +67,18 @@ class ProjectDelete(DdmAuthMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-class WelcomePageEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
-    """ View to edit the welcome page. """
+class BriefingEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
+    """ View to edit the briefing page. """
     model = DonationProject
-    template_name = 'ddm/admin/project/edit-welcome.html'
+    template_name = 'ddm/admin/project/edit-briefing.html'
     fields = ['intro_text']
     success_message = 'Welcome Page successfully updated.'
 
 
-class EndPageEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
-    """ View to edit the welcome page. """
+class DebriefingEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
+    """ View to edit the debriefing page. """
     model = DonationProject
-    template_name = 'ddm/admin/project/edit-end.html'
+    template_name = 'ddm/admin/project/edit-debriefing.html'
     fields = ['outro_text']
     success_message = 'End Page successfully updated.'
 

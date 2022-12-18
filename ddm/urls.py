@@ -6,10 +6,10 @@ from ddm.views.download_api import ProjectDataView
 
 
 participation_flow_patterns = [
-    path(r'intro/', participation_flow.EntryView.as_view(), name='project-entry'),
+    path(r'briefing/', participation_flow.BriefingView.as_view(), name='briefing'),
     path(r'data-donation/', participation_flow.DataDonationView.as_view(), name='data-donation'),
     path(r'questionnaire/', participation_flow.QuestionnaireView.as_view(), name='questionnaire'),
-    path(r'end/', participation_flow.ExitView.as_view(), name='project-exit')
+    path(r'debriefing/', participation_flow.DebriefingView.as_view(), name='debriefing')
 ]
 
 question_patterns = [
@@ -45,8 +45,8 @@ admin_patterns = [
     path(r'<int:pk>/', admin.ProjectDetail.as_view(), name='project-detail'),
     path(r'<int:pk>/edit/', admin.ProjectEdit.as_view(), name='project-edit'),
     path(r'<int:pk>/delete/', admin.ProjectDelete.as_view(), name='project-delete'),
-    path(r'<int:pk>/welcome-page/', admin.WelcomePageEdit.as_view(), name='welcome-page-edit'),
-    path(r'<int:pk>/end-page/', admin.EndPageEdit.as_view(), name='end-page-edit'),
+    path(r'<int:pk>/briefing/', admin.BriefingEdit.as_view(), name='briefing-edit'),
+    path(r'<int:pk>/debriefing/', admin.DebriefingEdit.as_view(), name='debriefing-edit'),
     path(r'<int:project_pk>/questionnaire/', include(question_patterns)),
     path(r'<int:project_pk>/donation-blueprints/', include(blueprint_patterns)),
     path(r'<int:project_pk>/exceptions/', admin.ExceptionList.as_view(), name='project-exceptions'),

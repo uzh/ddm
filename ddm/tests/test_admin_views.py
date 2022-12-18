@@ -84,15 +84,15 @@ class ProjectDeleteViewTests(BaseAdminViewTestMixin, TestData):
 class ProjectWelcomeEditViewTests(BaseAdminViewTestMixin, TestData):
     def setUp(self):
         super().setUp()
-        self.url = reverse('welcome-page-edit', args=[self.project_base.pk])
-        self.url_no_perm = reverse('welcome-page-edit', args=[self.project_no_perm.pk])
+        self.url = reverse('briefing-edit', args=[self.project_base.pk])
+        self.url_no_perm = reverse('briefing-edit', args=[self.project_no_perm.pk])
 
 
 class ProjectEndEditViewTests(BaseAdminViewTestMixin, TestData):
     def setUp(self):
         super().setUp()
-        self.url = reverse('end-page-edit', args=[self.project_base.pk])
-        self.url_no_perm = reverse('end-page-edit', args=[self.project_no_perm.pk])
+        self.url = reverse('debriefing-edit', args=[self.project_base.pk])
+        self.url_no_perm = reverse('debriefing-edit', args=[self.project_no_perm.pk])
 
 
 class BlueprintListViewTests(BaseAdminViewTestMixin, TestData):

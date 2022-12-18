@@ -6,6 +6,8 @@
 
 {% block submit_label %}Update End Page{% endblock %}
 
+{% block cancel_target %}{% url 'project-detail' object.pk %}{% endblock %}
+
 {% block breadcrumbs %}
 <a href="{% url 'project-list' %}">Projects</a> /
 <a href="{% url 'project-detail' object.pk %}">"{{ object.name|truncatechars:15 }}" Project</a> /

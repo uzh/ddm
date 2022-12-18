@@ -88,7 +88,12 @@ class QuestionCreate(SuccessMessageMixin, DdmAuthMixin, QuestionFormMixin, Creat
         return kwargs
 
     def get_success_url(self):
-        return reverse('questionnaire-overview', kwargs={'project_pk': self.kwargs['project_pk']})
+        kwargs = {
+            'project_pk': self.kwargs['project_pk'],
+            'question_type': self.kwargs['question_type'],
+            'pk': self.object.pk
+        }
+        return reverse('question-edit', kwargs=kwargs)
 
     def get_success_message(self, cleaned_data):
         return self.success_message % dict(

@@ -6,6 +6,8 @@
 
 {% block submit_label %}Create Blueprint Container{% endblock %}
 
+{% block cancel_target %}{% url 'blueprint-list' project_pk %}{% endblock %}
+
 {% block breadcrumbs %}
 <a href="{% url 'project-list' %}">Projects</a> /
 <a href="{% url 'project-detail' project_pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /

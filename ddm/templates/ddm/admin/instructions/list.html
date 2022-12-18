@@ -29,6 +29,10 @@
     <a class="ddm-btn" href="{% url 'instruction-create' blueprint.project.pk blueprint.get_slug blueprint.pk %}"><b>+</b>&nbsp;&nbsp;Add Instruction Page</a>
   </div>
 </div>
+
+<div class="mt-3">
+  <a href="{% url 'blueprint-list' blueprint.project.pk %}">&#129040; go back</a>
+</div>
 {% endblock %}
 
 {% block breadcrumbs %}

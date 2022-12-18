@@ -6,8 +6,39 @@
 
 {% block submit_label %}Update Project{% endblock %}
 
+{% block cancel_target %}{% url 'project-detail' object.pk %}{% endblock %}
+
 {% block breadcrumbs %}
 <a href="{% url 'project-list' %}">Projects</a> /
 <a href="{% url 'project-detail' object.pk %}">"{{ object.name|truncatechars:15 }}" Project</a> /
 Edit Details
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script>
+  function hideOrShowParameter() {
+    if( $( "#id_url_parameter_enabled" ).is(":checked")) {
+      $( "#id_expected_url_parameters" ).parent().show();
+    } else {
+      $( "#id_expected_url_parameters" ).parent().hide();
+    }
+  }
+
+  function hideOrShowRedirect() {
+    if( $( "#id_redirect_enabled" ).is(":checked")) {
+      $( "#id_redirect_target" ).parent().show();
+    } else {
+      $( "#id_redirect_target" ).parent().hide();
+    }
+  }
+
+  $(function() {
+    hideOrShowParameter();
+    hideOrShowRedirect();
+  });
+
+  $( "#id_url_parameter_enabled" ).change(function() { hideOrShowParameter() });
+  $( "#id_redirect_enabled" ).change(function() { hideOrShowRedirect() });
+</script>
 {% endblock %}

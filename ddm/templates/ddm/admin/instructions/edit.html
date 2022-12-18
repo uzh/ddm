@@ -6,6 +6,8 @@
 
 {% block submit_label %}Save Instruction Page{% endblock %}
 
+{% block cancel_target %}{% url 'instruction-overview' project_pk blueprint.get_slug blueprint.pk %}{% endblock %}
+
 {% block breadcrumbs %}
 <a href="{% url 'project-list' %}">Projects</a> /
 <a href="{% url 'project-detail' project_pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /

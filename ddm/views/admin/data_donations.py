@@ -44,12 +44,15 @@ class BlueprintCreate(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, CreateV
     """ View to create a new donation blueprint. """
     model = DonationBlueprint
     template_name = 'ddm/admin/blueprint/create.html'
-    fields = ['name', 'exp_file_format']
+    form_class = BlueprintEditForm
     success_message = 'Blueprint was created successfully.'
 
     def form_valid(self, form):
         form.instance.project_id = self.kwargs['project_pk']
         return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('blueprint-edit', kwargs={'project_pk': self.object.project.pk, 'pk': self.object.pk})
 
 
 class BlueprintEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, UpdateView):
@@ -60,7 +63,7 @@ class BlueprintEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, UpdateVie
     success_message = 'Blueprint "%(name)s" was successfully updated.'
 
     def get_success_url(self):
-        return self.request.path
+        return reverse('blueprint-list', kwargs={'project_pk': self.object.project.pk})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -77,13 +80,17 @@ class BlueprintEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, UpdateVie
         if form.is_valid() and formset.is_valid():
             return self.form_valid(form, formset)
         else:
-            print('form invalid')
             return self.form_invalid(form, formset)
 
     def form_valid(self, form, formset):
         self.object = form.save()
         formset.instance = self.object
         formset.save()
+        messages.add_message(
+            self.request, messages.SUCCESS,
+            self.success_message % dict(name=self.object.name),
+            fail_silently=True,
+        )
         return HttpResponseRedirect(self.get_success_url())
 
     def form_invalid(self, form, formset):

@@ -20,6 +20,11 @@
       <div class="ddm-admin-form">
         {{ form.as_p }}
         <input class="ddm-btn" type="submit" value="{% block submit_label %}Submit Form{% endblock %}">
+        {% block cancel %}
+        <p>
+          <a href="{% block cancel_target %}{% endblock %}">&#129040; Cancel</a>
+        </p>
+        {% endblock %}
       </div>
     </form>
     {% endblock %}

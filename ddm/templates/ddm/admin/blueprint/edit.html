@@ -193,9 +193,11 @@
   </div>
 
   <input class="ddm-btn" type="submit" value="Save Blueprint">
+  <p class="mt-3">
+    <a href="{% url 'blueprint-list' project_pk %}">&#129040; Cancel</a>
+  </p>
 </form>
 {% endblock %}
-
 
 
 {% block breadcrumbs %}
@@ -208,4 +210,17 @@ Edit Blueprint
 {% block scripts %}
 {{ block.super }}
 <script src="{% static 'ddm/js/blueprint-edit-ui-helpers.js' %}"></script>
+<script>
+  function hideOrShowCsvDelimiter() {
+    if( $( "#id_exp_file_format" ).val() == "csv") {
+      $( "#id_csv_delimiter" ).parent().show();
+    } else {
+      $( "#id_csv_delimiter" ).parent().hide();
+    }
+  }
+  $(function() {
+    hideOrShowCsvDelimiter();
+  });
+  $( "#id_exp_file_format" ).change(function() { hideOrShowCsvDelimiter() });
+</script>
 {% endblock scripts %}

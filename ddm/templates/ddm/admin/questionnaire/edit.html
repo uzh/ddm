@@ -6,6 +6,8 @@
 
 {% block submit_label %}Update Question{% endblock %}
 
+{% block cancel_target %}{% url 'questionnaire-overview' project_pk %}{% endblock %}
+
 {% block main_form_header %}Question Configuration{% endblock %}
 
 {% block main_bottom %}
@@ -69,6 +71,10 @@
   </div>
 </div>
 {% endif %}
+
+<div class="mt-3">
+  <a href="{% url 'questionnaire-overview' project_pk %}">&#129040; go back</a>
+</div>
 {% endblock %}
 
 

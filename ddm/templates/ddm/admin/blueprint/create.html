@@ -6,9 +6,28 @@
 
 {% block submit_label %}Create Donation Blueprint{% endblock %}
 
+{% block cancel_target %}{% url 'blueprint-list' project_pk %}{% endblock %}
+
 {% block breadcrumbs %}
 <a href="{% url 'project-list' %}">Projects</a> /
 <a href="{% url 'project-detail' project_pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
 <a href="{% url 'blueprint-list' project_pk %}">Data Donation</a> /
 Create Donation Blueprint
 {% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script>
+  function hideOrShowCsvDelimiter() {
+    if( $( "#id_exp_file_format" ).val() == "csv") {
+      $( "#id_csv_delimiter" ).parent().show();
+    } else {
+      $( "#id_csv_delimiter" ).parent().hide();
+    }
+  }
+  $(function() {
+    hideOrShowCsvDelimiter();
+  });
+  $( "#id_exp_file_format" ).change(function() { hideOrShowCsvDelimiter() });
+</script>
+{% endblock scripts %}

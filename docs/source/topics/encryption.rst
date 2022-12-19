@@ -21,7 +21,7 @@ Encryption at rest
 The module stores all data in encrypted fields in the database, the encryption/decryption procedure is described below.
 Each project has a unique `salt` that is generated when creating the project.
 In the Django site settings, we use the *SECRET_KEY* as the default passphrase for encryption.
-If a project is working with highly sensitive data, we recommend that a *project specific password* is set.
+If a project is working with sensitive data, we recommend that a *project specific password* is set.
 This password is only known by the person setting it and should not be shared.
 A project specific password will limit the functionality of the module for a given project: it won't be possible to create followup questions based on the data donation.
 

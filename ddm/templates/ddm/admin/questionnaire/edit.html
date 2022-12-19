@@ -4,11 +4,44 @@
 
 {% block main_heading %}Edit {{ question_type }} "{{ object.name }}"{% endblock %}
 
-{% block submit_label %}Update Question{% endblock %}
-
-{% block cancel_target %}{% url 'questionnaire-overview' project_pk %}{% endblock %}
-
 {% block main_form_header %}Question Configuration{% endblock %}
+
+{% block main_form %}
+<form method='post'>
+  {% csrf_token %}
+  {{ form.media }}
+
+  <div class="ddm-admin-form">
+    {% for field in form %}
+    {% if field.name not in "expected_fields,extracted_fields" %}
+    <p>
+      {{ field.label_tag }}
+      {% if field.name == "text" %}
+        <p class="mt-0 w-50">
+          Data points from the donated data associated with the linked donation blueprint can be included in the question text.
+          This data can be included as "{% verbatim %}{{ data }}{% endverbatim %}" in the question text.<br>
+          It is possible to subset the data object (e.g., to include the last datapoint you can use {{ data.0 }} or include advanced
+          rendering options included in the Django templating engine. For a more comprehensive overview and examples see [LINK TO BE INCLUDED]. <!-- TODO: Include link -->
+        </p>
+      {% endif %}
+      {{ field.errors }}
+      {{ field }}
+    </p>
+    {% endif %}
+    {% endfor %}
+
+    <input class="ddm-btn" type="submit" value="Update Question">
+    {% block cancel %}
+    <p>
+      <a href="{% url 'questionnaire-overview' project_pk %}">&#129040; Cancel</a>
+    </p>
+    {% endblock %}
+  </div>
+
+
+
+</form>
+{% endblock %}
 
 {% block main_bottom %}
 {% if object.question_type != "open" and object.question_type != "transition"  %}

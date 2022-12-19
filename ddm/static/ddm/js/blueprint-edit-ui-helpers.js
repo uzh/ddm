@@ -4,17 +4,17 @@
 updateRuleDescription = function( id ) {
   const id_prefix = "id_processingrule_set-" + id + "-";
   const field = $("[id^=" + id_prefix + "field]").val();
-  const operator = $("[id^=" + id_prefix + "comparison_operator]").val()
-  const comp_value = $("[id^=" + id_prefix + "comparison_value]").val()
+  const operator = $("[id^=" + id_prefix + "comparison_operator]").val();
+  const comp_value = $("[id^=" + id_prefix + "comparison_value]").val();
 
   let msg = "";
   if ( field !== "" ) {
     if ( operator === "" && field !== "" ){
-      msg = "Keep field '" + field + "' in uploaded data."
+      msg = "Keep field '" + field + "' in uploaded data.";
     } else if ( operator === "regex" ) {
-      msg = "Delete parts of " + field + "-value that match the following regex expression: " + comp_value + "."
+      msg = "Delete parts of " + field + "-value that match the following regex expression: " + comp_value + ".";
     } else {
-      msg = "Delete row if current value of field '" + field + "' " + operator + " " + comp_value + "."
+      msg = "Delete row if current value of field '" + field + "' " + operator + " " + comp_value + ".";
     }
     $("[id=step-description-" + id + "]").html(msg);
   }
@@ -29,7 +29,7 @@ updateFieldValue = function( id ) {
     if (!$(this).is("button")) {
       let fieldName = $(this).attr("id").split("-").pop();
       let targetId = "#" + fieldName + "-" + id;
-      $( targetId ).html($(this).val())
+      $( targetId ).html($(this).val());
     }
   });
 };
@@ -70,7 +70,7 @@ $("#add-inline-form").on("click", function() {
   });
   let formIdx;
   if ( !IDs.length ) {
-    formIdx = 1;
+    formIdx = 0;
   } else {
     formIdx = Math.max(...IDs) + 1;
   }

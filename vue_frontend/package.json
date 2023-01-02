@@ -19,7 +19,7 @@
     "@intlify/vue-i18n-loader": "^4.2.0",
     "@vue/cli-plugin-babel": "^5.0.6",
     "@vue/cli-plugin-eslint": "^5.0.6",
-    "@vue/cli-service": "^5.0.6",
+    "@vue/cli-service": "^5.0.8",
     "@vue/compiler-sfc": "^3.0.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.32.0",

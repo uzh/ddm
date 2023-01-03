@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory, TextInput, Textarea
 
-from ddm.models.core import ResearchProfile, DonationProject, DonationBlueprint, ProcessingRule
+from ddm.models.core import ResearchProfile, DonationProject, DonationBlueprint, ProcessingRule, FileUploader
 
 User = get_user_model()
 
@@ -79,7 +79,7 @@ class BlueprintEditForm(forms.ModelForm):
 
     class Meta:
         model = DonationBlueprint
-        fields = ['name', 'exp_file_format', 'csv_delimiter', 'blueprint_container', 'regex_path',
+        fields = ['name', 'exp_file_format', 'csv_delimiter', 'file_uploader', 'regex_path',
                   'expected_fields']
         widgets = {
             'expected_fields': forms.Textarea(attrs={'rows': 3}),
@@ -87,13 +87,16 @@ class BlueprintEditForm(forms.ModelForm):
         }
 
     def clean(self):
-        container_relation = self.data.get('blueprint_container', False)
+        related_file_uploader = self.data.get('file_uploader', None)
         regex = self.data.get('regex_path', None)
-        if container_relation and regex in ['', None]:
-            raise ValidationError(
-                'Donation Blueprints that belong to a blueprint container must define '
-                'a regex pattern.'
-            )
+
+        if related_file_uploader:
+            file_uploader = FileUploader.objects.get(pk=related_file_uploader)
+            if file_uploader.upload_type == FileUploader.UploadTypes.ZIP_FILE and regex in ['', None]:
+                raise ValidationError(
+                    'Donation Blueprints that belong to a ZIP file uploader must define '
+                    'a regex pattern.'
+                )
         super().clean()
 
 

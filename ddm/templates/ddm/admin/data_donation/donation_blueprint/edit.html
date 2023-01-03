@@ -196,16 +196,17 @@
 
   <input class="ddm-btn" type="submit" value="Save Blueprint">
   <p class="mt-3">
-    <a href="{% url 'blueprint-list' project_pk %}">&#129040; Cancel</a>
+    <a href="{% url 'data-donation-overview' project.pk %}">&#129040; Back</a>
   </p>
 </form>
+{{ file_uploader_meta|json_script:'file_uploader_meta' }}
 {% endblock %}
 
 
 {% block breadcrumbs %}
 <a href="{% url 'project-list' %}">Projects</a> /
-<a href="{% url 'project-detail' project_pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
-<a href="{% url 'blueprint-list' project_pk %}">Data Donation</a> /
+<a href="{% url 'project-detail' project.pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'data-donation-overview' project.pk %}">Data Donation</a> /
 Edit Blueprint
 {% endblock %}
 
@@ -213,6 +214,8 @@ Edit Blueprint
 {{ block.super }}
 <script src="{% static 'ddm/js/blueprint-edit-ui-helpers.js' %}"></script>
 <script>
+  const file_uploader_meta = JSON.parse(document.getElementById("file_uploader_meta").textContent);
+
   function hideOrShowCsvDelimiter() {
     if( $( "#id_exp_file_format" ).val() == "csv") {
       $( "#id_csv_delimiter" ).parent().show();
@@ -220,9 +223,20 @@ Edit Blueprint
       $( "#id_csv_delimiter" ).parent().hide();
     }
   }
+
+  function hideOrShowRegexPath() {
+    if( file_uploader_meta[$( "#id_file_uploader" ).val()] == "zip file" ) {
+      $( "#id_regex_path" ).parent().show();
+    } else {
+      $( "#id_regex_path" ).parent().hide();
+    }
+  }
+
   $(function() {
     hideOrShowCsvDelimiter();
+    hideOrShowRegexPath();
   });
   $( "#id_exp_file_format" ).change(function() { hideOrShowCsvDelimiter() });
+  $( "#id_file_uploader" ).change(function() { hideOrShowRegexPath() });
 </script>
 {% endblock scripts %}

@@ -3,7 +3,7 @@ from django.test import TestCase, override_settings
 from django.utils import timezone
 
 from ddm.models.core import (
-    ResearchProfile, DonationProject, DonationBlueprint, BlueprintContainer,
+    ResearchProfile, DonationProject, DonationBlueprint, FileUploader,
     DonationInstruction, Participant
 )
 from ddm.models.questions import MatrixQuestion, SingleChoiceQuestion, OpenQuestion
@@ -75,14 +75,17 @@ class TestData(TestCase):
             name='No Perm Project', slug='no-perm', owner=cls.users['no_permission']['profile'])
 
         # Blueprints
+        cls.file_uploader = FileUploader.objects.create(
+            project=cls.project_base,
+            name='basic file uploader',
+            upload_type=FileUploader.UploadTypes.SINGLE_FILE
+        )
+
         cls.don_bp = DonationBlueprint.objects.create(
             project=cls.project_base,
             name='donation blueprint',
-            expected_fields='"a", "b"'
-        )
-        cls.zip_bp = BlueprintContainer.objects.create(
-            name='blueprint container',
-            project=cls.project_base
+            expected_fields='"a", "b"',
+            file_uploader=cls.file_uploader
         )
 
         # Questions
@@ -107,7 +110,7 @@ class TestData(TestCase):
         cls.instruction = DonationInstruction.objects.create(
             text='some text',
             index=1,
-            blueprint=cls.don_bp
+            file_uploader=cls.file_uploader
         )
 
         # Participant

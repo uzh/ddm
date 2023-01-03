@@ -494,7 +494,7 @@ export default {
     },
 
     emitToParent() {
-      // TODO: Emit extra information on the blueprint container level (e.g.: JSON.stringify({'errors_general': this.errorLog, 'ul_attempts': this.uploadAttempts, 'blueprints': this.blueprintData}))
+      // TODO: Emit extra information on the file uploader level (e.g.: JSON.stringify({'errors_general': this.errorLog, 'ul_attempts': this.uploadAttempts, 'blueprints': this.blueprintData}))
       let dataToEmit = JSON.parse(JSON.stringify(this.blueprintData));
       Object.keys(dataToEmit).forEach(key => {
         if (dataToEmit[key].consent === '') {

@@ -28,15 +28,15 @@ instruction_patterns = [
     path(r'<int:pk>/delete/', admin.InstructionDelete.as_view(), name='instruction-delete'),
 ]
 
-blueprint_patterns = [
-    path(r'', admin.data_donations.ProjectBlueprintList.as_view(), name='blueprint-list'),
+data_donation_patterns = [
+    path(r'', admin.data_donations.DataDonationOverview.as_view(), name='data-donation-overview'),
     path(r'blueprint/create/', admin.BlueprintCreate.as_view(), name='blueprint-create'),
     path(r'blueprint/<int:pk>/edit/', admin.BlueprintEdit.as_view(), name='blueprint-edit'),
     path(r'blueprint/<int:pk>/delete/', admin.BlueprintDelete.as_view(), name='blueprint-delete'),
-    path(r'blueprint-container/create/', admin.BlueprintContainerCreate.as_view(), name='blueprint-container-create'),
-    path(r'blueprint-container/<int:pk>/edit/', admin.BlueprintContainerEdit.as_view(), name='blueprint-container-edit'),
-    path(r'blueprint-container/<int:pk>/delete/', admin.BlueprintContainerDelete.as_view(), name='blueprint-container-delete'),
-    path(r'<slug:blueprint_type>/<int:blueprint_pk>/instructions/', include(instruction_patterns)),
+    path(r'file-uploader/create/', admin.FileUploaderCreate.as_view(), name='file-uploader-create'),
+    path(r'file-uploader/<int:pk>/edit/', admin.FileUploaderEdit.as_view(), name='file-uploader-edit'),
+    path(r'file-uploader/<int:pk>/delete/', admin.FileUploaderDelete.as_view(), name='file-uploader-delete'),
+    path(r'file-uploader/<int:file_uploader_pk>/instructions/', include(instruction_patterns)),
 ]
 
 admin_patterns = [
@@ -48,7 +48,7 @@ admin_patterns = [
     path(r'<int:pk>/briefing/', admin.BriefingEdit.as_view(), name='briefing-edit'),
     path(r'<int:pk>/debriefing/', admin.DebriefingEdit.as_view(), name='debriefing-edit'),
     path(r'<int:project_pk>/questionnaire/', include(question_patterns)),
-    path(r'<int:project_pk>/donation-blueprints/', include(blueprint_patterns)),
+    path(r'<int:project_pk>/data-donation/', include(data_donation_patterns)),
     path(r'<int:project_pk>/exceptions/', admin.ExceptionList.as_view(), name='project-exceptions'),
 ]
 

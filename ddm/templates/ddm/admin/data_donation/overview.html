@@ -1,0 +1,98 @@
+{% extends 'ddm/admin/base.html' %}
+
+{% block page_title %}Data Donation Overview{% endblock %}
+
+{% block main_heading %}Data Donation Overview{% endblock %}
+
+{% block main_body %}
+<div class="ddm-admin-section">
+  <div class="w-75">
+
+    <p>Data donations from participants are collected through <i>File Uploaders</i>. Each file uploader is associated with a set of <i>Donation Instructions</i> and one or multiple <i>Donation Blueprints</i>.</p>
+
+    <p>
+      <b>File Uploaders</b> can either be configured to expect a single file as a donation (e.g., one JSON file) or to expect a ZIP container as a donation. <br>
+      If a File Uploader expects a single file, <b>one</b> Donation Blueprint can be associated to this uploader. <br>
+      If a File Uploader expects a ZIP container, <b>one or multiple</b> Donation Blueprints can be associated to this uploader.
+    </p>
+
+    <p>
+      A <b>Donation Blueprint</b> defines how the data contained in a single file (e.g., in a .json or a .csv file) will be validated and extracted. <br>
+      If a Donation Blueprint is assigned to a ZIP File Uploader, an additional file path must be provided that defines where the file is located within the ZIP container.
+      The validation and extraction logic will then be applied to all files in a ZIP container that match this file path.
+    </p>
+  </div>
+</div>
+
+<div class="ddm-admin-section">
+  <div class="ddm-admin-section-header">File Uploader Configuration</div>
+  <div class="ddm-admin-section-body">
+    <table class="table">
+      <tr>
+        <th>Index</th>
+        <th>File Uploader</th>
+        <th>Upload Type</th>
+        <th>Instructions</th>
+        <th>Associated Blueprints</th>
+      </tr>
+      {% for uploader in file_uploaders %}
+      <tr>
+        <td>{{ uploader.index }}</td>
+        <td>{{ uploader.name }} (<a href="{% url 'file-uploader-edit' project.pk uploader.pk %}">Edit</a> | <a href="{% url 'file-uploader-delete' project.pk uploader.pk %}">Delete</a>)</td>
+        <td>{{ uploader.upload_type }}</td>
+        <td><a href="{% url 'instruction-overview' project.pk uploader.pk %}">Edit Instructions</a></td>
+        <td>
+          <ul>
+            {% for blueprint in uploader.donationblueprint_set.all %}
+            <li>{{ blueprint.name }} (<a href="{{ blueprint.get_absolute_url }}">Edit</a> | <a href="{% url 'blueprint-delete' project.pk blueprint.pk %}">Delete</a>)</li>
+            {% empty %}
+            No associated Blueprints
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4">You have yet to create a File Uploader for this project.</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <a class="ddm-btn" href="{% url 'file-uploader-create' project.pk %}"><b>+</b>&nbsp;&nbsp;Create new File Uploader</a>
+    <a class="ddm-btn" href="{% url 'blueprint-create' project.pk %}"><b>+</b>&nbsp;&nbsp;Create new Donation Blueprint</a>
+  </div>
+</div>
+
+<div class="ddm-admin-section">
+  <div><h5>Unassociated Donation Blueprints</h5></div>
+  <div class="ddm-admin-section-body">
+    <table class="table">
+      <tr>
+        <th>Name</th>
+        <th></th>
+      </tr>
+      {% for blueprint in lonely_blueprints %}
+      <tr>
+        <td>{{ blueprint.name }}</td>
+        <td><a href="{{ blueprint.get_absolute_url }}">Edit</a> | <a href="{% url 'blueprint-delete' project.pk blueprint.pk %}">Delete</a></td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="2">No unassociated Donation Blueprints.</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <a class="ddm-btn" href="{% url 'blueprint-create' project.pk %}"><b>+</b>&nbsp;&nbsp;Create new Donation Blueprint</a>
+  </div>
+</div>
+
+<div>
+  <a href="{% url 'project-detail' project.pk %}">&#129040; Back</a>
+</div>
+
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' project.pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+Data Donation Overview
+{% endblock %}

@@ -45,8 +45,8 @@ class ResearchProfile(models.Model):
 class DonationProject(models.Model):
     name = models.CharField(max_length=50)
     slug = models.SlugField(unique=True, verbose_name='External Project Slug')
-    intro_text = RichTextField(null=True, blank=True, verbose_name='Welcome Page Text')
-    outro_text = RichTextField(null=True, blank=True, verbose_name='End Page Text')
+    intro_text = RichTextField(null=True, blank=True, verbose_name='Welcome Page Text')  # TODO: Rename to briefing
+    outro_text = RichTextField(null=True, blank=True, verbose_name='End Page Text')  # TODO: Rename to debriefing
 
     contact_information = RichTextField(
         null=True,
@@ -191,44 +191,50 @@ COMMA_SEPARATED_STRINGS_VALIDATOR = RegexValidator(
 )
 
 
-class BlueprintContainer(models.Model):
+class FileUploader(models.Model):
     name = models.CharField(max_length=250)
-    project = models.ForeignKey(
-        'DonationProject',
-        on_delete=models.CASCADE
+    project = models.ForeignKey('DonationProject', on_delete=models.CASCADE)
+    index = models.PositiveIntegerField()
+
+    class UploadTypes(models.TextChoices):
+        ZIP_FILE = 'zip file'
+        SINGLE_FILE = 'single file'
+
+    upload_type = models.CharField(
+        max_length=20,
+        choices=UploadTypes.choices,
+        default=UploadTypes.SINGLE_FILE,
+        verbose_name='Upload type',
     )
 
     def __str__(self):
         return self.name
 
-    def get_slug(self):
-        return 'blueprint-container'
-
-    def get_absolute_url(self):
-        return reverse('blueprint-container-edit', args=[str(self.project_id), str(self.id)])
-
-    def get_blueprints(self):
-        blueprints = DonationBlueprint.objects.filter(blueprint_container=self)
-        return blueprints
+    def delete(self, *args, **kwargs):
+        """ This model has a post_delete signal processor (see signals.py). """
+        super().delete(*args, **kwargs)
 
     def get_configs(self):
-        bp_configs = []
-        blueprints = self.get_blueprints()
-        for bp in blueprints:
-            bp_configs.append(bp.get_config())
-        return bp_configs
+        configs = {
+            'upload_type': self.upload_type,
+            'name': self.name,
+            'blueprints': [bp.get_config() for bp in self.donationblueprint_set.all()],
+            'instructions': [{'index': i.index, 'text': i.text} for i in self.donationinstruction_set.all()]
+        }
+        return configs
 
-    def get_instructions(self):
-        return [{'index': i.index, 'text': i.text} for i in self.donationinstruction_set.all()]
+    def save(self, *args, **kwargs):
+        if self.index is None:
+            uploader_indices = self.project.fileuploader_set.all().values_list('index', flat=True)
+            self.index = 1 if not uploader_indices else max(uploader_indices) + 1
+        super().save(*args, **kwargs)
 
 
-# TODO: For admin section: Add validation on save to ensure that regex_path != None when blueprint_container != None
 class DonationBlueprint(models.Model):
     project = models.ForeignKey(
         'DonationProject',
         on_delete=models.CASCADE
     )
-
     name = models.CharField(max_length=250)
 
     class FileFormats(models.TextChoices):
@@ -257,13 +263,12 @@ class DonationBlueprint(models.Model):
         help_text='Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").'
     )
 
-    # Configuration if related to BlueprintContainer:
-    blueprint_container = models.ForeignKey(
-        'BlueprintContainer',
+    file_uploader = models.ForeignKey(
+        'FileUploader',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        verbose_name='Blueprint container',
+        verbose_name='Associated File Uploader',
     )
     regex_path = models.TextField(null=True, blank=True)
 
@@ -418,53 +423,27 @@ class DataDonation(ModelWithEncryptedData):
 class DonationInstruction(models.Model):
     text = RichTextField(null=True, blank=True, config_name='ddm_ckeditor')
     index = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
-    blueprint = models.ForeignKey(
-        'DonationBlueprint',
+
+    file_uploader = models.ForeignKey(
+        'FileUploader',
         null=True,
-        blank=True,
-        on_delete=models.CASCADE
-    )
-    blueprint_container = models.ForeignKey(
-        'BlueprintContainer',
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE
+        blank=False,
+        on_delete=models.CASCADE,
+        verbose_name='Associated File Uploader',
     )
 
     class Meta:
         ordering = ['index']
         constraints = [
             models.UniqueConstraint(
-                fields=['index', 'blueprint'],
-                name='unique_index_per_blueprint'
-            ),
-            models.UniqueConstraint(
-                fields=['index', 'blueprint_container'],
-                name='unique_index_per_container'
+                fields=['index', 'file_uploader'],
+                name='unique_index_per_file_uploader'
             ),
         ]
 
-    def get_query_object(self):
-        if self.blueprint:
-            query_object = self.blueprint
-        else:
-            query_object = self.blueprint_container
-        return query_object
-
     def clean(self):
-        # Ensure that instruction is correctly linked to one blueprint type.
-        if not self.blueprint and not self.blueprint_container:
-            raise ValidationError(
-                'Must be linked to either a DonationBlueprint or a BlueprintContainer.'
-            )
-        if self.blueprint and self.blueprint_container:
-            raise ValidationError(
-                'Must be linked to either a DonationBlueprint or '
-                'a BlueprintContainer, but not both.'
-            )
-
         # Ensure that index of instruction page is not greater than set of existing instructions + 1.
-        n_instructions = self.get_query_object().donationinstruction_set.count()
+        n_instructions = self.file_uploader.donationinstruction_set.all().count()
         if self.pk:
             if self.index > n_instructions:
                 raise ValidationError(
@@ -483,16 +462,16 @@ class DonationInstruction(models.Model):
 
         # TODO: Optimize and prettify the following part:
         initial_index = DonationInstruction.objects.get(pk=self.pk).index if self.pk else None
-        index_taken = self.get_query_object().donationinstruction_set.filter(index=self.index).exclude(pk=self.pk).exists()
+        index_taken = self.file_uploader.donationinstruction_set.filter(index=self.index).exclude(pk=self.pk).exists()
         if index_taken and (self.index != initial_index):
 
             # Account for unique constraint by doing a "proxy"-save to free index.
             target_index = self.index
-            self.index = self.get_query_object().donationinstruction_set.count() + 5
+            self.index = self.file_uploader.donationinstruction_set.count() + 5
             super().save()
 
             # Change indices of involved objects:
-            queryset = self.get_query_object().donationinstruction_set.exclude(pk=self.pk)
+            queryset = self.file_uploader.donationinstruction_set.exclude(pk=self.pk)
             if initial_index is None:
                 queryset = queryset.filter(index__gte=target_index).order_by('-index')
                 for q in queryset:

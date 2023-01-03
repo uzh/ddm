@@ -6,7 +6,7 @@
       v-for="(uploadConfig, id) in parsedUploadConfig"
       :key="id"
       :component-id="id"
-      :expects-zip="uploadConfig.ul_type === 'zip'"
+      :expects-zip="uploadConfig.upload_type === 'zip file'"
       :name="uploadConfig.name"
       :blueprints="uploadConfig.blueprints"
       :instructions="uploadConfig.instructions"

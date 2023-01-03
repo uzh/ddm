@@ -1,0 +1,56 @@
+{% extends 'ddm/admin/generic/page_with_form.html' %}
+
+{% block page_title %}Edit File Uploader{% endblock %}
+
+{% block main_heading %}Edit File Uploader "{{ object.name }}"{% endblock %}
+
+{% block submit_label %}Save File Uploader{% endblock %}
+
+{% block main_form %}
+<form method='post'>
+  {% csrf_token %}
+  {{ form.media }}
+  {{ form.non_field_errors }}
+
+  <div class="ddm-admin-form">
+    {% for field in form %}
+    {% if field.name not in "expected_fields,extracted_fields" %}
+    <p>
+      {{ field.label_tag }}
+      {{ field.errors }}
+      {{ field }}
+      <span class="helptext">{{ field.help_text }}</span>
+    </p>
+    {% endif %}
+    {% endfor %}
+
+    <p>
+      <label>Associated Donation Blueprints:</label>
+    </p>
+    <table class="mt-2">
+      {% for blueprint in blueprints %}
+      <tr>
+        <td><input type="checkbox" id="bp-{{ blueprint.pk }}" name="bp-{{ blueprint.pk }}" {% if blueprint.file_uploader == object %}checked{% endif %}></td>
+        <td><label for="bp-{{ blueprint.pk }}" class="ddm-choice-label">{{ blueprint.name }}</label></td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td>No unassigned Donation Blueprints available.</td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <input class="ddm-btn" type="submit" value="Save File Uploader">
+    <p class="mt-3">
+      <a href="{% url 'data-donation-overview' project.pk %}">&#129040; Back</a>
+    </p>
+  </div>
+</form>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' project.pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'data-donation-overview' project.pk %}">Data Donation</a> /
+Edit File Uploader
+{% endblock %}

@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import inlineformset_factory
 from django.urls import reverse
+from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from ddm.models.core import DonationBlueprint, DonationProject
@@ -10,7 +11,7 @@ from ddm.models.questions import (
     OpenQuestion, MatrixQuestion, SemanticDifferential, Transition, QuestionItem,
     ScalePoint
 )
-from . import ProjectBlueprintList, DdmAuthMixin
+from . import DdmAuthMixin
 
 
 class ProjectMixin:
@@ -22,8 +23,10 @@ class ProjectMixin:
         return context
 
 
-class QuestionnaireOverview(ProjectBlueprintList):
+class QuestionnaireOverview(ProjectMixin, DdmAuthMixin, ListView):
     """ View to list all donation blueprints associated with a project. """
+    model = DonationBlueprint
+    context_object_name = 'donation_blueprints'
     template_name = 'ddm/admin/questionnaire/list.html'
 
     def get_context_data(self, **kwargs):
@@ -31,6 +34,9 @@ class QuestionnaireOverview(ProjectBlueprintList):
         question_types = QuestionType.choices
         context.update({'question_types': question_types})
         return context
+
+    def get_queryset(self):
+        return super().get_queryset().filter(project_id=self.kwargs['project_pk'])
 
 
 class QuestionFormMixin(ProjectMixin):

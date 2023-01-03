@@ -14,7 +14,7 @@ from django.views.decorators.cache import cache_page
 
 from ddm.models.core import (
     DataDonation, DonationBlueprint, DonationProject, Participant,
-    QuestionnaireResponse, BlueprintContainer
+    QuestionnaireResponse, FileUploader
 )
 from ddm.models.questions import QuestionBase
 
@@ -203,34 +203,13 @@ class DataDonationView(ParticipationFlowBaseView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['ul_configs'] = SafeString(self.get_blueprint_configs())
+        context['uploader_configs'] = SafeString(self.get_uploader_configs())
         context['project_id'] = self.object.pk
         return context
 
-    def get_blueprint_configs(self):
-        blueprint_configs = []
-
-        blueprint_containers = BlueprintContainer.objects.filter(project=self.object)
-        # TODO: Add blueprintprocessingsteps here and below (~ line 227ff.).
-        for container in blueprint_containers:
-            blueprint_configs.append({
-                'ul_type': 'zip',
-                'name': container.name,
-                'blueprints': container.get_configs(),
-                'instructions': container.get_instructions()
-            })
-
-        blueprints = DonationBlueprint.objects.filter(
-            project=self.object,
-            blueprint_container__isnull=True)
-        for blueprint in blueprints:
-            blueprint_configs.append({
-                'ul_type': 'singlefile',
-                'name': blueprint.name,
-                'blueprints': [blueprint.get_config()],
-                'instructions': blueprint.get_instructions()
-            })
-        return json.dumps(blueprint_configs)
+    def get_uploader_configs(self):
+        uploader_configs = [fu.get_configs() for fu in FileUploader.objects.filter(project=self.object)]
+        return json.dumps(uploader_configs)
 
     def post(self, request, *args, **kwargs):
         super().post(request, **kwargs)

@@ -145,6 +145,12 @@
     -ms-transform: rotate(35deg);
     transform: rotate(35deg);
 }
+.ddm-choice-label {
+    font-weight: normal !important;
+    font-size: 1rem !important;
+    margin-left: 5px;
+    cursor: pointer;
+}
 .ddm-admin-section {
     margin-bottom: 50px;
 }

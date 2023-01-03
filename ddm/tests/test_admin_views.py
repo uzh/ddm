@@ -95,11 +95,11 @@ class ProjectEndEditViewTests(BaseAdminViewTestMixin, TestData):
         self.url_no_perm = reverse('debriefing-edit', args=[self.project_no_perm.pk])
 
 
-class BlueprintListViewTests(BaseAdminViewTestMixin, TestData):
+class DataDonationOverviewTests(BaseAdminViewTestMixin, TestData):
     def setUp(self):
         super().setUp()
-        self.url = reverse('blueprint-list', args=[self.project_base.pk])
-        self.url_no_perm = reverse('blueprint-list', args=[self.project_no_perm.pk])
+        self.url = reverse('data-donation-overview', args=[self.project_base.pk])
+        self.url_no_perm = reverse('data-donation-overview', args=[self.project_no_perm.pk])
 
 
 class BlueprintCreateViewTests(BaseAdminViewTestMixin, TestData):
@@ -123,57 +123,57 @@ class BlueprintDeleteViewTests(BaseAdminViewTestMixin, TestData):
         self.url_no_perm = reverse('blueprint-delete', args=[self.project_no_perm.pk, self.don_bp.pk])
 
 
-class BlueprintContainerCreateViewTests(BaseAdminViewTestMixin, TestData):
+class FileUploaderCreateViewTests(BaseAdminViewTestMixin, TestData):
     def setUp(self):
         super().setUp()
-        self.url = reverse('blueprint-container-create', args=[self.project_base.pk])
-        self.url_no_perm = reverse('blueprint-container-create', args=[self.project_no_perm.pk])
+        self.url = reverse('file-uploader-create', args=[self.project_base.pk])
+        self.url_no_perm = reverse('file-uploader-create', args=[self.project_no_perm.pk])
 
 
-class BlueprintContainerEditViewTests(BaseAdminViewTestMixin, TestData):
+class FileUploaderEditViewTests(BaseAdminViewTestMixin, TestData):
     def setUp(self):
         super().setUp()
-        self.url = reverse('blueprint-container-edit', args=[self.project_base.pk, self.zip_bp.pk])
-        self.url_no_perm = reverse('blueprint-container-edit', args=[self.project_no_perm.pk, self.zip_bp.pk])
+        self.url = reverse('file-uploader-edit', args=[self.project_base.pk, self.file_uploader.pk])
+        self.url_no_perm = reverse('file-uploader-edit', args=[self.project_no_perm.pk, self.file_uploader.pk])
 
 
-class BlueprintContainerDeleteViewTests(BaseAdminViewTestMixin, TestData):
+class FileUploaderDeleteViewTests(BaseAdminViewTestMixin, TestData):
     def setUp(self):
         super().setUp()
-        self.url = reverse('blueprint-container-delete', args=[self.project_base.pk, self.zip_bp.pk])
-        self.url_no_perm = reverse('blueprint-container-delete', args=[self.project_no_perm.pk, self.zip_bp.pk])
+        self.url = reverse('file-uploader-delete', args=[self.project_base.pk, self.file_uploader.pk])
+        self.url_no_perm = reverse('file-uploader-delete', args=[self.project_no_perm.pk, self.file_uploader.pk])
 
 
 class InstructionListViewTests(BaseAdminViewTestMixin, TestData):
     def setUp(self):
         super().setUp()
-        self.url = reverse('instruction-overview', args=[self.project_base.pk, 'blueprint', self.don_bp.pk])
-        self.url_no_perm = reverse('instruction-overview', args=[self.project_no_perm.pk, 'blueprint', self.don_bp.pk])
+        self.url = reverse('instruction-overview', args=[self.project_base.pk, self.file_uploader.pk])
+        self.url_no_perm = reverse('instruction-overview', args=[self.project_no_perm.pk, self.file_uploader.pk])
 
 
 class InstructionCreateViewTests(BaseAdminViewTestMixin, TestData):
     def setUp(self):
         super().setUp()
-        self.url = reverse('instruction-create', args=[self.project_base.pk, 'blueprint', self.don_bp.pk])
-        self.url_no_perm = reverse('instruction-create', args=[self.project_no_perm.pk, 'blueprint', self.don_bp.pk])
+        self.url = reverse('instruction-create', args=[self.project_base.pk, self.file_uploader.pk])
+        self.url_no_perm = reverse('instruction-create', args=[self.project_no_perm.pk, self.file_uploader.pk])
 
 
 class InstructionEditViewTests(BaseAdminViewTestMixin, TestData):
     def setUp(self):
         super().setUp()
         self.url = reverse('instruction-edit',
-                           args=[self.project_base.pk, 'blueprint', self.don_bp.pk, self.instruction.pk])
+                           args=[self.project_base.pk, self.file_uploader.pk, self.instruction.pk])
         self.url_no_perm = reverse('instruction-edit',
-                                   args=[self.project_no_perm.pk, 'blueprint', self.don_bp.pk, self.instruction.pk])
+                                   args=[self.project_no_perm.pk, self.file_uploader.pk, self.instruction.pk])
 
 
 class InstructionDeleteViewTests(BaseAdminViewTestMixin, TestData):
     def setUp(self):
         super().setUp()
         self.url = reverse('instruction-delete',
-                           args=[self.project_base.pk, 'blueprint', self.don_bp.pk, self.instruction.pk])
+                           args=[self.project_base.pk, self.file_uploader.pk, self.instruction.pk])
         self.url_no_perm = reverse('instruction-delete',
-                                   args=[self.project_no_perm.pk, 'blueprint', self.don_bp.pk, self.instruction.pk])
+                                   args=[self.project_no_perm.pk, self.file_uploader.pk, self.instruction.pk])
 
 
 class QuestionnaireOverviewViewTests(BaseAdminViewTestMixin, TestData):

@@ -5,11 +5,11 @@
 <div>
 
   <div>
-    {% if object.outro_text == None %}
+    {% if object.debriefing_text == None %}
     <h1>{% translate "Thank you very much!" %}</h1>
     <p>{% translate "You have reached the end of the study and can now close this window." %}</p>
     {% else %}
-    {{ object.outro_text | safe }}
+    {{ object.debriefing_text | safe }}
     {% endif %}
   </div>
 

@@ -39,7 +39,7 @@ class ParticipationFlowBaseTestCase(TestData):
         DataDonation.objects.create(
             project=self.project_base,
             blueprint=self.don_bp,
-            participant=participant,
+            participant=self.participant,
             time_submitted=timezone.now(),
             consent=True,
             status='{}',
@@ -81,6 +81,46 @@ class TestBriefingView(ParticipationFlowBaseTestCase):
         self.assertEqual(project_session['steps']['briefing']['state'], 'completed')
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.dd_url)
+
+    def test_project_briefing_consent_yes_POST(self):
+        self.project_base.briefing_consent_enabled = True
+        self.project_base.save()
+        self.client.get(self.briefing_url)
+        response = self.client.post(self.briefing_url, {'briefing_consent': '1'}, follow=True)
+
+        project_session = self.client.session['projects'][f'{self.project_base.pk}']
+        self.assertEqual(project_session['steps']['briefing']['state'], 'completed')
+        self.assertRedirects(response, self.dd_url)
+        # Assert consent is correctly stored in participant data.
+        participant_id = self.client.session['projects'][f'{self.project_base.pk}']['participant_id']
+        participant = Participant.objects.get(pk=participant_id)
+        self.assertEqual(participant.extra_data['briefing_consent'], '1')
+
+    def test_project_briefing_consent_no_POST(self):
+        self.project_base.briefing_consent_enabled = True
+        self.project_base.save()
+        self.client.get(self.briefing_url)
+        response = self.client.post(self.briefing_url, {'briefing_consent': '0'})
+        project_session = self.client.session['projects'][f'{self.project_base.pk}']
+
+        self.assertEqual(project_session['steps']['briefing']['state'], 'completed')
+        self.assertRedirects(response, self.debriefing_url)
+        # Assert consent is correctly stored in participant data.
+        participant_id = self.client.session['projects'][f'{self.project_base.pk}']['participant_id']
+        participant = Participant.objects.get(pk=participant_id)
+        self.assertEqual(participant.extra_data['briefing_consent'], '0')
+
+    def test_project_briefing_consent_invalid_POST(self):
+        self.project_base.briefing_consent_enabled = True
+        self.project_base.save()
+        self.client.get(self.briefing_url)
+        response = self.client.post(self.briefing_url)
+        project_session = self.client.session['projects'][f'{self.project_base.pk}']
+
+        self.assertEqual(project_session['steps']['briefing']['state'], 'started')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'ddm/public/briefing.html')
+
 
 
 class TestDonationView(ParticipationFlowBaseTestCase):

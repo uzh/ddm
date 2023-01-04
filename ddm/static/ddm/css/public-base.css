@@ -43,6 +43,9 @@
 .text-orange:hover {
     color: #ff5f00;
 }
+.text-red {
+    color: #ab0000;
+}
 .bg-success-light {
     background-color: #55ff5517;
 }
@@ -78,4 +81,7 @@
 }
 .modal-close {
     font-size: 0.8rem;
+}
+#briefing-consent-answer label {
+    cursor: pointer;
 }

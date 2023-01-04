@@ -5,16 +5,28 @@
 <div>
 
   <div>
-    {% if object.intro_text == None %}
+    {% if briefing_error %}
+    <p class="text-red mb-4"><i class="bi bi-exclamation-square-fill"></i> {% translate "Please indicate whether you want to continue with this study." %}</p>
+    {% endif %}
+
+    {% if object.briefing_text == None %}
     <h1>{% translate "Welcome to this study!" %}</h1>
     <p>{% translate "Please define a description and welcome text for this project in the Project Hub." %}</p>
     {% else %}
-    {{ object.intro_text | safe }}
+    {{ object.briefing_text | safe }}
     {% endif %}
   </div>
 
   <form method="POST">
     {% csrf_token %}
+
+    {% if object.briefing_consent_enabled %}
+    <div id="briefing-consent-answer">
+      <input type="radio" id="consent_yes" name="briefing_consent" value="1" required> <label for="consent_yes">{{ object.briefing_consent_label_yes }}</label><br>
+      <input type="radio" id="consent_no" name="briefing_consent" value="0"> <label for="consent_no">{{ object.briefing_consent_label_no }}</label>
+    </div>
+    {% endif %}
+
     <input
         class="flow-btn"
         type="submit"

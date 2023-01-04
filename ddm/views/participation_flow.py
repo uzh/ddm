@@ -191,9 +191,37 @@ class BriefingView(ParticipationFlowBaseView):
             return redirect(target, slug=self.object.slug)
 
     def post(self, request, *args, **kwargs):
-        super().post(request, **kwargs)
-        return redirect(self.steps[self.current_step + 1],
-                        slug=self.object.slug)
+        """
+        Checks whether participant has provided briefing consent to continue with
+        the study. If briefing consent is not given, redirects to end page.
+        If briefing consent is not within the expected values, the briefing page
+        is again returned with a form error.
+        """
+        # Check briefing consent.
+        if self.get_object().briefing_consent_enabled:
+            self.initialize_values(request)
+
+            # Check that answer has been provided.
+            briefing_consent = request.POST.get('briefing_consent', None)
+            if briefing_consent not in ['0', '1']:
+                # Return error to briefing view.
+                context = self.get_context_data(object=self.object)
+                context.update({'briefing_error': True})
+                return self.render_to_response(context)
+
+            # Save consent to participant data.
+            self.participant.extra_data['briefing_consent'] = briefing_consent  # TODO: Add helper function
+            self.participant.save()
+
+            if briefing_consent == '0':
+                # Set all steps to complete and redirect to debriefing page.
+                self.project_session['steps'][self.view_name]['state'] = 'completed'
+                self.project_session['steps'][self.steps[self.current_step + 1]]['state'] = 'completed'
+                self.project_session['steps'][self.steps[self.current_step + 2]]['state'] = 'completed'
+                return redirect(self.steps[self.current_step + 3],
+                                slug=self.object.slug)
+
+        return super().post(request, **kwargs)
 
 
 @method_decorator(cache_page(0), name='dispatch')
@@ -223,7 +251,7 @@ class DataDonationView(ParticipationFlowBaseView):
         try:
             file = files['post_data']
         except MultiValueDictKeyError as err:
-            logger.error(f'Did not receive expected file. {err}')
+            logger.error(f'Did not receive expected file. {err}')  # TODO: Think about what to do with this logs -> should probably be added to the exception log.
             return
 
         # Check if file is a zip file.

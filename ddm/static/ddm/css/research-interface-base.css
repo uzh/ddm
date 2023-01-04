@@ -268,11 +268,18 @@
     font-size: 0.8rem;
     color: gray;
 }
-
 .django-ckeditor-widget {
     display: block !important;
 }
-
+.fs-08 {
+    font-size: 0.8rem;
+}
+.lh-1 {
+    line-height: 1;
+}
+.border-bottom-dark {
+    border-bottom: 1px solid #1a1a1a;
+}
 .ddm-overlay {
     position: fixed;
     display: none;

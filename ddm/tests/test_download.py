@@ -27,8 +27,6 @@ class TestDownload(TestData):
             time_submitted=timezone.now(),
             data='{"data": ["response_data", "response_data"]}'
         )
-        cls.project_base.collaborators.add(cls.users['base2']['profile'])
-        cls.project_base.save()
 
     def test_download_project_data_view_exists(self):
         response = self.client.get(reverse('ddm-download-api', args=[self.project_base.pk]))
@@ -36,12 +34,6 @@ class TestDownload(TestData):
 
     def test_download_with_regular_login_owner(self):
         self.client.login(**self.users['base']['credentials'])
-        response = self.client.get(reverse('ddm-download-api', args=[self.project_base.pk]))
-        self.assertEqual(response.status_code, 200)
-        self.assertIsNotNone(response.data)
-
-    def test_download_with_regular_login_collaborator(self):
-        self.client.login(**self.users['base2']['credentials'])
         response = self.client.get(reverse('ddm-download-api', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(response.data)

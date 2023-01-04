@@ -83,16 +83,16 @@ class BriefingEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     """ View to edit the briefing page. """
     model = DonationProject
     template_name = 'ddm/admin/project/edit-briefing.html'
-    fields = ['intro_text']
-    success_message = 'Welcome Page successfully updated.'
+    fields = ['briefing_text', 'briefing_consent_enabled', 'briefing_consent_label_yes', 'briefing_consent_label_no']
+    success_message = 'Briefing page successfully updated.'
 
 
 class DebriefingEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     """ View to edit the debriefing page. """
     model = DonationProject
     template_name = 'ddm/admin/project/edit-debriefing.html'
-    fields = ['outro_text']
-    success_message = 'End Page successfully updated.'
+    fields = ['debriefing_text']
+    success_message = 'Debriefing page successfully updated.'
 
 
 class ExceptionList(SuccessMessageMixin, DdmAuthMixin, ListView):

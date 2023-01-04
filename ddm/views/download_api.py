@@ -17,7 +17,7 @@ def user_is_allowed_to_download(user, project):
     if not user_profile:
         return False
     else:
-        if project.owner != user_profile and user_profile not in project.collaborators.all():
+        if project.owner != user_profile:
             return False
         else:
             return True
@@ -29,7 +29,7 @@ class ProjectDataView(APIView):
 
     * Token authentication for remote calls.
     * Session authentication for browser access.
-    * Only project owners and project collaborators are able to access this view.
+    * Only project owners are able to access this view.
     """
     authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]

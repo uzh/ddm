@@ -18,8 +18,3 @@ class TestDonationProject(TestCase):
     def test_project_owner_cannot_be_null_on_create(self):
         invalid_project = DonationProject(name='test_project', slug='test')
         self.assertRaises(ValidationError, invalid_project.save)
-
-    def test_project_owner_cannot_be_collaborator(self):
-        invalid_project = DonationProject.objects.create(name='test_project', slug='test', owner=self.user_profile)
-        invalid_project.collaborators.add(self.user_profile)
-        self.assertRaises(ValidationError, invalid_project.save)

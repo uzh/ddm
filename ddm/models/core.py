@@ -43,11 +43,17 @@ class ResearchProfile(models.Model):
 
 
 class DonationProject(models.Model):
+    # Basic information for internal organization.
     name = models.CharField(max_length=50)
-    slug = models.SlugField(unique=True, verbose_name='External Project Slug')
-    intro_text = RichTextField(null=True, blank=True, verbose_name='Welcome Page Text')  # TODO: Rename to briefing
-    outro_text = RichTextField(null=True, blank=True, verbose_name='End Page Text')  # TODO: Rename to debriefing
+    date_created = models.DateTimeField(default=timezone.now)
+    owner = models.ForeignKey(
+        'ResearchProfile',
+        related_name='project_owner',
+        on_delete=models.SET_NULL,
+        null=True
+    )
 
+    # Public information.
     contact_information = RichTextField(
         null=True,
         blank=False,
@@ -58,7 +64,6 @@ class DonationProject(models.Model):
             'accessible for participants during the data donation.'
         )
     )
-
     data_protection_statement = RichTextField(
         null=True,
         blank=False,
@@ -70,15 +75,23 @@ class DonationProject(models.Model):
         )
     )
 
-    date_created = models.DateTimeField(default=timezone.now)
+    # Information affecting participation flow.
+    slug = models.SlugField(unique=True, verbose_name='External Project Slug')
+    briefing_text = RichTextField(null=True, blank=True, verbose_name='Welcome Page Text')
+    briefing_consent_enabled = models.BooleanField(default=False)
+    briefing_consent_label_yes = models.CharField(max_length=255, blank=True)
+    briefing_consent_label_no = models.CharField(max_length=255, blank=True)
+    debriefing_text = RichTextField(null=True, blank=True, verbose_name='End Page Text')
 
+    # Access settings.
     public_key = models.BinaryField()
     super_secret = models.BooleanField(default=False)
 
+    # Redirect settings.
     redirect_enabled = models.BooleanField(default=False, verbose_name='Redirect enabled')
     redirect_target = models.CharField(
         max_length=2000,
-        null=True, blank=True,
+        blank=True,
         verbose_name='Redirect target',
         help_text=mark_safe(
             'Always include <i>http://</i> or <i>https://</i> in the redirect target. '
@@ -87,24 +100,14 @@ class DonationProject(models.Model):
             '"https://redirect.me/?redirectpara=<b>{{URLParameter}}</b>".')
     )
 
+    # URL parameter extraction settings.
     url_parameter_enabled = models.BooleanField(default=False, verbose_name='URL parameter extraction enabled')
     expected_url_parameters = models.CharField(
         max_length=500,
-        null=True, blank=True,
+        blank=True,
         verbose_name='Expected URL parameter',
         help_text='Separate multiple parameters with a semikolon (";"). '
                   'Semikolons are not allowed as part of the expected url parameters.'
-    )
-
-    owner = models.ForeignKey(
-        'ResearchProfile',
-        related_name='project_owner',
-        on_delete=models.SET_NULL,
-        null=True
-    )
-    collaborators = models.ManyToManyField(
-        'ResearchProfile',
-        related_name='project_collaborators'
     )
 
     def __init__(self, *args, **kwargs):
@@ -128,10 +131,6 @@ class DonationProject(models.Model):
 
             if self.super_secret:
                 self.public_key = Encryption(self.secret, str(self.date_created)).public_key
-        else:
-            if self.owner in self.collaborators.all():
-                raise ValidationError(
-                    'DonationProject.owner cannot be a collaborator at the same time.')
         super().save(*args, **kwargs)
 
     @property

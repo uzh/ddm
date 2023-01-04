@@ -54,6 +54,18 @@ class ProjectEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     ]
     success_message = 'Project details successfully updated.'
 
+    def form_valid(self, form):
+        if form.cleaned_data['url_parameter_enabled'] and form.cleaned_data['expected_url_parameters'] is None:
+            form.add_error('expected_url_parameters', 'URL parameter is enabled but no parameter is defined.')
+
+        if form.cleaned_data['redirect_enabled'] and form.cleaned_data['redirect_target'] is None:
+            form.add_error('redirect_target', 'Redirect is enabled but no redirect target is defined.')
+
+        if form.is_valid():
+            return super().form_valid(form)
+        else:
+            return self.form_invalid(form)
+
 
 class ProjectDelete(DdmAuthMixin, DeleteView):
     """ View to display a list of existing donation projects. """

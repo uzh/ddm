@@ -183,8 +183,13 @@
 }
 .errorlist {
     color: #ab0000;
-    background: #ff00000f;
-    border-radius: 5px;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+    padding-left: 20px;
+}
+.error-disclaimer {
+    color: #ab0000;
+
 }
 .page-item.active .page-link,
 .page-size,

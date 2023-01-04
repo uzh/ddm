@@ -18,7 +18,20 @@
       {{ form.media }}
 
       <div class="ddm-admin-form">
-        {{ form.as_p }}
+        {% if form.errors %}
+        <p class="error-disclaimer"><i class="bi bi-exclamation-square-fill"></i> The form could not be processed. Please check the issues highlighted below.</p>
+        {% endif %}
+
+        {{ form.non_field_errors }}
+
+        {% for field in form %}
+        <p>
+          {{ field.label_tag }}
+          {{ field.errors }}
+          {{ field }}
+          <span class="helptext">{{ field.help_text }}</span>
+        </p>
+        {% endfor %}
         <input class="ddm-btn" type="submit" value="{% block submit_label %}Submit Form{% endblock %}">
         {% block cancel %}
         <p>

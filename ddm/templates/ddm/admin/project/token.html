@@ -1,0 +1,51 @@
+{% extends 'ddm/admin/generic/page_with_form.html' %}
+
+{% block page_title %}Project Access Token{% endblock %}
+
+{% block main_heading %}Manage Project Access Token{% endblock %}
+
+{% block main_top %}
+<div class="ddm-admin-form">
+  {% if token %}
+  <p><label>Current Token:</label>{{ token.key }}</p>
+  <p><label>Created on</label>{{ token.created|date:"M d, Y, H:i" }}</p>
+  <p><label>Expires on</label>{{ token.expiration_date|date:"M d, Y, H:i" }}</p> <!-- TODO: Check timezone. -->
+  <p><label>Satus:</label>{% if token.has_expired %}<span class="badge bg-danger">Invalid</span>{% else %}<span class="badge bg-success">valid</span>{% endif %}</p>
+  {% else %}
+  <p>A token has yet to be created.</p>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block main_form %}
+<form method='post'>
+  {% csrf_token %}
+  {{ form.media }}
+
+  <div class="ddm-admin-form">
+    <h5 class="mt-0">Create new Token</h5>
+    {% if form.errors %}
+    <p class="error-disclaimer"><i class="bi bi-exclamation-square-fill"></i> The form could not be processed. Please check the issues highlighted below.</p>
+    {% endif %}
+
+    {{ form.non_field_errors }}
+
+    {% for field in form %}
+    <p>The new token expires in {{ field }} days.</p>
+    <p>The new token will overwrite the existing one and the current token will no longer work.</p>
+    {% endfor %}
+    <input class="ddm-btn" type="submit" value="Create Token">
+    {% block cancel %}
+    <p>
+      <a href="{% url 'project-detail' project.pk %}">&#129040; Back</a>
+    </p>
+    {% endblock %}
+  </div>
+</form>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' project.pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+Manage Access Token
+{% endblock %}

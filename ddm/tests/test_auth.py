@@ -1,9 +1,13 @@
+import datetime
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 from django.contrib.auth import get_user_model
+from ddm.models.auth import CustomTokenAuthenticator, CustomToken
 from ddm.models.core import ResearchProfile, DonationProject
 from ddm.auth import email_is_valid, user_is_owner, user_is_permitted
 from ddm.tests.base import TestData
+from rest_framework import exceptions
 
 
 User = get_user_model()
@@ -77,3 +81,54 @@ class TestAuthenticationFlow(TestData, TestCase):
         response = self.client.get(
             reverse('ddm-no-permission'), follow=True)
         self.assertRedirects(response, reverse('project-list'))
+
+
+class TestAuthCustomTokenAuthenticator(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        # User
+        base_user_credentials = {'username': 'base_user', 'password': '123', 'email': 'base@mail.com'}
+        base_user = User.objects.create_user(**base_user_credentials)
+        base_user_profile = ResearchProfile.objects.create(user=base_user)
+
+        # Project
+        cls.project = DonationProject.objects.create(name='Base Project', slug='base', owner=base_user_profile)
+
+        # Authenticator
+        cls.authenticator = CustomTokenAuthenticator()
+        cls.token = CustomToken.objects.create(
+            project=cls.project,
+            created=timezone.now(),
+            expiration_date=None
+        )
+
+    def test_valid_token_without_expiration(self):
+        validated_token = self.authenticator.authenticate_credentials(self.token)[1]
+        self.assertEqual(self.token, validated_token)
+
+    def test_valid_token_with_expiration(self):
+        self.token.delete()
+        token = CustomToken.objects.create(
+            project=self.project,
+            created=timezone.now(),
+            expiration_date=timezone.now() + datetime.timedelta(days=2)
+        )
+        validated_token = self.authenticator.authenticate_credentials(token)[1]
+        self.assertEqual(token, validated_token)
+
+    def test_invalid_token(self):
+        token = 'rubbish'
+        self.assertRaises(exceptions.AuthenticationFailed, self.authenticator.authenticate_credentials, token)
+
+    def test_without_token(self):
+        self.assertRaises(exceptions.AuthenticationFailed, self.authenticator.authenticate_credentials, None)
+
+    def test_expired_token(self):
+        self.token.delete()
+        expired_token = CustomToken.objects.create(
+            project=self.project,
+            created=timezone.now(),
+            expiration_date=datetime.datetime(2022, 2, 2, 22, 22).replace(tzinfo=timezone.utc)
+        )
+        self.assertRaises(exceptions.AuthenticationFailed, self.authenticator.authenticate_credentials, expired_token)

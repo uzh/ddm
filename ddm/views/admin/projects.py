@@ -1,11 +1,12 @@
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.views.generic.list import ListView
 
-from ddm.forms import ProjectCreateForm
+from ddm.forms import APITokenCreationForm, ProjectCreateForm
+from ddm.models.auth import CustomToken
 from ddm.models.core import DonationProject, ResearchProfile
 from ddm.models.exceptions import ExceptionLogEntry
 from ddm.views.admin.auth import DdmAuthMixin
@@ -131,3 +132,31 @@ class ExceptionList(SuccessMessageMixin, DdmAuthMixin, ListView):
             project = None
         context.update({'project': project})
         return context
+
+
+class ProjectAPITokenView(SuccessMessageMixin, DdmAuthMixin, FormView):
+    """ View to see existing access token or generate a new one. """
+    template_name = 'ddm/admin/project/token.html'
+    form_class = APITokenCreationForm
+
+    def get_project(self):
+        """ Returns current project. """
+        return DonationProject.objects.get(pk=self.kwargs.get('pk'))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        project = self.get_project()
+        context.update({
+            'project': project,
+            'token': CustomToken.objects.filter(project=project).first()
+        })
+        return context
+
+    def form_valid(self, form):
+        """ Create new token if form is valid. """
+        project = self.get_project()
+        project.create_token(expiration_days=form.cleaned_data['expiration_days'])
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('project-token', kwargs={'pk': self.kwargs.get('pk')})

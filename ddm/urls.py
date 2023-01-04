@@ -47,6 +47,7 @@ admin_patterns = [
     path(r'<int:pk>/delete/', admin.ProjectDelete.as_view(), name='project-delete'),
     path(r'<int:pk>/briefing/', admin.BriefingEdit.as_view(), name='briefing-edit'),
     path(r'<int:pk>/debriefing/', admin.DebriefingEdit.as_view(), name='debriefing-edit'),
+    path(r'<int:pk>/token/', admin.ProjectAPITokenView.as_view(), name='project-token'),
     path(r'<int:project_pk>/questionnaire/', include(question_patterns)),
     path(r'<int:project_pk>/data-donation/', include(data_donation_patterns)),
     path(r'<int:project_pk>/exceptions/', admin.ExceptionList.as_view(), name='project-exceptions'),

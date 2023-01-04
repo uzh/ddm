@@ -117,3 +117,12 @@ ProcessingRuleInlineFormset = inlineformset_factory(
     form=ProcessingRuleForm,
     extra=0
 )
+
+
+class APITokenCreationForm(forms.Form):
+    expiration_days = forms.IntegerField(
+        initial=30,
+        min_value=1,
+        max_value=90,
+        required=False
+    )

@@ -1,3 +1,4 @@
+import datetime
 import json
 import logging
 
@@ -13,10 +14,8 @@ from django.utils import timezone
 from django.utils.safestring import mark_safe
 
 import ddm.models.exceptions as ddm_exceptions
+from ddm.models.auth import CustomToken
 from ddm.models.encryption import Encryption, ModelWithEncryptedData
-
-
-from rest_framework.authtoken.models import Token
 
 
 logger = logging.getLogger(__name__)
@@ -31,15 +30,6 @@ class ResearchProfile(models.Model):
     active = models.BooleanField(default=True)
     created = models.DateTimeField('date registered', default=timezone.now)
     ignore_email_restriction = models.BooleanField(default=False)
-
-    def get_token(self):
-        return Token.objects.filter(user=self.user).first()
-
-    def create_token(self):
-        token = self.get_token()
-        if token:
-            token.delete()
-        return Token.objects.create(user=self.user)
 
 
 class DonationProject(models.Model):
@@ -155,6 +145,19 @@ class DonationProject(models.Model):
 
     def get_expected_url_parameters(self):
         return self.expected_url_parameters.split(';')
+
+    def get_token(self):
+        return CustomToken.objects.filter(project=self).first()
+
+    def create_token(self, expiration_days=None):
+        token = self.get_token()
+        if token:
+            token.delete()
+        if expiration_days:
+            expiration_date = timezone.now() + datetime.timedelta(days=expiration_days)
+        else:
+            expiration_date = None
+        return CustomToken.objects.create(project=self, expiration_date=expiration_date)
 
 
 def get_extra_data_default():

@@ -1,6 +1,7 @@
 from django.http import Http404, HttpResponseBadRequest
 from django.views.decorators.debug import sensitive_variables
 
+from ddm.models.auth import CustomTokenAuthenticator
 from ddm.models.core import DataDonation, DonationProject, QuestionnaireResponse, ResearchProfile, Participant
 from ddm.models.serializers import DonationSerializer, ResponseSerializer, ProjectSerializer
 
@@ -31,7 +32,7 @@ class ProjectDataView(APIView):
     * Session authentication for browser access.
     * Only project owners are able to access this view.
     """
-    authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication]
+    authentication_classes = [CustomTokenAuthenticator, authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     @sensitive_variables('secret')

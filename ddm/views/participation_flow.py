@@ -210,7 +210,8 @@ class BriefingView(ParticipationFlowBaseView):
                 return self.render_to_response(context)
 
             # Save consent to participant data.
-            self.participant.extra_data['briefing_consent'] = briefing_consent  # TODO: Add helper function
+            # TODO: Consider writing a helper function for this kind of operation.
+            self.participant.extra_data['briefing_consent'] = briefing_consent
             self.participant.save()
 
             if briefing_consent == '0':

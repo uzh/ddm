@@ -4,7 +4,7 @@ import os
 from django.db import models
 from django.utils import timezone
 from rest_framework import exceptions
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import TokenAuthentication, get_authorization_header
 
 
 class CustomToken(models.Model):
@@ -55,14 +55,54 @@ class CustomTokenAuthenticator(TokenAuthentication):
     """
     model = CustomToken
 
-    def authenticate_credentials(self, key):
+    def authenticate(self, request):
+        """
+        Adopted from parent model. Added that request is passed to
+        authenticate_credentials in order to check if the requested project
+        matches the token.
+        """
+        auth = get_authorization_header(request).split()
+
+        if not auth or auth[0].lower() != self.keyword.lower().encode():
+            return None
+
+        if len(auth) == 1:
+            msg = 'Invalid token header. No credentials provided.'
+            raise exceptions.AuthenticationFailed(msg)
+        elif len(auth) > 2:
+            msg = 'Invalid token header. Token string should not contain spaces.'
+            raise exceptions.AuthenticationFailed(msg)
+
+        try:
+            token = auth[1].decode()
+        except UnicodeError:
+            msg = 'Invalid token header. Token string should not contain invalid characters.'
+            raise exceptions.AuthenticationFailed(msg)
+
+        request_url = request.get_full_path()
+        project_pk = [x for x in request_url.split('/') if x != ''][0]
+        try:
+            project_pk = int(project_pk)
+        except ValueError:
+            msg = 'Invalid project identifier provided.'
+            raise exceptions.AuthenticationFailed(msg)
+
+        return self.authenticate_credentials(token, project_pk)
+
+    def authenticate_credentials(self, key, project_pk):
         model = self.get_model()
         try:
             token = model.objects.select_related('project').get(key=key)
         except model.DoesNotExist:
-            raise exceptions.AuthenticationFailed('Invalid token.')
+            msg = 'Invalid token.'
+            raise exceptions.AuthenticationFailed(msg)
 
         if token.has_expired():
-            raise exceptions.AuthenticationFailed('Token has expired. You can create a new one in the admin backend.')
+            msg = 'Token has expired. You can create a new one in the admin backend.'
+            raise exceptions.AuthenticationFailed(msg)
 
-        return token.project.owner.user, token  # TODO: Check if this user return makes sense.
+        if token.project.pk != project_pk:
+            msg = 'The provided token does not belong to the requested project.'
+            raise exceptions.AuthenticationFailed(msg)
+
+        return token.project.owner.user, token

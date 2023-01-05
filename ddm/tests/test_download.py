@@ -52,8 +52,17 @@ class TestDownload(TestData):
         self.assertIsNotNone(response.data)
 
     def test_download_with_invalid_api_credentials(self):
-        token = 'rubbish'
+        token = self.project_base2.create_token()
         client = APIClient()
-        client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        response = client.get(reverse('ddm-download-api', args=[self.project_base.pk]))
+        self.assertEqual(response.status_code, 401)
+
+    def test_download_with_no_api_credentials_created(self):
+        token = self.project_base.create_token()
+        key = token.key
+        token.delete()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + key)
         response = client.get(reverse('ddm-download-api', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 401)

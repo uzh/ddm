@@ -124,5 +124,10 @@ class APITokenCreationForm(forms.Form):
         initial=30,
         min_value=1,
         max_value=90,
-        required=False
+        required=True
+    )
+    action = forms.CharField(
+        max_length=20,
+        initial='create',
+        widget=forms.HiddenInput()
     )

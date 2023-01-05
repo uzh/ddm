@@ -153,9 +153,15 @@ class ProjectAPITokenView(SuccessMessageMixin, DdmAuthMixin, FormView):
         return context
 
     def form_valid(self, form):
-        """ Create new token if form is valid. """
+        """ If form is valid, either create new token or delete existing one. """
         project = self.get_project()
-        project.create_token(expiration_days=form.cleaned_data['expiration_days'])
+        if form.cleaned_data['action'] == 'create':
+            project.create_token(expiration_days=form.cleaned_data['expiration_days'])
+
+        if form.cleaned_data['action'] == 'delete':
+            token = project.get_token()
+            token.delete()
+
         return super().form_valid(form)
 
     def get_success_url(self):

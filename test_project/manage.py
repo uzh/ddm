@@ -92,6 +92,7 @@ settings.configure(
     SITE_ID=1,
     STATIC_URL='/static/',
     USE_TZ=True,
+    TIME_ZONE='Europe/Zurich',
     LANGUAGE_CODE='en',
     USE_I18N=True,
     LANGUAGES=[

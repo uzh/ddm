@@ -39,7 +39,7 @@ class ParticipationFlowBaseTestCase(TestData):
         DataDonation.objects.create(
             project=self.project_base,
             blueprint=self.don_bp,
-            participant=self.participant,
+            participant=participant,
             time_submitted=timezone.now(),
             consent=True,
             status='{}',
@@ -120,7 +120,6 @@ class TestBriefingView(ParticipationFlowBaseTestCase):
         self.assertEqual(project_session['steps']['briefing']['state'], 'started')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'ddm/public/briefing.html')
-
 
 
 class TestDonationView(ParticipationFlowBaseTestCase):

@@ -1,7 +1,7 @@
-from django.http import Http404, HttpResponseBadRequest
+from django.http import Http404, HttpResponseBadRequest, HttpResponseForbidden
 from django.views.decorators.debug import sensitive_variables
 
-from ddm.models.auth import CustomTokenAuthenticator
+from ddm.models.auth import ProjectTokenAuthenticator
 from ddm.models.core import DataDonation, DonationProject, QuestionnaireResponse, ResearchProfile, Participant
 from ddm.models.serializers import DonationSerializer, ResponseSerializer, ProjectSerializer
 
@@ -24,6 +24,7 @@ def user_is_allowed_to_download(user, project):
             return True
 
 
+# TODO: Log these actions somewhere.
 class ProjectDataView(APIView):
     """
     Download or delete data collected within a project.
@@ -32,10 +33,10 @@ class ProjectDataView(APIView):
     * Session authentication for browser access.
     * Only project owners are able to access this view.
     """
-    authentication_classes = [CustomTokenAuthenticator, authentication.SessionAuthentication]
+    authentication_classes = [ProjectTokenAuthenticator, authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
-    @sensitive_variables('secret')
+    @sensitive_variables()
     def get(self, request, format=None, *args, **kwargs):
         """
         Return a dictionary object containing the data donations and
@@ -44,25 +45,28 @@ class ProjectDataView(APIView):
         project_id = self.kwargs['pk']
         project = DonationProject.objects.get(pk=project_id)
         if not user_is_allowed_to_download(request.user, project):
-            raise Http404()
+            return HttpResponseForbidden('User does not have access.')
 
-        if project.super_secret:
-            secret = None if 'super_secret' not in request.headers else request.headers['super_secret']
-
+        if not project.super_secret:
+            secret = None
+        else:
+            secret = None if 'Super-Secret' not in request.headers else request.headers['Super-Secret']
             if not secret:
-                # TODO: Add this to admin log.
-                return HttpResponseBadRequest('super_secret required but not found in headers.')
-
-            project.secret_key = secret
+                # TODO: Add this to admin log
+                return HttpResponseForbidden('Incorrect key material.')
 
         data_donations = DataDonation.objects.filter(project=project)
         q_responses = QuestionnaireResponse.objects.filter(project=project)
 
-        results = {
-            'project': ProjectSerializer(project).data,
-            'donations': [DonationSerializer(d).data for d in data_donations],
-            'responses': [ResponseSerializer(r).data for r in q_responses],
-        }
+        try:
+            results = {
+                'project': ProjectSerializer(project).data,
+                'donations': [DonationSerializer(d, secret=secret).data for d in data_donations],
+                'responses': [ResponseSerializer(r, secret=secret).data for r in q_responses],
+            }
+        except ValueError:
+            return HttpResponseForbidden('Incorrect key material.')
+
         return Response(results)
 
     def delete(self, request, format=None, *args, **kwargs):
@@ -72,7 +76,7 @@ class ProjectDataView(APIView):
         project_id = self.kwargs['pk']
         project = DonationProject.objects.get(pk=project_id)
         if not user_is_allowed_to_download(request.user, project):
-            raise Http404()
+            return HttpResponseForbidden('User does not have access.')
 
         # Delete all related objects.
         Participant.objects.filter(project=project).delete()

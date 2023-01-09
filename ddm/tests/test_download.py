@@ -41,7 +41,7 @@ class TestDownload(TestData):
     def test_download_fails_for_user_without_permission(self):
         self.client.login(**self.users['base3']['credentials'])
         response = self.client.get(reverse('ddm-download-api', args=[self.project_base.pk]), follow=True)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
 
     def test_download_with_valid_api_credentials(self):
         token = self.project_base.create_token()
@@ -66,3 +66,5 @@ class TestDownload(TestData):
         client.credentials(HTTP_AUTHORIZATION='Token ' + key)
         response = client.get(reverse('ddm-download-api', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 401)
+
+# TODO: Add test_delete

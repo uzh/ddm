@@ -9,12 +9,15 @@ from struct import pack
 import base64
 import json
 
+from django.views.decorators.debug import sensitive_variables
+
 
 class ModelWithEncryptedData(models.Model):
 
     class Meta:
         abstract = True
 
+    @sensitive_variables()
     def save(self, *args, **kwargs):
         self.data = Encryption(
             secret=self.project.secret_key,
@@ -23,6 +26,7 @@ class ModelWithEncryptedData(models.Model):
         ).encrypt(self.data)
         super().save(*args, **kwargs)
 
+    @sensitive_variables()
     def get_decrypted_data(self, *args, **kwargs):
         if not self.project.super_secret:
             return Encryption(secret=self.project.secret_key, salt=str(self.project.date_created)).decrypt(self.data)
@@ -31,6 +35,8 @@ class ModelWithEncryptedData(models.Model):
                 return Encryption(secret=kwargs['secret'], salt=str(self.project.date_created)).decrypt(self.data)
             except KeyError:
                 raise KeyError('Super secret project expects the custom secret to be passed in the argument "secret".')
+            except ValueError:
+                raise ValueError('Wrong super secret.')
 
 
 class Encryption:

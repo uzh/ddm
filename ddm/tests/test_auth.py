@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 from django.contrib.auth import get_user_model
-from ddm.models.auth import CustomTokenAuthenticator, CustomToken
+from ddm.models.auth import ProjectTokenAuthenticator, ProjectAccessToken
 from ddm.models.core import ResearchProfile, DonationProject
 from ddm.auth import email_is_valid, user_is_owner, user_is_permitted
 from ddm.tests.base import TestData
@@ -104,8 +104,8 @@ class TestAuthCustomTokenAuthenticator(TestCase):
         )
 
         # Authenticator
-        cls.authenticator = CustomTokenAuthenticator()
-        cls.token = CustomToken.objects.create(
+        cls.authenticator = ProjectTokenAuthenticator()
+        cls.token = ProjectAccessToken.objects.create(
             project=cls.project,
             created=timezone.now(),
             expiration_date=None
@@ -118,7 +118,7 @@ class TestAuthCustomTokenAuthenticator(TestCase):
 
     def test_valid_token_with_expiration(self):
         self.token.delete()
-        token = CustomToken.objects.create(
+        token = ProjectAccessToken.objects.create(
             project=self.project,
             created=timezone.now(),
             expiration_date=timezone.now() + datetime.timedelta(days=2)
@@ -144,7 +144,7 @@ class TestAuthCustomTokenAuthenticator(TestCase):
 
     def test_expired_token(self):
         self.token.delete()
-        expired_token = CustomToken.objects.create(
+        expired_token = ProjectAccessToken.objects.create(
             project=self.project,
             created=timezone.now(),
             expiration_date=datetime.datetime(2022, 2, 2, 22, 22).replace(tzinfo=timezone.utc)

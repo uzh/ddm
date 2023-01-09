@@ -6,7 +6,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormVi
 from django.views.generic.list import ListView
 
 from ddm.forms import APITokenCreationForm, ProjectCreateForm
-from ddm.models.auth import CustomToken
+from ddm.models.auth import ProjectAccessToken
 from ddm.models.core import DonationProject, ResearchProfile
 from ddm.models.exceptions import ExceptionLogEntry
 from ddm.views.admin.auth import DdmAuthMixin
@@ -148,7 +148,7 @@ class ProjectAPITokenView(SuccessMessageMixin, DdmAuthMixin, FormView):
         project = self.get_project()
         context.update({
             'project': project,
-            'token': CustomToken.objects.filter(project=project).first()
+            'token': ProjectAccessToken.objects.filter(project=project).first()
         })
         return context
 

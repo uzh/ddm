@@ -7,7 +7,7 @@ from rest_framework import exceptions
 from rest_framework.authentication import TokenAuthentication, get_authorization_header
 
 
-class CustomToken(models.Model):
+class ProjectAccessToken(models.Model):
     """
     Custom authorization token that is linked to a DonationProject.
     Adapted from the Token model as implemented in rest_framework.authtoken.models.Token.
@@ -34,13 +34,10 @@ class CustomToken(models.Model):
 
     def has_expired(self):
         """ Returns False if token has expired. """
-        if self.expiration_date is not None and timezone.now() > self.expiration_date:
-            return True
-        else:
-            return False
+        return self.expiration_date is not None and timezone.now() > self.expiration_date
 
 
-class CustomTokenAuthenticator(TokenAuthentication):
+class ProjectTokenAuthenticator(TokenAuthentication):
     """
     Custom implementation of the rest_framework.authentication.TokenAuthentication
     method that does not require a token to be related to a user. Instead, the
@@ -53,7 +50,7 @@ class CustomTokenAuthenticator(TokenAuthentication):
 
         Authorization: Token 401f7ac837da42b97f613d789819ff93537bee6a
     """
-    model = CustomToken
+    model = ProjectAccessToken
 
     def authenticate(self, request):
         """

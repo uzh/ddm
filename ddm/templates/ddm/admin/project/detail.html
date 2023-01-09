@@ -129,7 +129,7 @@
     </div>
     <h4 class="mt-3">Download Section</h4>
     <div>
-      <p><a class="a-no-link" onclick="downloadData('{% url "ddm-download-api" object.pk %}', 'project_{{ object.pk }}_data')"><i class="bi bi-download"></i> Download Data as JSON</a></p>
+      <p><a class="a-no-link" {% if not object.super_secret %}onclick="downloadData('{% url "ddm-download-api" object.pk %}', 'project_{{ object.pk }}_data')"{% else %}onclick="askSecret()"{% endif %}><i class="bi bi-download"></i> Download Data as JSON</a></p>
       <p><a href="{% url 'project-token' object.pk %}">Manage Access Token</a></p>
     </div>
     <h4>Exception Log</h4>
@@ -139,6 +139,44 @@
   </div>
 </div>
 
+{# Modal for secret input #}
+<div class="modal" id="modal-secret-input" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body ddm-form">
+        <p><b>Personal Secret for Data Encryption</b></p>
+        <p>
+          This is a super secret project and your personal secret is needed to decrypt and download the data belonging to this project.<br>
+          You defined this secret during the creation of the project. Without this secret, the data belonging to this project cannot be downloaded.
+        </p>
+        <p>
+          Please provide your secret:
+          <input type="text" id="secret-input" class="w-100 mt-2" name="secret">
+          <span id="error-no-secret" class="text-danger helptext" hidden>Please provide your secret - secret cannot empty.</span>
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button id="cancel-secret" type="button" class="ddm-btn" data-bs-dismiss="modal">Cancel</button>
+        <button id="submit-secret" type="button" class="ddm-btn" onclick="downloadData('{% url "ddm-download-api" object.pk %}', 'project_{{ object.pk }}_data', true)">Download Data</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Modal for download error #}
+<div class="modal" id="modal-download-error" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p><i class="bi bi-x-octagon-fill text-danger pe-2"></i><b>Download Failed</b></p>
+        The download failed due to the following issue: <span id="download-error-message"></span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="ddm-btn" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 {# DANGER ZONE #}
 <div class="ddm-admin-section">
@@ -180,7 +218,7 @@
 </div>
 
 <div class="mt-3">
-  <a href="{% url 'project-list' %}">&#129040; go back</a>
+  <a href="{% url 'project-list' %}">&#129040; Back</a>
 </div>
 
 <div id="download-overlay" class="ddm-overlay">

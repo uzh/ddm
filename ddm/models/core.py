@@ -12,9 +12,10 @@ from django.db.models import Avg, F
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.safestring import mark_safe
+from django.views.decorators.debug import sensitive_variables
 
 import ddm.models.exceptions as ddm_exceptions
-from ddm.models.auth import CustomToken
+from ddm.models.auth import ProjectAccessToken
 from ddm.models.encryption import Encryption, ModelWithEncryptedData
 
 
@@ -100,6 +101,7 @@ class DonationProject(models.Model):
                   'Semikolons are not allowed as part of the expected url parameters.'
     )
 
+    @sensitive_variables()
     def __init__(self, *args, **kwargs):
         self.secret_key = settings.SECRET_KEY
         if 'secret_key' in kwargs:
@@ -113,6 +115,7 @@ class DonationProject(models.Model):
     def get_absolute_url(self):
         return reverse('project-detail', args=[str(self.id)])
 
+    @sensitive_variables()
     def save(self, *args, **kwargs):
         if not self.pk:
             if self.owner is None:
@@ -147,7 +150,7 @@ class DonationProject(models.Model):
         return self.expected_url_parameters.split(';')
 
     def get_token(self):
-        return CustomToken.objects.filter(project=self).first()
+        return ProjectAccessToken.objects.filter(project=self).first()
 
     def create_token(self, expiration_days=None):
         token = self.get_token()
@@ -157,7 +160,7 @@ class DonationProject(models.Model):
             expiration_date = timezone.now() + datetime.timedelta(days=expiration_days)
         else:
             expiration_date = None
-        return CustomToken.objects.create(project=self, expiration_date=expiration_date)
+        return ProjectAccessToken.objects.create(project=self, expiration_date=expiration_date)
 
 
 def get_extra_data_default():

@@ -7,7 +7,7 @@ from ddm.models.core import DataDonation, QuestionnaireResponse
 from ddm.tests.base import TestData
 
 
-class TestDownload(TestData):
+class TestDataAPI(TestData):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
@@ -67,4 +67,37 @@ class TestDownload(TestData):
         response = client.get(reverse('ddm-download-api', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 401)
 
-# TODO: Add test_delete
+    def test_delete_with_regular_login_owner(self):
+        self.client.login(**self.users['base']['credentials'])
+        response = self.client.delete(reverse('ddm-download-api', args=[self.project_base.pk]))
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNotNone(response.data)
+
+    def test_delete_fails_for_user_without_permission(self):
+        self.client.login(**self.users['base3']['credentials'])
+        response = self.client.delete(reverse('ddm-download-api', args=[self.project_base.pk]), follow=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_delete_with_valid_api_credentials(self):
+        token = self.project_base.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        response = client.delete(reverse('ddm-download-api', args=[self.project_base.pk]))
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNotNone(response.data)
+
+    def test_delete_with_invalid_api_credentials(self):
+        token = self.project_base2.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        response = client.delete(reverse('ddm-download-api', args=[self.project_base.pk]))
+        self.assertEqual(response.status_code, 401)
+
+    def test_delete_with_no_api_credentials_created(self):
+        token = self.project_base.create_token()
+        key = token.key
+        token.delete()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + key)
+        response = client.delete(reverse('ddm-download-api', args=[self.project_base.pk]))
+        self.assertEqual(response.status_code, 401)

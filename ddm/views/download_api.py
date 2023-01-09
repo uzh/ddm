@@ -1,4 +1,3 @@
-from django.http import Http404, HttpResponseBadRequest, HttpResponseForbidden
 from django.views.decorators.debug import sensitive_variables
 
 from ddm.models.auth import ProjectTokenAuthenticator
@@ -45,7 +44,8 @@ class ProjectDataView(APIView):
         project_id = self.kwargs['pk']
         project = DonationProject.objects.get(pk=project_id)
         if not user_is_allowed_to_download(request.user, project):
-            return HttpResponseForbidden('User does not have access.')
+            msg = 'User does not have access.'
+            return Response(status=status.HTTP_403_FORBIDDEN, data={'message': msg})
 
         if not project.super_secret:
             secret = None
@@ -53,7 +53,8 @@ class ProjectDataView(APIView):
             secret = None if 'Super-Secret' not in request.headers else request.headers['Super-Secret']
             if not secret:
                 # TODO: Add this to admin log
-                return HttpResponseForbidden('Incorrect key material.')
+                msg = 'Incorrect key material.'
+                return Response(status=status.HTTP_403_FORBIDDEN, data={'message': msg})
 
         data_donations = DataDonation.objects.filter(project=project)
         q_responses = QuestionnaireResponse.objects.filter(project=project)
@@ -65,9 +66,10 @@ class ProjectDataView(APIView):
                 'responses': [ResponseSerializer(r, secret=secret).data for r in q_responses],
             }
         except ValueError:
-            return HttpResponseForbidden('Incorrect key material.')
+            msg = 'Incorrect key material.'
+            return Response(status=status.HTTP_403_FORBIDDEN, data={'message': msg})
 
-        return Response(results)
+        return Response(status=status.HTTP_200_OK, data=results)
 
     def delete(self, request, format=None, *args, **kwargs):
         """
@@ -76,15 +78,15 @@ class ProjectDataView(APIView):
         project_id = self.kwargs['pk']
         project = DonationProject.objects.get(pk=project_id)
         if not user_is_allowed_to_download(request.user, project):
-            return HttpResponseForbidden('User does not have access.')
+            msg = 'User does not have access.'
+            return Response(status=status.HTTP_403_FORBIDDEN, data={'message': msg})
 
         # Delete all related objects.
         Participant.objects.filter(project=project).delete()
         n_deleted_donations = DataDonation.objects.filter(project=project).delete()[0]
         n_deleted_responses = QuestionnaireResponse.objects.filter(project=project).delete()[0]
 
-        response_data = {
-            'Deleted Donations': n_deleted_donations,
-            'Deleted Responses': n_deleted_responses
-        }
-        return Response(status=status.HTTP_204_NO_CONTENT, data=response_data)
+        msg = f'Deleted {n_deleted_donations} data donations and ' \
+              f'{n_deleted_responses} questionnaire responses.'
+
+        return Response(status=status.HTTP_200_OK, data={'message': msg})

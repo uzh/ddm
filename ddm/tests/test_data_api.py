@@ -29,25 +29,25 @@ class TestDataAPI(TestData):
         )
 
     def test_download_project_data_view_exists(self):
-        response = self.client.get(reverse('ddm-download-api', args=[self.project_base.pk]))
+        response = self.client.get(reverse('ddm-data-api', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 401)
 
     def test_download_with_regular_login_owner(self):
         self.client.login(**self.users['base']['credentials'])
-        response = self.client.get(reverse('ddm-download-api', args=[self.project_base.pk]))
+        response = self.client.get(reverse('ddm-data-api', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(response.data)
 
     def test_download_fails_for_user_without_permission(self):
         self.client.login(**self.users['base3']['credentials'])
-        response = self.client.get(reverse('ddm-download-api', args=[self.project_base.pk]), follow=True)
+        response = self.client.get(reverse('ddm-data-api', args=[self.project_base.pk]), follow=True)
         self.assertEqual(response.status_code, 403)
 
     def test_download_with_valid_api_credentials(self):
         token = self.project_base.create_token()
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
-        response = client.get(reverse('ddm-download-api', args=[self.project_base.pk]))
+        response = client.get(reverse('ddm-data-api', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(response.data)
 
@@ -55,7 +55,7 @@ class TestDataAPI(TestData):
         token = self.project_base2.create_token()
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
-        response = client.get(reverse('ddm-download-api', args=[self.project_base.pk]))
+        response = client.get(reverse('ddm-data-api', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 401)
 
     def test_download_with_no_api_credentials_created(self):
@@ -64,25 +64,25 @@ class TestDataAPI(TestData):
         token.delete()
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + key)
-        response = client.get(reverse('ddm-download-api', args=[self.project_base.pk]))
+        response = client.get(reverse('ddm-data-api', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 401)
 
     def test_delete_with_regular_login_owner(self):
         self.client.login(**self.users['base']['credentials'])
-        response = self.client.delete(reverse('ddm-download-api', args=[self.project_base.pk]))
+        response = self.client.delete(reverse('ddm-data-api', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(response.data)
 
     def test_delete_fails_for_user_without_permission(self):
         self.client.login(**self.users['base3']['credentials'])
-        response = self.client.delete(reverse('ddm-download-api', args=[self.project_base.pk]), follow=True)
+        response = self.client.delete(reverse('ddm-data-api', args=[self.project_base.pk]), follow=True)
         self.assertEqual(response.status_code, 403)
 
     def test_delete_with_valid_api_credentials(self):
         token = self.project_base.create_token()
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
-        response = client.delete(reverse('ddm-download-api', args=[self.project_base.pk]))
+        response = client.delete(reverse('ddm-data-api', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(response.data)
 
@@ -90,7 +90,7 @@ class TestDataAPI(TestData):
         token = self.project_base2.create_token()
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
-        response = client.delete(reverse('ddm-download-api', args=[self.project_base.pk]))
+        response = client.delete(reverse('ddm-data-api', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 401)
 
     def test_delete_with_no_api_credentials_created(self):
@@ -99,5 +99,5 @@ class TestDataAPI(TestData):
         token.delete()
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + key)
-        response = client.delete(reverse('ddm-download-api', args=[self.project_base.pk]))
+        response = client.delete(reverse('ddm-data-api', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 401)

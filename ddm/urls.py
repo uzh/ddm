@@ -2,7 +2,7 @@ from django.urls import path, include
 
 from ddm.views import admin, participation_flow
 from ddm.views.exception_api import ExceptionAPI
-from ddm.views.download_api import ProjectDataView
+from ddm.views.download_api import ProjectDataAPI
 
 
 participation_flow_patterns = [
@@ -62,6 +62,6 @@ urlpatterns = [
     path(r'<slug:slug>/', include(participation_flow_patterns)),
     path(r'projects/', include(admin_patterns)),
     path(r'auth/', include(authentication_patterns)),
-    path(r'<int:pk>/download/', ProjectDataView.as_view(), name='ddm-download-api'),
-    path(r'<int:pk>/exceptions', ExceptionAPI.as_view(), name='ddm-exceptions-api'),
+    path(r'<int:pk>/data/', ProjectDataAPI.as_view(), name='ddm-data-api'),
+    path(r'<int:pk>/exceptions/', ExceptionAPI.as_view(), name='ddm-exceptions-api'),
 ]

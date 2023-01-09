@@ -24,7 +24,7 @@ def user_is_allowed_to_download(user, project):
 
 
 # TODO: Log these actions somewhere.
-class ProjectDataView(APIView):
+class ProjectDataAPI(APIView):
     """
     Download or delete data collected within a project.
 

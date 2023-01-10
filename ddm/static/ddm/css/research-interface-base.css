@@ -191,12 +191,10 @@
     color: #ab0000;
 }
 .page-item.active .page-link,
-.page-size,
 .btn-secondary {
     background-color: #1a1a1a !important;
     border: none !important;
 }
-
 .ddm-if-icon {
     background: linear-gradient(142deg, rgb(0, 156, 148) 0%, rgba(0, 156, 148, 0.34) 100%);
     -webkit-background-clip: text;

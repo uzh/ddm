@@ -1,4 +1,4 @@
-from ddm.models.core import DonationProject, Participant
+from ddm.models.core import DonationProject, Participant, DonationBlueprint
 from ddm.models.exceptions import ExceptionLogEntry
 from django.utils import timezone
 from rest_framework import permissions
@@ -20,12 +20,21 @@ class ExceptionAPI(APIView):
         participant_id = request.session['projects'][f'{project_id}']['participant_id']
         participant = Participant.objects.get(pk=participant_id)
 
+        # Get related blueprint
+        blueprint_id = request.data.get('blueprint')
+        if blueprint_id:
+            blueprint = DonationBlueprint.objects.get(pk=blueprint_id)
+        else:
+            blueprint = None
+
         ExceptionLogEntry.objects.create(
             date=timezone.now(),
             project=project,
             participant=participant,
-            exception_type=request.data['status_code'],
-            message=request.data['message']
+            exception_type=request.data.get('status_code'),
+            message=request.data['message'],
+            raised_by=request.data.get('raised_by'),
+            blueprint=blueprint
         )
 
         return Response(None, status=201)

@@ -209,7 +209,6 @@ import JSZip from "jszip";
 import DonationInstructions from "./DonationInstructions";
 import axios from "axios";
 import Papa from 'papaparse';
-// import fs from "fs";
 
 
 export default {
@@ -249,6 +248,11 @@ export default {
     this.emitToParent();
   },
   methods: {
+
+    /**
+     * Change label of collapsible that displays uploaded data.
+     * @param {string} elementId Html-id of the label element.
+     */
     toggleCollapseLabel(elementId) {
       let element = document.getElementById(elementId);
       let label = document.getElementById(elementId.concat('-label'));
@@ -265,6 +269,10 @@ export default {
       }, 300);
     },
 
+    /**
+     * Processes the file uploaded by the participant.
+     * @param event
+     */
     processFile(event) {
       let uploader = this;
       uploader.uploadStatus = 'processing';
@@ -286,12 +294,12 @@ export default {
                       .async("string")
                       .then(c => uploader.processContent(c, blueprint))
                       .catch(e => {
-                        axios.post(uploader.exceptionUrl, {'status_code': 4199, 'message': e.message}).catch(e => console.error(`Could not post error message, ${e}`));
+                        uploader.postError(4199, e.message);
                         uploader.recordError(uploader.$t('error-generic') + e.message, blueprint.id.toString());
                       })
                 })
                 if (!reHasMatched) {
-                  axios.post(uploader.exceptionUrl, {'status_code': 418, 'message': uploader.$t('error-regex-not-matched')}).catch(e => console.error(`Could not post error message, ${e}`));
+                  uploader.postError(4180, uploader.$t('error-regex-not-matched'), blueprint.id);
                   uploader.recordError(uploader.$t('error-regex-not-matched'), blueprint.id.toString());
                 }
               })
@@ -312,7 +320,7 @@ export default {
                 myMess = uploader.$t('error-generic') + e.message;
                 statusCode = 4198;
               }
-              axios.post(uploader.exceptionUrl, {'status_code': statusCode, 'message': e.message}).catch(e => console.error(`Could not post error message, ${e}`));
+              uploader.postError(statusCode, e.message);
               uploader.recordError(myMess, 'general');
         })
       }
@@ -322,14 +330,16 @@ export default {
 
         if (uploader.blueprints[0].format === 'json') {
           if (!files[0].name.endsWith('.json')) {
-            axios.post(uploader.exceptionUrl, {'status_code': 4105, 'message': uploader.$t('error-wrong-file-type', 'en', {actualType: files[0].name.substr(files[0].name.lastIndexOf(".")), expectedType: '.json'})}).catch(e => console.error(`Could not post error message, ${e}`));
+            let errorMsg = uploader.$t('error-wrong-file-type', 'en', {actualType: files[0].name.substr(files[0].name.lastIndexOf(".")), expectedType: '.json'})
+            uploader.postError(4105, errorMsg, uploader.blueprints[0].id);
             uploader.recordError(uploader.$t('error-wrong-file-type', {actualType: files[0].name.substr(files[0].name.lastIndexOf(".")), expectedType: '.json'}), uploader.blueprints[0].id.toString());
           }
         }
 
         if (uploader.blueprints[0].format === 'csv') {
           if (!files[0].name.endsWith('.csv')) {
-            axios.post(uploader.exceptionUrl, {'status_code': 4105, 'message': uploader.$t('error-wrong-file-type', 'en', {actualType: files[0].name.substr(files[0].name.lastIndexOf(".")), expectedType: '.csv'})}).catch(e => console.error(`Could not post error message, ${e}`));
+            let errorMsg = uploader.$t('error-wrong-file-type', 'en', {actualType: files[0].name.substr(files[0].name.lastIndexOf(".")), expectedType: '.csv'});
+            uploader.postError(4105, errorMsg, uploader.blueprints[0].id);
             uploader.recordError(uploader.$t('error-wrong-file-type', {actualType: files[0].name.substr(files[0].name.lastIndexOf(".")), expectedType: '.csv'}), uploader.blueprints[0].id.toString());
           }
         }
@@ -341,7 +351,7 @@ export default {
           try {
             uploader.processContent(content, uploader.blueprints[0]);
           } catch(e) {
-            axios.post(uploader.exceptionUrl, {'status_code': 4199, 'message': e.message}).catch(e => console.error(`Could not post error message, ${e}`));
+            uploader.postError(4199, e.message, uploader.blueprints[0].id);
             uploader.recordError(uploader.$t('error-generic') + e.message, uploader.blueprints[0].id.toString());
           }
         }
@@ -350,7 +360,7 @@ export default {
 
       // Procedure if files.length != 1
       else {
-        axios.post(uploader.exceptionUrl, {'status_code': 4104, 'message': uploader.$t('error-multiple-files', 'en')}).catch(e => console.error(`Could not post error message, ${e}`));
+        uploader.postError(4104, uploader.$t('error-multiple-files', 'en'));
         uploader.recordError(uploader.$t('error-multiple-files'), 'general');
       }
 
@@ -360,6 +370,12 @@ export default {
         }, 1000);
     },
 
+    /**
+     * Extracts the content of a file according to the defined extraction and
+     * validation rules.
+     * @param {string } content   A file's content.
+     * @param {Object}  blueprint A blueprint.
+     */
     processContent(content, blueprint) {
       let uploader = this;
       let blueprintID = blueprint.id.toString();
@@ -371,7 +387,7 @@ export default {
         try {
           fileContent = JSON.parse(content);
         } catch(e) {
-          axios.post(uploader.exceptionUrl, {'status_code': 4106, 'message': e.message}).catch(e => console.error(`Could not post error message, ${e}`));
+          uploader.postError(4106, e.message, blueprint.id);
           uploader.recordError(uploader.$t('error-json-syntax'), uploader.blueprints[0].id.toString());
         }
       }
@@ -381,7 +397,7 @@ export default {
           let parserResult = Papa.parse(content, {header: true, delimiter: blueprint.csv_delimiter });
           fileContent = parserResult.data;
         } catch(e) {
-          axios.post(uploader.exceptionUrl, {'status_code': 4106, 'message': e.message}).catch(e => console.error(`Could not post error message, ${e}`));
+          uploader.postError(4106, e.message, blueprint.id);
           uploader.recordError(uploader.$t('error-json-syntax'), uploader.blueprints[0].id.toString());  // TODO: Check 'error-json-syntax'
         }
       }
@@ -402,7 +418,8 @@ export default {
               return false;
             }})) {
             // Go to next entry and record exception
-            axios.post(uploader.exceptionUrl, {'status_code': 4203, 'message': `Entry does not contain the expected field(s) "${missingFields.toString()}".`}).catch(e => console.error(`Could not post error message, ${e}`))
+            let errorMsg = `Entry does not contain the expected field(s) "${missingFields.toString()}".`;
+            uploader.postError(4203, errorMsg, blueprint.id);
             return;
           }
 
@@ -473,26 +490,32 @@ export default {
               extractedData.push(result);
             } catch (e) {
               nEntriesFilteredOut += 1;
-              axios.post(uploader.exceptionUrl, {'status_code': 4206, 'message': `${e}`}).catch(e => console.error(`Could not post error message, ${e}`))
+              uploader.postError(4206, `${e}`, blueprint.id)
             }
           }
         })
         uploader.blueprintData[blueprintID].extracted_data = extractedData;
         if (nEntriesWithMissingFields === fileContent.length) {
-          axios.post(uploader.exceptionUrl, {'status_code': 4201, 'message': `No data extracted: Expected fields missing in ${nEntriesWithMissingFields}/${fileContent.length} entries.`}).catch(e => console.error(`Could not post error message, ${e}`))
+          let errorMsg = `No data extracted: Expected fields missing in ${nEntriesWithMissingFields}/${fileContent.length} entries.`;
+          uploader.postError(4201, errorMsg, blueprint.id);
           uploader.recordError(uploader.$t('error-all-expected-fields-missing'), blueprint.id.toString());
         }
         else if (nEntriesFilteredOut === fileContent.length) {
-          axios.post(uploader.exceptionUrl, {'status_code': 4204, 'message': `No data extracted: All entries (${nEntriesFilteredOut}/${fileContent.length}) were filtered out.`}).catch(e => console.error(`Could not post error message, ${e}`))
+          let errorMsg = `No data extracted: All entries (${nEntriesFilteredOut}/${fileContent.length}) were filtered out.`;
+          uploader.postError(4204, errorMsg, blueprint.id);
           uploader.recordError(uploader.$t('error-all-fields-filtered-out'), blueprint.id.toString());
         }
         else if ((nEntriesWithMissingFields + nEntriesFilteredOut) === fileContent.length) {
-          axios.post(uploader.exceptionUrl, {'status_code': 4205, 'message': `No data extracted: Expected fields missing in ${nEntriesWithMissingFields}/${fileContent.length} entries and ${nEntriesFilteredOut}/${fileContent.length} filtered out.`}).catch(e => console.error(`Could not post error message, ${e}`))
+          let errorMsg = `No data extracted: Expected fields missing in ${nEntriesWithMissingFields}/${fileContent.length} entries and ${nEntriesFilteredOut}/${fileContent.length} filtered out.`;
+          uploader.postError(4205, errorMsg, blueprint.id);
           uploader.recordError(uploader.$t('error-all-fields-filtered-out'), blueprint.id.toString());
         }
       }
     },
 
+    /**
+     * Emit data to UploaderApp.
+     */
     emitToParent() {
       // TODO: Emit extra information on the file uploader level (e.g.: JSON.stringify({'errors_general': this.errorLog, 'ul_attempts': this.uploadAttempts, 'blueprints': this.blueprintData}))
       let dataToEmit = JSON.parse(JSON.stringify(this.blueprintData));
@@ -510,6 +533,9 @@ export default {
       this.$emit('changedData', dataToEmit);
     },
 
+    /**
+     * Resets the client-side error log.
+     */
     resetErrorLog() {
       this.generalErrors = [];
       for (let bp in this.blueprintData){
@@ -517,6 +543,12 @@ export default {
       }
     },
 
+    /**
+     * Records errors that will be displayed to participants on the client-side.
+     * @param {string} e      Error message that is displayed to the user.
+     * @param {string} target If error relates to a specific blueprint a blueprint ID.
+     *                        'general' if it is a general error.
+     */
     recordError(e, target) {
       if (target == 'general') {
         this.generalErrors.push(e)
@@ -525,6 +557,30 @@ export default {
       }
     },
 
+    /**
+     * Posts error to server through DDM's exception API (endpoint specified
+     * in the exceptionUrl variable). Targeted at researchers administrating
+     * the project.
+     * @param {number}  code        Exception code (see DDM documentation).
+     * @param {string}  msg         Exception description that will be submitted to
+     *                              the server-side exception log.
+     * @param {number}  blueprintID ID of related blueprint. Default is null.
+     */
+    postError(code, msg, blueprintID=null) {
+      let data = {
+        'status_code': code,
+        'message': this.name + ': ' + msg,
+        'raised_by': 'client',
+        'blueprint': blueprintID
+      }
+      axios.post(this.exceptionUrl, data)
+          .catch(e => console.error(`Could not post error message, ${e}`));
+    },
+
+    /**
+     * Updates the upload status displayed to the participant.
+     * Status will be updated to either 'success', 'failed', or 'partial'.
+     */
     updateStatus() {
       let bpErrorCount = 0;
       let nBlueprints = Object.keys(this.blueprintData).length

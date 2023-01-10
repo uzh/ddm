@@ -1,8 +1,15 @@
-from django.test import TestCase
+from django.contrib.auth import get_user_model
+from django.test import TestCase, override_settings
+from django.utils import timezone
 
-from ddm.models.core import DataDonation, DonationProject, QuestionnaireResponse
+from ddm.models.core import (
+    DataDonation, DonationProject, QuestionnaireResponse, ResearchProfile,
+    DonationBlueprint, Participant
+)
 from ddm.models.encryption import Encryption
-from ddm.tests.base import TestData
+
+
+User = get_user_model()
 
 
 class TestEncryptedFieldIsolated(TestCase):
@@ -22,18 +29,50 @@ class TestEncryptedFieldIsolated(TestCase):
         self.assertEqual(text, enc.decrypt(enc_text))
 
 
-class TestModelEncryption(TestData):
+@override_settings(DDM_SETTINGS={'EMAIL_PERMISSION_CHECK':  r'.*(\.|@)mail\.com$', })
+class TestModelEncryption(TestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
 
-        cls.custom_project = DonationProject.objects.create(
+        base_user = User.objects.create_user(**{
+            'username': 'owner', 'password': '123', 'email': 'owner@mail.com'
+        })
+        base_profile = ResearchProfile.objects.create(user=base_user)
+
+        cls.base_project = DonationProject.objects.create(
+            name='Base Project', slug='base', owner=base_profile)
+
+        cls.alt_project = DonationProject.objects.create(
             name='Test Project Custom',
             slug='test-project-custom',
             super_secret=True,
             secret_key='test1234',
-            owner=cls.users['base']['profile']
+            owner=base_profile
         )
+
+        cls.base_blueprint = DonationBlueprint.objects.create(
+            project=cls.base_project,
+            name='donation blueprint',
+            expected_fields='"a", "b"',
+            file_uploader=None
+        )
+        cls.alt_blueprint = DonationBlueprint.objects.create(
+            project=cls.alt_project,
+            name='donation blueprint',
+            expected_fields='"a", "b"',
+            file_uploader=None
+        )
+
+        cls.base_participant = Participant.objects.create(
+            project=cls.base_project,
+            start_time=timezone.now()
+        )
+        cls.alt_participant = Participant.objects.create(
+            project=cls.alt_project,
+            start_time=timezone.now()
+        )
+
         cls.raw_data_short = '{"some_data": "some_value"}'
         cls.raw_data_long = '{' + 100*'"some_data": "some_value",' + '}'
 
@@ -41,9 +80,9 @@ class TestModelEncryption(TestData):
         for raw_data in [self.raw_data_short, self.raw_data_long]:
             with self.subTest(raw_data=raw_data):
                 dd = DataDonation.objects.create(
-                    project=self.project_base,
-                    blueprint=self.don_bp,
-                    participant=self.participant_base,
+                    project=self.base_project,
+                    blueprint=self.base_blueprint,
+                    participant=self.base_participant,
                     consent=True,
                     status='some status',
                     data=raw_data
@@ -55,8 +94,8 @@ class TestModelEncryption(TestData):
         for raw_data in [self.raw_data_short, self.raw_data_long]:
             with self.subTest(raw_data=raw_data):
                 qr = QuestionnaireResponse.objects.create(
-                    project=self.project_base,
-                    participant=self.participant_base,
+                    project=self.base_project,
+                    participant=self.base_participant,
                     data=raw_data
                 )
                 self.assertNotEqual(raw_data, qr.data)
@@ -66,9 +105,9 @@ class TestModelEncryption(TestData):
         for raw_data in [self.raw_data_short, self.raw_data_long]:
             with self.subTest(raw_data=raw_data):
                 dd = DataDonation.objects.create(
-                    project=self.custom_project,
-                    blueprint=self.don_bp,
-                    participant=self.participant_base,
+                    project=self.alt_project,
+                    blueprint=self.alt_blueprint,
+                    participant=self.alt_participant,
                     consent=True,
                     status='some status',
                     data=raw_data,
@@ -84,8 +123,8 @@ class TestModelEncryption(TestData):
         for raw_data in [self.raw_data_short, self.raw_data_long]:
             with self.subTest(raw_data=raw_data):
                 qr = QuestionnaireResponse.objects.create(
-                    project=self.custom_project,
-                    participant=self.participant_base,
+                    project=self.alt_project,
+                    participant=self.alt_participant,
                     data=raw_data
                 )
                 self.assertNotEqual(raw_data, qr.data)

@@ -11,7 +11,9 @@ User = get_user_model()
 @override_settings(DDM_SETTINGS={'EMAIL_PERMISSION_CHECK':  r'.*(\.|@)mail\.com$', })
 class TestDonationProject(TestCase):
     def setUp(self):
-        credentials = {'username': 'no_prof', 'password': '123', 'email': 'u@mail.com'}
+        credentials = {
+            'username': 'no_prof', 'password': '123', 'email': 'u@mail.com'
+        }
         self.user = User.objects.create_user(**credentials)
         self.user_profile = ResearchProfile.objects.create(user=self.user)
 

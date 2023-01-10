@@ -124,10 +124,12 @@ settings.configure(
     CKEDITOR_CONFIGS={
         'default': {
             'toolbar': 'Full',
+            'removePlugins': 'exportpdf',
         },
         'ddm_ckeditor': {
             'toolbar': 'Full',
-            'allowedContent': True
+            'allowedContent': True,
+            'removePlugins': 'exportpdf',
         },
     },
     LOGIN_REDIRECT_URL='/auth/register/',

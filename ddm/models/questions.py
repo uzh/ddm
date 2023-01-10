@@ -50,7 +50,7 @@ class QuestionBase(PolymorphicModel):
         help_text='Will be used in the data export to identify responses to this question.'
     )
 
-    text = RichTextField(null=True, blank=True)
+    text = RichTextField(null=True, blank=True, config_name='ddm_ckeditor')
     required = models.BooleanField(default=False)
 
     # Fix for issue with django-polymorphic (see https://github.com/django-polymorphic/django-polymorphic/issues/34#issuecomment-1027866872)

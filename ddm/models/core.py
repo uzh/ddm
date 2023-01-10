@@ -53,7 +53,8 @@ class DonationProject(models.Model):
             'Please provide the contact information of the person responsible '
             'for the conduction of this study. The contact information will be '
             'accessible for participants during the data donation.'
-        )
+        ),
+        config_name='ddm_ckeditor'
     )
     data_protection_statement = RichTextField(
         null=True,
@@ -63,16 +64,25 @@ class DonationProject(models.Model):
             'Please provide a data protection statement for your data donation '
             'collection. This should include the purpose for which the data is '
             'collected, how it will be stored, and who will have access to the data.'
-        )
+        ),
+        config_name='ddm_ckeditor'
     )
 
     # Information affecting participation flow.
     slug = models.SlugField(unique=True, verbose_name='External Project Slug')
-    briefing_text = RichTextField(null=True, blank=True, verbose_name='Welcome Page Text')
+    briefing_text = RichTextField(
+        null=True, blank=True,
+        verbose_name='Welcome Page Text',
+        config_name='ddm_ckeditor'
+    )
     briefing_consent_enabled = models.BooleanField(default=False)
     briefing_consent_label_yes = models.CharField(max_length=255, blank=True)
     briefing_consent_label_no = models.CharField(max_length=255, blank=True)
-    debriefing_text = RichTextField(null=True, blank=True, verbose_name='End Page Text')
+    debriefing_text = RichTextField(
+        null=True, blank=True,
+        verbose_name='End Page Text',
+        config_name='ddm_ckeditor'
+    )
 
     # Access settings.
     public_key = models.BinaryField()

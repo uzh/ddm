@@ -45,7 +45,7 @@
 
       {% for e in exceptions %}
       <tr>
-        <td>{{ e.date|date:"c" }}</td>
+        <td>{{ e.date|date:"Y-m-d, H:i" }}</td>
         <td>{{ e.participant.pk }}</td>
         <td>{{ e.exception_type }}</td>
         <td>{{ e.message }}</td>

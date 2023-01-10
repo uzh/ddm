@@ -27,15 +27,17 @@
   {% endblock %}
 </div>
 
-<div class="ddm-message-container container">
-  {% if messages %}
-  {% for message in messages %}
-  <div id="message-{{ forloop.counter }}" class="ddm-message d-flex justify-content-between space-between {% if message.tags %} {{ message.tags }}{% endif %}">
-    <div>{{ message }}</div>
-    <div><a class="ddm-message-close" href="#" onclick="closeMessage('message-{{ forloop.counter }}');">&#128941;</a></div>
+<div class="message-wrapper position-relative container d-flex align-items-end flex-column">
+  <div class="ddm-message-container container d-flex justify-content-end">
+    {% if messages %}
+    {% for message in messages %}
+    <div id="message-{{ forloop.counter }}" class="ddm-message d-flex justify-content-between space-between {% if message.tags %} {{ message.tags }}{% endif %}">
+      <div>{{ message }}</div>
+      <div><a class="ddm-message-close" href="#" onclick="closeMessage('message-{{ forloop.counter }}');">&#128941;</a></div>
+    </div>
+    {% endfor %}
+    {% endif %}
   </div>
-  {% endfor %}
-  {% endif %}
 </div>
 
 <div class="ddm-main container mt-4">

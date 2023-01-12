@@ -1,6 +1,7 @@
 import binascii
 import os
 
+from ddm.models.logs import EventLog
 from django.db import models
 from django.utils import timezone
 from rest_framework import exceptions
@@ -24,6 +25,13 @@ class ProjectAccessToken(models.Model):
         if not self.key:
             self.key = self.generate_key()
         return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        EventLog.objects.create(
+            project=self.project,
+            description='Access Token Deleted'
+        )
+        super().delete(*args, **kwargs)
 
     @classmethod
     def generate_key(cls):

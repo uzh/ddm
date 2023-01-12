@@ -34,11 +34,11 @@ class ExceptionLogEntry(models.Model):
     message = models.TextField()
 
 
-# class EventLog(models.Model):
-#     date = models.DateTimeField(default=timezone.now)
-#     project = models.ForeignKey(
-#         'DonationProject',
-#         on_delete=models.CASCADE
-#     )
-#     description = models.CharField(max_length=100)
-#     message = models.TextField()
+class EventLog(models.Model):
+    date = models.DateTimeField(default=timezone.now)
+    project = models.ForeignKey(
+        'DonationProject',
+        on_delete=models.CASCADE
+    )
+    description = models.CharField(max_length=100)
+    message = models.TextField()

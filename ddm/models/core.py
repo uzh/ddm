@@ -1,6 +1,5 @@
 import datetime
 import json
-import logging
 
 from ckeditor.fields import RichTextField
 
@@ -16,7 +15,7 @@ from django.views.decorators.debug import sensitive_variables
 
 from ddm.models.auth import ProjectAccessToken
 from ddm.models.encryption import Encryption, ModelWithEncryptedData
-from ddm.models.logs import ExceptionLogEntry, ExceptionRaisers
+from ddm.models.logs import ExceptionLogEntry, ExceptionRaisers, EventLog
 
 
 class ResearchProfile(models.Model):
@@ -167,7 +166,10 @@ class DonationProject(models.Model):
             expiration_date = timezone.now() + datetime.timedelta(days=expiration_days)
         else:
             expiration_date = None
-        return ProjectAccessToken.objects.create(project=self, expiration_date=expiration_date)
+        EventLog.objects.create(project=self,
+                                description='New Access Token Created')
+        return ProjectAccessToken.objects.create(project=self,
+                                                 expiration_date=expiration_date)
 
 
 def get_extra_data_default():

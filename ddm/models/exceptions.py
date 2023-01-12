@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class ExceptionRaisers(models.TextChoices):
@@ -7,7 +8,7 @@ class ExceptionRaisers(models.TextChoices):
 
 
 class ExceptionLogEntry(models.Model):
-    date = models.DateTimeField()
+    date = models.DateTimeField(default=timezone.now)
     project = models.ForeignKey(
         'DonationProject',
         on_delete=models.CASCADE
@@ -31,3 +32,13 @@ class ExceptionLogEntry(models.Model):
         null=True
     )
     message = models.TextField()
+
+
+# class EventLog(models.Model):
+#     date = models.DateTimeField(default=timezone.now)
+#     project = models.ForeignKey(
+#         'DonationProject',
+#         on_delete=models.CASCADE
+#     )
+#     description = models.CharField(max_length=100)
+#     message = models.TextField()

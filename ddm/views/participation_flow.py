@@ -16,10 +16,8 @@ from ddm.models.core import (
     DataDonation, DonationBlueprint, DonationProject, Participant,
     QuestionnaireResponse, FileUploader
 )
+from ddm.models.exceptions import ExceptionLogEntry, ExceptionRaisers
 from ddm.models.questions import QuestionBase
-
-import logging
-logger = logging.getLogger(__name__)
 
 
 class ParticipationFlowBaseView(DetailView):
@@ -55,7 +53,10 @@ class ParticipationFlowBaseView(DetailView):
             return redirect(target, slug=self.object.slug)
 
     def extra_before_render(self, request):
-        """ Placeholder for stage specific code executed before rendering the response. """
+        """
+        Placeholder for stage specific code executed before rendering the
+        response.
+        """
         pass
 
     def initialize_values(self, request):
@@ -237,7 +238,8 @@ class DataDonationView(ParticipationFlowBaseView):
         return context
 
     def get_uploader_configs(self):
-        uploader_configs = [fu.get_configs() for fu in FileUploader.objects.filter(project=self.object)]
+        project_uploaders = FileUploader.objects.filter(project=self.object)
+        uploader_configs = [fu.get_configs() for fu in project_uploaders]
         return json.dumps(uploader_configs)
 
     def post(self, request, *args, **kwargs):
@@ -252,18 +254,36 @@ class DataDonationView(ParticipationFlowBaseView):
         try:
             file = files['post_data']
         except MultiValueDictKeyError as err:
-            logger.error(f'Did not receive expected file. {err}')  # TODO: Think about what to do with this logs -> should probably be added to the exception log.
+            msg = ('Data Donation Processing Exception: Did not receive '
+                   f'expected data file from client. {err}')
+            ExceptionLogEntry.objects.create(
+                project=self.object,
+                raised_by=ExceptionRaisers.SERVER,
+                message=msg
+            )
             return
 
         # Check if file is a zip file.
         if not zipfile.is_zipfile(file):
-            logger.error('Received file is not a zip file.')
+            msg = ('Data Donation Processing Exception: Data file received '
+                   'from client is not a zip file.')
+            ExceptionLogEntry.objects.create(
+                project=self.object,
+                raised_by=ExceptionRaisers.SERVER,
+                message=msg
+            )
             return
 
         # Check if zip file contains expected file.
         unzipped_file = zipfile.ZipFile(file, 'r')
         if 'ul_data.json' not in unzipped_file.namelist():
-            logger.error('"ul_data.json" is not in namelist.')
+            msg = ('Data Donation Processing Exception: "ul_data.json" is not '
+                   'in namelist.')
+            ExceptionLogEntry.objects.create(
+                project=self.object,
+                raised_by=ExceptionRaisers.SERVER,
+                message=msg
+            )
             return
 
         # Process donation data.
@@ -272,10 +292,17 @@ class DataDonationView(ParticipationFlowBaseView):
             blueprint_id = upload
             blueprint_data = file_data[upload]
             try:
-                blueprint = DonationBlueprint.objects.get(pk=blueprint_id)
+                blueprint = DonationBlueprint.objects.get(pk=blueprint_id,
+                                                          project=self.object)
             except DonationBlueprint.DoesNotExist as e:
-                logger.error(
-                    f'{e} – Donation blueprint with id={blueprint_id} does not exist')
+                msg = ('Data Donation Processing Exception: Referenced '
+                       f'blueprint with id={blueprint_id} does not exist for '
+                       'this project.')
+                ExceptionLogEntry.objects.create(
+                    project=self.object,
+                    raised_by=ExceptionRaisers.SERVER,
+                    message=msg
+                )
                 return
             blueprint.process_donation(blueprint_data, self.participant)
 
@@ -312,9 +339,13 @@ class QuestionnaireView(ParticipationFlowBaseView):
                 if donation.data:
                     question_config.append(question.get_config(self.participant))
             except ObjectDoesNotExist:
-                logger.error(
-                    f'No donation found for participant {self.participant.pk} '
-                    f'and blueprint {question.blueprint.pk}.'
+                msg = ('Questionnaire Rendering Exception: No donation found '
+                       f'for participant {self.participant.pk} and '
+                       f'blueprint {question.blueprint.pk}.')
+                ExceptionLogEntry.objects.create(
+                    project=self.object,
+                    raised_by=ExceptionRaisers.SERVER,
+                    message=msg
                 )
         return question_config
 
@@ -329,19 +360,35 @@ class QuestionnaireView(ParticipationFlowBaseView):
         try:
             post_data = json.loads(response['post_data'])
         except MultiValueDictKeyError:
-            logger.error(f'POST did not contain expected key "post_data".')
+            msg = ('Questionnaire Post Exception: POST did not contain '
+                   'expected key "post_data".')
+            ExceptionLogEntry.objects.create(
+                project=self.object,
+                raised_by=ExceptionRaisers.SERVER,
+                message=msg
+            )
             return
 
         for question_id in post_data:
             try:
                 question = QuestionBase.objects.get(pk=int(question_id))
             except QuestionBase.doesNotExist:
-                logger.error(f'Question with id={question_id} does not exist.')
+                msg = ('Questionnaire Post Exception:'
+                       f'Question with id={question_id} does not exist.')
+                ExceptionLogEntry.objects.create(
+                    project=self.object,
+                    raised_by=ExceptionRaisers.SERVER,
+                    message=msg
+                )
                 continue
             except ValueError:
-                logger.error(
-                    f'Received invalid question_id ({question_id}) in '
-                    f'questionnaire post_data.'
+                msg = ('Questionnaire Post Exception: Received invalid '
+                       f'question_id ({question_id}) in questionnaire '
+                       f'post_data.')
+                ExceptionLogEntry.objects.create(
+                    project=self.object,
+                    raised_by=ExceptionRaisers.SERVER,
+                    message=msg
                 )
                 continue
             question.validate_response(post_data[question_id])

@@ -14,12 +14,9 @@ from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.views.decorators.debug import sensitive_variables
 
-import ddm.models.exceptions as ddm_exceptions
+from ddm.models.exceptions import ExceptionLogEntry, ExceptionRaisers
 from ddm.models.auth import ProjectAccessToken
 from ddm.models.encryption import Encryption, ModelWithEncryptedData
-
-
-logger = logging.getLogger(__name__)
 
 
 class ResearchProfile(models.Model):
@@ -151,7 +148,7 @@ class DonationProject(models.Model):
             'n_completed': participants.filter(completed=True).count(),
             'completion_rate': participants.filter(completed=True).count() / participants.count() if participants.count() > 0 else 0,
             'n_donations': DataDonation.objects.filter(project=self).count(),
-            'n_errors': ddm_exceptions.ExceptionLogEntry.objects.filter(project=self).count(),
+            'n_errors': ExceptionLogEntry.objects.filter(project=self).count(),
             'average_time': str(participants.filter(completed=True).aggregate(v=Avg(F('end_time')-F('start_time')))['v']).split(".")[0]
         }
         return statistics
@@ -329,18 +326,29 @@ class DonationBlueprint(models.Model):
         if self.validate_donation(data):
             self.create_donation(data, participant)
         else:
-            logger.error(f'Donation not processed by blueprint {self.pk}')
+            msg = ('Data Donation Processing Exception: Donation validation '
+                   f'failed for blueprint {self.pk}')
+            ExceptionLogEntry.objects.create(
+                project=self.project,
+                blueprint=self,
+                raised_by=ExceptionRaisers.SERVER,
+                message=msg
+            )
         return
 
-    @staticmethod
-    def validate_donation(data):
+    def validate_donation(self, data):
         # Check if all expected fields are in response.
         response_fields = ['consent', 'extracted_data', 'status']
         if not all(k in data for k in response_fields):
-            logger.error(
-                'Donation data does not contain the expected information. '
-                f'Expected key: {response_fields}; '
-                f'Present fields: {data.keys()}.'
+            msg = ('Data Donation Processing Exception: Donation data for '
+                   f'Donation Blueprint {self.pk} does not contain the '
+                   f'expected information. Expected fields: {response_fields}; '
+                   f'Present fields: {data.keys()}.')
+            ExceptionLogEntry.objects.create(
+                project=self.oproject,
+                blueprint=self,
+                raised_by=ExceptionRaisers.SERVER,
+                message=msg
             )
             return False
 

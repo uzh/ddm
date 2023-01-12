@@ -7,9 +7,7 @@ from django.template import Context, Template
 
 from polymorphic.models import PolymorphicModel
 from ddm.models.core import DataDonation
-
-import logging
-logger = logging.getLogger(__name__)
+from ddm.models.exceptions import ExceptionLogEntry, ExceptionRaisers
 
 
 class QuestionType(models.TextChoices):
@@ -90,6 +88,14 @@ class QuestionBase(PolymorphicModel):
         }
         return config
 
+    def log_exception(self, msg):
+        ExceptionLogEntry.objects.create(
+            project=self.project,
+            blueprint=self.blueprint,
+            raised_by=ExceptionRaisers.SERVER,
+            message='Questionnaire Response Processing Exception: ' + msg
+        )
+
     def render_config_content(self, config, participant):
         data_donation = DataDonation.objects.get(
             participant=participant,
@@ -136,20 +142,20 @@ class ItemMixin(models.Model):
         item_ids = [str(i) for i in list(self.questionitem_set.all().values_list('id', flat=True))]
         if not sorted(item_ids) == sorted(response.keys()):
             if len(item_ids) > len(response.keys()):
-                logger.error(
-                    f'Some responses are missing for {self.DEFAULT_QUESTION_TYPE} with ID {self.id}.'
-                    f'Got no response for items {[i for i in item_ids if i not in response.keys()]}.'
-                )
+                msg = ('Some responses are missing for '
+                       f'{self.DEFAULT_QUESTION_TYPE} with ID '
+                       f'{self.id}. Got no response for items '
+                       f'{[i for i in item_ids if i not in response.keys()]}.')
+                self.log_exception(msg)
             elif len(item_ids) < len(response.keys()):
-                logger.error(
-                    f'Got unexpected response keys for {self.DEFAULT_QUESTION_TYPE} with ID {self.id}.'
-                    f'Unexpected keys: {[k for k in response.keys() if k not in item_ids]}.'
-                )
+                msg = (f'Got unexpected response keys for '
+                       f'{self.DEFAULT_QUESTION_TYPE} with ID {self.id}.'
+                       f'Unexpected keys: {[k for k in response.keys() if k not in item_ids]}.')
+                self.log_exception(msg)
             else:
-                logger.error(
-                    f'Response does not match the expected items. '
-                    f'Items: {sorted(item_ids)}; Keys: {sorted(response.keys())}.'
-                )
+                msg = (f'Response does not match the expected items. Items: '
+                       f'{sorted(item_ids)}; Keys: {sorted(response.keys())}.')
+                self.log_exception(msg)
         return
 
 
@@ -171,8 +177,9 @@ class ScaleMixin:
         valid_values.append(-99)
         for k, val in response.items():
             if val not in valid_values:
-                logger.error(f'Got invalid response "{k}: {val}" for multi '
-                             f'choice question with ID {self.id}.')
+                msg = (f'Got invalid response "{k}: {val}" for multi '
+                       f'choice question with ID {self.id}.')
+                self.log_exception(msg)
         return
 
 
@@ -183,8 +190,9 @@ class SingleChoiceQuestion(ItemMixin, QuestionBase):
         valid_values = list(self.questionitem_set.all().values_list('value', flat=True))
         valid_values.append(-99)
         if response not in valid_values:
-            logger.error(f'Got invalid response "{response}" for single choice '
-                         f'question with ID {self.id}.')
+            msg = (f'Got invalid response "{response}" for single choice '
+                   f'question with ID {self.id}.')
+            self.log_exception(msg)
         return
 
 
@@ -196,8 +204,9 @@ class MultiChoiceQuestion(ItemMixin, QuestionBase):
         valid_values = [0, 1, -99]
         for k, val in response.items():
             if val not in valid_values:
-                logger.error(f'Got invalid response "{k}: {val}" for '
-                             f'{self.DEFAULT_QUESTION_TYPE} with ID {self.id}.')
+                msg = (f'Got invalid response "{k}: {val}" for '
+                       f'{self.DEFAULT_QUESTION_TYPE} with ID {self.id}.')
+                self.log_exception(msg)
         return
 
 

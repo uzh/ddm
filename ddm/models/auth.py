@@ -1,7 +1,7 @@
 import binascii
 import os
 
-from ddm.models.logs import EventLog
+from ddm.models.logs import EventLogEntry
 from django.db import models
 from django.utils import timezone
 from rest_framework import exceptions
@@ -27,7 +27,7 @@ class ProjectAccessToken(models.Model):
         return super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        EventLog.objects.create(
+        EventLogEntry.objects.create(
             project=self.project,
             description='Access Token Deleted'
         )

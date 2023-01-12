@@ -119,7 +119,7 @@ class ProjectLogsView(SuccessMessageMixin, DdmAuthMixin, TemplateView):
 
     def get_event_logs(self):
         project = self.get_project()
-        return project.eventlog_set.all()
+        return project.eventlogentry_set.all()
 
     def get_exception_logs(self):
         project = self.get_project()

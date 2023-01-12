@@ -34,7 +34,7 @@ class ExceptionLogEntry(models.Model):
     message = models.TextField()
 
 
-class EventLog(models.Model):
+class EventLogEntry(models.Model):
     date = models.DateTimeField(default=timezone.now)
     project = models.ForeignKey(
         'DonationProject',

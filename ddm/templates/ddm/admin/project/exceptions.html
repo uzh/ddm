@@ -40,6 +40,8 @@
           <th data-field="date" data-filter-control="input" data-sortable="true">Date</th>
           <th data-field="participant" data-filter-control="select" data-sortable="true">Participant</th>
           <th data-field="type" data-filter-control="select" data-sortable="true">Type</th>
+          <th data-field="raised-by" data-filter-control="select" data-sortable="true">Raised by</th>
+          <th data-field="blueprint" data-filter-control="select" data-sortable="true">Related Blueprint</th>
           <th data-field="message" data-filter-control="input" data-sortable="true">Message</th>
         </tr>
       </thead>
@@ -49,6 +51,8 @@
         <td>{{ e.date|date:"Y-m-d, H:i" }}</td>
         <td>{{ e.participant.pk }}</td>
         <td>{{ e.exception_type }}</td>
+        <td>{{ e.raised_by }}</td>
+        <td>{{ e.blueprint.pk }}</td>
         <td>{{ e.message }}</td>
       </tr>
       {% empty %}

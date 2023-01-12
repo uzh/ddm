@@ -14,9 +14,9 @@ from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.views.decorators.debug import sensitive_variables
 
-from ddm.models.exceptions import ExceptionLogEntry, ExceptionRaisers
 from ddm.models.auth import ProjectAccessToken
 from ddm.models.encryption import Encryption, ModelWithEncryptedData
+from ddm.models.logs import ExceptionLogEntry, ExceptionRaisers
 
 
 class ResearchProfile(models.Model):

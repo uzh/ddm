@@ -7,7 +7,7 @@ from django.template import Context, Template
 
 from polymorphic.models import PolymorphicModel
 from ddm.models.core import DataDonation
-from ddm.models.exceptions import ExceptionLogEntry, ExceptionRaisers
+from ddm.models.logs import ExceptionLogEntry, ExceptionRaisers
 
 
 class QuestionType(models.TextChoices):

@@ -7,7 +7,7 @@
 }
 
 .card-link:hover .ddm-if-icon {
-    background: linear-gradient(142deg, rgb(0, 89, 85) 0%, rgba(0, 89, 85, 0.32) 100%);
+    background: #00817b;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -201,7 +201,7 @@
     border: none !important;
 }
 .ddm-if-icon {
-    background: linear-gradient(142deg, rgb(0, 156, 148) 0%, rgba(0, 156, 148, 0.34) 100%);
+    background: #009c94;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-size: 3rem;
@@ -236,7 +236,9 @@
 .ddm-admin-form .ddm-btn {
     margin-top: 1rem;
 }
-
+.ddm-btn-green {
+    background: #009c94;
+}
 .ddm-admin-form h5, h6 {
     margin-top: 2rem;
 }

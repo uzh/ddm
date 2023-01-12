@@ -127,14 +127,18 @@
       </div>
       {% endwith %}
     </div>
-    <h4 class="mt-3">Download Section</h4>
-    <div>
-      <p><a class="a-no-link" {% if not object.super_secret %}onclick="downloadData('{% url "ddm-data-api" object.pk %}', 'project_{{ object.pk }}_data')"{% else %}onclick="askSecret()"{% endif %}><i class="bi bi-download"></i> Download Data as JSON</a></p>
-      <p><a href="{% url 'project-token' object.pk %}">Manage Access Token</a></p>
+    <h4 class="mt-3">Data Download</h4>
+    <div class="d-flex flex-row">
+      <div class="me-5">
+        <p><b>Direct Download:</b><br><a class="a-no-link ddm-btn ddm-btn-green" {% if not object.super_secret %}onclick="downloadData('{% url "ddm-data-api" object.pk %}', 'project_{{ object.pk }}_data')"{% else %}onclick="askSecret()"{% endif %}><i class="bi bi-download"></i> Download Data as JSON</a></p>
+      </div>
+      <div>
+        <p><b>Remote Download:</b><br><a href="{% url 'project-token' object.pk %}">Manage Access Token</a></p>
+      </div>
     </div>
-    <h4>Exception Log</h4>
+    <h4>Project Log</h4>
     <div>
-      <p><a href="{% url 'project-exceptions' object.pk %}">Show registered exceptions</a></p>
+      <p><a href="{% url 'project-logs' object.pk %}">Show Project Log</a></p>
     </div>
   </div>
 </div>

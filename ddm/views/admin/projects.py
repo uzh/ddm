@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy, reverse
+from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.views.generic.list import ListView
@@ -8,7 +9,6 @@ from django.views.generic.list import ListView
 from ddm.forms import APITokenCreationForm, ProjectCreateForm
 from ddm.models.auth import ProjectAccessToken
 from ddm.models.core import DonationProject, ResearchProfile
-from ddm.models.logs import ExceptionLogEntry
 from ddm.views.admin.auth import DdmAuthMixin
 
 
@@ -109,28 +109,29 @@ class DebriefingEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     success_message = 'Debriefing page successfully updated.'
 
 
-class ExceptionList(SuccessMessageMixin, DdmAuthMixin, ListView):
+class ProjectLogsView(SuccessMessageMixin, DdmAuthMixin, TemplateView):
     """ View that lists all exceptions related to a project. """
-    model = ExceptionLogEntry
-    template_name = 'ddm/admin/project/exceptions.html'
-    context_object_name = 'exceptions'
+    template_name = 'ddm/admin/project/logs/overview.html'
 
-    def get_queryset(self):
-        qs = super().get_queryset()
+    def get_project(self):
         project_id = self.kwargs.get('project_pk')
-        if project_id is not None:
-            project = DonationProject.objects.get(pk=project_id)
-            qs = qs.filter(project=project).order_by('-date')
-        return qs
+        return DonationProject.objects.filter(pk=project_id).first()
+
+    def get_event_logs(self):
+        project = self.get_project()
+        return project.eventlog_set.all()
+
+    def get_exception_logs(self):
+        project = self.get_project()
+        return project.exceptionlogentry_set.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        project_id = self.kwargs.get('project_pk')
-        if project_id is not None:
-            project = DonationProject.objects.get(pk=project_id)
-        else:
-            project = None
-        context.update({'project': project})
+        context.update({
+            'project': self.get_project(),
+            'events': self.get_event_logs(),
+            'exceptions': self.get_exception_logs()
+        })
         return context
 
 
@@ -141,7 +142,8 @@ class ProjectAPITokenView(SuccessMessageMixin, DdmAuthMixin, FormView):
 
     def get_project(self):
         """ Returns current project. """
-        return DonationProject.objects.get(pk=self.kwargs.get('pk'))
+        project_id = self.kwargs.get('pk')
+        return DonationProject.objects.filter(pk=project_id).first()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

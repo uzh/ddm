@@ -50,7 +50,7 @@ admin_patterns = [
     path(r'<int:pk>/token/', admin.ProjectAPITokenView.as_view(), name='project-token'),
     path(r'<int:project_pk>/questionnaire/', include(question_patterns)),
     path(r'<int:project_pk>/data-donation/', include(data_donation_patterns)),
-    path(r'<int:project_pk>/exceptions/', admin.ExceptionList.as_view(), name='project-exceptions'),
+    path(r'<int:project_pk>/logs/', admin.ProjectLogsView.as_view(), name='project-logs'),
 ]
 
 authentication_patterns = [

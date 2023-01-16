@@ -163,7 +163,7 @@
                 <div class="surquest-gq-response surquest-cq-response">
                   <div class="surquest-choice-item form-check">
                     <label class="form-check-label rb-cb-label" :for="'donate-agree-'+bp.id.toString()">
-                      <input type="radio" :id="'donate-agree-'+bp.id.toString()" value="true" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent">
+                      <input type="radio" :id="'donate-agree-'+bp.id.toString()" value="true" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent" required>
                        {{ $t('donation-agree') }}
                     </label>
                   </div>
@@ -521,7 +521,7 @@ export default {
       let dataToEmit = JSON.parse(JSON.stringify(this.blueprintData));
       Object.keys(dataToEmit).forEach(key => {
         if (dataToEmit[key].consent === '') {
-          dataToEmit[key].consent = false;
+          dataToEmit[key].consent = null;
           dataToEmit[key].extracted_data = [];
         }
         else if (!dataToEmit[key].consent) {

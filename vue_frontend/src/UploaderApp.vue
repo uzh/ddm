@@ -2,6 +2,8 @@
 
 <template>
 
+    {{ postData }}
+
   <FileUploader
       v-for="(uploadConfig, id) in parsedUploadConfig"
       :key="id"
@@ -19,13 +21,12 @@
       <button
           class="flow-btn"
           type="button"
-          data-bs-toggle="modal"
-          data-bs-target="#overlayModal"
-          @click="zipData"
+          @click="checkConsent"
       >{{ $t('next-btn-label') }}&nbsp;&nbsp;&#8250;</button>
     </div>
   </div>
-
+  <!-- data-bs-toggle="modal"
+  data-bs-target="#overlayModal" -->
   <div class="modal custom-modal" id="overlayModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered custom-modal-container">
       <div class="modal-content fs-1 text-center custom-modal-content">
@@ -71,7 +72,84 @@ export default {
         this.postData[key] = data[key]
       })
     },
+
+    /**
+     * Checks if the consent question for all files has been answered.
+     * If not, displays a message to the user.
+     */
+    checkConsent() {
+      // loop through postData
+      let success = [];
+      let failed = [];
+      let pending = [];
+      let consents = [];
+      let stati = [];
+      Object.keys(this.postData).forEach(entry => {
+        consents.push(this.postData[entry].consent);
+        stati.push(this.postData[entry].status);
+
+        switch (this.postData[entry].status) {
+          case 'success':
+            success.push(this.postData[entry]);
+            break;
+          case 'failed':
+            failed.push(this.postData[entry]);
+            break;
+          case 'pending':
+            pending.push(this.postData[entry]);
+        }
+      });
+
+      // Case 1: No upload attempted
+      if (!success.length && !failed.length && pending.length) {
+        console.log('No upload attempted');
+      }
+
+      // Case 2: No upload, not all attempted
+      if(!success.length && pending.length && failed.length) {
+        console.log('No upload, not all attempted')
+      }
+
+      // Case 3: No upload, all attempted
+      if (!success.length && !pending.length) {
+        console.log('No upload, but attempted');
+      }
+
+      // Case 4: Partial Upload, not all attempted
+      if (success.length && pending.length) {
+        console.log('Partial Upload, not all attempted');
+      }
+
+      // Case 5: Partial upload, all attempted
+      if (success.length && !pending.length && failed.length) {
+        console.log('Partial upload, all attempted');
+      }
+
+      // Case 6: All uploaded
+      if (success.length && !pending.length && !failed.length) {
+        console.log('All uploaded');
+      }
+    },
+
+    /**
+     * Sets consent to false in postData where consent is null.
+     * This is necessary because the server will only accept Boolean values for
+     * consent.
+     */
+    cleanConsent() {
+      Object.keys(this.postData).forEach(entry => {
+        if (this.postData[entry].consent == null) {
+          this.postData[entry].consent = false;
+        }
+      })
+    },
+
+    /**
+     * Zips the data and sends them to the server.
+     */
     zipData() {
+      this.cleanConsent();
+
       // Disable file inputs.
       let fileInputs = document.querySelectorAll("input[type=file]")
       fileInputs.forEach(fi => {
@@ -123,7 +201,6 @@ export default {
   border-radius: 0px;
   font-size: 2.5rem !important;
   display: flex;
-  justify-content: flex-end;
   justify-content: center;
   align-items: center;
   position: relative;

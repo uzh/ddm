@@ -21,7 +21,7 @@
       <button
           class="flow-btn"
           type="button"
-          @click="checkConsent"
+          @click="zipData"
       >{{ $t('next-btn-label') }}&nbsp;&nbsp;&#8250;</button>
     </div>
   </div>

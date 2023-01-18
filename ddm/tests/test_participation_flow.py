@@ -76,8 +76,8 @@ class ParticipationFlowBaseTestCase(TestCase):
 
     def create_data_donation(self):
         # Create a data donation for project 1.
-        project_session = self.client.session['projects'][f'{self.project_base.pk}']
-        participant_id = project_session['participant_id']
+        session = self.client.session
+        participant_id = session[f'project-{self.project_base.pk}']['participant_id']
         participant = Participant.objects.get(pk=int(participant_id))
         DataDonation.objects.create(
             project=self.project_base,
@@ -98,8 +98,8 @@ class TestBriefingView(ParticipationFlowBaseTestCase):
     def test_project_briefing_view_registers_project(self):
         self.client.get(self.briefing_url)
         session = self.client.session
-        expected_keys = ['steps', 'data', 'completed', 'participant_id']
-        actual_keys = set(session['projects'][f'{self.project_base.pk}'].keys())
+        expected_keys = ['last_completed_step', 'participant_id']
+        actual_keys = set(session[f'project-{self.project_base.pk}'].keys())
         assert set(expected_keys).issubset(actual_keys)
 
     def test_project_briefing_view_registers_participant(self):
@@ -107,13 +107,11 @@ class TestBriefingView(ParticipationFlowBaseTestCase):
         self.client.get(self.briefing_url)
         self.assertGreater(len(Participant.objects.all()), nr_participants_before)
 
-        project_session = self.client.session['projects'][f'{self.project_base.pk}']
+        project_session = self.client.session[f'project-{self.project_base.pk}']
         self.assertIsNotNone(project_session['participant_id'])
 
     def test_project_briefing_view_GET_valid_url(self):
         response = self.client.get(self.briefing_url)
-        project_session = self.client.session['projects'][f'{self.project_base.pk}']
-        self.assertEqual(project_session['steps']['briefing']['state'], 'started')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'ddm/public/briefing.html')
 
@@ -123,8 +121,8 @@ class TestBriefingView(ParticipationFlowBaseTestCase):
 
     def test_project_briefing_POST(self):
         response = self.client.post(self.briefing_url)
-        project_session = self.client.session['projects'][f'{self.project_base.pk}']
-        self.assertEqual(project_session['steps']['briefing']['state'], 'completed')
+        project_session = self.client.session[f'project-{self.project_base.pk}']
+        self.assertEqual(project_session['last_completed_step'], 0)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.dd_url)
 
@@ -134,9 +132,9 @@ class TestBriefingView(ParticipationFlowBaseTestCase):
         self.client.get(self.briefing_url)
         response = self.client.post(
             self.briefing_url, {'briefing_consent': '1'}, follow=True)
-        project_session = self.client.session['projects'][f'{self.project_base.pk}']
+        project_session = self.client.session[f'project-{self.project_base.pk}']
 
-        self.assertEqual(project_session['steps']['briefing']['state'], 'completed')
+        self.assertEqual(project_session['last_completed_step'], 0)
         self.assertRedirects(response, self.dd_url)
 
         # Assert consent is correctly stored in participant data.
@@ -149,9 +147,9 @@ class TestBriefingView(ParticipationFlowBaseTestCase):
         self.project_base.save()
         self.client.get(self.briefing_url)
         response = self.client.post(self.briefing_url, {'briefing_consent': '0'})
-        project_session = self.client.session['projects'][f'{self.project_base.pk}']
+        project_session = self.client.session[f'project-{self.project_base.pk}']
 
-        self.assertEqual(project_session['steps']['briefing']['state'], 'completed')
+        self.assertEqual(project_session['last_completed_step'], 2)
         self.assertRedirects(response, self.debriefing_url)
 
         # Assert consent is correctly stored in participant data.
@@ -164,9 +162,8 @@ class TestBriefingView(ParticipationFlowBaseTestCase):
         self.project_base.save()
         self.client.get(self.briefing_url)
         response = self.client.post(self.briefing_url)
-        project_session = self.client.session['projects'][f'{self.project_base.pk}']
+        project_session = self.client.session[f'project-{self.project_base.pk}']
 
-        self.assertEqual(project_session['steps']['briefing']['state'], 'started')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'ddm/public/briefing.html')
 
@@ -178,7 +175,7 @@ class TestDonationView(ParticipationFlowBaseTestCase):
         self.initialize_project_and_session()
         self.create_data_donation()
         session = self.client.session
-        session['projects'][f'{self.project_base.pk}']['steps']['briefing']['state'] = 'completed'
+        session[f'project-{self.project_base.pk}']['last_completed_step'] = 0
         session.save()
 
     def test_data_donation_GET_valid_url(self):
@@ -203,10 +200,8 @@ class TestQuestionnaireView(ParticipationFlowBaseTestCase):
         self.initialize_project_and_session()
         self.create_data_donation()
         session = self.client.session
-        session['projects'][f'{self.project_base.pk}']['steps']['briefing']['state'] = 'completed'
-        session['projects'][f'{self.project_base.pk}']['steps']['data-donation']['state'] = 'completed'
-        session['projects'][f'{self.project_alt.pk}']['steps']['briefing']['state'] = 'completed'
-        session['projects'][f'{self.project_alt.pk}']['steps']['data-donation']['state'] = 'completed'
+        session[f'project-{self.project_base.pk}']['last_completed_step'] = 1
+        session[f'project-{self.project_alt.pk}']['last_completed_step'] = 1
         session.save()
 
     def test_questionnaire_GET_valid_url(self):
@@ -234,9 +229,7 @@ class TestDebriefingView(ParticipationFlowBaseTestCase):
         super().setUp()
         self.initialize_project_and_session()
         session = self.client.session
-        session['projects'][f'{self.project_base.pk}']['steps']['briefing']['state'] = 'completed'
-        session['projects'][f'{self.project_base.pk}']['steps']['data-donation']['state'] = 'completed'
-        session['projects'][f'{self.project_base.pk}']['steps']['questionnaire']['state'] = 'completed'
+        session[f'project-{self.project_base.pk}']['last_completed_step'] = 2
         session.save()
 
     def test_project_debriefing_GET_valid_url(self):
@@ -267,9 +260,7 @@ class TestRedirect(ParticipationFlowBaseTestCase):
         self.client.get(self.briefing_url + '?testparam=test')
 
         session = self.client.session
-        session['projects'][f'{self.project_base.pk}']['steps']['briefing']['state'] = 'completed'
-        session['projects'][f'{self.project_base.pk}']['steps']['data-donation']['state'] = 'completed'
-        session['projects'][f'{self.project_base.pk}']['steps']['questionnaire']['state'] = 'completed'
+        session[f'project-{self.project_base.pk}']['last_completed_step'] = 2
         session.save()
 
         response = self.client.get(self.debriefing_url)
@@ -285,9 +276,7 @@ class TestRedirect(ParticipationFlowBaseTestCase):
         self.client.get(self.briefing_url + '?testparam=test&testparam2=test2')
 
         session = self.client.session
-        session['projects'][f'{self.project_base.pk}']['steps']['briefing']['state'] = 'completed'
-        session['projects'][f'{self.project_base.pk}']['steps']['data-donation']['state'] = 'completed'
-        session['projects'][f'{self.project_base.pk}']['steps']['questionnaire']['state'] = 'completed'
+        session[f'project-{self.project_base.pk}']['last_completed_step'] = 2
         session.save()
 
         response = self.client.get(self.debriefing_url)

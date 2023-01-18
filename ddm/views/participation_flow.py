@@ -1,7 +1,6 @@
 import json
 import zipfile
 
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, reverse
 from django.template import Context, Template
@@ -13,8 +12,8 @@ from django.views.generic.detail import DetailView
 from django.views.decorators.cache import cache_page
 
 from ddm.models.core import (
-    DataDonation, DonationBlueprint, DonationProject, Participant,
-    QuestionnaireResponse, FileUploader
+    DonationBlueprint, DonationProject, Participant, QuestionnaireResponse,
+    FileUploader
 )
 from ddm.models.logs import ExceptionLogEntry, ExceptionRaisers
 from ddm.models.questions import QuestionBase
@@ -27,30 +26,92 @@ class ParticipationFlowBaseView(DetailView):
     """
     model = DonationProject
     context_object_name = 'project'
+
     steps = [
         'briefing',
         'data-donation',
         'questionnaire',
         'debriefing'
     ]
-    view_name = None
-    current_step = None
     participant = None
-    project_session = None
-    state = None
+    current_step = None
+    step_name = None
+
+    def setup(self, request, *args, **kwargs):
+        """ Initialize attributes shared by all participation steps. """
+        super().setup(request, *args, **kwargs)
+        self._initialize_values(request)
 
     def get(self, request, *args, **kwargs):
-        self.initialize_values(request)
+        # Redirect to previous step if necessary.
+        print(self.current_step)
+        for key, value in request.session.items():
+            print('{} => {}'.format(key, value))
+        if not self.steps[self.current_step] == self.step_name:
+            print(self.step_name)
+            return redirect(self.steps[self.current_step], slug=self.object.slug)
 
-        target = self.get_target()
-        if target == self.view_name:
-            context = self.get_context_data(object=self.object)
-            self.project_session['steps'][self.view_name]['state'] = 'started'
+        # Render current view.
+        context = self.get_context_data(object=self.object)
+        self.extra_before_render(request)
+        return self.render_to_response(context)
+
+    def post(self, request, *arges, **kwargs):
+        self.set_step_completed(request)
+        return redirect(self.steps[self.current_step + 1],
+                        slug=self.object.slug)
+
+    def register_project_in_session(self, request):
+        if not request.session.get(self.get_session_id()):
+            request.session[self.get_session_id()] = {
+                'participant_id': None,
+                'last_completed_step': None
+            }
             request.session.modified = True
-            self.extra_before_render(request)
-            return self.render_to_response(context)
+        return
+
+    def get_session_id(self):
+        """
+        Return id under which project related information is stored in a
+        participant's session.
+        """
+        return f'project-{self.object.pk}'
+
+    def get_participant_from_session(self, request):
+        """
+        Gets participant from session. If participant has not yet been created,
+        creates new participant and saves it to session.
+        """
+        participant_id = request.session[self.get_session_id()]['participant_id']
+        try:
+            participant = Participant.objects.get(pk=participant_id)
+        except Participant.DoesNotExist:
+            participant = Participant.objects.create(
+                project=self.object,
+                start_time=timezone.now()
+            )
+            request.session[self.get_session_id()]['participant_id'] = participant.id
+            request.session.modified = True
+        return participant
+
+    def get_current_step_from_session(self, request):
+        """
+        Gets current step from information stored in participant's session.
+        """
+        step = request.session[self.get_session_id()]['last_completed_step']
+        if step is None:
+            current_step = 0
         else:
-            return redirect(target, slug=self.object.slug)
+            current_step = step + 1
+        return current_step
+
+    def set_step_completed(self, request):
+        """
+        Updates the last_completed_step attribute in current session.
+        """
+        request.session[self.get_session_id()]['last_completed_step'] = self.current_step
+        request.session.modified = True
+        return
 
     def extra_before_render(self, request):
         """
@@ -59,114 +120,57 @@ class ParticipationFlowBaseView(DetailView):
         """
         pass
 
-    def initialize_values(self, request):
+    def _initialize_values(self, request):
         self.object = self.get_object()
-        self.current_step = self.steps.index(self.view_name)
-
-        # Initialize or read session data.
         self.register_project_in_session(request)
-        request.session.modified = True
-        self.project_session = request.session['projects'][f'{self.object.pk}']
-
-        # Save shortcuts to session information.
-        self.get_participant()
-        self.state = self.project_session['steps'][self.view_name]['state']
+        self.participant = self.get_participant_from_session(request)
+        self.current_step = self.get_current_step_from_session(request)
         return
-
-    def register_project_in_session(self, request):
-        if not request.session.get('projects'):
-            request.session['projects'] = {}
-
-        if not request.session['projects'].get(f'{self.object.pk}'):
-            request.session['projects'][f'{self.object.pk}'] = {
-                'steps': {},
-                'data': {},
-                'completed': False,
-                'participant_id': None
-            }
-            for step in self.steps:
-                request.session['projects'][f'{self.object.pk}']['steps'][step] = {
-                    'state': 'not started'
-                }
-        return
-
-    def get_participant(self):
-        """
-        Gets participant from session. If participant has not yet been created,
-        creates new participant and saves it to session.
-        """
-        participant_id = self.project_session['participant_id']
-        try:
-            self.participant = Participant.objects.get(pk=participant_id)
-        except Participant.DoesNotExist:
-            self.participant = Participant.objects.create(
-                project=self.object,
-                start_time=timezone.now()
-            )
-            self.project_session['participant_id'] = self.participant.id
-        return
-
-    def get_target(self):
-        """
-        Determines which view of the participation flow should be rendered next.
-        Needed to redirect participants to the correct step in the flow.
-        Also needed to determine redirects if a participant enters the flow in
-        a step that has already been concluded or not yet started.
-        """
-        def search_backward(project_session, view_name):
-            current_step_index = ParticipationFlowBaseView.steps.index(view_name)
-            if current_step_index == 0:
-                next_target = view_name
-            else:
-                next_step = ParticipationFlowBaseView.steps[current_step_index - 1]
-                next_step_state = project_session['steps'][next_step]['state']
-                if next_step_state == 'completed':
-                    next_target = view_name
-                elif next_step_state == 'started':
-                    next_target = next_step
-                else:
-                    next_target = search_backward(project_session, next_step)
-            return next_target
-
-        def search_forward(project_session, view_name):
-            current_step_index = ParticipationFlowBaseView.steps.index(view_name)
-            if current_step_index == len(ParticipationFlowBaseView.steps) - 1:
-                next_target = view_name
-            else:
-                next_step = ParticipationFlowBaseView.steps[current_step_index + 1]
-                next_step_state = project_session['steps'][next_step]['state']
-                if next_step_state != 'completed':
-                    next_target = next_step
-                else:
-                    next_target = search_forward(project_session, next_step)
-            return next_target
-
-        if self.state == 'started':
-            target = self.view_name
-        elif self.state == 'not started':
-            target = search_backward(self.project_session, self.view_name)
-        elif self.state == 'completed':
-            target = search_forward(self.project_session, self.view_name)
-        else:
-            target = None
-        return target
-
-    def set_step_complete(self):
-        """ Sets a step to 'completed' in the session. """
-        self.project_session['steps'][self.view_name]['state'] = 'completed'
-        return
-
-    def post(self, request, *arges, **kwargs):
-        self.initialize_values(request)
-        self.project_session['steps'][self.view_name]['state'] = 'completed'
-        request.session.modified = True
-        return redirect(self.steps[self.current_step + 1],
-                        slug=self.object.slug)
 
 
 class BriefingView(ParticipationFlowBaseView):
     template_name = 'ddm/public/briefing.html'
-    view_name = 'briefing'
+    step_name = 'briefing'
+
+    def post(self, request, *args, **kwargs):
+        """
+        Checks whether participant has provided briefing consent to continue with
+        the study. If briefing consent is not given, redirects to end page.
+        If briefing consent is not within the expected values, the briefing page
+        is again returned with a form error.
+        """
+        # Check briefing consent if enabled for project.
+        if self.get_object().briefing_consent_enabled:
+            return self.check_consent(request, **kwargs)
+
+        return super().post(request, **kwargs)
+
+    def check_consent(self, request, **kwargs):
+        """
+        Checks whether post data contains information on briefing consent.
+        Renders briefing view with error message if consent information is invalid.
+        Renders debriefing view if no consent has been given.
+        Renders next step if consent has been given.
+        """
+        # Check that answer has been provided and is valid.
+        consent = request.POST.get('briefing_consent', None)
+        if consent not in ['0', '1']:
+            # Render briefing view again with error message.
+            context = self.get_context_data(object=self.object)
+            context.update({'briefing_error': True})
+            return self.render_to_response(context)
+
+        # Save consent to participant data.
+        self.participant.extra_data['briefing_consent'] = consent
+        self.participant.save()
+
+        if consent == '0':
+            # Redirect to debriefing page.
+            request.session[self.get_session_id()]['last_completed_step'] = len(self.steps) - 2
+            request.session.modified = True
+            return redirect(self.steps[-1], slug=self.object.slug)
+        else:
+            return super().post(request, **kwargs)
 
     def extra_before_render(self, request):
         """ Extract URL parameters if this option has been enabled. """
@@ -178,58 +182,11 @@ class BriefingView(ParticipationFlowBaseView):
                 self.participant.save()
         return
 
-    def get(self, request, *args, **kwargs):
-        self.initialize_values(request)
-
-        target = self.get_target()
-        if target == self.view_name:
-            context = self.get_context_data(object=self.object)
-            self.project_session['steps'][self.view_name]['state'] = 'started'
-            request.session.modified = True
-            self.extra_before_render(request)
-            return self.render_to_response(context)
-        else:
-            return redirect(target, slug=self.object.slug)
-
-    def post(self, request, *args, **kwargs):
-        """
-        Checks whether participant has provided briefing consent to continue with
-        the study. If briefing consent is not given, redirects to end page.
-        If briefing consent is not within the expected values, the briefing page
-        is again returned with a form error.
-        """
-        # Check briefing consent.
-        if self.get_object().briefing_consent_enabled:
-            self.initialize_values(request)
-
-            # Check that answer has been provided.
-            briefing_consent = request.POST.get('briefing_consent', None)
-            if briefing_consent not in ['0', '1']:
-                # Return error to briefing view.
-                context = self.get_context_data(object=self.object)
-                context.update({'briefing_error': True})
-                return self.render_to_response(context)
-
-            # Save consent to participant data.
-            # TODO: Consider writing a helper function for this kind of operation.
-            self.participant.extra_data['briefing_consent'] = briefing_consent
-            self.participant.save()
-
-            if briefing_consent == '0':
-                # Set all steps to complete and redirect to debriefing page.
-                self.project_session['steps'][self.view_name]['state'] = 'completed'
-                self.project_session['steps'][self.steps[self.current_step + 1]]['state'] = 'completed'
-                self.project_session['steps'][self.steps[self.current_step + 2]]['state'] = 'completed'
-                return redirect(self.steps[self.current_step + 3],
-                                slug=self.object.slug)
-
-        return super().post(request, **kwargs)
-
 
 @method_decorator(cache_page(0), name='dispatch')
 class DataDonationView(ParticipationFlowBaseView):
     template_name = 'ddm/public/data_donation.html'
-    view_name = 'data-donation'
+    step_name = 'data-donation'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -250,7 +207,7 @@ class DataDonationView(ParticipationFlowBaseView):
         return HttpResponseRedirect(redirect_url)
 
     def process_uploads(self, files):
-        # Check if expected file in request.FILES.
+        # Check if expected file is in request.FILES.
         try:
             file = files['post_data']
         except MultiValueDictKeyError as err:
@@ -309,52 +266,36 @@ class DataDonationView(ParticipationFlowBaseView):
 
 class QuestionnaireView(ParticipationFlowBaseView):
     template_name = 'ddm/public/questionnaire.html'
-    view_name = 'questionnaire'
+    step_name = 'questionnaire'
 
-    def render_to_response(self, context, **response_kwargs):
-        # Check if there are any questions to display.
+    def get(self, request, *args, **kwargs):
+        """
+        Skip questionnaire if no questions are defined and redirect to next step.
+        Otherwise, render questionnaire.
+        """
+        # Redirect to previous step if necessary.
+        if not self.steps[self.current_step] == self.step_name:
+            return redirect(self.steps[self.current_step], slug=self.object.slug)
+
+        context = self.get_context_data(object=self.object)
         if not len(context['q_config']) > 2:
-            self.project_session['steps'][self.view_name]['state'] = 'completed'
-            current_step = self.steps.index(self.view_name)
-            target = self.steps[current_step + 1]
-            return redirect(target, slug=self.object.slug)
+            self.set_step_completed(request)
+            return redirect(self.steps[self.current_step + 1],
+                            slug=self.object.slug)
         else:
-            return super().render_to_response(context, **response_kwargs)
+            return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        question_config = self.get_question_config()
+        question_config = self.object.get_questionnaire_config(self.participant)
         context['q_config'] = json.dumps(question_config)
         return context
-
-    def get_question_config(self):
-        question_config = []
-        questions = QuestionBase.objects.filter(project=self.object)
-        for question in questions:
-            try:
-                donation = DataDonation.objects.get(
-                    blueprint=question.blueprint,
-                    participant=self.participant
-                )
-                if donation.data:
-                    question_config.append(question.get_config(self.participant))
-            except ObjectDoesNotExist:
-                msg = ('Questionnaire Rendering Exception: No donation found '
-                       f'for participant {self.participant.pk} and '
-                       f'blueprint {question.blueprint.pk}.')
-                ExceptionLogEntry.objects.create(
-                    project=self.object,
-                    raised_by=ExceptionRaisers.SERVER,
-                    message=msg
-                )
-        return question_config
 
     def post(self, request, *args, **kwargs):
         super().post(request, **kwargs)
         self.process_response(request.POST)
-        redirect_url = reverse(self.steps[self.current_step + 1],
-                               kwargs={'slug': self.object.slug})
-        return HttpResponseRedirect(redirect_url)
+        return redirect(self.steps[self.current_step + 1],
+                        slug=self.object.slug)
 
     def process_response(self, response):
         try:
@@ -406,7 +347,7 @@ class QuestionnaireView(ParticipationFlowBaseView):
 
 class DebriefingView(ParticipationFlowBaseView):
     template_name = 'ddm/public/debriefing.html'
-    view_name = 'debriefing'
+    step_name = 'debriefing'
 
     def get_context_data(self, **kwargs):
         """ Inject url parameters in redirect target. """
@@ -423,8 +364,6 @@ class DebriefingView(ParticipationFlowBaseView):
 
     def extra_before_render(self, request):
         """Set step to completed and update participant information."""
-        self.project_session['steps'][self.view_name]['state'] = 'completed'
-        request.session.modified = True
         if not self.participant.completed:
             self.participant.end_time = timezone.now()
             self.participant.completed = True

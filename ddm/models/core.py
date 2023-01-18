@@ -4,7 +4,7 @@ import json
 from ckeditor.fields import RichTextField
 
 from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.core.validators import RegexValidator, MinValueValidator
 from django.db import models
 from django.db.models import Avg, F
@@ -151,6 +151,32 @@ class DonationProject(models.Model):
             'average_time': str(participants.filter(completed=True).aggregate(v=Avg(F('end_time')-F('start_time')))['v']).split(".")[0]
         }
         return statistics
+
+    def get_questionnaire_config(self, participant):
+        """
+        Returns a dictionary containing all information to render the
+        questionnaire for a given participant.
+        """
+        q_config = []
+        questions = self.questionbase_set.all()
+        for question in questions:
+            try:
+                donation = DataDonation.objects.get(
+                    blueprint=question.blueprint,
+                    participant=participant
+                )
+                if donation.data:
+                    q_config.append(question.get_config(participant))
+            except ObjectDoesNotExist:
+                msg = ('Questionnaire Rendering Exception: No donation found '
+                       f'for participant {participant.pk} and '
+                       f'blueprint {question.blueprint.pk}.')
+                ExceptionLogEntry.objects.create(
+                    project=self,
+                    raised_by=ExceptionRaisers.SERVER,
+                    message=msg
+                )
+        return q_config
 
     def get_expected_url_parameters(self):
         return self.expected_url_parameters.split(';')

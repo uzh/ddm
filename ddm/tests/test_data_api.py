@@ -1,15 +1,12 @@
-from django.contrib.auth import get_user_model
-from django.test import TestCase, override_settings
-from django.urls import reverse
-from django.utils import timezone
-
-from rest_framework.test import APIClient
-
 from ddm.models.core import (
     DataDonation, QuestionnaireResponse, ResearchProfile, DonationProject,
     Participant, DonationBlueprint
 )
-
+from django.contrib.auth import get_user_model
+from django.test import TestCase, override_settings
+from django.urls import reverse
+from django.utils import timezone
+from rest_framework.test import APIClient
 
 User = get_user_model()
 

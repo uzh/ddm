@@ -1,3 +1,6 @@
+import gzip
+import io
+
 from django.views.decorators.debug import sensitive_variables
 
 from ddm.models.auth import ProjectTokenAuthenticator
@@ -82,9 +85,8 @@ class ProjectDataAPI(APIView):
             return Response(status=status.HTTP_403_FORBIDDEN,
                             data={'message': msg})
 
-        if not project.super_secret:
-            secret = None
-        else:
+        kwargs = {}
+        if project.super_secret:
             secret = None if 'Super-Secret' not in request.headers else request.headers['Super-Secret']
             if not secret:
                 self.create_event_log(
@@ -94,6 +96,8 @@ class ProjectDataAPI(APIView):
                 msg = 'Incorrect key material.'
                 return Response(status=status.HTTP_403_FORBIDDEN,
                                 data={'message': msg})
+            else:
+                kwargs['secret'] = secret
 
         data_donations = DataDonation.objects.filter(project=project)
         q_responses = QuestionnaireResponse.objects.filter(project=project)
@@ -101,22 +105,29 @@ class ProjectDataAPI(APIView):
         try:
             results = {
                 'project': ProjectSerializer(project).data,
-                'donations': [DonationSerializer(d, secret=secret).data for d in data_donations],
-                'responses': [ResponseSerializer(r, secret=secret).data for r in q_responses],
+                'donations': [DonationSerializer(d, **kwargs).data for d in data_donations],
+                'responses': [ResponseSerializer(r, **kwargs).data for r in q_responses],
             }
-        except ValueError:
+        except ValueError as e:
+            print(e)
             self.create_event_log(
                 'Failed Download Attempt',
                 'Download requested with incorrect secret.'
             )
             msg = 'Incorrect key material.'
+            print(msg)
             return Response(status=status.HTTP_403_FORBIDDEN,
                             data={'message': msg})
 
         self.create_event_log('Data Download Successful',
                               'The project data was downloaded.')
 
-        return Response(status=status.HTTP_200_OK, data=results)
+        # gzip_buffer = io.BytesIO()
+        # gzip_file = gzip.GzipFile(mode='wb', compresslevel=5, fileobj=gzip_buffer)
+        # gzip_file.write(bytes(results, 'UTF-8'))
+        # gzip_file.close()
+
+        return Response(status=status.HTTP_200_OK, data=results) # data=gzip_buffer.getvalue())  # add file size info
 
     def delete(self, request, format=None, *args, **kwargs):
         """

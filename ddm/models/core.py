@@ -128,8 +128,8 @@ class DonationProject(models.Model):
                 raise ValidationError(
                     'DonationProject.owner cannot be null on create.')
 
-            if self.super_secret:
-                self.public_key = Encryption(self.secret, str(self.date_created)).public_key
+        if not self.public_key:
+            self.public_key = Encryption.get_public_key(self.secret, str(self.date_created))
         super().save(*args, **kwargs)
 
     @property
@@ -366,6 +366,19 @@ class DonationBlueprint(models.Model):
             status=data['status'],
             data=data['extracted_data']
         )
+        return
+
+    def bulk_create_donations(self, data_list, participant):
+        DataDonation.objects.bulk_create([
+            DataDonation(
+                project=self.project,
+                blueprint=self,
+                participant=participant,
+                consent=d['consent'],
+                status=d['status'],
+                data=d['extracted_data']
+            )
+            for d in data_list])
         return
 
 

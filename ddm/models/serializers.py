@@ -18,13 +18,16 @@ class SerializerDecryptionMixin:
     the serializer on init.
     """
     @sensitive_variables()
-    def __init__(self, instance=None, data=empty, secret=None, **kwargs):
-        self.secret = secret
+    def __init__(self, instance=None, data=empty, **kwargs):
+        self.secret = kwargs.get('secret', None)
         super().__init__(instance=instance, data=data, **kwargs)
 
     @sensitive_variables()
     def get_data(self, obj):
-        return obj.get_decrypted_data(secret=self.secret)
+        kwargs = {}
+        if self.secret:
+            kwargs['secret'] = self.secret
+        return obj.get_decrypted_data(**kwargs)
 
 
 class DonationSerializer(SerializerDecryptionMixin, serializers.HyperlinkedModelSerializer):

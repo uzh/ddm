@@ -116,18 +116,17 @@ class TestDownloadAPIPerformance(TestCase):
         """ Profile blueprint processing performance. """
         with open('../ddm/tests/files_for_tests/test_data_1mb.json') as file:
             data_1mb = json.load(file)
-            data_1mb = json.loads(data_1mb)
 
         donation_data = {
             'consent': True,
-            'extracted_data': json.dumps(data_1mb * 10),
+            'extracted_data': bytes(data_1mb*10, 'utf-8'),
             'status': 'some status'
         }
         self.client.login(**self.user_creds)
 
         times = []
-        for i in range(2):
-            self.blueprint.create_donation(donation_data, self.participant)
+        for i in range(10):
+            self.blueprint.bulk_create_donations([donation_data] * 100, self.participant)
 
             with cProfile.Profile() as profiler:
                 profiler.enable()
@@ -142,8 +141,22 @@ class TestDownloadAPIPerformance(TestCase):
                     columns=['func', 'ncalls', 'ccalls', 'tottime', 'inlinetime', 'callers']
                 )
 
-                for k, r in s.nlargest(5, 'inlinetime').iterrows():
-                    print(f'Func: {r["func"]}\ntime: {r["inlinetime"]}')
+                import inspect
+
+                def filter_row(r):
+                    if 'code' in str(type(r['func'])):
+                        source_file = inspect.getsourcefile(r['func'])
+                        if source_file:
+                            if '\\lib\\' in source_file:
+                                return False
+                            else:
+                                return True
+                    return False
+
+                s = s[s.apply(lambda x: filter_row(x), axis=1)]
+
+                for k, r in s.nlargest(15, 'inlinetime').iterrows():
+                    print(f'Func: {r["func"]}\ntime: {r["inlinetime"]}\nncalls: {r["ncalls"]}; ccalls: {r["ccalls"]}')
                 print(f'Total execution time: {s["tottime"].max()}\n----------')
 
                 times.append(s['tottime'].max())

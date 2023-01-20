@@ -10,6 +10,7 @@ from django.db import models
 from django.db.models import Avg, F
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.encoding import smart_bytes
 from django.utils.safestring import mark_safe
 from django.views.decorators.debug import sensitive_variables
 
@@ -368,19 +369,6 @@ class DonationBlueprint(models.Model):
         )
         return
 
-    def bulk_create_donations(self, data_list, participant):
-        DataDonation.objects.bulk_create([
-            DataDonation(
-                project=self.project,
-                blueprint=self,
-                participant=participant,
-                consent=d['consent'],
-                status=d['status'],
-                data=d['extracted_data']
-            )
-            for d in data_list])
-        return
-
 
 class ProcessingRule(models.Model):
     """
@@ -400,8 +388,6 @@ class ProcessingRule(models.Model):
 
     field = models.TextField(null=False, blank=False)
     execution_order = models.IntegerField()
-
-    # TODO: inclusive = models.BooleanField()  # Option to include or exclude data points, when there is an error in the operation.
 
     class ComparisonOperators(models.TextChoices):
         EQUAL = '==', 'Equal (==)'

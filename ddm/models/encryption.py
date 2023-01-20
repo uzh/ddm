@@ -54,7 +54,7 @@ class ModelWithEncryptedData(models.Model):
     @sensitive_variables()
     def get_decrypted_data(self, *args, **kwargs):
         if self.project.super_secret and 'secret' not in kwargs:
-            raise KeyError('Super secret project expects the custom secret to be passed in the argument "secret".')
+            raise KeyError('Super secret project expects the custom secret to be passed in kwargs["secret"].')
 
         try:
             return self.decrypt(self.data, **kwargs)

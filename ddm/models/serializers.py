@@ -25,7 +25,7 @@ class SerializerDecryptionMixin:
     @sensitive_variables()
     def get_data(self, obj):
         kwargs = {}
-        if self.secret:
+        if self.secret is not None:
             kwargs['secret'] = self.secret
         return obj.get_decrypted_data(**kwargs)
 

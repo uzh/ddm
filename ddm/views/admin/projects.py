@@ -52,6 +52,7 @@ class ProjectEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
         'name', 'slug', 'contact_information', 'data_protection_statement',
         'url_parameter_enabled', 'expected_url_parameters',
         'redirect_enabled', 'redirect_target',
+        'img_header_left', 'img_header_right'
     ]
     success_message = 'Project details successfully updated.'
 

@@ -70,7 +70,6 @@ DATABASES = DB_CONFIG
 DEBUG = True
 SECRET_KEY = test_config['SECRET_KEY']
 SITE_ID = 1
-STATIC_URL = '/static/'
 USE_TZ = True
 TIME_ZONE = 'Europe/Zurich'
 LANGUAGE_CODE = 'en'
@@ -79,9 +78,13 @@ LANGUAGES = [
     ('en', 'English'),
     ('de', 'Deutsch')
 ]
+
+STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(DDM_DIR, 'static'),
 )
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
 
 WEBPACK_LOADER = {
     'DEFAULT': {

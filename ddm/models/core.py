@@ -7,10 +7,9 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, MinValueValidator
 from django.db import models
-from django.db.models import Avg, F
+from django.db.models import Avg, F, ImageField
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.encoding import smart_bytes
 from django.utils.safestring import mark_safe
 from django.views.decorators.debug import sensitive_variables
 
@@ -28,6 +27,10 @@ class ResearchProfile(models.Model):
     active = models.BooleanField(default=True)
     created = models.DateTimeField('date registered', default=timezone.now)
     ignore_email_restriction = models.BooleanField(default=False)
+
+
+def project_directory_path(instance, filename):
+    return f'project_{instance.pk}/{filename}'
 
 
 class DonationProject(models.Model):
@@ -79,6 +82,18 @@ class DonationProject(models.Model):
         null=True, blank=True,
         verbose_name='End Page Text',
         config_name='ddm_ckeditor'
+    )
+
+    # Appearance settings.
+    img_header_left = ImageField(
+        upload_to=project_directory_path,
+        null=True,
+        blank=True
+    )
+    img_header_right = ImageField(
+        upload_to=project_directory_path,
+        null=True,
+        blank=True
     )
 
     # Access settings.

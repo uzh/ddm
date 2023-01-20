@@ -19,7 +19,7 @@ class SerializerDecryptionMixin:
     """
     @sensitive_variables()
     def __init__(self, instance=None, data=empty, **kwargs):
-        self.secret = kwargs.get('secret', None)
+        self.secret = kwargs.pop('secret', None)
         super().__init__(instance=instance, data=data, **kwargs)
 
     @sensitive_variables()

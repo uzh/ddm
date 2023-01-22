@@ -13,7 +13,7 @@
 
   <div class="ddm-admin-section-body">
     {% block main_form %}
-    <form method='post'>
+    <form method='post' enctype="multipart/form-data">
       {% csrf_token %}
       {{ form.media }}
 

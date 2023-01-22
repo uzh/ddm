@@ -1,5 +1,6 @@
 import datetime
 import json
+import os
 
 from ckeditor.fields import RichTextField
 
@@ -29,8 +30,8 @@ class ResearchProfile(models.Model):
     ignore_email_restriction = models.BooleanField(default=False)
 
 
-def project_directory_path(instance, filename):
-    return f'project_{instance.pk}/{filename}'
+def project_header_dir_path(instance, filename):
+    return f'project_{instance.pk}/headers/{filename}'
 
 
 class DonationProject(models.Model):
@@ -86,14 +87,16 @@ class DonationProject(models.Model):
 
     # Appearance settings.
     img_header_left = ImageField(
-        upload_to=project_directory_path,
+        upload_to=project_header_dir_path,
         null=True,
-        blank=True
+        blank=True,
+        verbose_name='Header Image Left'
     )
     img_header_right = ImageField(
-        upload_to=project_directory_path,
+        upload_to=project_header_dir_path,
         null=True,
-        blank=True
+        blank=True,
+        verbose_name='Header Image Right'
     )
 
     # Access settings.
@@ -137,12 +140,31 @@ class DonationProject(models.Model):
     def get_absolute_url(self):
         return reverse('project-detail', args=[str(self.id)])
 
+    def clean_file_on_reupload(self):
+        """
+        Deletes previous file on model FileFields or ImageFields if a file
+        is re-uploaded.
+        """
+        i = DonationProject.objects.get(pk=self.pk)
+        for field in i._meta.fields:
+            if field.get_internal_type() in ['FileField', 'ImageField']:
+                if getattr(i, field.name) != getattr(self, field.name):
+                    file_attr = getattr(i, field.name)
+                    try:
+                        if os.path.isfile(file_attr.path):
+                            os.remove(file_attr.path)
+                    except ValueError:
+                        pass
+        return
+
     @sensitive_variables()
     def save(self, *args, **kwargs):
         if not self.pk:
             if self.owner is None:
                 raise ValidationError(
                     'DonationProject.owner cannot be null on create.')
+        else:
+            self.clean_file_on_reupload()
 
         if not self.public_key:
             self.public_key = Encryption.get_public_key(self.secret, str(self.date_created))

@@ -4,9 +4,124 @@
 
 {% block main_heading %}Edit "{{ object.name }}"{% endblock %}
 
-{% block submit_label %}Update Project{% endblock %}
+{% block main_form %}
+<form method='post' enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.media }}
 
-{% block cancel_target %}{% url 'project-detail' object.pk %}{% endblock %}
+  <div class="ddm-admin-form">
+    {% if form.errors %}
+      <p class="error-disclaimer"><i class="bi bi-exclamation-square-fill"></i> The form could not be processed.
+        Please check the issues highlighted below.</p>
+    {% endif %}
+
+    {{ form.non_field_errors }}
+
+    <div class="ddm-accordion accordion-flush well">
+      <div class="ddm-accordion-item">
+        <p class="ddm-accordion-header">
+          <button class="ddm-accordion-btn collapsed sign-accordion-open" type="button" data-bs-toggle="collapse" data-bs-target="#baseSettings" aria-expanded="true" aria-controls="flush-baseSettings">
+            Base Settings
+          </button>
+        </p>
+        <div id="baseSettings" class="accordion-collapse collapse show" aria-labelledby="flush-baseSettings">
+          <div class="ddm-accordion-content">
+          {% for field in form %}
+            {% if field.name in "name,slug" %}
+              {% include "ddm/admin/components/form_field_basic.html" %}
+            {% endif %}
+          {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="ddm-accordion-item">
+        <p class="ddm-accordion-header">
+          <button class="ddm-accordion-btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#publicInformation" aria-expanded="false" aria-controls="flush-collapseOne">
+            Public Project Information
+          </button>
+        </p>
+        <div id="publicInformation" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+          <div class="ddm-accordion-content">
+          <p class="fs-6">This information is linked in your project's footer. Participants can access this information at any time.</p>
+          {% for field in form %}
+            {% if field.name in "contact_information,data_protection_statement" %}
+              {% include "ddm/admin/components/form_field_basic.html" %}
+            {% endif %}
+          {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="ddm-accordion-item">
+        <p class="ddm-accordion-header">
+          <button class="ddm-accordion-btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#redirectConfiguration" aria-expanded="false" aria-controls="flush-collapseOne">
+            Redirect Configuration
+          </button>
+        </p>
+        <div id="redirectConfiguration" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+          <div class="ddm-accordion-content">
+          {% for field in form %}
+            {% if field.name in "redirect_enabled,redirect_target" %}
+              {% include "ddm/admin/components/form_field_basic.html" %}
+            {% endif %}
+          {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="ddm-accordion-item">
+        <p class="ddm-accordion-header">
+          <button class="ddm-accordion-btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#urlParameter" aria-expanded="false" aria-controls="flush-collapseOne">
+            URL Parameter Extraction
+          </button>
+        </p>
+        <div id="urlParameter" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+          <div class="ddm-accordion-content">
+          {% for field in form %}
+            {% if field.name in "url_parameter_enabled,expected_url_parameters" %}
+              {% include "ddm/admin/components/form_field_basic.html" %}
+            {% endif %}
+          {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="ddm-accordion-item">
+        <p class="ddm-accordion-header">
+          <button class="ddm-accordion-btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#projectAppearance" aria-expanded="false" aria-controls="flush-collapseOne">
+            Project Appearance
+          </button>
+        </p>
+        <div id="projectAppearance" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+          <div class="ddm-accordion-content">
+          {% for field in form %}
+            {% if field.name in "img_header_left,img_header_right" %}
+              <hr>
+              <div class="ddm-form-file-field">
+                {{ field.label_tag }}
+                {{ field.errors }}
+                {{ field }}
+                <span class="helptext">{{ field.help_text }}</span>
+              </div>
+
+            {% endif %}
+          {% endfor %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <input class="ddm-btn" type="submit" value="Update Project">
+    {% block cancel %}
+      <p>
+        <a href="{% url 'project-detail' object.pk %}">&#129040; Cancel</a>
+      </p>
+    {% endblock %}
+  </div>
+</form>
+{% endblock %}
 
 {% block breadcrumbs %}
 <a href="{% url 'project-list' %}">Projects</a> /
@@ -40,5 +155,16 @@ Edit Details
 
   $( "#id_url_parameter_enabled" ).change(function() { hideOrShowParameter() });
   $( "#id_redirect_enabled" ).change(function() { hideOrShowRedirect() });
+
+  $(document).ready(function () {
+    $('.ddm-accordion-btn').on("click", function () {
+      if ($(this).attr('aria-expanded') === 'true') {
+        $(this).addClass('sign-accordion-open');
+      } else {
+        $(this).removeClass('sign-accordion-open');
+      }
+    });
+  });
+
 </script>
 {% endblock %}

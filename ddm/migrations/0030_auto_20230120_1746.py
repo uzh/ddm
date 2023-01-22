@@ -14,11 +14,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='donationproject',
             name='img_header_left',
-            field=models.ImageField(blank=True, null=True, upload_to=ddm.models.core.project_directory_path),
+            field=models.ImageField(blank=True, null=True, upload_to=ddm.models.core.project_header_dir_path),
         ),
         migrations.AddField(
             model_name='donationproject',
             name='img_header_right',
-            field=models.ImageField(blank=True, null=True, upload_to=ddm.models.core.project_directory_path),
+            field=models.ImageField(blank=True, null=True, upload_to=ddm.models.core.project_header_dir_path),
         ),
     ]

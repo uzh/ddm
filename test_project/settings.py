@@ -83,6 +83,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(DDM_DIR, 'static'),
 )
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
 

@@ -37,12 +37,13 @@
     color: white;
 }
 
-.text-orange {
-    color: #de5300;
+a {
+    color: #0068b3 !important;
 }
-.text-orange:hover {
-    color: #ff5f00;
+a:hover {
+    color: #00518d !important;
 }
+
 .text-red {
     color: #ab0000;
 }

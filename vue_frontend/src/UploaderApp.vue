@@ -2,8 +2,6 @@
 
 <template>
 
-    {{ postData }}
-
   <FileUploader
       v-for="(uploadConfig, id) in parsedUploadConfig"
       :key="id"
@@ -21,13 +19,12 @@
       <button
           class="flow-btn"
           type="button"
-          @click="zipData"
+          @click="processData(false)"
       >{{ $t('next-btn-label') }}&nbsp;&nbsp;&#8250;</button>
     </div>
   </div>
-  <!-- data-bs-toggle="modal"
-  data-bs-target="#overlayModal" -->
-  <div class="modal custom-modal" id="overlayModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+
+  <div class="modal custom-modal" id="processingModal" ref="processingModal" style="display: none">
     <div class="modal-dialog modal-dialog-centered custom-modal-container">
       <div class="modal-content fs-1 text-center custom-modal-content">
         <div class="p-3 modal-message">{{ $t('data-submit-wait') }}</div>
@@ -35,6 +32,29 @@
       </div>
     </div>
   </div>
+
+  <div class="default-modal" id="infoModal" ref="infoModal" style="display: none">
+    <div class="modal-header"></div>
+    <div class="modal-body">
+      <p>{{ this.infoModalMsg }}</p>
+    </div>
+    <div class="modal-footer">
+      <button class="flow-btn" type="button" id="closeInfoModal" @click="closeInfoModal">OK</button>
+    </div>
+  </div>
+
+  <div class="default-modal" id="statusModal" ref="statusModal" style="display: none">
+    <div class="modal-header"></div>
+    <div class="modal-body">
+      <p>{{ $t("status-info-msg") }}</p>
+    </div>
+    <div class="modal-footer">
+      <button class="flow-btn" type="button" id="closeStatusModal" @click="closeStatusModal">{{ $t('back-label') }}</button>
+      <button class="flow-btn" type="button" id="closeStatusModal" @click="processData(true)">{{ $t('continue-anyway-label') }}</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" ref="modalBackdrop" style="display: none"></div>
 
 </template>
 
@@ -59,6 +79,8 @@ export default {
       parsedUploadConfig: JSON.parse(this.uploadConfig),
       postData: {},
       locale: this.language,
+      donationStatus: 0,
+      infoModalMsg: 'undefined'
     }
   },
   watch: {
@@ -74,20 +96,14 @@ export default {
     },
 
     /**
-     * Checks if the consent question for all files has been answered.
-     * If not, displays a message to the user.
+     * Evaluates the donation status
      */
-    checkConsent() {
+    getStatus() {
       // loop through postData
       let success = [];
       let failed = [];
       let pending = [];
-      let consents = [];
-      let stati = [];
       Object.keys(this.postData).forEach(entry => {
-        consents.push(this.postData[entry].consent);
-        stati.push(this.postData[entry].status);
-
         switch (this.postData[entry].status) {
           case 'success':
             success.push(this.postData[entry]);
@@ -102,33 +118,52 @@ export default {
 
       // Case 1: No upload attempted
       if (!success.length && !failed.length && pending.length) {
-        console.log('No upload attempted');
+        this.donationStatus = 1;
       }
-
       // Case 2: No upload, not all attempted
-      if(!success.length && pending.length && failed.length) {
-        console.log('No upload, not all attempted')
+      else if(!success.length && pending.length && failed.length) {
+        this.donationStatus =  2;
       }
-
       // Case 3: No upload, all attempted
-      if (!success.length && !pending.length) {
-        console.log('No upload, but attempted');
+      else if (!success.length && !pending.length) {
+        this.donationStatus =  3;
       }
-
       // Case 4: Partial Upload, not all attempted
-      if (success.length && pending.length) {
-        console.log('Partial Upload, not all attempted');
+      else if (success.length && pending.length) {
+        this.donationStatus =  4;
       }
-
       // Case 5: Partial upload, all attempted
-      if (success.length && !pending.length && failed.length) {
-        console.log('Partial upload, all attempted');
+      else if (success.length && !pending.length && failed.length) {
+        this.donationStatus =  5;
       }
-
       // Case 6: All uploaded
-      if (success.length && !pending.length && !failed.length) {
-        console.log('All uploaded');
+      else if (success.length && !pending.length && !failed.length) {
+        this.donationStatus =  6;
       }
+    },
+
+    /**
+     * Checks if consent question has been answered for all blueprints.
+     */
+    consentValid() {
+      let consents = [];
+      Object.keys(this.postData).forEach(entry => {
+        if (this.postData[entry].status !== 'pending') {
+          consents.push(this.postData[entry].consent);
+        }
+      });
+
+      if (consents.includes(null) === true) {
+        // hide processing modal
+        this.$refs.processingModal.style.display = 'none';
+
+        // show consent questions not answered modal
+        this.infoModalMsg = this.$t('consent-error-msg');
+        this.$refs.infoModal.style.display = 'block';
+
+        return false;
+      }
+      return true;
     },
 
     /**
@@ -145,9 +180,37 @@ export default {
     },
 
     /**
+     * Processes the uploaded data.
+     */
+    processData(skipStatus=false) {
+      // Show processing overlay.
+      this.$refs.statusModal.style.display = 'none'
+      this.$refs.processingModal.style.display = 'block';
+      this.$refs.modalBackdrop.style.display = 'block';
+
+      if (!skipStatus) {
+        // Determine donation status across all donation blueprints.
+        this.getStatus();
+        if (this.donationStatus === 1) {
+          // Show info modal with options 'back' and 'continue anyway'.
+          this.$refs.processingModal.style.display = 'none';
+          this.$refs.statusModal.style.display = 'block';
+          return;
+        }
+      }
+
+      // Check consent data.
+      if (!this.consentValid()) return;
+
+      // Zip and send data to server.
+      this.zipData();
+    },
+
+    /**
      * Zips the data and sends them to the server.
      */
     zipData() {
+      // Clean consent data.
       this.cleanConsent();
 
       // Disable file inputs.
@@ -167,7 +230,6 @@ export default {
 
             fetch(this.actionUrl, {method: "POST", body: form})
                 .then(response => {
-                  console.log(response)
                   if (response.redirected) {
                     window.location.href = response.url;
                   }
@@ -176,6 +238,16 @@ export default {
                   console.info(err);
                 });
           })
+    },
+
+    closeInfoModal() {
+      this.$refs.infoModal.style.display = 'none';
+      this.$refs.modalBackdrop.style.display = 'none';
+    },
+
+    closeStatusModal() {
+      this.$refs.statusModal.style.display = 'none';
+      this.$refs.modalBackdrop.style.display = 'none';
     }
   },
 
@@ -188,6 +260,26 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+}
+.default-modal {
+  background: white;
+  z-index: 2000;
+  position: absolute;
+  top: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  width: 30%;
+  border-radius: 10px;
+}
+.modal-backdrop {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: black;
+  opacity: .3;
+  z-index: 1000;
 }
 .custom-modal-container {
   width: 100%;

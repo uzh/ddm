@@ -44,11 +44,7 @@ class ParticipationFlowBaseView(DetailView):
 
     def get(self, request, *args, **kwargs):
         # Redirect to previous step if necessary.
-        print(self.current_step)
-        for key, value in request.session.items():
-            print('{} => {}'.format(key, value))
         if not self.steps[self.current_step] == self.step_name:
-            print(self.step_name)
             return redirect(self.steps[self.current_step], slug=self.object.slug)
 
         # Render current view.

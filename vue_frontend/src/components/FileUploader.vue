@@ -133,12 +133,12 @@
               <div class="col-2 bp-description">{{ bp.name }}</div>
               <div class="col bp-ul-status">{{ $t('upload-success-short') }}</div>
               <div class="col-auto bp-ul-data">
-                <a class="text-orange text-decoration-none" :id="'collapse-toggle-'+bp.id.toString()" data-bs-toggle="collapse" v-on:click="toggleCollapseLabel('collapse-toggle-'+bp.id.toString())" :href="'#bp-fb-'+bp.id.toString()" role="button" aria-expanded="true" :aria-controls="'bp-fb-'+bp.id.toString()"><span :id="'collapse-toggle-'+bp.id.toString()+'-label'">{{ $t('hide-extracted-data') }}</span> <i class="bi bi-arrow-bar-down collapse-icon rotate-down"></i></a>
+                <a class="text-decoration-none fw-bold" :id="'collapse-toggle-'+bp.id.toString()" data-bs-toggle="collapse" v-on:click="toggleCollapseLabel('collapse-toggle-'+bp.id.toString())" :href="'#bp-fb-'+bp.id.toString()" role="button" aria-expanded="false" :aria-controls="'bp-fb-'+bp.id.toString()"><span :id="'collapse-toggle-'+bp.id.toString()+'-label'">{{ $t('show-extracted-data') }}</span> <i class="bi bi-arrow-bar-down collapse-icon"></i></a>
               </div>
             </div>
 
             <div class="row ms-2">
-              <div :id="'bp-fb-'+bp.id.toString()" class="row bg-white ul-data-collapsible collapse show">
+              <div :id="'bp-fb-'+bp.id.toString()" class="row bg-white ul-data-collapsible collapse">
                 <p>{{ $t('extracted-data-intro') }}:</p>
                 <div class="ul-data-container">
                   <table :id="'ul-result-' + bp.id.toString()" class="table table-sm">

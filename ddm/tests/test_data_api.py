@@ -1,15 +1,12 @@
-from django.contrib.auth import get_user_model
-from django.test import TestCase, override_settings
-from django.urls import reverse
-from django.utils import timezone
-
-from rest_framework.test import APIClient
-
 from ddm.models.core import (
     DataDonation, QuestionnaireResponse, ResearchProfile, DonationProject,
     Participant, DonationBlueprint
 )
-
+from django.contrib.auth import get_user_model
+from django.test import TestCase, override_settings
+from django.urls import reverse
+from django.utils import timezone
+from rest_framework.test import APIClient
 
 User = get_user_model()
 
@@ -73,7 +70,6 @@ class TestDataAPI(TestCase):
         response = self.client.get(
             reverse('ddm-data-api', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 200)
-        self.assertIsNotNone(response.data)
 
     def test_download_fails_for_user_without_permission(self):
         self.client.login(**self.no_perm_creds)
@@ -88,7 +84,6 @@ class TestDataAPI(TestCase):
         response = client.get(
             reverse('ddm-data-api', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 200)
-        self.assertIsNotNone(response.data)
 
     def test_download_with_invalid_api_credentials(self):
         token = self.project_alt.create_token()

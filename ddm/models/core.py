@@ -1,5 +1,6 @@
 import datetime
 import json
+import os
 
 from ckeditor.fields import RichTextField
 
@@ -7,7 +8,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.core.validators import RegexValidator, MinValueValidator
 from django.db import models
-from django.db.models import Avg, F
+from django.db.models import Avg, F, ImageField
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.safestring import mark_safe
@@ -27,6 +28,10 @@ class ResearchProfile(models.Model):
     active = models.BooleanField(default=True)
     created = models.DateTimeField('date registered', default=timezone.now)
     ignore_email_restriction = models.BooleanField(default=False)
+
+
+def project_header_dir_path(instance, filename):
+    return f'project_{instance.pk}/headers/{filename}'
 
 
 class DonationProject(models.Model):
@@ -80,6 +85,20 @@ class DonationProject(models.Model):
         config_name='ddm_ckeditor'
     )
 
+    # Appearance settings.
+    img_header_left = ImageField(
+        upload_to=project_header_dir_path,
+        null=True,
+        blank=True,
+        verbose_name='Header Image Left'
+    )
+    img_header_right = ImageField(
+        upload_to=project_header_dir_path,
+        null=True,
+        blank=True,
+        verbose_name='Header Image Right'
+    )
+
     # Access settings.
     public_key = models.BinaryField()
     super_secret = models.BooleanField(default=False)
@@ -121,15 +140,34 @@ class DonationProject(models.Model):
     def get_absolute_url(self):
         return reverse('project-detail', args=[str(self.id)])
 
+    def clean_file_on_reupload(self):
+        """
+        Deletes previous file on model FileFields or ImageFields if a file
+        is re-uploaded.
+        """
+        i = DonationProject.objects.get(pk=self.pk)
+        for field in i._meta.fields:
+            if field.get_internal_type() in ['FileField', 'ImageField']:
+                if getattr(i, field.name) != getattr(self, field.name):
+                    file_attr = getattr(i, field.name)
+                    try:
+                        if os.path.isfile(file_attr.path):
+                            os.remove(file_attr.path)
+                    except ValueError:
+                        pass
+        return
+
     @sensitive_variables()
     def save(self, *args, **kwargs):
         if not self.pk:
             if self.owner is None:
                 raise ValidationError(
                     'DonationProject.owner cannot be null on create.')
+        else:
+            self.clean_file_on_reupload()
 
-            if self.super_secret:
-                self.public_key = Encryption(self.secret, str(self.date_created)).public_key
+        if not self.public_key:
+            self.public_key = Encryption.get_public_key(self.secret, str(self.date_created))
         super().save(*args, **kwargs)
 
     @property
@@ -413,8 +451,6 @@ class ProcessingRule(models.Model):
 
     field = models.TextField(null=False, blank=False)
     execution_order = models.IntegerField()
-
-    # TODO: inclusive = models.BooleanField()  # Option to include or exclude data points, when there is an error in the operation.
 
     class ComparisonOperators(models.TextChoices):
         EQUAL = '==', 'Equal (==)'

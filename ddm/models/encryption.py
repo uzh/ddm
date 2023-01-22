@@ -14,54 +14,91 @@ from django.views.decorators.debug import sensitive_variables
 
 class ModelWithEncryptedData(models.Model):
 
+    secret = None
+    encryption = None
+    decryption = None
+
     class Meta:
         abstract = True
 
     @sensitive_variables()
+    def extract_secret(self, **kwargs):
+        if 'secret' in kwargs and not self.secret:
+            return kwargs['secret'], True
+        elif 'secret' not in kwargs and not self.secret:
+            return self.project.secret_key, True
+        elif 'secret' in kwargs and self.secret and self.secret != kwargs['secret']:
+            return kwargs['secret'], True
+        else:
+            return self.project.secret_key, False
+
+    @sensitive_variables()
+    def encrypt(self, value, **kwargs):
+        self.secret, forced = self.extract_secret(**kwargs)
+        if not self.encryption or forced:
+            self.encryption = Encryption(self.secret, str(self.project.date_created), self.project.public_key)
+        return self.encryption.encrypt(value)
+
+    @sensitive_variables()
+    def decrypt(self, value, **kwargs):
+        self.secret, forced = self.extract_secret(**kwargs)
+        if not self.decryption or forced:
+            self.decryption = Decryption(self.secret, str(self.project.date_created))
+        return self.decryption.decrypt(value)
+
+    @sensitive_variables()
     def save(self, *args, **kwargs):
-        self.data = Encryption(
-            secret=self.project.secret_key,
-            salt=str(self.project.date_created),
-            public_key=self.project.public_key
-        ).encrypt(self.data)
+        self.data = self.encrypt(self.data, **kwargs)
         super().save(*args, **kwargs)
 
     @sensitive_variables()
     def get_decrypted_data(self, *args, **kwargs):
-        if not self.project.super_secret:
-            return Encryption(secret=self.project.secret_key, salt=str(self.project.date_created)).decrypt(self.data)
+        if self.project.super_secret and 'secret' not in kwargs:
+            raise KeyError('Super secret project expects the custom secret to be passed in kwargs["secret"].')
+
+        try:
+            return self.decrypt(self.data, **kwargs)
+        except ValueError as e:
+            print(e)
+            raise ValueError('Wrong secret.')
+
+
+class PRNG(object):
+    def __init__(self, seed):
+        self.index = 0
+        self.seed = seed
+        self.buffer = b""
+
+    def __call__(self, n):
+        while len(self.buffer) < n:
+            self.buffer += HMAC.new(self.seed + pack("<I", self.index)).digest()
+            self.index += 1
+        result, self.buffer = self.buffer[:n], self.buffer[n:]
+        return result
+
+
+class AsyncSyncCrypto:
+    @staticmethod
+    def get_public_key(secret, salt):
+        return Encryption.get_rsa(secret, salt).publickey().exportKey()
+
+    @staticmethod
+    def get_rsa(secret, salt):
+        if secret is None:
+            raise ValueError('secret is None.')
+        if salt is None:
+            raise ValueError('salt is None.')
+        seed_128 = HMAC.new(bytes(secret, 'utf-8') + bytes(salt, 'utf-8')).digest()
+        return RSA.generate(2048, randfunc=PRNG(seed_128))
+
+
+class Encryption(AsyncSyncCrypto):
+
+    def __init__(self, secret=None, salt=None, public=None):
+        if public:
+            self.public_key = public
         else:
-            try:
-                return Encryption(secret=kwargs['secret'], salt=str(self.project.date_created)).decrypt(self.data)
-            except KeyError:
-                raise KeyError('Super secret project expects the custom secret to be passed in the argument "secret".')
-            except ValueError:
-                raise ValueError('Wrong super secret.')
-
-
-class Encryption:
-
-    class PRNG(object):
-        def __init__(self, seed):
-            self.index = 0
-            self.seed = seed
-            self.buffer = b""
-
-        def __call__(self, n):
-            while len(self.buffer) < n:
-                self.buffer += HMAC.new(self.seed + pack("<I", self.index)).digest()
-                self.index += 1
-            result, self.buffer = self.buffer[:n], self.buffer[n:]
-            return result
-
-    def __init__(self, secret=None, salt=None, public_key=None):
-        self.counter = 0
-        if public_key:
-            self.public_key = public_key
-        else:
-            seed_128 = HMAC.new(bytes(secret, 'utf-8') + bytes(salt, 'utf-8')).digest()
-            self.rsa = RSA.generate(2048, randfunc=Encryption.PRNG(seed_128))
-            self.public_key = self.rsa.publickey().exportKey()
+            self.public_key = self.get_public_key(secret, salt)
 
     def encrypt(self, value):
         """
@@ -75,6 +112,12 @@ class Encryption:
         encrypted_session_key = cipher_rsa.encrypt(session_key)
         payload = encrypted_session_key + cipher_aes.nonce + tag + cipher_data
         return base64.encodebytes(payload)
+
+
+class Decryption(AsyncSyncCrypto):
+
+    def __init__(self, secret, salt):
+        self.rsa = self.get_rsa(secret, salt)
 
     def decrypt(self, value):
         """

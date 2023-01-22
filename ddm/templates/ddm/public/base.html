@@ -20,13 +20,17 @@
 
 <div class="container public-header">
   {% block public-header %}
-  <div class="row align-items-center h-100">
-    <div class="col h-100">
-      <img class="h-100" src="{% static 'ddm/img/uzh_logo.svg' %}">
-    </div>
+  <div class="row align-items-center">
+    {% if project.img_header_left %}
     <div class="col">
-      <img class="w-50 h-100 float-end" src="{% static 'ddm/img/ikmz_logo.svg' %}">
+      <img src="{{ project.img_header_left.url }}" height="100px">
     </div>
+    {% endif %}
+    {% if project.img_header_right %}
+    <div class="col">
+      <img class="float-end" src="{{ project.img_header_right.url }}" height="100px">
+    </div>
+    {% endif %}
   </div>
   {% endblock public-header %}
 </div>

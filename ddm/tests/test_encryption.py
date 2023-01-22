@@ -6,7 +6,7 @@ from ddm.models.core import (
     DataDonation, DonationProject, QuestionnaireResponse, ResearchProfile,
     DonationBlueprint, Participant
 )
-from ddm.models.encryption import Encryption
+from ddm.models.encryption import Encryption, Decryption
 
 
 User = get_user_model()
@@ -17,16 +17,17 @@ class TestEncryptedFieldIsolated(TestCase):
         text = 'test_string'
         enc = Encryption(secret='foo', salt='bar')
         enc_text = enc.encrypt(text)
+        dec = Decryption(secret='foo', salt='bar')
         self.assertNotEqual(text, enc_text)
-        self.assertEqual(text, enc.decrypt(enc_text))
+        self.assertEqual(text, dec.decrypt(enc_text))
 
     def test_encrypt_decrypt_explicit_public(self):
         text = 'test_string'
-        enc = Encryption(secret='foo', salt='bar')
-        pub = enc.public_key
-        enc_text = Encryption(public_key=pub).encrypt(text)
+        dec = Decryption(secret='foo', salt='bar')
+        pub = Encryption.get_public_key(secret='foo', salt='bar')
+        enc_text = Encryption(public=pub).encrypt(text)
         self.assertNotEqual(text, enc_text)
-        self.assertEqual(text, enc.decrypt(enc_text))
+        self.assertEqual(text, dec.decrypt(enc_text))
 
 
 @override_settings(DDM_SETTINGS={'EMAIL_PERMISSION_CHECK':  r'.*(\.|@)mail\.com$', })

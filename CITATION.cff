@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Pfiffner"
+  given-names: "Nico"
+  orcid: "https://orcid.org/0000-0003-3347-5267"
+- family-names: "Witlox"
+  given-names: "Pim"
+- family-names: "Friemel"
+  given-names: "Thomas N."
+  orcid: "https://orcid.org/0000-0001-8088-0113"
+title: "Data Donation Module"
+version: 0.1.26
+date-released: 2022-11-30
+url: "https://github.com/uzh/ddm"

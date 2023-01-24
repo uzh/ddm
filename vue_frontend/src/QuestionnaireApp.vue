@@ -1,7 +1,7 @@
 <i18n src="./translations/questionnaire_app.json"></i18n>
 
 <template>
-  <p>THIS: {{ this.questionnaireConfig }}</p>
+
   <template v-for="(question, id) in parsedQuestConfig" :key="id">
     <div v-show="currentIndex === question.index">
 
@@ -134,13 +134,10 @@ export default {
       this.maxIndex = Math.max(...indices);
     },
     next() {
-      console.log('check 1')
       if (this.currentIndex === this.maxIndex) {
-        console.log('check 2')
         this.submitData();
       } else {
-        console.log('check 3')
-        this.curr_index += 1;
+        this.currentIndex += 1;
       }
     },
     submitData() {
@@ -152,7 +149,6 @@ export default {
 
       fetch(this.actionUrl, {method: "POST", body: form})
           .then(response => {
-            console.log(response)
             if (response.redirected) {
               window.location.href = response.url;
             }

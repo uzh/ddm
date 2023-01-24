@@ -178,6 +178,14 @@ class DonationProject(models.Model):
     def secret(self, value):
         self.secret_key = value
 
+    def delete(self, using=None, keep_parents=False):
+        # Manually delete related questions to circumvent foreign key integrity
+        # problem caused by QuestionBase models inheriting from django-polymorphic.
+        # (see https://github.com/django-polymorphic/django-polymorphic/issues/34#issuecomment-1027866872)
+        for question in self.questionbase_set.all():
+            question.delete()
+        return super().delete(using, keep_parents)
+
     def get_statistics(self):
         participants = Participant.objects.filter(project=self)
         statistics = {

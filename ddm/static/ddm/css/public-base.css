@@ -23,7 +23,7 @@
     font-size: 1.1rem;
     min-width: 15%;
     float: right;
-    color: white;
+    color: white !important;
     transition: none;
     line-height: 1.5;
     text-align: center;

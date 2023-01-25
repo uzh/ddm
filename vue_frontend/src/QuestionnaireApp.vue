@@ -6,70 +6,82 @@
     <div v-show="currentIndex === question.index">
 
       <template v-if="question.type === 'single_choice'">
-        <SingleChoiceQuestion
-            :qid="question.question"
-            :text="question.text"
-            :items="question.items"
-            @answerChanged="updateAnswers"
-            class="question-container"
-        ></SingleChoiceQuestion>
+        <div class="question-container">
+          <SingleChoiceQuestion
+              :qid="question.question"
+              :text="question.text"
+              :items="question.items"
+              @answerChanged="updateAnswers"
+              class="question-body"
+          ></SingleChoiceQuestion>
+        </div>
       </template>
 
       <template v-if="question.type === 'multi_choice'">
-        <MultiChoiceQuestion
-            :qid="question.question"
-            :text="question.text"
-            :items="question.items"
-            @answerChanged="updateAnswers"
-            class="question-container"
-        ></MultiChoiceQuestion>
+        <div class="question-container">
+          <MultiChoiceQuestion
+              :qid="question.question"
+              :text="question.text"
+              :items="question.items"
+              @answerChanged="updateAnswers"
+              class="question-body"
+          ></MultiChoiceQuestion>
+        </div>
       </template>
 
       <template v-if="question.type === 'open'">
-        <OpenQuestion
-            :qid="question.question"
-            :text="question.text"
-            :options="question.options"
-            @answerChanged="updateAnswers"
-            class="question-container"
-        ></OpenQuestion>
+        <div class="question-container">
+          <OpenQuestion
+              :qid="question.question"
+              :text="question.text"
+              :options="question.options"
+              @answerChanged="updateAnswers"
+              class="question-body"
+          ></OpenQuestion>
+        </div>
       </template>
 
       <template v-if="question.type === 'matrix'">
-        <MatrixQuestion
-            :qid="question.question"
-            :text="question.text"
-            :items="question.items"
-            :scale="question.scale"
-            @answerChanged="updateAnswers"
-            class="question-container"
-        ></MatrixQuestion>
+        <div class="question-container">
+          <MatrixQuestion
+              :qid="question.question"
+              :text="question.text"
+              :items="question.items"
+              :scale="question.scale"
+              @answerChanged="updateAnswers"
+              class="question-body"
+          ></MatrixQuestion>
+        </div>
       </template>
 
       <template v-if="question.type === 'semantic_diff'">
-        <SemanticDifferential
-            :qid="question.question"
-            :text="question.text"
-            :items="question.items"
-            :scale="question.scale"
-            @answerChanged="updateAnswers"
-            class="question-container"
-        ></SemanticDifferential>
+        <div class="question-container">
+          <SemanticDifferential
+              :qid="question.question"
+              :text="question.text"
+              :items="question.items"
+              :scale="question.scale"
+              @answerChanged="updateAnswers"
+              class="question-body"
+          ></SemanticDifferential>
+        </div>
       </template>
 
       <template v-if="question.type === 'transition'">
-        <TransitionQuestion
-            :text="question.text"
-            @answerChanged="updateAnswers"
-            class="question-container"
-        ></TransitionQuestion>
+        <div class="question-container">
+          <TransitionQuestion
+              :text="question.text"
+              @answerChanged="updateAnswers"
+              class="question-body"
+          ></TransitionQuestion>
+        </div>
       </template>
 
     </div>
 
   </template>
 
-  <div class="row">
+  <div class="row flow-navigation">
     <div class="col">
       <button
           class="flow-btn"
@@ -169,7 +181,15 @@ export default {
   text-align: left;
 }
 .question-container {
-  margin-bottom: 50px;
-  font-size: 1.15rem;
+  font-size: 1rem;
+  padding: 0px 20%;
+}
+.question-body {
+  border-bottom: 1px solid lightgray;
+  padding: 50px 30px;
+}
+.flow-navigation {
+  padding-top: 50px;
+  padding-right: 20%;
 }
 </style>

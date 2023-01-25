@@ -21,20 +21,21 @@
 .flow-btn {
     background-color: black;
     font-size: 1.1rem;
-    min-width: 15%;
+    min-width: 140px;
     float: right;
     color: white !important;
     transition: none;
     line-height: 1.5;
     text-align: center;
     text-decoration: none;
+    margin-top: 20px;
     padding: .375rem;
     border-radius: .25rem;
     border: none;
 }
 .flow-btn:hover {
     background-color: #2f2f2f;
-    color: white;
+    color: white !important;
 }
 
 a {

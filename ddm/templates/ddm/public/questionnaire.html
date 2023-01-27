@@ -1,5 +1,5 @@
 {% extends "ddm/public/base.html" %}
-{% load i18n static %}
+{% load i18n static ddm_graphs %}
 {% get_current_language as LANGUAGE_CODE %}
 {% load render_bundle from webpack_loader %}
 
@@ -8,6 +8,14 @@
 {% endblock extrahead %}
 
 {% block content %}
+<!--
+  {% get_circle_plot 1 as circle_plot %}
+
+  {{ circle_plot.div|safe }}
+
+  {{ circle_plot.script|safe }}
+  <script src="{% static 'stats/js/bokeh-3.0.3.min.js' %}"></script>
+-->
 <div>
   <form method="POST">
     {% csrf_token %}

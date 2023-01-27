@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.staticfiles',
     'ddm.apps.DdmConfig',
+    'ddm.stats',
     'ckeditor',
     'webpack_loader',
     'rest_framework',

@@ -39,7 +39,7 @@ class QuestionBase(PolymorphicModel):
     )
 
     name = models.CharField(max_length=255)
-    index = models.PositiveIntegerField(default=1)
+    index = models.PositiveIntegerField(default=1, verbose_name='Page')
 
     variable_name = models.SlugField(
         max_length=50,

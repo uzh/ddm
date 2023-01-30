@@ -211,8 +211,6 @@ class DonationProject(models.Model):
                     blueprint=question.blueprint,
                     participant=participant
                 )
-                if donation.data:
-                    q_config.append(question.get_config(participant, view))
             except ObjectDoesNotExist:
                 msg = ('Questionnaire Rendering Exception: No donation found '
                        f'for participant {participant.pk} and '
@@ -222,6 +220,10 @@ class DonationProject(models.Model):
                     raised_by=ExceptionRaisers.SERVER,
                     message=msg
                 )
+                continue
+
+            if donation.consent:
+                q_config.append(question.get_config(participant, view))
         return q_config
 
     def get_expected_url_parameters(self):
@@ -510,7 +512,7 @@ class DataDonation(ModelWithEncryptedData):
     )
     time_submitted = models.DateTimeField(default=timezone.now)
     consent = models.BooleanField(default=False)
-    status = models.JSONField()
+    status = models.JSONField()  # 'success' if data was successfully donated; 'pending' otherwise
     data = models.BinaryField()
 
 

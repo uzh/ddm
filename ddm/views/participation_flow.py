@@ -203,7 +203,6 @@ class DataDonationView(ParticipationFlowBaseView):
         return HttpResponseRedirect(redirect_url)
 
     def process_uploads(self, files):
-        # Check if expected file is in request.FILES.
         try:
             file = files['post_data']
         except MultiValueDictKeyError as err:
@@ -216,7 +215,6 @@ class DataDonationView(ParticipationFlowBaseView):
             )
             return
 
-        # Check if file is a zip file.
         if not zipfile.is_zipfile(file):
             msg = ('Data Donation Processing Exception: Data file received '
                    'from client is not a zip file.')

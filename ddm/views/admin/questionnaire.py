@@ -19,8 +19,11 @@ class ProjectMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({'project_pk': self.kwargs['project_pk']})
-        context.update({'project': DonationProject.objects.get(pk=self.kwargs['project_pk'])})
+        context.update({'project': self.get_project()})
         return context
+
+    def get_project(self):
+        return DonationProject.objects.get(pk=self.kwargs['project_pk'])
 
 
 class QuestionnaireOverview(ProjectMixin, DdmAuthMixin, ListView):
@@ -32,8 +35,15 @@ class QuestionnaireOverview(ProjectMixin, DdmAuthMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         question_types = QuestionType.choices
-        context.update({'question_types': question_types})
+        context.update({
+            'question_types': question_types,
+            'general_questions': self.get_general_questions()
+        })
         return context
+
+    def get_general_questions(self):
+        project = self.get_project()
+        return project.questionbase_set.filter(blueprint=None)
 
     def get_queryset(self):
         return super().get_queryset().filter(project_id=self.kwargs['project_pk'])
@@ -73,6 +83,7 @@ class QuestionFormMixin(ProjectMixin):
         context.update({'question_type': question_type_label})
         context['form'].fields['blueprint'].queryset = DonationBlueprint.objects.filter(
             project_id=self.kwargs['project_pk'])
+        context['form'].fields['blueprint'].empty_label = 'General Question – no Blueprint assigned'
         return context
 
 
@@ -112,7 +123,6 @@ class QuestionEdit(SuccessMessageMixin, DdmAuthMixin, QuestionFormMixin, UpdateV
     """ View to edit question. """
     model = QuestionBase
     template_name = 'ddm/admin/questionnaire/edit.html'
-    fields = '__all__'
     success_message = 'Question "%(name)s" was successfully updated.'
 
     def get_success_url(self):

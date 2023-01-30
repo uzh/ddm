@@ -206,24 +206,27 @@ class DonationProject(models.Model):
         q_config = []
         questions = self.questionbase_set.all()
         for question in questions:
-            try:
-                donation = DataDonation.objects.get(
-                    blueprint=question.blueprint,
-                    participant=participant
-                )
-            except ObjectDoesNotExist:
-                msg = ('Questionnaire Rendering Exception: No donation found '
-                       f'for participant {participant.pk} and '
-                       f'blueprint {question.blueprint.pk}.')
-                ExceptionLogEntry.objects.create(
-                    project=self,
-                    raised_by=ExceptionRaisers.SERVER,
-                    message=msg
-                )
-                continue
-
-            if donation.consent:
+            if question.is_general():
                 q_config.append(question.get_config(participant, view))
+            else:
+                try:
+                    donation = DataDonation.objects.get(
+                        blueprint=question.blueprint,
+                        participant=participant
+                    )
+                except ObjectDoesNotExist:
+                    msg = ('Questionnaire Rendering Exception: No donation '
+                           f'found for participant {participant.pk} and '
+                           f'blueprint {question.blueprint.pk}.')
+                    ExceptionLogEntry.objects.create(
+                        project=self,
+                        raised_by=ExceptionRaisers.SERVER,
+                        message=msg
+                    )
+                    continue
+
+                if donation.consent:
+                    q_config.append(question.get_config(participant, view))
         return q_config
 
     def get_expected_url_parameters(self):

@@ -30,6 +30,24 @@
       <th class="fs-08">Type</th>
       <th></th>
     </tr>
+
+    <!-- TODO: Add general questions -->
+    {% for question in general_questions %}
+      <tr {% if forloop.last %}class="border-bottom-dark"{% endif %}>
+        {% if forloop.first %}
+          <td rowspan="{{ general_questions|length }}" class="border-bottom-dark">General Questions</td>
+        {% endif %}
+        <td>{{ question.index }}</td>
+        <td>{{ question.name }}</td>
+        <td>{{ question.get_question_type_display }}</td>
+        <td> <a href="{% url 'question-edit' project_pk question.question_type question.pk %}">Edit Question</a> | <a href="{% url 'question-delete' project_pk question.question_type question.pk %}">Delete Question</a></td>
+        {% empty %}
+      <tr class="border-bottom-dark">
+        <td>General Questions</td>
+        <td colspan="4" class="text-muted">No general questions defined.</td>
+      </tr>
+    {% endfor %}
+
     {% for blueprint in donation_blueprints %}
     {% for question in blueprint.get_associated_questions %}
     <tr {% if forloop.last %}class="border-bottom-dark"{% endif %}>

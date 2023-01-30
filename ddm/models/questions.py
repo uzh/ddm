@@ -1,11 +1,13 @@
 import random
 
 from ckeditor.fields import RichTextField
+
 from django.db import models
 from django.forms import model_to_dict
 from django.template import Context, Template
 
 from polymorphic.models import PolymorphicModel
+
 from ddm.models.core import DataDonation
 from ddm.models.logs import ExceptionLogEntry, ExceptionRaisers
 
@@ -27,7 +29,9 @@ class QuestionBase(PolymorphicModel):
     )
     blueprint = models.ForeignKey(
         'DonationBlueprint',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
     )
 
     DEFAULT_QUESTION_TYPE = QuestionType.GENERIC
@@ -67,6 +71,9 @@ class QuestionBase(PolymorphicModel):
     def __str__(self):
         return self.name
 
+    def is_general(self):
+        return True if self.blueprint is None else False
+
     def get_config(self, participant_id, view):
         config = self.create_config()
         config = self.render_config_content(config, participant_id, view)
@@ -93,11 +100,14 @@ class QuestionBase(PolymorphicModel):
         )
 
     def render_config_content(self, config, participant, view):
-        data_donation = DataDonation.objects.get(
-            participant=participant,
-            blueprint=self.blueprint
-        )
-        context_data = data_donation.get_decrypted_data()
+        if self.is_general():
+            context_data = None
+        else:
+            data_donation = DataDonation.objects.get(
+                participant=participant,
+                blueprint=self.blueprint
+            )
+            context_data = data_donation.get_decrypted_data()
         config['text'] = self.render_text(config['text'], context_data, view)
         for index, item in enumerate(config['items']):
             item['label'] = self.render_text(item['label'], context_data, view)

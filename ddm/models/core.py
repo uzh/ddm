@@ -198,7 +198,7 @@ class DonationProject(models.Model):
         }
         return statistics
 
-    def get_questionnaire_config(self, participant):
+    def get_questionnaire_config(self, participant, view):
         """
         Returns a dictionary containing all information to render the
         questionnaire for a given participant.
@@ -212,7 +212,7 @@ class DonationProject(models.Model):
                     participant=participant
                 )
                 if donation.data:
-                    q_config.append(question.get_config(participant))
+                    q_config.append(question.get_config(participant, view))
             except ObjectDoesNotExist:
                 msg = ('Questionnaire Rendering Exception: No donation found '
                        f'for participant {participant.pk} and '

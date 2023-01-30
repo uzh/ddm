@@ -263,6 +263,7 @@ class DataDonationView(ParticipationFlowBaseView):
 class QuestionnaireView(ParticipationFlowBaseView):
     template_name = 'ddm/public/questionnaire.html'
     step_name = 'questionnaire'
+    extra_scripts = []
 
     def get(self, request, *args, **kwargs):
         """
@@ -283,8 +284,9 @@ class QuestionnaireView(ParticipationFlowBaseView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        question_config = self.object.get_questionnaire_config(self.participant)
+        question_config = self.object.get_questionnaire_config(self.participant, self)
         context['q_config'] = json.dumps(question_config)
+        context['extra_scripts'] = set(self.extra_scripts)
         return context
 
     def post(self, request, *args, **kwargs):

@@ -67,9 +67,9 @@ class QuestionBase(PolymorphicModel):
     def __str__(self):
         return self.name
 
-    def get_config(self, participant_id):
+    def get_config(self, participant_id, view):
         config = self.create_config()
-        config = self.render_config_content(config, participant_id)
+        config = self.render_config_content(config, participant_id, view)
         return config
 
     def create_config(self):
@@ -92,22 +92,24 @@ class QuestionBase(PolymorphicModel):
             message='Questionnaire Response Processing Exception: ' + msg
         )
 
-    def render_config_content(self, config, participant):
+    def render_config_content(self, config, participant, view):
         data_donation = DataDonation.objects.get(
             participant=participant,
             blueprint=self.blueprint
         )
         context_data = data_donation.get_decrypted_data()
-        config['text'] = self.render_text(config['text'], context_data)
+        config['text'] = self.render_text(config['text'], context_data, view)
         for index, item in enumerate(config['items']):
-            item['label'] = self.render_text(item['label'], context_data)
-            item['label_alt'] = self.render_text(item['label_alt'], context_data)
+            item['label'] = self.render_text(item['label'], context_data, view)
+            item['label_alt'] = self.render_text(item['label_alt'], context_data, view)
         return config
 
     @staticmethod
-    def render_text(text, context):
+    def render_text(text, context, view):
+        if text is not None:
+            text = '{% load ddm_graphs static %}\n' + text
         template = Template(text)
-        return template.render(Context({'data': context}))
+        return template.render(Context({'data': context, 'view': view}))
 
     def validate_response(self, response):
         return

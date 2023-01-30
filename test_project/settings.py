@@ -119,6 +119,7 @@ CKEDITOR_CONFIGS = {
         'toolbar': 'Full',
         'allowedContent': True,
         'removePlugins': 'exportpdf',
+        'entities': False,
     },
 }
 

@@ -8,14 +8,7 @@
 {% endblock extrahead %}
 
 {% block content %}
-<!--
-  {% get_circle_plot 1 as circle_plot %}
 
-  {{ circle_plot.div|safe }}
-
-  {{ circle_plot.script|safe }}
-  <script src="{% static 'stats/js/bokeh-3.0.3.min.js' %}"></script>
--->
 <div>
   <form method="POST">
     {% csrf_token %}
@@ -31,3 +24,10 @@
   {% render_bundle 'vue_questionnaire' %}
 </div>
 {% endblock content %}
+
+{% block extrascripts %}
+  <script src="{% static 'stats/js/bokeh-3.0.3.min.js' %}"></script>
+  {% for script in extra_scripts %}
+  {{ script|safe }}
+  {% endfor %}
+{% endblock extrascripts %}

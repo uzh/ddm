@@ -261,7 +261,11 @@ class DataDonationView(ParticipationFlowBaseView):
 class QuestionnaireView(ParticipationFlowBaseView):
     template_name = 'ddm/public/questionnaire.html'
     step_name = 'questionnaire'
-    extra_scripts = []
+
+    def setup(self, request, *args, **kwargs):
+        """ Reset extra_scripts """
+        super().setup(request, *args, **kwargs)
+        self.extra_scripts = []
 
     def get(self, request, *args, **kwargs):
         """

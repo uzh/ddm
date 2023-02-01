@@ -13,7 +13,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(item, id) in items" :key="id">
+        <tr v-for="(item, id) in items" :key="id" :id="'answer-' + item.id">
           <td class="mq-table-td-item dq-table-td-item-left">{{ item.label }}</td>
           <td v-for="(point, id) in scale" :key="id" class="dq-table-td-input">
             <label><input type="radio" :name="item.id" :value="point.value" @change="answerChanged($event)"></label>

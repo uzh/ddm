@@ -203,11 +203,11 @@ class DonationProject(models.Model):
         Returns a dictionary containing all information to render the
         questionnaire for a given participant.
         """
-        q_config = []
+        q_config = {}
         questions = self.questionbase_set.all()
         for question in questions:
             if question.is_general():
-                q_config.append(question.get_config(participant, view))
+                q_config[question.pk] = question.get_config(participant, view)
             else:
                 try:
                     donation = DataDonation.objects.get(
@@ -226,7 +226,7 @@ class DonationProject(models.Model):
                     continue
 
                 if donation.consent:
-                    q_config.append(question.get_config(participant, view))
+                    q_config[question.pk] = question.get_config(participant, view)
         return q_config
 
     def get_expected_url_parameters(self):

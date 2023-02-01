@@ -42,10 +42,8 @@
 }
 
 .surquest-gq-response {
-	padding-left: 10px;
-	padding-right: 10px;
-	padding-top: 20px;
-	width: 100%;
+    padding: 20px 10px;
+    width: 100%;
 }
 
 .surquest-hidden {

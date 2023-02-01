@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="surquest-question-text" v-html="text"></div>
-    <div class="surquest-gq-response surquest-cq-response">
+    <div :id="'answer-' + qid" class="surquest-gq-response surquest-cq-response">
       <div v-for="(item, id) in items" :key="id" class="surquest-choice-item form-check">
         <label class="form-check-label rb-cb-label">
           <input class="form-check-input" type="radio" :dataid="qid" :name="'q-' + qid" :value="item.value" @change="answerChanged($event)">

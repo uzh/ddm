@@ -85,6 +85,7 @@ class QuestionBase(PolymorphicModel):
             'type': self.question_type,
             'index': self.index,
             'text': self.text,
+            'required': self.required,
             'items': [],
             'scale': [],
             'options': {}

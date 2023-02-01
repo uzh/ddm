@@ -1,6 +1,11 @@
 <i18n src="./translations/questionnaire_app.json"></i18n>
 
+
+
 <template>
+
+  Answers: {{ answers }}<br><br>
+  Config: {{ parsedQuestConfig }}
 
   <template v-for="(question, id) in parsedQuestConfig" :key="id">
     <div v-show="currentIndex === question.index">
@@ -23,6 +28,7 @@
               :qid="question.question"
               :text="question.text"
               :items="question.items"
+              :required="question.required"
               @answerChanged="updateAnswers"
               class="question-body"
           ></MultiChoiceQuestion>
@@ -140,16 +146,64 @@ export default {
     },
     setMaxIndex() {
       let indices = [];
-      this.parsedQuestConfig.forEach(q =>
-          indices.push(q.index)
-      )
+      for (let key in this.parsedQuestConfig) {
+        indices.push(this.parsedQuestConfig[key].index)
+      }
       this.maxIndex = Math.max(...indices);
     },
     next() {
-      if (this.currentIndex === this.maxIndex) {
-        this.submitData();
+      // TODO: this.checkRequired();
+      if (this.checkRequired()) {
+        if (this.currentIndex === this.maxIndex) {
+          this.submitData();
+        } else {
+          this.currentIndex += 1;
+        }
+      }
+    },
+    getActiveQuestions() {
+      let activeQuestions = [];
+      for (let key in this.parsedQuestConfig) {
+        if (this.currentIndex === this.parsedQuestConfig[key].index) {
+          activeQuestions.push(key)
+        }
+      }
+      console.log(activeQuestions);
+      return activeQuestions;
+    },
+    checkRequired() {
+      let requiredButMissing = [];
+      this.getActiveQuestions().forEach(q => {
+        document.querySelectorAll("div, tr").forEach((el) => el.classList.remove("required-but-missing"));
+
+        if (this.parsedQuestConfig[q].required) {
+          console.log(q);
+          console.log(this.answers[q]);
+          let answers = this.answers[q];
+          if (answers instanceof Object) {
+            console.log("found question with items");
+            for (let i in answers) {
+              console.log(i);
+              if (answers[i] === -99 || answers[i] === "-99") {
+                console.log("found required but missing item");
+                requiredButMissing.push(i);
+              }
+            }
+          } else if (answers === -99 || answers === "-99") {
+            requiredButMissing.push(q);
+          }
+        }
+      })
+
+      if (requiredButMissing.length === 0) {
+        return true;
       } else {
-        this.currentIndex += 1;
+        requiredButMissing.forEach(e => {
+          console.log(requiredButMissing);
+          let id = "answer-" + e;
+          document.getElementById(id).classList.add("required-but-missing");
+        })
+        return false;
       }
     },
     submitData() {
@@ -191,5 +245,8 @@ export default {
 .flow-navigation {
   padding-top: 50px;
   padding-right: 20%;
+}
+.required-but-missing {
+  background: red !important;
 }
 </style>

@@ -39,18 +39,18 @@
       <p>{{ this.infoModalMsg }}</p>
     </div>
     <div class="modal-footer">
-      <button class="flow-btn" type="button" id="closeInfoModal" @click="closeInfoModal">OK</button>
+      <button class="ddm-btn" type="button" id="closeInfoModal" @click="closeInfoModal">OK</button>
     </div>
   </div>
 
   <div class="default-modal" id="statusModal" ref="statusModal" style="display: none">
-    <div class="modal-header"></div>
+    <div class="modal-header">Achtung</div>
     <div class="modal-body">
       <p>{{ $t("status-info-msg") }}</p>
     </div>
     <div class="modal-footer">
-      <button class="flow-btn" type="button" id="closeStatusModal" @click="closeStatusModal">{{ $t('back-label') }}</button>
-      <button class="flow-btn" type="button" id="closeStatusModal" @click="processData(true)">{{ $t('continue-anyway-label') }}</button>
+      <button class="ddm-btn" type="button" id="closeStatusModal" @click="closeStatusModal">{{ $t('cancel-label') }}</button>
+      <button class="ddm-btn" type="button" id="closeStatusModal" @click="processData(true)">{{ $t('continue-anyway-label') }}</button>
     </div>
   </div>
 
@@ -265,20 +265,20 @@ export default {
   background: white;
   z-index: 2000;
   position: absolute;
-  top: 50%;
+  top: 35%;
   margin-left: auto;
   margin-right: auto;
   left: 0;
   right: 0;
   width: 30%;
-  border-radius: 10px;
+  border-radius: 5px;
 }
 .modal-backdrop {
   position: absolute;
   height: 100%;
   width: 100%;
-  background: black;
-  opacity: .3;
+  background: #959595;
+  opacity: .75;
   z-index: 1000;
 }
 .custom-modal-container {
@@ -346,6 +346,16 @@ export default {
   background-color: #009c94;
   color: #009c94;
   animation: dotFloatingAfter 3s infinite cubic-bezier(0.4, 0, 1, 1);
+}
+
+.ddm-btn {
+  background-color: #1a1a1a;
+  color: white !important;
+  border-radius: 5px;
+  border: 0px;
+  padding: 3px 10px !important;
+  font-size: 0.9rem;
+  text-decoration: none;
 }
 
 @keyframes dotFloating {

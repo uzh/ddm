@@ -129,6 +129,7 @@ export default {
       parsedQuestConfig: JSON.parse(this.questionnaireConfig),
       answers: {},
       currentIndex: 1,
+      minIndex: 1,
       maxIndex: 1,
       locale: this.language,
       displayedRequiredHint: false,
@@ -136,6 +137,7 @@ export default {
   },
   created() {
     this.setMaxIndex();
+    this.currentIndex = this.minIndex;
   },
   watch: {
     locale (val){
@@ -151,6 +153,7 @@ export default {
       for (let key in this.parsedQuestConfig) {
         indices.push(this.parsedQuestConfig[key].index)
       }
+      this.minIndex = Math.min(...indices);
       this.maxIndex = Math.max(...indices);
     },
     next() {

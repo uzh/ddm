@@ -1,12 +1,14 @@
 import datetime
 import json
 import os
+import random
+import string
 
 from ckeditor.fields import RichTextField
 
 from django.conf import settings
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
-from django.core.validators import RegexValidator, MinValueValidator
+from django.core.validators import RegexValidator, MinValueValidator, MinLengthValidator
 from django.db import models
 from django.db.models import Avg, F, ImageField
 from django.urls import reverse
@@ -254,8 +256,18 @@ def get_extra_data_default():
     return dict(url_param=dict())
 
 
+def create_asciidigits_id():
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=24))
+
+
 class Participant(models.Model):
     project = models.ForeignKey('DonationProject', on_delete=models.CASCADE)
+
+    external_id = models.CharField(
+        unique=True, null=False,
+        max_length=24,
+        validators=[MinLengthValidator(24)]
+    )
 
     # Participation statistics.
     start_time = models.DateTimeField()
@@ -263,6 +275,14 @@ class Participant(models.Model):
     completed = models.BooleanField(default=False)
 
     extra_data = models.JSONField(default=get_extra_data_default)
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            new_external_id = create_asciidigits_id()
+            while len(Participant.objects.filter(external_id=new_external_id)) != 0:
+                new_external_id = create_asciidigits_id()
+            self.external_id = new_external_id
+        super().save(*args, **kwargs)
 
 
 class QuestionnaireResponse(ModelWithEncryptedData):

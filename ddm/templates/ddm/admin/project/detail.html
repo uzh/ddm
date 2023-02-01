@@ -191,6 +191,10 @@
     <div>
       <p><button class="ddm-btn ddm-btn-red" data-bs-toggle="modal" data-bs-target="#delete-data-confirm">Reset Project Data</button></p>
     </div>
+    <h4>Delete Participant</h4>
+    <div>
+      <p><button class="ddm-btn ddm-btn-red" data-bs-toggle="modal" data-bs-target="#delete-participant">Delete Participant</button></p>
+    </div>
     <h4>Delete Project</h4>
     <div>
       <p><a class="ddm-btn ddm-btn-red" href="{% url 'project-delete' object.pk %}">Delete Project</a></p>
@@ -222,7 +226,42 @@
   </div>
 </div>
 
-{# Modal for delete error #}
+{# Modal for participant deletion #}
+<div class="modal" id="delete-participant" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h4>Delete Participant</h4>
+        <p>You can delete a specific participant by providing their external id in the field below:</p>
+        <p>
+          <input id="participant-id-input" class="w-100 mt-2" name="participant-id">
+        </p>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="ddm-btn" data-bs-dismiss="modal">Cancel</button>
+        <button id="delete-data-button" type="button" class="ddm-btn ddm-btn-red" data-bs-dismiss="modal" onclick="deleteParticipant('{% url "ddm-participant-api" object.pk "placeholder" %}', '{{csrf_token}}')">Delete Participant</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Modal for participant delete success #}
+<div class="modal" id="modal-participant-delete-success" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p><i class="bi bi-check-circle-fill text-success pe-2"></i><b>Participant Deleted</b></p>
+        Participant was successfully deleted.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="ddm-btn" data-bs-dismiss="modal" onclick="window.location.reload();">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Modal for delete success #}
 <div class="modal" id="modal-delete-success" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">

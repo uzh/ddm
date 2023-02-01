@@ -1,14 +1,9 @@
 <i18n src="./translations/questionnaire_app.json"></i18n>
 
-
-
 <template>
 
-  Answers: {{ answers }}<br><br>
-  Config: {{ parsedQuestConfig }}
-
   <template v-for="(question, id) in parsedQuestConfig" :key="id">
-    <div v-show="currentIndex === question.index">
+    <div :data-page-index="question.index" v-show="currentIndex === question.index">
 
       <template v-if="question.type === 'single_choice'">
         <div class="question-container">
@@ -19,6 +14,7 @@
               @answerChanged="updateAnswers"
               class="question-body"
           ></SingleChoiceQuestion>
+          <div :id="'required-hint-' + question.question" class="required-hint hidden">{{ $t('required-but-missing-hint') }}</div>
         </div>
       </template>
 
@@ -32,6 +28,7 @@
               @answerChanged="updateAnswers"
               class="question-body"
           ></MultiChoiceQuestion>
+          <div :id="'required-hint-' + question.question" class="required-hint hidden">{{ $t('required-but-missing-hint') }}</div>
         </div>
       </template>
 
@@ -44,6 +41,7 @@
               @answerChanged="updateAnswers"
               class="question-body"
           ></OpenQuestion>
+          <div :id="'required-hint-' + question.question" class="required-hint hidden">{{ $t('required-but-missing-hint') }}</div>
         </div>
       </template>
 
@@ -57,6 +55,7 @@
               @answerChanged="updateAnswers"
               class="question-body"
           ></MatrixQuestion>
+          <div :id="'required-hint-' + question.question" class="required-hint hidden">{{ $t('required-but-missing-hint') }}</div>
         </div>
       </template>
 
@@ -70,6 +69,7 @@
               @answerChanged="updateAnswers"
               class="question-body"
           ></SemanticDifferential>
+          <div :id="'required-hint-' + question.question" class="required-hint hidden">{{ $t('required-but-missing-hint') }}</div>
         </div>
       </template>
 
@@ -80,6 +80,7 @@
               @answerChanged="updateAnswers"
               class="question-body"
           ></TransitionQuestion>
+          <div :id="'required-hint-' + question.question" class="required-hint hidden">{{ $t('required-but-missing-hint') }}</div>
         </div>
       </template>
 
@@ -130,6 +131,7 @@ export default {
       currentIndex: 1,
       maxIndex: 1,
       locale: this.language,
+      displayedRequiredHint: false,
     }
   },
   created() {
@@ -152,12 +154,14 @@ export default {
       this.maxIndex = Math.max(...indices);
     },
     next() {
-      // TODO: this.checkRequired();
-      if (this.checkRequired()) {
+      if (this.displayedRequiredHint || this.checkRequired()) {
         if (this.currentIndex === this.maxIndex) {
           this.submitData();
         } else {
           this.currentIndex += 1;
+          if (document.querySelector("[data-page-index='" + this.currentIndex + "']") === null) {
+            this.next();
+          }
         }
       }
     },
@@ -168,41 +172,42 @@ export default {
           activeQuestions.push(key)
         }
       }
-      console.log(activeQuestions);
       return activeQuestions;
     },
     checkRequired() {
-      let requiredButMissing = [];
+      let requiredButMissingElement = [];
+      let missingQuestionIds = new Set();
       this.getActiveQuestions().forEach(q => {
-        document.querySelectorAll("div, tr").forEach((el) => el.classList.remove("required-but-missing"));
+        document.querySelectorAll("div[id*=answer-], tr[id*=answer-]").forEach((el) => el.classList.remove("required-but-missing"));
+        document.querySelectorAll("div[class*=required-hint]").forEach((el) => el.classList.remove("show"));
 
         if (this.parsedQuestConfig[q].required) {
-          console.log(q);
-          console.log(this.answers[q]);
           let answers = this.answers[q];
           if (answers instanceof Object) {
-            console.log("found question with items");
             for (let i in answers) {
-              console.log(i);
               if (answers[i] === -99 || answers[i] === "-99") {
-                console.log("found required but missing item");
-                requiredButMissing.push(i);
+                requiredButMissingElement.push("item-" + i);
+                missingQuestionIds.add(q);
               }
             }
           } else if (answers === -99 || answers === "-99") {
-            requiredButMissing.push(q);
+            requiredButMissingElement.push(q);
+            missingQuestionIds.add(q);
           }
         }
       })
 
-      if (requiredButMissing.length === 0) {
+      if (requiredButMissingElement.length === 0) {
         return true;
       } else {
-        requiredButMissing.forEach(e => {
-          console.log(requiredButMissing);
+        requiredButMissingElement.forEach(e => {
           let id = "answer-" + e;
           document.getElementById(id).classList.add("required-but-missing");
         })
+        missingQuestionIds.forEach(q => {
+          document.getElementById("required-hint-" + q).classList.add("show");
+        })
+        this.displayedRequiredHint = true;
         return false;
       }
     },
@@ -236,17 +241,30 @@ export default {
 }
 .question-container {
   font-size: 1rem;
-  padding: 0px 20%;
+  margin: 0px 20%;
+  border-bottom: 1px solid lightgray;
+  padding-bottom: 50px;
+  padding-top: 50px;
 }
 .question-body {
-  border-bottom: 1px solid lightgray;
-  padding: 50px 30px;
+  padding-left: 30px;
+  padding-right: 30px;
 }
 .flow-navigation {
   padding-top: 50px;
   padding-right: 20%;
 }
 .required-but-missing {
-  background: red !important;
+  background: #ff480012 !important;
+  border-radius: 5px;
+}
+.required-hint {
+  font-size: 0.9rem;
+  color: #c51c00;
+  padding-left: 35px;
+  display: none;
+}
+.show {
+  display: block !important;
 }
 </style>

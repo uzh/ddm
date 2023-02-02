@@ -160,7 +160,7 @@
 }
 .ddm-admin-section-header {
     margin-top: 20px;
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     border-bottom: 2px solid #1a1a1a;
     font-weight: bold;
 }
@@ -203,7 +203,7 @@
     background: #009c94;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    font-size: 3rem;
+    font-size: 2.5rem;
 }
 
 .bi-chevron-compact-right {
@@ -365,4 +365,21 @@
 .ddm-form-file-field label {
     display: inline-block;
 
+}
+.project-statistics-container {
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.w-15 {
+    width: 15%;
+    min-width: 180px;
+}
+.data-center-row {
+    padding: 15px 5px;
+    border-color: #bdbdbd !important;
+}
+.data-center-row h5 {
+    margin: 0;
 }

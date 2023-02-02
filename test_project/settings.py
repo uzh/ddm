@@ -5,7 +5,7 @@ import sys
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DDM_DIR = os.path.join(PROJECT_DIR, 'ddm')
-VUE_FRONTEND_DIR = os.path.join(PROJECT_DIR, 'vue_frontend')
+VUE_FRONTEND_DIR = os.path.join(PROJECT_DIR, 'frontend')
 
 sys.path.append(PROJECT_DIR)
 sys.path.append(DDM_DIR)

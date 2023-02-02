@@ -5,7 +5,7 @@
   <div class="mb-5">
     <div class="float-left bg-dark text-white pt-2 ps-2 pb-1 rounded-top">
       <div class="col-sm">
-        <h4>Upload {{ name }}</h4>
+        <h4>{{ name }}</h4>
       </div>
     </div>
 
@@ -112,14 +112,12 @@
       <!-- UPLOAD FEEDBACK -->
       <div class="ul-feedback-container row border-bottom mt-3">
         <div class="col">
-        <template v-for="bp in blueprints"
-                :key="bp"
-        >
+        <template v-for="bp in blueprints" :key="bp">
         <div class="ul-status row align-items-center border-top pt-2 pb-2" :class="{ 'ul-success': blueprintData[bp.id.toString()].status === 'success', 'ul-failed': blueprintData[bp.id.toString()].status === 'failed'}">
 
           <!-- Pending -->
           <template v-if="blueprintData[bp.id.toString()].status === 'pending'">
-            <div class="col-auto bp-ul-icon"><i class="bi bi-file-earmark-fill text-grey"></i></div>
+            <div class="col w-small bp-ul-icon"><i class="bi bi-file-earmark-fill text-grey"></i></div>
             <div class="col-2 bp-description">{{ bp.name }}</div>
             <div class="col bp-ul-status">{{ $t('not-yet-extracted') }}</div>
             <div class="col bp-ul-data"></div>
@@ -129,36 +127,38 @@
           <!-- Success -->
           <template v-if="blueprintData[bp.id.toString()].status === 'success'">
             <div class="row pb-2">
-              <div class="col-auto bp-ul-icon"><i class="bi bi-file-earmark-check-fill text-success"></i></div>
+              <div class="col w-small bp-ul-icon"><i class="bi bi-file-earmark-check-fill text-success"></i></div>
               <div class="col-2 bp-description">{{ bp.name }}</div>
               <div class="col bp-ul-status">{{ $t('upload-success-short') }}</div>
-              <div class="col-auto bp-ul-data">
-                <a class="text-decoration-none fw-bold" :id="'collapse-toggle-'+bp.id.toString()" data-bs-toggle="collapse" v-on:click="toggleCollapseLabel('collapse-toggle-'+bp.id.toString())" :href="'#bp-fb-'+bp.id.toString()" role="button" aria-expanded="false" :aria-controls="'bp-fb-'+bp.id.toString()"><span :id="'collapse-toggle-'+bp.id.toString()+'-label'">{{ $t('show-extracted-data') }}</span> <i class="bi bi-arrow-bar-down collapse-icon"></i></a>
-              </div>
             </div>
 
-            <div class="row ms-2">
-              <div :id="'bp-fb-'+bp.id.toString()" class="row bg-white ul-data-collapsible collapse">
-                <p>{{ $t('extracted-data-intro') }}:</p>
-                <div class="ul-data-container">
-                  <table :id="'ul-result-' + bp.id.toString()" class="table table-sm">
-                    <thead>
-                    <tr>
-                      <th v-for="field in Object.keys(blueprintData[bp.id.toString()].extracted_data[0])" :key="field">{{ field }}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="row in blueprintData[bp.id.toString()].extracted_data" :key="row">
-                      <td v-for="v in row" :key="v">{{ v }}</td>
-                    </tr>
-                    </tbody>
-                  </table>
+            <div class="row fs-09">
+              <div class="col w-small"></div>
+              <div class="col">
+                <p class="pb-2">{{ $t('extracted-data-intro') }}:</p>
+                <div class="data-donation-container pb-3">
+                  <div :id="'donation-container-'+bp.id.toString()" class="ul-data-container ul-data-condensed bg-white">
+                    <table :id="'ul-result-' + bp.id.toString()" class="table table-sm">
+                      <thead>
+                      <tr>
+                        <th v-for="field in Object.keys(blueprintData[bp.id.toString()].extracted_data[0])" :key="field">{{ field }}</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr v-for="row in blueprintData[bp.id.toString()].extracted_data" :key="row">
+                        <td v-for="v in row" :key="v">{{ v }}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div :id="'expansion-control-'+bp.id.toString()" class="ul-data-expansion-control control-condensed"><a class="text-decoration-none fw-bold" :id="'collapse-toggle-'+bp.id.toString()" v-on:click="showHideData(bp.id.toString())"><span :id="'donation-container-'+ bp.id.toString() + '-toggle-label'">{{ $t('show-extracted-data') }}</span></a></div>
                 </div>
               </div>
             </div>
 
-            <div class="row ms-2">
-              <div class="row bg-white pb-3 pt-3 pl-32">
+            <div class="row">
+              <div class="col w-small"></div>
+              <div class="col fs-09 pb-3 pt-1">
                 <p class="fw-bold">{{ $t('donation-question') }}</p>
                 <div class="surquest-gq-response surquest-cq-response">
                   <div class="surquest-choice-item form-check">
@@ -182,7 +182,7 @@
 
           <!-- Failed -->
           <template v-if="blueprintData[bp.id.toString()].status === 'failed'">
-            <div class="col-auto bp-ul-icon"><i class="bi bi-file-earmark-x-fill text-danger"></i></div>
+            <div class="col w-small bp-ul-icon"><i class="bi bi-file-earmark-x-fill text-danger"></i></div>
             <div class="col-2 bp-description">{{ bp.name }}</div>
             <div class="col bp-ul-status">
               <template v-if="blueprintData[bp.id.toString()].errors.length">
@@ -248,27 +248,6 @@ export default {
     this.emitToParent();
   },
   methods: {
-
-    /**
-     * Change label of collapsible that displays uploaded data.
-     * @param {string} elementId Html-id of the label element.
-     */
-    toggleCollapseLabel(elementId) {
-      let element = document.getElementById(elementId);
-      let label = document.getElementById(elementId.concat('-label'));
-      let newLabel = '';
-      if (element.getAttribute('aria-expanded') === 'true') {
-        newLabel = this.$t('hide-extracted-data');
-        element.getElementsByTagName('i')[0].classList.add('rotate-down');
-      } else {
-        newLabel = this.$t('show-extracted-data');
-        element.getElementsByTagName('i')[0].classList.remove('rotate-down');
-      }
-      setTimeout(() => {
-        label.innerHTML = newLabel;
-      }, 300);
-    },
-
     /**
      * Processes the file uploaded by the participant.
      * @param event
@@ -603,8 +582,26 @@ export default {
           this.blueprintData[bp].status = 'failed';
         }
       }
-    }
+    },
 
+    showHideData(bpId) {
+      let elementId = 'donation-container-' + bpId;
+      let target = document.getElementById(elementId);
+      let targetLabel = document.getElementById(elementId.concat('-toggle-label'));
+      let controlElement = document.getElementById('expansion-control-' + bpId)
+
+      let newLabel = '';
+      if (target.classList.contains('ul-data-condensed')) {
+        target.classList.replace('ul-data-condensed', 'ul-data-expanded');
+        controlElement.classList.replace('control-condensed', 'control-expanded')
+        newLabel = this.$t('hide-extracted-data');
+      } else {
+        target.classList.replace('ul-data-expanded', 'ul-data-condensed');
+        controlElement.classList.replace('control-expanded', 'control-condensed')
+        newLabel = this.$t('show-extracted-data');
+      }
+      targetLabel.innerHTML = newLabel;
+    },
   },
 }
 </script>
@@ -633,29 +630,14 @@ export default {
 .accordion-item:first-of-type {
   border-radius: 0 !important;
 }
-.form-check-label,
-.form-check-input {
+.form-check-label {
   cursor: pointer;
-}
-.form-check-input {
-  margin-top: 0;
 }
 .ul-success {
   background-color: #55ff5517;
 }
-.ul-partial {
-  background-color: rgba(255, 170, 85, 0.09);
-}
 .ul-failed {
   background-color: #f8d7da;
-}
-.fb-modal {
-  max-width: 80%;
-  height: 80%;
-}
-.modal-body-data {
-  overflow: auto;
-  max-height: 400px;
 }
 .ul-status-icon {
   font-size: 2.5rem;
@@ -672,12 +654,17 @@ export default {
 .bp-description {
   font-weight: bold;
 }
-.ul-data-collapsible {
-  padding: 10px 0px 0px 32px;
-  font-size: 0.9rem;
-}
 .ul-data-container {
   display: block;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 5px;
+}
+.ul-data-condensed {
+  max-height: 150px;
+  overflow: hidden;
+}
+.ul-data-expanded {
   max-height: 500px;
   overflow-y: scroll;
 }
@@ -688,19 +675,29 @@ export default {
   background-color: white !important;
   box-shadow: 0px 1px black;
 }
-.collapse-icon {
-  display: inline-block;
-  transition:all 0.3s ease-out;
-  transform: rotate(0deg);
-  -moz-transform:rotate(0deg);
-  -webkit-transform: rotate(0deg);
+.ul-data-expansion-control {
+  text-align: center;
+  z-index: 10;
+  position: relative;
+  cursor: pointer;
+  border-radius: 5px;
 }
-.rotate-down {
-  transform: rotate(180deg) !important;
-  -moz-transform:rotate(180deg) !important;
-  -webkit-transform: rotate(180deg) !important;
+.control-expanded {
+  background: white;
+  margin-top: 0;
+  height:30px;
 }
-.pl-32 {
-  padding-left: 32px;
+.control-condensed {
+  background: rgb(255,255,255);
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 50%);
+  height: 75px;
+  margin-top: -75px;
+  padding-top: 45px;
+}
+.fs-09 {
+  font-size: 0.9rem;
+}
+.w-small {
+  max-width: 33px;
 }
 </style>

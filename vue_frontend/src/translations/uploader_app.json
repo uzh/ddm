@@ -2,19 +2,21 @@
   "en": {
     "data-submit-wait": "Just a moment, your data donation is being submitted",
     "next-btn-label": "Submit Data",
-    "consent-error-msg": "You did not indicate for all uploads whether you consent to the donation of your data.",
+    "consent-error-msg": "You did not indicate for all uploads whether you consent to the donation of your data. Please go back and indicate whether you want to donate your data.",
     "back-label": "back",
-    "cancel-label": "cancel",
-    "continue-anyway-label": "continue anyway",
-    "status-info-msg": "You have not uploaded any data. Are you sure you want to continue?"
+    "cancel-label": "Cancel",
+    "continue-anyway-label": "Yes, continue anyway",
+    "status-info-msg-not-all-attempted": "You have skipped some data uploads. Are you sure you want to continue?",
+    "status-info-msg-none-attempted": "You have not uploaded any data. Are you sure you want to continue?"
   },
   "de": {
     "data-submit-wait": "Einen Moment bitte, Ihre Datenspende wird gerade übermittelt",
     "next-btn-label": "Daten übermitteln",
-    "consent-error-msg": "Sie haben nicht bei allen Uploads angegeben, ob Sie mit der Spende Ihrer Daten einverstanden sind.",
+    "consent-error-msg": "Sie haben nicht bei allen Uploads angegeben, ob Sie mit der Spende Ihrer Daten einverstanden sind. Bitte gehen Sie zurück und geben Sie an, ob Sie mit der Spende Ihrer Daten einverstanden sind.",
     "back-label": "zurück",
-    "continue-anyway-label": "trotzdem fortfahren",
-    "cancel-label": "abbrechen",
-    "status-info-msg": "Sie haben keine Daten hochgeladen. Sind Sie sicher, dass Sie fortfahren möchten?"
+    "continue-anyway-label": "Ja, trotzdem fortfahren",
+    "cancel-label": "Abbrechen",
+    "status-info-msg-not-all-attempted": "Sie haben einige Daten nicht hochgeladen. Sind Sie sicher, dass Sie fortfahren möchten?",
+    "status-info-msg-none-attempted": "Sie haben keine Daten hochgeladen. Sind Sie sicher, dass Sie fortfahren möchten?"
   }
 }

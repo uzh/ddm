@@ -34,9 +34,9 @@
   </div>
 
   <div class="default-modal" id="infoModal" ref="infoModal" style="display: none">
-    <div class="modal-header"></div>
-    <div class="modal-body">
-      <p>{{ this.infoModalMsg }}</p>
+    <div class="modal-body d-flex flex-row align-items-center pt-5">
+      <div class="ps-2 pe-3 color-blue"><i class="bi bi-info-circle-fill fs-1"></i></div>
+      <div>{{ this.infoModalMsg }}</div>
     </div>
     <div class="modal-footer">
       <button class="ddm-btn" type="button" id="closeInfoModal" @click="closeInfoModal">OK</button>
@@ -44,12 +44,12 @@
   </div>
 
   <div class="default-modal" id="statusModal" ref="statusModal" style="display: none">
-    <div class="modal-header">Achtung</div>
-    <div class="modal-body">
-      <p>{{ $t("status-info-msg") }}</p>
+    <div class="modal-body d-flex flex-row align-items-center pt-5">
+      <div class="ps-2 pe-3 color-blue"><i class="bi bi-info-circle-fill fs-1"></i></div>
+      <div id="statusModalMsg" ref="statusModalMsg">{{ $t("status-info-msg") }}</div>
     </div>
     <div class="modal-footer">
-      <button class="ddm-btn" type="button" id="closeStatusModal" @click="closeStatusModal">{{ $t('cancel-label') }}</button>
+      <button class="ddm-btn" type="button" id="cancelStatusModal" @click="closeStatusModal">{{ $t('cancel-label') }}</button>
       <button class="ddm-btn" type="button" id="closeStatusModal" @click="processData(true)">{{ $t('continue-anyway-label') }}</button>
     </div>
   </div>
@@ -154,13 +154,9 @@ export default {
       });
 
       if (consents.includes(null) === true) {
-        // hide processing modal
         this.$refs.processingModal.style.display = 'none';
-
-        // show consent questions not answered modal
         this.infoModalMsg = this.$t('consent-error-msg');
         this.$refs.infoModal.style.display = 'block';
-
         return false;
       }
       return true;
@@ -188,19 +184,26 @@ export default {
       this.$refs.processingModal.style.display = 'block';
       this.$refs.modalBackdrop.style.display = 'block';
 
+      // Check consent data.
+      if (!this.consentValid()) return;
+
       if (!skipStatus) {
         // Determine donation status across all donation blueprints.
         this.getStatus();
-        if (this.donationStatus === 1) {
-          // Show info modal with options 'back' and 'continue anyway'.
+        if (this.donationStatus === 1) {  // means no upload attempted.
           this.$refs.processingModal.style.display = 'none';
+          this.$refs.statusModalMsg.innerHTML = this.$t('status-info-msg-none-attempted');
+          this.$refs.statusModal.style.display = 'block';
+          return;
+        }
+
+        if (this.donationStatus === 2 || this.donationStatus === 4) {  // means not all uploads attempted.
+          this.$refs.processingModal.style.display = 'none';
+          this.$refs.statusModalMsg.innerHTML = this.$t('status-info-msg-not-all-attempted');
           this.$refs.statusModal.style.display = 'block';
           return;
         }
       }
-
-      // Check consent data.
-      if (!this.consentValid()) return;
 
       // Zip and send data to server.
       this.zipData();
@@ -274,7 +277,7 @@ export default {
   border-radius: 5px;
 }
 .modal-backdrop {
-  position: absolute;
+  position: fixed;
   height: 100%;
   width: 100%;
   background: #959595;
@@ -352,10 +355,14 @@ export default {
   background-color: #1a1a1a;
   color: white !important;
   border-radius: 5px;
-  border: 0px;
+  border: 1px solid #8e8e8e;
   padding: 3px 10px !important;
   font-size: 0.9rem;
   text-decoration: none;
+}
+
+.color-blue {
+  color: #0068b3;
 }
 
 @keyframes dotFloating {

@@ -69,7 +69,7 @@ class ParticipantAPI(APIView):
             participant = Participant.objects.get(project=project, external_id=external_id)
         except ObjectDoesNotExist:
             msg = f'Participant with id "{external_id}" not found.'
-            return Response(status=status.HTTP_403_FORBIDDEN, data={'message': msg})
+            return Response(status=status.HTTP_404_NOT_FOUND, data={'message': msg})
 
         participant.delete()
 

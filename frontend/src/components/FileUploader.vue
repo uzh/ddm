@@ -160,14 +160,14 @@
               <div class="col w-small"></div>
               <div class="col fs-09 pb-3 pt-1">
                 <p class="fw-bold">{{ $t('donation-question') }}</p>
-                <div class="surquest-gq-response surquest-cq-response">
-                  <div class="surquest-choice-item form-check">
+                <div class="consent-question-container">
+                  <div class="question-choice-item  form-check">
                     <label class="form-check-label rb-cb-label" :for="'donate-agree-'+bp.id.toString()">
                       <input type="radio" :id="'donate-agree-'+bp.id.toString()" value="true" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent" required>
                        {{ $t('donation-agree') }}
                     </label>
                   </div>
-                  <div class="surquest-choice-item form-check">
+                  <div class="question-choice-item  form-check">
                     <label class="form-check-label rb-cb-label" :for="'donate-disagree-'+bp.id.toString()">
                       <input type="radio" :id="'donate-disagree-'+bp.id.toString()" value="false" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent">
                        {{ $t('donation-disagree') }}
@@ -699,5 +699,9 @@ export default {
 }
 .w-small {
   max-width: 33px;
+}
+.consent-question-container {
+  padding: 20px 10px;
+  width: 100%;
 }
 </style>

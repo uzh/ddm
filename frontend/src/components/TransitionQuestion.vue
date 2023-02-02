@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="surquest-question-text" v-html="text"></div>
+    <div v-html="text"></div>
   </div>
 </template>
 

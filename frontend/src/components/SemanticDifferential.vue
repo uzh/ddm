@@ -1,9 +1,9 @@
 <template>
   <div>
 
-    <div class="surquest-question-text" v-html="text"></div>
+    <div v-html="text"></div>
 
-    <div class="surquest-gq-response">
+    <div class="question-response-body">
       <table class="dq-table">
         <thead>
         <tr>

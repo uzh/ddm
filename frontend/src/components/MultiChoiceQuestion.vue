@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="surquest-question-text" v-html="text"></div>
-    <div class="surquest-gq-response surquest-cq-response">
-      <div v-for="(item, id) in items" :key="id" class="surquest-choice-item form-check">
+    <div v-html="text"></div>
+    <div class="question-response-body">
+      <div v-for="(item, id) in items" :key="id" class="question-choice-item form-check">
         <label class="form-check-label rb-cb-label">
           <input class="form-check-input" type="checkbox" :name="item.id" :value="item.value" @change="answerChanged($event)">
           {{ item.label }}

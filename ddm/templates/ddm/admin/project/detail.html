@@ -168,19 +168,7 @@
 </div>
 
 {# Modal for download error #}
-<div class="modal" id="modal-download-error" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-body">
-        <p><i class="bi bi-x-octagon-fill text-danger pe-2"></i><b>Download Failed</b></p>
-        The download failed due to the following issue: <span id="download-error-message"></span>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="ddm-btn" data-bs-dismiss="modal">OK</button>
-      </div>
-    </div>
-  </div>
-</div>
+{% include "ddm/admin/components/info_modal.html" with modal_id="modal-download-error" body="<p><i class='bi bi-x-octagon-fill text-danger pe-2'></i><b>Download Failed</b></p>The download failed due to the following issue: <span id='download-error-message'></span>" reload="False" %}
 
 
 {# DANGER ZONE #}
@@ -247,50 +235,13 @@
 </div>
 
 {# Modal for participant delete success #}
-<div class="modal" id="modal-participant-delete-success" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-body">
-        <p><i class="bi bi-check-circle-fill text-success pe-2"></i><b>Participant Deleted</b></p>
-        Participant was successfully deleted.
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="ddm-btn" data-bs-dismiss="modal" onclick="window.location.reload();">OK</button>
-      </div>
-    </div>
-  </div>
-</div>
+{% include "ddm/admin/components/info_modal.html" with modal_id="modal-participant-delete-success" body="<p><i class='bi bi-check-circle-fill text-success pe-2'></i><b>Participant Deleted</b></p>Participant was successfully deleted." reload="False" %}
 
 {# Modal for delete success #}
-<div class="modal" id="modal-delete-success" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-body">
-        <p><i class="bi bi-check-circle-fill text-success pe-2"></i><b>Data Deleted</b></p>
-        All data were successfully deleted.
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="ddm-btn" data-bs-dismiss="modal" onclick="window.location.reload();">OK</button>
-      </div>
-    </div>
-  </div>
-</div>
+{% include "ddm/admin/components/info_modal.html" with modal_id="modal-delete-success" body="<p><i class='bi bi-check-circle-fill text-success pe-2'></i><b>All data were successfully deleted.</b></p>" reload="True" %}
 
 {# Modal for delete error #}
-<div class="modal" id="modal-delete-error" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-body">
-        <p><i class="bi bi-x-octagon-fill text-danger pe-2"></i><b>An error occurred</b></p>
-        Something went wrong during the data deletion: <span id="delete-error-message"></span>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="ddm-btn" data-bs-dismiss="modal">OK</button>
-      </div>
-    </div>
-  </div>
-</div>
-
+{% include "ddm/admin/components/info_modal.html" with modal_id="modal-delete-error" body="<p><i class='bi bi-x-octagon-fill text-danger pe-2'></i><b>An error occurred</b></p>Something went wrong during the data deletion: <span id='delete-error-message'></span>" reload="False" %}
 
 <div class="mt-3">
   <a href="{% url 'project-list' %}">&#129040; Back</a>

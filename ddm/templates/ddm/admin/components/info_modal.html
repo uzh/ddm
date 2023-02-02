@@ -1,0 +1,12 @@
+<div class="modal" id="{{ modal_id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        {{ body|safe }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="ddm-btn" data-bs-dismiss="modal" {% if reload == "True" %}onclick="window.location.reload();"{% endif %}>{{ button_label|default:"OK" }}</button>
+      </div>
+    </div>
+  </div>
+</div>

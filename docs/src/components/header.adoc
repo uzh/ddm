@@ -1,0 +1,13 @@
+++++
+<div id="top-nav-top">
+    <a href="index.html"><img class="top-nav-img" src="./static/img/DDM_Logo_Schwarz.svg" height="300"></a>
+    <div class="top-nav-title">Documentation</div>
+</div>
+<div id="top-nav">
+    <div><a class="nav-link" href="for_researchers.html">for Researchers</a></div>
+    <div><a class="nav-link" href="for_admins.html">for Administrators</a></div>
+    <div><a class="nav-link" href="for_developers.html">for Developers</a></div>
+    <div><a class="nav-link" href="topic_references.html">Topic References</a></div>
+    <div><a class="nav-link" href="about.html">About</a></div>
+</div>
+++++

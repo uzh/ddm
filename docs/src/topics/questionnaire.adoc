@@ -1,0 +1,6 @@
+=== Behaviour
+
+- Required: If a question is marked as required, the application will show a
+hint to the participant if they missed to answer a required question.
+This hint will only be shown once. This means that if a participant chooses to
+ignore the hint and clicks on 'continue', they are able to skip a required question.

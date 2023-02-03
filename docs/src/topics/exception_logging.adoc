@@ -1,0 +1,90 @@
+This page describes the implemented exceptions that are logged in a project's exception log.
+
+=== Exceptions Caught on Client Side
+
+==== Exceptions During Data Donation (4xxx)
+
+===== File Messages (41xx)
+File errors relate to exceptions raised during uploading and reading a file,
+but before the read contents of a file are processed.
+
+*4101: Not Zip* +
+_Description:_ Zip-container was expected as upload but another file type was selected (zip specific). +
+_Exception Message:_ TODO
+
+
+*4102: Corrupt Zip* +
+__Description:_ The provided zip-container is corrupted (zip specific). +
+_Exception Message:_ TODO
+
+
+*4103: Encrypted Zip* +
+_Description:_ The provided zip-container is encrypted (zip specific). +
+_Exception Message:_ TODO
+
+
+*4104: Multiple Files* +
+_Description:_ Multiple files were selected. +
+_Exception Message:_ TODO
+
+
+*4105: Wrong File Type* +
+_Description:_ The provided file does not match the expected file type. +
+_Exception Message:_ TODO
+
+
+*4106: JSON Syntax Error* +
+_Description:_ The provided json file contains a syntax error. +
+_Exception Message:_ TODO
+
+
+*4198: Generic Zip Error* +
+_Description:_ An unexpected exception occurred while processing the zip file (zip specific). +
+_Exception Message:_ TODO
+
+
+*4199: Generic File Error* +
+_Description:_ An unexpected exception occurred while processing a single file. +
+_Exception Message:_ TODO
+
+
+===== Processing Messages (42xx)
+
+*4201: All Expected Fields Missing* +
+_Description:_ None of the entries in the supplied file did contain the expected fields as defined in the blueprint. +
+_Exception Message:_ TODO
+
+
+*4202: Regex Not Matched* +
+_Description:_ The expected file did not exist. +
+_Exception Message:_ TODO
+
+
+*4203: Entry Not Containing Expected Fields* +
+_Description:_ An entry did not contain one or more of the expected fields. +
+_Exception Message:_ TODO
+
+
+*4204: All Entries Filtered Out* +
+_Description:_ All entries of an uploaded file were filtered out and therefore no data was extracted. +
+_Exception Message:_ TODO
+
+
+*4205: All Entries Either Missing Expected Field or Filtered* +
+_Description:_ All entries of an uploaded file were either missing one or more expected fields or filtered out and therefore no data was extracted. +
+_Exception Message:_ TODO
+
+
+*4206: Entry was filtered out* +
+_Description:_ A filter rule applied and the entry was deleted. +
+_Exception Message:_ TODO
+
+
+*4299: Entry Not Containing Expected Fields* +
+_Description:_ An entry did not contain one or more of the expected fields. +
+_Exception Message:_ TODO
+
+
+==== Exceptions During Questionnaire (5xxx)
+
+NOTE: To be implemented

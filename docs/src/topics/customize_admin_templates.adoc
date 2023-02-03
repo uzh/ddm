@@ -1,0 +1,31 @@
+The default admin templates include a minimalistic header and footer that do not integrate any actions related to
+a researchers user account because authentication is handled by the main website (see <<User Authentication>>).
+
+However, for your own project you may wish to replace the default header and/or footer within the admin interface
+to include your own branding and provide your users with some account management options such as a logout button.
+This can be done by using Django's template inheritance.
+
+In your application create a new html template `your_application/templates/ddm/admin/base.html`. In this file,
+you can overwrite the header and/or footer as follows:
+
+[source]
+----
+
+{% extends "ddm/project_admin/base.html" %}
+
+{% block extrahead %}
+    <!-- If you wish, you can integrate some custom css files here -->
+{% endblock %}
+
+{% block header %}
+<div>
+    <!-- Your Custom Header HTML -->
+</div>
+{% endblock %}
+
+{% block header %}
+<div>
+    <!-- Your Custom Footer HTML -->
+</div>
+{% endblock %}
+----

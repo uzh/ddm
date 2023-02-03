@@ -70,7 +70,7 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+docs_old/_build/
 
 # PyBuilder
 .pybuilder/
@@ -286,7 +286,7 @@ dist
 #
 # Recommended template: Node.gitignore
 
-docs/_book
+docs_old/_book
 test/
 
 ### Vuejs ###

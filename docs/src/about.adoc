@@ -1,0 +1,12 @@
+:stylesheet: ../static/css/custom.css
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: static/img/ddl_favicon_black.svg
+include::components/header.adoc[]
+
+== About
+
+
+include::components/footer.adoc[]
+include::components/scripts.adoc[]

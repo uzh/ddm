@@ -1,0 +1,12 @@
+site:
+  title: DDM Documentation
+  start_page: ddm::index.adoc
+content:
+  sources:
+    - url: ../../ddm
+      branches: [main, develop]
+      start_path: docs
+ui:
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/HEAD/raw/build/ui-bundle.zip?job=bundle-stable
+    snapshot: true

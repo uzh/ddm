@@ -641,3 +641,8 @@ a.active { color: #007b74 !important; }
 
 #custom-footer { font-size: 0.85rem; color: grey; text-align: center; border-top: 1px solid lightgray; padding-top: 10px; padding-bottom: 20px; margin-top: 60px; }
 .footer-info { padding-left: 8px; padding-right: 8px; }
+
+.sectlevel1 { padding-top: 50px; }
+.sectlevel1 > li { padding-bottom: 7px; }
+.sectlevel1 > li > a { font-weight: bold; }
+#toctitle { display: none; }

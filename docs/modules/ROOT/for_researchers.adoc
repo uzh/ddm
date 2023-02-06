@@ -1,22 +1,67 @@
+= DDM Documentation for Researchers
 :toc: right
-:toc-title: For Researchers
+:toc-title: Documentation for Researchers
 :stylesheet: ../static/css/custom.css
 :icons: font
 :stem: latexmath
 :last-update-label!:
 :favicon: static/img/ddl_favicon_black.svg
+:showtitle!:
+
 include::components/header.adoc[]
 
 
 This part of the documentation is addressed at the users of the Data Donation Module (i.e., the researchers) and will explain:
 
 - Core principles of the Data Donation Module.
-- How to navigate the user interface.
 - How to set up a data donation project.
 - How to monitor an ongoing data donation project.
 - How to download and work with the collected data.
 
 Readers interested in setting up DDM for institutional use or their own research should turn to the xref:for_admins.adoc[Documentation for Administrators].
+
+== Getting Started With DDM
+
+=== Overview
+
+=== Create An Account
+
+
+
+== Set Up a Data Donation Project
+
+=== Creating a Project
+
+=== Overview of the Project Interface
+
+=== Setting Up the Data Donation Steps
+
+==== Briefing of Participants
+
+==== Data Donation Setup
+
+==== Questionnaire
+
+==== Debriefing of Participants
+
+
+== Monitoring an Ongoing Project
+
+=== Exception Logs
+
+
+== Accessing Collected Data Donations
+
+=== Internal Download
+
+=== External Download via API
+
+==== Example with R
+
+==== Example with Python
+
+=== Data Structure
+
 
 
 == Definitions

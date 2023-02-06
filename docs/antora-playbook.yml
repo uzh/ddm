@@ -3,8 +3,8 @@ site:
   start_page: ddm::index.adoc
 content:
   sources:
-    - url: ../../ddm
-      branches: [main, develop]
+    - url: https://github.com/uzh/ddm.git
+      branches: [docs]
       start_path: docs
 ui:
   bundle:

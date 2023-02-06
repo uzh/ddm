@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Untitled :: DDM Documentation</title>
+    <meta name="generator" content="Antora 3.1.2">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div>
+        <a class="navbar-item" href="../.."><img src="../../_/img/DDM_Logo_Schwarz.svg" height="50px"></a>
+      </div>
+      <div class="navbar-slogan">
+        <a class="navbar-item" href="../..">Data Donation Module Documentation</a>
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="ddm" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html">DDM</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="for_researchers.html"><strong>For Researchers</strong></a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="for_admins.html"><strong>For System Administrators</strong></a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="for_developers.html"><strong>For Developers</strong></a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="topic_references.html"><strong>Topic References</strong></a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="about.html">About</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">DDM</span>
+    <span class="version">1-beta.1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="index.html">DDM</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="index.html">1-beta.1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">DDM</a></li>
+    <li><a href="for_developers.html"><strong>For Developers</strong></a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/uzh/ddm/edit/docs/docs/modules/ROOT/pages/for_developers.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<div id="toc" class="toc">
+<div id="toctitle">For Developers</div>
+<ul class="sectlevel1">
+<li><a href="#_development_guidelines">Development Guidelines</a>
+<ul class="sectlevel2">
+<li><a href="#_local_project_for_development_and_testing">Local Project for Development and Testing</a></li>
+<li><a href="#_vue_integration">Vue Integration</a></li>
+<li><a href="#_cicd">CI/CD</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="top-nav-top">
+    <a href="index.html"><img class="top-nav-img" src="./static/img/DDM_Logo_Schwarz.svg" height="300"></a>
+    <div class="top-nav-title">Documentation</div>
+</div>
+<div id="top-nav">
+    <div><a class="nav-link" href="for_researchers.html">for Researchers</a></div>
+    <div><a class="nav-link" href="for_admins.html">for Administrators</a></div>
+    <div><a class="nav-link" href="for_developers.html">for Developers</a></div>
+    <div><a class="nav-link" href="topic_references.html">Topic References</a></div>
+    <div><a class="nav-link" href="about.html">About</a></div>
+</div>
+<div class="sect1">
+<h2 id="_development_guidelines"><a class="anchor" href="#_development_guidelines"></a>Development Guidelines</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_local_project_for_development_and_testing"><a class="anchor" href="#_local_project_for_development_and_testing"></a>Local Project for Development and Testing</h3>
+<div class="paragraph">
+<p>The repository includes a django test project that can be used for local development and testing.</p>
+</div>
+<div class="sect3">
+<h4 id="_setup"><a class="anchor" href="#_setup"></a>Setup</h4>
+<div class="sect4">
+<h5 id="_install_required_packages"><a class="anchor" href="#_install_required_packages"></a>Install required packages</h5>
+<div class="paragraph">
+<p>Once you have cloned or forked the GitHub repository, activate your local virtual environment and install the following requirements:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">(venv) SomePath/ddm&gt; pip install -r requirements.txt</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_adjust_test_configuration"><a class="anchor" href="#_adjust_test_configuration"></a>Adjust Test Configuration</h5>
+<div class="paragraph">
+<p>A basic standard configuration for the test project is specified in
+<code>test_project/test_config.json</code>. Adjust the information in this file if you
+want to use a custom setup, or use another database. By default, the test project
+uses SQLite as a database backend.</p>
+</div>
+<div class="paragraph">
+<p>If you do make changes to this file, please do NOT commit these changes to the
+shared repository.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_commands"><a class="anchor" href="#_commands"></a>Commands</h4>
+<div class="paragraph">
+<p>Through the setup described above, the regular django commands are now available:</p>
+</div>
+<div class="sect4">
+<h5 id="_run_development_server"><a class="anchor" href="#_run_development_server"></a>Run Development Server</h5>
+<div class="paragraph">
+<p>To start the development server use the following commands:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">(venv) SomePath/ddm/test_project&gt; python manage.py runserver</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_create_database_migrations"><a class="anchor" href="#_create_database_migrations"></a>Create Database Migrations</h5>
+<div class="paragraph">
+<p>To create new migrations based on the changes made to the models, run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">(venv) SomePath/ddm/test_project&gt; python manage.py makemigrations</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_apply_migrations"><a class="anchor" href="#_apply_migrations"></a>Apply migrations</h5>
+<div class="paragraph">
+<p>To apply existing migrations to your local database, run: <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">(venv) SomePath/ddm/test_project&gt; python manage.py migrate</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_run_unit_tests"><a class="anchor" href="#_run_unit_tests"></a>Run Unit Tests</h5>
+<div class="paragraph">
+<p>To run unit tests, use:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">(venv) SomePath/ddm/test_project&gt; python manage.py test ddm</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_vue_integration"><a class="anchor" href="#_vue_integration"></a>Vue Integration</h3>
+<div class="sect3">
+<h4 id="_development"><a class="anchor" href="#_development"></a>Development</h4>
+<div class="paragraph">
+<p>To run the app in development mode, you will need to serve both Django’s dev server and the webpack development server. From the frontend directory, run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">(venv) SomePath/ddm/frontend&gt; npm run serve</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And, in a separate terminal in the Django root directory, run the Django development server:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">(venv) SomePath/ddm/test_project&gt; python manage.py runserver</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Open your locally hosted Django app in a browser (e.g. <a href="http://localhost:8000" class="bare">http://localhost:8000</a>).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_production_deployment"><a class="anchor" href="#_production_deployment"></a>Production Deployment</h4>
+<div class="paragraph">
+<p>When it is time to deploy, or when you simply want to omit running the Vue dev server,
+you can build the Vue project in production mode.
+Cancel the <code>npm run serve</code> process if it is running and instead run <code>npm run build</code>.
+The optimized bundles will be built in and placed into the Django static file location,
+and webpack-stats.json will be updated to reflect this new configuration.
+The vue builds should end up in the static folder of the django module (ddm/static).</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cicd"><a class="anchor" href="#_cicd"></a>CI/CD</h3>
+<div class="paragraph">
+<p>This project uses <em>GitHub actions</em> for automated testing and CI tasks.</p>
+</div>
+<div class="sect3">
+<h4 id="_github_actions"><a class="anchor" href="#_github_actions"></a>GitHub Actions</h4>
+<div class="paragraph">
+<p>A <strong>push to develop</strong> triggers build tests for the following configurations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Python: [3.8, 3.10.4]</p>
+</li>
+<li>
+<p>Database: [sqlite, mysql]</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>A <strong>tag (vX.X.X) push to develop</strong> triggers build tests (see above). If the tests are successful
+develop is automatically merged into main.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Please make sure that pushed tags are in sync with package versions on PyPi.</p>
+</div>
+<div class="paragraph">
+<p>If the build-tests of a pushed tag fail, delete the tag<sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup> and push the fixed version again with the same tag until the tests run through.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>A <strong>push to main</strong> triggers build tests and if the tests are successful, automatically
+bumps the version number (patch number) and builds a new PyPi package.
+The tests have the same configurations as on develop.</p>
+</div>
+<div class="paragraph">
+<p>A <strong>pull request to main created by dependabot</strong> will automatically update the
+affected dependencies and merge into main.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_pipeline"><a class="anchor" href="#_pipeline"></a>Pipeline</h4>
+<div class="paragraph">
+<p>A <strong>tag ("vX.X.X") push to develop</strong> triggers the following pipeline:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Run tests on develop.</p>
+</li>
+<li>
+<p>Merge develop into main.</p>
+</li>
+<li>
+<p>Run tests on main.</p>
+</li>
+<li>
+<p>Create PyPi package.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>A <strong>pull request to main created by dependabot</strong> triggers the following pipeline:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Update dependencies.</p>
+</li>
+<li>
+<p>Merge into main.</p>
+</li>
+<li>
+<p>Run tests on main.</p>
+</li>
+<li>
+<p>Create PyPi package.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_release"><a class="anchor" href="#_release"></a>Release</h4>
+<div class="paragraph">
+<p>A new <strong>release</strong> is created manually and includes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Bumping the minor or major part of the version.</p>
+</li>
+<li>
+<p>Updating setup.cfg.</p>
+</li>
+<li>
+<p>Ideally, add a changelog.</p>
+</li>
+</ul>
+</div>
+<div id="custom-footer">
+  <div>
+    <span class="footer-info">&copy; 2023 Data Donation Lab</span>|
+    <span class="footer-info">last updated: 03.02.2023</span>|
+    <span class="footer-info">Documentation for DDM v1.0.0</span>
+  </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function(event) {
+  let url = window.location.href;
+  let els = document.getElementsByClassName('nav-link');
+  Array.prototype.forEach.call(els, function(e) {
+    let href = e.href;
+    if (url === href) {
+      e.classList.add('active');
+    }
+  })
+});
+</script>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnotedef_1">
+<a href="#_footnoteref_1">1</a>. If you are running a version of Python &lt; 3.9, you might have to manually enable the JSON1 extension on SQLite for the migration to work properly. For an explanation on how to do this visit <a href="https://code.djangoproject.com/wiki/JSON1Extension" class="bare">https://code.djangoproject.com/wiki/JSON1Extension</a>.
+</div>
+<div class="footnote" id="_footnotedef_2">
+<a href="#_footnoteref_2">2</a>. To delete a tag, first run <code>git tag -d tagname</code> then <code>git push --delete origin tagname</code>.
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>
+    <span class="footer-content-bite">© Data Donation Lab, 2023-present</span>
+    <span class="footer-content-bite"><a href="https://github.com/uzh/ddm">DDM on GitHub</a></span>
+  </p>
+</footer>
+<script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

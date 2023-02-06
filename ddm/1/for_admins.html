@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Untitled :: DDM Documentation</title>
+    <meta name="generator" content="Antora 3.1.2">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div>
+        <a class="navbar-item" href="../.."><img src="../../_/img/DDM_Logo_Schwarz.svg" height="50px"></a>
+      </div>
+      <div class="navbar-slogan">
+        <a class="navbar-item" href="../..">Data Donation Module Documentation</a>
+      </div>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="ddm" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html">DDM</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="for_researchers.html"><strong>For Researchers</strong></a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="for_admins.html"><strong>For System Administrators</strong></a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="for_developers.html"><strong>For Developers</strong></a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="topic_references.html"><strong>Topic References</strong></a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="about.html">About</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">DDM</span>
+    <span class="version">1-beta.1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="index.html">DDM</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="index.html">1-beta.1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">DDM</a></li>
+    <li><a href="for_admins.html"><strong>For System Administrators</strong></a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/uzh/ddm/edit/docs/docs/modules/ROOT/pages/for_admins.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<div id="toc" class="toc">
+<div id="toctitle">For Admins</div>
+<ul class="sectlevel1">
+<li><a href="#_getting_started">Getting Started</a></li>
+</ul>
+</div>
+<div id="top-nav-top">
+    <a href="index.html"><img class="top-nav-img" src="./static/img/DDM_Logo_Schwarz.svg" height="300"></a>
+    <div class="top-nav-title">Documentation</div>
+</div>
+<div id="top-nav">
+    <div><a class="nav-link" href="for_researchers.html">for Researchers</a></div>
+    <div><a class="nav-link" href="for_admins.html">for Administrators</a></div>
+    <div><a class="nav-link" href="for_developers.html">for Developers</a></div>
+    <div><a class="nav-link" href="topic_references.html">Topic References</a></div>
+    <div><a class="nav-link" href="about.html">About</a></div>
+</div>
+<div class="sect1">
+<h2 id="_getting_started"><a class="anchor" href="#_getting_started"></a>Getting Started</h2>
+<div class="sectionbody">
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+Extend section with general steps to set up Django. Add ckeditor settings.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Install the Django DDM package:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">pip install django-ddm</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add the necessary entries to INSTALLED_APPS in your settings.py:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">INSTALLED_APPS = [
+    ...,
+    'ddm',
+    'ckeditor',
+    'webpack_loader',
+    'rest_framework',
+    'rest_framework.authtoken',
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add the following configuration for webpack-loader to your settings.py:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">WEBPACK_LOADER = {
+    'DEFAULT': {
+        'CACHE': True,
+        'BUNDLE_DIR_NAME': 'ddm/vue/',
+        'STATS_FILE': os.path.join(STATIC_ROOT, 'ddm/vue/webpack-stats.json'),
+        'POLL_INTERVAL': 0.1,
+        'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Include the ddm URLconf in your projects urls.py:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">url(r'^ddm/', include('ddm.urls')),</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add time zone support to your settings.py:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">USE_TZ = True</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Optionally, an e-mail address restriction can be defined in settings.py. Only users whose e-mail address matches the defined regex pattern will be allowed to set up data donation projects:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">DDM_SETTINGS={
+    'EMAIL_PERMISSION_CHECK':  r'.*(\.|@)somedomain\.com$',
+},</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Run <code>python manage.py migrate</code> to create the ddm models in your database.</p>
+</div>
+<div class="paragraph">
+<p>You should be good to go.</p>
+</div>
+<div id="custom-footer">
+  <div>
+    <span class="footer-info">&copy; 2023 Data Donation Lab</span>|
+    <span class="footer-info">last updated: 03.02.2023</span>|
+    <span class="footer-info">Documentation for DDM v1.0.0</span>
+  </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function(event) {
+  let url = window.location.href;
+  let els = document.getElementsByClassName('nav-link');
+  Array.prototype.forEach.call(els, function(e) {
+    let href = e.href;
+    if (url === href) {
+      e.classList.add('active');
+    }
+  })
+});
+</script>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>
+    <span class="footer-content-bite">© Data Donation Lab, 2023-present</span>
+    <span class="footer-content-bite"><a href="https://github.com/uzh/ddm">DDM on GitHub</a></span>
+  </p>
+</footer>
+<script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -28,7 +28,7 @@
   </nav>
 </header>
 <div class="body">
-<div class="nav-container" data-component="ddm" data-version="1">
+<div class="nav-container" data-component="ddm" data-version="develop">
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -60,14 +60,17 @@
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
     <span class="title">DDM</span>
-    <span class="version">1</span>
+    <span class="version">develop</span>
   </div>
   <ul class="components">
     <li class="component is-current">
-      <a class="title" href="../index.html">DDM</a>
+      <a class="title" href="../../main/index.html">DDM</a>
       <ul class="versions">
-        <li class="version is-current is-latest">
-          <a href="../index.html">1</a>
+        <li class="version is-latest">
+          <a href="../../main/index.html">main</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">develop</a>
         </li>
       </ul>
     </li>
@@ -79,49 +82,33 @@
 <main class="article">
 <div class="toolbar" role="navigation">
 <button class="nav-toggle"></button>
-  <a href="../index.html" class="home-link"></a>
+  <a href="../../main/index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/uzh/ddm/edit/docs/docs/modules/ROOT/pages/topics/customize_admin_templates.adoc">Edit this Page</a></div>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">develop</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/components/header.html">main</a>
+    <a class="version is-current" href="header.html">develop</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/uzh/ddm/edit/develop/docs/modules/ROOT/pages/components/header.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<div class="paragraph">
-<p>The default admin templates include a minimalistic header and footer that do not integrate any actions related to
-a researchers user account because authentication is handled by the main website (see <a href="#User Authentication">[User Authentication]</a>).</p>
+<div id="top-nav-top">
+    <a href="index.html"><img class="top-nav-img" src="./static/img/DDM_Logo_Schwarz.svg" height="300"></a>
+    <div class="top-nav-title">Documentation</div>
 </div>
-<div class="paragraph">
-<p>However, for your own project you may wish to replace the default header and/or footer within the admin interface
-to include your own branding and provide your users with some account management options such as a logout button.
-This can be done by using Django&#8217;s template inheritance.</p>
-</div>
-<div class="paragraph">
-<p>In your application create a new html template <code>your_application/templates/ddm/admin/base.html</code>. In this file,
-you can overwrite the header and/or footer as follows:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">{% extends "ddm/project_admin/base.html" %}
-
-{% block extrahead %}
-    &lt;!-- If you wish, you can integrate some custom css files here --&gt;
-{% endblock %}
-
-{% block header %}
-&lt;div&gt;
-    &lt;!-- Your Custom Header HTML --&gt;
-&lt;/div&gt;
-{% endblock %}
-
-{% block header %}
-&lt;div&gt;
-    &lt;!-- Your Custom Footer HTML --&gt;
-&lt;/div&gt;
-{% endblock %}</code></pre>
-</div>
+<div id="top-nav">
+    <div><a class="nav-link" href="for_researchers.html">for Researchers</a></div>
+    <div><a class="nav-link" href="for_admins.html">for Administrators</a></div>
+    <div><a class="nav-link" href="for_developers.html">for Developers</a></div>
+    <div><a class="nav-link" href="topic_references.html">Topic References</a></div>
+    <div><a class="nav-link" href="about.html">About</a></div>
 </div>
 </article>
   </div>

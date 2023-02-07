@@ -1,14 +1,10 @@
-= DDM Documentation for Researchers
-:toc: right
-:toc-title: Documentation for Researchers
-:stylesheet: ../static/css/custom.css
+= Documentation for Researchers
+:!toc:
 :icons: font
 :stem: latexmath
 :last-update-label!:
-:favicon: static/img/ddl_favicon_black.svg
+:favicon: ddl_favicon_black.svg
 :showtitle!:
-
-include::components/header.adoc[]
 
 
 This part of the documentation is addressed at the users of the Data Donation Module (i.e., the researchers) and will explain:
@@ -355,6 +351,3 @@ NOTE: TODO: Add content.
 
 NOTE: TODO: Add content.
 
-
-include::components/footer.adoc[]
-include::components/scripts.adoc[]

@@ -1,11 +1,9 @@
-:toc: right
-:toc-title: For Developers
-:stylesheet: ../static/css/custom.css
+= Documentation for Developers
+:!toc:
 :icons: font
 :stem: latexmath
 :last-update-label!:
 :favicon: static/img/ddl_favicon_black.svg
-include::components/header.adoc[]
 
 
 == Development Guidelines

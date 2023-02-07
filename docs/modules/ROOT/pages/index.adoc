@@ -1,11 +1,9 @@
-:toc: right
-:toc-title: Index
-:stylesheet: ../static/css/custom.css
+= DDM Documentation
+:!toc:
 :icons: font
 :stem: latexmath
 :last-update-label!:
 :favicon: static/img/ddl_favicon_black.svg
-include::components/header.adoc[]
 
 *DDM* (Data Donation Module) is an open-source Django/web application that helps researchers to
 set up data donation projects and to collect data donations for academic research.
@@ -35,6 +33,3 @@ to fork and extend DDM on their own.
 
 Furthermore, the section *xref:topic_references.adoc[Topic References]* contains more detailed information on various specialized topics.
 
-
-include::components/footer.adoc[]
-include::components/scripts.adoc[]

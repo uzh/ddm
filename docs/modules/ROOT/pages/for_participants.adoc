@@ -1,14 +1,8 @@
-:toc: right
-:toc-title: For Participants
-:stylesheet: ../static/css/custom.css
+= Documentation for Participants
+:!toc:
 :icons: font
 :stem: latexmath
 :last-update-label!:
 :favicon: static/img/ddl_favicon_black.svg
-include::components/header.adoc[]
 
 NOTE: This section might be added at a later stage.
-
-
-include::components/footer.adoc[]
-include::components/scripts.adoc[]

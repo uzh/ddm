@@ -1,11 +1,10 @@
-:toc: right
-:toc-title: For Admins
+= Documentation for System Administrators
+:!toc:
 :stylesheet: ../static/css/custom.css
 :icons: font
 :stem: latexmath
 :last-update-label!:
 :favicon: static/img/ddl_favicon_black.svg
-include::components/header.adoc[]
 
 == Getting Started
 
@@ -75,6 +74,3 @@ Run ``python manage.py migrate`` to create the ddm models in your database.
 
 You should be good to go.
 
-
-include::components/footer.adoc[]
-include::components/scripts.adoc[]

@@ -1,11 +1,10 @@
-:toc: right
-:toc-title: Topic References
+= Topic References
+:!toc:
 :stylesheet: ../static/css/custom.css
 :icons: font
 :stem: latexmath
 :last-update-label!:
 :favicon: static/img/ddl_favicon_black.svg
-include::components/header.adoc[]
 
 
 This section covers a range of different topics.
@@ -29,6 +28,3 @@ include::topics/exception_logging.adoc[]
 == Questionnaire
 include::topics/questionnaire.adoc[]
 
-
-include::components/footer.adoc[]
-include::components/scripts.adoc[]

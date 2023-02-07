@@ -1,6 +1,5 @@
 name: ddm
 title: DDM
-version: 1.0
 nav:
   - modules/ROOT/nav.adoc
 

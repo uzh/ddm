@@ -4,7 +4,7 @@ site:
 content:
   sources:
     - url: https://github.com/uzh/ddm.git
-      branches: [docs]
+      branches: [main, develop]
       start_path: docs
 ui:
   bundle:

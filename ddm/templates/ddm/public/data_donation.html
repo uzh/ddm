@@ -9,7 +9,7 @@
     {% csrf_token %}
     <div id="uapp"
          class="container text-black"
-         data-upload-config='{{ ul_configs }}'
+         data-upload-config='{{ uploader_configs }}'
          data-action-url='{{ request.build_absolute_uri }}'
          data-exception-url='{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url "ddm-exceptions-api" project_id %}'
          data-language='{{ LANGUAGE_CODE|slice:"0:2"}}'

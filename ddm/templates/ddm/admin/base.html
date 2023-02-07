@@ -1,85 +1,63 @@
 {% load static i18n %}
 <!DOCTYPE html>
-<html class='d-flex' lang='{{ LANGUAGE_CODE }}'>
+<html lang="en">
 <head>
-  <meta charset='utf-8'>
-  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-  <meta name='viewport' content='width=device-width, initial-scale=1'>
-  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-  <title>{% block title %}SurQuest | Admin Panel{% endblock title %}</title>
+  <meta charset="UTF-8">
+  <title>DDM: {% block page_title %}Title{% endblock %}</title>
 
-  <!-- Stylesheets -->
-  <link href='{% static "ddm/css/admin-base.css" %}' rel='stylesheet'>
-  <link href='{% static "ddm/css/bootstrap4/bootstrap.min.css" %}' rel='stylesheet'>
-
-  <link rel="icon" href="{% static 'ddm/img/surquest_v0-2_icon.svg' %}">
-
-  {% block extra_head %}{% endblock %}
-
+  <link rel="stylesheet" href="{% static 'ddm/css/bootstrap/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'ddm/css/ddm-base.css' %}">
+  <link rel="stylesheet" href="{% static 'ddm/css/research-interface-base.css' %}">
+  <link rel="stylesheet" href="{% static 'ddm/css/bootstrap/bootstrap-icons.css' %}">
+  {% block extrahead %}{% endblock %}
 </head>
-<body class='sq-body'>
 
-<div class='sq-body-container h-100 w-100 d-flex flex-column'>
+<body class="research-interface">
 
-  <div class='sq-interface d-flex bg-light'>
-
-    <div class='sq-side-nav d-flex flex-column'>
-      {% include 'ddm/admin/navigation/side_navigation/level_0_header.html' %}
-      {% block side_nav %}{% endblock side_nav %}
-    </div>
-
-    <div class='sq-main h-100'>
-      <div class='sq-main-head'>
-        <h2>
-          {% block page_title %}{% endblock page_title %}
-        </h2>
-
-        <div class='sq-main-subtitle'>
-          {% block page_subtitle %}{% endblock page_subtitle %}
-        </div>
-      </div>
-
-      <div class='sq-main-breadcrumbs'>
-        {% if questionnaire or page or question %}
-          <p>
-            {% if questionnaire %}
-              <a href=' {% url "questionnaire-structure" questionnaire.id %} '>Questionnaire '{{ questionnaire.name }}'</a>
-            {% endif %}
-
-            {% if page %}
-              &nbsp; &rsaquo; &nbsp; <a href='{% with viewname=page.page_type|add:"-update" %} {% url viewname q=questionnaire.id pk=page.id %} {% endwith %} '>Page '{{ page.name }}'</a>
-            {% endif %}
-
-            {% if question %}
-              &nbsp; &rsaquo; &nbsp; <a href='{% with viewname=question.question_type|add:"-update" %} {% url viewname q=questionnaire.id pk=question.id %} {% endwith %} '>Question '{{ question.name }}'</a>
-            {% endif %}
-          </p>
-        {% endif %}
-      </div>
-
-      <div class='sq-main-content'>
-        {% block content %}{% endblock %}
-
-        {% block form %}{% endblock %}
-
-        {% block content_after %}{% endblock %}
-
-      </div>
-
+{% block header %}
+  <div class="ddm-header">
+    <div class="container fs-6 fw-light">
+    {% include "ddm/admin/components/header.html" %}
     </div>
   </div>
+{% endblock %}
 
-  <div class='sq-footer'></div>
-
-  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-  <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/TableDnD/0.9.1/jquery.tablednd.js' integrity='sha256-d3rtug+Hg1GZPB7Y/yTcRixO/wlI78+2m08tosoRn7A=' crossorigin='anonymous'></script>
-  <script src='{% static "ddm/js/bootstrap4/bootstrap.bundle.min.js" %}'></script>
-  <script src='{% static "ddm/js/questionnaire-admin.js" %}'></script>
-
-  {% block extra_js %}{% endblock %}
-
+<div class="ddm-breadcrumbs container mt-3 mb-3 fw-light">
+  {% block breadcrumbs %}
+  {% endblock %}
 </div>
 
+<div class="message-wrapper position-relative container d-flex align-items-end flex-column">
+  <div class="ddm-message-container container d-flex justify-content-end">
+    {% if messages %}
+    {% for message in messages %}
+    <div id="message-{{ forloop.counter }}" class="ddm-message d-flex justify-content-between space-between {% if message.tags %} {{ message.tags }}{% endif %}">
+      <div>{{ message }}</div>
+      <div><a class="ddm-message-close" href="#" onclick="closeMessage('message-{{ forloop.counter }}');">&#128941;</a></div>
+    </div>
+    {% endfor %}
+    {% endif %}
+  </div>
+</div>
+
+<div class="ddm-main container mt-4">
+  <h1>{% block main_heading %}{% endblock %}</h1>
+
+  <div>
+    {% block main_body %}{% endblock %}
+  </div>
+</div>
+
+{% block footer %}
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'ddm/js/jquery/jquery-3.6.2.min.js' %}"></script>
+<script src="{% static 'ddm/js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'ddm/js/project-admin-base.js' %}"></script>
+{% endblock %}
+
 </body>
+
 </html>

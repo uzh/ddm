@@ -1,0 +1,47 @@
+{% extends 'ddm/admin/generic/page_with_form.html' %}
+
+{% block page_title %}Create New Donation Blueprint{% endblock %}
+
+{% block main_heading %}Create New Donation Blueprint{% endblock %}
+
+{% block submit_label %}Create Donation Blueprint{% endblock %}
+
+{% block cancel_target %}{% url 'data-donation-overview' project.pk %}{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' project.pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'data-donation-overview' project.pk %}">Data Donation</a> /
+Create Donation Blueprint
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+{{ file_uploader_meta|json_script:'file_uploader_meta' }}
+<script>
+  const file_uploader_meta = JSON.parse(document.getElementById("file_uploader_meta").textContent);
+
+  function hideOrShowCsvDelimiter() {
+    if( $( "#id_exp_file_format" ).val() == "csv") {
+      $( "#id_csv_delimiter" ).parent().show();
+    } else {
+      $( "#id_csv_delimiter" ).parent().hide();
+    }
+  }
+
+  function hideOrShowRegexPath() {
+    if( file_uploader_meta[$( "#id_file_uploader" ).val()] == "zip file" ) {
+      $( "#id_regex_path" ).parent().show();
+    } else {
+      $( "#id_regex_path" ).parent().hide();
+    }
+  }
+
+  $(function() {
+    hideOrShowCsvDelimiter();
+    hideOrShowRegexPath();
+  });
+  $( "#id_exp_file_format" ).change(function() { hideOrShowCsvDelimiter() });
+  $( "#id_file_uploader" ).change(function() { hideOrShowRegexPath() });
+</script>
+{% endblock scripts %}

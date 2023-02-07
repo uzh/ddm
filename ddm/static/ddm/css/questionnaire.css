@@ -1,232 +1,24 @@
-/* QUESTIONNAIRE */
-.surquest-questionnaire-header {
-	display: flex;
-	flex-flow: row;
-	justify-content: space-between;
-	align-items: center;
-	border-bottom: 1px solid #ddd;
-	margin-top: 20px;
+.question-response-body {
+    padding: 20px 10px;
+    width: 100%;
 }
-
-.surquest-questionnaire-header img {
-	max-height: 115px;
-}
-
-/* QUESTION CONTAINER */
-.surquest-question {
-	padding-bottom: 60px;
-	padding-top: 50px;
-	padding-left: 50px;
-	padding-right: 50px;
-	border-bottom: 1px solid #ddd;
-}
-
-.surquest-question-text {
-	font-size: 19px;
-}
-
-.surquest-question-instruction {
-	font-size: 17px;
-}
-
-.surquest-question-items {
-	margin-left: 30px;
-}
-
-.surquest-progress-container {
-	width: 100%;
-	height: 10px;
-	border-bottom: 1px solid #ddd;
-}
-
-.surquest-progress-bar {
-	background-color: #808080;
-	height: 100%;
-	border-radius: 2px;
-}
-
-.surquest-gq-response {
-	padding-left: 10px;
-	padding-right: 10px;
-	padding-top: 20px;
-	width: 100%;
-}
-
-.surquest-hidden {
-	display: none !important;
-}
-
-.surquest-input-hidden {
-	opacity: 0;
-}
-
-.surquest-controls {
-	padding-top: 30px;
-	padding-bottom: 100px;
-}
-
-.surquest-controls-button {
-	background-color: grey;
-	border-radius: 3px;
-	border: 1px solid grey;
-	padding: 5px 30px 5px 30px;
-	color: white;
-}
-
-.surquest-controls-button:hover {
-	background-color: #A9A9A9;
-}
-
-.surquest-invalid {
-	color:  #b30000;
-}
-
-/* FILE UPLOAD QUESTION */
-.sq-file-upload-interface-container{
-	display: inline-block;
-}
-
-.sq-file-upload-interface{
-    padding: 10px 20px 10px 20px;
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
-}
-
-.sq-fileupload-input{
-	color: grey;
-}
-
-.sq-fileupload-info{
-	font-size: 0.8rem;
-	color: grey;
-    font-style: italic;
-    padding-left: 5px;
-}
-
-.surquest-invalid-upload-infobox {
-	padding: 2px 10px 2px 10px;
-	margin-top: 30px;
-	border: 1px solid #d70000;
-	border-radius: 4px;
-	font-size: 0.85rem;
-	color: #d70000;
-	background-color: #fff3f3;
-	width: 60%;
-}
-
-.surquest-invalid-infobox {
-	color: #b30000;
-	font-size: 0.9rem;
-	border-radius: 3px;
-	padding-left: 10px;
-	padding-right: 10px;
-	margin-bottom: 20px;
-}
-
-.surquest-invalid-tablerow {
-	background-color: #dc35451c !important;
-	color: #b30000;
-	border-bottom: 1px solid #f2f2f2;
-}
-
-#sq-fileupload-msg-box {
-	margin-top: 40px;
-    padding: 10px;
-    border: 2px solid grey;
-    border-radius: 5px;
-    max-width: 50%;
-}
-
-.sq-msg-box-title {
-	font-size: 1rem;
-    font-weight: bold;
-}
-
-.surquest-success-infobox {
-	color: green;
-	padding-top: 30px;
-	padding-bottom: 20px;
-}
-
-.surquest-success-addendum {
-	color: green;
-	font-size: 0.75rem;
-	margin: 0;
-}
-
-.surquest-fail-addendum {
-	color: #b30000;
-	font-size: 0.75rem;
-	margin: 0;
-}
-
-.surquest-overlay {
-	position: fixed;
-	display: none;
-	width: 100%;
-	height: 100%;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background-color: rgba(0,0,0,0.5);
-	z-index: 2;
-	cursor: pointer;
-}
-
-.surquest-overlay-text {
-	position: absolute;
-	top: 60%;
-	left: 50%;
-	font-size: 50px;
-	color: white;
-	transform: translate(-50%,-50%);
-	-ms-transform: translate(-50%,-50%);
-}
-
-.surquest-loader {
-	position: absolute;
-	margin: auto;
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	text-align: center;
-	border: 13px solid #f3f3f3;
-	border-top: 13px solid #009933;
-	border-radius: 50%;
-	width: 80px;
-	height: 80px;
-	animation: spin 2s linear infinite;
-	transform: translate(-50%,-50%);
-	-ms-transform: translate(-50%,-50%);
-}
-
-@keyframes spin {
-	0% { transform: rotate(0deg); }
-	100% { transform: rotate(360deg); }
-}
-
-/* CHOICE QUESTION */
-.surquest-choice-item {
-	padding-bottom: 5px;
+.question-choice-item {
+    padding-bottom: 5px;
 }
 
 .rb-cb-label {
 	cursor: pointer;
 }
-
 .rb-cb-label input {
 	vertical-align: middle;
 }
-
 .rb-cb-label input[type="radio"],
 .rb-cb-label input[type="checkbox"]  {
 	cursor: pointer;
 }
 
 /* OPEN QUESTION */
-.surquest-oq-textarea {
+.open-question-textarea {
 	resize: none;
 	width: 100%;
 	min-height: 150px;
@@ -357,113 +149,7 @@
 	float: left;
 }
 
-/* LIST QUESTION */
-.surquest-list-input-container {
-	width: 100%;
-	padding-bottom: 10px;
-}
-.surquest-list-input {
-	width: 80%;
-    max-width: 300px;
-	border-radius: 2px;
-    border: 1px solid #a9a9a9;
-    padding-left: 5px;
-    padding-right: 5px;
-}
-
-
-/* FILE FEEDBACK QUESTION */
-.ffq-table-container {
-	background: white;
-	overflow-x: scroll;
-	box-shadow: 0 0 5px 0 rgba(0,0,0,.2);
-	max-height: 500px;
-}
-
-.ffq-table {
-	display: table;
-	width:100%;
-	background-color: white;
-	border: 0;
-	font-size: 0.75rem;
-	white-space: nowrap;
-}
-
-.ffq-table tr {
-	line-height: 20px;
-}
-
-.ffq-table td,
-.ffq-table th {
-	padding: 5px 10px 5px 10px;
-}
-
-.ffq-table tbody tr:nth-child(odd) {
-	background-color: #f2f2f2;;
-}
-
-.ffq-confirmation {
-	padding-top: 30px;
-}
-
-/* Collapsible Box */
-.sq-collapsible {
-  background-color: #777;
-  color: white;
-  cursor: pointer;
-  padding: 12px;
-  width: 100%;
-  border: none;
-  border-radius: 5px 5px 0px 0px;
-  text-align: left;
-  outline: none;
-  font-size: 15px;
-}
-
-.active, .sq-collapsible:hover {
-  background-color: #555;
-  cursor: pointer;
-}
-
-.sq-collapsible:after {
-  content: '\002B';
-  color: white;
-  font-weight: bold;
-  float: right;
-  margin-left: 5px;
-}
-
-.active:after {
-  content: "\2212";
-}
-
-.sq-collapsible-content {
-  padding: 12px;
-  display: none;
-  overflow: hidden;
-  background-color: #f1f1f1;
-}
-
-
 @media (max-width: 576px) {
-	/* GENERAL QUESTIONNAIRE LAYOUT */
-	.surquest-questionnaire-header {
-		flex-flow: column;
-		justify-content: space-between;
-		align-items: center;
-		min-height: 100px;
-	}
-
-	.surquest-questionnaire-header img {
-		max-height: 85px;
-	}
-
-	.surquest-question{
-		padding-left: 10px;
-		padding-right: 0px;
-  }
-
-
 	/* MATRIX QUESTION */
 	.mq-table {
 		text-align: left;
@@ -569,15 +255,5 @@
   .dq-table-td-input label {
 		margin-left: 0;
 		margin-right: 0;
-	}
-
-
-	/* FILE UPLOAD */
-	.sq-fileupload-input{
-		margin-bottom: 20px;
-	}
-
-	#sq-fileupload-msg-box {
-	    max-width: 100%;
 	}
 }

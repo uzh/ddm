@@ -1,0 +1,5 @@
+name: ddm
+title: DDM
+nav:
+  - modules/ROOT/nav.adoc
+

@@ -1,0 +1,8 @@
+= Documentation for Participants
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: static/img/ddl_favicon_black.svg
+
+NOTE: This section might be added at a later stage.

@@ -60,6 +60,7 @@ cover/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+media/
 
 # Flask stuff:
 instance/
@@ -69,7 +70,7 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+docs_old/_build/
 
 # PyBuilder
 .pybuilder/
@@ -285,7 +286,7 @@ dist
 #
 # Recommended template: Node.gitignore
 
-docs/_book
+docs_old/_book
 test/
 
 ### Vuejs ###
@@ -312,3 +313,8 @@ yarn-error.log
 # hot-update files of vue development server
 *.hot-update.js
 *.hot-update.json
+
+# Pycharm
+.idea
+
+docs/*.html

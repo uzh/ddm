@@ -1,0 +1,16 @@
+{% extends 'ddm/admin/generic/page_with_form.html' %}
+
+{% block page_title %}Create New File Uploader{% endblock %}
+
+{% block main_heading %}Create New File Uploader{% endblock %}
+
+{% block submit_label %}Create File Uploader{% endblock %}
+
+{% block cancel_target %}{% url 'data-donation-overview' project.pk %}{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' project.pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'data-donation-overview' project.pk %}">Data Donation</a> /
+Create File Uploader
+{% endblock %}

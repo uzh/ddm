@@ -1,0 +1,22 @@
+{% extends 'ddm/admin/generic/page_with_form.html' %}
+
+{% block page_title %}Edit Instruction Page{% endblock %}
+
+{% block main_heading %}Edit Instruction Page for File Uploader "{{ file_uploader.name }}"{% endblock %}
+
+{% block submit_label %}Save Instruction Page{% endblock %}
+
+{% block cancel %}
+<p>
+  <a href="{% url 'instruction-overview' project_pk file_uploader.pk %}">&#129040; Back</a>
+</p>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' project_pk %}">"{{ file_uploader.project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'data-donation-overview' project_pk %}">Data Donation</a> /
+<a href="{% url 'file-uploader-edit' project_pk file_uploader.pk %}">File Uploader "{{ file_uploader.name|truncatechars:15 }}"</a> /
+<a href="{% url 'instruction-overview' project_pk file_uploader.pk %}">Instructions</a> /
+Edit Instruction Page
+{% endblock %}

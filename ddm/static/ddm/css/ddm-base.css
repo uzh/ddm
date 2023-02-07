@@ -45,9 +45,11 @@
     font-family: 'Nunito Sans', sans-serif;
 }
 
-.research-interface a {
-    color: #009c94;
+.research-interface a,
+.a-no-link {
+    color: #007b74;
     text-decoration: none;
+    cursor: pointer;
 }
 .research-interface a:hover {
     color: #005955;
@@ -56,17 +58,19 @@
 .ddm-btn {
     background-color: #1a1a1a;
     color: white !important;
-    border-radius: 4px;
-    border: 2px solid #1a1a1a;
-    padding: 5px 15px !important;
+    border-radius: 5px;
+    border: 0px;
+    padding: 3px 10px !important;
     font-size: 0.9rem;
     text-decoration: none;
 }
 .ddm-btn:hover {
-    border-color: #009c94;
+    filter: brightness(85%);
+    color: white;
 }
 
 .ddm-btn-red {
-    background-color: #9a0000;
-    border: 2px solid #9a0000;
+    background-color: #840600;
+    border: 0px;
+    width: 160px;
 }

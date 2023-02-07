@@ -1,0 +1,99 @@
+{% extends 'ddm/admin/generic/page_with_form.html' %}
+
+{% block page_title %}Create New Project{% endblock %}
+
+{% block main_heading %}Create Donation Project {{ object.name }}{% endblock %}
+
+{% block main_form %}
+<form method='post'>
+  {% csrf_token %}
+  {{ form.media }}
+
+  {{ form.non_field_errors }}
+
+  <div class="ddm-admin-form">
+    <p>
+      {{ form.name.errors }}
+      <label for="{{ form.name.id_for_label }}">Project Name:</label>
+      {{ form.name }}
+    </p>
+
+    <p>
+      {{ form.slug.errors }}
+      {{ form.slug.label_tag }}
+      {{ form.slug }}
+    </p>
+
+    <p>
+      {{ form.contact_information.errors }}
+      {{ form.contact_information.label_tag }}
+      {{ form.contact_information }}
+      <span class="helptext">{{ form.contact_information.help_text|safe }}</span>
+    </p>
+
+    <p>
+      {{ form.data_protection_statement.errors }}
+      {{ form.data_protection_statement.label_tag }}
+      {{ form.data_protection_statement }}
+      <span class="helptext">{{ form.data_protection_statement.help_text|safe }}</span>
+    </p>
+
+    <p>
+      {{ form.owner }}
+    </p>
+
+    <div class="p-3 mt-2 w-50 rounded" style="background-color: #ffdfdf;">
+      <p class="mt-0">
+        <b>Is this a super secret project?</b>
+      </p>
+      <p>
+        <b>Attention:</b> Data donated to a super secret project will be stored with improved encryption and data decryption will only be possible if the secret is supplied.
+        Be aware that this will limit the functionality of the module for this project: it won’t be possible to create followup questions based on the data donation (i.e., data points from the data donation cannot be referenced in a question).<br>
+      </p>
+      <p> After a project has been created, it cannot be changed from <i>super secret</i> to <i>regular</i> and vice versa.</p>
+      <p>
+        {{ form.super_secret.errors }}
+        {{ form.super_secret.label_tag }}
+        {{ form.super_secret }}
+      </p>
+      <div id="secret-definition" style="display: none;">
+        <p>
+          {{ form.secret.errors }}
+          {{ form.secret.label_tag }}
+          {{ form.secret }}
+        </p>
+        <p>
+          {{ form.secret_confirm.errors }}
+          <label for="{{ form.secret_confirm.id_for_label }}">Confirm Secret:</label>
+          {{ form.secret_confirm }}
+        </p>
+      </div>
+    </div>
+
+    <input class="ddm-btn" type="submit" value="Create Project">
+    <p class="mt-3">
+      <a href="{% url 'project-list' %}">&#129040; Cancel</a>
+    </p>
+  </div>
+</form>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'project-list' %}">Projects</a> /
+Create New Project
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script>
+  $( "#id_super_secret" ).change(function() {
+    $( "#id_secret" ).val("");
+    $( "#id_secret_confirm" ).val("");
+    if( $( this ).is(":checked")) {
+      $( "#secret-definition" ).show();
+    } else {
+      $( "#secret-definition" ).hide();
+    }
+  })
+</script>
+{% endblock %}

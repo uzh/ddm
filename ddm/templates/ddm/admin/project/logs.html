@@ -1,0 +1,76 @@
+{% extends 'ddm/admin/generic/page_with_form.html' %}
+{% load static %}
+
+{% block extrahead %}
+<link rel="stylesheet" href="{% static 'ddm/css/bootstrap/bootstrap-table.min.css' %}">
+<link rel="stylesheet" href="{% static 'ddm/css/bootstrap/bootstrap-table-filter-control.min.css' %}">
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script src="{% static 'ddm/js/filesaver/FileSaver.min.js' %}"></script>
+<script src="{% static 'ddm/js/jquery/tableExport.min.js' %}"></script>
+<script src="{% static 'ddm/js/bootstrap/bootstrap-table.min.js' %}"></script>
+<script src="{% static 'ddm/js/bootstrap/bootstrap-table-filter-control.min.js' %}"></script>
+<script src="{% static 'ddm/js/bootstrap/bootstrap-table-export.min.js' %}"></script>
+{% endblock %}
+
+{% block page_title %}Project Logs{% endblock %}
+
+{% block main_heading %}Project Logs{% endblock %}
+
+{% block main_body %}
+<div class="ddm-admin-section">
+  <div class="ddm-admin-section-header">Exception Log</div>
+  <div class="ddm-admin-section-body">
+    <div>
+      Below you can find a list of the exceptions that have been recorded for this project.
+    </div>
+
+    <table data-classes="table table-sm table-striped table-hover small-font small-inputs"
+           data-toggle="table"
+           data-filter-control="true"
+           data-show-export="true"
+           data-export-types="['csv', 'json']"
+           data-pagination="true"
+           data-page-size="25"
+           data-buttons-class="transparent">
+      <thead>
+        <tr>
+          <th data-field="date" data-filter-control="input" data-sortable="true">Date</th>
+          <th data-field="participant" data-filter-control="select" data-sortable="true">Participant</th>
+          <th data-field="type" data-filter-control="select" data-sortable="true">Type</th>
+          <th data-field="raised-by" data-filter-control="select" data-sortable="true">Raised by</th>
+          <th data-field="blueprint" data-filter-control="select" data-sortable="true">Related Blueprint</th>
+          <th data-field="message" data-filter-control="input" data-sortable="true">Message</th>
+        </tr>
+      </thead>
+
+      {% for e in exceptions %}
+      <tr>
+        <td>{{ e.date|date:"Y-m-d, H:i" }}</td>
+        <td>{{ e.participant.pk }}</td>
+        <td>{{ e.exception_type }}</td>
+        <td>{{ e.raised_by }}</td>
+        <td>{{ e.blueprint.pk }}</td>
+        <td>{{ e.message }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td>No exceptions recorded.</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+
+<div class="mt-3">
+  <a href="{% url 'project-detail' project.pk %}">&#129040; go back</a>
+</div>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' project.pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+Logs
+{% endblock %}

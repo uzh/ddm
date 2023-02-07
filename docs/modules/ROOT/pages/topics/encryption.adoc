@@ -1,0 +1,58 @@
+This pages aims to describe what types of encryption should be used by the system hosting this module and what is implemented in this module.
+
+=== Encryption in transit and at rest
+
+==== Encryption in transit
+
+It is site-level responsibility to setup encryption in transit, like SSL/TLS for all communication between clients and the server.
+For some hints on how this should be setup, start with the https://docs.djangoproject.com/en/4.0/topics/security/#ssl-https>[Django docs].
+We minimize the amount of potential data that is processed on the server, by doing most of the filtering client-side.
+Do take into account that ideally the connection from system to the database is secured as well, and that the database is stored on an encrypted system.
+
+==== Encryption at rest
+
+The module stores all data in encrypted fields in the database, the encryption/decryption procedure is described below.
+Each project has a unique `salt` that is generated when creating the project.
+In the Django site settings, we use the *SECRET_KEY* as the default passphrase for encryption.
+If a project is working with sensitive data, we recommend that a *project specific password* is set.
+This password is only known by the person setting it and should not be shared.
+A project specific password will limit the functionality of the module for a given project: it won't be possible to create followup questions based on the data donation.
+
+=== Encryption and decryption process
+
+==== Steps
+
+We use a hybrid asymmetric/symmetric encryption approach, due to the size limitation of the pure asymmetric approach.
+The following steps occur in the encryption process
+- generate a public key and store it in the project (if none exists)
+- generate a session key used for encrypting a single message
+- encrypt the data symmetrically using the session key
+- encrypt the session key using the public key asymmetrically
+- store the encrypted data with the encrypted key as header
+
+The following steps occur in the decryption process
+- generate a private key
+- get the desired encrypted data from the project
+- decrypt the encrypted session key (header) asymmetrically using the private key
+- decrypt the data using the decrypted session key symmetrically
+
+==== Asymmetric Key Generation and process
+
+For encryption we only need the public key;
+- Check if we have a public key that is saved for the project
+- if not, we should have gotten a passphrase and a salt with which we can generate a public key.
+-- generate the private key
+-- derive the public key
+-- save the public key for the project
+- We then use link:https://tools.ietf.org/html/rfc8017[PKCS#1 OAEP] for the wrapping and OAEP padding.
+
+For decryption we need the private key;
+- Using the supplied passphrase and salt, we generate a 128bit link:https://en.wikipedia.org/wiki/HMAC[HMAC] digest, which we use to populate a pseudo-random number generator.
+- This random number generator is used to generate our link:https://en.wikipedia.org/wiki/RSA_(cryptosystem)[RSA] key.
+- We then use link:https://tools.ietf.org/html/rfc8017[PKCS#1 OAEP] for wrapping the OAEP padding.
+
+==== Symmetric Key Generation and process
+
+There are significant limitations on the size of the data that can be encrypted using asymmetric algorithms and severe performance penalties.
+This is why we combine this with symmetric encryption.
+In our case we use link:https://en.wikipedia.org/wiki/Advanced_Encryption_Standard>[AES] to encrypt the actual data.

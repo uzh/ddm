@@ -1,15 +1,15 @@
 import random
 
 from ckeditor.fields import RichTextField
+
 from django.db import models
 from django.forms import model_to_dict
 from django.template import Context, Template
 
 from polymorphic.models import PolymorphicModel
-from ddm.models import DonationProject, DonationBlueprint, DataDonation
 
-import logging
-logger = logging.getLogger(__name__)
+from ddm.models.core import DataDonation
+from ddm.models.logs import ExceptionLogEntry, ExceptionRaisers
 
 
 class QuestionType(models.TextChoices):
@@ -24,12 +24,14 @@ class QuestionType(models.TextChoices):
 
 class QuestionBase(PolymorphicModel):
     project = models.ForeignKey(
-        DonationProject,
+        'DonationProject',
         on_delete=models.CASCADE
     )
     blueprint = models.ForeignKey(
-        DonationBlueprint,
-        on_delete=models.CASCADE
+        'DonationBlueprint',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
     )
 
     DEFAULT_QUESTION_TYPE = QuestionType.GENERIC
@@ -41,14 +43,16 @@ class QuestionBase(PolymorphicModel):
     )
 
     name = models.CharField(max_length=255)
-    index = models.PositiveIntegerField(default=1)
+    index = models.PositiveIntegerField(default=1, verbose_name='Page')
 
     variable_name = models.SlugField(
         max_length=50,
-        null=False
+        null=False,
+        verbose_name='Variable name for storing response',
+        help_text='Will be used in the data export to identify responses to this question.'
     )
 
-    text = RichTextField(null=True, blank=True)
+    text = RichTextField(null=True, blank=True, config_name='ddm_ckeditor')
     required = models.BooleanField(default=False)
 
     class Meta:
@@ -67,9 +71,12 @@ class QuestionBase(PolymorphicModel):
     def __str__(self):
         return self.name
 
-    def get_config(self, participant_id):
+    def is_general(self):
+        return True if self.blueprint is None else False
+
+    def get_config(self, participant_id, view):
         config = self.create_config()
-        config = self.render_config_content(config, participant_id)
+        config = self.render_config_content(config, participant_id, view)
         return config
 
     def create_config(self):
@@ -78,28 +85,42 @@ class QuestionBase(PolymorphicModel):
             'type': self.question_type,
             'index': self.index,
             'text': self.text,
+            'required': self.required,
             'items': [],
             'scale': [],
             'options': {}
         }
         return config
 
-    def render_config_content(self, config, participant):
-        data_donation = DataDonation.objects.get(
-            participant=participant,
-            blueprint=self.blueprint
+    def log_exception(self, msg):
+        ExceptionLogEntry.objects.create(
+            project=self.project,
+            blueprint=self.blueprint,
+            raised_by=ExceptionRaisers.SERVER,
+            message='Questionnaire Response Processing Exception: ' + msg
         )
-        context_data = data_donation.get_decrypted_data()
-        config['text'] = self.render_text(config['text'], context_data)
+
+    def render_config_content(self, config, participant, view):
+        if self.is_general():
+            context_data = None
+        else:
+            data_donation = DataDonation.objects.get(
+                participant=participant,
+                blueprint=self.blueprint
+            )
+            context_data = data_donation.get_decrypted_data()
+        config['text'] = self.render_text(config['text'], context_data, view)
         for index, item in enumerate(config['items']):
-            item['label'] = self.render_text(item['label'], context_data)
-            item['label_alt'] = self.render_text(item['label_alt'], context_data)
+            item['label'] = self.render_text(item['label'], context_data, view)
+            item['label_alt'] = self.render_text(item['label_alt'], context_data, view)
         return config
 
     @staticmethod
-    def render_text(text, context):
+    def render_text(text, context, view):
+        if text is not None:
+            text = '{% load ddm_graphs static %}\n' + text
         template = Template(text)
-        return template.render(Context({'data': context}))
+        return template.render(Context({'data': context, 'view': view}))
 
     def validate_response(self, response):
         return
@@ -130,20 +151,20 @@ class ItemMixin(models.Model):
         item_ids = [str(i) for i in list(self.questionitem_set.all().values_list('id', flat=True))]
         if not sorted(item_ids) == sorted(response.keys()):
             if len(item_ids) > len(response.keys()):
-                logger.error(
-                    f'Some responses are missing for {self.DEFAULT_QUESTION_TYPE} with ID {self.id}.'
-                    f'Got no response for items {[i for i in item_ids if i not in response.keys()]}.'
-                )
+                msg = ('Some responses are missing for '
+                       f'{self.DEFAULT_QUESTION_TYPE} with ID '
+                       f'{self.id}. Got no response for items '
+                       f'{[i for i in item_ids if i not in response.keys()]}.')
+                self.log_exception(msg)
             elif len(item_ids) < len(response.keys()):
-                logger.error(
-                    f'Got unexpected response keys for {self.DEFAULT_QUESTION_TYPE} with ID {self.id}.'
-                    f'Unexpected keys: {[k for k in response.keys() if k not in item_ids]}.'
-                )
+                msg = (f'Got unexpected response keys for '
+                       f'{self.DEFAULT_QUESTION_TYPE} with ID {self.id}.'
+                       f'Unexpected keys: {[k for k in response.keys() if k not in item_ids]}.')
+                self.log_exception(msg)
             else:
-                logger.error(
-                    f'Response does not match the expected items. '
-                    f'Items: {sorted(item_ids)}; Keys: {sorted(response.keys())}.'
-                )
+                msg = (f'Response does not match the expected items. Items: '
+                       f'{sorted(item_ids)}; Keys: {sorted(response.keys())}.')
+                self.log_exception(msg)
         return
 
 
@@ -165,8 +186,9 @@ class ScaleMixin:
         valid_values.append(-99)
         for k, val in response.items():
             if val not in valid_values:
-                logger.error(f'Got invalid response "{k}: {val}" for multi '
-                             f'choice question with ID {self.id}.')
+                msg = (f'Got invalid response "{k}: {val}" for multi '
+                       f'choice question with ID {self.id}.')
+                self.log_exception(msg)
         return
 
 
@@ -177,8 +199,9 @@ class SingleChoiceQuestion(ItemMixin, QuestionBase):
         valid_values = list(self.questionitem_set.all().values_list('value', flat=True))
         valid_values.append(-99)
         if response not in valid_values:
-            logger.error(f'Got invalid response "{response}" for single choice '
-                         f'question with ID {self.id}.')
+            msg = (f'Got invalid response "{response}" for single choice '
+                   f'question with ID {self.id}.')
+            self.log_exception(msg)
         return
 
 
@@ -190,8 +213,9 @@ class MultiChoiceQuestion(ItemMixin, QuestionBase):
         valid_values = [0, 1, -99]
         for k, val in response.items():
             if val not in valid_values:
-                logger.error(f'Got invalid response "{k}: {val}" for '
-                             f'{self.DEFAULT_QUESTION_TYPE} with ID {self.id}.')
+                msg = (f'Got invalid response "{k}: {val}" for '
+                       f'{self.DEFAULT_QUESTION_TYPE} with ID {self.id}.')
+                self.log_exception(msg)
         return
 
 
@@ -235,7 +259,7 @@ class QuestionItem(models.Model):
         ordering = ['index']
 
     question = models.ForeignKey(
-        QuestionBase,
+        'QuestionBase',
         on_delete=models.CASCADE
     )
     label = models.CharField(
@@ -268,7 +292,7 @@ class ScalePoint(models.Model):
         ]
 
     question = models.ForeignKey(
-        QuestionBase,
+        'QuestionBase',
         on_delete=models.CASCADE
     )
     index = models.IntegerField()

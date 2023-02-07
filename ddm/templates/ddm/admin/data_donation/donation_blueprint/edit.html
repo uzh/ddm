@@ -1,0 +1,242 @@
+{% extends 'ddm/admin/generic/page_with_form.html' %}
+
+{% load static %}
+
+{% block page_title %}Edit Donation Blueprint{% endblock %}
+
+{% block main_heading %}Edit Donation Blueprint "{{ object.name }}"{% endblock %}
+
+{% block main_form %}
+<form method='post'>
+  {% csrf_token %}
+  {{ form.media }}
+  {{ form.non_field_errors }}
+
+  <div class="ddm-admin-form">
+    {% for field in form %}
+    {% if field.name not in "expected_fields,extracted_fields" %}
+    <p>
+      {{ field.label_tag }}
+      {{ field.errors }}
+      {{ field }}
+      <span class="helptext">{{ field.help_text }}</span>
+    </p>
+    {% endif %}
+    {% endfor %}
+  </div>
+
+  <div class="ddm-admin-form">
+    <h5>Data Extraction Settings</h5>
+  </div>
+
+  <div class="ddm-admin-form">
+    {% for field in form %}
+    {% if field.name in "expected_fields,extracted_fields" %}
+    <p>
+      {{ field.label_tag }}
+      {{ field.errors }}
+      {{ field }}
+      <span class="helptext">{{ field.help_text }}</span>
+    </p>
+    {% endif %}
+    {% endfor %}
+  </div>
+
+  {{ formset.management_form }}
+  <div class="ddm-admin-form">
+    <table id="inlineform-table" class="table table-borderless">
+      <tr>
+        <td colspan="100%"><h6>Extraction Rules</h6></td>
+      </tr>
+      {% for form in formset%}
+      {% if forloop.first %}
+      <tr class="border-bottom">
+        {% for field in form.visible_fields %}
+        {% if field.name in 'name,field,execution_order' %}
+        <th>{{ field.label }}</th>
+        {% endif %}
+        {% endfor %}
+        <th></th>
+        <th>Delete</th>
+      </tr>
+      {% endif %}
+
+      <tr>
+        {{ form.non_field_errors }}
+        {% with loop_id=forloop.counter0 %}
+        {% for field in form.visible_fields %}
+        {% if field.name in 'name,field,execution_order' %}
+        <td id="{{ field.name }}-{{ loop_id }}">
+          {{ field.errors }}
+          {{ field.value }}
+        </td>
+        {% endif %}
+        {% endfor %}
+        {% endwith %}
+
+        <td><a href="" type="button" data-bs-toggle="modal" data-bs-target="#configuration-{{ forloop.counter0 }}">Configure Step</a></td>
+
+        {% for field in form.visible_fields %}
+        {% if field.name in 'DELETE' %}
+        <td>
+          {{ field.errors }}
+          {{ field }}
+        </td>
+        {% endif %}
+        {% endfor %}
+
+        {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+        {% endfor %}
+      </tr>
+      <tr class="border-bottom bg-white">
+        <td colspan="100%"><b><i>Description: </i></b><span id="step-description-{{ forloop.counter0 }}">–</span></td>
+      </tr>
+      {% endfor %}
+
+    </table>
+  </div>
+
+  <div class="mb-3 fs-4 ps-2">
+    <a id="add-inline-form" type="button"><i class="bi bi-plus-square"></i></a>
+  </div>
+
+  {% for form in formset%}
+  <div class="modal" id="configuration-{{ forloop.counter0 }}" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <h4>Rule Configuration</h4>
+          <div class="ddm-admin-form">
+            {% for field in form %}
+            {% if field.name in 'name,field,execution_order,input_type,comparison_operator,comparison_value' %}
+            <p>
+              {{ field.label_tag }}
+              {{ field }}
+              {{ field.errors }}
+            </p>
+            {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="ddm-modal-ok-{{ forloop.counter0 }}" type="button" class="ddm-btn ddm-modal-ok" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="modal" id="configuration-template" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <h4>Rule Configuration</h4>
+          <div class="ddm-admin-form">
+            {% for field in formset.empty_form %}
+            {% if field.name in 'name,field,execution_order,input_type,comparison_operator,comparison_value' %}
+            <p>
+              {{ field.label_tag }}
+              {{ field }}
+              {{ field.errors }}
+            </p>
+            {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="ddm-modal-ok-__prefix__" type="button" class="ddm-btn ddm-modal-ok" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+  <table id="empty-form-placeholder" style="display:none">
+    <tr>
+      {% for field in formset.empty_form %}
+      {% if field.name in 'name,field,execution_order' %}
+      <td id="{{ field.name }}-__prefix__">
+        {{ field.errors }}
+        {{ field.value }}
+      </td>
+      {% endif %}
+      {% endfor %}
+
+      <td><a href="" type="button" data-bs-toggle="modal" data-bs-target="#configuration-__prefix__">Configure Step</a></td>
+
+      {% for field in formset.empty_form.visible_fields %}
+      {% if field.name in 'DELETE' %}
+      <td>
+        {{ field.errors }}
+        {{ field }}
+      </td>
+      {% endif %}
+      {% endfor %}
+
+      {% for hidden in formset.empty_form.hidden_fields %}
+      {{ hidden }}
+      {% endfor %}
+    </tr>
+    <tr class="border-bottom">
+      <td colspan="100%"><b><i>Description: </i></b><span id="step-description-__prefix__">Not yet defined</span></td>
+    </tr>
+  </table>
+
+  <div id="empty-form" class="ddm-admin-form" style="display:none">
+    {% for field in formset.empty_form %}
+    {% if field.name in 'name,field,execution_order,input_type,comparison_operator,comparison_value' %}
+    <p>
+      {{ field.label }}
+      {{ field }}
+      {{ field.errors }}
+    </p>
+    {% endif %}
+    {% endfor %}
+  </div>
+
+  <input class="ddm-btn" type="submit" value="Save Blueprint">
+  <p class="mt-3">
+    <a href="{% url 'data-donation-overview' project.pk %}">&#129040; Back</a>
+  </p>
+</form>
+{{ file_uploader_meta|json_script:'file_uploader_meta' }}
+{% endblock %}
+
+
+{% block breadcrumbs %}
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' project.pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'data-donation-overview' project.pk %}">Data Donation</a> /
+Edit Blueprint
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script src="{% static 'ddm/js/blueprint-edit-ui-helpers.js' %}"></script>
+<script>
+  const file_uploader_meta = JSON.parse(document.getElementById("file_uploader_meta").textContent);
+
+  function hideOrShowCsvDelimiter() {
+    if( $( "#id_exp_file_format" ).val() == "csv") {
+      $( "#id_csv_delimiter" ).parent().show();
+    } else {
+      $( "#id_csv_delimiter" ).parent().hide();
+    }
+  }
+
+  function hideOrShowRegexPath() {
+    if( file_uploader_meta[$( "#id_file_uploader" ).val()] == "zip file" ) {
+      $( "#id_regex_path" ).parent().show();
+    } else {
+      $( "#id_regex_path" ).parent().hide();
+    }
+  }
+
+  $(function() {
+    hideOrShowCsvDelimiter();
+    hideOrShowRegexPath();
+  });
+  $( "#id_exp_file_format" ).change(function() { hideOrShowCsvDelimiter() });
+  $( "#id_file_uploader" ).change(function() { hideOrShowRegexPath() });
+</script>
+{% endblock scripts %}

@@ -1,24 +1,23 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
+from django.forms import inlineformset_factory, TextInput, Textarea
 
-from ddm.models import ResearchProfile, DonationProject, DonationBlueprint, DonationInstruction
-from ddm.auth import email_is_valid
-
+from ddm.models.core import ResearchProfile, DonationProject, DonationBlueprint, ProcessingRule, FileUploader
 
 User = get_user_model()
 
 
 class ProjectCreateForm(forms.ModelForm):
-    secret = forms.CharField(min_length=10, max_length=150, required=False)
+    secret = forms.CharField(min_length=10, max_length=150, required=False, widget=forms.PasswordInput())
+    secret_confirm = forms.CharField(min_length=10, max_length=150, required=False, widget=forms.PasswordInput())
 
     class Meta:
         model = DonationProject
-        fields = ['name', 'slug', 'super_secret', 'owner']
+        fields = ['name', 'slug', 'super_secret', 'owner', 'contact_information', 'data_protection_statement']
         widgets = {'owner': forms.HiddenInput()}
 
-    field_order = ['name', 'slug', 'super_secret', 'secret']
+    field_order = ['name', 'slug', 'super_secret', 'secret', 'secret_confirm', 'contact_information', 'data_protection_statement']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -28,8 +27,14 @@ class ProjectCreateForm(forms.ModelForm):
     def clean(self):
         super_secret = self.data.get('super_secret', False)
         secret = self.data.get('secret', None)
+        secret_confirm = self.data.get('secret_confirm', None)
+
         if super_secret and secret in ['', None]:
             raise ValidationError('Super secret project needs a secret.')
+
+        if super_secret and (secret != secret_confirm):
+            raise ValidationError('Secret and Secret Confirm does not match".')
+
         super().clean()
 
     def save(self, commit=True):
@@ -38,30 +43,6 @@ class ProjectCreateForm(forms.ModelForm):
             project.secret_key = self.data['secret']
         project.save()
         return project
-
-
-class DdmUserCreationForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-
-    class Meta:
-        model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
-
-    def clean_email(self):
-        email = self.cleaned_data['email']
-        if not email_is_valid(email):
-            raise forms.ValidationError(
-                'Only researchers with a valid UZH e-mail address can register.'
-            )
-        return email
-
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.email = self.cleaned_data['email']
-        if commit:
-            user.save()
-            ResearchProfile.objects.create(user=user)
-        return user
 
 
 class ResearchProfileConfirmationForm(forms.ModelForm):
@@ -98,20 +79,55 @@ class BlueprintEditForm(forms.ModelForm):
 
     class Meta:
         model = DonationBlueprint
-        fields = ['name', 'exp_file_format', 'expected_fields', 'extracted_fields',
-                  'zip_blueprint', 'regex_path']
+        fields = ['name', 'exp_file_format', 'csv_delimiter', 'file_uploader', 'regex_path',
+                  'expected_fields']
         widgets = {
             'expected_fields': forms.Textarea(attrs={'rows': 3}),
-            'extracted_fields': forms.Textarea(attrs={'rows': 3}),
             'regex_path': forms.Textarea(attrs={'rows': 3}),
         }
 
     def clean(self):
-        zip_relation = self.data.get('zip_blueprint', False)
+        related_file_uploader = self.data.get('file_uploader', None)
         regex = self.data.get('regex_path', None)
-        if zip_relation and regex in ['', None]:
-            raise ValidationError(
-                'Donation Blueprints that belong to a zip blueprint must define '
-                'a regex pattern.'
-            )
+
+        if related_file_uploader:
+            file_uploader = FileUploader.objects.get(pk=related_file_uploader)
+            if file_uploader.upload_type == FileUploader.UploadTypes.ZIP_FILE and regex in ['', None]:
+                raise ValidationError(
+                    'Donation Blueprints that belong to a ZIP file uploader must define '
+                    'a regex pattern.'
+                )
         super().clean()
+
+
+class ProcessingRuleForm(forms.ModelForm):
+
+    class Meta:
+        model = ProcessingRule
+        fields = ['execution_order', 'name', 'field', 'comparison_operator', 'comparison_value']
+        widgets = {
+            'field': TextInput(),
+            'comparison_value': Textarea(attrs={'cols': 60, 'rows': 2})
+        }
+
+
+ProcessingRuleInlineFormset = inlineformset_factory(
+    DonationBlueprint,
+    ProcessingRule,
+    form=ProcessingRuleForm,
+    extra=0
+)
+
+
+class APITokenCreationForm(forms.Form):
+    expiration_days = forms.IntegerField(
+        initial=30,
+        min_value=1,
+        max_value=90,
+        required=True
+    )
+    action = forms.CharField(
+        max_length=20,
+        initial='create',
+        widget=forms.HiddenInput()
+    )

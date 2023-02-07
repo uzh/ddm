@@ -1,0 +1,9 @@
+= About
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: static/img/ddl_favicon_black.svg
+
+
+

@@ -1,0 +1,9 @@
+++++
+<div id="custom-footer">
+  <div>
+    <span class="footer-info">&copy; 2023 Data Donation Lab</span>|
+    <span class="footer-info">last updated: 03.02.2023</span>|
+    <span class="footer-info">Documentation for DDM v1.0.0</span>
+  </div>
+</div>
+++++

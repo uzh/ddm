@@ -1,0 +1,44 @@
+{% extends 'ddm/admin/base.html' %}
+
+{% block page_title %}Donation Instructions{% endblock %}
+
+{% block main_heading %}Instructions for File Uploader "{{ file_uploader.name }}"{% endblock %}
+
+{% block main_body %}
+<div class="ddm-admin-section">
+  <div class="ddm-admin-section-header"></div>
+  <div class="ddm-admin-section-body">
+    <p>Number of pages: {{ instructions | length }}</p>
+
+    <div class="container border-bottom mb-4">
+      {% for page in instructions %}
+      <div class="row border-top py-2">
+        <div class="col-2 border-end">
+          <h4>Page {{ page.index }}</h4>
+          <a href="{% url 'instruction-edit' project_pk file_uploader.pk page.pk %}">Edit</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+          <a href="{% url 'instruction-delete' project_pk file_uploader.pk page.pk %}">Delete</a>
+        </div>
+        <div class="col bg-white">
+          {{ page.text | safe }}
+        </div>
+      </div>
+      {% empty %}
+      <tr><td>No Instructions defined.</td></tr>
+      {% endfor %}
+    </div>
+    <a class="ddm-btn" href="{% url 'instruction-create' project_pk file_uploader.pk %}"><b>+</b>&nbsp;&nbsp;Add Instruction Page</a>
+  </div>
+</div>
+
+<div class="mt-3">
+  <a href="{% url 'data-donation-overview' project_pk %}">&#129040; Back</a>
+</div>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' project_pk %}">"{{ file_uploader.project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'data-donation-overview' project_pk %}">Data Donation</a> /
+<a href="{% url 'file-uploader-edit' project_pk file_uploader.pk %}">File Uploader "{{ file_uploader.name|truncatechars:15 }}"</a> /
+Instructions
+{% endblock %}

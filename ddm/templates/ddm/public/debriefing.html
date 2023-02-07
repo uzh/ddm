@@ -1,0 +1,21 @@
+{% extends "ddm/public/base.html" %}
+{% load static i18n %}
+
+{% block content %}
+<div>
+
+  <div>
+    {% if object.debriefing_text == None %}
+    <h1>{% translate "Thank you very much!" %}</h1>
+    <p>{% translate "You have reached the end of the study and can now close this window." %}</p>
+    {% else %}
+    {{ object.debriefing_text | safe }}
+    {% endif %}
+  </div>
+
+  {% if object.redirect_enabled %}
+  <a class="flow-btn" href="{{ redirect_target }}">{% translate 'Leave Page&nbsp;&nbsp;&#8250;' %}</a>
+  {% endif %}
+
+</div>
+{% endblock content %}

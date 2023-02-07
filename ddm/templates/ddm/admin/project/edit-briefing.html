@@ -1,0 +1,36 @@
+{% extends 'ddm/admin/generic/page_with_form.html' %}
+
+{% block page_title %}Edit Project{% endblock %}
+
+{% block main_heading %}Edit Briefing Page of Project "{{ object.name }}"{% endblock %}
+
+{% block submit_label %}Update Briefing Page{% endblock %}
+
+{% block cancel_target %}{% url 'project-detail' object.pk %}{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' object.pk %}">"{{ object.name|truncatechars:15 }}" Project</a> /
+Edit Briefing Page
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script>
+  function hideOrShowConsentLabels() {
+    if( $( "#id_briefing_consent_enabled" ).is(":checked")) {
+      $( "#id_briefing_consent_label_yes" ).parent().show();
+      $( "#id_briefing_consent_label_no" ).parent().show();
+    } else {
+      $( "#id_briefing_consent_label_yes" ).parent().hide();
+      $( "#id_briefing_consent_label_no" ).parent().hide();
+    }
+  }
+
+  $(function() {
+    hideOrShowConsentLabels();
+  });
+
+  $( "#id_briefing_consent_enabled" ).change(function() { hideOrShowConsentLabels() });
+</script>
+{% endblock %}

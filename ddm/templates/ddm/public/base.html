@@ -9,10 +9,9 @@
 
   <title>{% block title %}{{ project.name }}{% endblock title %}</title>
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
-  <link href='{% static "ddm/css/public-base.css" %}' rel='stylesheet'>
+  <link rel="stylesheet" href="{% static 'ddm/css/bootstrap/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'ddm/css/bootstrap/bootstrap-icons.css' %}">
+  <link href="{% static 'ddm/css/public-base.css' %}" rel="stylesheet">
 
   {% block extrahead %}{% endblock extrahead %}
 
@@ -21,13 +20,17 @@
 
 <div class="container public-header">
   {% block public-header %}
-  <div class="row align-items-center h-100">
-    <div class="col h-100">
-      <img class="h-100" src="{% static 'ddm/img/uzh_logo.svg' %}">
-    </div>
+  <div class="row align-items-center">
+    {% if project.img_header_left %}
     <div class="col">
-      <img class="w-50 h-100 float-end" src="{% static 'ddm/img/ikmz_logo.svg' %}">
+      <img src="{{ project.img_header_left.url }}" height="100px">
     </div>
+    {% endif %}
+    {% if project.img_header_right %}
+    <div class="col">
+      <img class="float-end" src="{{ project.img_header_right.url }}" height="100px">
+    </div>
+    {% endif %}
   </div>
   {% endblock public-header %}
 </div>
@@ -39,14 +42,13 @@
 </div>
 
 <div class="container public-footer">
-  <!-- Footer -->
   {% block public-footer %}
   <div class="row justify-content-md-center">
     <div class="col-md-auto text-center">
-      <a href="#" class="text-orange">{% translate "Contact" %}</a>
+      <a type="button" data-bs-toggle="modal" data-bs-target="#contactModal">{% translate "Contact" %}</a>
     </div>
     <div class="col-md-auto text-center">
-      <a href="#" class="text-orange">{% translate "What happens with my data?" %}</a>
+      <a type="button" data-bs-toggle="modal" data-bs-target="#dataProtectionModal">{% translate "What happens with my data?" %}</a>
     </div>
   </div>
   {% endblock public-footer %}
@@ -54,10 +56,38 @@
 
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-        crossorigin="anonymous"></script>
+<div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactInformation" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header fw-bold pb-2 pt-2">
+        {% translate "Contact Information" %}
+        <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pb-2 pt-2">
+        {% autoescape on %}{{ project.contact_information|safe }}{% endautoescape %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="dataProtectionModal" tabindex="-1" aria-labelledby="dataProtection" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header fw-bold pb-2 pt-2">
+        {% translate "Data Protection Statement" %}
+        <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pb-2 pt-2">
+        {% autoescape on %}{{ project.data_protection_statement|safe }}{% endautoescape %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'ddm/js/jquery/jquery-3.6.2.min.js' %}"></script>
+<script src="{% static 'ddm/js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+
+{% block extrascripts %}{% endblock extrascripts %}
 
 </body>
 </html>

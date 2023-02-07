@@ -1,5 +1,6 @@
 {% extends "ddm/public/base.html" %}
-{% load static %}
+{% load i18n static ddm_graphs %}
+{% get_current_language as LANGUAGE_CODE %}
 {% load render_bundle from webpack_loader %}
 
 {% block extrahead %}
@@ -7,12 +8,14 @@
 {% endblock extrahead %}
 
 {% block content %}
+
 <div>
   <form method="POST">
     {% csrf_token %}
     <div id="qapp"
          data-questionnaire-config='{{ q_config }}'
          data-action-url='{{ request.build_absolute_uri }}'
+         data-language='{{ LANGUAGE_CODE|slice:"0:2"}}'
          class="text-black"
     >
       <qapp></qapp>
@@ -21,3 +24,10 @@
   {% render_bundle 'vue_questionnaire' %}
 </div>
 {% endblock content %}
+
+{% block extrascripts %}
+  <script src="{% static 'stats/js/bokeh-3.0.3.min.js' %}"></script>
+  {% for script in extra_scripts %}
+  {{ script|safe }}
+  {% endfor %}
+{% endblock extrascripts %}

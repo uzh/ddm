@@ -1,0 +1,269 @@
+{% extends 'ddm/admin/base.html' %}
+{% load static %}
+
+{% block page_title %}Project Overview{% endblock %}
+
+{% block main_heading %}{{ object.name }}: Project Hub{% endblock %}
+
+{% block main_body %}
+
+{# PROJECT DETAILS #}
+<div class="ddm-admin-section">
+  <div class="ddm-admin-section-header">
+    Project Details <span class="inline-edit"><a href="{% url 'project-edit' object.pk %}"><i class="bi bi-pencil-square"></i> Edit</a></span>
+  </div>
+  <div class="ddm-admin-section-body">
+    <table class="table table-borderless table-sm">
+      <tr>
+        <td>Name:</td>
+        <td>{{ object.name }}</td>
+      </tr>
+      <tr>
+        <td>Slug:</td>
+        <td>{{ object.slug }}</td>
+      </tr>
+      <tr>
+        <td>Public Access:</td>
+        <td><a href="{% url 'briefing' object.slug %}" target="_blank">{{ request.scheme }}://{{ request.get_host }}{% url 'briefing' object.slug %}</a></td>
+      </tr>
+      <tr>
+        <td>Project Type:</td>
+        <td>{% if object.super_secret %}Super Secret Project{% else %}Regular Project{% endif %}</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+
+{# PROJECT CONFIGURATION #}
+<div class="ddm-admin-section">
+  <div class="ddm-admin-section-header">Project Configuration</div>
+  <div class="ddm-admin-section-body">
+    <div class="container">
+      <div class="row d-flex align-items-stretch">
+
+        <div class="project-setup-card text-center">
+          <a class="card-link" href="{% url 'briefing-edit' object.pk %}">
+            <div><i class="bi bi-chat-right-text-fill ddm-if-icon"></i></div>
+            <div><h5>Briefing</h5></div>
+          </a>
+          <div><p>Define how you will greet and brief your participants.</p></div>
+        </div>
+
+        <div class="project-setup-filler">
+          <i class="bi bi-chevron-compact-right fs-2"></i>
+        </div>
+
+        <div class="project-setup-card text-center">
+          <a class="card-link" href="{% url 'data-donation-overview' object.pk %}">
+            <div><i class="bi bi-box-fill ddm-if-icon"></i></div>
+            <div><h5>Data Donation</h5></div>
+          </a>
+          <div><p>Configure the data donation and the donation instructions.</p></div>
+        </div>
+
+        <div class="project-setup-filler">
+          <i class="bi bi-chevron-compact-right fs-2"></i>
+        </div>
+
+
+        <div class="project-setup-card text-center">
+          <a  class="card-link" href="{% url 'questionnaire-overview' object.pk %}">
+            <div><i class="bi bi-pencil-fill ddm-if-icon"></i></div>
+            <div><h5>Questionnaire</h5></div>
+          </a>
+          <div><p>Configure a questionnaire that is displayed after the data donation.</p></div>
+        </div>
+
+        <div class="project-setup-filler">
+          <i class="bi bi-chevron-compact-right fs-2"></i>
+        </div>
+
+        <div class="project-setup-card text-center">
+          <a class="card-link" href="{% url 'debriefing-edit' object.pk %}">
+            <div><i class="bi bi-chat-left-text-fill ddm-if-icon"></i></div>
+            <div><h5>Debriefing</h5></div>
+          </a>
+          <div><p>Define how you will debrief your participants.</p></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{# DATA CENTER #}
+<div class="ddm-admin-section">
+  <div class="ddm-admin-section-header">Data Center</div>
+  <div class="ddm-admin-section-body">
+
+    <div class="d-flex flex-row align-items-center data-center-row border-bottom">
+      <div class="w-15"><h5>Data Download</h5></div>
+      <div class="me-5">
+        <p class="mb-0"><b>Direct Download:</b><br><a class="a-no-link ddm-btn ddm-btn-green" {% if not object.super_secret %}onclick="downloadData('{% url "ddm-data-api" object.pk %}', 'project_{{ object.pk }}_data')"{% else %}onclick="askSecret()"{% endif %}><i class="bi bi-download"></i> Download Data as JSON</a></p>
+      </div>
+      <div>
+        <p class="mb-0"><b>Remote Download:</b><br><a href="{% url 'project-token' object.pk %}">Manage Access Token</a></p>
+      </div>
+    </div>
+
+    <div class="d-flex flex-row align-items-center data-center-row border-bottom">
+      <div class="w-15"><h5>Project Log</h5></div>
+      <div><a href="{% url 'project-logs' object.pk %}">Show Project Log</a></div>
+    </div>
+
+    <div class="d-flex flex-row align-items-center data-center-row">
+      <div class="w-15"><h5>Participation Statistics</h5></div>
+      <div class="row col fw-bold text-center project-statistics-container">
+        {% with stats=object.get_statistics %}
+          <div class="col">
+            <p class="mb-0">n Started</p>
+            <p class="fs-3 mb-0">{{ stats.n_started }}</p>
+          </div>
+          <div class="col">
+            <p class="mb-0">n Completed</p>
+            <p class="fs-3 mb-0">{{ stats.n_completed }}</p>
+          </div>
+          <div class="col">
+            <p class="mb-0">Completion Rate</p>
+            <p class="fs-3 mb-0">{{ stats.completion_rate|floatformat:2 }}</p>
+          </div>
+          <div class="col">
+            <p class="mb-0">n Donations</p>
+            <p class="fs-3 mb-0">{{ stats.n_donations }}</p>
+          </div>
+          <div class="col">
+            <p class="mb-0">n Errors</p>
+            <p class="fs-3 mb-0">{{ stats.n_errors }}</p>
+          </div>
+          <div class="col">
+            <p class="mb-0">Avrg. to complete</p>
+            <p class="fs-3 mb-0">{{ stats.average_time }}<span class="fs-6 mb-0 pb-1">(H:m:s)</span></p>
+          </div>
+        {% endwith %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Modal for secret input #}
+<div class="modal" id="modal-secret-input" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body ddm-form">
+        <p><b>Personal Secret for Data Encryption</b></p>
+        <p>
+          This is a super secret project and your personal secret is needed to decrypt and download the data belonging to this project.<br>
+          You defined this secret during the creation of the project. Without this secret, the data belonging to this project cannot be downloaded.
+        </p>
+        <p>
+          Please provide your secret:
+          <input type="password" id="secret-input" class="w-100 mt-2" name="secret">
+          <span id="error-no-secret" class="text-danger helptext" hidden>Please provide your secret - secret cannot empty.</span>
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button id="cancel-secret" type="button" class="ddm-btn" data-bs-dismiss="modal">Cancel</button>
+        <button id="submit-secret" type="button" class="ddm-btn" onclick="downloadData('{% url "ddm-data-api" object.pk %}', 'project_{{ object.pk }}_data', true)">Download Data</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Modal for download error #}
+{% include "ddm/admin/components/info_modal.html" with modal_id="modal-download-error" body="<p><i class='bi bi-x-octagon-fill text-danger pe-2'></i><b>Download Failed</b></p>The download failed due to the following issue: <span id='download-error-message'></span>" reload="False" %}
+
+
+{# DANGER ZONE #}
+<div class="ddm-admin-section">
+  <div class="ddm-admin-section-header">Danger Zone</div>
+  <div class="ddm-admin-section-body">
+    <div>
+      <p><button class="ddm-btn ddm-btn-red" data-bs-toggle="modal" data-bs-target="#delete-data-confirm">Reset Project Data</button></p>
+    </div>
+    <div>
+      <p><button class="ddm-btn ddm-btn-red" data-bs-toggle="modal" data-bs-target="#delete-participant">Delete Participant</button></p>
+    </div>
+    <div>
+      <p><a class="ddm-btn ddm-btn-red text-center d-inline-block" href="{% url 'project-delete' object.pk %}">Delete Project</a></p>
+    </div>
+  </div>
+</div>
+
+{# Modal for delete confirm #}
+<div class="modal" id="delete-data-confirm" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h4>Careful!</h4>
+        <p>You are about to delete all collected data related to your project.</p>
+        This includes:
+        <ul>
+          <li>All data donations</li>
+          <li>All questionnaire responses</li>
+          <li>All participation statistics</li>
+        </ul>
+        <p>We strongly recommend downloading and storing a copy of your data before you continue with this procedure.</p>
+        <p>Are you sure you want to delete all data related to this project?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="ddm-btn" data-bs-dismiss="modal">Cancel</button>
+        <button id="delete-data-button" type="button" class="ddm-btn ddm-btn-red" data-bs-dismiss="modal" onclick="deleteData('{% url "ddm-data-api" object.pk %}', '{{csrf_token}}')">Yes, delete all data</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Modal for participant deletion #}
+<div class="modal" id="delete-participant" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h4>Delete Participant</h4>
+        <p>You can delete a specific participant by providing their external id in the field below:</p>
+        <p>
+          <input id="participant-id-input" class="w-100 mt-2" name="participant-id">
+        </p>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="ddm-btn" data-bs-dismiss="modal">Cancel</button>
+        <button id="delete-data-button" type="button" class="ddm-btn ddm-btn-red" data-bs-dismiss="modal" onclick="deleteParticipant('{% url "ddm-participant-api" object.pk "placeholder" %}', '{{csrf_token}}')">Delete Participant</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Modal for participant delete success #}
+{% include "ddm/admin/components/info_modal.html" with modal_id="modal-participant-delete-success" body="<p><i class='bi bi-check-circle-fill text-success pe-2'></i><b>Participant Deleted</b></p>Participant was successfully deleted." reload="False" %}
+
+{# Modal for delete success #}
+{% include "ddm/admin/components/info_modal.html" with modal_id="modal-delete-success" body="<p><i class='bi bi-check-circle-fill text-success pe-2'></i><b>All data were successfully deleted.</b></p>" reload="True" %}
+
+{# Modal for delete error #}
+{% include "ddm/admin/components/info_modal.html" with modal_id="modal-delete-error" body="<p><i class='bi bi-x-octagon-fill text-danger pe-2'></i><b>An error occurred</b></p>Something went wrong during the data deletion: <span id='delete-error-message'></span>" reload="False" %}
+
+<div class="mt-3">
+  <a href="{% url 'project-list' %}">&#129040; Back</a>
+</div>
+
+<div id="download-overlay" class="ddm-overlay">
+  <div class="overlay-content d-flex justify-content-center align-items-center h-100 white">
+    <div class="lds-dual-ring"></div>
+    <div class="fs-2 ps-3 text-white">Your data is being prepared. This may take a few moments.</div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block breadcrumbs %}
+<a href="{% url 'project-list' %}">Projects</a> /
+"{{ object.name|truncatechars:15 }}" Project
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script src="{% static 'ddm/js/download-data.js' %}"></script>
+<script src="{% static 'ddm/js/delete-data.js' %}"></script>
+{% endblock %}

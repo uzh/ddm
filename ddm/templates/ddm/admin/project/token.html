@@ -1,0 +1,92 @@
+{% extends 'ddm/admin/generic/page_with_form.html' %}
+
+{% block page_title %}Project Access Token{% endblock %}
+
+{% block main_heading %}Manage Project Access Token{% endblock %}
+
+{% block main_top %}
+<div class="mt-3">
+  <p>
+    The collected data of a project can be accessed remotely through the download API.
+    For this to work, an access token must be created. Access tokens are project-specific.
+    <br>
+    Access tokens are valid for a limited time (maximum 120 days). After the current token has expired, a new one must be created.
+  </p>
+  <p>
+    The download API endpoint for this project is <code class="text-dark">https://{{ request.get_host }}/{{ project.pk }}/download/</code>.<br>
+    When making a request, prefix your token with "Token " and include this string in the Authorization HTTP header.
+    {% if project.super_secret %}
+    Because this is a super secret project, the secret must also be provided in an HTTP header named "Super-Secret" (e.g., <code class="text-dark">GET https://{{ request.get_host }}/{{ project.pk }}/download/ -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b' -H 'Super-Secret: y0urSuperSecr3t'</code>).
+    {% else %}
+    (e.g., <code class="text-dark">GET https://{{ request.get_host }}/{{ project.pk }}/download/ -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b'</code>).
+    {% endif %}
+  </p>
+  An example on how this can be used to retrieve the data directly from within your R- or Python-scripts can be found <a>here</a>. <!-- TODO: Link to example in documentation. -->
+</div>
+
+<div class="ddm-admin-section">
+  <div class="ddm-admin-section-header">Current Token</div>
+  <div class="ddm-admin-section-body">
+    <div class="ddm-admin-form">
+      {% if token %}
+      <div>
+        <div class="row">
+          <div class="col"><label>Token</label>{{ token.key }}</div>
+          <div class="col"><label>Created on</label>{{ token.created|date:"M d, Y, H:i" }}</div>
+          <div class="col"><label>Expires on</label>{{ token.expiration_date|date:"M d, Y, H:i" }}</div>
+          <div class="col"><label>Satus</label>{% if token.has_expired %}<span class="badge bg-danger">Invalid</span>{% else %}<span class="badge bg-success">valid</span>{% endif %}</div>
+        </div>
+        <form method='post'>
+          {% csrf_token %}
+          {{ form.media }}
+          <input type="hidden" id="delete-token" name="action" value="delete">
+          <input class="ddm-btn ddm-btn-red" type="submit" value="Delete Token">
+        </form>
+      </div>
+      {% else %}
+      <p>A token has yet to be created.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block main_form_header %}Create new Token{% endblock %}
+
+{% block main_form %}
+<form method='post'>
+  {% csrf_token %}
+  {{ form.media }}
+
+  <div class="ddm-admin-form">
+    {% if form.errors %}
+    <p class="error-disclaimer"><i class="bi bi-exclamation-square-fill"></i> The form could not be processed. Please
+      check the issues highlighted below.</p>
+    {% endif %}
+
+    {{ form.non_field_errors }}
+
+    {% for field in form %}
+    {% if field.name in 'expiration_days' %}
+    <p>The new token expires in {{ field }} days.</p>
+    <p>The new token will overwrite the existing one and the current token will no longer work.</p>
+    {% else %}
+    {{ field }}
+    {% endif %}
+    {% endfor %}
+    <input class="ddm-btn" type="submit" value="Create Token">
+    {% block cancel %}
+    <p>
+      <a href="{% url 'project-detail' project.pk %}">&#129040; Back</a>
+    </p>
+    {% endblock %}
+  </div>
+</form>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' project.pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+Manage Access Token
+{% endblock %}

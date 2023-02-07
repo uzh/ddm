@@ -1,0 +1,36 @@
+{% extends 'ddm/admin/generic/page_with_form.html' %}
+
+{% block page_title %}Delete Project{% endblock %}
+
+{% block main_heading %}Delete the Project "{{ object.name }}"{% endblock %}
+
+{% block main_form %}
+<form method='post'>
+  {% csrf_token %}
+  <p>You are about to delete the following project:</p>
+  <div class="ddm-admin-form">
+    <p>
+      <label>Name:</label>
+      {{ object.name }}
+    </p>
+    <p>
+      <label>Slug:</label>
+      {{ object.slug }}
+    </p>
+  </div>
+  <div class="mt-4">
+    <p>All collected data associated with this project will also be deleted. <b>This action cannot be reversed.</b></p>
+    <p>Are you sure you want to delete this project?</p>
+  </div>
+  <input class="ddm-btn ddm-btn-red" type="submit" value="Delete project">
+  <p class="mt-3">
+    <a href="{% url 'project-detail' object.pk %}">&#129040; Cancel</a>
+  </p>
+</form>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' object.pk %}">"{{ object.name|truncatechars:15 }}" Project</a> /
+Delete
+{% endblock %}

@@ -1,0 +1,10 @@
+{
+  "en": {
+    "next-btn-label": "Next",
+    "required-but-missing-hint": "Please answer this question."
+  },
+  "de": {
+    "next-btn-label": "Weiter",
+    "required-but-missing-hint": "Bitte beantworten Sie diese Frage."
+  }
+}

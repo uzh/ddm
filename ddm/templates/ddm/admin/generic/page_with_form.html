@@ -1,0 +1,51 @@
+{% extends 'ddm/admin/base.html' %}
+
+{% block page_title %}Create {{ object_type }}{% endblock %}
+
+{% block main_heading %}{{ heading }}{% endblock %}
+
+{% block main_body %}
+
+{% block main_top %}{% endblock %}
+
+<div class="ddm-form ddm-admin-section">
+  <div class="ddm-admin-section-header">{% block main_form_header %}{% endblock %}</div>
+
+  <div class="ddm-admin-section-body">
+    {% block main_form %}
+    <form method='post' enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.media }}
+
+      <div class="ddm-admin-form">
+        {% if form.errors %}
+        <p class="error-disclaimer"><i class="bi bi-exclamation-square-fill"></i> The form could not be processed. Please check the issues highlighted below.</p>
+        {% endif %}
+
+        {{ form.non_field_errors }}
+
+        {% for field in form %}
+        <p>
+          {{ field.label_tag }}
+          {{ field.errors }}
+          {{ field }}
+          <span class="helptext">{{ field.help_text }}</span>
+        </p>
+        {% endfor %}
+        <input class="ddm-btn" type="submit" value="{% block submit_label %}Submit Form{% endblock %}">
+        {% block cancel %}
+        <p>
+          <a href="{% block cancel_target %}{% endblock %}">&#129040; Cancel</a>
+        </p>
+        {% endblock %}
+      </div>
+    </form>
+    {% endblock %}
+  </div>
+</div>
+
+{% block main_bottom %}{% endblock %}
+
+{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}

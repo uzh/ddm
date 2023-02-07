@@ -1,0 +1,14 @@
+++++
+<script>
+document.addEventListener("DOMContentLoaded", function(event) {
+  let url = window.location.href;
+  let els = document.getElementsByClassName('nav-link');
+  Array.prototype.forEach.call(els, function(e) {
+    let href = e.href;
+    if (url === href) {
+      e.classList.add('active');
+    }
+  })
+});
+</script>
+++++

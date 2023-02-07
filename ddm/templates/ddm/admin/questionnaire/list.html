@@ -1,0 +1,112 @@
+{% extends 'ddm/admin/base.html' %}
+
+{% block page_title %}Questionnaire Setup{% endblock %}
+
+{% block main_heading %}Questionnaire{% endblock %}
+
+{% block main_body %}
+
+{% if not donation_blueprints %}
+<div>
+  <p>
+    Questions can only be created in relation to a donation blueprint and no donation blueprints have been defined yet.
+    <a href="{% url 'blueprint-list' project_pk %}">Create a donation blueprint &rarr;</a>
+  </p>
+</div>
+{% else %}
+<div>
+  <table class="table">
+    <tr class="lh-1 align-bottom">
+      <th class="border-bottom-0"></th>
+      <th class="border-bottom-0">Questions</th>
+      <th class="border-bottom-0"></th>
+      <th class="border-bottom-0"></th>
+      <th class="border-bottom-0"></th>
+    </tr>
+    <tr class="lh-1 align-bottom border-bottom-dark">
+      <th style="width: 16%">Blueprint</th>
+      <th class="fs-08">Page</th>
+      <th class="fs-08">Name</th>
+      <th class="fs-08">Type</th>
+      <th></th>
+    </tr>
+
+    <!-- TODO: Add general questions -->
+    {% for question in general_questions %}
+      <tr {% if forloop.last %}class="border-bottom-dark"{% endif %}>
+        {% if forloop.first %}
+          <td rowspan="{{ general_questions|length }}" class="border-bottom-dark">General Questions</td>
+        {% endif %}
+        <td>{{ question.index }}</td>
+        <td>{{ question.name }}</td>
+        <td>{{ question.get_question_type_display }}</td>
+        <td> <a href="{% url 'question-edit' project_pk question.question_type question.pk %}">Edit Question</a> | <a href="{% url 'question-delete' project_pk question.question_type question.pk %}">Delete Question</a></td>
+        {% empty %}
+      <tr class="border-bottom-dark">
+        <td>General Questions</td>
+        <td colspan="4" class="text-muted">No general questions defined.</td>
+      </tr>
+    {% endfor %}
+
+    {% for blueprint in donation_blueprints %}
+    {% for question in blueprint.get_associated_questions %}
+    <tr {% if forloop.last %}class="border-bottom-dark"{% endif %}>
+      {% if forloop.first %}
+      <td rowspan="{{ blueprint.get_associated_questions|length }}" class="border-bottom-dark">{{ blueprint.name }}</td>
+      {% endif %}
+      <td>{{ question.index }}</td>
+      <td>{{ question.name }}</td>
+      <td>{{ question.get_question_type_display }}</td>
+      <td> <a href="{% url 'question-edit' project_pk question.question_type question.pk %}">Edit Question</a> | <a href="{% url 'question-delete' project_pk question.question_type question.pk %}">Delete Question</a></td>
+      {% empty %}
+      <tr class="border-bottom-dark">
+      <td>{{ blueprint.name }}</td>
+      <td colspan="4" class="text-muted">No associated questions.</td>
+    </tr>
+    {% endfor %}
+    {% empty %}
+    <tr class="border-bottom-dark">
+      <td>No blueprints created yet.</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div>
+  <button type="button" class="ddm-btn" data-bs-toggle="modal" data-bs-target="#exampleModal"><b>+</b>&nbsp;&nbsp;Create new question</button>
+</div>
+
+<div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Choose type of question:</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% for question_type in question_types %}
+        {% if question_type.0 != 'generic' %}
+        <p><a href="{% url 'question-create' project_pk question_type.0 %}">{{ question_type.1 }}</a></p>
+        {% endif %}
+        {% empty %}
+        <p>No question types defined.</p>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="ddm-btn" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="mt-3">
+  <a href="{% url 'project-detail' project_pk %}">&#129040; Back</a>
+</div>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' project_pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+Questionnaire
+{% endblock %}

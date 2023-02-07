@@ -1,0 +1,120 @@
+{% extends 'ddm/admin/generic/page_with_form.html' %}
+
+{% block page_title %}Edit {{ question_type }}{% endblock %}
+
+{% block main_heading %}Edit {{ question_type }} "{{ object.name }}"{% endblock %}
+
+{% block main_form_header %}Question Configuration{% endblock %}
+
+{% block main_form %}
+<form method='post'>
+  {% csrf_token %}
+  {{ form.media }}
+
+  <div class="ddm-admin-form">
+    {% for field in form %}
+    {% if field.name not in "expected_fields,extracted_fields" %}
+    <p>
+      {{ field.label_tag }}
+      {% if field.name == "text" %}
+        <p class="mt-0 w-50">
+          Data points from the donated data associated with the linked donation blueprint can be included in the question text.
+          This data can be included as "{% verbatim %}{{ data }}{% endverbatim %}" in the question text.<br>
+          It is possible to subset the data object (e.g., to include the last datapoint you can use {{ data.0 }} or include advanced
+          rendering options included in the Django templating engine. For a more comprehensive overview and examples see [LINK TO BE INCLUDED]. <!-- TODO: Include link -->
+        </p>
+      {% endif %}
+      {{ field.errors }}
+      {{ field }}
+      <span class="helptext">{{ field.help_text }}</span>
+    </p>
+    {% endif %}
+    {% endfor %}
+
+    <input class="ddm-btn" type="submit" value="Update Question">
+    {% block cancel %}
+    <p>
+      <a href="{% url 'questionnaire-overview' project_pk %}">&#129040; Back</a>
+    </p>
+    {% endblock %}
+  </div>
+
+
+
+</form>
+{% endblock %}
+
+{% block main_bottom %}
+{% if object.question_type != "open" and object.question_type != "transition"  %}
+<div class="ddm-admin-section">
+  <div class="ddm-admin-section-header">Question Items</div>
+  <div class="ddm-admin-section-body">
+    <table class="table table-sm">
+    {% for item in object.questionitem_set.all %}
+      {% if forloop.first %}
+      <thead>
+      <tr>
+        <th>Label</th>
+        <th>Index</th>
+        <th>Value</th>
+        <th>Randomize</th>
+      </tr>
+      </thead>
+      {% endif %}
+      <tr>
+        <td>{{ item.label }}</td>
+        <td>{{ item.index }}</td>
+        <td>{{ item.value }}</td>
+        <td>{{ item.randomize }}</td>
+      </tr>
+      {% empty %}
+      <tr><td>No items defined.</td></tr>
+    {% endfor %}
+    </table>
+
+    <p><a class="ddm-btn" href="{% url 'question-items' project_pk object.question_type object.pk %}">Edit Items</a></p>
+  </div>
+</div>
+{% endif %}
+
+{% if object.question_type == "semantic_diff" or object.question_type == "matrix"  %}
+<div class="ddm-admin-section">
+  <div class="ddm-admin-section-header">Scale Configuration</div>
+  <div class="ddm-admin-section-body">
+    <table class="table table-sm">
+    {% for point in object.scalepoint_set.all %}
+      {% if forloop.first %}
+      <thead>
+      <tr>
+        <th>Label</th>
+        <th>Index</th>
+        <th>Value</th>
+      </tr>
+      </thead>
+      {% endif %}
+      <tr>
+        <td>{{ point.label }}</td>
+        <td>{{ point.index }}</td>
+        <td>{{ point.value }}</td>
+      </tr>
+      {% empty %}
+      <tr><td>No scale points defined.</td></tr>
+    {% endfor %}
+    </table>
+    <p><a class="ddm-btn" href="{% url 'question-scale' project_pk object.question_type object.pk %}">Edit Scale Points</a></p>
+  </div>
+</div>
+{% endif %}
+
+<div class="mt-3">
+  <a href="{% url 'questionnaire-overview' project_pk %}">&#129040; Back</a>
+</div>
+{% endblock %}
+
+
+{% block breadcrumbs %}
+<a href="{% url 'project-list' %}">Projects</a> /
+<a href="{% url 'project-detail' project_pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'questionnaire-overview' project_pk %}">Questionnaire</a> /
+Edit Question
+{% endblock %}

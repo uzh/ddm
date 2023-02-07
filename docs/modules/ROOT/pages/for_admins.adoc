@@ -1,0 +1,76 @@
+= Documentation for System Administrators
+:!toc:
+:stylesheet: ../static/css/custom.css
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: static/img/ddl_favicon_black.svg
+
+== Getting Started
+
+CAUTION: Extend section with general steps to set up Django. Add ckeditor settings.
+
+Install the Django DDM package:
+
+[source, python]
+----
+pip install django-ddm
+----
+
+Add the necessary entries to INSTALLED_APPS in your settings.py:
+
+[source, python]
+----
+INSTALLED_APPS = [
+    ...,
+    'ddm',
+    'ckeditor',
+    'webpack_loader',
+    'rest_framework',
+    'rest_framework.authtoken',
+]
+----
+
+
+Add the following configuration for webpack-loader to your settings.py:
+
+[source, python]
+----
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'CACHE': True,
+        'BUNDLE_DIR_NAME': 'ddm/vue/',
+        'STATS_FILE': os.path.join(STATIC_ROOT, 'ddm/vue/webpack-stats.json'),
+        'POLL_INTERVAL': 0.1,
+        'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
+    }
+}
+----
+
+Include the ddm URLconf in your projects urls.py:
+
+[source, python]
+----
+url(r'^ddm/', include('ddm.urls')),
+----
+
+Add time zone support to your settings.py:
+
+[source, python]
+----
+USE_TZ = True
+----
+
+Optionally, an e-mail address restriction can be defined in settings.py. Only users whose e-mail address matches the defined regex pattern will be allowed to set up data donation projects:
+
+[source, python]
+----
+DDM_SETTINGS={
+    'EMAIL_PERMISSION_CHECK':  r'.*(\.|@)somedomain\.com$',
+},
+----
+
+Run ``python manage.py migrate`` to create the ddm models in your database.
+
+You should be good to go.
+

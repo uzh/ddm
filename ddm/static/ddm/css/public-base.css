@@ -21,27 +21,32 @@
 .flow-btn {
     background-color: black;
     font-size: 1.1rem;
-    min-width: 15%;
+    min-width: 140px;
     float: right;
-    color: white;
+    color: white !important;
     transition: none;
     line-height: 1.5;
     text-align: center;
     text-decoration: none;
+    margin-top: 20px;
     padding: .375rem;
     border-radius: .25rem;
     border: none;
 }
 .flow-btn:hover {
     background-color: #2f2f2f;
-    color: white;
+    color: white !important;
 }
 
-.text-orange {
-    color: #de5300;
+a {
+    color: #0068b3 !important;
 }
-.text-orange:hover {
-    color: #ff5f00;
+a:hover {
+    color: #00518d !important;
+}
+
+.text-red {
+    color: #ab0000;
 }
 .bg-success-light {
     background-color: #55ff5517;
@@ -75,4 +80,10 @@
 }
 .select-file-btn:hover {
     background: #d5d5d5;
+}
+.modal-close {
+    font-size: 0.8rem;
+}
+#briefing-consent-answer label {
+    cursor: pointer;
 }

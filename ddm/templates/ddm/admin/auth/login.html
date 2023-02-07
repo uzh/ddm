@@ -1,0 +1,39 @@
+{% extends 'ddm/admin/base.html' %}
+
+{% load static %}
+
+{% block page_title %}Data Donation Module: Login{% endblock %}
+
+{% block header %}{% endblock header %}
+
+{% block main_body %}
+
+<div class="container row justify-content-center">
+  <div class="col-4 text-center mt-5">
+    <div class="row">
+      <img alt="Data Donation Module" height="100" alt="" src="{% static 'ddm/img/logos/DDM_Logo_Schwarz.svg' %}">
+    </div>
+
+    <div>
+      <h4>Data Donation Module</h4>
+      <p class="mt-4">
+        {% block introduction %}
+        Please log in with your account.
+        {% endblock introduction %}
+      </p>
+    </div>
+
+    <div class="row justify-content-center">
+      <form method='post'>
+        {% csrf_token %}
+
+        <div class="ddm-admin-form ddm-form auth-form">
+          {{ form.as_p }}
+          <input class="ddm-btn-large mt-3 w-75" type="submit" value="{% block submit_label %}Login{% endblock submit_label %}">
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

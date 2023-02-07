@@ -1,7 +1,8 @@
+from django.views.decorators.debug import sensitive_variables
 from rest_framework import serializers
+from rest_framework.fields import empty
 
-from ddm.models.data_donations import DataDonation
-from ddm.models.projects import DonationProject, QuestionnaireResponse
+from ddm.models.core import DataDonation, DonationProject, QuestionnaireResponse
 
 
 class ProjectSerializer(serializers.HyperlinkedModelSerializer):
@@ -11,9 +12,27 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['pk', 'name', 'date_created']
 
 
-class DonationSerializer(serializers.HyperlinkedModelSerializer):
+class SerializerDecryptionMixin:
+    """
+    Allows to pass the secret for the decryption of super secret projects to
+    the serializer on init.
+    """
+    @sensitive_variables()
+    def __init__(self, instance=None, data=empty, **kwargs):
+        self.secret = kwargs.pop('secret', None)
+        super().__init__(instance=instance, data=data, **kwargs)
+
+    @sensitive_variables()
+    def get_data(self, obj):
+        kwargs = {}
+        if self.secret is not None:
+            kwargs['secret'] = self.secret
+        return obj.get_decrypted_data(**kwargs)
+
+
+class DonationSerializer(SerializerDecryptionMixin, serializers.HyperlinkedModelSerializer):
     project = serializers.IntegerField(source='project.id')
-    data = serializers.CharField(source='get_decrypted_data')
+    data = serializers.SerializerMethodField()
     participant = serializers.IntegerField(source='participant.id')
 
     class Meta:
@@ -21,7 +40,7 @@ class DonationSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['time_submitted', 'consent', 'status', 'data', 'project', 'participant']
 
 
-class ResponseSerializer(serializers.HyperlinkedModelSerializer):
+class ResponseSerializer(SerializerDecryptionMixin, serializers.HyperlinkedModelSerializer):
     project = serializers.IntegerField(source='project.id')
     data = serializers.CharField(source='get_decrypted_data')
     participant = serializers.IntegerField(source='participant.id')

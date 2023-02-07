@@ -77,7 +77,7 @@ jobs:
       - name: Dispatch signal to DDL
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.DISPATCH_SIGNAL_TOKEN }}
+          token: ${{ secrets.PERSONAL_WORKFLOW_TOKEN }}
           repository: uzh/ddl
           event-type: new-ddm-version
           client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'

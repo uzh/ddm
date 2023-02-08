@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
   workflow_run:
-    workflows: [ Test Develop ]
+    workflows: [ Merge to Main ]
     types:
       - completed
 

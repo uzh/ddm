@@ -1,11 +1,10 @@
 # Runs a build test every time a commit is pushed to branch 'develop'.
 # Runs a build test and merges develop into main every time a tag with pattern 'v*' is pushed.
 
-name: Test Develop
+name: Merge to Main
 
 on:
   push:
-    branches: [ develop ]
     tags:
       - v*
 
@@ -38,26 +37,26 @@ jobs:
           --health-retries=3
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install psycopg2 mysqlclient
-    - name: Run Tests With ${{ matrix.db }}
-      env:
-        DB: ${{ matrix.db }}
-        DB_ENGINE: ${{ matrix.db_engine }}
-        DB_NAME: ddmtestdb
-        DB_USER: ${{ matrix.db_user }}
-        DB_PASSWORD: password
-        DB_PORT: ${{ matrix.db_port }}
-      run: |
-        python test_project/manage.py test ddm
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install psycopg2 mysqlclient
+      - name: Run Tests With ${{ matrix.db }}
+        env:
+          DB: ${{ matrix.db }}
+          DB_ENGINE: ${{ matrix.db_engine }}
+          DB_NAME: ddmtestdb
+          DB_USER: ${{ matrix.db_user }}
+          DB_PASSWORD: password
+          DB_PORT: ${{ matrix.db_port }}
+        run: |
+          python test_project/manage.py test ddm
 
   publish-docs:
     runs-on: ubuntu-latest
@@ -77,3 +76,16 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: docs/build/site
+
+  merge-dev:
+    needs: build-test
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: everlytic/branch-merge@1.1.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          source_ref: 'develop'
+          target_branch: 'main'
+          commit_message_template: '[Automated] Merged {source_ref} into target {target_branch}'

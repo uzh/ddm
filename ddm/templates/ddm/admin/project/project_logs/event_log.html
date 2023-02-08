@@ -1,0 +1,37 @@
+<div class="ddm-admin-section">
+  <div class="ddm-admin-section-header">Event Log</div>
+  <div class="ddm-admin-section-body">
+    <div>
+      Below you can find a list of the events that have been recorded for this project.
+    </div>
+
+    <table data-classes="table table-sm table-striped table-hover small-font small-inputs"
+           data-toggle="table"
+           data-filter-control="true"
+           data-show-export="true"
+           data-export-types="['csv', 'json']"
+           data-pagination="true"
+           data-page-size="10"
+           data-buttons-class="transparent">
+      <thead>
+      <tr>
+        <th data-field="date" data-filter-control="input" data-sortable="true">Date</th>
+        <th data-field="participant" data-filter-control="input" data-sortable="true">Description</th>
+        <th data-field="message" data-filter-control="input" data-sortable="true">Message</th>
+      </tr>
+      </thead>
+
+      {% for e in events %}
+      <tr>
+        <td>{{ e.date|date:"Y-m-d, H:i" }}</td>
+        <td>{{ e.description }}</td>
+        <td>{{ e.message }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td>No events recorded.</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>

@@ -69,6 +69,25 @@ urlpatterns = [
 ]
 ----
 
+[CAUTION]
+====
+If you use DDM on a Django site together with https://wagtail.org/[wagtail] and you
+have internationalization enabled for your wagtail urls, we recommend to use the
+`prefix_default_language=False` for the i18n_patterns:
+
+[source, python]
+----
+urlpatterns += i18n_patterns(
+    path('', include(wagtail_urls)),
+    prefix_default_language=False
+)
+----
+
+Not doing this will cause ddm.tests.test_apis.test_participant_deletion_with_regular_login to fail.
+In practice, the participant API still seems to work properly despite the test failing, however,
+unexpected behaviour cannot be ruled out at this point. This will be fixed in a future version.
+====
+
 Add time zone support to your settings.py:
 
 [source, python]

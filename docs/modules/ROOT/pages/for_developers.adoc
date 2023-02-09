@@ -133,12 +133,18 @@ affected dependencies and merge into main.
 
 ==== Pipeline
 
+A regular **push to develop** triggers the following pipeline:
+
+1. Run tests on develop.
+2. Create new documentation for GitHub pages.
+
 A **tag ("vX.X.X") push to develop** triggers the following pipeline:
 
 1. Run tests on develop.
-2. Merge develop into main.
-3. Run tests on main.
-4. Create PyPi package.
+2. Create new documentation for GitHub pages.
+3. Merge develop into main.
+4. Run tests on main.
+5. Create PyPi package.
 
 A **pull request to main created by dependabot** triggers the following pipeline:
 

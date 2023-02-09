@@ -6,8 +6,6 @@ name: Test Develop
 on:
   push:
     branches: [ develop ]
-    tags:
-      - v*
 
 jobs:
   build-test:

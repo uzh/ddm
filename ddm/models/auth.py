@@ -84,9 +84,8 @@ class ProjectTokenAuthenticator(TokenAuthentication):
             msg = 'Invalid token header. Token string should not contain invalid characters.'
             raise exceptions.AuthenticationFailed(msg)
 
-        request_url = request.get_full_path()
-        project_pk = [x for x in request_url.split('/') if x != ''][0]
         try:
+            project_pk = request.parser_context['kwargs'].get('pk', None)
             project_pk = int(project_pk)
         except ValueError:
             msg = 'Invalid project identifier provided.'

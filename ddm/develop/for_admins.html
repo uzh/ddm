@@ -163,7 +163,23 @@ Extend section with general steps to set up Django. Add ckeditor settings.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">url(r'^ddm/', include('ddm.urls')),</code></pre>
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">urlpatterns = [
+    ...
+    path('ddm/', include('ddm.urls')),
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Configure login and logout endpoints for DDM in urls.py:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">urlpatterns = [
+    ...
+    path('ddm/', include('ddm.urls')),
+    path('login/', auth_views.LoginView.as_view(template_name='ddm/admin/auth/login.html'), name='ddm-login'),  # You can choose whatever path and template you like
+    path('logout/', auth_views.LogoutView.as_view(), name='ddm-logout'),  # You can choose whatever path and template you like
+]</code></pre>
 </div>
 </div>
 <div class="paragraph">

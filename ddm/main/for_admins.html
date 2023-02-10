@@ -107,14 +107,14 @@
 <div class="sect1">
 <h2 id="_getting_started"><a class="anchor" href="#_getting_started"></a>Getting Started</h2>
 <div class="sectionbody">
-<div class="admonitionblock caution">
+<div class="admonitionblock note">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-caution" title="Caution"></i>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Extend section with general steps to set up Django. Add ckeditor settings.
+Extend section with general steps to set up Django.
 </td>
 </tr>
 </table>
@@ -132,10 +132,13 @@ Extend section with general steps to set up Django. Add ckeditor settings.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">INSTALLED_APPS = [
-    ...,
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># settings.py
+
+INSTALLED_APPS = [
+    # ...,
     'ddm',
     'ckeditor',
+    'ckeditor_uploader',
     'webpack_loader',
     'rest_framework',
     'rest_framework.authtoken',
@@ -147,7 +150,9 @@ Extend section with general steps to set up Django. Add ckeditor settings.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">WEBPACK_LOADER = {
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># settings.py
+
+WEBPACK_LOADER = {
     'DEFAULT': {
         'CACHE': True,
         'BUNDLE_DIR_NAME': 'ddm/vue/',
@@ -159,12 +164,14 @@ Extend section with general steps to set up Django. Add ckeditor settings.
 </div>
 </div>
 <div class="paragraph">
-<p>Include the ddm URLconf in your projects urls.py:</p>
+<p>Include the DDM urls in your projects urls.py:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">urlpatterns = [
-    ...
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># urls.py
+
+urlpatterns = [
+    # ...
     path('ddm/', include('ddm.urls')),
 ]</code></pre>
 </div>
@@ -174,7 +181,9 @@ Extend section with general steps to set up Django. Add ckeditor settings.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">urlpatterns = [
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># urls.py
+
+urlpatterns = [
     ...
     path('ddm/', include('ddm.urls')),
     path('login/', auth_views.LoginView.as_view(template_name='ddm/admin/auth/login.html'), name='ddm-login'),  # You can choose whatever path and template you like
@@ -182,12 +191,98 @@ Extend section with general steps to set up Django. Add ckeditor settings.
 ]</code></pre>
 </div>
 </div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you use DDM on a Django site together with <a href="https://wagtail.org/">wagtail</a> and you
+have internationalization enabled for your wagtail urls, we recommend to use the
+<code>prefix_default_language=False</code> for the i18n_patterns:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># urls.py
+
+urlpatterns += i18n_patterns(
+    path('', include(wagtail_urls)),
+    prefix_default_language=False
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Not doing this will cause ddm.tests.test_apis.test_participant_deletion_with_regular_login to fail.
+In practice, the participant API still seems to work properly despite the test failing, however,
+unexpected behaviour cannot be ruled out at this point. This will be fixed in a future version.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Add the DDM context processor to your template context processors.
+This will enable the version indicator of the currently used DDM distribution
+below the header in the admin interface.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># settings.py
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': ['templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                # ...
+                'ddm.context_processors.add_ddm_version'  # Add this.
+            ],
+        },
+    },
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Configure CKEditor settings in your settings.py to allow your users to upload
+images and gifs in instructions and question texts:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># settings.py
+
+CKEDITOR_RESTRICT_BY_USER = True  # Files uploaded by one user can only be accessed by this particular user
+CKEDITOR_UPLOAD_PATH = 'uploads/'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Furthermore, add the following to your urls.py:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># urls.py
+
+urlpatterns = [
+    ...
+    path('ckeditor/', include('ckeditor_uploader.urls')),
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>DDM uses a custom CKEditor toolbar for instruction and question text definitions
+that can optionally be customized (<a href="topics/customize_ckeditor_configs.html" class="xref page">find out more</a>)</p>
+</div>
 <div class="paragraph">
 <p>Add time zone support to your settings.py:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">USE_TZ = True</code></pre>
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># settings.py
+
+USE_TZ = True</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -195,7 +290,9 @@ Extend section with general steps to set up Django. Add ckeditor settings.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">DDM_SETTINGS={
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># settings.py
+
+DDM_SETTINGS = {
     'EMAIL_PERMISSION_CHECK':  r'.*(\.|@)somedomain\.com$',
 },</code></pre>
 </div>
@@ -204,7 +301,7 @@ Extend section with general steps to set up Django. Add ckeditor settings.
 <p>Run <code>python manage.py migrate</code> to create the ddm models in your database.</p>
 </div>
 <div class="paragraph">
-<p>You should be good to go.</p>
+<p>Run <code>python manage.py test ddm</code> to check that DDM is setup and works correctly.</p>
 </div>
 </div>
 </div>

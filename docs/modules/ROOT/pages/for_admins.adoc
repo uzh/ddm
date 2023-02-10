@@ -8,7 +8,7 @@
 
 == Getting Started
 
-CAUTION: Extend section with general steps to set up Django. Add ckeditor settings.
+NOTE: Extend section with general steps to set up Django.
 
 Install the Django DDM package:
 
@@ -52,7 +52,7 @@ WEBPACK_LOADER = {
 }
 ----
 
-Include the ddm URLconf in your projects urls.py:
+Include the DDM urls in your projects urls.py:
 
 [source, python]
 ----
@@ -172,5 +172,5 @@ DDM_SETTINGS = {
 
 Run `python manage.py migrate` to create the ddm models in your database.
 
-You should be good to go.
+Run `python manage.py test ddm` to check that DDM is setup and works correctly.
 

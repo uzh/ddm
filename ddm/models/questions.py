@@ -1,6 +1,6 @@
 import random
 
-from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
 
 from django.db import models
 from django.forms import model_to_dict
@@ -52,7 +52,7 @@ class QuestionBase(PolymorphicModel):
         help_text='Will be used in the data export to identify responses to this question.'
     )
 
-    text = RichTextField(null=True, blank=True, config_name='ddm_ckeditor')
+    text = RichTextUploadingField(null=True, blank=True, config_name='ddm_ckeditor')
     required = models.BooleanField(default=False)
 
     class Meta:

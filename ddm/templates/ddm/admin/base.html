@@ -22,9 +22,12 @@
   </div>
 {% endblock %}
 
-<div class="ddm-breadcrumbs container mt-3 mb-3 fw-light">
-  {% block breadcrumbs %}
-  {% endblock %}
+<div class="ddm-breadcrumbs container mt-3 mb-3 fw-light d-flex flex-row justify-content-between">
+  <div>
+    {% block breadcrumbs %}
+    {% endblock %}
+  </div>
+  <div class="version-info">{{ ddm_version }}</div>
 </div>
 
 <div class="message-wrapper position-relative container d-flex align-items-end flex-column">

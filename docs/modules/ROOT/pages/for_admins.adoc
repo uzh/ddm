@@ -22,7 +22,7 @@ Add the necessary entries to INSTALLED_APPS in your settings.py:
 [source, python]
 ----
 INSTALLED_APPS = [
-    ...,
+    # ...,
     'ddm',
     'ckeditor',
     'webpack_loader',
@@ -52,7 +52,7 @@ Include the ddm URLconf in your projects urls.py:
 [source, python]
 ----
 urlpatterns = [
-    ...
+    # ...
     path('ddm/', include('ddm.urls')),
 ]
 ----
@@ -87,6 +87,27 @@ Not doing this will cause ddm.tests.test_apis.test_participant_deletion_with_reg
 In practice, the participant API still seems to work properly despite the test failing, however,
 unexpected behaviour cannot be ruled out at this point. This will be fixed in a future version.
 ====
+
+Add the DDM context processor to your template context processors.
+This will enable the version indicator of the currently used DDM distribution
+below the header in the admin interface.
+
+[source, python]
+----
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': ['templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                # ...
+                'ddm.context_processors.add_ddm_version'  # Add this.
+            ],
+        },
+    },
+]
+----
 
 Add time zone support to your settings.py:
 

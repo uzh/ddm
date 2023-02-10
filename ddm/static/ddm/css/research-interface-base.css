@@ -382,3 +382,6 @@
 .data-center-row h5 {
     margin: 0;
 }
+.version-info {
+    color: lightgray;
+}

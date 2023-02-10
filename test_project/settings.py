@@ -52,7 +52,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
-                'django.template.context_processors.i18n'
+                'django.template.context_processors.i18n',
+                'ddm.context_processors.add_ddm_version'
             ],
         },
     },

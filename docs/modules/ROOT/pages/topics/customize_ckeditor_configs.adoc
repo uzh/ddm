@@ -1,0 +1,22 @@
+DDM uses https://pypi.org/project/django-ckeditor/[Django CKEditor] for some of
+its forms.
+
+A custom configuration of the CKEditor for ddm is implemented in the app itself.
+However, you can overwrite the default configuration by adding a `CKEDITOR_CONFIGS`
+setting to your projects settings.py that includes a setting named
+`'ddm_ckeditor'` that defines the CKEditor appearance for DDM:
+
+[source, python]
+----
+# settings.py
+
+CKEDITOR_CONFIGS = {
+    'ddm_ckeditor': {
+        'toolbar': 'Basic',
+        # etc.
+    },
+}
+----
+
+For an overview of configuration options consult the
+https://github.com/django-ckeditor/django-ckeditor#example-ckeditor-configuration [Django CKEditor Repository].

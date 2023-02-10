@@ -111,18 +111,5 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
 ]
 
-CKEDITOR_CONFIGS = {
-    'default': {
-        'toolbar': 'Full',
-        'removePlugins': 'exportpdf',
-    },
-    'ddm_ckeditor': {
-        'toolbar': 'Full',
-        'allowedContent': True,
-        'removePlugins': 'exportpdf',
-        'entities': False,
-    },
-}
-
 LOGIN_REDIRECT_URL = '/auth/register/'
 LOGOUT_REDIRECT_URL = '/login/'

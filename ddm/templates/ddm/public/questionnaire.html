@@ -26,7 +26,7 @@
 {% endblock content %}
 
 {% block extrascripts %}
-  <script src="{% static 'stats/js/bokeh-3.0.3.min.js' %}"></script>
+  <script src="{% static 'ddm/js/bokeh/bokeh-3.0.3.min.js' %}"></script>
   {% for script in extra_scripts %}
   {{ script|safe }}
   {% endfor %}

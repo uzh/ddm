@@ -36,6 +36,8 @@ Readers interested in setting up DDM for institutional use or their own research
 
 ==== Data Donation Setup
 
+NOTE: Mention that only img and gif files can be embedded without problems.
+
 ==== Questionnaire
 
 ==== Debriefing of Participants

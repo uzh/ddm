@@ -5,6 +5,7 @@ import random
 import string
 
 from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
 
 from django.conf import settings
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
@@ -73,7 +74,7 @@ class DonationProject(models.Model):
 
     # Information affecting participation flow.
     slug = models.SlugField(unique=True, verbose_name='External Project Slug')
-    briefing_text = RichTextField(
+    briefing_text = RichTextUploadingField(
         null=True, blank=True,
         verbose_name='Welcome Page Text',
         config_name='ddm_ckeditor'
@@ -81,7 +82,7 @@ class DonationProject(models.Model):
     briefing_consent_enabled = models.BooleanField(default=False)
     briefing_consent_label_yes = models.CharField(max_length=255, blank=True)
     briefing_consent_label_no = models.CharField(max_length=255, blank=True)
-    debriefing_text = RichTextField(
+    debriefing_text = RichTextUploadingField(
         null=True, blank=True,
         verbose_name='End Page Text',
         config_name='ddm_ckeditor'
@@ -541,7 +542,7 @@ class DataDonation(ModelWithEncryptedData):
 
 # TODO: Outsource to separate model.py file when instruction database is added.
 class DonationInstruction(models.Model):
-    text = RichTextField(null=True, blank=True, config_name='ddm_ckeditor')
+    text = RichTextUploadingField(null=True, blank=True, config_name='ddm_ckeditor')
     index = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
 
     file_uploader = models.ForeignKey(

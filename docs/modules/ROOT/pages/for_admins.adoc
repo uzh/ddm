@@ -8,7 +8,7 @@
 
 == Getting Started
 
-CAUTION: Extend section with general steps to set up Django. Add ckeditor settings.
+NOTE: Extend section with general steps to set up Django.
 
 Install the Django DDM package:
 
@@ -21,10 +21,13 @@ Add the necessary entries to INSTALLED_APPS in your settings.py:
 
 [source, python]
 ----
+# settings.py
+
 INSTALLED_APPS = [
-    ...,
+    # ...,
     'ddm',
     'ckeditor',
+    'ckeditor_uploader',
     'webpack_loader',
     'rest_framework',
     'rest_framework.authtoken',
@@ -36,6 +39,8 @@ Add the following configuration for webpack-loader to your settings.py:
 
 [source, python]
 ----
+# settings.py
+
 WEBPACK_LOADER = {
     'DEFAULT': {
         'CACHE': True,
@@ -47,12 +52,14 @@ WEBPACK_LOADER = {
 }
 ----
 
-Include the ddm URLconf in your projects urls.py:
+Include the DDM urls in your projects urls.py:
 
 [source, python]
 ----
+# urls.py
+
 urlpatterns = [
-    ...
+    # ...
     path('ddm/', include('ddm.urls')),
 ]
 ----
@@ -61,6 +68,8 @@ Configure login and logout endpoints for DDM in urls.py:
 
 [source, python]
 ----
+# urls.py
+
 urlpatterns = [
     ...
     path('ddm/', include('ddm.urls')),
@@ -69,10 +78,84 @@ urlpatterns = [
 ]
 ----
 
+[CAUTION]
+====
+If you use DDM on a Django site together with https://wagtail.org/[wagtail] and you
+have internationalization enabled for your wagtail urls, we recommend to use the
+`prefix_default_language=False` for the i18n_patterns:
+
+[source, python]
+----
+# urls.py
+
+urlpatterns += i18n_patterns(
+    path('', include(wagtail_urls)),
+    prefix_default_language=False
+)
+----
+
+Not doing this will cause ddm.tests.test_apis.test_participant_deletion_with_regular_login to fail.
+In practice, the participant API still seems to work properly despite the test failing, however,
+unexpected behaviour cannot be ruled out at this point. This will be fixed in a future version.
+====
+
+Add the DDM context processor to your template context processors.
+This will enable the version indicator of the currently used DDM distribution
+below the header in the admin interface.
+
+[source, python]
+----
+# settings.py
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': ['templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                # ...
+                'ddm.context_processors.add_ddm_version'  # Add this.
+            ],
+        },
+    },
+]
+----
+
+
+Configure CKEditor settings in your settings.py to allow your users to upload
+images and gifs in instructions and question texts:
+
+[source, python]
+----
+# settings.py
+
+CKEDITOR_RESTRICT_BY_USER = True  # Files uploaded by one user can only be accessed by this particular user
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+----
+
+Furthermore, add the following to your urls.py:
+
+[source, python]
+----
+# urls.py
+
+urlpatterns = [
+    ...
+    path('ckeditor/', include('ckeditor_uploader.urls')),
+]
+----
+
+DDM uses a custom CKEditor toolbar for instruction and question text definitions
+that can optionally be customized (xref:topics/customize_ckeditor_configs.adoc[find out more])
+
+
 Add time zone support to your settings.py:
 
 [source, python]
 ----
+# settings.py
+
 USE_TZ = True
 ----
 
@@ -80,12 +163,14 @@ Optionally, an e-mail address restriction can be defined in settings.py. Only us
 
 [source, python]
 ----
-DDM_SETTINGS={
+# settings.py
+
+DDM_SETTINGS = {
     'EMAIL_PERMISSION_CHECK':  r'.*(\.|@)somedomain\.com$',
 },
 ----
 
-Run ``python manage.py migrate`` to create the ddm models in your database.
+Run `python manage.py migrate` to create the ddm models in your database.
 
-You should be good to go.
+Run `python manage.py test ddm` to check that DDM is setup and works correctly.
 

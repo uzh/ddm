@@ -20,9 +20,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.sites',
     'django.contrib.staticfiles',
-    'ddm.apps.DdmConfig',
-    'ddm.stats',
+    'ddm',
     'ckeditor',
+    'ckeditor_uploader',
     'webpack_loader',
     'rest_framework',
     'rest_framework.authtoken',
@@ -52,7 +52,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
-                'django.template.context_processors.i18n'
+                'django.template.context_processors.i18n',
+                'ddm.context_processors.add_ddm_version'
             ],
         },
     },
@@ -110,18 +111,8 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
 ]
 
-CKEDITOR_CONFIGS = {
-    'default': {
-        'toolbar': 'Full',
-        'removePlugins': 'exportpdf',
-    },
-    'ddm_ckeditor': {
-        'toolbar': 'Full',
-        'allowedContent': True,
-        'removePlugins': 'exportpdf',
-        'entities': False,
-    },
-}
-
 LOGIN_REDIRECT_URL = '/auth/register/'
 LOGOUT_REDIRECT_URL = '/login/'
+
+CKEDITOR_RESTRICT_BY_USER = True
+CKEDITOR_UPLOAD_PATH = 'uploads/'

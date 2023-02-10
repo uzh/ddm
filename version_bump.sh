@@ -4,3 +4,4 @@ minor=$(echo $prev | rev | cut -d"." -f1  | rev)
 major=$(echo $prev | rev | cut -d"." -f2-  | rev)
 let "minor++"
 sed -i "s/__version__/$major.$minor/g" setup.cfg
+sed -i "s/__version__/$major.$minor/g" ddm/__init__.py

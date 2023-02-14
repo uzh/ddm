@@ -143,6 +143,9 @@ class DonationProject(models.Model):
     def get_absolute_url(self):
         return reverse('project-detail', args=[str(self.id)])
 
+    def get_salt(self):
+        return str(self.date_created)
+
     def clean_file_on_reupload(self):
         """
         Deletes previous file on model FileFields or ImageFields if a file

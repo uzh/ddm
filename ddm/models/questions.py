@@ -101,26 +101,35 @@ class QuestionBase(PolymorphicModel):
         )
 
     def render_config_content(self, config, participant, view):
+        """
+        Renders references to donated data or participant data in question or
+        item text configurations as html.
+        """
         if self.is_general():
-            context_data = None
+            donated_data = None
         else:
             data_donation = DataDonation.objects.get(
                 participant=participant,
                 blueprint=self.blueprint
             )
-            context_data = data_donation.get_decrypted_data()
-        config['text'] = self.render_text(config['text'], context_data, view)
+            donated_data = data_donation.get_decrypted_data()
+
+        participant_data = participant.get_context_data()
+
+        config['text'] = self.render_text(config['text'], donated_data, participant_data, view)
         for index, item in enumerate(config['items']):
-            item['label'] = self.render_text(item['label'], context_data, view)
-            item['label_alt'] = self.render_text(item['label_alt'], context_data, view)
+            item['label'] = self.render_text(item['label'], donated_data, participant_data, view)
+            item['label_alt'] = self.render_text(item['label_alt'], donated_data, participant_data, view)
         return config
 
     @staticmethod
-    def render_text(text, context, view):
+    def render_text(text, donated_data, participant_data, view):
         if text is not None:
             text = '{% load ddm_graphs static %}\n' + text
         template = Template(text)
-        return template.render(Context({'data': context, 'view': view}))
+        return template.render(Context(
+            {'data': donated_data, 'participant': participant_data, 'view': view})
+        )
 
     def validate_response(self, response):
         return

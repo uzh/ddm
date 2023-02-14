@@ -327,16 +327,19 @@ Additional features:
 
 ==== Include Donated Data in a Question
 
-It is possible to include information contained in the donated data in the question text.
-For this, every question must be associated to a *Donation Blueprint*.
+It is possible to include information contained in the donated data or related to the participant in the question text.
+Questions that should integrate this behaviour must be linked to a donation blueprint
 The donated data related to the associated blueprint will then be available as a
-context variable.
+context variable an can be referenced in the question body as follows:
+`Display donated data: {{ data }}. Display participant data: {{ participant }}.`
 
 For this, DDM utilizes the `Django template engine <https://docs.djangoproject.com/en/3.2/topics/templates/>`_.
 The donated data will be available as a template variable "data" in the question text definition.
 This variable can be combined flexibly with Django's `built-in template tags and filters <https://docs.djangoproject.com/en/3.2/ref/templates/builtins/>`_.
 
 NOTE: TODO: Include Example.
+
+NOTE: TODO: Include a list of accessible template features.
 
 
 === Define the End Page

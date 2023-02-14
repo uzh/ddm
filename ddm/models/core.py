@@ -277,6 +277,17 @@ class Participant(models.Model):
 
     extra_data = models.JSONField(default=get_extra_data_default)
 
+    def get_context_data(self):
+        """
+        Returns data that can be accessed when participant is passed to a
+        template as a context variable.
+        """
+        context_data = {
+            'public_id': self.external_id,
+            'data': self.extra_data
+        }
+        return context_data
+
     def save(self, *args, **kwargs):
         if self.pk is None:
             new_external_id = create_asciidigits_id()

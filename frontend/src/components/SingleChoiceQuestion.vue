@@ -5,7 +5,7 @@
       <div v-for="(item, id) in items" :key="id" class="question-choice-item form-check">
         <label class="form-check-label rb-cb-label">
           <input class="form-check-input" type="radio" :dataid="qid" :name="'q-' + qid" :value="item.value" @change="answerChanged($event)">
-          {{ item.label }}
+          <span v-html="item.label"></span>
         </label>
       </div>
     </div>

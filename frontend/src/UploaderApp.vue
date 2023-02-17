@@ -267,7 +267,7 @@ export default {
 .default-modal {
   background: white;
   z-index: 2000;
-  position: absolute;
+  position: fixed;
   top: 35%;
   margin-left: auto;
   margin-right: auto;

@@ -456,9 +456,26 @@ export default {
                           throw `Field "${key}" matches filter value "${rule.comparison_value}".`
                         }
                         break;
-                      case 'regex':
+                      case 'regex-delete-match':
                         if (key in entry) {
-                          result[key] = entry[key].replaceAll(rule.comparison_value, '');
+                          let newValue = entry[key].replaceAll(RegExp(rule.comparison_value, 'g'), '');
+                          result[key] = newValue;
+                          entry[key] = newValue;
+                        }
+                        break;
+                      case 'regex-replace-match':
+                        if (key in entry) {
+                          let newValue = entry[key].replaceAll(RegExp(rule.comparison_value, 'g'), rule.replacement_value);
+                          result[key] = newValue;
+                          entry[key] = newValue;
+                        }
+                        break;
+                      case 'regex-delete-row':
+                        if (key in entry) {
+                          let comparisonValue = RegExp(rule.comparison_value, 'g');
+                          if (!comparisonValue.test(entry[key])) {
+                            result[key] = entry[key];
+                          }
                         }
                         break;
                       default: break;

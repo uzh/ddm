@@ -507,23 +507,31 @@ class ProcessingRule(models.Model):
         SMALLER = '<', 'Smaller than (<)'
         GREATER_OR_EQUAL = '>=', 'Greater than or equal (>=)'
         SMALLER_OR_EQUAL = '<=', 'Smaller than or equal (<=)'
-        REGEX = 'regex', 'Regex (removes matches)'
+        REGEX_DELETE_MATCH = 'regex-delete-match', 'Delete match (regex)'
+        REGEX_REPLACE_MATCH = 'regex-replace-match', 'Replace match (regex)'
+        REGEX_DELETE_ROW = 'regex-delete-row', 'Delete row when match (regex)'
 
     comparison_operator = models.CharField(
-        max_length=10,
+        max_length=24,
         blank=True,
         null=True,
         choices=ComparisonOperators.choices,
         default=None
     )
     comparison_value = models.TextField(blank=True)
+    replacement_value = models.TextField(
+        blank=True,
+        help_text='Only required for operation "Replace match (regex)".'
+    )
 
     def get_rule_config(self):
         """
         Return a configuration dict for the processing rule:
         {
             'field': 'field_name',
-            'comparison_operator': '==' | '!=' | '>' | '<' | '>=' | '<=' | 'regex' | None,
+            'comparison_operator': '==' | '!=' | '>' | '<' | '>=' | '<=' |
+                                   'regex-delete-match' | ' regex-replace-match'
+                                   'regex-delete-row' | None,
             'comparison_value': '123' | Regex-String | None
         }
         """

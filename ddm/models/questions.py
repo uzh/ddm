@@ -112,7 +112,8 @@ class QuestionBase(PolymorphicModel):
                 participant=participant,
                 blueprint=self.blueprint
             )
-            donated_data = data_donation.get_decrypted_data()
+            donated_data = data_donation.get_decrypted_data(
+                secret=self.project.secret_key, salt=self.project.get_salt())
 
         participant_data = participant.get_context_data()
 

@@ -11,6 +11,7 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='ddm/admin/auth/login.html'), name='ddm-login'),
     path('logout/', auth_views.LogoutView.as_view(), name='ddm-logout'),
     path('ckeditor/', include('ckeditor_uploader.urls')),
+    path('__debug__/', include('debug_toolbar.urls')),  # Added for debugging purposes
 ]
 
 if settings.DEBUG:

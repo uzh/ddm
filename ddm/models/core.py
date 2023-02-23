@@ -76,7 +76,7 @@ class DonationProject(models.Model):
     slug = models.SlugField(unique=True, verbose_name='External Project Slug')
     briefing_text = RichTextUploadingField(
         null=True, blank=True,
-        verbose_name='Welcome Page Text',
+        verbose_name='Briefing Page Text',
         config_name='ddm_ckeditor'
     )
     briefing_consent_enabled = models.BooleanField(default=False)
@@ -84,7 +84,7 @@ class DonationProject(models.Model):
     briefing_consent_label_no = models.CharField(max_length=255, blank=True)
     debriefing_text = RichTextUploadingField(
         null=True, blank=True,
-        verbose_name='End Page Text',
+        verbose_name='Debriefing Page Text',
         config_name='ddm_ckeditor'
     )
 
@@ -364,8 +364,8 @@ class DonationBlueprint(models.Model):
     name = models.CharField(max_length=250)
 
     class FileFormats(models.TextChoices):
-        JSON_FORMAT = 'json'
-        CSV_FORMAT = 'csv'
+        JSON_FORMAT = 'json', 'JSON file'
+        CSV_FORMAT = 'csv', 'CSV file'
         # HTML_FORMAT = 'html',
         # XLSX_FORMAT = 'xlsx',
 

@@ -14,7 +14,7 @@ from ddm.models.core import (
 from ddm.models.encryption import Decryption
 from ddm.models.logs import EventLogEntry, ExceptionLogEntry
 from ddm.models.serializers import (
-    DonationSerializer, ResponseSerializer, ProjectSerializer
+    DonationSerializer, ResponseSerializer, ProjectSerializer, ParticipantSerializer
 )
 
 from rest_framework.views import APIView
@@ -110,12 +110,14 @@ class ProjectDataAPI(APIView):
         # Gather project data in dictionary.
         data_donations = DataDonation.objects.filter(project=project)
         q_responses = QuestionnaireResponse.objects.filter(project=project)
+        participants = Participant.objects.filter(project=project)
         try:
             decryptor = Decryption(secret, project.get_salt())
             results = {
                 'project': ProjectSerializer(project).data,
                 'donations': [DonationSerializer(d, decryptor=decryptor).data for d in data_donations],
                 'responses': [ResponseSerializer(r, decryptor=decryptor).data for r in q_responses],
+                'participants': [ParticipantSerializer(p).data for p in participants]
             }
         except ValueError:
             self.create_event_log(

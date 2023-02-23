@@ -2,7 +2,9 @@ from django.views.decorators.debug import sensitive_variables
 from rest_framework import serializers
 from rest_framework.fields import empty
 
-from ddm.models.core import DataDonation, DonationProject, QuestionnaireResponse
+from ddm.models.core import (
+    DataDonation, DonationProject, QuestionnaireResponse, Participant
+)
 
 
 class ProjectSerializer(serializers.HyperlinkedModelSerializer):
@@ -48,3 +50,12 @@ class ResponseSerializer(SerializerDecryptionMixin, serializers.HyperlinkedModel
     class Meta:
         model = QuestionnaireResponse
         fields = ['time_submitted', 'data', 'project', 'participant']
+
+
+class ParticipantSerializer(serializers.HyperlinkedModelSerializer):
+    project = serializers.IntegerField(source='project.id')
+
+    class Meta:
+        model = Participant
+        fields = ['pk', 'project', 'external_id', 'start_time', 'end_time',
+                  'completed', 'extra_data']

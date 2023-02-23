@@ -76,7 +76,7 @@ class DonationProject(models.Model):
     slug = models.SlugField(unique=True, verbose_name='External Project Slug')
     briefing_text = RichTextUploadingField(
         null=True, blank=True,
-        verbose_name='Briefing Page Text',
+        verbose_name='Briefing Text',
         config_name='ddm_ckeditor'
     )
     briefing_consent_enabled = models.BooleanField(default=False)
@@ -84,7 +84,7 @@ class DonationProject(models.Model):
     briefing_consent_label_no = models.CharField(max_length=255, blank=True)
     debriefing_text = RichTextUploadingField(
         null=True, blank=True,
-        verbose_name='Debriefing Page Text',
+        verbose_name='Debriefing Text',
         config_name='ddm_ckeditor'
     )
 

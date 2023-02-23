@@ -81,26 +81,46 @@ Is linked in the footer of the donation interface and can be viewed by data dono
 
 ==== Redirect Configuration
 
+Optionally, participants can be redirected to another website from the debriefing page.
+This can be configured using the following settings:
+
 Redirect enabled:: Enable or disable the redirection of your participants when they have completed your project.
 If enabled, a redirect button will be displayed on the data donation end page that redirects to the URL defined in the `Redirect target` setting.
 
 Redirect target:: URL to which participants will redirected (only required if `redirect` is enabled).
+
+[TIP]
+====
 The redirect URL can include variables that are populated with the respective values. Currently, the following variables are supported:
 An extracted URL parameter (see above), the participant id (as ``ddm_participant_id``), or the project id (as ``ddm_project_id``).
 Use the following syntax to include variables in the redirect target: e.g. ``https://redirect.url?param={{URLParameter}}&participant={{ddm_participant_id}}&project={{ddm_project_id}}``
-
+====
 
 
 ==== URL Parameter Extraction
 
+Optionally, information can be extracted from parameters passed with the URL when a project is accessed by a participant.
+This can be configured using the following settings:
+
 URL parameter extraction enabled:: Enable or disable whether URL parameters should be extracted when participants access the project's briefing page.
 
-Expected URL parameter:: Provide a string containing the parameters that should be extracted. Separate multiple parameters with a semikolon (e.g., "parameter_A;parameter_B").
+Expected URL parameter:: Provide a string containing the parameters that should be extracted.
+Separate multiple parameters with a semikolon (e.g., "parameter_A;parameter_B"). The extracted values will
+be saved for each participant and is included in the data export. If a parameter is not present, it will be saved
+as `None`. Undefined parameters passed in the URL will be ignored.
 
-General behavior: // TODO: Describe general behavior (where are the extracted values saved, what is the default behavior when a URL parameter is not present)
+[TIP]
+====
+If participants are asked to first fill out a questionnaire created in an external
+survey software such as e.g. Unipark or Qualtrics, passing URL parameters can
+be used to link data donations with the survey data by passing a participant
+ID in the URL parameters.
+====
 
 
 ==== Project Appearance
+
+The following settings are available to customize the appearance of your data donation project:
 
 Header Image Left/Header Image Right:: Upload an image that will be displayed in the header of your project (e.g., an institution or project logo).
 
@@ -117,12 +137,12 @@ data donation process. It consists of the following sections:
 
 ==== Briefing
 
-Welcome Page Text:: Text displayed to participants on the briefing page.
+Briefing Text:: Text displayed to participants on the briefing page.
 
 Briefing consent enabled:: If briefing consent is enabled, participants will
 have to explicitly indicate their consent at the bottom of the briefing page before
-they can continue. If a participant does not indicate active consent, they will
-be redirected to the debriefing page. // TODO: Check this behavior.
+they can continue. If a participant does indicate that they to do not consent,
+they will be redirected to the debriefing page.
 
 Briefing consent label yes/Briefing consent label no:: The labels displayed to
 participants to indicate consent ("briefing consent label yes") or reject
@@ -139,7 +159,9 @@ This file can either be a single file (e.g., a JSON file) or a ZIP container.
 For each File Uploader, a set of `Instructions` for participants can be defined
 that describe how they can access and upload the requested file.
 
-Each uploader has one or multiple associated `Donation Blueprints`.
+Each uploader has one or multiple associated `Donation Blueprints` (although
+if a File Uploader expects a single file, only one Donation Blueprint can
+be associated with it).
 A Donation Blueprint defines how the data contained in a single file
 (e.g., the uploaded file in the case of a single file upload, or a file contained
 in the ZIP container in the case of a ZIP upload) is extracted.
@@ -182,7 +204,39 @@ Expected file format:: The file format of the expected data donation. Currently,
 Associated File Uploader:: The `File Uploader` for which the blueprint will be applied.
 
 Regex path:: Here, the path where the file is expected to be located within a ZIP file is defined.
-Only necessary, if the Donation Blueprint is part of a Blueprint Container.  // TODO: Check if this has already been implemented correctly
+Only necessary, if the Donation Blueprint is part of a Blueprint Container.
+
+WARNING: If a regex expression matches two files, DDM extracts the first one that matches the expression.
+Afterwards, it does not look any further, even if the matched file does not match the expected fields.
+Therefore, be careful to choose regex expressions that will only match the expected file.
+
+
+[TIP]
+====
+*Examples for regex paths to match files*
+
+[%header,cols=2*]
+|===
+|Regex
+|Description
+
+|`^MyActivities.json`
+|Matches a file named `MyActivities.json` that is located at the root of the ZIP file.
+
+|`^SpecificFolder/MyActivities\.json`
+|Matches a file named `MyActivities.json` that is located in a folder named `SpecificFolder` in the root of the ZIP file.
+
+|`.*MyActivities\.json`
+|Matches file if the filename ends with `MyActivities.json` that can be located anywhere in the ZIP file. Warning: This also matches e.g. `BogusMyAcitivties.json`.
+
+|`(\^MyActivities\.json\|^MeineAktivitäten\.json\|^MieAttivita\.json)`
+|Matches a file that is located at the root of the ZIP file and either named `MyActivities.json`, `MeineAktivitäten.json`, or `MieAttivita.json`.
+Can be helpful to match the same file in different languages.
+|===
+
+You can find about more about the possibilities of regex matches [here].
+With the following application, you can test your regex patterns online: [link to a regex pattern tester]
+====
 
 Expected fields:: The fields that must be contained in the donated file. If a file does not contain
 one or more of the fields defined here, it will not be accepted as a donation.
@@ -251,7 +305,7 @@ This variable can be combined flexibly with Django's `built-in template tags and
 
 ==== Debriefing
 
-End page text:: Text displayed to participants on the briefing page.
+Debriefing text:: Text displayed to participants on the briefing page.
 
 
 === Data Center

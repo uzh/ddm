@@ -195,9 +195,14 @@ class ScaleMixin:
         valid_values = list(self.scalepoint_set.all().values_list('value', flat=True))
         valid_values.append(-99)
         for k, val in response.items():
-            if val not in valid_values:
-                msg = (f'Got invalid response "{k}: {val}" for multi '
-                       f'choice question with ID {self.id}.')
+            try:
+                if int(val) not in valid_values:
+                    msg = (f'Got invalid response "{k}: {val}" for {self.DEFAULT_QUESTION_TYPE} '
+                           f'question with ID {self.id}.')
+                    self.log_exception(msg)
+            except ValueError as e:
+                msg = (f'Got ValueError for {self.DEFAULT_QUESTION_TYPE} question with '
+                       f'ID {self.id}: {e}')
                 self.log_exception(msg)
         return
 
@@ -208,9 +213,15 @@ class SingleChoiceQuestion(ItemMixin, QuestionBase):
     def validate_response(self, response):
         valid_values = list(self.questionitem_set.all().values_list('value', flat=True))
         valid_values.append(-99)
-        if response not in valid_values:
-            msg = (f'Got invalid response "{response}" for single choice '
-                   f'question with ID {self.id}.')
+
+        try:
+            if int(response) not in valid_values:
+                msg = (f'Got invalid response "{response}" for single choice '
+                       f'question with ID {self.id}.')
+                self.log_exception(msg)
+        except ValueError as e:
+            msg = (f'Got ValueError for single choice question with '
+                   f'ID {self.id}: {e}')
             self.log_exception(msg)
         return
 
@@ -222,9 +233,14 @@ class MultiChoiceQuestion(ItemMixin, QuestionBase):
         super().validate_response(response)
         valid_values = [0, 1, -99]
         for k, val in response.items():
-            if val not in valid_values:
-                msg = (f'Got invalid response "{k}: {val}" for '
-                       f'{self.DEFAULT_QUESTION_TYPE} with ID {self.id}.')
+            try:
+                if int(val) not in valid_values:
+                    msg = (f'Got invalid response "{k}: {val}" for '
+                           f'{self.DEFAULT_QUESTION_TYPE} with ID {self.id}.')
+                    self.log_exception(msg)
+            except ValueError as e:
+                msg = (f'Got ValueError for multi choice question with '
+                       f'ID {self.id}: {e}')
                 self.log_exception(msg)
         return
 

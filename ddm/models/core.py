@@ -362,6 +362,7 @@ class DonationBlueprint(models.Model):
         on_delete=models.CASCADE
     )
     name = models.CharField(max_length=250)
+    description = models.TextField(null=True)
 
     class FileFormats(models.TextChoices):
         JSON_FORMAT = 'json', 'JSON file'
@@ -412,6 +413,7 @@ class DonationBlueprint(models.Model):
         config = {
             'id': self.pk,
             'name': self.name,
+            'description': self.description,
             'format': self.exp_file_format,
             'f_expected': json.loads("[" + str(self.expected_fields) + "]"),
             'f_extract': self.get_fields_to_extract(),

@@ -194,10 +194,16 @@ but videos hosted externally can still be embedded).  //TODO: Check if video can
 
 Index:: The position of the page in the slideshow.
 
+NOTE:: If no instructions are defined for a File Uploader, the instruction section will
+be hidden in the participation view.
+
 ===== Configure Donation Blueprint
 
 Name:: Name of the expected data donations. Will be publicly visible to participants.
 Therefore, it is important to define a meaningful name.
+
+Description:: Description of what the blueprint will extract. If defined, the
+description will be visible for participants in the data donation step.
 
 Expected file format:: The file format of the expected data donation. Currently, only JSON and CSV is implemented.
 

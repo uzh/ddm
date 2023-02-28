@@ -1,0 +1,24 @@
+## Translation
+
+The administration interface for researchers currently only supports English.
+The participation interface currently supports English and German.
+
+
+### Language Detection
+
+The language in which the interface for participants is displayed is determined
+by the default language of the participant's browser.
+If a language is not implemented for the participant interface, it is displayed
+in English.
+
+
+### Adding Support for new Languages
+
+To add support for a new language, new locales must be added at two locations:
+
+1. In the Django code: `/ddm/locale/` +
+A description of how to do this can be found here: https://docs.djangoproject.com/en/3.2/topics/i18n/translation/#localization-how-to-create-language-files
+
+2. In the code of the VUE component: `/frontend/src/translations/` +
+Here, support for a new language can be added by appending the respective locale name
+as a first-level key to the json files and adding corresponding translations for all translation blocks.

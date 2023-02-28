@@ -51,11 +51,13 @@
       {% for form in formset%}
       {% if forloop.first %}
       <tr class="border-bottom">
+        <th>Order</th>
         {% for field in form.visible_fields %}
-        {% if field.name in 'name,field,execution_order' %}
+        {% if field.name in 'name,field' %}
         <th>{{ field.label }}</th>
         {% endif %}
         {% endfor %}
+        <th>Description</th>
         <th></th>
         <th>Delete</th>
       </tr>
@@ -74,6 +76,8 @@
         {% endfor %}
         {% endwith %}
 
+        <td><span id="step-description-{{ forloop.counter0 }}">–</span></td>
+
         <td><a href="" type="button" data-bs-toggle="modal" data-bs-target="#configuration-{{ forloop.counter0 }}">Configure Step</a></td>
 
         {% for field in form.visible_fields %}
@@ -89,9 +93,6 @@
         {{ hidden }}
         {% endfor %}
       </tr>
-      <tr class="border-bottom bg-white">
-        <td colspan="100%"><b><i>Description: </i></b><span id="step-description-{{ forloop.counter0 }}">–</span></td>
-      </tr>
       {% endfor %}
 
     </table>
@@ -102,53 +103,11 @@
   </div>
 
   {% for form in formset%}
-  <div class="modal" id="configuration-{{ forloop.counter0 }}" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-body">
-          <h4>Rule Configuration</h4>
-          <div class="ddm-admin-form">
-            {% for field in form %}
-            {% if field.name in 'name,field,execution_order,input_type,comparison_operator,comparison_value' %}
-            <p>
-              {{ field.label_tag }}
-              {{ field }}
-              {{ field.errors }}
-            </p>
-            {% endif %}
-            {% endfor %}
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button id="ddm-modal-ok-{{ forloop.counter0 }}" type="button" class="ddm-btn ddm-modal-ok" data-bs-dismiss="modal">OK</button>
-        </div>
-      </div>
-    </div>
-  </div>
+    {% with modal_id_postfix=forloop.counter0|stringformat:"i" button_id_postfix=forloop.counter0|stringformat:"i" %}
+      {% include "ddm/admin/data_donation/processing_rule_modal.html" with modal_id="configuration-"|add:modal_id_postfix form=form button_id="ddm-modal-ok-"|add:button_id_postfix %}
+    {% endwith %}
   {% empty %}
-  <div class="modal" id="configuration-template" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-body">
-          <h4>Rule Configuration</h4>
-          <div class="ddm-admin-form">
-            {% for field in formset.empty_form %}
-            {% if field.name in 'name,field,execution_order,input_type,comparison_operator,comparison_value' %}
-            <p>
-              {{ field.label_tag }}
-              {{ field }}
-              {{ field.errors }}
-            </p>
-            {% endif %}
-            {% endfor %}
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button id="ddm-modal-ok-__prefix__" type="button" class="ddm-btn ddm-modal-ok" data-bs-dismiss="modal">OK</button>
-        </div>
-      </div>
-    </div>
-  </div>
+    {% include "ddm/admin/data_donation/processing_rule_modal.html" with modal_id="configuration-template" form=formset.empty_form button_id="ddm-modal-ok-__prefix__" %}
   {% endfor %}
 
   <table id="empty-form-placeholder" style="display:none">
@@ -161,6 +120,8 @@
       </td>
       {% endif %}
       {% endfor %}
+
+      <td><span id="step-description-__prefix__">–</span></td>
 
       <td><a href="" type="button" data-bs-toggle="modal" data-bs-target="#configuration-__prefix__">Configure Step</a></td>
 
@@ -177,21 +138,21 @@
       {{ hidden }}
       {% endfor %}
     </tr>
-    <tr class="border-bottom">
-      <td colspan="100%"><b><i>Description: </i></b><span id="step-description-__prefix__">Not yet defined</span></td>
-    </tr>
   </table>
 
   <div id="empty-form" class="ddm-admin-form" style="display:none">
+    <div class="ddm-admin-form">
     {% for field in formset.empty_form %}
-    {% if field.name in 'name,field,execution_order,input_type,comparison_operator,comparison_value' %}
+    {% if field.name in 'name,field,execution_order,input_type,comparison_operator,comparison_value,replacement_value' %}
     <p>
       {{ field.label }}
+      <span class="helptext"><br>{{ field.help_text }}</span>
       {{ field }}
       {{ field.errors }}
     </p>
     {% endif %}
     {% endfor %}
+    </div>
   </div>
 
   <input class="ddm-btn" type="submit" value="Save Blueprint">

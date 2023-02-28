@@ -11,9 +11,10 @@ from ddm.models.core import (
     DataDonation, DonationProject, QuestionnaireResponse, ResearchProfile,
     Participant, DonationBlueprint
 )
+from ddm.models.encryption import Decryption
 from ddm.models.logs import EventLogEntry, ExceptionLogEntry
 from ddm.models.serializers import (
-    DonationSerializer, ResponseSerializer, ProjectSerializer
+    DonationSerializer, ResponseSerializer, ProjectSerializer, ParticipantSerializer
 )
 
 from rest_framework.views import APIView
@@ -92,10 +93,10 @@ class ProjectDataAPI(APIView):
                             data={'message': msg})
 
         # Extract secret from request if project is super secret.
-        kwargs = {}
+        secret = project.secret_key
         if project.super_secret:
-            secret = None if 'Super-Secret' not in request.headers else request.headers['Super-Secret']
-            if secret is None:
+            super_secret = None if 'Super-Secret' not in request.headers else request.headers['Super-Secret']
+            if super_secret is None:
                 self.create_event_log(
                     descr='Failed Download Attempt',
                     msg='Download requested without supplying secret.'
@@ -104,16 +105,19 @@ class ProjectDataAPI(APIView):
                 return Response(status=status.HTTP_403_FORBIDDEN,
                                 data={'message': msg})
             else:
-                kwargs['secret'] = secret
+                secret = super_secret
 
         # Gather project data in dictionary.
         data_donations = DataDonation.objects.filter(project=project)
         q_responses = QuestionnaireResponse.objects.filter(project=project)
+        participants = Participant.objects.filter(project=project)
         try:
+            decryptor = Decryption(secret, project.get_salt())
             results = {
                 'project': ProjectSerializer(project).data,
-                'donations': [DonationSerializer(d, **kwargs).data for d in data_donations],
-                'responses': [ResponseSerializer(r, **kwargs).data for r in q_responses],
+                'donations': [DonationSerializer(d, decryptor=decryptor).data for d in data_donations],
+                'responses': [ResponseSerializer(r, decryptor=decryptor).data for r in q_responses],
+                'participants': [ParticipantSerializer(p).data for p in participants]
             }
         except ValueError:
             self.create_event_log(

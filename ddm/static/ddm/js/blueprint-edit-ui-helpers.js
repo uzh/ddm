@@ -6,15 +6,20 @@ updateRuleDescription = function( id ) {
   const field = $("[id^=" + id_prefix + "field]").val();
   const operator = $("[id^=" + id_prefix + "comparison_operator]").val();
   const comp_value = $("[id^=" + id_prefix + "comparison_value]").val();
+  const repl_value = $("[id^=" + id_prefix + "replacement_value]").val();
 
   let msg = "";
   if ( field !== "" ) {
     if ( operator === "" && field !== "" ){
       msg = "Keep field '" + field + "' in uploaded data.";
-    } else if ( operator === "regex" ) {
-      msg = "Delete parts of " + field + "-value that match the following regex expression: " + comp_value + ".";
+    } else if ( operator === "regex-delete-match" ) {
+      msg = "Delete parts of '" + field + "' field that match the following regex expression: '" + comp_value + "'.";
+    } else if ( operator === "regex-replace-match" ) {
+      msg = "Replace parts of '" + field + "' field that match the regex expression '" + comp_value + "' with '" + repl_value + "'.";
+    } else if ( operator === "regex-delete-row" ) {
+      msg = "Delete entry if '" + field + "' field value matches the following regex expression: '" + comp_value + "'.";
     } else {
-      msg = "Delete row if current value of field '" + field + "' " + operator + " " + comp_value + ".";
+      msg = "Delete row if current value of field '" + field + "' " + operator + " '" + comp_value + "'.";
     }
     $("[id=step-description-" + id + "]").html(msg);
   }

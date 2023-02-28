@@ -7,13 +7,13 @@
       <thead class="mq-header">
       <tr>
         <th></th>
-        <th v-for="(point, id) in scale" :key="id">{{ point.label }}</th>
+        <th v-for="(point, id) in scale" :key="id" v-html="point.label"></th>
       </tr>
       </thead>
       <tbody>
       <template v-for="(item, id) in items" :key="id">
         <tr :id="'answer-item-' + item.id">
-          <td class="mq-table-td-item">{{ item.label }}</td>
+          <td class="mq-table-td-item" v-html="item.label"></td>
           <td v-for="(point, id) in scale" :key="id" class="mq-table-td-input">
             <label><input type="radio" :name="item.id" :value="point.value" @change="answerChanged($event)"></label>
           </td>

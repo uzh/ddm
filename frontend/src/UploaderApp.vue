@@ -46,7 +46,7 @@
   <div class="default-modal" id="statusModal" ref="statusModal" style="display: none">
     <div class="modal-body d-flex flex-row align-items-center pt-5">
       <div class="ps-2 pe-3 color-blue"><i class="bi bi-info-circle-fill fs-1"></i></div>
-      <div id="statusModalMsg" ref="statusModalMsg">{{ $t("status-info-msg") }}</div>
+      <div id="statusModalMsg" ref="statusModalMsg"></div>
     </div>
     <div class="modal-footer">
       <button class="ddm-btn" type="button" id="cancelStatusModal" @click="closeStatusModal">{{ $t('cancel-label') }}</button>
@@ -267,7 +267,7 @@ export default {
 .default-modal {
   background: white;
   z-index: 2000;
-  position: absolute;
+  position: fixed;
   top: 35%;
   margin-left: auto;
   margin-right: auto;

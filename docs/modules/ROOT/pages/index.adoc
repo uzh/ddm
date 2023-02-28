@@ -19,6 +19,50 @@ promote this data collection approach. For more information, visit https://datad
 
 NOTE: This project is currently under active development.
 
+== Overview of DDM
+
+=== Core Functionality
+
+The Data Donation Module enables researchers to setup a data donation project that, from the participants' perspective, consists of the following steps:
+
+*_1) Briefing Page_* +
+At the beginning, participants are presented with a briefing page.
+On this page, researchers can describe their project, brief participants about the upcoming steps,
+and optionally obtain explicit consent for participation.
+
+
+*_2) Data Donation_* +
+Next, participants are presented with a user interface through which they can donate their data.
+This interface consists of `(1)` a set of instructions, `(2)` a data upload form, and `(3)` a feedback area.
+
+// TODO: Insert Screenshot of Donation Step
+
+The participation flow in this step looks as follows:
+
+a. The participant reads the instructions and downloads/finds the relevant file on their PC.
+b. The participant uploads their data with the provided upload form.
+c. The uploaded data is filtered and transformed according to the rules defined by the researcher (e.g., only certain fields are extracted).
+d. The participant is presented with the filtered/transformed data which they will be donating to the researchers.
+e. Based on `d`, the participant can decide whether to donate their data (i.e., submit their data to the reseacher's server).
+
+Steps `b` to `d` are all client-based and executed in the participant's browser. No personal data is submitted until step `e`.
+
+
+*_3) Follow-Up Questionnaire_* (optional) +
+After the data donation, participants can optionally be presented with a questionnaire.
+Questions defined in this questionnaire can be configured to include data points from the donated data – either to
+enrich the donated data or to provide participants with insights into their personal data.
+// TODO: Link 'configured to include...' to the section, where this is described in more detail.
+
+*_4) End/Debriefing Page_* +
+Lastly, participants are presented with a debriefing page. From here, participants can optionally be redirected to another website or web application.
+
+
+=== Core Principles
+
+// TODO: Extend
+
+
 == Documentation Structure
 
 Different parts of the documentation are targeted at different user groups of the application.

@@ -2,7 +2,9 @@ from django.views.decorators.debug import sensitive_variables
 from rest_framework import serializers
 from rest_framework.fields import empty
 
-from ddm.models.core import DataDonation, DonationProject, QuestionnaireResponse
+from ddm.models.core import (
+    DataDonation, DonationProject, QuestionnaireResponse, Participant
+)
 
 
 class ProjectSerializer(serializers.HyperlinkedModelSerializer):
@@ -18,16 +20,16 @@ class SerializerDecryptionMixin:
     the serializer on init.
     """
     @sensitive_variables()
-    def __init__(self, instance=None, data=empty, **kwargs):
+    def __init__(self, instance=None, data=empty, decryptor=None, **kwargs):
+        self.decryptor = decryptor
         self.secret = kwargs.pop('secret', None)
         super().__init__(instance=instance, data=data, **kwargs)
 
     @sensitive_variables()
     def get_data(self, obj):
-        kwargs = {}
-        if self.secret is not None:
-            kwargs['secret'] = self.secret
-        return obj.get_decrypted_data(**kwargs)
+        if not self.secret:
+            self.secret = obj.project.secret_key
+        return obj.get_decrypted_data(self.secret, obj.project.get_salt(), self.decryptor)
 
 
 class DonationSerializer(SerializerDecryptionMixin, serializers.HyperlinkedModelSerializer):
@@ -48,3 +50,12 @@ class ResponseSerializer(SerializerDecryptionMixin, serializers.HyperlinkedModel
     class Meta:
         model = QuestionnaireResponse
         fields = ['time_submitted', 'data', 'project', 'participant']
+
+
+class ParticipantSerializer(serializers.HyperlinkedModelSerializer):
+    project = serializers.IntegerField(source='project.id')
+
+    class Meta:
+        model = Participant
+        fields = ['pk', 'project', 'external_id', 'start_time', 'end_time',
+                  'completed', 'extra_data']

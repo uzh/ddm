@@ -101,26 +101,36 @@ class QuestionBase(PolymorphicModel):
         )
 
     def render_config_content(self, config, participant, view):
+        """
+        Renders references to donated data or participant data in question or
+        item text configurations as html.
+        """
         if self.is_general():
-            context_data = None
+            donated_data = None
         else:
             data_donation = DataDonation.objects.get(
                 participant=participant,
                 blueprint=self.blueprint
             )
-            context_data = data_donation.get_decrypted_data()
-        config['text'] = self.render_text(config['text'], context_data, view)
+            donated_data = data_donation.get_decrypted_data(
+                secret=self.project.secret_key, salt=self.project.get_salt())
+
+        participant_data = participant.get_context_data()
+
+        config['text'] = self.render_text(config['text'], donated_data, participant_data, view)
         for index, item in enumerate(config['items']):
-            item['label'] = self.render_text(item['label'], context_data, view)
-            item['label_alt'] = self.render_text(item['label_alt'], context_data, view)
+            item['label'] = self.render_text(item['label'], donated_data, participant_data, view)
+            item['label_alt'] = self.render_text(item['label_alt'], donated_data, participant_data, view)
         return config
 
     @staticmethod
-    def render_text(text, context, view):
+    def render_text(text, donated_data, participant_data, view):
         if text is not None:
             text = '{% load ddm_graphs static %}\n' + text
         template = Template(text)
-        return template.render(Context({'data': context, 'view': view}))
+        return template.render(Context(
+            {'data': donated_data, 'participant': participant_data, 'view': view})
+        )
 
     def validate_response(self, response):
         return
@@ -185,9 +195,14 @@ class ScaleMixin:
         valid_values = list(self.scalepoint_set.all().values_list('value', flat=True))
         valid_values.append(-99)
         for k, val in response.items():
-            if val not in valid_values:
-                msg = (f'Got invalid response "{k}: {val}" for multi '
-                       f'choice question with ID {self.id}.')
+            try:
+                if int(val) not in valid_values:
+                    msg = (f'Got invalid response "{k}: {val}" for {self.DEFAULT_QUESTION_TYPE} '
+                           f'question with ID {self.id}.')
+                    self.log_exception(msg)
+            except ValueError as e:
+                msg = (f'Got ValueError for {self.DEFAULT_QUESTION_TYPE} question with '
+                       f'ID {self.id}: {e}')
                 self.log_exception(msg)
         return
 
@@ -198,9 +213,15 @@ class SingleChoiceQuestion(ItemMixin, QuestionBase):
     def validate_response(self, response):
         valid_values = list(self.questionitem_set.all().values_list('value', flat=True))
         valid_values.append(-99)
-        if response not in valid_values:
-            msg = (f'Got invalid response "{response}" for single choice '
-                   f'question with ID {self.id}.')
+
+        try:
+            if int(response) not in valid_values:
+                msg = (f'Got invalid response "{response}" for single choice '
+                       f'question with ID {self.id}.')
+                self.log_exception(msg)
+        except ValueError as e:
+            msg = (f'Got ValueError for single choice question with '
+                   f'ID {self.id}: {e}')
             self.log_exception(msg)
         return
 
@@ -212,9 +233,14 @@ class MultiChoiceQuestion(ItemMixin, QuestionBase):
         super().validate_response(response)
         valid_values = [0, 1, -99]
         for k, val in response.items():
-            if val not in valid_values:
-                msg = (f'Got invalid response "{k}: {val}" for '
-                       f'{self.DEFAULT_QUESTION_TYPE} with ID {self.id}.')
+            try:
+                if int(val) not in valid_values:
+                    msg = (f'Got invalid response "{k}: {val}" for '
+                           f'{self.DEFAULT_QUESTION_TYPE} with ID {self.id}.')
+                    self.log_exception(msg)
+            except ValueError as e:
+                msg = (f'Got ValueError for multi choice question with '
+                       f'ID {self.id}: {e}')
                 self.log_exception(msg)
         return
 

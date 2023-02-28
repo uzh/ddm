@@ -14,53 +14,28 @@ from django.views.decorators.debug import sensitive_variables
 
 class ModelWithEncryptedData(models.Model):
 
-    secret = None
-    encryption = None
-    decryption = None
-
     class Meta:
         abstract = True
 
     @sensitive_variables()
-    def extract_secret(self, **kwargs):
-        if 'secret' in kwargs and not self.secret:
-            return kwargs['secret'], True
-        elif 'secret' not in kwargs and not self.secret:
-            return self.project.secret_key, True
-        elif 'secret' in kwargs and self.secret and self.secret != kwargs['secret']:
-            return kwargs['secret'], True
-        else:
-            return self.project.secret_key, False
-
-    @sensitive_variables()
-    def encrypt(self, value, **kwargs):
-        self.secret, forced = self.extract_secret(**kwargs)
-        if not self.encryption or forced:
-            self.encryption = Encryption(self.secret, str(self.project.date_created), self.project.public_key)
-        return self.encryption.encrypt(value)
-
-    @sensitive_variables()
-    def decrypt(self, value, **kwargs):
-        self.secret, forced = self.extract_secret(**kwargs)
-        if not self.decryption or forced:
-            self.decryption = Decryption(self.secret, str(self.project.date_created))
-        return self.decryption.decrypt(value)
-
-    @sensitive_variables()
     def save(self, *args, **kwargs):
-        self.data = self.encrypt(self.data, **kwargs)
+
+        if 'encryptor' in kwargs:
+            self.data = kwargs['encryptor'].encrypt(self.data)
+        else:
+            secret = kwargs['secret'] if 'secret' in kwargs else self.project.secret_key
+            self.data = Encryption(secret, self.project.get_salt(), self.project.public_key).encrypt(self.data)
         super().save(*args, **kwargs)
 
     @sensitive_variables()
-    def get_decrypted_data(self, *args, **kwargs):
-        if self.project.super_secret and 'secret' not in kwargs:
-            raise KeyError('Super secret project expects the custom secret to be passed in kwargs["secret"].')
-
+    def get_decrypted_data(self, secret, salt, decryptor=None):
         try:
-            return self.decrypt(self.data, **kwargs)
+            if decryptor:
+                return decryptor.decrypt(self.data)
+            else:
+                return Decryption(secret, salt).decrypt(self.data)
         except ValueError as e:
-            print(e)
-            raise ValueError('Wrong secret.')
+            raise ValueError(f'Wrong secret, {e}')
 
 
 class PRNG(object):

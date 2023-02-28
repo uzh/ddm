@@ -89,7 +89,7 @@ class TestModelEncryption(TestCase):
                     data=raw_data
                 )
                 self.assertNotEqual(raw_data, dd.data)
-                self.assertEqual(raw_data, dd.get_decrypted_data())
+                self.assertEqual(raw_data, dd.get_decrypted_data(secret=dd.project.secret_key, salt=dd.project.get_salt()))
 
     def test_questionnaire_response_encryption_default(self):
         for raw_data in [self.raw_data_short, self.raw_data_long]:
@@ -100,7 +100,7 @@ class TestModelEncryption(TestCase):
                     data=raw_data
                 )
                 self.assertNotEqual(raw_data, qr.data)
-                self.assertEqual(raw_data, qr.get_decrypted_data())
+                self.assertEqual(raw_data, qr.get_decrypted_data(secret=qr.project.secret_key, salt=qr.project.get_salt()))
 
     def test_data_donation_encryption_super_secret(self):
         for raw_data in [self.raw_data_short, self.raw_data_long]:
@@ -114,11 +114,9 @@ class TestModelEncryption(TestCase):
                     data=raw_data,
                 )
                 self.assertNotEqual(raw_data, dd.data)
-                with self.assertRaises(KeyError):
-                    dd.get_decrypted_data()
                 with self.assertRaises(ValueError):
-                    dd.get_decrypted_data(secret='invalidSecret1234')
-                self.assertEqual(raw_data, dd.get_decrypted_data(secret='test1234'))
+                    dd.get_decrypted_data(secret='invalidSecret1234', salt=dd.project.get_salt())
+                self.assertEqual(raw_data, dd.get_decrypted_data(secret='test1234', salt=dd.project.get_salt()))
 
     def test_questionnaire_response_encryption_super_secret(self):
         for raw_data in [self.raw_data_short, self.raw_data_long]:
@@ -129,8 +127,6 @@ class TestModelEncryption(TestCase):
                     data=raw_data
                 )
                 self.assertNotEqual(raw_data, qr.data)
-                with self.assertRaises(KeyError):
-                    qr.get_decrypted_data()
                 with self.assertRaises(ValueError):
-                    qr.get_decrypted_data(secret='invalidSecret1234')
-                self.assertEqual(raw_data, qr.get_decrypted_data(secret='test1234'))
+                    qr.get_decrypted_data(secret='invalidSecret1234', salt=qr.project.get_salt())
+                self.assertEqual(raw_data, qr.get_decrypted_data(secret='test1234', salt=qr.project.get_salt()))

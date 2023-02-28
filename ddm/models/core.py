@@ -76,7 +76,7 @@ class DonationProject(models.Model):
     slug = models.SlugField(unique=True, verbose_name='External Project Slug')
     briefing_text = RichTextUploadingField(
         null=True, blank=True,
-        verbose_name='Welcome Page Text',
+        verbose_name='Briefing Text',
         config_name='ddm_ckeditor'
     )
     briefing_consent_enabled = models.BooleanField(default=False)
@@ -84,7 +84,7 @@ class DonationProject(models.Model):
     briefing_consent_label_no = models.CharField(max_length=255, blank=True)
     debriefing_text = RichTextUploadingField(
         null=True, blank=True,
-        verbose_name='End Page Text',
+        verbose_name='Debriefing Text',
         config_name='ddm_ckeditor'
     )
 
@@ -142,6 +142,9 @@ class DonationProject(models.Model):
 
     def get_absolute_url(self):
         return reverse('project-detail', args=[str(self.id)])
+
+    def get_salt(self):
+        return str(self.date_created)
 
     def clean_file_on_reupload(self):
         """
@@ -277,6 +280,17 @@ class Participant(models.Model):
 
     extra_data = models.JSONField(default=get_extra_data_default)
 
+    def get_context_data(self):
+        """
+        Returns data that can be accessed when participant is passed to a
+        template as a context variable.
+        """
+        context_data = {
+            'public_id': self.external_id,
+            'data': self.extra_data
+        }
+        return context_data
+
     def save(self, *args, **kwargs):
         if self.pk is None:
             new_external_id = create_asciidigits_id()
@@ -348,10 +362,11 @@ class DonationBlueprint(models.Model):
         on_delete=models.CASCADE
     )
     name = models.CharField(max_length=250)
+    description = models.TextField(null=True)
 
     class FileFormats(models.TextChoices):
-        JSON_FORMAT = 'json'
-        CSV_FORMAT = 'csv'
+        JSON_FORMAT = 'json', 'JSON file'
+        CSV_FORMAT = 'csv', 'CSV file'
         # HTML_FORMAT = 'html',
         # XLSX_FORMAT = 'xlsx',
 
@@ -398,6 +413,7 @@ class DonationBlueprint(models.Model):
         config = {
             'id': self.pk,
             'name': self.name,
+            'description': self.description,
             'format': self.exp_file_format,
             'f_expected': json.loads("[" + str(self.expected_fields) + "]"),
             'f_extract': self.get_fields_to_extract(),
@@ -493,23 +509,31 @@ class ProcessingRule(models.Model):
         SMALLER = '<', 'Smaller than (<)'
         GREATER_OR_EQUAL = '>=', 'Greater than or equal (>=)'
         SMALLER_OR_EQUAL = '<=', 'Smaller than or equal (<=)'
-        REGEX = 'regex', 'Regex (removes matches)'
+        REGEX_DELETE_MATCH = 'regex-delete-match', 'Delete match (regex)'
+        REGEX_REPLACE_MATCH = 'regex-replace-match', 'Replace match (regex)'
+        REGEX_DELETE_ROW = 'regex-delete-row', 'Delete row when match (regex)'
 
     comparison_operator = models.CharField(
-        max_length=10,
+        max_length=24,
         blank=True,
         null=True,
         choices=ComparisonOperators.choices,
         default=None
     )
     comparison_value = models.TextField(blank=True)
+    replacement_value = models.TextField(
+        blank=True,
+        help_text='Only required for operation "Replace match (regex)".'
+    )
 
     def get_rule_config(self):
         """
         Return a configuration dict for the processing rule:
         {
             'field': 'field_name',
-            'comparison_operator': '==' | '!=' | '>' | '<' | '>=' | '<=' | 'regex' | None,
+            'comparison_operator': '==' | '!=' | '>' | '<' | '>=' | '<=' |
+                                   'regex-delete-match' | ' regex-replace-match'
+                                   'regex-delete-row' | None,
             'comparison_value': '123' | Regex-String | None
         }
         """

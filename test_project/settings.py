@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'webpack_loader',
     'rest_framework',
     'rest_framework.authtoken',
+    # 'debug_toolbar',  # Added for debugging purposes
 ]
 
 MIDDLEWARE = [
@@ -37,6 +38,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',  # Added for debugging purposes
 ]
 
 TEMPLATES = [
@@ -116,3 +118,6 @@ LOGOUT_REDIRECT_URL = '/login/'
 
 CKEDITOR_RESTRICT_BY_USER = True
 CKEDITOR_UPLOAD_PATH = 'uploads/'
+
+
+# INTERNAL_IPS = ["127.0.0.1", ]  # Added for debugging purposes

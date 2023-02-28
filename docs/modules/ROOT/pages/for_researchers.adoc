@@ -7,161 +7,125 @@
 :showtitle!:
 
 
-This part of the documentation is addressed at the users of the Data Donation Module (i.e., the researchers) and will explain:
+This part of the documentation is addressed at the _users_ of the Data Donation Module (i.e., the researchers) and will explain:
 
-- Core principles of the Data Donation Module.
 - How to set up a data donation project.
 - How to monitor an ongoing data donation project.
 - How to download and work with the collected data.
 
-Readers interested in setting up DDM for institutional use or their own research should turn to the xref:for_admins.adoc[Documentation for Administrators].
-
-== Getting Started With DDM
-
-=== Overview
-
-=== Create An Account
+It is assumed that a server with DDM set up on it is running.
+Readers interested in setting up a server to run DDM for institutional use or their own research should turn to the xref:for_admins.adoc[Documentation for Administrators].
+For a general introduction to the module, see xref:index.adoc[this page].
 
 
-
-== Set Up a Data Donation Project
+== Setting Up a Data Donation Project
 
 === Creating a Project
 
-=== Overview of the Project Interface
+To set up a new data donation project, got to the `/projects/` page and click on "+ Create New Project".
+On the project creation page, you will be presented with the following options to configure your project:
 
-=== Setting Up the Data Donation Steps
+Project Name:: Name of the project. Visible to participants in the browser's title bar or a page's tab.
 
-==== Briefing of Participants
+External Project Slug:: Identifier that is used to expose the project to participants (e.g, https://root.url/project-slug ).
 
-==== Data Donation Setup
+Contact Information:: Contact information of the researcher responsible for the project.
+Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.
 
-NOTE: Mention that only img and gif files can be embedded without problems.
+Data Protection Statement:: Data protection statement that describes how the data is processed.
+Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.
 
-==== Questionnaire
-
-==== Debriefing of Participants
-
-
-== Monitoring an Ongoing Project
-
-=== Exception Logs
-
-
-== Accessing Collected Data Donations
-
-=== Internal Download
-
-=== External Download via API
-
-==== Example with R
-
-==== Example with Python
-
-=== Data Structure
+Super Secret:: When creating a "super secret" project, you will have to provide
+a password, which will be used to encrypt all collected data donations and survey responses
+(for more information on how collected data is encrypted, see xref:topics/encryption.adoc[here]).
+This password will not be saved by the application, and the data collected for
+this project can only be encrypted by entering the password that was used as a super secret
+when the project was created.
+Please note that there is no way to recover or reset this password if it is lost.
+Furthermore, also note that making a project "super secret" will limit the
+functionality of the module: it won’t be possible to create followup questions based on the data donation
+(i.e., data points from the data donation cannot be referenced in a question).
 
 
+=== The Project Hub
 
-== Definitions
-
-This section introduces the core concepts behind the DDM
-and defines terms used throughout the Researcher Manual.
-
-=== Data Donation Process
-
-A prototypical data donation as implemented in the DDM consists of 4 steps.
-These steps can be individually defined within a data donation project.
-Participants will access a data donation project through a link provided by the
-researchers and go through the following steps in their browser:
-
-
-==== Welcome/Briefing Page
-
-First, participants are presented with a welcome/briefing page.
-On this page, researchers...
-
-- describe their project.
-- disclose their data security policies.
-- inform about potential risks of a data donation.
-- etc.
-
-Based on this information, participants should be able to make an
-informed decision on whether they would like to continue with the data donation.
-
-
-==== Data Donation
-
-Next, participants are presented with the instructions on how to access the data
-of interest. Along with the instructions, a data upload form is provided.
-The user flow in this step looks as follows:
-
-a. Participants read the instructions and download/find the relevant the on their PC.
-b. Participants upload their data with the provided upload form.
-c. The uploaded data is filtered and transformed according to the rules defined by the researcher (e.g., only certain fields are extracted).
-d. The participant is presented with the filtered/transformed data which they will be donating to the researchers.
-e. Based on *d*, the participant can decide whether to donate their data (i.e., submit their data to the reseacher's server) or to abort.
-
-Steps *b* to *c* are all client-based and executed in the participant's browser.
-No personal data is submitted until step *e*.
-
-
-==== Follow-Up Questionnaire (optional)
-
-If data were donated, participants are presented with a follow-up questionnaire
-(this step is optional).
-Researchers can define the questions to include references to data points from
-the donated data.
-
-
-==== End/Debriefing Page
-
-Lastly, participants are presented with a debriefing page.
-
-
-=== Perspectives
-
-The data donation process can either be looked at from the researcher's or the
-participant's perspective.
-
-**Researchers** uses the DDM to collect data donations for their own research
-projects. A researcher is the owner of a data donation project and responsible
-for setting the project up. You can find more about how to set up a data donation
-project :doc:`here <./researcher_interface>`.
-
-**Participants** are citizens who are recruited by researchers to donate personal
-data for a research project.
-Find out more about how the data donation process as implemented in the DDM
-looks from the participant's perspective :doc:`here <./participation_flow>`.
-
-
-== Researcher Interface
-
-This section provides an overview of the interface structure.
-
-
-=== Project List
-
-The project list provides an overview of all the projects you have created.
-Here, you can also create new projects.
-
-
-=== Project Hub
-
-The Project Hub is the entry point to editing an existing project.
-It consists of the following sections:
+Once a project is created, you will be redirected to the "Project Hub".
+From here, you can access all settings and information that are relevant for your data donation project.
+It consists of four main areas:
 
 1. Project Details
+
 2. Project Configuration
+
 3. Data Center
+
 4. Danger Zone
 
 
-==== Project Details
 
-Here, basic meta-configurations of the data donation project are listed and can be edited.
+=== Editing Project Details
+
+==== Base Settings
+
+Project Name:: Name of the project. Visible to participants in the browser's title bar or a page's tab.
+
+External Project Slug:: Identifier that is used to expose the project to participants (e.g, https://root.url/project-slug ).
+
+==== Public Project Information
+
+Contact Information:: Contact information of the researcher responsible for the project.
+Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.
+
+Data Protection Statement:: Data protection statement that describes how the data is processed.
+Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.
+
+==== Redirect Configuration
+
+Optionally, participants can be redirected to another website from the debriefing page.
+This can be configured using the following settings:
+
+Redirect enabled:: Enable or disable the redirection of your participants when they have completed your project.
+If enabled, a redirect button will be displayed on the data donation end page that redirects to the URL defined in the `Redirect target` setting.
+
+Redirect target:: URL to which participants will redirected (only required if `redirect` is enabled).
+
+[TIP]
+====
+The redirect URL can include variables that are populated with the respective values. Currently, the following variables are supported:
+An extracted URL parameter (see above), the participant id (as ``ddm_participant_id``), or the project id (as ``ddm_project_id``).
+Use the following syntax to include variables in the redirect target: e.g. ``https://redirect.url?param={{URLParameter}}&participant={{ddm_participant_id}}&project={{ddm_project_id}}``
+====
 
 
-==== Project Configuration
+==== URL Parameter Extraction
+
+Optionally, information can be extracted from parameters passed with the URL when a project is accessed by a participant.
+This can be configured using the following settings:
+
+URL parameter extraction enabled:: Enable or disable whether URL parameters should be extracted when participants access the project's briefing page.
+
+Expected URL parameter:: Provide a string containing the parameters that should be extracted.
+Separate multiple parameters with a semikolon (e.g., "parameter_A;parameter_B"). The extracted values will
+be saved for each participant and is included in the data export. If a parameter is not present, it will be saved
+as `None`. Undefined parameters passed in the URL will be ignored.
+
+[TIP]
+====
+If participants are asked to first fill out a questionnaire created in an external
+survey software such as e.g. Unipark or Qualtrics, passing URL parameters can
+be used to link data donations with the survey data by passing a participant
+ID in the URL parameters.
+====
+
+
+==== Project Appearance
+
+The following settings are available to customize the appearance of your data donation project:
+
+Header Image Left/Header Image Right:: Upload an image that will be displayed in the header of your project (e.g., an institution or project logo).
+
+
+=== Editing Project Configuration
 
 The structure of the Project Configuration follows the steps of the prototypical
 data donation process. It consists of the following sections:
@@ -171,144 +135,125 @@ data donation process. It consists of the following sections:
 3. Questionnaire: Define questions that will be shown to participants after they have donated their data.
 4. End Page: Define what is displayed when participants reach the end of the data donation.
 
+==== Briefing
 
-==== Data Center
+Briefing Text:: Text displayed to participants on the briefing page.
 
-The Data Center will report some basic statistics about the status of an
-ongoing data donation project [to be integrated].
+Briefing consent enabled:: If briefing consent is enabled, participants will
+have to explicitly indicate their consent at the bottom of the briefing page before
+they can continue. If a participant does indicate that they to do not consent,
+they will be redirected to the debriefing page.
 
-Furthermore, you can download the collected data donations as a JSON file.
-
-
-==== Danger Zone
-
-Here, you can find the option to delete the current project.
-Please be aware that a deleted project cannot be restored and all the collected
-data donations and questionnaire responses will be deleted with it.
+Briefing consent label yes/Briefing consent label no:: The labels displayed to
+participants to indicate consent ("briefing consent label yes") or reject
+consent ("briefing consent label no").
 
 
-=== Set up a Data Donation Project
+==== Data Donation
 
-NOTE: Will be added soon.
+The data donation is organized in `File Uploaders` and `Donation Blueprints`.
 
+A "File Uploader" corresponds to the file that is expected to be uploaded.
+This file can either be a single file (e.g., a JSON file) or a ZIP container.
 
-=== Create a Project
+For each File Uploader, a set of `Instructions` for participants can be defined
+that describe how they can access and upload the requested file.
 
-NOTE: Will be added soon.
+Each uploader has one or multiple associated `Donation Blueprints` (although
+if a File Uploader expects a single file, only one Donation Blueprint can
+be associated with it).
+A Donation Blueprint defines how the data contained in a single file
+(e.g., the uploaded file in the case of a single file upload, or a file contained
+in the ZIP container in the case of a ZIP upload) is extracted.
 
+The data donation step can incorporate multiple File Uploaders.
 
-=== Project Settings
+===== Configure File Uploader
 
-**Name (required):**
-Name of the project. Visible to data donors in the browser's title bar or a page's tab.
+Name:: Name of the File Uploader. Will be publicly visible to participants in the header of the file uplaoder.
 
-**Slug (required):**
-Identifier that is used to expose the project to data donors (e.g, https://root.url/project-slug ).
+Upload Type:: Either "single file" or "zip file".
 
-**Contact Information (required):**
-Contact information of the researcher responsible for the project.
-Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.
+Index:: The position of the file uploader on the data donation page.
+Only relevant if multiple file uploaders are displayed – file uploaders with a
+lower index will be displayed closer to the top of the page.
 
-**Data Protection Statement (required):**
-Data protection statement that describes how the data is processed.
-Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.
-
-**URL parameter extraction enabled (optional):**
-If enabled, the URL parameter(s) defined in the *expected URL parameter* setting will be extracted on the donation
-  entry page and saved (e.g., ``https://root.url/project-slug?param1=value`` will store 'value' as response to 'param1').
-
-**Expected URL parameter (optional):**
-Defines which URL parameters should be extracted on project entry (only effective if URL parameter extraction is enabled).
-Multiple parameters can be defined by separating them with a semikolon (e.g., 'param1;param2;param3').
-
-**Redirect Enabled (optional):**
-If enabled, a redirect button will be displayed on the data donation end page that redirects
-  to the URL defined in the *redirect target* setting.
-
-**Redirect Target (optional):**
-If redirect is enabled for a project, data donors will be redirected to this URL at the end of the donation process.
-The redirect URL can include variables that are populated with the respective values. Currently, the following variables are supported:
-An extracted URL parameter (see above), the participant id (as ``ddm_participant_id``), or the project id (as ``ddm_project_id``).
-  Use the following syntax to include variables in the redirect target: e.g. ``https://redirect.url?param={{URLParameter}}&participant={{ddm_participant_id}}&project={{ddm_project_id}}``
+Associated Donation Blueprints:: The donation blueprints that apply to the expected file(s) collected with the file uploader.
 
 
-=== Define the Welcome Page
+===== Configure Instructions
 
-NOTE: Will be added soon.
+Donation Instructions consist of one or multiple instruction pages.
+Instruction pages are displayed as a slide show at the top of file uploader.
+For each instruction page, the following can be configured:
 
+Text:: The instruction text displayed to the participants.
+By default, researchers can also upload and include images or gifs to guide
+participants through the data donation process in this field (video upload is not supported -
+but videos hosted externally can still be embedded).  //TODO: Check if video can be embedded without problems.
 
+Index:: The position of the page in the slideshow.
 
-=== Set up the Data Donation
+NOTE:: If no instructions are defined for a File Uploader, the instruction section will
+be hidden in the participation view.
 
-With Donation Blueprints, researchers define what kind of data they are expecting and
-which data they want to extract from the donated data.
+===== Configure Donation Blueprint
 
-There are two types of Donation Blueprints:
-
-a. Donation Blueprint
-b. Blueprint Container
-
-The *Donation Blueprint* defines processing rules on the file level.
-The *Blueprint Container* is a container class, that can be used to bundle
-multiple *Donation Blueprints* if participants upload a ZIP file instead of a single file.
-
-
-==== Donation Blueprint
-The Donation Blueprint defines the logic, how a donated data file will be processed
-and how the data will be extracted.
-
-===== Settings
-
-**Name:**
-Name of the expected data donations. Will be publicly visible to participants.
+Name:: Name of the expected data donations. Will be publicly visible to participants.
 Therefore, it is important to define a meaningful name.
 
-**Expected File Format:**
-The file format of the expected data donation. Currently, only JSON is implemented.
+Description:: Description of what the blueprint will extract. If defined, the
+description will be visible for participants in the data donation step.
 
-**Expected Fields:**
-The fields that must be contained in the donated file. If a file does not contain
-one or more of the fields defined here, it will not be accepted as a donation.
-This setting should be defined in the following format: "Field A", "Field B"
+Expected file format:: The file format of the expected data donation. Currently, only JSON and CSV is implemented.
 
-**Extracted Fields:**
-The fields that will be extracted from a donated file, of the file contains the
-expected fields.
-This setting should be defined in the following format: "Field A", "Field B"
+Associated File Uploader:: The `File Uploader` for which the blueprint will be applied.
 
-**Blueprint Container:**
-This field is allowed to be undefined. [-- TODO: Add meaningful description --]
-
-**Regex path:**
-Here, the path where the file is expected to be located within a ZIP file is defined.
+Regex path:: Here, the path where the file is expected to be located within a ZIP file is defined.
 Only necessary, if the Donation Blueprint is part of a Blueprint Container.
-[-- TODO: Check if this has already been implemented correctly --]
+
+WARNING: If a regex expression matches two files, DDM extracts the first one that matches the expression.
+Afterwards, it does not look any further, even if the matched file does not match the expected fields.
+Therefore, be careful to choose regex expressions that will only match the expected file.
 
 
-NOTE: TODO: Add File Uploader Description.
+[TIP]
+====
+*Examples for regex paths to match files*
 
+[%header,cols=2*]
+|===
+|Regex
+|Description
 
-==== Instructions
+|`^MyActivities.json`
+|Matches a file named `MyActivities.json` that is located at the root of the ZIP file.
 
-Instructions can either be defined on the level of a *Donation Blueprint* or a *Blueprint Container*.
+|`^SpecificFolder/MyActivities\.json`
+|Matches a file named `MyActivities.json` that is located in a folder named `SpecificFolder` in the root of the ZIP file.
 
-Instructions consist of one or more instruction pages that can be freely edited by the researcher.
-Instructions will automatically be displayed in the participant-flow.
+|`.*MyActivities\.json`
+|Matches file if the filename ends with `MyActivities.json` that can be located anywhere in the ZIP file. Warning: This also matches e.g. `BogusMyAcitivties.json`.
 
-If a *Donation Blueprint* is part of a *Blueprint Container*, the instructions defined
-on the *Blueprint Container* will take precedent over the instructions defined on the
-Blueprint-level (i.e., the latter will not be shown).
+|`(\^MyActivities\.json\|^MeineAktivitäten\.json\|^MieAttivita\.json)`
+|Matches a file that is located at the root of the ZIP file and either named `MyActivities.json`, `MeineAktivitäten.json`, or `MieAttivita.json`.
+Can be helpful to match the same file in different languages.
+|===
 
+You can find about more about the possibilities of regex matches [here].
+With the following application, you can test your regex patterns online: [link to a regex pattern tester]
+====
 
+Expected fields:: The fields that must be contained in the donated file. If a file does not contain
+one or more of the fields defined here, it will not be accepted as a donation.
+Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").
 
-=== Define Questionnaire
+==== Questionnaire
 
-Researchers can optionally define a questionnaire consisting of one or more questions.
-The questions will be displayed after the data donation, but only if the data donation has been successfully completed.
+Researchers can optionally define a questionnaire consisting of one or more pages, each consisting of one or more questions.
+The questions will be displayed after the data donation.
 
-==== Question Types
-
-DDM integrates the following question types:
+Currently, the following question types are implemented:
 
 * Single Choice Question
 * Multi Choice Question
@@ -317,39 +262,99 @@ DDM integrates the following question types:
 * Open Question
 * Transition Block (plain text, without any response options for the participant)
 
-Depending on the question type, *question response items* and a *question response scale* can be defined.
+Depending on the question types, the following attributes can be configured:
 
-Additional features:
+Name:: Question name - only used for internal organisation.
 
-* Question items can be randomized.
-* More to come.
+Blueprint (optional):: If associated to a blueprint, the data extracted by
+this blueprint for a given participant is available to be included in the question text
+(see [LOCATION] for more information on how to include data in question texts). // TODO: Add link.
+If the associated blueprint did not extract any data, the question will not be displayed.
+If a question should always be displayed, select the option "General Question" here.
+
+Page:: Number of the page on which the question should be displayed.
+
+Text:: The question text that is displayed to participants.  // TODO: Extend description to explain inclusion of donated data.
+
+Required:: If a question is marked as required, the application will show a
+hint to the participant if they missed to answer this question.
+This hint will only be shown once. This means that if a participant chooses to
+ignore the hint and clicks on 'continue', they are able to skip a required question.
+
+Randomize items:: Enable or disable randomization of items.
+
+Question Items:: The items that will be displayed in the answer part of the question.
+
+Scale Configuration:: Configure how the scale displayed to participants to rate items will look like
+(only for Matrix Question and Semantic Differential).
 
 
-==== Include Donated Data in a Question
+[TIP]
+====
+*How to Include Donated Data in a Question*
 
-It is possible to include information contained in the donated data in the question text.
-For this, every question must be associated to a *Donation Blueprint*.
+It is possible to include information contained in the donated data or related to the participant in the question text.
+Questions that should integrate this behaviour must be linked to a donation blueprint
 The donated data related to the associated blueprint will then be available as a
-context variable.
+context variable an can be referenced in the question body as follows:
+`Display donated data: {{ data }}. Display participant data: {{ participant }}.`
 
 For this, DDM utilizes the `Django template engine <https://docs.djangoproject.com/en/3.2/topics/templates/>`_.
 The donated data will be available as a template variable "data" in the question text definition.
 This variable can be combined flexibly with Django's `built-in template tags and filters <https://docs.djangoproject.com/en/3.2/ref/templates/builtins/>`_.
 
-NOTE: TODO: Include Example.
+// TODO: Include Example.
+
+// TODO: Include a list of accessible template features.
+====
 
 
-=== Define the End Page
+==== Debriefing
 
-NOTE: TODO: Add content.
-
-
-=== Monitor an Active Data Donation Project
-
-NOTE: TODO: Add content.
+Debriefing text:: Text displayed to participants on the briefing page.
 
 
-=== Download the Collected Data
+=== Data Center
 
-NOTE: TODO: Add content.
+In the Data Center, you can find options to `A` access the collected data,
+`B` access the project logs, and `C` find some general field statistics about the progress of your project.
 
+==== Data Download: Accessing Collected Data Donations
+
+A) Internal Download
+
+B) External Download via API
+
+// TODO: Add Example with R
+
+// TODO: Add Example with Python
+
+==== Data Structure
+
+
+==== Project Log: Monitoring an on-going Project
+
+// TODO: Describe Exception Logs.
+
+==== Participation Statistics
+
+// TODO: Describe.
+
+
+
+=== Danger Zone
+
+Here, you can find all options that affect the data collected in the course of your project:
+
+==== Reset Project Data
+
+With this option, you can delete all data collected for a given project.
+
+==== Delete Participant
+
+You can delete the data for a given participant by providing their external participation id.
+// TODO: Explain this function further.
+
+==== Delete Project
+
+With this option you can delete the current project. This will also delete all associated data.

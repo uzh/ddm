@@ -1,6 +1,6 @@
 {
   "en": {
-    "data-submit-wait": "Just a moment, your data donation is being submitted",
+    "data-submit-wait": "Your data donation is being submitted. Please be patient for a moment and do not close this window.",
     "next-btn-label": "Submit Data",
     "consent-error-msg": "You did not indicate for all uploads whether you consent to the donation of your data. Please go back and indicate whether you want to donate your data.",
     "back-label": "back",
@@ -10,7 +10,7 @@
     "status-info-msg-none-attempted": "You have not uploaded any data. Are you sure you want to continue?"
   },
   "de": {
-    "data-submit-wait": "Einen Moment bitte, Ihre Datenspende wird gerade übermittelt",
+    "data-submit-wait": "Ihre Datenspende wird gerade übermittelt. Bitte haben Sie einen Moment Geduld und schliessen Sie dieses Fenster nicht.",
     "next-btn-label": "Daten übermitteln",
     "consent-error-msg": "Sie haben nicht bei allen Uploads angegeben, ob Sie mit der Spende Ihrer Daten einverstanden sind. Bitte gehen Sie zurück und geben Sie an, ob Sie mit der Spende Ihrer Daten einverstanden sind.",
     "back-label": "zurück",

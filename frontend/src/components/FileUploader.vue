@@ -10,19 +10,20 @@
     </div>
 
     <!-- INSTRUCTIONS -->
-    <div class="accordion" :id="'ul-acc-'+componentId">
-      <div class="accordion-item">
-
-        <h3 class="accordion-header" :id="'acc-instr-head-'+componentId">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#acc-instr-body-'+componentId" aria-expanded="true" :aria-controls="'acc-instr-body-'+componentId">
-            <b>{{ $t('instructions') }}</b>
-          </button>
-        </h3>
+    <div v-if="instructions.length" class="accordion" :id="'ul-acc-'+componentId">
+      <div class="accordion-body border">
+        <div class="row align-items-center">
+          <div class="col-auto ul-status-icon"><i class="bi bi-signpost"></i></div>
+          <div class="col-auto"><b>{{ $t('instructions') }}</b></div>
+          <div class="col accordion-header" :id="'acc-instr-head-'+componentId">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#acc-instr-body-'+componentId" aria-expanded="true" :aria-controls="'acc-instr-body-'+componentId">
+            </button>
+          </div>
+        </div>
 
         <div :id="'acc-instr-body-'+componentId" class="accordion-collapse collapse show" aria-labelledby="headingOne" :data-bs-parent="'#ul-acc-'+componentId">
           <div class="accordion-body">
-            <DonationInstructions v-if="instructions.length" :instructions="instructions" :component-id="componentId"></DonationInstructions>
-            <div v-else>{{ $t('no-instructions-defined') }}.</div>
+            <DonationInstructions :instructions="instructions" :component-id="componentId"></DonationInstructions>
           </div>
         </div>
 
@@ -37,8 +38,8 @@
         <template v-if="uploadStatus === 'pending'">
           <div class="col-auto ul-status-icon"><i class="bi bi-upload"></i></div>
 
-          <div class="col ul-status-description">
-            <p v-if="!uploadAttempts">{{ $t('upload-file') }}:</p>
+          <div class="col-auto ul-status-description">
+            <p v-if="!uploadAttempts"><b>{{ $t('upload-file') }}:</b></p>
             <p v-else-if="uploadAttempts">{{ $t('upload-different-file') }}:</p>
           </div>
 
@@ -79,7 +80,7 @@
 
         <!-- Upload partial -->
         <template v-else-if="uploadStatus === 'partial'">
-          <div class="col-auto ul-status-icon"><i class="bi bi-exclamation-diamond text-warning"></i></div>
+          <div class="col-auto ul-status-icon"><i class="bi bi-exclamation-diamond text-orange"></i></div>
 
           <div class="col-auto ul-status-description">
             <p class="fw-bold">{{ $t('partial-upload-status') }}</p>
@@ -93,7 +94,7 @@
 
         <!-- Upload failed -->
         <template v-else-if="uploadStatus === 'failed'">
-          <div class="col-auto ul-status-icon"><i class="bi bi-exclamation-diamond text-danger"></i></div>
+          <div class="col-auto ul-status-icon"><i class="bi bi-x-octagon text-danger"></i></div>
 
           <div class="col-auto ul-status-description">
             <p class="fw-bold">{{ $t('upload-failed') }}</p>
@@ -108,34 +109,41 @@
         </template>
 
       </div>
-
+      </div>
       <!-- UPLOAD FEEDBACK -->
-      <div class="ul-feedback-container row border-bottom mt-3">
-        <div class="col">
+      <div class="accordion-body border">
+      <div class="row ul-feedback-container">
+        <div class="col-auto ul-status-icon"><i class="bi bi-clipboard-data"></i></div>
+        <div class="col extraction-information-container">
+          <div class="col"><b>{{ $t('data-extraction') }}</b></div>
+            <div class="col pb-4">
+              <template v-if="uploadStatus === 'pending'">
+                {{ $t('data-extraction-intro') }}:
+              </template>
+              <template v-else>
+                {{ $t('extracted-data-intro') }}:
+              </template>
+            </div>
         <template v-for="bp in blueprints" :key="bp">
-        <div class="ul-status row align-items-center border-top pt-2 pb-2" :class="{ 'ul-success': blueprintData[bp.id.toString()].status === 'success', 'ul-failed': blueprintData[bp.id.toString()].status === 'failed'}">
+        <div class="ul-status row align-items-center pt-2 pb-2" :class="{ 'ul-success': blueprintData[bp.id.toString()].status === 'success', 'ul-failed': blueprintData[bp.id.toString()].status === 'failed'}">
 
           <!-- Pending -->
           <template v-if="blueprintData[bp.id.toString()].status === 'pending'">
             <div class="col w-small bp-ul-icon"><i class="bi bi-file-earmark-fill text-grey"></i></div>
-            <div class="col-2 bp-description">{{ bp.name }}</div>
-            <div class="col bp-ul-status">{{ $t('not-yet-extracted') }}</div>
-            <div class="col bp-ul-data"></div>
-            <div class="col bp-ul-consent"></div>
+            <div class="col-4 bp-description">{{ bp.name }}</div>
+            <div class="col bp-ul-status">{{ bp.description }}</div>
           </template>
 
           <!-- Success -->
           <template v-if="blueprintData[bp.id.toString()].status === 'success'">
             <div class="row pb-2">
               <div class="col w-small bp-ul-icon"><i class="bi bi-file-earmark-check-fill text-success"></i></div>
-              <div class="col-2 bp-description">{{ bp.name }}</div>
-              <div class="col bp-ul-status">{{ $t('upload-success-short') }}</div>
+              <div class="col-4 bp-description">{{ bp.name }}</div>
             </div>
 
             <div class="row fs-09">
-              <div class="col w-small"></div>
-              <div class="col">
-                <p class="pb-2">{{ $t('extracted-data-intro') }}:</p>
+              <div class="col feedback-col">
+                <div>{{ $t('extracted-data') }}:</div>
                 <div class="data-donation-container pb-3">
                   <div :id="'donation-container-'+bp.id.toString()" class="ul-data-container ul-data-condensed bg-white">
                     <table :id="'ul-result-' + bp.id.toString()" class="table table-sm">
@@ -157,17 +165,16 @@
             </div>
 
             <div class="row">
-              <div class="col w-small"></div>
-              <div class="col fs-09 pb-3 pt-1">
+              <div class="col feedback-col pb-5 pt-1">
                 <p class="fw-bold">{{ $t('donation-question') }}</p>
                 <div class="consent-question-container">
-                  <div class="question-choice-item  form-check">
+                  <div class="question-choice-item">
                     <label class="form-check-label rb-cb-label" :for="'donate-agree-'+bp.id.toString()">
                       <input type="radio" :id="'donate-agree-'+bp.id.toString()" value="true" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent" required>
                        {{ $t('donation-agree') }}
                     </label>
                   </div>
-                  <div class="question-choice-item  form-check">
+                  <div class="question-choice-item">
                     <label class="form-check-label rb-cb-label" :for="'donate-disagree-'+bp.id.toString()">
                       <input type="radio" :id="'donate-disagree-'+bp.id.toString()" value="false" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent">
                        {{ $t('donation-disagree') }}
@@ -183,7 +190,7 @@
           <!-- Failed -->
           <template v-if="blueprintData[bp.id.toString()].status === 'failed'">
             <div class="col w-small bp-ul-icon"><i class="bi bi-file-earmark-x-fill text-danger"></i></div>
-            <div class="col-2 bp-description">{{ bp.name }}</div>
+            <div class="col-4 bp-description">{{ bp.name }}</div>
             <div class="col bp-ul-status">
               <template v-if="blueprintData[bp.id.toString()].errors.length">
                 <p v-for="e in blueprintData[bp.id.toString()].errors" :key="e">{{ e }}</p>
@@ -201,6 +208,29 @@
       </div>
     </div>
   </div>
+
+  <div class="default-modal" id="ulInfoModal" ref="ulInfoModal" style="display: none">
+    <div class="modal-body d-flex flex-row align-items-center pt-5">
+
+      <div class="ps-2 pe-3 ul-status-icon"><i id="ul-modal-info-icon" class="bi bi-file-check"></i></div>
+
+      <div class="ul-status-description">
+        <h4>{{ this.ulModalInfoTitle }}</h4>
+        <p id="ul-modal-info-msg" class="pb-2" v-html="this.ulModalInfoMsg"></p>
+        <div v-if="uploadStatus === 'failed'">
+          <ul class="text-danger pb-3">
+            <li v-for="error in generalErrors" :key="error">{{ error }}</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="ddm-btn" type="button" id="closeUlInfoModal" @click="closeUlInfoModal">OK</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" ref="modalBackdrop" style="display: none"></div>
 
 </template>
 
@@ -229,6 +259,8 @@ export default {
       uploadStatus: 'pending',
       uploadAttempts: 0,
       generalErrors: [],
+      ulModalInfoMsg: '',
+      ulModalInfoTitle: ''
     }
   },
   created() {
@@ -589,16 +621,33 @@ export default {
         }
       }
 
+      let modalIcon = document.getElementById('ul-modal-info-icon');
+
       if (!this.generalErrors.length && bpErrorCount === 0) {
         this.uploadStatus = 'success';
+        modalIcon.className = 'bi bi-file-check text-success';
+        this.ulModalInfoTitle = this.$t('ul-success-modal-title');
+        this.ulModalInfoMsg = this.$t('ul-success-modal-body');
+
       } else if (!this.generalErrors.length && (bpErrorCount < nBlueprints)) {
         this.uploadStatus = 'partial';
+        modalIcon.className = 'bi bi-exclamation-diamond text-orange';
+        this.ulModalInfoTitle = this.$t('ul-partial-modal-title');
+        this.ulModalInfoMsg = this.$t('ul-partial-modal-body');
+
       } else {
         this.uploadStatus = 'failed';
+        modalIcon.className = 'bi bi-x-octagon text-danger';
+        this.ulModalInfoTitle = this.$t('ul-failed-modal-title');
+        this.ulModalInfoMsg = this.$t('ul-failed-modal-body');
+
         for (let bp in this.blueprintData){
           this.blueprintData[bp].status = 'failed';
         }
       }
+
+      this.$refs.ulInfoModal.style.display = 'block';
+      this.$refs.modalBackdrop.style.display = 'block';
     },
 
     showHideData(bpId) {
@@ -619,6 +668,11 @@ export default {
       }
       targetLabel.innerHTML = newLabel;
     },
+
+    closeUlInfoModal() {
+      this.$refs.ulInfoModal.style.display = 'none';
+      this.$refs.modalBackdrop.style.display = 'none';
+    },
   },
 }
 </script>
@@ -635,26 +689,20 @@ export default {
   box-shadow: none;
 }
 .accordion-button {
-  background-color: #efefef;
   color: black;
   border-bottom: none;
 }
 .accordion-button:not(.collapsed)::after {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
 }
-.accordion-item,
-.accordion-button,
-.accordion-item:first-of-type {
+.accordion-button {
   border-radius: 0 !important;
 }
 .form-check-label {
   cursor: pointer;
 }
 .ul-success {
-  background-color: #55ff5517;
-}
-.ul-failed {
-  background-color: #f8d7da;
+
 }
 .ul-status-icon {
   font-size: 2.5rem;
@@ -673,12 +721,9 @@ export default {
 }
 .ul-data-container {
   display: block;
-  padding-left: 10px;
-  padding-right: 10px;
-  border-radius: 5px;
 }
 .ul-data-condensed {
-  max-height: 150px;
+  max-height: 250px;
   overflow: hidden;
 }
 .ul-data-expanded {
@@ -697,7 +742,7 @@ export default {
   z-index: 10;
   position: relative;
   cursor: pointer;
-  border-radius: 5px;
+  border-bottom: 1px solid black;
 }
 .control-expanded {
   background: white;
@@ -706,9 +751,9 @@ export default {
 }
 .control-condensed {
   background: rgb(255,255,255);
-  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 50%);
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(250,250,250,1) 50%);
   height: 75px;
-  margin-top: -75px;
+  margin-top: -74px;
   padding-top: 45px;
 }
 .fs-09 {
@@ -718,7 +763,27 @@ export default {
   max-width: 33px;
 }
 .consent-question-container {
-  padding: 20px 10px;
   width: 100%;
+}
+.feedback-col {
+  padding-left: 46px;
+}
+.extraction-information-container {
+  padding-top: 6px;
+}
+.ul-status {
+  border-top: 1px solid #212529;
+}
+.extraction-information-container .ul-status:last-of-type {
+  border-bottom: 1px solid #212529;
+}
+.text-orange {
+  color: #ef7000;
+}
+.upload-other a {
+  color: #767676 !important;
+}
+.ul-status-message {
+  padding-left: 25px;
 }
 </style>

@@ -136,6 +136,67 @@ This project is currently under active development.
 </div>
 </div>
 <div class="sect1">
+<h2 id="_overview_of_ddm"><a class="anchor" href="#_overview_of_ddm"></a>Overview of DDM</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_core_functionality"><a class="anchor" href="#_core_functionality"></a>Core Functionality</h3>
+<div class="paragraph">
+<p>The Data Donation Module enables researchers to setup a data donation project that, from the participants' perspective, consists of the following steps:</p>
+</div>
+<div class="paragraph">
+<p><strong><em>1) Briefing Page</em></strong><br>
+At the beginning, participants are presented with a briefing page.
+On this page, researchers can describe their project, brief participants about the upcoming steps,
+and optionally obtain explicit consent for participation.</p>
+</div>
+<div class="paragraph">
+<p><strong><em>2) Data Donation</em></strong><br>
+Next, participants are presented with a user interface through which they can donate their data.
+This interface consists of <code>(1)</code> a set of instructions, <code>(2)</code> a data upload form, and <code>(3)</code> a feedback area.</p>
+</div>
+<div class="paragraph">
+<p>The participation flow in this step looks as follows:</p>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>The participant reads the instructions and downloads/finds the relevant file on their PC.</p>
+</li>
+<li>
+<p>The participant uploads their data with the provided upload form.</p>
+</li>
+<li>
+<p>The uploaded data is filtered and transformed according to the rules defined by the researcher (e.g., only certain fields are extracted).</p>
+</li>
+<li>
+<p>The participant is presented with the filtered/transformed data which they will be donating to the researchers.</p>
+</li>
+<li>
+<p>Based on <code>d</code>, the participant can decide whether to donate their data (i.e., submit their data to the reseacher&#8217;s server).</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Steps <code>b</code> to <code>d</code> are all client-based and executed in the participant&#8217;s browser. No personal data is submitted until step <code>e</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong><em>3) Follow-Up Questionnaire</em></strong> (optional)<br>
+After the data donation, participants can optionally be presented with a questionnaire.
+Questions defined in this questionnaire can be configured to include data points from the donated data – either to
+enrich the donated data or to provide participants with insights into their personal data.</p>
+</div>
+<div class="paragraph">
+<p><strong><em>4) End/Debriefing Page</em></strong><br>
+Lastly, participants are presented with a debriefing page. From here, participants can optionally be redirected to another website or web application.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_core_principles"><a class="anchor" href="#_core_principles"></a>Core Principles</h3>
+
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_documentation_structure"><a class="anchor" href="#_documentation_structure"></a>Documentation Structure</h2>
 <div class="sectionbody">
 <div class="paragraph">

@@ -107,13 +107,10 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This part of the documentation is addressed at the users of the Data Donation Module (i.e., the researchers) and will explain:</p>
+<p>This part of the documentation is addressed at the <em>users</em> of the Data Donation Module (i.e., the researchers) and will explain:</p>
 </div>
 <div class="ulist">
 <ul>
-<li>
-<p>Core principles of the Data Donation Module.</p>
-</li>
 <li>
 <p>How to set up a data donation project.</p>
 </li>
@@ -126,227 +123,63 @@
 </ul>
 </div>
 <div class="paragraph">
-<p>Readers interested in setting up DDM for institutional use or their own research should turn to the <a href="for_admins.html" class="xref page">Documentation for Administrators</a>.</p>
+<p>It is assumed that a server with DDM set up on it is running.
+Readers interested in setting up a server to run DDM for institutional use or their own research should turn to the <a href="for_admins.html" class="xref page">Documentation for Administrators</a>.
+For a general introduction to the module, see <a href="index.html" class="xref page">this page</a>.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_getting_started_with_ddm"><a class="anchor" href="#_getting_started_with_ddm"></a>Getting Started With DDM</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_overview"><a class="anchor" href="#_overview"></a>Overview</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_create_an_account"><a class="anchor" href="#_create_an_account"></a>Create An Account</h3>
-
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_set_up_a_data_donation_project"><a class="anchor" href="#_set_up_a_data_donation_project"></a>Set Up a Data Donation Project</h2>
+<h2 id="_setting_up_a_data_donation_project"><a class="anchor" href="#_setting_up_a_data_donation_project"></a>Setting Up a Data Donation Project</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_creating_a_project"><a class="anchor" href="#_creating_a_project"></a>Creating a Project</h3>
-
+<div class="paragraph">
+<p>To set up a new data donation project, got to the <code>/projects/</code> page and click on "+ Create New Project".
+On the project creation page, you will be presented with the following options to configure your project:</p>
 </div>
-<div class="sect2">
-<h3 id="_overview_of_the_project_interface"><a class="anchor" href="#_overview_of_the_project_interface"></a>Overview of the Project Interface</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_setting_up_the_data_donation_steps"><a class="anchor" href="#_setting_up_the_data_donation_steps"></a>Setting Up the Data Donation Steps</h3>
-<div class="sect3">
-<h4 id="_briefing_of_participants"><a class="anchor" href="#_briefing_of_participants"></a>Briefing of Participants</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_data_donation_setup"><a class="anchor" href="#_data_donation_setup"></a>Data Donation Setup</h4>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Mention that only img and gif files can be embedded without problems.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_questionnaire"><a class="anchor" href="#_questionnaire"></a>Questionnaire</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_debriefing_of_participants"><a class="anchor" href="#_debriefing_of_participants"></a>Debriefing of Participants</h4>
-
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_monitoring_an_ongoing_project"><a class="anchor" href="#_monitoring_an_ongoing_project"></a>Monitoring an Ongoing Project</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_exception_logs"><a class="anchor" href="#_exception_logs"></a>Exception Logs</h3>
-
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_accessing_collected_data_donations"><a class="anchor" href="#_accessing_collected_data_donations"></a>Accessing Collected Data Donations</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_internal_download"><a class="anchor" href="#_internal_download"></a>Internal Download</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_external_download_via_api"><a class="anchor" href="#_external_download_via_api"></a>External Download via API</h3>
-<div class="sect3">
-<h4 id="_example_with_r"><a class="anchor" href="#_example_with_r"></a>Example with R</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_example_with_python"><a class="anchor" href="#_example_with_python"></a>Example with Python</h4>
-
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Project Name</dt>
+<dd>
+<p>Name of the project. Visible to participants in the browser&#8217;s title bar or a page&#8217;s tab.</p>
+</dd>
+<dt class="hdlist1">External Project Slug</dt>
+<dd>
+<p>Identifier that is used to expose the project to participants (e.g, <a href="https://root.url/project-slug" class="bare">https://root.url/project-slug</a> ).</p>
+</dd>
+<dt class="hdlist1">Contact Information</dt>
+<dd>
+<p>Contact information of the researcher responsible for the project.
+Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.</p>
+</dd>
+<dt class="hdlist1">Data Protection Statement</dt>
+<dd>
+<p>Data protection statement that describes how the data is processed.
+Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.</p>
+</dd>
+<dt class="hdlist1">Super Secret</dt>
+<dd>
+<p>When creating a "super secret" project, you will have to provide
+a password, which will be used to encrypt all collected data donations and survey responses
+(for more information on how collected data is encrypted, see <a href="topics/encryption.html" class="xref page">here</a>).
+This password will not be saved by the application, and the data collected for
+this project can only be encrypted by entering the password that was used as a super secret
+when the project was created.
+Please note that there is no way to recover or reset this password if it is lost.
+Furthermore, also note that making a project "super secret" will limit the
+functionality of the module: it won’t be possible to create followup questions based on the data donation
+(i.e., data points from the data donation cannot be referenced in a question).</p>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_data_structure"><a class="anchor" href="#_data_structure"></a>Data Structure</h3>
-
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_definitions"><a class="anchor" href="#_definitions"></a>Definitions</h2>
-<div class="sectionbody">
+<h3 id="_the_project_hub"><a class="anchor" href="#_the_project_hub"></a>The Project Hub</h3>
 <div class="paragraph">
-<p>This section introduces the core concepts behind the DDM
-and defines terms used throughout the Researcher Manual.</p>
-</div>
-<div class="sect2">
-<h3 id="_data_donation_process"><a class="anchor" href="#_data_donation_process"></a>Data Donation Process</h3>
-<div class="paragraph">
-<p>A prototypical data donation as implemented in the DDM consists of 4 steps.
-These steps can be individually defined within a data donation project.
-Participants will access a data donation project through a link provided by the
-researchers and go through the following steps in their browser:</p>
-</div>
-<div class="sect3">
-<h4 id="_welcomebriefing_page"><a class="anchor" href="#_welcomebriefing_page"></a>Welcome/Briefing Page</h4>
-<div class="paragraph">
-<p>First, participants are presented with a welcome/briefing page.
-On this page, researchers&#8230;&#8203;</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>describe their project.</p>
-</li>
-<li>
-<p>disclose their data security policies.</p>
-</li>
-<li>
-<p>inform about potential risks of a data donation.</p>
-</li>
-<li>
-<p>etc.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Based on this information, participants should be able to make an
-informed decision on whether they would like to continue with the data donation.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_data_donation"><a class="anchor" href="#_data_donation"></a>Data Donation</h4>
-<div class="paragraph">
-<p>Next, participants are presented with the instructions on how to access the data
-of interest. Along with the instructions, a data upload form is provided.
-The user flow in this step looks as follows:</p>
-</div>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Participants read the instructions and download/find the relevant the on their PC.</p>
-</li>
-<li>
-<p>Participants upload their data with the provided upload form.</p>
-</li>
-<li>
-<p>The uploaded data is filtered and transformed according to the rules defined by the researcher (e.g., only certain fields are extracted).</p>
-</li>
-<li>
-<p>The participant is presented with the filtered/transformed data which they will be donating to the researchers.</p>
-</li>
-<li>
-<p>Based on <strong>d</strong>, the participant can decide whether to donate their data (i.e., submit their data to the reseacher&#8217;s server) or to abort.</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>Steps <strong>b</strong> to <strong>c</strong> are all client-based and executed in the participant&#8217;s browser.
-No personal data is submitted until step <strong>e</strong>.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_follow_up_questionnaire_optional"><a class="anchor" href="#_follow_up_questionnaire_optional"></a>Follow-Up Questionnaire (optional)</h4>
-<div class="paragraph">
-<p>If data were donated, participants are presented with a follow-up questionnaire
-(this step is optional).
-Researchers can define the questions to include references to data points from
-the donated data.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_enddebriefing_page"><a class="anchor" href="#_enddebriefing_page"></a>End/Debriefing Page</h4>
-<div class="paragraph">
-<p>Lastly, participants are presented with a debriefing page.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_perspectives"><a class="anchor" href="#_perspectives"></a>Perspectives</h3>
-<div class="paragraph">
-<p>The data donation process can either be looked at from the researcher&#8217;s or the
-participant&#8217;s perspective.</p>
-</div>
-<div class="paragraph">
-<p><strong>Researchers</strong> uses the DDM to collect data donations for their own research
-projects. A researcher is the owner of a data donation project and responsible
-for setting the project up. You can find more about how to set up a data donation
-project :doc:`here &lt;./researcher_interface&gt;`.</p>
-</div>
-<div class="paragraph">
-<p><strong>Participants</strong> are citizens who are recruited by researchers to donate personal
-data for a research project.
-Find out more about how the data donation process as implemented in the DDM
-looks from the participant&#8217;s perspective :doc:`here &lt;./participation_flow&gt;`.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_researcher_interface"><a class="anchor" href="#_researcher_interface"></a>Researcher Interface</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>This section provides an overview of the interface structure.</p>
-</div>
-<div class="sect2">
-<h3 id="_project_list"><a class="anchor" href="#_project_list"></a>Project List</h3>
-<div class="paragraph">
-<p>The project list provides an overview of all the projects you have created.
-Here, you can also create new projects.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_project_hub"><a class="anchor" href="#_project_hub"></a>Project Hub</h3>
-<div class="paragraph">
-<p>The Project Hub is the entry point to editing an existing project.
-It consists of the following sections:</p>
+<p>Once a project is created, you will be redirected to the "Project Hub".
+From here, you can access all settings and information that are relevant for your data donation project.
+It consists of four main areas:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -364,14 +197,133 @@ It consists of the following sections:</p>
 </li>
 </ol>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_editing_project_details"><a class="anchor" href="#_editing_project_details"></a>Editing Project Details</h3>
 <div class="sect3">
-<h4 id="_project_details"><a class="anchor" href="#_project_details"></a>Project Details</h4>
+<h4 id="_base_settings"><a class="anchor" href="#_base_settings"></a>Base Settings</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Project Name</dt>
+<dd>
+<p>Name of the project. Visible to participants in the browser&#8217;s title bar or a page&#8217;s tab.</p>
+</dd>
+<dt class="hdlist1">External Project Slug</dt>
+<dd>
+<p>Identifier that is used to expose the project to participants (e.g, <a href="https://root.url/project-slug" class="bare">https://root.url/project-slug</a> ).</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_public_project_information"><a class="anchor" href="#_public_project_information"></a>Public Project Information</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Contact Information</dt>
+<dd>
+<p>Contact information of the researcher responsible for the project.
+Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.</p>
+</dd>
+<dt class="hdlist1">Data Protection Statement</dt>
+<dd>
+<p>Data protection statement that describes how the data is processed.
+Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_redirect_configuration"><a class="anchor" href="#_redirect_configuration"></a>Redirect Configuration</h4>
 <div class="paragraph">
-<p>Here, basic meta-configurations of the data donation project are listed and can be edited.</p>
+<p>Optionally, participants can be redirected to another website from the debriefing page.
+This can be configured using the following settings:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Redirect enabled</dt>
+<dd>
+<p>Enable or disable the redirection of your participants when they have completed your project.
+If enabled, a redirect button will be displayed on the data donation end page that redirects to the URL defined in the <code>Redirect target</code> setting.</p>
+</dd>
+<dt class="hdlist1">Redirect target</dt>
+<dd>
+<p>URL to which participants will redirected (only required if <code>redirect</code> is enabled).</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The redirect URL can include variables that are populated with the respective values. Currently, the following variables are supported:
+An extracted URL parameter (see above), the participant id (as <code>ddm_participant_id</code>), or the project id (as <code>ddm_project_id</code>).
+Use the following syntax to include variables in the redirect target: e.g. <code><a href="https://redirect.url?param={{URLParameter}}&amp;participant={{ddm_participant_id}}&amp;project={{ddm_project_id}}" class="bare">https://redirect.url?param={{URLParameter}}&amp;participant={{ddm_participant_id}}&amp;project={{ddm_project_id}}</a></code></p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_project_configuration"><a class="anchor" href="#_project_configuration"></a>Project Configuration</h4>
+<h4 id="_url_parameter_extraction"><a class="anchor" href="#_url_parameter_extraction"></a>URL Parameter Extraction</h4>
+<div class="paragraph">
+<p>Optionally, information can be extracted from parameters passed with the URL when a project is accessed by a participant.
+This can be configured using the following settings:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">URL parameter extraction enabled</dt>
+<dd>
+<p>Enable or disable whether URL parameters should be extracted when participants access the project&#8217;s briefing page.</p>
+</dd>
+<dt class="hdlist1">Expected URL parameter</dt>
+<dd>
+<p>Provide a string containing the parameters that should be extracted.
+Separate multiple parameters with a semikolon (e.g., "parameter_A;parameter_B"). The extracted values will
+be saved for each participant and is included in the data export. If a parameter is not present, it will be saved
+as <code>None</code>. Undefined parameters passed in the URL will be ignored.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If participants are asked to first fill out a questionnaire created in an external
+survey software such as e.g. Unipark or Qualtrics, passing URL parameters can
+be used to link data donations with the survey data by passing a participant
+ID in the URL parameters.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_project_appearance"><a class="anchor" href="#_project_appearance"></a>Project Appearance</h4>
+<div class="paragraph">
+<p>The following settings are available to customize the appearance of your data donation project:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Header Image Left/Header Image Right</dt>
+<dd>
+<p>Upload an image that will be displayed in the header of your project (e.g., an institution or project logo).</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_editing_project_configuration"><a class="anchor" href="#_editing_project_configuration"></a>Editing Project Configuration</h3>
 <div class="paragraph">
 <p>The structure of the Project Configuration follows the steps of the prototypical
 data donation process. It consists of the following sections:</p>
@@ -392,217 +344,219 @@ data donation process. It consists of the following sections:</p>
 </li>
 </ol>
 </div>
+<div class="sect3">
+<h4 id="_briefing"><a class="anchor" href="#_briefing"></a>Briefing</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Briefing Text</dt>
+<dd>
+<p>Text displayed to participants on the briefing page.</p>
+</dd>
+<dt class="hdlist1">Briefing consent enabled</dt>
+<dd>
+<p>If briefing consent is enabled, participants will
+have to explicitly indicate their consent at the bottom of the briefing page before
+they can continue. If a participant does indicate that they to do not consent,
+they will be redirected to the debriefing page.</p>
+</dd>
+<dt class="hdlist1">Briefing consent label yes/Briefing consent label no</dt>
+<dd>
+<p>The labels displayed to
+participants to indicate consent ("briefing consent label yes") or reject
+consent ("briefing consent label no").</p>
+</dd>
+</dl>
+</div>
 </div>
 <div class="sect3">
-<h4 id="_data_center"><a class="anchor" href="#_data_center"></a>Data Center</h4>
+<h4 id="_data_donation"><a class="anchor" href="#_data_donation"></a>Data Donation</h4>
 <div class="paragraph">
-<p>The Data Center will report some basic statistics about the status of an
-ongoing data donation project [to be integrated].</p>
-</div>
-<div class="paragraph">
-<p>Furthermore, you can download the collected data donations as a JSON file.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_danger_zone"><a class="anchor" href="#_danger_zone"></a>Danger Zone</h4>
-<div class="paragraph">
-<p>Here, you can find the option to delete the current project.
-Please be aware that a deleted project cannot be restored and all the collected
-data donations and questionnaire responses will be deleted with it.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_set_up_a_data_donation_project_2"><a class="anchor" href="#_set_up_a_data_donation_project_2"></a>Set up a Data Donation Project</h3>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Will be added soon.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_create_a_project"><a class="anchor" href="#_create_a_project"></a>Create a Project</h3>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Will be added soon.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_project_settings"><a class="anchor" href="#_project_settings"></a>Project Settings</h3>
-<div class="paragraph">
-<p><strong>Name (required):</strong>
-Name of the project. Visible to data donors in the browser&#8217;s title bar or a page&#8217;s tab.</p>
+<p>The data donation is organized in <code>File Uploaders</code> and <code>Donation Blueprints</code>.</p>
 </div>
 <div class="paragraph">
-<p><strong>Slug (required):</strong>
-Identifier that is used to expose the project to data donors (e.g, <a href="https://root.url/project-slug" class="bare">https://root.url/project-slug</a> ).</p>
+<p>A "File Uploader" corresponds to the file that is expected to be uploaded.
+This file can either be a single file (e.g., a JSON file) or a ZIP container.</p>
 </div>
 <div class="paragraph">
-<p><strong>Contact Information (required):</strong>
-Contact information of the researcher responsible for the project.
-Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.</p>
+<p>For each File Uploader, a set of <code>Instructions</code> for participants can be defined
+that describe how they can access and upload the requested file.</p>
 </div>
 <div class="paragraph">
-<p><strong>Data Protection Statement (required):</strong>
-Data protection statement that describes how the data is processed.
-Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.</p>
+<p>Each uploader has one or multiple associated <code>Donation Blueprints</code> (although
+if a File Uploader expects a single file, only one Donation Blueprint can
+be associated with it).
+A Donation Blueprint defines how the data contained in a single file
+(e.g., the uploaded file in the case of a single file upload, or a file contained
+in the ZIP container in the case of a ZIP upload) is extracted.</p>
 </div>
 <div class="paragraph">
-<p><strong>URL parameter extraction enabled (optional):</strong>
-If enabled, the URL parameter(s) defined in the <strong>expected URL parameter</strong> setting will be extracted on the donation
-  entry page and saved (e.g., <code><a href="https://root.url/project-slug?param1=value" class="bare">https://root.url/project-slug?param1=value</a></code> will store 'value' as response to 'param1').</p>
-</div>
-<div class="paragraph">
-<p><strong>Expected URL parameter (optional):</strong>
-Defines which URL parameters should be extracted on project entry (only effective if URL parameter extraction is enabled).
-Multiple parameters can be defined by separating them with a semikolon (e.g., 'param1;param2;param3').</p>
-</div>
-<div class="paragraph">
-<p><strong>Redirect Enabled (optional):</strong>
-If enabled, a redirect button will be displayed on the data donation end page that redirects
-  to the URL defined in the <strong>redirect target</strong> setting.</p>
-</div>
-<div class="paragraph">
-<p><strong>Redirect Target (optional):</strong>
-If redirect is enabled for a project, data donors will be redirected to this URL at the end of the donation process.
-The redirect URL can include variables that are populated with the respective values. Currently, the following variables are supported:
-An extracted URL parameter (see above), the participant id (as <code>ddm_participant_id</code>), or the project id (as <code>ddm_project_id</code>).
-  Use the following syntax to include variables in the redirect target: e.g. <code><a href="https://redirect.url?param={{URLParameter}}&amp;participant={{ddm_participant_id}}&amp;project={{ddm_project_id}}" class="bare">https://redirect.url?param={{URLParameter}}&amp;participant={{ddm_participant_id}}&amp;project={{ddm_project_id}}</a></code></p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_define_the_welcome_page"><a class="anchor" href="#_define_the_welcome_page"></a>Define the Welcome Page</h3>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Will be added soon.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_set_up_the_data_donation"><a class="anchor" href="#_set_up_the_data_donation"></a>Set up the Data Donation</h3>
-<div class="paragraph">
-<p>With Donation Blueprints, researchers define what kind of data they are expecting and
-which data they want to extract from the donated data.</p>
-</div>
-<div class="paragraph">
-<p>There are two types of Donation Blueprints:</p>
-</div>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Donation Blueprint</p>
-</li>
-<li>
-<p>Blueprint Container</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>The <strong>Donation Blueprint</strong> defines processing rules on the file level.
-The <strong>Blueprint Container</strong> is a container class, that can be used to bundle
-multiple <strong>Donation Blueprints</strong> if participants upload a ZIP file instead of a single file.</p>
-</div>
-<div class="sect3">
-<h4 id="_donation_blueprint"><a class="anchor" href="#_donation_blueprint"></a>Donation Blueprint</h4>
-<div class="paragraph">
-<p>The Donation Blueprint defines the logic, how a donated data file will be processed
-and how the data will be extracted.</p>
+<p>The data donation step can incorporate multiple File Uploaders.</p>
 </div>
 <div class="sect4">
-<h5 id="_settings"><a class="anchor" href="#_settings"></a>Settings</h5>
+<h5 id="_configure_file_uploader"><a class="anchor" href="#_configure_file_uploader"></a>Configure File Uploader</h5>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Name</dt>
+<dd>
+<p>Name of the File Uploader. Will be publicly visible to participants in the header of the file uplaoder.</p>
+</dd>
+<dt class="hdlist1">Upload Type</dt>
+<dd>
+<p>Either "single file" or "zip file".</p>
+</dd>
+<dt class="hdlist1">Index</dt>
+<dd>
+<p>The position of the file uploader on the data donation page.
+Only relevant if multiple file uploaders are displayed – file uploaders with a
+lower index will be displayed closer to the top of the page.</p>
+</dd>
+<dt class="hdlist1">Associated Donation Blueprints</dt>
+<dd>
+<p>The donation blueprints that apply to the expected file(s) collected with the file uploader.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_configure_instructions"><a class="anchor" href="#_configure_instructions"></a>Configure Instructions</h5>
 <div class="paragraph">
-<p><strong>Name:</strong>
-Name of the expected data donations. Will be publicly visible to participants.
+<p>Donation Instructions consist of one or multiple instruction pages.
+Instruction pages are displayed as a slide show at the top of file uploader.
+For each instruction page, the following can be configured:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Text</dt>
+<dd>
+<p>The instruction text displayed to the participants.
+By default, researchers can also upload and include images or gifs to guide
+participants through the data donation process in this field (video upload is not supported -
+but videos hosted externally can still be embedded).  //TODO: Check if video can be embedded without problems.</p>
+</dd>
+<dt class="hdlist1">Index</dt>
+<dd>
+<p>The position of the page in the slideshow.</p>
+</dd>
+<dt class="hdlist1">NOTE</dt>
+<dd>
+<p>If no instructions are defined for a File Uploader, the instruction section will
+be hidden in the participation view.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_configure_donation_blueprint"><a class="anchor" href="#_configure_donation_blueprint"></a>Configure Donation Blueprint</h5>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Name</dt>
+<dd>
+<p>Name of the expected data donations. Will be publicly visible to participants.
 Therefore, it is important to define a meaningful name.</p>
+</dd>
+<dt class="hdlist1">Description</dt>
+<dd>
+<p>Description of what the blueprint will extract. If defined, the
+description will be visible for participants in the data donation step.</p>
+</dd>
+<dt class="hdlist1">Expected file format</dt>
+<dd>
+<p>The file format of the expected data donation. Currently, only JSON and CSV is implemented.</p>
+</dd>
+<dt class="hdlist1">Associated File Uploader</dt>
+<dd>
+<p>The <code>File Uploader</code> for which the blueprint will be applied.</p>
+</dd>
+<dt class="hdlist1">Regex path</dt>
+<dd>
+<p>Here, the path where the file is expected to be located within a ZIP file is defined.
+Only necessary, if the Donation Blueprint is part of a Blueprint Container.</p>
+</dd>
+</dl>
 </div>
-<div class="paragraph">
-<p><strong>Expected File Format:</strong>
-The file format of the expected data donation. Currently, only JSON is implemented.</p>
-</div>
-<div class="paragraph">
-<p><strong>Expected Fields:</strong>
-The fields that must be contained in the donated file. If a file does not contain
-one or more of the fields defined here, it will not be accepted as a donation.
-This setting should be defined in the following format: "Field A", "Field B"</p>
-</div>
-<div class="paragraph">
-<p><strong>Extracted Fields:</strong>
-The fields that will be extracted from a donated file, of the file contains the
-expected fields.
-This setting should be defined in the following format: "Field A", "Field B"</p>
-</div>
-<div class="paragraph">
-<p><strong>Blueprint Container:</strong>
-This field is allowed to be undefined. [-- TODO: Add meaningful description --]</p>
-</div>
-<div class="paragraph">
-<p><strong>Regex path:</strong>
-Here, the path where the file is expected to be located within a ZIP file is defined.
-Only necessary, if the Donation Blueprint is part of a Blueprint Container.
-[-- TODO: Check if this has already been implemented correctly --]</p>
-</div>
-<div class="admonitionblock note">
+<div class="admonitionblock warning">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-TODO: Add File Uploader Description.
+If a regex expression matches two files, DDM extracts the first one that matches the expression.
+Afterwards, it does not look any further, even if the matched file does not match the expected fields.
+Therefore, be careful to choose regex expressions that will only match the expected file.
 </td>
 </tr>
 </table>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><strong>Examples for regex paths to match files</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Regex</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>^MyActivities.json</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Matches a file named <code>MyActivities.json</code> that is located at the root of the ZIP file.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>^SpecificFolder/MyActivities\.json</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Matches a file named <code>MyActivities.json</code> that is located in a folder named <code>SpecificFolder</code> in the root of the ZIP file.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>.*MyActivities\.json</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Matches file if the filename ends with <code>MyActivities.json</code> that can be located anywhere in the ZIP file. Warning: This also matches e.g. <code>BogusMyAcitivties.json</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>(^MyActivities\.json|^MeineAktivitäten\.json|^MieAttivita\.json)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Matches a file that is located at the root of the ZIP file and either named <code>MyActivities.json</code>, <code>MeineAktivitäten.json</code>, or <code>MieAttivita.json</code>.
+Can be helpful to match the same file in different languages.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>You can find about more about the possibilities of regex matches [here].
+With the following application, you can test your regex patterns online: [link to a regex pattern tester]</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Expected fields</dt>
+<dd>
+<p>The fields that must be contained in the donated file. If a file does not contain
+one or more of the fields defined here, it will not be accepted as a donation.
+Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").</p>
+</dd>
+</dl>
+</div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_instructions"><a class="anchor" href="#_instructions"></a>Instructions</h4>
+<h4 id="_questionnaire"><a class="anchor" href="#_questionnaire"></a>Questionnaire</h4>
 <div class="paragraph">
-<p>Instructions can either be defined on the level of a <strong>Donation Blueprint</strong> or a <strong>Blueprint Container</strong>.</p>
-</div>
-<div class="paragraph">
-<p>Instructions consist of one or more instruction pages that can be freely edited by the researcher.
-Instructions will automatically be displayed in the participant-flow.</p>
+<p>Researchers can optionally define a questionnaire consisting of one or more pages, each consisting of one or more questions.
+The questions will be displayed after the data donation.</p>
 </div>
 <div class="paragraph">
-<p>If a <strong>Donation Blueprint</strong> is part of a <strong>Blueprint Container</strong>, the instructions defined
-on the <strong>Blueprint Container</strong> will take precedent over the instructions defined on the
-Blueprint-level (i.e., the latter will not be shown).</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_define_questionnaire"><a class="anchor" href="#_define_questionnaire"></a>Define Questionnaire</h3>
-<div class="paragraph">
-<p>Researchers can optionally define a questionnaire consisting of one or more questions.
-The questions will be displayed after the data donation, but only if the data donation has been successfully completed.</p>
-</div>
-<div class="sect3">
-<h4 id="_question_types"><a class="anchor" href="#_question_types"></a>Question Types</h4>
-<div class="paragraph">
-<p>DDM integrates the following question types:</p>
+<p>Currently, the following question types are implemented:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -627,92 +581,141 @@ The questions will be displayed after the data donation, but only if the data do
 </ul>
 </div>
 <div class="paragraph">
-<p>Depending on the question type, <strong>question response items</strong> and a <strong>question response scale</strong> can be defined.</p>
+<p>Depending on the question types, the following attributes can be configured:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Name</dt>
+<dd>
+<p>Question name - only used for internal organisation.</p>
+</dd>
+<dt class="hdlist1">Blueprint (optional)</dt>
+<dd>
+<p>If associated to a blueprint, the data extracted by
+this blueprint for a given participant is available to be included in the question text
+(see [LOCATION] for more information on how to include data in question texts). // TODO: Add link.
+If the associated blueprint did not extract any data, the question will not be displayed.
+If a question should always be displayed, select the option "General Question" here.</p>
+</dd>
+<dt class="hdlist1">Page</dt>
+<dd>
+<p>Number of the page on which the question should be displayed.</p>
+</dd>
+<dt class="hdlist1">Text</dt>
+<dd>
+<p>The question text that is displayed to participants.  // TODO: Extend description to explain inclusion of donated data.</p>
+</dd>
+<dt class="hdlist1">Required</dt>
+<dd>
+<p>If a question is marked as required, the application will show a
+hint to the participant if they missed to answer this question.
+This hint will only be shown once. This means that if a participant chooses to
+ignore the hint and clicks on 'continue', they are able to skip a required question.</p>
+</dd>
+<dt class="hdlist1">Randomize items</dt>
+<dd>
+<p>Enable or disable randomization of items.</p>
+</dd>
+<dt class="hdlist1">Question Items</dt>
+<dd>
+<p>The items that will be displayed in the answer part of the question.</p>
+</dd>
+<dt class="hdlist1">Scale Configuration</dt>
+<dd>
+<p>Configure how the scale displayed to participants to rate items will look like
+(only for Matrix Question and Semantic Differential).</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><strong>How to Include Donated Data in a Question</strong></p>
 </div>
 <div class="paragraph">
-<p>Additional features:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Question items can be randomized.</p>
-</li>
-<li>
-<p>More to come.</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_include_donated_data_in_a_question"><a class="anchor" href="#_include_donated_data_in_a_question"></a>Include Donated Data in a Question</h4>
-<div class="paragraph">
-<p>It is possible to include information contained in the donated data in the question text.
-For this, every question must be associated to a <strong>Donation Blueprint</strong>.
+<p>It is possible to include information contained in the donated data or related to the participant in the question text.
+Questions that should integrate this behaviour must be linked to a donation blueprint
 The donated data related to the associated blueprint will then be available as a
-context variable.</p>
+context variable an can be referenced in the question body as follows:
+<code>Display donated data: {{ data }}. Display participant data: {{ participant }}.</code></p>
 </div>
 <div class="paragraph">
 <p>For this, DDM utilizes the `Django template engine &lt;<a href="https://docs.djangoproject.com/en/3.2/topics/templates/&gt;`" class="bare">https://docs.djangoproject.com/en/3.2/topics/templates/&gt;`</a><em>.
 The donated data will be available as a template variable "data" in the question text definition.
 This variable can be combined flexibly with Django&#8217;s `built-in template tags and filters &lt;<a href="https://docs.djangoproject.com/en/3.2/ref/templates/builtins/&gt;`" class="bare">https://docs.djangoproject.com/en/3.2/ref/templates/builtins/&gt;`</a></em>.</p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-TODO: Include Example.
 </td>
 </tr>
 </table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_debriefing"><a class="anchor" href="#_debriefing"></a>Debriefing</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Debriefing text</dt>
+<dd>
+<p>Text displayed to participants on the briefing page.</p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_define_the_end_page"><a class="anchor" href="#_define_the_end_page"></a>Define the End Page</h3>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-TODO: Add content.
-</td>
-</tr>
-</table>
+<h3 id="_data_center"><a class="anchor" href="#_data_center"></a>Data Center</h3>
+<div class="paragraph">
+<p>In the Data Center, you can find options to <code>A</code> access the collected data,
+<code>B</code> access the project logs, and <code>C</code> find some general field statistics about the progress of your project.</p>
+</div>
+<div class="sect3">
+<h4 id="_data_download_accessing_collected_data_donations"><a class="anchor" href="#_data_download_accessing_collected_data_donations"></a>Data Download: Accessing Collected Data Donations</h4>
+<div class="paragraph">
+<p>A) Internal Download</p>
+</div>
+<div class="paragraph">
+<p>B) External Download via API</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_data_structure"><a class="anchor" href="#_data_structure"></a>Data Structure</h4>
+
+</div>
+<div class="sect3">
+<h4 id="_project_log_monitoring_an_on_going_project"><a class="anchor" href="#_project_log_monitoring_an_on_going_project"></a>Project Log: Monitoring an on-going Project</h4>
+
+</div>
+<div class="sect3">
+<h4 id="_participation_statistics"><a class="anchor" href="#_participation_statistics"></a>Participation Statistics</h4>
+
 </div>
 </div>
 <div class="sect2">
-<h3 id="_monitor_an_active_data_donation_project"><a class="anchor" href="#_monitor_an_active_data_donation_project"></a>Monitor an Active Data Donation Project</h3>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-TODO: Add content.
-</td>
-</tr>
-</table>
+<h3 id="_danger_zone"><a class="anchor" href="#_danger_zone"></a>Danger Zone</h3>
+<div class="paragraph">
+<p>Here, you can find all options that affect the data collected in the course of your project:</p>
+</div>
+<div class="sect3">
+<h4 id="_reset_project_data"><a class="anchor" href="#_reset_project_data"></a>Reset Project Data</h4>
+<div class="paragraph">
+<p>With this option, you can delete all data collected for a given project.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_download_the_collected_data"><a class="anchor" href="#_download_the_collected_data"></a>Download the Collected Data</h3>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-TODO: Add content.
-</td>
-</tr>
-</table>
+<div class="sect3">
+<h4 id="_delete_participant"><a class="anchor" href="#_delete_participant"></a>Delete Participant</h4>
+<div class="paragraph">
+<p>You can delete the data for a given participant by providing their external participation id.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_delete_project"><a class="anchor" href="#_delete_project"></a>Delete Project</h4>
+<div class="paragraph">
+<p>With this option you can delete the current project. This will also delete all associated data.</p>
+</div>
 </div>
 </div>
 </div>

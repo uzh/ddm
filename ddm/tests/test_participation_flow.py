@@ -242,7 +242,6 @@ class TestDebriefingView(ParticipationFlowBaseTestCase):
         self.assertEqual(response.status_code, 404)
 
 
-# TODO: Add Class TestViewsRerouting(TestCase)
 class TestRedirect(ParticipationFlowBaseTestCase):
 
     def setUp(self):

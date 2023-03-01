@@ -355,7 +355,6 @@ export default {
           }
         }
 
-        // TODO: Add selection of which file they're trying to upload if multiple (i.e. a zip-upload) is expected.
         let reader = new FileReader();
         reader.onload = function(event) {
           let content = event.target.result;
@@ -409,7 +408,7 @@ export default {
           fileContent = parserResult.data;
         } catch(e) {
           uploader.postError(4106, e.message, blueprint.id);
-          uploader.recordError(uploader.$t('error-json-syntax'), uploader.blueprints[0].id.toString());  // TODO: Check 'error-json-syntax'
+          uploader.recordError(uploader.$t('error-json-syntax'), uploader.blueprints[0].id.toString());
         }
       }
 
@@ -545,7 +544,6 @@ export default {
      * Emit data to UploaderApp.
      */
     emitToParent() {
-      // TODO: Emit extra information on the file uploader level (e.g.: JSON.stringify({'errors_general': this.errorLog, 'ul_attempts': this.uploadAttempts, 'blueprints': this.blueprintData}))
       let dataToEmit = JSON.parse(JSON.stringify(this.blueprintData));
       Object.keys(dataToEmit).forEach(key => {
         if (dataToEmit[key].consent === '') {

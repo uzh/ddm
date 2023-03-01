@@ -264,7 +264,6 @@ class OpenQuestion(QuestionBase):
         return config
 
     def validate_response(self, response):
-        # TODO: Think about if it's necessary to add some validation steps here.
         return
 
 

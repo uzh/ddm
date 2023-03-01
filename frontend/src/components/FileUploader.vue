@@ -420,7 +420,7 @@ export default {
         fileContent.forEach(entry => {
           // Check if all expected fields are here
           let missingFields = [];
-          if (!blueprint.f_expected.every(element => {
+          if (!blueprint.expected_fields.every(element => {
             if (Object.keys(entry).includes(element)) {
               return true;
             } else {
@@ -434,7 +434,7 @@ export default {
             return;
           }
 
-          if (blueprint.f_extract.every(element => Object.keys(entry).includes(element))) {
+          if (blueprint.fields_to_extract.every(element => Object.keys(entry).includes(element))) {
             // Apply filters, Pop unused keys and add to result.
             let result = {};
             try {

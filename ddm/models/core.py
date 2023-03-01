@@ -409,14 +409,13 @@ class DonationBlueprint(models.Model):
         return 'blueprint'
 
     def get_config(self):
-        # TODO: Change 'f_expected' and 'f_extract' to something more meaningful
         config = {
             'id': self.pk,
             'name': self.name,
             'description': self.description,
             'format': self.exp_file_format,
-            'f_expected': json.loads("[" + str(self.expected_fields) + "]"),
-            'f_extract': self.get_fields_to_extract(),
+            'expected_fields': json.loads("[" + str(self.expected_fields) + "]"),
+            'fields_to_extract': self.get_fields_to_extract(),
             'regex_path': self.regex_path,
             'filter_rules': self.get_filter_rules(),
             'csv_delimiter': self.csv_delimiter

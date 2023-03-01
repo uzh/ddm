@@ -9,5 +9,5 @@ This is part of a larger initiative from the University of Zurich and the Digita
 Society Initiative to strengthen the exchange about the topic of data donations and
 promote this data collection approach. For more information, visit https://datadonation.uzh.ch.
 
-Documentation: https://data-donation-module.readthedocs.io/en/latest/ \
+Documentation: https://uzh.github.io/ddm/ddm/main/index.html \
 PyPi: https://pypi.org/project/django-ddm/

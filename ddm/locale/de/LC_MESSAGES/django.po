@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-22 09:26+0200\n"
+"POT-Creation-Date: 2023-03-01 14:25+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,34 +18,54 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\templates\ddm\public\base.html:45
+#: .\ddm\templates\ddm\public\base.html:49
 msgid "Contact"
 msgstr "Kontakt"
 
-#: .\templates\ddm\public\base.html:48
+#: .\ddm\templates\ddm\public\base.html:52
 msgid "What happens with my data?"
 msgstr "Was passiert mit meinen Daten?"
 
-#: .\templates\ddm\public\end.html:9
-msgid "Thank you very much!"
-msgstr "Herzlichen Dank!"
+#: .\ddm\templates\ddm\public\base.html:64
+msgid "Contact Information"
+msgstr "Kontaktinformationen"
 
-#: .\templates\ddm\public\end.html:10
-msgid "You have reached the end of the study and can now close this window."
-msgstr "Sie haben das Ende der Studie erreicht und können dieses Fenster nun schliessen."
+#: .\ddm\templates\ddm\public\base.html:78
+msgid "Data Protection Statement"
+msgstr "Datenschutzerklärung"
 
-#: .\templates\ddm\public\entry_page.html:9
+#: .\ddm\templates\ddm\public\briefing.html:9
+msgid "Please indicate whether you want to continue with this study."
+msgstr "Bitte geben Sie an, ob Sie mit dieser Studie fortfahren möchten."
+
+#: .\ddm\templates\ddm\public\briefing.html:13
 msgid "Welcome to this study!"
 msgstr "Herzlich willkommen zu dieser Studie!"
 
-#: .\templates\ddm\public\entry_page.html:10
+#: .\ddm\templates\ddm\public\briefing.html:14
 msgid ""
 "Please define a description and welcome text for this project in the Project "
 "Hub."
 msgstr ""
-"Bitte definieren Sie eine Beschreibung und einen Begrüßungstext für "
-"dieses Projekt im Project Hub."
+"Bitte definieren Sie eine Beschreibung und einen Begrüßungstext für dieses "
+"Projekt im Project Hub."
 
-#: .\templates\ddm\public\entry_page.html:21
+#: .\ddm\templates\ddm\public\briefing.html:33
 msgid "Continue&nbsp;&nbsp;&#8250;"
+msgstr "Weiter&nbsp;&nbsp;&#8250;"
+
+#: .\ddm\templates\ddm\public\debriefing.html:9
+msgid "Thank you very much!"
+msgstr "Herzlichen Dank!"
+
+#: .\ddm\templates\ddm\public\debriefing.html:10
+msgid "You have reached the end of the study and can now close this window."
+msgstr ""
+"Sie haben das Ende der Studie erreicht und können dieses Fenster nun "
+"schliessen."
+
+#: .\ddm\templates\ddm\public\debriefing.html:17
+#, fuzzy
+#| msgid "Continue&nbsp;&nbsp;&#8250;"
+msgid "Leave Page&nbsp;&nbsp;&#8250;"
 msgstr "Weiter&nbsp;&nbsp;&#8250;"

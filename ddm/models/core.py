@@ -467,7 +467,6 @@ class DonationBlueprint(models.Model):
             )
             return False
 
-        # TODO: Add other validation steps? - e.g., validation of extracted fields
         return True
 
     def create_donation(self, data, participant):
@@ -484,10 +483,10 @@ class DonationBlueprint(models.Model):
 
 class ProcessingRule(models.Model):
     """
-    A processing rule that is executed on the specified blueprint field,
-    during the file upload in vue.
-    Filters or matches values.
-    TODO: Improve this description.
+    A processing rule that defines how the data uploaded to VUE will be processed
+    before being sent to the server.
+    Generates a json configuration that is passed to the VUE frontend component
+    'UploaderApp'.
     """
     blueprint = models.ForeignKey(
         'DonationBlueprint',
@@ -604,7 +603,6 @@ class DonationInstruction(models.Model):
         if kwargs.pop('ignore_index_check', False):
             return super().save()
 
-        # TODO: Optimize and prettify the following part:
         initial_index = DonationInstruction.objects.get(pk=self.pk).index if self.pk else None
         index_taken = self.file_uploader.donationinstruction_set.filter(index=self.index).exclude(pk=self.pk).exists()
         if index_taken and (self.index != initial_index):

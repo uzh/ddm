@@ -495,11 +495,22 @@ class ProcessingRule(models.Model):
         on_delete=models.CASCADE
     )
 
-    name = models.CharField(max_length=250)
+    name = models.CharField(
+        max_length=250,
+        help_text='An informative name for this rule. Only used internally.'
+    )
 
-    field = models.TextField(null=False, blank=False)
-    execution_order = models.IntegerField()
+    field = models.TextField(
+        null=False,
+        blank=False,
+        help_text='The field on which the rule will be applied. If a field is mentioned in a rule, '
+                  'it will be kept in the data that are sent to the server.'
+    )
+    execution_order = models.IntegerField(
+        help_text='The order in which the extraction steps are executed.'
+    )
 
+    # TODO: Integrate a description of these steps somehow.
     class ComparisonOperators(models.TextChoices):
         EQUAL = '==', 'Equal (==)'
         NOT_EQUAL = '!=', 'Not Equal (!=)'
@@ -518,7 +529,11 @@ class ProcessingRule(models.Model):
         choices=ComparisonOperators.choices,
         default=None
     )
-    comparison_value = models.TextField(blank=True)
+    comparison_value = models.TextField(
+        blank=True,
+        help_text='The value against which the data contained in a data donation will '
+                  'be compared according to the selected comparison logic.'
+    )
     replacement_value = models.TextField(
         blank=True,
         help_text='Only required for operation "Replace match (regex)".'

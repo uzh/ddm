@@ -547,13 +547,15 @@ class ProcessingRule(models.Model):
             'comparison_operator': '==' | '!=' | '>' | '<' | '>=' | '<=' |
                                    'regex-delete-match' | ' regex-replace-match'
                                    'regex-delete-row' | None,
-            'comparison_value': '123' | Regex-String | None
+            'comparison_value': '123' | Regex-String | None,
+            'replacement_value': String
         }
         """
         return {
             'field': self.field,
             'comparison_operator': self.comparison_operator,
-            'comparison_value': self.comparison_value
+            'comparison_value': self.comparison_value,
+            'replacement_value': self.replacement_value
         }
 
 

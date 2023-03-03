@@ -108,14 +108,21 @@ class ProjectDataAPI(APIView):
                 secret = super_secret
 
         # Gather project data in dictionary.
+        blueprints = DonationBlueprint.objects.filter(project=project)
         data_donations = DataDonation.objects.filter(project=project)
         q_responses = QuestionnaireResponse.objects.filter(project=project)
         participants = Participant.objects.filter(project=project)
         try:
             decryptor = Decryption(secret, project.get_salt())
+
+            donations = {}
+            for blueprint in blueprints:
+                blueprint_donations = blueprint.datadonation_set.all()
+                donations[blueprint.name] = [DonationSerializer(d, decryptor=decryptor).data for d in blueprint_donations]
+
             results = {
                 'project': ProjectSerializer(project).data,
-                'donations': [DonationSerializer(d, decryptor=decryptor).data for d in data_donations],
+                'donations': donations,
                 'responses': [ResponseSerializer(r, decryptor=decryptor).data for r in q_responses],
                 'participants': [ParticipantSerializer(p).data for p in participants]
             }
@@ -268,8 +275,11 @@ class ExceptionAPI(APIView):
         project_id = self.kwargs['pk']
         project = DonationProject.objects.get(pk=project_id)
 
-        participant_id = request.session['projects'][f'{project_id}']['participant_id']
-        participant = Participant.objects.get(pk=participant_id)
+        try:
+            participant_id = request.session['projects'][f'{project_id}']['participant_id']
+            participant = Participant.objects.get(pk=participant_id)
+        except KeyError:
+            return Response(None, status=500)
 
         # Get related blueprint
         blueprint_id = request.data.get('blueprint')

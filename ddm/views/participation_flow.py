@@ -341,7 +341,7 @@ class QuestionnaireView(ParticipationFlowBaseView):
             project=self.object,
             participant=self.participant,
             time_submitted=timezone.now(),
-            data=response
+            data=response['post_data']
         )
 
 

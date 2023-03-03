@@ -1,10 +1,10 @@
 {% extends 'ddm/admin/generic/page_with_form.html' %}
 
-{% block page_title %}Edit File Uploader{% endblock %}
+{% block page_title %}Edit Uploader{% endblock %}
 
-{% block main_heading %}Edit File Uploader "{{ object.name }}"{% endblock %}
+{% block main_heading %}Edit Uploader "{{ object.name }}"{% endblock %}
 
-{% block submit_label %}Save File Uploader{% endblock %}
+{% block submit_label %}Save Uploader{% endblock %}
 
 {% block main_form %}
 <form method='post'>
@@ -25,7 +25,7 @@
     {% endfor %}
 
     <p>
-      <label>Associated Donation Blueprints:</label>
+      <label>Associated File Blueprints:</label>
     </p>
     <table class="mt-2">
       {% for blueprint in blueprints %}
@@ -35,12 +35,12 @@
       </tr>
       {% empty %}
       <tr>
-        <td>No unassigned Donation Blueprints available.</td>
+        <td>No unassigned File Blueprints available.</td>
       </tr>
       {% endfor %}
     </table>
 
-    <input class="ddm-btn" type="submit" value="Save File Uploader">
+    <input class="ddm-btn" type="submit" value="Save Uploader">
     <p class="mt-3">
       <a href="{% url 'data-donation-overview' project.pk %}">&#129040; Back</a>
     </p>
@@ -52,5 +52,5 @@
 <a href="{% url 'project-list' %}">Projects</a> /
 <a href="{% url 'project-detail' project.pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
 <a href="{% url 'data-donation-overview' project.pk %}">Data Donation</a> /
-Edit File Uploader
+Edit Uploader
 {% endblock %}

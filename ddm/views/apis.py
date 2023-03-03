@@ -276,7 +276,7 @@ class ExceptionAPI(APIView):
         project = DonationProject.objects.get(pk=project_id)
 
         try:
-            participant_id = request.session[f'projects-{project_id}']['participant_id']
+            participant_id = request.session[f'project-{project_id}']['participant_id']
             participant = Participant.objects.get(pk=participant_id)
         except KeyError:
             participant = None

@@ -276,12 +276,11 @@ class ExceptionAPI(APIView):
         project = DonationProject.objects.get(pk=project_id)
 
         try:
-            participant_id = request.session['projects'][f'{project_id}']['participant_id']
+            participant_id = request.session[f'projects-{project_id}']['participant_id']
             participant = Participant.objects.get(pk=participant_id)
         except KeyError:
-            return Response(None, status=500)
+            participant = None
 
-        # Get related blueprint
         blueprint_id = request.data.get('blueprint')
         if blueprint_id:
             blueprint = DonationBlueprint.objects.get(pk=blueprint_id)

@@ -39,7 +39,10 @@ def project_header_dir_path(instance, filename):
 
 class DonationProject(models.Model):
     # Basic information for internal organization.
-    name = models.CharField(max_length=50)
+    name = models.CharField(
+        max_length=50,
+        help_text='Project Name - for internal organisation only (can be changed).'
+    )
     date_created = models.DateTimeField(default=timezone.now)
     owner = models.ForeignKey(
         'ResearchProfile',
@@ -73,13 +76,22 @@ class DonationProject(models.Model):
     )
 
     # Information affecting participation flow.
-    slug = models.SlugField(unique=True, verbose_name='External Project Slug')
+    slug = models.SlugField(
+        unique=True,
+        verbose_name='URL Identifier',
+        help_text='Identifier that is included in the URL through which '
+                  'participants can access the project '
+                  '(e.g, https://root.url/url-identifier).'
+    )
     briefing_text = RichTextUploadingField(
         null=True, blank=True,
         verbose_name='Briefing Text',
         config_name='ddm_ckeditor'
     )
-    briefing_consent_enabled = models.BooleanField(default=False)
+    briefing_consent_enabled = models.BooleanField(
+        default=False,
+        verbose_name='Briefing Consent Mandatory'
+    )
     briefing_consent_label_yes = models.CharField(max_length=255, blank=True)
     briefing_consent_label_no = models.CharField(max_length=255, blank=True)
     debriefing_text = RichTextUploadingField(

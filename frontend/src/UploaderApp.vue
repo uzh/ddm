@@ -111,6 +111,9 @@ export default {
           case 'failed':
             failed.push(this.postData[entry]);
             break;
+          case 'nothing extracted':
+            failed.push(this.postData[entry]);
+            break;
           case 'pending':
             pending.push(this.postData[entry]);
         }
@@ -276,6 +279,19 @@ export default {
   width: 30%;
   border-radius: 5px;
 }
+
+@media (max-width: 768px) {
+  .default-modal {
+    width: 85%;
+  }
+}
+
+@media (min-width: 769px) {
+  .default-modal {
+    width: 50%;
+  }
+}
+
 .modal-backdrop {
   position: fixed;
   height: 100%;

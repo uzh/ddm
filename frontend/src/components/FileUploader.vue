@@ -186,6 +186,19 @@
 
           </template>
 
+          <!-- Nothing Extracted -->
+          <template v-if="blueprintData[bp.id.toString()].status === 'nothing extracted'">
+            <div class="col w-small bp-ul-icon"><i class="bi bi-file-earmark-x-fill text-grey"></i></div>
+            <div class="col-4 bp-description">{{ bp.name }}</div>
+            <div class="col bp-ul-status">
+              <template v-if="blueprintData[bp.id.toString()].errors.length">
+                <p v-for="e in blueprintData[bp.id.toString()].errors" :key="e">{{ e }}</p>
+              </template>
+              <p v-else>{{ $t('extraction-failed') }}</p>
+            </div>
+            <div class="col-auto bp-ul-data"></div>
+            <div class="col-auto bp-ul-consent"></div>
+          </template>
 
           <!-- Failed -->
           <template v-if="blueprintData[bp.id.toString()].status === 'failed'">
@@ -406,7 +419,10 @@ export default {
         try {
           let parserResult = Papa.parse(content, {header: true, delimiter: blueprint.csv_delimiter });
           fileContent = parserResult.data;
+          console.log('try csv.')
+          console.log(fileContent)
         } catch(e) {
+          console.log('error')
           uploader.postError(4106, e.message, blueprint.id);
           uploader.recordError(uploader.$t('error-json-syntax'), uploader.blueprints[0].id.toString());
         }
@@ -517,7 +533,7 @@ export default {
               extractedData.push(result);
             } catch (e) {
               nEntriesFilteredOut += 1;
-              uploader.postError(4206, `${e}`, blueprint.id)
+              // uploader.postError(4206, `${e}`, blueprint.id)
             }
           }
         })
@@ -536,6 +552,9 @@ export default {
           let errorMsg = `No data extracted: Expected fields missing in ${nEntriesWithMissingFields}/${fileContent.length} entries and ${nEntriesFilteredOut}/${fileContent.length} filtered out.`;
           uploader.postError(4205, errorMsg, blueprint.id);
           uploader.recordError(uploader.$t('error-all-fields-filtered-out'), blueprint.id.toString());
+        } else if (nEntriesFilteredOut > 0) {
+          let msg = `${nEntriesFilteredOut}/${fileContent.length} rows omitted due to a filter rule match.`;
+          uploader.postError(4206, msg, blueprint.id);
         }
       }
     },
@@ -545,6 +564,7 @@ export default {
      */
     emitToParent() {
       let dataToEmit = JSON.parse(JSON.stringify(this.blueprintData));
+
       Object.keys(dataToEmit).forEach(key => {
         if (dataToEmit[key].consent === '') {
           dataToEmit[key].consent = null;
@@ -609,11 +629,21 @@ export default {
      */
     updateStatus() {
       let bpErrorCount = 0;
+      let bpNothingExtracted = 0;
       let nBlueprints = Object.keys(this.blueprintData).length
       for (let bp in this.blueprintData){
         if (this.blueprintData[bp].errors.length) {
-          this.blueprintData[bp].status = 'failed';
-          bpErrorCount += 1;
+          let errorSet = new Set(this.blueprintData[bp].errors);
+
+          if (errorSet.size === 1 && errorSet.has(this.$t('error-all-fields-filtered-out'))) {
+            this.blueprintData[bp].status = 'nothing extracted';
+            this.blueprintData[bp].consent = false;
+            bpNothingExtracted += 1;
+          } else {
+            this.blueprintData[bp].status = 'failed';
+            this.blueprintData[bp].consent = false;
+            bpErrorCount += 1;
+          }
         } else {
           this.blueprintData[bp].status = 'success';
         }
@@ -621,11 +651,17 @@ export default {
 
       let modalIcon = document.getElementById('ul-modal-info-icon');
 
-      if (!this.generalErrors.length && bpErrorCount === 0) {
+      if (!this.generalErrors.length && bpErrorCount === 0 && bpNothingExtracted === 0) {
         this.uploadStatus = 'success';
         modalIcon.className = 'bi bi-file-check text-success';
         this.ulModalInfoTitle = this.$t('ul-success-modal-title');
         this.ulModalInfoMsg = this.$t('ul-success-modal-body');
+
+      } else if (!this.generalErrors.length && bpNothingExtracted > 0 && bpErrorCount === 0) {
+        this.uploadStatus = 'partial';
+        modalIcon.className = 'bi bi-exclamation-diamond text-orange';
+        this.ulModalInfoTitle = this.$t('ul-nothing-extracted-modal-title');
+        this.ulModalInfoMsg = this.$t('ul-nothing-extracted-modal-body');
 
       } else if (!this.generalErrors.length && (bpErrorCount < nBlueprints)) {
         this.uploadStatus = 'partial';

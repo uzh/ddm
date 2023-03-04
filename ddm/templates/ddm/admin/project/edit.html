@@ -55,34 +55,41 @@
 
       <div class="ddm-accordion-item">
         <p class="ddm-accordion-header">
-          <button class="ddm-accordion-btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#redirectConfiguration" aria-expanded="false" aria-controls="flush-collapseOne">
-            Redirect Configuration
-          </button>
-        </p>
-        <div id="redirectConfiguration" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-          <div class="ddm-accordion-content">
-          {% for field in form %}
-            {% if field.name in "redirect_enabled,redirect_target" %}
-              {% include "ddm/admin/components/form_field_basic.html" %}
-            {% endif %}
-          {% endfor %}
-          </div>
-        </div>
-      </div>
-
-      <div class="ddm-accordion-item">
-        <p class="ddm-accordion-header">
           <button class="ddm-accordion-btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#urlParameter" aria-expanded="false" aria-controls="flush-collapseOne">
             URL Parameter Extraction
           </button>
         </p>
         <div id="urlParameter" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
           <div class="ddm-accordion-content">
-          {% for field in form %}
-            {% if field.name in "url_parameter_enabled,expected_url_parameters" %}
-              {% include "ddm/admin/components/form_field_basic.html" %}
-            {% endif %}
-          {% endfor %}
+            <p class="fs-6">
+              Extract information from parameters passed with the URL when a project is accessed by a participant.
+            </p>
+            {% for field in form %}
+              {% if field.name in "url_parameter_enabled,expected_url_parameters" %}
+                {% include "ddm/admin/components/form_field_basic.html" %}
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="ddm-accordion-item">
+        <p class="ddm-accordion-header">
+          <button class="ddm-accordion-btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#redirectConfiguration" aria-expanded="false" aria-controls="flush-collapseOne">
+            Redirect Configuration
+          </button>
+        </p>
+        <div id="redirectConfiguration" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+          <div class="ddm-accordion-content">
+            <p class="fs-6">
+              Configure your project to redirect your participants to another web-address after
+              reaching the end of your study (i.e., after reaching the debriefing page).
+            </p>
+            {% for field in form %}
+              {% if field.name in "redirect_enabled,redirect_target" %}
+                {% include "ddm/admin/components/form_field_basic.html" %}
+              {% endif %}
+            {% endfor %}
           </div>
         </div>
       </div>
@@ -95,18 +102,21 @@
         </p>
         <div id="projectAppearance" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
           <div class="ddm-accordion-content">
-          {% for field in form %}
-            {% if field.name in "img_header_left,img_header_right" %}
-              <hr>
-              <div class="ddm-form-file-field">
-                {{ field.label_tag }}
-                {{ field.errors }}
-                {{ field }}
-                <span class="helptext">{{ field.help_text }}</span>
-              </div>
+            <p class="fs-6">
+              Configure the appearance of your project from the participants' perspective:
+            </p>
+            {% for field in form %}
+              {% if field.name in "img_header_left,img_header_right" %}
+                <hr>
+                <div class="ddm-form-file-field">
+                  {{ field.label_tag }}
+                  {{ field.errors }}
+                  {{ field }}
+                  <span class="helptext">{{ field.help_text }}</span>
+                </div>
 
-            {% endif %}
-          {% endfor %}
+              {% endif %}
+            {% endfor %}
           </div>
         </div>
       </div>

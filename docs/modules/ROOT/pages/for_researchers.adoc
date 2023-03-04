@@ -27,7 +27,7 @@ On the project creation page, you will be presented with the following options t
 
 Project Name:: Name of the project. Visible to participants in the browser's title bar or a page's tab.
 
-External Project Slug:: Identifier that is used to expose the project to participants (e.g, https://root.url/project-slug ).
+URL Identifier:: Identifier that is included in the URL through which participants can access the project (e.g, https://root.url/project-slug).
 
 Contact Information:: Contact information of the researcher responsible for the project.
 Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.
@@ -36,7 +36,7 @@ Data Protection Statement:: Data protection statement that describes how the dat
 Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.
 
 Super Secret:: When creating a "super secret" project, you will have to provide
-a password, which will be used to encrypt all collected data donations and survey responses
+a project password, which will be used to encrypt all collected data donations and survey responses
 (for more information on how collected data is encrypted, see xref:topics/encryption.adoc[here]).
 This password will not be saved by the application, and the data collected for
 this project can only be encrypted by entering the password that was used as a super secret
@@ -79,23 +79,6 @@ Is linked in the footer of the donation interface and can be viewed by data dono
 Data Protection Statement:: Data protection statement that describes how the data is processed.
 Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.
 
-==== Redirect Configuration
-
-Optionally, participants can be redirected to another website from the debriefing page.
-This can be configured using the following settings:
-
-Redirect enabled:: Enable or disable the redirection of your participants when they have completed your project.
-If enabled, a redirect button will be displayed on the data donation end page that redirects to the URL defined in the `Redirect target` setting.
-
-Redirect target:: URL to which participants will redirected (only required if `redirect` is enabled).
-
-[TIP]
-====
-The redirect URL can include variables that are populated with the respective values. Currently, the following variables are supported:
-An extracted URL parameter (see above), the participant id (as ``ddm_participant_id``), or the project id (as ``ddm_project_id``).
-Use the following syntax to include variables in the redirect target: e.g. ``https://redirect.url?param={{URLParameter}}&participant={{ddm_participant_id}}&project={{ddm_project_id}}``
-====
-
 
 ==== URL Parameter Extraction
 
@@ -115,6 +98,24 @@ If participants are asked to first fill out a questionnaire created in an extern
 survey software such as e.g. Unipark or Qualtrics, passing URL parameters can
 be used to link data donations with the survey data by passing a participant
 ID in the URL parameters.
+====
+
+
+==== Redirect Configuration
+
+Optionally, participants can be redirected to another website from the debriefing page.
+This can be configured using the following settings:
+
+Redirect enabled:: Enable or disable the redirection of your participants when they have completed your project.
+If enabled, a redirect button will be displayed on the data donation end page that redirects to the URL defined in the `Redirect target` setting.
+
+Redirect target:: URL to which participants will redirected (only required if `redirect` is enabled).
+
+[TIP]
+====
+The redirect URL can include variables that are populated with the respective values. Currently, the following variables are supported:
+An extracted URL parameter (see above), the participant id (as ``ddm_participant_id``), or the project id (as ``ddm_project_id``).
+Use the following syntax to include variables in the redirect target: e.g. ``https://redirect.url?param={{URLParameter}}&participant={{ddm_participant_id}}&project={{ddm_project_id}}``
 ====
 
 
@@ -139,7 +140,7 @@ data donation process. It consists of the following sections:
 
 Briefing Text:: Text displayed to participants on the briefing page.
 
-Briefing consent enabled:: If briefing consent is enabled, participants will
+Briefing Consent Mandatory:: If briefing consent is enabled, participants will
 have to explicitly indicate their consent at the bottom of the briefing page before
 they can continue. If a participant does indicate that they to do not consent,
 they will be redirected to the debriefing page.
@@ -321,9 +322,57 @@ In the Data Center, you can find options to `A` access the collected data,
 
 ==== Data Download: Accessing Collected Data Donations
 
-A) Internal Download
+When downloading your data, you will receive a .json file with the following structure:
 
-B) External Download via API
+[source,json]
+----
+{
+  'project': {
+      'pk': 1,
+      'name': 'project name',
+      'date_created': '2022-12-19T08:49:18.363880+01:00'
+  },
+  'donations': {
+    'blueprint name 1': [
+      {'time_submitted': '2022-12-19T08:49:18.363880+01:00',
+       'consent': '_',  # TODO: List options
+       'status': '_',  # TODO: List options
+       'data': [{'extracted_field_1':  'value', 'extracted_field_2':  'value2', ...}],
+       'project': 1,
+       'participant': 1
+      },  # ...
+    ],
+    'blueprint name 2': [ ... ]
+  },
+  'responses': [{'time_submitted':  '', 'data':  {}, 'project':  1, 'participant':  1}],
+  'participants': [
+    {'pk':  1, 'project':  1, 'external_id':  '_', 'start_time':  '_', 'end_time':  '_', 'completed':  '_', 'extra_data':  '_'}
+  ]
+}
+----
+
+There are two options to download your data:
+
+1. Internal Download
+When you are logged in, click on {download label}. This will gather your data from the database and
+you will be able to download the json file in your browser.
+
+
+2. External Download via API (advanced option)
+There is also the possibility to download your data through an API endpoint remotely.
+For this, an API token has to be created which will need to be supplied when sending
+the request to the API (see below for an example).
+
+
+[TIP]
+----
+Through the admin interface, a project can only be accessed by the user who created it.
+This means that the internal download is only accessible for this project owner.
+The API token, on the other hand, can be used to share data access with colleagues working on the same project.
+However, be careful with whom you share this token as it exposes the sensitive data collected from participants.
+We recommend to choose a short expiration date for Tokens that you create.
+----
+
 
 // TODO: Add Example with R
 

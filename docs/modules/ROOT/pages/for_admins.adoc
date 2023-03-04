@@ -174,3 +174,22 @@ Run `python manage.py migrate` to create the ddm models in your database.
 
 Run `python manage.py test ddm` to check that DDM is setup and works correctly.
 
+
+== Optional Settings
+
+=== Default Header Images
+
+You can provide default images to be included in the header of the participation views.
+These images will be displayed by default, but can be overwritten on a project-basis
+by researchers in the project settings.
+
+To enable default images, provide the paths to the images that you want to display
+in the left and/or right part of the public header in your settings.py as follows:
+
+[source, python]
+----
+# settings.py
+
+DDM_DEFAULT_HEADER_IMG_LEFT = '/path/to/logo_left.png'
+DDM_DEFAULT_HEADER_IMG_RIGHT = '/path/to/logo_right.png'
+----

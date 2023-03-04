@@ -36,11 +36,6 @@
       "path": "index.html",
       "publicPath": "/static/ddm/vue/index.html"
     },
-    "index.html.py": {
-      "name": "index.html.py",
-      "path": "index.html.py",
-      "publicPath": "/static/ddm/vue/index.html.py"
-    },
     "js/vue_uploader.js.map": {
       "name": "js/vue_uploader.js.map",
       "path": "js\\vue_uploader.js.map",

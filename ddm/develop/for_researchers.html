@@ -144,9 +144,9 @@ On the project creation page, you will be presented with the following options t
 <dd>
 <p>Name of the project. Visible to participants in the browser&#8217;s title bar or a page&#8217;s tab.</p>
 </dd>
-<dt class="hdlist1">External Project Slug</dt>
+<dt class="hdlist1">URL Identifier</dt>
 <dd>
-<p>Identifier that is used to expose the project to participants (e.g, <a href="https://root.url/project-slug" class="bare">https://root.url/project-slug</a> ).</p>
+<p>Identifier that is included in the URL through which participants can access the project (e.g, <a href="https://root.url/project-slug" class="bare">https://root.url/project-slug</a>).</p>
 </dd>
 <dt class="hdlist1">Contact Information</dt>
 <dd>
@@ -161,7 +161,7 @@ Is linked in the footer of the donation interface and can be viewed by data dono
 <dt class="hdlist1">Super Secret</dt>
 <dd>
 <p>When creating a "super secret" project, you will have to provide
-a password, which will be used to encrypt all collected data donations and survey responses
+a project password, which will be used to encrypt all collected data donations and survey responses
 (for more information on how collected data is encrypted, see <a href="topics/encryption.html" class="xref page">here</a>).
 This password will not be saved by the application, and the data collected for
 this project can only be encrypted by entering the password that was used as a super secret
@@ -233,42 +233,6 @@ Is linked in the footer of the donation interface and can be viewed by data dono
 </div>
 </div>
 <div class="sect3">
-<h4 id="_redirect_configuration"><a class="anchor" href="#_redirect_configuration"></a>Redirect Configuration</h4>
-<div class="paragraph">
-<p>Optionally, participants can be redirected to another website from the debriefing page.
-This can be configured using the following settings:</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Redirect enabled</dt>
-<dd>
-<p>Enable or disable the redirection of your participants when they have completed your project.
-If enabled, a redirect button will be displayed on the data donation end page that redirects to the URL defined in the <code>Redirect target</code> setting.</p>
-</dd>
-<dt class="hdlist1">Redirect target</dt>
-<dd>
-<p>URL to which participants will redirected (only required if <code>redirect</code> is enabled).</p>
-</dd>
-</dl>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The redirect URL can include variables that are populated with the respective values. Currently, the following variables are supported:
-An extracted URL parameter (see above), the participant id (as <code>ddm_participant_id</code>), or the project id (as <code>ddm_project_id</code>).
-Use the following syntax to include variables in the redirect target: e.g. <code><a href="https://redirect.url?param={{URLParameter}}&amp;participant={{ddm_participant_id}}&amp;project={{ddm_project_id}}" class="bare">https://redirect.url?param={{URLParameter}}&amp;participant={{ddm_participant_id}}&amp;project={{ddm_project_id}}</a></code></p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
 <h4 id="_url_parameter_extraction"><a class="anchor" href="#_url_parameter_extraction"></a>URL Parameter Extraction</h4>
 <div class="paragraph">
 <p>Optionally, information can be extracted from parameters passed with the URL when a project is accessed by a participant.
@@ -301,6 +265,42 @@ as <code>None</code>. Undefined parameters passed in the URL will be ignored.</p
 survey software such as e.g. Unipark or Qualtrics, passing URL parameters can
 be used to link data donations with the survey data by passing a participant
 ID in the URL parameters.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_redirect_configuration"><a class="anchor" href="#_redirect_configuration"></a>Redirect Configuration</h4>
+<div class="paragraph">
+<p>Optionally, participants can be redirected to another website from the debriefing page.
+This can be configured using the following settings:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Redirect enabled</dt>
+<dd>
+<p>Enable or disable the redirection of your participants when they have completed your project.
+If enabled, a redirect button will be displayed on the data donation end page that redirects to the URL defined in the <code>Redirect target</code> setting.</p>
+</dd>
+<dt class="hdlist1">Redirect target</dt>
+<dd>
+<p>URL to which participants will redirected (only required if <code>redirect</code> is enabled).</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The redirect URL can include variables that are populated with the respective values. Currently, the following variables are supported:
+An extracted URL parameter (see above), the participant id (as <code>ddm_participant_id</code>), or the project id (as <code>ddm_project_id</code>).
+Use the following syntax to include variables in the redirect target: e.g. <code><a href="https://redirect.url?param={{URLParameter}}&amp;participant={{ddm_participant_id}}&amp;project={{ddm_project_id}}" class="bare">https://redirect.url?param={{URLParameter}}&amp;participant={{ddm_participant_id}}&amp;project={{ddm_project_id}}</a></code></p>
 </div>
 </td>
 </tr>
@@ -352,7 +352,7 @@ data donation process. It consists of the following sections:</p>
 <dd>
 <p>Text displayed to participants on the briefing page.</p>
 </dd>
-<dt class="hdlist1">Briefing consent enabled</dt>
+<dt class="hdlist1">Briefing Consent Mandatory</dt>
 <dd>
 <p>If briefing consent is enabled, participants will
 have to explicitly indicate their consent at the bottom of the briefing page before
@@ -675,10 +675,61 @@ This variable can be combined flexibly with Django&#8217;s `built-in template ta
 <div class="sect3">
 <h4 id="_data_download_accessing_collected_data_donations"><a class="anchor" href="#_data_download_accessing_collected_data_donations"></a>Data Download: Accessing Collected Data Donations</h4>
 <div class="paragraph">
-<p>A) Internal Download</p>
+<p>When downloading your data, you will receive a .json file with the following structure:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  'project': {
+      'pk': 1,
+      'name': 'project name',
+      'date_created': '2022-12-19T08:49:18.363880+01:00'
+  },
+  'donations': {
+    'blueprint name 1': [
+      {'time_submitted': '2022-12-19T08:49:18.363880+01:00',
+       'consent': '_',  # TODO: List options
+       'status': '_',  # TODO: List options
+       'data': [{'extracted_field_1':  'value', 'extracted_field_2':  'value2', ...}],
+       'project': 1,
+       'participant': 1
+      },  # ...
+    ],
+    'blueprint name 2': [ ... ]
+  },
+  'responses': [{'time_submitted':  '', 'data':  {}, 'project':  1, 'participant':  1}],
+  'participants': [
+    {'pk':  1, 'project':  1, 'external_id':  '_', 'start_time':  '_', 'end_time':  '_', 'completed':  '_', 'extra_data':  '_'}
+  ]
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>B) External Download via API</p>
+<p>There are two options to download your data:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Internal Download
+When you are logged in, click on {download label}. This will gather your data from the database and
+you will be able to download the json file in your browser.</p>
+</li>
+<li>
+<p>External Download via API (advanced option)
+There is also the possibility to download your data through an API endpoint remotely.
+For this, an API token has to be created which will need to be supplied when sending
+the request to the API (see below for an example).</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Through the admin interface, a project can only be accessed by the user who created it.
+This means that the internal download is only accessible for this project owner.
+The API token, on the other hand, can be used to share data access with colleagues working on the same project.
+However, be careful with whom you share this token as it exposes the sensitive data collected from participants.
+We recommend to choose a short expiration date for Tokens that you create.</pre>
+</div>
 </div>
 </div>
 <div class="sect3">

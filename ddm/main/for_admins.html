@@ -305,6 +305,31 @@ DDM_SETTINGS = {
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_optional_settings"><a class="anchor" href="#_optional_settings"></a>Optional Settings</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_default_header_images"><a class="anchor" href="#_default_header_images"></a>Default Header Images</h3>
+<div class="paragraph">
+<p>You can provide default images to be included in the header of the participation views.
+These images will be displayed by default, but can be overwritten on a project-basis
+by researchers in the project settings.</p>
+</div>
+<div class="paragraph">
+<p>To enable default images, provide the paths to the images that you want to display
+in the left and/or right part of the public header in your settings.py as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># settings.py
+
+DDM_DEFAULT_HEADER_IMG_LEFT = '/path/to/logo_left.png'
+DDM_DEFAULT_HEADER_IMG_RIGHT = '/path/to/logo_right.png'</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 </article>
   </div>
 </main>

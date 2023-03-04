@@ -26,11 +26,19 @@
     <div class="col">
       <img src="{{ project.img_header_left.url }}" height="80px">
     </div>
+    {% elif default_header_left %}
+      <div class="col">
+        <img src="{{ default_header_left }}" height="80px">
+      </div>
     {% endif %}
     {% if project.img_header_right %}
     <div class="col">
       <img class="float-end" src="{{ project.img_header_right.url }}" height="80px">
     </div>
+    {% elif default_header_right %}
+      <div class="col">
+        <img class="float-end" src="{{ default_header_right }}" height="80px">
+      </div>
     {% endif %}
   </div>
   {% endblock public-header %}

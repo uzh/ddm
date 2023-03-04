@@ -39,7 +39,10 @@ def project_header_dir_path(instance, filename):
 
 class DonationProject(models.Model):
     # Basic information for internal organization.
-    name = models.CharField(max_length=50)
+    name = models.CharField(
+        max_length=50,
+        help_text='Project Name - for internal organisation only (can be changed).'
+    )
     date_created = models.DateTimeField(default=timezone.now)
     owner = models.ForeignKey(
         'ResearchProfile',
@@ -73,13 +76,22 @@ class DonationProject(models.Model):
     )
 
     # Information affecting participation flow.
-    slug = models.SlugField(unique=True, verbose_name='External Project Slug')
+    slug = models.SlugField(
+        unique=True,
+        verbose_name='URL Identifier',
+        help_text='Identifier that is included in the URL through which '
+                  'participants can access the project '
+                  '(e.g, https://root.url/url-identifier).'
+    )
     briefing_text = RichTextUploadingField(
         null=True, blank=True,
         verbose_name='Briefing Text',
         config_name='ddm_ckeditor'
     )
-    briefing_consent_enabled = models.BooleanField(default=False)
+    briefing_consent_enabled = models.BooleanField(
+        default=False,
+        verbose_name='Briefing Consent Mandatory'
+    )
     briefing_consent_label_yes = models.CharField(max_length=255, blank=True)
     briefing_consent_label_no = models.CharField(max_length=255, blank=True)
     debriefing_text = RichTextUploadingField(
@@ -409,14 +421,13 @@ class DonationBlueprint(models.Model):
         return 'blueprint'
 
     def get_config(self):
-        # TODO: Change 'f_expected' and 'f_extract' to something more meaningful
         config = {
             'id': self.pk,
             'name': self.name,
             'description': self.description,
             'format': self.exp_file_format,
-            'f_expected': json.loads("[" + str(self.expected_fields) + "]"),
-            'f_extract': self.get_fields_to_extract(),
+            'expected_fields': json.loads("[" + str(self.expected_fields) + "]"),
+            'fields_to_extract': self.get_fields_to_extract(),
             'regex_path': self.regex_path,
             'filter_rules': self.get_filter_rules(),
             'csv_delimiter': self.csv_delimiter
@@ -468,7 +479,6 @@ class DonationBlueprint(models.Model):
             )
             return False
 
-        # TODO: Add other validation steps? - e.g., validation of extracted fields
         return True
 
     def create_donation(self, data, participant):
@@ -485,10 +495,10 @@ class DonationBlueprint(models.Model):
 
 class ProcessingRule(models.Model):
     """
-    A processing rule that is executed on the specified blueprint field,
-    during the file upload in vue.
-    Filters or matches values.
-    TODO: Improve this description.
+    A processing rule that defines how the data uploaded to VUE will be processed
+    before being sent to the server.
+    Generates a json configuration that is passed to the VUE frontend component
+    'UploaderApp'.
     """
     blueprint = models.ForeignKey(
         'DonationBlueprint',
@@ -497,11 +507,22 @@ class ProcessingRule(models.Model):
         on_delete=models.CASCADE
     )
 
-    name = models.CharField(max_length=250)
+    name = models.CharField(
+        max_length=250,
+        help_text='An informative name for this rule. Only used internally.'
+    )
 
-    field = models.TextField(null=False, blank=False)
-    execution_order = models.IntegerField()
+    field = models.TextField(
+        null=False,
+        blank=False,
+        help_text='The field on which the rule will be applied. If a field is mentioned in a rule, '
+                  'it will be kept in the data that are sent to the server.'
+    )
+    execution_order = models.IntegerField(
+        help_text='The order in which the extraction steps are executed.'
+    )
 
+    # TODO: Integrate a description of these steps somehow.
     class ComparisonOperators(models.TextChoices):
         EQUAL = '==', 'Equal (==)'
         NOT_EQUAL = '!=', 'Not Equal (!=)'
@@ -520,7 +541,11 @@ class ProcessingRule(models.Model):
         choices=ComparisonOperators.choices,
         default=None
     )
-    comparison_value = models.TextField(blank=True)
+    comparison_value = models.TextField(
+        blank=True,
+        help_text='The value against which the data contained in a data donation will '
+                  'be compared according to the selected comparison logic.'
+    )
     replacement_value = models.TextField(
         blank=True,
         help_text='Only required for operation "Replace match (regex)".'
@@ -534,13 +559,15 @@ class ProcessingRule(models.Model):
             'comparison_operator': '==' | '!=' | '>' | '<' | '>=' | '<=' |
                                    'regex-delete-match' | ' regex-replace-match'
                                    'regex-delete-row' | None,
-            'comparison_value': '123' | Regex-String | None
+            'comparison_value': '123' | Regex-String | None,
+            'replacement_value': String
         }
         """
         return {
             'field': self.field,
             'comparison_operator': self.comparison_operator,
-            'comparison_value': self.comparison_value
+            'comparison_value': self.comparison_value,
+            'replacement_value': self.replacement_value
         }
 
 
@@ -564,7 +591,6 @@ class DataDonation(ModelWithEncryptedData):
     data = models.BinaryField()
 
 
-# TODO: Outsource to separate model.py file when instruction database is added.
 class DonationInstruction(models.Model):
     text = RichTextUploadingField(null=True, blank=True, config_name='ddm_ckeditor')
     index = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
@@ -605,7 +631,6 @@ class DonationInstruction(models.Model):
         if kwargs.pop('ignore_index_check', False):
             return super().save()
 
-        # TODO: Optimize and prettify the following part:
         initial_index = DonationInstruction.objects.get(pk=self.pk).index if self.pk else None
         index_taken = self.file_uploader.donationinstruction_set.filter(index=self.index).exclude(pk=self.pk).exists()
         if index_taken and (self.index != initial_index):

@@ -9,15 +9,16 @@ User = get_user_model()
 
 
 class ProjectCreateForm(forms.ModelForm):
-    secret = forms.CharField(min_length=10, max_length=150, required=False, widget=forms.PasswordInput())
-    secret_confirm = forms.CharField(min_length=10, max_length=150, required=False, widget=forms.PasswordInput())
+    project_password = forms.CharField(min_length=10, max_length=150, required=False, widget=forms.PasswordInput())
+    project_password_confirm = forms.CharField(min_length=10, max_length=150, required=False, widget=forms.PasswordInput())
 
     class Meta:
         model = DonationProject
         fields = ['name', 'slug', 'super_secret', 'owner', 'contact_information', 'data_protection_statement']
         widgets = {'owner': forms.HiddenInput()}
 
-    field_order = ['name', 'slug', 'super_secret', 'secret', 'secret_confirm', 'contact_information', 'data_protection_statement']
+    field_order = ['name', 'slug', 'super_secret', 'project_password', 'project_password_confirm',
+                   'contact_information', 'data_protection_statement']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -26,21 +27,21 @@ class ProjectCreateForm(forms.ModelForm):
 
     def clean(self):
         super_secret = self.data.get('super_secret', False)
-        secret = self.data.get('secret', None)
-        secret_confirm = self.data.get('secret_confirm', None)
+        secret = self.data.get('project_password', None)
+        secret_confirm = self.data.get('project_password_confirm', None)
 
         if super_secret and secret in ['', None]:
-            raise ValidationError('Super secret project needs a secret.')
+            raise ValidationError('Super secret project needs a project password.')
 
         if super_secret and (secret != secret_confirm):
-            raise ValidationError('Secret and Secret Confirm does not match".')
+            raise ValidationError('The two supplied project passwords do not match".')
 
         super().clean()
 
     def save(self, commit=True):
         project = super().save(commit=False)
         if project.super_secret:
-            project.secret_key = self.data['secret']
+            project.secret_key = self.data['project_password']
         project.save()
         return project
 

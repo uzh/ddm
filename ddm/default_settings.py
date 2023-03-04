@@ -11,7 +11,7 @@ ddm_ckeditor = {
          'items': ['Image', 'Flash', 'Table', 'HorizontalRule', 'SpecialChar']},
         {'name': 'styles', 'items': ['Styles', 'Format', 'Font', 'FontSize']},
         {'name': 'colors', 'items': ['TextColor', 'BGColor']},
-        {'name': 'tools', 'items': ['Maximize', 'ShowBlocks']}
+        {'name': 'tools', 'items': ['Maximize', 'ShowBlocks', 'Source']}
     ],
     'toolbar': 'custom',
     'allowedContent': True,

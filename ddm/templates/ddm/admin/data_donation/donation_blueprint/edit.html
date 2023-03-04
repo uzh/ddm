@@ -2,9 +2,9 @@
 
 {% load static %}
 
-{% block page_title %}Edit Donation Blueprint{% endblock %}
+{% block page_title %}Edit File Blueprint{% endblock %}
 
-{% block main_heading %}Edit Donation Blueprint "{{ object.name }}"{% endblock %}
+{% block main_heading %}Edit File Blueprint "{{ object.name }}"{% endblock %}
 
 {% block main_form %}
 <form method='post'>
@@ -172,32 +172,34 @@ Edit Blueprint
 {% endblock %}
 
 {% block scripts %}
-{{ block.super }}
-<script src="{% static 'ddm/js/blueprint-edit-ui-helpers.js' %}"></script>
-<script>
-  const file_uploader_meta = JSON.parse(document.getElementById("file_uploader_meta").textContent);
+  {{ block.super }}
+  <script src="{% static 'ddm/js/blueprint-edit-ui-helpers.js' %}"></script>
+  <script src="{% static 'ddm/js/processing-rule-modal.js' %}"></script>
 
-  function hideOrShowCsvDelimiter() {
-    if( $( "#id_exp_file_format" ).val() == "csv") {
-      $( "#id_csv_delimiter" ).parent().show();
-    } else {
-      $( "#id_csv_delimiter" ).parent().hide();
+  <script>
+    const file_uploader_meta = JSON.parse(document.getElementById("file_uploader_meta").textContent);
+
+    function hideOrShowCsvDelimiter() {
+      if( $( "#id_exp_file_format" ).val() == "csv") {
+        $( "#id_csv_delimiter" ).parent().show();
+      } else {
+        $( "#id_csv_delimiter" ).parent().hide();
+      }
     }
-  }
 
-  function hideOrShowRegexPath() {
-    if( file_uploader_meta[$( "#id_file_uploader" ).val()] == "zip file" ) {
-      $( "#id_regex_path" ).parent().show();
-    } else {
-      $( "#id_regex_path" ).parent().hide();
+    function hideOrShowRegexPath() {
+      if( file_uploader_meta[$( "#id_file_uploader" ).val()] == "zip file" ) {
+        $( "#id_regex_path" ).parent().show();
+      } else {
+        $( "#id_regex_path" ).parent().hide();
+      }
     }
-  }
 
-  $(function() {
-    hideOrShowCsvDelimiter();
-    hideOrShowRegexPath();
-  });
-  $( "#id_exp_file_format" ).change(function() { hideOrShowCsvDelimiter() });
-  $( "#id_file_uploader" ).change(function() { hideOrShowRegexPath() });
-</script>
+    $(function() {
+      hideOrShowCsvDelimiter();
+      hideOrShowRegexPath();
+    });
+    $( "#id_exp_file_format" ).change(function() { hideOrShowCsvDelimiter() });
+    $( "#id_file_uploader" ).change(function() { hideOrShowRegexPath() });
+  </script>
 {% endblock scripts %}

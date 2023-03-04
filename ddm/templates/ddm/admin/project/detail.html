@@ -108,21 +108,28 @@
       </div>
     </div>
 
+    {% with stats=object.get_statistics %}
     <div class="d-flex flex-row align-items-center data-center-row border-bottom">
       <div class="w-15"><h5>Project Log</h5></div>
       <div><a href="{% url 'project-logs' object.pk %}">Show Project Log</a></div>
+      <div class="col ps-4">
+        <p class="mb-0">(Registered Exceptions: {{ stats.n_errors }})</p>
+      </div>
     </div>
 
     <div class="d-flex flex-row align-items-center data-center-row">
       <div class="w-15"><h5>Participation Statistics</h5></div>
       <div class="row col fw-bold text-center project-statistics-container">
-        {% with stats=object.get_statistics %}
           <div class="col">
-            <p class="mb-0">n Started</p>
+            <p class="mb-0">Donated Files</p>
+            <p class="fs-3 mb-0">{{ stats.n_donations }}</p>
+          </div>
+          <div class="col">
+            <p class="mb-0">Started</p>
             <p class="fs-3 mb-0">{{ stats.n_started }}</p>
           </div>
           <div class="col">
-            <p class="mb-0">n Completed</p>
+            <p class="mb-0">Completed</p>
             <p class="fs-3 mb-0">{{ stats.n_completed }}</p>
           </div>
           <div class="col">
@@ -130,20 +137,12 @@
             <p class="fs-3 mb-0">{{ stats.completion_rate|floatformat:2 }}</p>
           </div>
           <div class="col">
-            <p class="mb-0">n Donations</p>
-            <p class="fs-3 mb-0">{{ stats.n_donations }}</p>
-          </div>
-          <div class="col">
-            <p class="mb-0">n Errors</p>
-            <p class="fs-3 mb-0">{{ stats.n_errors }}</p>
-          </div>
-          <div class="col">
             <p class="mb-0">Avrg. to complete</p>
             <p class="fs-3 mb-0">{{ stats.average_time }}<span class="fs-6 mb-0 pb-1">(H:m:s)</span></p>
           </div>
-        {% endwith %}
       </div>
     </div>
+    {% endwith %}
   </div>
 </div>
 
@@ -152,15 +151,15 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-body ddm-form">
-        <p><b>Personal Secret for Data Encryption</b></p>
+        <p><b>Project Password for Data Encryption</b></p>
         <p>
-          This is a super secret project and your personal secret is needed to decrypt and download the data belonging to this project.<br>
-          You defined this secret during the creation of the project. Without this secret, the data belonging to this project cannot be downloaded.
+          This is a super secret project and the project password is needed to decrypt and download the data belonging to this project.<br>
+          You defined this password during the creation of the project. Without this password, the data belonging to this project cannot be downloaded.
         </p>
         <p>
-          Please provide your secret:
+          Please provide the project password:
           <input type="password" id="secret-input" class="w-100 mt-2" name="secret">
-          <span id="error-no-secret" class="text-danger helptext" hidden>Please provide your secret - secret cannot empty.</span>
+          <span id="error-no-secret" class="text-danger helptext" hidden>Please provide your project password – cannot empty.</span>
         </p>
       </div>
       <div class="modal-footer">

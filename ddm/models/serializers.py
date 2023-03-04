@@ -1,3 +1,5 @@
+import json
+
 from django.views.decorators.debug import sensitive_variables
 from rest_framework import serializers
 from rest_framework.fields import empty
@@ -44,12 +46,20 @@ class DonationSerializer(SerializerDecryptionMixin, serializers.HyperlinkedModel
 
 class ResponseSerializer(SerializerDecryptionMixin, serializers.HyperlinkedModelSerializer):
     project = serializers.IntegerField(source='project.id')
-    data = serializers.CharField(source='get_decrypted_data')
+    data = serializers.SerializerMethodField()
     participant = serializers.IntegerField(source='participant.id')
 
     class Meta:
         model = QuestionnaireResponse
         fields = ['time_submitted', 'data', 'project', 'participant']
+
+    @sensitive_variables()
+    def get_data(self, obj):
+        data = super().get_data(obj)
+        try:
+            return json.loads(data)
+        except TypeError:
+            return data
 
 
 class ParticipantSerializer(serializers.HyperlinkedModelSerializer):

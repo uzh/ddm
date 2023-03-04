@@ -119,5 +119,7 @@ LOGOUT_REDIRECT_URL = '/login/'
 CKEDITOR_RESTRICT_BY_USER = True
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 
+DDM_DEFAULT_HEADER_IMG_LEFT = '/media/project_10/headers/DDLabLogo.png'
+DDM_DEFAULT_HEADER_IMG_RIGHT = '/media/project_10/headers/IKMZ_Logo.png'
 
 # INTERNAL_IPS = ["127.0.0.1", ]  # Added for debugging purposes

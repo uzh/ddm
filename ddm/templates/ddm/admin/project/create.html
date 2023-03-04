@@ -16,12 +16,14 @@
       {{ form.name.errors }}
       <label for="{{ form.name.id_for_label }}">Project Name:</label>
       {{ form.name }}
+      <span class="helptext">{{ form.name.help_text|safe }}</span>
     </p>
 
     <p>
       {{ form.slug.errors }}
       {{ form.slug.label_tag }}
       {{ form.slug }}
+      <span class="helptext">{{ form.slug.help_text|safe }}</span>
     </p>
 
     <p>
@@ -47,7 +49,7 @@
         <b>Is this a super secret project?</b>
       </p>
       <p>
-        <b>Attention:</b> Data donated to a super secret project will be stored with improved encryption and data decryption will only be possible if the secret is supplied.
+        <b>Attention:</b> Data donated to a super secret project will be stored with improved encryption and data decryption will only be possible if the project password is supplied.
         Be aware that this will limit the functionality of the module for this project: it won’t be possible to create followup questions based on the data donation (i.e., data points from the data donation cannot be referenced in a question).<br>
       </p>
       <p> After a project has been created, it cannot be changed from <i>super secret</i> to <i>regular</i> and vice versa.</p>
@@ -58,14 +60,14 @@
       </p>
       <div id="secret-definition" style="display: none;">
         <p>
-          {{ form.secret.errors }}
-          {{ form.secret.label_tag }}
-          {{ form.secret }}
+          {{ form.project_password.errors }}
+          {{ form.project_password.label_tag }}
+          {{ form.project_password }}
         </p>
         <p>
-          {{ form.secret_confirm.errors }}
-          <label for="{{ form.secret_confirm.id_for_label }}">Confirm Secret:</label>
-          {{ form.secret_confirm }}
+          {{ form.project_password_confirm.errors }}
+          <label for="{{ form.project_password_confirm.id_for_label }}">Confirm Project Password:</label>
+          {{ form.project_password_confirm }}
         </p>
       </div>
     </div>

@@ -6,14 +6,6 @@
 
 {% block main_body %}
 
-{% if not donation_blueprints %}
-<div>
-  <p>
-    Questions can only be created in relation to a donation blueprint and no donation blueprints have been defined yet.
-    <a href="{% url 'blueprint-list' project_pk %}">Create a donation blueprint &rarr;</a>
-  </p>
-</div>
-{% else %}
 <div>
   <table class="table">
     <tr class="lh-1 align-bottom">
@@ -31,7 +23,6 @@
       <th></th>
     </tr>
 
-    <!-- TODO: Add general questions -->
     {% for question in general_questions %}
       <tr {% if forloop.last %}class="border-bottom-dark"{% endif %}>
         {% if forloop.first %}
@@ -98,7 +89,6 @@
     </div>
   </div>
 </div>
-{% endif %}
 
 <div class="mt-3">
   <a href="{% url 'project-detail' project_pk %}">&#129040; Back</a>

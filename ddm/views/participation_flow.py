@@ -1,6 +1,7 @@
 import json
 import zipfile
 
+from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, reverse
 from django.template import Context, Template
@@ -65,6 +66,14 @@ class ParticipationFlowBaseView(DetailView):
             }
             request.session.modified = True
         return
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'default_header_left': settings.DDM_DEFAULT_HEADER_IMG_LEFT,
+            'default_header_right': settings.DDM_DEFAULT_HEADER_IMG_RIGHT,
+        })
+        return context
 
     def get_session_id(self):
         """
@@ -341,7 +350,7 @@ class QuestionnaireView(ParticipationFlowBaseView):
             project=self.object,
             participant=self.participant,
             time_submitted=timezone.now(),
-            data=response
+            data=response['post_data']
         )
 
 

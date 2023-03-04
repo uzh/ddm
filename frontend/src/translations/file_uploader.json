@@ -32,14 +32,16 @@
     "error-all-fields-filtered-out": "All entries were filtered out and deleted.",
     "extraction-failed": "Information could not be extracted from uploaded file",
     "partial-upload-status": "Only partially uploaded",
-    "partial-upload-message": "Zip file was successfully uploaded but only parts of the expected information were successfully extracted (see below)",
+    "partial-upload-message": "Zip file was successfully uploaded but not all of the expected information were successfully extracted (see below)",
     "data-extraction-intro": "The following information will be extracted from the selected file",
     "ul-success-modal-title": "Upload Complete",
     "ul-success-modal-body": "All data has been uploaded successfully. Please look at the uploaded data and indicate whether you want to donate the data or not.",
     "ul-failed-modal-title": "An Error Occurred",
     "ul-failed-modal-body": "Unfortunately, an error occurred while uploading your file. Please have a look at the following error description and try again if necessary:",
     "ul-partial-modal-title": "Upload Partially Successful",
-    "ul-partial-modal-body": "<p>Only parts of the data could be uploaded successfully.</p><p>In the 'Data Donation' section you will find more information on which data has experienced a problem. This information may help you to identify and fix the problem.</p><p>If not, you can inspect the uploaded data, indicate whether you want to donate the data or not, and continue.</p>",
+    "ul-partial-modal-body": "<p>Only parts of the data could be uploaded successfully.</p><p>In the 'Data Donation' section you will find more information on which file a problem occurred. This information may help you to identify and fix the problem.</p><p>If not, you can inspect the uploaded data, indicate whether you want to donate the data or not, and continue.</p>",
+    "ul-nothing-extracted-modal-title": "Upload Successful but No Data Extracted",
+    "ul-nothing-extracted-modal-body": "<p>The data was successfully uploaded but no data were extracted. It is possible, that your data file did not contain any information relevant to this research project.</p><p>If you think you chose the wrong file, you can try the upload again. Otherwise, you can continue by clicking on 'submit data'.</p>",
     "extracted-data": "Extracted data"
   },
   "de": {
@@ -75,7 +77,7 @@
     "error-all-fields-filtered-out": "Alle Einträge in der hochgeladenen Datei wurden herausgefiltert.",
     "extraction-failed": "Es konnten nicht alle erwarteten Dateien ausgelesen werden.",
     "partial-upload-status": "Nur teilweise hochgeladen",
-    "partial-upload-message": "Der Zip-Container wurde erfolgreich hochgeladen, aber es wurde nur ein Teil der erwarteten Daten erfolgreich extrahiert (siehe unten)",
+    "partial-upload-message": "Der Zip-Container wurde erfolgreich hochgeladen, aber es wurden nicht alle Daten erfolgreich extrahiert (siehe unten)",
     "data-extraction-intro": "Die folgenden Informationen werden aus dem ausgewählten File ausgelesen",
     "ul-success-modal-title": "Upload abgeschlossen",
     "ul-success-modal-body": "Alle Daten wurden erfolgreich hochgeladen. Bitte schauen Sie sich die hochgeladenen Daten an und geben Sie jeweils an, ob Sie die Daten spenden möchten oder nicht.",
@@ -83,6 +85,8 @@
     "ul-failed-modal-body": "Leider ist beim Hochladen ihrer Datei ein Fehler aufgetreten. Bitte schauen Sie sich die folgende Fehlerbeschreibung an und versuchen Sie es gegebenenfalls erneut:",
     "ul-partial-modal-title": "Upload teilweise erfolgreich",
     "ul-partial-modal-body": "<p>Es konnte nur ein Teil der Daten erfolgreich hochgeladen werden.</p><p>Im Bereich 'Datenspende' finden Sie weitere Informationen dazu, bei welchen Daten ein Problem aufgetreten ist. Gegebenenfalls helfen Ihnen diese Informationen das Problem zu identifizieren und zu beheben.</p><p>Falls nicht, können Sie sich die erfolgreich hochgeladenen Daten anschauen und entscheiden, ob Sie diese Daten spenden möchten oder nicht.</p>",
+    "ul-nothing-extracted-modal-title": "Upload erfolgreich, jedoch wurden keine Daten ausgelesen",
+    "ul-nothing-extracted-modal-body": "<p>Die Daten wurden erfolgreich verarbeitet, aber es wurden keine Daten extrahiert. Es ist möglich, dass Ihre Datei keine für dieses Forschungsprojekt relevanten Informationen enthält.</p><p>Wenn Sie denken, dass Sie die falsche Datei ausgewählt haben, können Sie den Upload erneut versuchen.</p><p>Andernfalls können Sie fortfahren, indem Sie auf 'Daten übermitteln' klicken.</p>",
     "extracted-data": "Ausgelesene Daten"
   }
 }

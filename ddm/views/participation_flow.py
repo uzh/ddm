@@ -70,8 +70,8 @@ class ParticipationFlowBaseView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
-            'default_header_left': settings.DDM_DEFAULT_HEADER_IMG_LEFT,
-            'default_header_right': settings.DDM_DEFAULT_HEADER_IMG_RIGHT,
+            'default_header_left': getattr(settings, 'DDM_DEFAULT_HEADER_IMG_LEFT', None),
+            'default_header_right': getattr(settings, 'DDM_DEFAULT_HEADER_IMG_RIGHT', None),
         })
         return context
 

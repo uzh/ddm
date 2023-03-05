@@ -17,9 +17,3 @@ class DdmConfig(AppConfig):
             setattr(settings, 'CKEDITOR_CONFIGS', {})
         if 'ddm_ckeditor' not in settings.CKEDITOR_CONFIGS:
             settings.CKEDITOR_CONFIGS['ddm_ckeditor'] = defaults.ddm_ckeditor
-
-        if not hasattr(settings, 'DDM_DEFAULT_HEADER_IMG_LEFT'):
-            setattr(settings, 'DDM_DEFAULT_HEADER_IMG_LEFT', None)
-
-        if not hasattr(settings, 'DDM_DEFAULT_HEADER_IMG_RIGHT'):
-            setattr(settings, 'DDM_DEFAULT_HEADER_IMG_LEFT', None)

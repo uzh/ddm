@@ -137,6 +137,12 @@ class BlueprintCreate(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, CreateV
     form_class = BlueprintEditForm
     success_message = 'Blueprint was created successfully.'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        available_file_uploaders = FileUploader.objects.filter(project_id=self.kwargs['project_pk'])
+        context['form'].fields['file_uploader'].queryset = available_file_uploaders
+        return context
+
     def form_valid(self, form):
         form.instance.project_id = self.kwargs['project_pk']
         return super().form_valid(form)

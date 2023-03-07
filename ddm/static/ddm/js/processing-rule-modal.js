@@ -1,14 +1,18 @@
-hideOrShowReplacementValue = function( id ) {
+hideOrShowReplacementAndComparisonValue = function( id ) {
   let replacementInput = $("#id_processingrule_set-" + id + "-replacement_value");
+  let comparisonValue = $("#id_processingrule_set-" + id + "-comparison_value");
+
   let val = $("[id$=" + id + "-comparison_operator]").val();
 
-  // if value contains "replace match"
   if (val.indexOf("regex-replace-match") >= 0 ) {
-    replacementInput.show();
-    replacementInput.siblings().show();
+    replacementInput.parent().show();
+    comparisonValue.parent().show();
+  } else if (val === "") {
+    replacementInput.parent().hide();
+    comparisonValue.parent().hide();
   } else {
-    replacementInput.hide();
-    replacementInput.siblings().hide();
+    replacementInput.parent().hide();
+    comparisonValue.parent().show();
   }
 }
 
@@ -17,7 +21,7 @@ hideOrShowReplacementValue = function( id ) {
  */
 $( "body" ).on("change", "select[id$='-comparison_operator']", function() {
   const current_id = $(this).attr("id").match(/\d/)[0];
-  hideOrShowReplacementValue(current_id);
+  hideOrShowReplacementAndComparisonValue(current_id);
 
 });
 
@@ -29,6 +33,6 @@ $(document).ready(function() {
     }
   });
   for ( const id of IDs ) {
-    hideOrShowReplacementValue(id);
+    hideOrShowReplacementAndComparisonValue(id);
   }
 });

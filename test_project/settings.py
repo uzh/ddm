@@ -113,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
 ]
 
-LOGIN_REDIRECT_URL = '/auth/register/'
+LOGIN_REDIRECT_URL = '/projects/'
 LOGOUT_REDIRECT_URL = '/login/'
 
 CKEDITOR_RESTRICT_BY_USER = True

@@ -53,7 +53,6 @@ admin_patterns = [
 ]
 
 authentication_patterns = [
-    path(r'register/', admin.DdmRegisterResearchProfileView.as_view(), name='ddm-register-researcher'),
     path(r'no-permission/', admin.DdmNoPermissionView.as_view(), name='ddm-no-permission'),
 ]
 

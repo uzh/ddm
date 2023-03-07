@@ -17,19 +17,18 @@ class DdmAuthMixin:
     """
     Mixin for Class Based Views that handles redirects as follows:
     - unauthenticated users => login page.
-    - users without research profiles => registration page.
+    - users without research profiles => create research profile.
     - users without authorization (e.g., due to e-mail restriction) => no permission page.
     - users without owner-rights => 404.
     """
     def dispatch(self, request, *args, **kwargs):
         if request.method == 'GET':
-            # Check if user is authenticated.
             if not request.user.is_authenticated:
                 return redirect('ddm-login')
             elif not user_is_permitted(request.user):
                 return redirect('ddm-no-permission')
             elif not ResearchProfile.objects.filter(user=request.user).exists():
-                return redirect('ddm-register-researcher')
+                ResearchProfile.objects.create(user=request.user)
             else:
                 if request.path not in [reverse('project-list'), reverse('project-create')]:
                     if 'project_pk' in self.kwargs:

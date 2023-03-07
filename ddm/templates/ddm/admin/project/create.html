@@ -15,29 +15,29 @@
     <p>
       {{ form.name.errors }}
       <label for="{{ form.name.id_for_label }}">Project Name:</label>
-      {{ form.name }}
       <span class="helptext">{{ form.name.help_text|safe }}</span>
+      {{ form.name }}
     </p>
 
     <p>
       {{ form.slug.errors }}
       {{ form.slug.label_tag }}
-      {{ form.slug }}
       <span class="helptext">{{ form.slug.help_text|safe }}</span>
+      {{ form.slug }}
     </p>
 
     <p>
       {{ form.contact_information.errors }}
       {{ form.contact_information.label_tag }}
-      {{ form.contact_information }}
       <span class="helptext">{{ form.contact_information.help_text|safe }}</span>
+      {{ form.contact_information }}
     </p>
 
     <p>
       {{ form.data_protection_statement.errors }}
       {{ form.data_protection_statement.label_tag }}
-      {{ form.data_protection_statement }}
       <span class="helptext">{{ form.data_protection_statement.help_text|safe }}</span>
+      {{ form.data_protection_statement }}
     </p>
 
     <p>
@@ -49,8 +49,11 @@
         <b>Is this a super secret project?</b>
       </p>
       <p>
-        <b>Attention:</b> Data donated to a super secret project will be stored with improved encryption and data decryption will only be possible if the project password is supplied.
-        Be aware that this will limit the functionality of the module for this project: it won’t be possible to create followup questions based on the data donation (i.e., data points from the data donation cannot be referenced in a question).<br>
+        <b>Attention:</b> Data donated to a super secret project will be stored
+        with improved encryption and data decryption will only be possible if the project password is supplied.
+        For most projects this will not be necessary, but you might want to enable this option if you are working with
+        very sensitive data such as health records or similar information.
+        Also, be aware that this will limit the functionality of the module for this project: it won’t be possible to create followup questions based on the data donation (i.e., data points from the data donation cannot be referenced in a question).<br>
       </p>
       <p> After a project has been created, it cannot be changed from <i>super secret</i> to <i>regular</i> and vice versa.</p>
       <p>

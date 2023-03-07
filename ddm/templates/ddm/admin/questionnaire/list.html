@@ -6,7 +6,59 @@
 
 {% block main_body %}
 
-<div>
+  <div>
+    <p>
+      An optional questionnaire can be defined that will be presented to participants after they have concluded the data donation. Questions in this questionnaire can either be <i>General Questions</i> or <i>associated to a File Blueprint</i>.
+      If no questions are defined, participants will be directed to the debriefing page after they have concluded their data donation.
+    </p>
+  </div>
+
+  <div>
+  <h5>General Questions</h5>
+    <p>General questions will be displayed to all participants after they have concluded the data donation.</p>
+    <table class="table">
+      <tr class="lh-1 align-bottom">
+        <th class="border-bottom-0"></th>
+        <th class="border-bottom-0">Questions</th>
+        <th class="border-bottom-0"></th>
+        <th class="border-bottom-0"></th>
+        <th class="border-bottom-0"></th>
+      </tr>
+      <tr class="lh-1 align-bottom border-bottom-dark">
+        <th style="width: 16%"></th>
+        <th class="fs-08">Page</th>
+        <th class="fs-08">Name</th>
+        <th class="fs-08">Type</th>
+        <th></th>
+      </tr>
+
+      {% for question in general_questions %}
+        <tr {% if forloop.last %}class="border-bottom-dark"{% endif %}>
+          {% if forloop.first %}
+            <td rowspan="{{ general_questions|length }}"></td>
+          {% endif %}
+          <td>{{ question.index }}</td>
+          <td>{{ question.name }}</td>
+          <td>{{ question.get_question_type_display }}</td>
+          <td> <a href="{% url 'question-edit' project_pk question.question_type question.pk %}">Edit Question</a> | <a href="{% url 'question-delete' project_pk question.question_type question.pk %}">Delete Question</a></td>
+          {% empty %}
+        <tr class="border-bottom-dark">
+          <td>General Questions</td>
+          <td colspan="4" class="text-muted">No general questions defined.</td>
+        </tr>
+      {% endfor %}
+
+    </table>
+  </div>
+
+<div class="pt-5">
+  <h5>Questions Associated to File Blueprints</h5>
+  <p>
+    Questions associated to a file blueprint will only be shown to those participants who have donated some data to the respective blueprint.
+    Otherwise, they will be omitted.<br>
+    In questions associated to a file blueprint, the donated data is available as a variable through which specific data points can be extracted from the donated data
+    of a person and included in the question body (e.g., extract the last video from a person's watch history and ask questions related to this specific video).
+  </p>
   <table class="table">
     <tr class="lh-1 align-bottom">
       <th class="border-bottom-0"></th>
@@ -22,22 +74,6 @@
       <th class="fs-08">Type</th>
       <th></th>
     </tr>
-
-    {% for question in general_questions %}
-      <tr {% if forloop.last %}class="border-bottom-dark"{% endif %}>
-        {% if forloop.first %}
-          <td rowspan="{{ general_questions|length }}" class="border-bottom-dark">General Questions</td>
-        {% endif %}
-        <td>{{ question.index }}</td>
-        <td>{{ question.name }}</td>
-        <td>{{ question.get_question_type_display }}</td>
-        <td> <a href="{% url 'question-edit' project_pk question.question_type question.pk %}">Edit Question</a> | <a href="{% url 'question-delete' project_pk question.question_type question.pk %}">Delete Question</a></td>
-        {% empty %}
-      <tr class="border-bottom-dark">
-        <td>General Questions</td>
-        <td colspan="4" class="text-muted">No general questions defined.</td>
-      </tr>
-    {% endfor %}
 
     {% for blueprint in donation_blueprints %}
     {% for question in blueprint.get_associated_questions %}

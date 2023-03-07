@@ -19,7 +19,7 @@ class QuestionType(models.TextChoices):
     MATRIX = 'matrix', 'Matrix Question'
     SEMANTIC_DIFF = 'semantic_diff', 'Semantic Differential'
     OPEN = 'open', 'Open Question'
-    TRANSITION = 'transition', 'Transition Block'
+    TRANSITION = 'transition', 'Text Block'
 
 
 class QuestionBase(PolymorphicModel):
@@ -52,7 +52,18 @@ class QuestionBase(PolymorphicModel):
         help_text='Will be used in the data export to identify responses to this question.'
     )
 
-    text = RichTextUploadingField(null=True, blank=True, config_name='ddm_ckeditor')
+    text = RichTextUploadingField(
+        null=True, blank=True,
+        config_name='ddm_ckeditor',
+        help_text=(
+            'If a question is linked to a File Blueprint, data points from the donated data associated with the linked donation blueprint can be included in the question text. '
+            'This data can be included as "{{ data }}" in the question text. '
+            'It is possible to subset the data object (e.g., to include the last datapoint you can use {{ data.0 }} or include advanced '
+            'rendering options included in the Django templating engine. For a more comprehensive overview and examples see [LINK TO BE INCLUDED]. '  # TODO: Include link
+            'Additionally, information directly related to the participant can be included in the question text. '
+            'This information can be referenced as "{{ participant }}".'
+        )
+    )
     required = models.BooleanField(default=False)
 
     class Meta:

@@ -15,7 +15,16 @@ class ProjectCreateForm(forms.ModelForm):
     class Meta:
         model = DonationProject
         fields = ['name', 'slug', 'super_secret', 'owner', 'contact_information', 'data_protection_statement']
-        widgets = {'owner': forms.HiddenInput()}
+        widgets = {
+            'owner': forms.HiddenInput(),
+        }
+
+        #
+        # widgets = {
+        #     'expected_fields': forms.Textarea(attrs={'rows': 1}),
+        #     'regex_path': forms.Textarea(attrs={'rows': 1}),
+        #     'description': forms.Textarea(attrs={'rows': 3}),
+        # }
 
     field_order = ['name', 'slug', 'super_secret', 'project_password', 'project_password_confirm',
                    'contact_information', 'data_protection_statement']
@@ -83,8 +92,9 @@ class BlueprintEditForm(forms.ModelForm):
         fields = ['name', 'description', 'exp_file_format', 'csv_delimiter',
                   'file_uploader', 'regex_path', 'expected_fields']
         widgets = {
-            'expected_fields': forms.Textarea(attrs={'rows': 3}),
-            'regex_path': forms.Textarea(attrs={'rows': 3}),
+            'expected_fields': forms.Textarea(attrs={'rows': 1}),
+            'regex_path': forms.Textarea(attrs={'rows': 1}),
+            'description': forms.Textarea(attrs={'rows': 3}),
         }
 
     def clean(self):

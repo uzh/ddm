@@ -238,6 +238,11 @@
 .ddm-btn-green {
     background: #009c94;
 }
+.ddm-btn-inverted {
+    color: black !important;
+    border: 1px solid black;
+    background: white;
+}
 .ddm-admin-form h5, h6 {
     margin-top: 2rem;
 }

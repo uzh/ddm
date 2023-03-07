@@ -41,7 +41,7 @@ class DonationProject(models.Model):
     # Basic information for internal organization.
     name = models.CharField(
         max_length=50,
-        help_text='Project Name - for internal organisation only (can be changed).'
+        help_text='Project Name - for internal organisation only (can still be changed later).'
     )
     date_created = models.DateTimeField(default=timezone.now)
     owner = models.ForeignKey(
@@ -58,8 +58,8 @@ class DonationProject(models.Model):
         verbose_name='Contact information',
         help_text=(
             'Please provide the contact information of the person responsible '
-            'for the conduction of this study. The contact information will be '
-            'accessible for participants during the data donation.'
+            'for the conduction of this study (Name, professional address, e-mail, tel, ...). The contact information will be '
+            'accessible for participants during the data donation. The field is mandatory.'
         ),
         config_name='ddm_ckeditor'
     )
@@ -70,7 +70,8 @@ class DonationProject(models.Model):
         help_text=(
             'Please provide a data protection statement for your data donation '
             'collection. This should include the purpose for which the data is '
-            'collected, how it will be stored, and who will have access to the data.'
+            'collected, how it will be stored, and who will have access to the data. '
+            'The field is mandatory.'
         ),
         config_name='ddm_ckeditor'
     )
@@ -86,18 +87,28 @@ class DonationProject(models.Model):
     briefing_text = RichTextUploadingField(
         null=True, blank=True,
         verbose_name='Briefing Text',
-        config_name='ddm_ckeditor'
+        config_name='ddm_ckeditor',
+        help_text=(
+            'This text will be displayed to participants in the first step before '
+            'beginning the data donation. Here, you should introduce your study, '
+            'who is responsible for the study, provide a quick summary of what '
+            'your participants will be asked to do in the next steps, etc.'
+        )
     )
     briefing_consent_enabled = models.BooleanField(
         default=False,
-        verbose_name='Briefing Consent Mandatory'
+        verbose_name='Briefing Consent Mandatory',
+        help_text='Enable this option to obtain explicit consent from participant, '
+                  'that they want to start the study.'
     )
     briefing_consent_label_yes = models.CharField(max_length=255, blank=True)
     briefing_consent_label_no = models.CharField(max_length=255, blank=True)
     debriefing_text = RichTextUploadingField(
         null=True, blank=True,
         verbose_name='Debriefing Text',
-        config_name='ddm_ckeditor'
+        config_name='ddm_ckeditor',
+        help_text='This text will be displayed to participants on the last page '
+                  'of the study (i.e., after the data donation and the questionnaire).'
     )
 
     # Appearance settings.
@@ -373,8 +384,22 @@ class DonationBlueprint(models.Model):
         'DonationProject',
         on_delete=models.CASCADE
     )
-    name = models.CharField(max_length=250)
-    description = models.TextField(null=True)
+    name = models.CharField(
+        max_length=250,
+        help_text=(
+            'Name for this File Blueprint. Will be visible to participants, '
+            'so pick an informative name (e.g., "Watch History").'
+        )
+    )
+    description = models.TextField(
+        null=True,
+        help_text=(
+            'A description of which kind of data will be extracted by this '
+            'Blueprint (e.g., "The title of your watched videos will be '
+            'collected together with the time when you watched it."). '
+            'Will be visible to participants.'
+        )
+    )
 
     class FileFormats(models.TextChoices):
         JSON_FORMAT = 'json', 'JSON file'
@@ -399,7 +424,10 @@ class DonationBlueprint(models.Model):
         null=False,
         blank=False,
         validators=[COMMA_SEPARATED_STRINGS_VALIDATOR],
-        help_text='Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").'
+        help_text=(
+            'Put the field names in double quotes (") and separate them '
+            'with commas ("Field A", "Field B").'
+        )
     )
 
     file_uploader = models.ForeignKey(
@@ -408,8 +436,21 @@ class DonationBlueprint(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
         verbose_name='Associated File Uploader',
+        help_text=(
+            'The File Uploader through which the related file will be uploaded.'
+        )
     )
-    regex_path = models.TextField(null=True, blank=True)
+    regex_path = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name='File path',
+        help_text=(
+            'The path where the file is expected to be located in the uploaded '
+            'ZIP folder. You can use Regex to, e.g., add wildcard characters or '
+            'to match files in different languages. Consult the documentation '
+            'for some examples.'
+        )
+    )
 
     def __str__(self):
         return self.name
@@ -515,14 +556,15 @@ class ProcessingRule(models.Model):
     field = models.TextField(
         null=False,
         blank=False,
-        help_text='The field on which the rule will be applied. If a field is mentioned in a rule, '
-                  'it will be kept in the data that are sent to the server.'
+        help_text=(
+            'The field on which the rule will be applied (just as a string without quotes).'
+            'If a field is mentioned in a rule, it will be kept in the data that are sent to the server.'
+        )
     )
     execution_order = models.IntegerField(
         help_text='The order in which the extraction steps are executed.'
     )
 
-    # TODO: Integrate a description of these steps somehow.
     class ComparisonOperators(models.TextChoices):
         EQUAL = '==', 'Equal (==)'
         NOT_EQUAL = '!=', 'Not Equal (!=)'
@@ -539,11 +581,12 @@ class ProcessingRule(models.Model):
         blank=True,
         null=True,
         choices=ComparisonOperators.choices,
-        default=None
+        default=None,
+        verbose_name='Extraction Operator'
     )
     comparison_value = models.TextField(
         blank=True,
-        help_text='The value against which the data contained in a data donation will '
+        help_text='The value against which the data contained in the indicated field will '
                   'be compared according to the selected comparison logic.'
     )
     replacement_value = models.TextField(

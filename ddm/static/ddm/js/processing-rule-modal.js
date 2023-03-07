@@ -2,13 +2,10 @@ hideOrShowReplacementValue = function( id ) {
   let replacementInput = $("#id_processingrule_set-" + id + "-replacement_value");
   let val = $("[id$=" + id + "-comparison_operator]").val();
 
-  // if value contains "replace match"
   if (val.indexOf("regex-replace-match") >= 0 ) {
-    replacementInput.show();
-    replacementInput.siblings().show();
+    replacementInput.parent().show();
   } else {
-    replacementInput.hide();
-    replacementInput.siblings().hide();
+    replacementInput.parent().hide();
   }
 }
 

@@ -144,7 +144,7 @@
     <div class="ddm-admin-form">
     {% for field in formset.empty_form %}
     {% if field.name in 'name,field,execution_order,input_type,comparison_operator,comparison_value,replacement_value' %}
-    <p>
+    <p {% if field.name == 'replacement_value' %}style="display: none"{% endif %}>
       {{ field.label }}
       <span class="helptext"><br>{{ field.help_text }}</span>
       {{ field }}

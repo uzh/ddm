@@ -1,4 +1,5 @@
 from django.urls import path, include
+from django.views.generic import RedirectView
 
 from ddm.views import admin, participation_flow
 from ddm.views.apis import ExceptionAPI, ProjectDataAPI, ParticipantAPI
@@ -53,11 +54,11 @@ admin_patterns = [
 ]
 
 authentication_patterns = [
-    path(r'register/', admin.DdmRegisterResearchProfileView.as_view(), name='ddm-register-researcher'),
     path(r'no-permission/', admin.DdmNoPermissionView.as_view(), name='ddm-no-permission'),
 ]
 
 urlpatterns = [
+    path(r'', RedirectView.as_view(pattern_name='project-list'), name='ddm-landing-page'),
     path(r'<slug:slug>/', include(participation_flow_patterns)),
     path(r'projects/', include(admin_patterns)),
     path(r'auth/', include(authentication_patterns)),

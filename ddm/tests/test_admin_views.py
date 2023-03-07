@@ -230,11 +230,14 @@ class TestAdminViewAuthentication(TestCase):
                 response = self.client.get(url, follow=True)
                 self.assertEqual(response.status_code, 404)
 
-    def test_user_without_profile_logged_in_redirects_to_registration_view(self):
+    def test_user_without_profile_logged_in_creates_profile_and_returns_200(self):
         for url in self.urls:
+            self.assertFalse(ResearchProfile.objects.filter(user=self.wo_profile_user).exists())
             self.client.login(**self.wo_profile_creds)
             response = self.client.get(url, follow=True)
-            self.assertRedirects(response, reverse('ddm-register-researcher'))
+            self.assertTrue(ResearchProfile.objects.filter(user=self.wo_profile_user).exists())
+            self.assertEqual(response.status_code, 200)
+            ResearchProfile.objects.get(user=self.wo_profile_user).delete()
 
     def test_user_wo_permission_logged_in_redirects_to_no_permission_view(self):
         for url in self.urls_no_perm:

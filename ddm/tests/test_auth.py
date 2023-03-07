@@ -59,41 +59,6 @@ class TestAuthenticationFlow(TestCase):
         self.assertTrue(user_is_owner(self.base_user, project.pk))
         self.assertFalse(user_is_owner(self.wo_profile_user, project.pk))
 
-    def test_register_redirect_with_profile(self):
-        self.client.login(**self.base_creds)
-        response = self.client.get(reverse('ddm-register-researcher'), follow=True)
-        self.assertRedirects(response, reverse('project-list'))
-
-    def test_register_redirect_after_registration_form_valid(self):
-        self.client.login(**self.wo_profile_creds)
-        response = self.client.post(
-            reverse('ddm-register-researcher'),
-            data={'confirmed': True, 'user': self.wo_profile_user.pk},
-            follow=True
-        )
-        self.assertRedirects(response, reverse('project-list'))
-
-    def test_register_redirect_after_registration_form_invalid(self):
-        self.client.login(**self.wo_profile_creds)
-        response = self.client.post(
-            reverse('ddm-register-researcher'),
-            data={'confirmed': False, 'user': self.wo_profile_user.pk},
-            follow=True
-        )
-        self.assertRedirects(response, reverse('ddm-no-permission'))
-
-    def test_register_view_creates_research_profile(self):
-        self.assertFalse(ResearchProfile.objects.filter(
-            user=self.wo_profile_user).exists())
-        self.client.login(**self.wo_profile_creds)
-        self.client.post(
-            reverse('ddm-register-researcher'),
-            data={'confirmed': True, 'user': self.wo_profile_user.pk},
-            follow=True
-        )
-        self.assertTrue(ResearchProfile.objects.filter(
-            user=self.wo_profile_user).exists())
-
     def test_ddm_no_permission_view_200(self):
         self.client.login(**self.not_permitted_creds)
         response = self.client.get(reverse('ddm-no-permission'), follow=True)

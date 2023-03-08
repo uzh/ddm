@@ -10,11 +10,10 @@ you can overwrite the header and/or footer as follows:
 
 [source]
 ----
-
-{% extends "ddm/project_admin/base.html" %}
+{% extends "ddm/admin/base.html" %}
 
 {% block extrahead %}
-    <!-- If you wish, you can integrate some custom css files here -->
+    <!-- If you wish, you can integrate custom css files, favicon etc. here -->
 {% endblock %}
 
 {% block header %}
@@ -23,7 +22,7 @@ you can overwrite the header and/or footer as follows:
 </div>
 {% endblock %}
 
-{% block header %}
+{% block footer %}
 <div>
     <!-- Your Custom Footer HTML -->
 </div>

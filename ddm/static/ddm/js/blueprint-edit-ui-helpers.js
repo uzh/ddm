@@ -39,14 +39,72 @@ updateFieldValue = function( id ) {
   });
 };
 
+hideErrorMessages = function(id) {
+  const independentFields = ["execution_order", "name", "field"];
+  for (let i = 0; i < independentFields.length; i++) {
+    let curElement = $("#id_processingrule_set-" + id + "-" + independentFields[i]);
+    curElement.siblings( ".form-error" ).hide();
+  }
+}
+
+checkNoFieldsMissing = function( id ) {
+  const independentFields = ["execution_order", "name", "field"];
+
+  for (let i = 0; i < independentFields.length; i++) {
+    let val = $("[id$=" + id + "-" + independentFields[i] + "]").val();
+
+    if (val === "") {
+      let curElement = $("#id_processingrule_set-" + id + "-" + independentFields[i]);
+      curElement.siblings( ".form-error" ).show();
+      return(false);
+    }
+  }
+
+  let comparisonOperator = $("#id_processingrule_set-" + id + "-comparison_operator");
+  if (comparisonOperator.val() !== "") {
+    let comparisonValue = $("#id_processingrule_set-" + id + "-comparison_value").val();
+    if (comparisonValue === "") {
+      let curElement = $("#id_processingrule_set-" + id + "-comparison_value");
+      curElement.siblings( ".form-error" ).show();
+      return(false);
+    }
+  }
+  return(true);
+}
+
+closeModal = function(id) {
+  let modal = $("#configuration-" + id);
+  modal.hide();
+  $("body").removeClass("modal-open").removeAttr("style");
+  $(".modal-backdrop").remove();
+}
 
 /**
  * On OK-click in modal, update filter settings overview.
  */
 $( "body" ).on("click", "button[class*='ddm-modal-ok']", function() {
   const current_id = $(this).attr("id").match(/\d/)[0];
-  updateRuleDescription(current_id);
-  updateFieldValue(current_id);
+  hideErrorMessages(current_id);
+  if (checkNoFieldsMissing(current_id)) {
+    updateRuleDescription(current_id);
+    updateFieldValue(current_id);
+    closeModal(current_id);
+  }
+});
+
+$( "body" ).on("click", "button[class*='ddm-modal-cancel']", function() {
+  const current_id = $(this).attr("id").match(/\d/)[0];
+  let e = $("#execution_order-" + current_id);
+
+  if ($.trim(e.text()) === 'None') {
+    $("#configuration-" + current_id).remove();
+    $('#inlineform-table tr:last').remove();
+
+    let totalFormElement = $("#id_processingrule_set-TOTAL_FORMS");
+    let currentFormN = totalFormElement.val();
+    totalFormElement.val(parseInt(currentFormN) - 1);
+  }
+  closeModal(current_id);
 });
 
 

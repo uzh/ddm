@@ -65,6 +65,8 @@
 
     <div>
       <h6><b>2. Data Extraction</b></h6>
+    </div>
+    <div>
       <p>
         For the data extraction, the Data Donation Module follows the data sparsity paradigm.
         This means that the base assumption is, that you do not want any data from your participants,
@@ -147,10 +149,10 @@
 
   {% for form in formset%}
     {% with modal_id_postfix=forloop.counter0|stringformat:"i" button_id_postfix=forloop.counter0|stringformat:"i" %}
-      {% include "ddm/admin/data_donation/processing_rule_modal.html" with modal_id="configuration-"|add:modal_id_postfix form=form button_id="ddm-modal-ok-"|add:button_id_postfix %}
+      {% include "ddm/admin/data_donation/processing_rule_modal.html" with modal_id="configuration-"|add:modal_id_postfix form=form button_id=""|add:button_id_postfix %}
     {% endwith %}
   {% empty %}
-    {% include "ddm/admin/data_donation/processing_rule_modal.html" with modal_id="configuration-template" form=formset.empty_form button_id="ddm-modal-ok-__prefix__" %}
+    {% include "ddm/admin/data_donation/processing_rule_modal.html" with modal_id="configuration-template" form=formset.empty_form button_id="__prefix__" %}
   {% endfor %}
 
   <table id="empty-form-placeholder" style="display:none">
@@ -192,6 +194,7 @@
       <span class="helptext"><br>{{ field.help_text }}</span>
       {{ field }}
       {{ field.errors }}
+      <span class="form-error" style="display: none; color: red;">Please provide a value for this field.</span>
     </p>
     {% endif %}
     {% endfor %}

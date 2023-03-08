@@ -16,9 +16,6 @@ hideOrShowReplacementAndComparisonValue = function( id ) {
   }
 }
 
-/**
- * On OK-click in modal, update filter settings overview.
- */
 $( "body" ).on("change", "select[id$='-comparison_operator']", function() {
   const current_id = $(this).attr("id").match(/\d/)[0];
   hideOrShowReplacementAndComparisonValue(current_id);

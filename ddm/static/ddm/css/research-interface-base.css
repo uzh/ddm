@@ -228,7 +228,8 @@
     margin-bottom: 0px;
     margin-top: 1rem;
 }
-.ddm-admin-form .helptext {
+.ddm-admin-form .helptext,
+.helptext {
     color: grey;
     font-size: 0.8rem;
 }

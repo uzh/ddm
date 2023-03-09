@@ -149,12 +149,15 @@
                     <table :id="'ul-result-' + bp.id.toString()" class="table table-sm">
                       <thead>
                       <tr>
-                        <th v-for="field in Object.keys(blueprintData[bp.id.toString()].extracted_data[0])" :key="field">{{ field }}</th>
+                        <th v-for="field in bp.fields_to_extract" :key="field">{{ field }}</th>
                       </tr>
                       </thead>
                       <tbody>
                       <tr v-for="row in blueprintData[bp.id.toString()].extracted_data" :key="row">
-                        <td v-for="v in row" :key="v">{{ v }}</td>
+                        <template v-for="field in bp.fields_to_extract" :key="field">
+                          <td v-if="field in row" :key="row">{{ row[field] }}</td>
+                          <td v-else>–</td>
+                        </template>
                       </tr>
                       </tbody>
                     </table>
@@ -372,7 +375,11 @@ export default {
         reader.onload = function(event) {
           let content = event.target.result;
           try {
-            uploader.processContent(content, uploader.blueprints[0]);
+            // uploader.processContent(content, uploader.blueprints[0]);  // TODO: Check this
+            uploader.blueprints.forEach(blueprint => {
+              uploader.processContent(content, blueprint)
+            })
+
           } catch(e) {
             uploader.postError(4199, e.message, uploader.blueprints[0].id);
             uploader.recordError(uploader.$t('error-generic') + e.message, uploader.blueprints[0].id.toString());
@@ -413,16 +420,24 @@ export default {
           uploader.postError(4106, e.message, blueprint.id);
           uploader.recordError(uploader.$t('error-json-syntax'), uploader.blueprints[0].id.toString());
         }
+
+        if(fileContent) {
+          if (blueprint.json_extraction_root !== '') {
+            fileContent = this.getNestedJsonEntry(fileContent, blueprint.json_extraction_root);
+          }
+
+          if (!(Symbol.iterator in Object(fileContent))) {
+            fileContent = new Array(fileContent);
+          }
+        }
+
       }
 
       else if (blueprint.format === 'csv') {
         try {
           let parserResult = Papa.parse(content, {header: true, delimiter: blueprint.csv_delimiter });
           fileContent = parserResult.data;
-          console.log('try csv.')
-          console.log(fileContent)
         } catch(e) {
-          console.log('error')
           uploader.postError(4106, e.message, blueprint.id);
           uploader.recordError(uploader.$t('error-json-syntax'), uploader.blueprints[0].id.toString());
         }
@@ -432,7 +447,9 @@ export default {
       if (fileContent) {
         let nEntriesWithMissingFields = 0;
         let nEntriesFilteredOut = 0;
+
         fileContent.forEach(entry => {
+
           // Check if all expected fields are here
           let missingFields = [];
           if (!blueprint.expected_fields.every(element => {
@@ -444,97 +461,95 @@ export default {
               return false;
             }})) {
             // Go to next entry and record exception
-            let errorMsg = `Entry does not contain the expected field(s) "${missingFields.toString()}".`;
-            uploader.postError(4203, errorMsg, blueprint.id);
+            // let errorMsg = `Entry does not contain the expected field(s) "${missingFields.toString()}".`;
+            // uploader.postError(4203, errorMsg, blueprint.id);
             return;
           }
 
-          if (blueprint.fields_to_extract.every(element => Object.keys(entry).includes(element))) {
-            // Apply filters, Pop unused keys and add to result.
-            let result = {};
-            try {
-              for (let key in entry) {
-                let rules = blueprint.filter_rules.filter(rule => rule.field === key);
-                if (rules.length > 0) {
-                  rules.forEach(rule => {
-                    switch (rule.comparison_operator) {
-                      case null:
-                        result[key] = entry[key];
-                        break;
-                      case '==':
-                        if (entry[key] !== rule.comparison_value) {
-                          result[key] = entry[key]
-                        } else {
-                          throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+          // Apply filters, Pop unused keys and add to result.
+          let result = {};
+          try {
+            for (let key in entry) {
+              let rules = blueprint.filter_rules.filter(rule => rule.field === key);
+              if (rules.length > 0) {
+                rules.forEach(rule => {
+                  switch (rule.comparison_operator) {
+                    case null:
+                      result[key] = entry[key];
+                      break;
+                    case '==':
+                      if (entry[key] !== rule.comparison_value) {
+                        result[key] = entry[key]
+                      } else {
+                        throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                      }
+                      break;
+                    case '!=':
+                      if (entry[key] === rule.comparison_value) {
+                        result[key] = entry[key]
+                      } else {
+                        throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                      }
+                      break;
+                    case '<=':
+                      if (entry[key] > rule.comparison_value) {
+                        result[key] = entry[key]
+                      } else {
+                        throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                      }
+                      break;
+                    case '>=':
+                      if (entry[key] < rule.comparison_value) {
+                        result[key] = entry[key]
+                      } else {
+                        throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                      }
+                      break;
+                    case '<':
+                      if (entry[key] >= rule.comparison_value) {
+                        result[key] = entry[key]
+                      } else {
+                        throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                      }
+                      break;
+                    case '>':
+                      if (entry[key] <= rule.comparison_value) {
+                        result[key] = entry[key]
+                      } else {
+                        throw `Field "${key}" matches filter value "${rule.comparison_value}".`
+                      }
+                      break;
+                    case 'regex-delete-match':
+                      if (key in entry) {
+                        let newValue = entry[key].replaceAll(RegExp(rule.comparison_value, 'g'), '');
+                        result[key] = newValue;
+                        entry[key] = newValue;
+                      }
+                      break;
+                    case 'regex-replace-match':
+                      if (key in entry) {
+                        let newValue = entry[key].replaceAll(RegExp(rule.comparison_value, 'g'), rule.replacement_value);
+                        result[key] = newValue;
+                        entry[key] = newValue;
+                      }
+                      break;
+                    case 'regex-delete-row':
+                      if (key in entry) {
+                        let comparisonValue = RegExp(rule.comparison_value, 'g');
+                        if (!comparisonValue.test(entry[key])) {
+                          result[key] = entry[key];
                         }
-                        break;
-                      case '!=':
-                        if (entry[key] === rule.comparison_value) {
-                          result[key] = entry[key]
-                        } else {
-                          throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
-                        }
-                        break;
-                      case '<=':
-                        if (entry[key] > rule.comparison_value) {
-                          result[key] = entry[key]
-                        } else {
-                          throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
-                        }
-                        break;
-                      case '>=':
-                        if (entry[key] < rule.comparison_value) {
-                          result[key] = entry[key]
-                        } else {
-                          throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
-                        }
-                        break;
-                      case '<':
-                        if (entry[key] >= rule.comparison_value) {
-                          result[key] = entry[key]
-                        } else {
-                          throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
-                        }
-                        break;
-                      case '>':
-                        if (entry[key] <= rule.comparison_value) {
-                          result[key] = entry[key]
-                        } else {
-                          throw `Field "${key}" matches filter value "${rule.comparison_value}".`
-                        }
-                        break;
-                      case 'regex-delete-match':
-                        if (key in entry) {
-                          let newValue = entry[key].replaceAll(RegExp(rule.comparison_value, 'g'), '');
-                          result[key] = newValue;
-                          entry[key] = newValue;
-                        }
-                        break;
-                      case 'regex-replace-match':
-                        if (key in entry) {
-                          let newValue = entry[key].replaceAll(RegExp(rule.comparison_value, 'g'), rule.replacement_value);
-                          result[key] = newValue;
-                          entry[key] = newValue;
-                        }
-                        break;
-                      case 'regex-delete-row':
-                        if (key in entry) {
-                          let comparisonValue = RegExp(rule.comparison_value, 'g');
-                          if (!comparisonValue.test(entry[key])) {
-                            result[key] = entry[key];
-                          }
-                        }
-                        break;
-                      default: break;
-                    }
-                  });
-                }
+                      }
+                      break;
+                    default: break;
+                  }
+                });
               }
-              extractedData.push(result);
-            } catch (e) {
-              nEntriesFilteredOut += 1;
-              // uploader.postError(4206, `${e}`, blueprint.id)
             }
+            extractedData.push(result);
+          } catch (e) {
+            nEntriesFilteredOut += 1;
+            // uploader.postError(4206, `${e}`, blueprint.id)
           }
         })
         uploader.blueprintData[blueprintID].extracted_data = extractedData;
@@ -557,6 +572,21 @@ export default {
           uploader.postError(4206, msg, blueprint.id);
         }
       }
+    },
+
+    getNestedJsonEntry(fileContent, path) {
+      path = path.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+      path = path.replace(/^\./, '');           // strip a leading dot
+      let a = path.split('.');
+      for (let i = 0, n = a.length; i < n; ++i) {
+        let k = a[i];
+        if (k in fileContent) {
+          fileContent = fileContent[k];
+        } else {
+          return;
+        }
+      }
+      return fileContent;
     },
 
     /**

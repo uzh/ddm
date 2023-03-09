@@ -76,21 +76,24 @@
     </tr>
 
     {% for blueprint in donation_blueprints %}
-    {% for question in blueprint.get_associated_questions %}
-    <tr {% if forloop.last %}class="border-bottom-dark"{% endif %}>
-      {% if forloop.first %}
-      <td rowspan="{{ blueprint.get_associated_questions|length }}" class="border-bottom-dark">{{ blueprint.name }}</td>
+      {{ blueprint.file_uploader }}
+      {% if blueprint.file_uploader is not None %}
+        {% for question in blueprint.get_associated_questions %}
+        <tr {% if forloop.last %}class="border-bottom-dark"{% endif %}>
+          {% if forloop.first %}
+          <td rowspan="{{ blueprint.get_associated_questions|length }}" class="border-bottom-dark">{{ blueprint.name }}</td>
+          {% endif %}
+          <td>{{ question.index }}</td>
+          <td>{{ question.name }}</td>
+          <td>{{ question.get_question_type_display }}</td>
+          <td> <a href="{% url 'question-edit' project_pk question.question_type question.pk %}">Edit Question</a> | <a href="{% url 'question-delete' project_pk question.question_type question.pk %}">Delete Question</a></td>
+          {% empty %}
+          <tr class="border-bottom-dark">
+          <td>{{ blueprint.name }}</td>
+          <td colspan="4" class="text-muted">No associated questions.</td>
+        </tr>
+        {% endfor %}
       {% endif %}
-      <td>{{ question.index }}</td>
-      <td>{{ question.name }}</td>
-      <td>{{ question.get_question_type_display }}</td>
-      <td> <a href="{% url 'question-edit' project_pk question.question_type question.pk %}">Edit Question</a> | <a href="{% url 'question-delete' project_pk question.question_type question.pk %}">Delete Question</a></td>
-      {% empty %}
-      <tr class="border-bottom-dark">
-      <td>{{ blueprint.name }}</td>
-      <td colspan="4" class="text-muted">No associated questions.</td>
-    </tr>
-    {% endfor %}
     {% empty %}
     <tr class="border-bottom-dark">
       <td>No blueprints created yet.</td>

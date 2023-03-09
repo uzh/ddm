@@ -148,6 +148,7 @@ $("#add-inline-form").on("click", function() {
 
   // Add new form placeholder.
   let newPlaceholder = $("#empty-form-placeholder").find("tbody:first");
+
   $("#inlineform-table > tbody:last-child").append(newPlaceholder.html().replace(/__prefix__/g, formIdx));
 
   // Update management form.

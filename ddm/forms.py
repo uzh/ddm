@@ -19,13 +19,6 @@ class ProjectCreateForm(forms.ModelForm):
             'owner': forms.HiddenInput(),
         }
 
-        #
-        # widgets = {
-        #     'expected_fields': forms.Textarea(attrs={'rows': 1}),
-        #     'regex_path': forms.Textarea(attrs={'rows': 1}),
-        #     'description': forms.Textarea(attrs={'rows': 3}),
-        # }
-
     field_order = ['name', 'slug', 'super_secret', 'project_password', 'project_password_confirm',
                    'contact_information', 'data_protection_statement']
 
@@ -89,8 +82,8 @@ class BlueprintEditForm(forms.ModelForm):
 
     class Meta:
         model = DonationBlueprint
-        fields = ['name', 'description', 'exp_file_format', 'csv_delimiter',
-                  'file_uploader', 'regex_path', 'expected_fields']
+        fields = ['name', 'description', 'regex_path', 'exp_file_format', 'csv_delimiter',
+                  'file_uploader', 'json_extraction_root', 'expected_fields']
         widgets = {
             'expected_fields': forms.Textarea(attrs={'rows': 1}),
             'regex_path': forms.Textarea(attrs={'rows': 1}),

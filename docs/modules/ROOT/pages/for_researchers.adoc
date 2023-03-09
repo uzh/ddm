@@ -206,7 +206,7 @@ Therefore, it is important to define a meaningful name.
 Description:: Description of what the blueprint will extract. If defined, the
 description will be visible for participants in the data donation step.
 
-Expected file format:: The file format of the expected data donation. Currently, only JSON and CSV is implemented.
+Expected File Format:: The file format of the expected data donation. Currently, only JSON and CSV is implemented.
 
 Associated File Uploader:: The `File Uploader` for which the blueprint will be applied.
 
@@ -216,7 +216,6 @@ Only necessary, if the Donation Blueprint is part of a Blueprint Container.
 WARNING: If a regex expression matches two files, DDM extracts the first one that matches the expression.
 Afterwards, it does not look any further, even if the matched file does not match the expected fields.
 Therefore, be careful to choose regex expressions that will only match the expected file.
-
 
 [TIP]
 ====
@@ -241,13 +240,24 @@ Therefore, be careful to choose regex expressions that will only match the expec
 Can be helpful to match the same file in different languages.
 |===
 
-You can find about more about the possibilities of regex matches [here].
-With the following application, you can test your regex patterns online: [link to a regex pattern tester]
+You can find about more about regex https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions[here].
+On this website, you will https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#tools[also find some Tools]
+that can help you test regex patterns.
 ====
 
 Expected fields:: The fields that must be contained in the donated file. If a file does not contain
 one or more of the fields defined here, it will not be accepted as a donation.
 Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").
+
+
+// TODO: CSV specific settings
+
+
+// TODO: JSON specific settings
+
+
+// TODO: Explain extraction rules.
+
 
 ==== Questionnaire
 

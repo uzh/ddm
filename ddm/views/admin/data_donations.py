@@ -89,9 +89,9 @@ class FileUploaderEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, Update
 
         # Add custom error.
         selected_blueprints = [int(k[3:]) for k in self.request.POST.keys() if k.startswith('bp-')]
-        if form.data['upload_type'] == FileUploader.UploadTypes.SINGLE_FILE:
-            if len(selected_blueprints) > 1:
-                form.add_error(None, 'Only one Donation Blueprint can be assigned to a single file File Uploader.')
+        # if form.data['upload_type'] == FileUploader.UploadTypes.SINGLE_FILE:
+        #     if len(selected_blueprints) > 1:
+        #         form.add_error(None, 'Only one Donation Blueprint can be assigned to a single file File Uploader.')
 
         # Validate form.
         if form.is_valid():

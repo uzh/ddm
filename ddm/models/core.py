@@ -414,6 +414,21 @@ class DonationBlueprint(models.Model):
         verbose_name='Expected file format',
     )
 
+    json_extraction_root = models.CharField(
+        max_length=200,
+        default='',
+        blank=True,
+        verbose_name='Extraction Root',
+        help_text=(
+            'Indicates on which level of the files\' data structure information should be extractet. '
+            'If you want to extract information contained on the first level (e.g., {\'field to be extracted\': value}, '
+            'you can leave this field empty. If you want to extract data located on a higher level, then you would '
+            'provide the path to the parent field of the data you want to extract (e.g., if your json file is structured like this '
+            '{\'friends\': {\'real_friends\': [{\'name to extract\': name, \'date to extract\': date}], \'fake friends\': [{\'name\': name, \'date\': date }]}} '
+            'and you want to extract the names and dates of real_friends, you would set the extraction root to \'friends.real_friends\'.'
+        )
+    )
+
     csv_delimiter = models.CharField(
         max_length=10,
         default="",
@@ -467,6 +482,7 @@ class DonationBlueprint(models.Model):
             'name': self.name,
             'description': self.description,
             'format': self.exp_file_format,
+            'json_extraction_root': self.json_extraction_root,
             'expected_fields': json.loads("[" + str(self.expected_fields) + "]"),
             'fields_to_extract': self.get_fields_to_extract(),
             'regex_path': self.regex_path,

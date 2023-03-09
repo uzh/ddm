@@ -23,7 +23,7 @@ Create File Blueprint
 
     <div class="ddm-admin-form">
       {% for field in form %}
-        {% if field.name not in "expected_fields,regex_path,exp_file_format,csv_delimiter" %}
+        {% if field.name not in "expected_fields,regex_path,exp_file_format,csv_delimiter,json_extraction_root" %}
           <p>
             {{ field.label_tag }}
             {{ field.errors }}
@@ -61,7 +61,7 @@ Create File Blueprint
 
     <div class="ddm-admin-form">
       {% for field in form %}
-        {% if field.name in "expected_fields,regex_path,exp_file_format,csv_delimiter" %}
+        {% if field.name in "expected_fields,regex_path,exp_file_format,csv_delimiter,json_extraction_root" %}
           <p>
             {{ field.label_tag }}
             {{ field.errors }}
@@ -127,11 +127,23 @@ Create File Blueprint
     }
   }
 
+  function hideOrShowJsonRoot() {
+    if( $( "#id_exp_file_format" ).val() == "json") {
+      $( "#id_json_extraction_root" ).parent().show();
+    } else {
+      $( "#id_json_extraction_root" ).parent().hide();
+    }
+  }
+
   $(function() {
     hideOrShowCsvDelimiter();
     hideOrShowRegexPath();
+    hideOrShowJsonRoot();
   });
-  $( "#id_exp_file_format" ).change(function() { hideOrShowCsvDelimiter() });
+  $( "#id_exp_file_format" ).change(function() {
+    hideOrShowCsvDelimiter();
+    hideOrShowJsonRoot();
+  });
   $( "#id_file_uploader" ).change(function() { hideOrShowRegexPath() });
 </script>
 {% endblock scripts %}

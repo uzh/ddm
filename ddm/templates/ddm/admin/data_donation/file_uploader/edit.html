@@ -35,7 +35,7 @@
       </tr>
       {% empty %}
       <tr>
-        <td>No unassigned File Blueprints available.</td>
+        <td>No unassigned File Blueprints available <a class="ddm-btn ddm-btn-inverted" href="{% url 'blueprint-create' project.pk %}"><b>+</b>&nbsp;&nbsp;Create new File Blueprint</a></td>
       </tr>
       {% endfor %}
     </table>

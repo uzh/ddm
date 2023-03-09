@@ -43,13 +43,15 @@
         <td>{{ uploader.upload_type }}</td>
         <td><a href="{% url 'instruction-overview' project.pk uploader.pk %}">Edit Instructions</a></td>
         <td>
+          {% if uploader.donationblueprint_set.all %}
           <ul>
             {% for blueprint in uploader.donationblueprint_set.all %}
             <li>{{ blueprint.name }} (<a href="{{ blueprint.get_absolute_url }}">Edit</a> | <a href="{% url 'blueprint-delete' project.pk blueprint.pk %}">Delete</a>)</li>
-            {% empty %}
-            No associated Blueprints
             {% endfor %}
           </ul>
+          {% else %}
+          No associated Blueprints
+          {% endif %}
         </td>
       </tr>
       {% empty %}

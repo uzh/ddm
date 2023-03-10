@@ -469,82 +469,90 @@ export default {
           // Apply filters, Pop unused keys and add to result.
           let result = {};
           try {
-            for (let key in entry) {
-              let rules = blueprint.filter_rules.filter(rule => rule.field === key);
-              if (rules.length > 0) {
-                rules.forEach(rule => {
-                  switch (rule.comparison_operator) {
-                    case null:
-                      result[key] = entry[key];
-                      break;
-                    case '==':
-                      if (entry[key] !== rule.comparison_value) {
-                        result[key] = entry[key]
+            let rules = blueprint.filter_rules
+            if (rules.length > 0) {
+              rules.forEach(rule => {
+                let key = rule.field;
+                switch (rule.comparison_operator) {
+                  case null:
+                    result[key] = entry[key];
+                    break;
+                  case '==':
+                    if (entry[key] !== rule.comparison_value) {
+                      // result[key] = entry[key]
+                      // pass
+                    } else {
+                      throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                    }
+                    break;
+                  case '!=':
+                    if (entry[key] === rule.comparison_value) {
+                      // result[key] = entry[key]
+                      // pass
+                    } else {
+                      throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                    }
+                    break;
+                  case '<=':
+                    if (entry[key] > rule.comparison_value) {
+                      // result[key] = entry[key]
+                      // pass
+                    } else {
+                      throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                    }
+                    break;
+                  case '>=':
+                    if (entry[key] < rule.comparison_value) {
+                      // result[key] = entry[key]
+                      // pass
+                    } else {
+                      throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                    }
+                    break;
+                  case '<':
+                    if (entry[key] >= rule.comparison_value) {
+                      // result[key] = entry[key]
+                      // pass
+                    } else {
+                      throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                    }
+                    break;
+                  case '>':
+                    if (entry[key] <= rule.comparison_value) {
+                      // result[key] = entry[key]
+                      // pass
+                    } else {
+                      throw `Field "${key}" matches filter value "${rule.comparison_value}".`
+                    }
+                    break;
+                  case 'regex-delete-match':
+                    if (key in result) {
+                      let newValue = entry[key].replaceAll(RegExp(rule.comparison_value, 'g'), '');
+                      result[key] = newValue;
+                      entry[key] = newValue;
+                    }
+                    break;
+                  case 'regex-replace-match':
+                    if (key in result) {
+                      let newValue = entry[key].replaceAll(RegExp(rule.comparison_value, 'g'), rule.replacement_value);
+                      result[key] = newValue;
+                      entry[key] = newValue;
+                    }
+                    break;
+                  case 'regex-delete-row':
+                    if (key in entry) {
+                      let comparisonValue = RegExp(rule.comparison_value, 'g');
+                      if (!comparisonValue.test(entry[key])) {
+                        // result[key] = entry[key];
+                        // pass
                       } else {
-                        throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
+                        throw `Field "${key}" matches RegExp "${rule.comparison_value}".`
                       }
-                      break;
-                    case '!=':
-                      if (entry[key] === rule.comparison_value) {
-                        result[key] = entry[key]
-                      } else {
-                        throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
-                      }
-                      break;
-                    case '<=':
-                      if (entry[key] > rule.comparison_value) {
-                        result[key] = entry[key]
-                      } else {
-                        throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
-                      }
-                      break;
-                    case '>=':
-                      if (entry[key] < rule.comparison_value) {
-                        result[key] = entry[key]
-                      } else {
-                        throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
-                      }
-                      break;
-                    case '<':
-                      if (entry[key] >= rule.comparison_value) {
-                        result[key] = entry[key]
-                      } else {
-                        throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
-                      }
-                      break;
-                    case '>':
-                      if (entry[key] <= rule.comparison_value) {
-                        result[key] = entry[key]
-                      } else {
-                        throw `Field "${key}" matches filter value "${rule.comparison_value}".`
-                      }
-                      break;
-                    case 'regex-delete-match':
-                      if (key in entry) {
-                        let newValue = entry[key].replaceAll(RegExp(rule.comparison_value, 'g'), '');
-                        result[key] = newValue;
-                        entry[key] = newValue;
-                      }
-                      break;
-                    case 'regex-replace-match':
-                      if (key in entry) {
-                        let newValue = entry[key].replaceAll(RegExp(rule.comparison_value, 'g'), rule.replacement_value);
-                        result[key] = newValue;
-                        entry[key] = newValue;
-                      }
-                      break;
-                    case 'regex-delete-row':
-                      if (key in entry) {
-                        let comparisonValue = RegExp(rule.comparison_value, 'g');
-                        if (!comparisonValue.test(entry[key])) {
-                          result[key] = entry[key];
-                        }
-                      }
-                      break;
-                    default: break;
-                  }
-                });
-              }
+                    }
+                    break;
+                  default: break;
+                }
+              });
             }
             extractedData.push(result);
           } catch (e) {

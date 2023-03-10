@@ -256,7 +256,27 @@ Put the field names in double quotes (") and separate them with commas ("Field A
 // TODO: JSON specific settings
 
 
-// TODO: Explain extraction rules.
+===== Extraction Rules
+
+The base assumption for the extraction of the data contained in an uploaded file is
+that you do not want any data. This means that when you configure your extraction rules,
+you first have to add a rule for each field that you want to keep in your data.
+
+Execution Order:: The order in which the extraction rules are applied to a file.
+
+Name:: The name of an extraction rule. For internal organisation only.
+
+Field:: The field to which the rule will be applied.
+
+Extraction Operator:: Defines the main logic of the extraction step. If empty, this indicates
+that you want to keep the field in the donated data. For all non-RegEx operations,
+if an operations evaluates to True, the row will be deleted from the donated data
+(further explanations on the separate rules will follow).
+
+Comparison Value:: The value against which the data contained in the indicated field will be compared according to the selected comparison logic.
+
+Replacement Value:: Only required for operation "Replace match (regex)". The value
+that will be used as a replacement if the RegEx pattern matches.
 
 
 ==== Questionnaire

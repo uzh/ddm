@@ -503,7 +503,8 @@ class DonationBlueprint(models.Model):
     def get_fields_to_extract(self):
         fields = set()
         for r in self.processingrule_set.all():
-            fields.add(r.field)
+            if r.comparison_operator is None:
+                fields.add(r.field)
         return list(fields)
 
     def process_donation(self, data, participant):

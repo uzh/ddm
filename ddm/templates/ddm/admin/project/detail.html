@@ -24,7 +24,10 @@
       </tr>
       <tr>
         <td>Public Access:</td>
-        <td><a href="{% url 'briefing' object.slug %}" target="_blank">{{ request.scheme }}://{{ request.get_host }}{% url 'briefing' object.slug %}</a></td>
+        <td>
+          <a href="{% url 'briefing' object.slug %}" target="_blank">{{ request.scheme }}://{{ request.get_host }}{% url 'briefing' object.slug %}</a><br>
+          <span class="helptext">To test the project yourself from the participants' perspective, open this link in a new private window.</span>
+        </td>
       </tr>
       <tr>
         <td>Project Type:</td>

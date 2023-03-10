@@ -549,6 +549,46 @@ Put the field names in double quotes (") and separate them with commas ("Field A
 </dl>
 </div>
 </div>
+<div class="sect4">
+<h5 id="_extraction_rules"><a class="anchor" href="#_extraction_rules"></a>Extraction Rules</h5>
+<div class="paragraph">
+<p>The base assumption for the extraction of the data contained in an uploaded file is
+that you do not want any data. This means that when you configure your extraction rules,
+you first have to add a rule for each field that you want to keep in your data.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Execution Order</dt>
+<dd>
+<p>The order in which the extraction rules are applied to a file.</p>
+</dd>
+<dt class="hdlist1">Name</dt>
+<dd>
+<p>The name of an extraction rule. For internal organisation only.</p>
+</dd>
+<dt class="hdlist1">Field</dt>
+<dd>
+<p>The field to which the rule will be applied.</p>
+</dd>
+<dt class="hdlist1">Extraction Operator</dt>
+<dd>
+<p>Defines the main logic of the extraction step. If empty, this indicates
+that you want to keep the field in the donated data. For all non-RegEx operations,
+if an operations evaluates to True, the row will be deleted from the donated data
+(further explanations on the separate rules will follow).</p>
+</dd>
+<dt class="hdlist1">Comparison Value</dt>
+<dd>
+<p>The value against which the data contained in the indicated field will be compared according to the selected comparison logic.</p>
+</dd>
+<dt class="hdlist1">Replacement Value</dt>
+<dd>
+<p>Only required for operation "Replace match (regex)". The value
+that will be used as a replacement if the RegEx pattern matches.</p>
+</dd>
+</dl>
+</div>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_questionnaire"><a class="anchor" href="#_questionnaire"></a>Questionnaire</h4>

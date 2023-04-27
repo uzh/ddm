@@ -1,10 +1,8 @@
-## Translation
-
 The administration interface for researchers currently only supports English.
 The participation interface currently supports English and German.
 
 
-### Language Detection
+=== Language Detection
 
 The language in which the interface for participants is displayed is determined
 by the default language of the participant's browser.
@@ -12,7 +10,7 @@ If a language is not implemented for the participant interface, it is displayed
 in English.
 
 
-### Adding Support for new Languages
+=== Adding Support for new Languages
 
 To add support for a new language, new locales must be added at two locations:
 

@@ -28,3 +28,6 @@ include::topics/exception_logging.adoc[]
 == Questionnaire
 include::topics/questionnaire.adoc[]
 
+
+== Internationalization
+include::topics/internationalization.adoc[]

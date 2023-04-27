@@ -163,5 +163,25 @@ A new **release** is created manually and includes:
 - Ideally, add a changelog.
 
 
-include::components/footer.adoc[]
+=== Documentation
+
+This documentation is written in
+https://docs.asciidoctor.org/asciidoc/latest/syntax-quick-reference/[AsciiDoc]
+and compiled using https://docs.antora.org/antora/latest/[Antora].
+
+The documentation UI uses the https://github.com/Nico-AP/antora-ddm-ui[Antora DDM UI]
+which is based on the https://gitlab.com/antora/antora-ui-default[default Antora UI].
+
+To compile the documentation locally, you first need to install Antora following
+https://docs.antora.org/antora/latest/install-and-run-quickstart/[these instructions].
+
+Next, you can compile the documentation locally using the `antora-playbook-local.yml` file:
+[source]
+----
+(venv) .../ddm/docs> npx antora antora-playbook-local.yml
+----
+Inspect the compiled documentation by opening `.../ddm/docs/build/index.html` in
+your preferred browser.
+
+
 include::components/scripts.adoc[]

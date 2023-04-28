@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-01 14:25+0100\n"
+"POT-Creation-Date: 2023-04-28 13:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,31 +18,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\ddm\templates\ddm\public\base.html:49
+#: .\templates\ddm\public\base.html:57
 msgid "Contact"
 msgstr "Kontakt"
 
-#: .\ddm\templates\ddm\public\base.html:52
+#: .\templates\ddm\public\base.html:60
 msgid "What happens with my data?"
 msgstr "Was passiert mit meinen Daten?"
 
-#: .\ddm\templates\ddm\public\base.html:64
+#: .\templates\ddm\public\base.html:72
 msgid "Contact Information"
 msgstr "Kontaktinformationen"
 
-#: .\ddm\templates\ddm\public\base.html:78
+#: .\templates\ddm\public\base.html:86
 msgid "Data Protection Statement"
 msgstr "Datenschutzerklärung"
 
-#: .\ddm\templates\ddm\public\briefing.html:9
+#: .\templates\ddm\public\briefing.html:11
 msgid "Please indicate whether you want to continue with this study."
 msgstr "Bitte geben Sie an, ob Sie mit dieser Studie fortfahren möchten."
 
-#: .\ddm\templates\ddm\public\briefing.html:13
+#: .\templates\ddm\public\briefing.html:15
 msgid "Welcome to this study!"
 msgstr "Herzlich willkommen zu dieser Studie!"
 
-#: .\ddm\templates\ddm\public\briefing.html:14
+#: .\templates\ddm\public\briefing.html:16
 msgid ""
 "Please define a description and welcome text for this project in the Project "
 "Hub."
@@ -50,21 +50,37 @@ msgstr ""
 "Bitte definieren Sie eine Beschreibung und einen Begrüßungstext für dieses "
 "Projekt im Project Hub."
 
-#: .\ddm\templates\ddm\public\briefing.html:33
+#: .\templates\ddm\public\briefing.html:35
 msgid "Continue&nbsp;&nbsp;&#8250;"
 msgstr "Weiter&nbsp;&nbsp;&#8250;"
 
-#: .\ddm\templates\ddm\public\debriefing.html:9
+#: .\templates\ddm\public\continuation_not_found.html:6
+msgid "Provided ID not found"
+msgstr "Angegebene ID konnte nicht gefunden werden"
+
+#: .\templates\ddm\public\continuation_not_found.html:8
+msgid ""
+"Unfortunately, we could not find a study participation started for the given "
+"ID. However, you can access the study by clicking on the following link:"
+msgstr ""
+"Leider konnten wir für die angegebene ID keine begonnene Studienteilnahme finden."
+"Wenn Sie die Studie trotzdem aufrufen möchten, klicken Sie auf den folgenden Link:"
+
+#: .\templates\ddm\public\continuation_not_found.html:9
+msgid "Go to Study"
+msgstr "Zur Studie"
+
+#: .\templates\ddm\public\debriefing.html:9
 msgid "Thank you very much!"
 msgstr "Herzlichen Dank!"
 
-#: .\ddm\templates\ddm\public\debriefing.html:10
+#: .\templates\ddm\public\debriefing.html:10
 msgid "You have reached the end of the study and can now close this window."
 msgstr ""
 "Sie haben das Ende der Studie erreicht und können dieses Fenster nun "
 "schliessen."
 
-#: .\ddm\templates\ddm\public\debriefing.html:17
+#: .\templates\ddm\public\debriefing.html:17
 #, fuzzy
 #| msgid "Continue&nbsp;&nbsp;&#8250;"
 msgid "Leave Page&nbsp;&nbsp;&#8250;"

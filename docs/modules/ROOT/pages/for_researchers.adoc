@@ -190,8 +190,18 @@ For each instruction page, the following can be configured:
 
 Text:: The instruction text displayed to the participants.
 By default, researchers can also upload and include images or gifs to guide
-participants through the data donation process in this field (video upload is not supported -
-but videos hosted externally can still be embedded).  //TODO: Check if video can be embedded without problems.
+participants through the data donation process in this field (currently, video upload is not supported).
+
+[TIP]
+====
+The participant's external ID is available as a template variable to be included
+in the instruction text as follows: `{{ participant_id }}` which will be displayed
+to the participant as something like `IPI2wHDWrHODDRKuo8zo101S`. This is
+helpful to enable participants to continue the data donation at a later point in time
+(e.g., because it can take some time between requesting data takeout and being
+able to download it); read xref:topic_references.adoc#_continuation[this section of the documentation] to find out how
+this can be done.
+====
 
 Index:: The position of the page in the slideshow.
 
@@ -395,13 +405,13 @@ the request to the API (see below for an example).
 
 
 [TIP]
-----
+====
 Through the admin interface, a project can only be accessed by the user who created it.
 This means that the internal download is only accessible for this project owner.
 The API token, on the other hand, can be used to share data access with colleagues working on the same project.
 However, be careful with whom you share this token as it exposes the sensitive data collected from participants.
 We recommend to choose a short expiration date for Tokens that you create.
-----
+====
 
 
 // TODO: Add Example with R

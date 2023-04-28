@@ -14,9 +14,20 @@ in English.
 
 To add support for a new language, new locales must be added at two locations:
 
-1. In the Django code: `/ddm/locale/` +
-A description of how to do this can be found here: https://docs.djangoproject.com/en/3.2/topics/i18n/translation/#localization-how-to-create-language-files
+==== Django Components
+Translations for the Django part of DDM are located at `/ddm/locale/`.
 
-2. In the code of the VUE component: `/frontend/src/translations/` +
+An extensive description of how translation is handled by Django can be found here:
+https://docs.djangoproject.com/en/3.2/topics/i18n/translation/
+
+To create the translation files, first run `django-admin makemessages -l de` in
+the `ddm` directory, where `de` is the locale name that you want to create.
+This command creates or updates a file located at `ddm/locale/de/LC_MESSAGES/django.po`.
+In this file, you can add your translations. Afterwards, run `django-admin compilemessages`
+to create a `django.mo` file, which will be used by gettext for translation.
+
+==== Vue Components
+The translation files for the vue components are located at `/frontend/src/translations/`.
+
 Here, support for a new language can be added by appending the respective locale name
 as a first-level key to the json files and adding corresponding translations for all translation blocks.

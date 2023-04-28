@@ -9,7 +9,8 @@ participation_flow_patterns = [
     path(r'briefing/', participation_flow.BriefingView.as_view(), name='briefing'),
     path(r'data-donation/', participation_flow.DataDonationView.as_view(), name='data-donation'),
     path(r'questionnaire/', participation_flow.QuestionnaireView.as_view(), name='questionnaire'),
-    path(r'debriefing/', participation_flow.DebriefingView.as_view(), name='debriefing')
+    path(r'debriefing/', participation_flow.DebriefingView.as_view(), name='debriefing'),
+    path(r'continue/', participation_flow.ContinuationView.as_view(), name='continuation')
 ]
 
 question_patterns = [

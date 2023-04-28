@@ -54,15 +54,14 @@ class ParticipationFlowBaseView(DetailView):
         return self.render_to_response(context)
 
     def post(self, request, *arges, **kwargs):
-        self.set_step_completed(request)
+        self.set_step_completed()
         return redirect(self.steps[self.current_step + 1],
                         slug=self.object.slug)
 
     def register_project_in_session(self, request):
         if not request.session.get(self.get_session_id()):
             request.session[self.get_session_id()] = {
-                'participant_id': None,
-                'last_completed_step': None
+                'participant_id': None
             }
             request.session.modified = True
         return
@@ -99,23 +98,25 @@ class ParticipationFlowBaseView(DetailView):
             request.session.modified = True
         return participant
 
-    def get_current_step_from_session(self, request):
+    def get_current_step_from_participant(self, participant):
         """
         Gets current step from information stored in participant's session.
         """
-        step = request.session[self.get_session_id()]['last_completed_step']
+        step = participant.current_step
         if step is None:
             current_step = 0
+            participant.current_step = 0
+            participant.save()
         else:
-            current_step = step + 1
+            current_step = step
         return current_step
 
-    def set_step_completed(self, request):
+    def set_step_completed(self):
         """
         Updates the last_completed_step attribute in current session.
         """
-        request.session[self.get_session_id()]['last_completed_step'] = self.current_step
-        request.session.modified = True
+        self.participant.current_step += 1
+        self.participant.save()
         return
 
     def extra_before_render(self, request):
@@ -129,7 +130,7 @@ class ParticipationFlowBaseView(DetailView):
         self.object = self.get_object()
         self.register_project_in_session(request)
         self.participant = self.get_participant_from_session(request)
-        self.current_step = self.get_current_step_from_session(request)
+        self.current_step = self.get_current_step_from_participant(self.participant)
         return
 
 
@@ -171,11 +172,16 @@ class BriefingView(ParticipationFlowBaseView):
 
         if consent == '0':
             # Redirect to debriefing page.
-            request.session[self.get_session_id()]['last_completed_step'] = len(self.steps) - 2
-            request.session.modified = True
+            self.participant.current_step = len(self.steps) - 1
+            self.participant.save()
             return redirect(self.steps[-1], slug=self.object.slug)
         else:
             return super().post(request, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['participant'] = self.participant
+        return context
 
     def extra_before_render(self, request):
         """ Extract URL parameters if this option has been enabled. """
@@ -201,7 +207,7 @@ class DataDonationView(ParticipationFlowBaseView):
 
     def get_uploader_configs(self):
         project_uploaders = FileUploader.objects.filter(project=self.object)
-        uploader_configs = [fu.get_configs() for fu in project_uploaders]
+        uploader_configs = [fu.get_configs(self.participant.external_id) for fu in project_uploaders]
         return json.dumps(uploader_configs)
 
     def post(self, request, *args, **kwargs):
@@ -287,7 +293,7 @@ class QuestionnaireView(ParticipationFlowBaseView):
 
         context = self.get_context_data(object=self.object)
         if not len(context['q_config']) > 2:
-            self.set_step_completed(request)
+            self.set_step_completed()
             return redirect(self.steps[self.current_step + 1],
                             slug=self.object.slug)
         else:
@@ -364,7 +370,7 @@ class DebriefingView(ParticipationFlowBaseView):
         if self.object.redirect_enabled:
             template = Template(self.object.redirect_target)
             template_context = self.participant.extra_data['url_param']
-            template_context['ddm_participant_id'] = self.participant.pk
+            template_context['ddm_participant_id'] = self.participant.external_id
             template_context['ddm_project_id'] = self.object.pk
             context['redirect_target'] = template.render(Context(template_context))
         else:
@@ -377,4 +383,36 @@ class DebriefingView(ParticipationFlowBaseView):
             self.participant.end_time = timezone.now()
             self.participant.completed = True
             self.participant.save()
+        return
+
+
+class ContinuationView(DetailView):
+    """
+    Enables the continuation of the study at a later stage.
+    Retrieves the session for a participant id passed as a URL parameter (?p=)
+    and redirects to the last initiated stage of the study by the given
+    participant.
+    """
+    model = DonationProject
+    context_object_name = 'project'
+    template_name = 'ddm/public/continuation_not_found.html'
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = super().get_context_data(**kwargs)
+        participant_id = request.GET.get('p', None)
+        try:
+            participant = Participant.objects.get(external_id=participant_id)
+        except Participant.DoesNotExist:
+            # render continuation failed view with option to start new
+            return self.render_to_response(context)
+
+        self.initialize_session(request, participant.pk)
+        return redirect(ParticipationFlowBaseView.steps[0], slug=self.object.slug)
+
+    def initialize_session(self, request, participant_id):
+        request.session[f'project-{self.object.pk}'] = {
+            'participant_id': participant_id
+        }
+        request.session.modified = True
         return

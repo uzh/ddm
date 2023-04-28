@@ -12,6 +12,7 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.core.validators import RegexValidator, MinValueValidator, MinLengthValidator
 from django.db import models
 from django.db.models import Avg, F, ImageField
+from django.template import Context, Template
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.safestring import mark_safe
@@ -300,6 +301,7 @@ class Participant(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(null=True)
     completed = models.BooleanField(default=False)
+    current_step = models.IntegerField(blank=True, null=True)
 
     extra_data = models.JSONField(default=get_extra_data_default)
 
@@ -363,12 +365,18 @@ class FileUploader(models.Model):
         """ This model has a post_delete signal processor (see signals.py). """
         super().delete(*args, **kwargs)
 
-    def get_configs(self):
+    def get_configs(self, participant_id=None):
+        blueprints = self.donationblueprint_set.all()
+        instructions = self.donationinstruction_set.all()
         configs = {
             'upload_type': self.upload_type,
             'name': self.name,
-            'blueprints': [bp.get_config() for bp in self.donationblueprint_set.all()],
-            'instructions': [{'index': i.index, 'text': i.text} for i in self.donationinstruction_set.all()]
+            'blueprints': [bp.get_config() for bp in blueprints],
+            'instructions': [{
+                'index': i.index,
+                'text': Template(i.text).render(
+                    Context({'participant_id': participant_id}))
+            } for i in instructions]
         }
         return configs
 

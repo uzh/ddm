@@ -4,7 +4,7 @@ site:
 content:
   sources:
     - url: ../
-      branches: [main, develop]
+      branches: [main, develop, participant-continuation]
       version: true
       start_path: docs
 ui:

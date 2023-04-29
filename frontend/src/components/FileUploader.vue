@@ -608,10 +608,11 @@ export default {
           dataToEmit[key].consent = null;
           dataToEmit[key].extracted_data = [];
         }
-        else if (!dataToEmit[key].consent) {
+        else if (dataToEmit[key].consent === 'false') {
           dataToEmit[key].extracted_data = [];
+          dataToEmit[key].consent = false;
         } else {
-          dataToEmit[key].consent = true
+          dataToEmit[key].consent = true;
         }
       })
       this.$emit('changedData', dataToEmit);

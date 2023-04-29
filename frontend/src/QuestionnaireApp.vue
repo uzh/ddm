@@ -11,7 +11,7 @@
               :qid="question.question"
               :text="question.text"
               :items="question.items"
-              @answerChanged="updateAnswers"
+              @responseChanged="updateResponses"
               class="question-body"
           ></SingleChoiceQuestion>
           <div :id="'required-hint-' + question.question" class="required-hint hidden">{{ $t('required-but-missing-hint') }}</div>
@@ -25,7 +25,7 @@
               :text="question.text"
               :items="question.items"
               :required="question.required"
-              @answerChanged="updateAnswers"
+              @responseChanged="updateResponses"
               class="question-body"
           ></MultiChoiceQuestion>
           <div :id="'required-hint-' + question.question" class="required-hint hidden">{{ $t('required-but-missing-hint') }}</div>
@@ -38,7 +38,7 @@
               :qid="question.question"
               :text="question.text"
               :options="question.options"
-              @answerChanged="updateAnswers"
+              @responseChanged="updateResponses"
               class="question-body"
           ></OpenQuestion>
           <div :id="'required-hint-' + question.question" class="required-hint hidden">{{ $t('required-but-missing-hint') }}</div>
@@ -52,7 +52,7 @@
               :text="question.text"
               :items="question.items"
               :scale="question.scale"
-              @answerChanged="updateAnswers"
+              @responseChanged="updateResponses"
               class="question-body"
           ></MatrixQuestion>
           <div :id="'required-hint-' + question.question" class="required-hint hidden">{{ $t('required-but-missing-hint') }}</div>
@@ -66,7 +66,7 @@
               :text="question.text"
               :items="question.items"
               :scale="question.scale"
-              @answerChanged="updateAnswers"
+              @responseChanged="updateResponses"
               class="question-body"
           ></SemanticDifferential>
           <div :id="'required-hint-' + question.question" class="required-hint hidden">{{ $t('required-but-missing-hint') }}</div>
@@ -76,8 +76,9 @@
       <template v-if="question.type === 'transition'">
         <div class="question-container">
           <TransitionQuestion
+              :qid="question.question"
               :text="question.text"
-              @answerChanged="updateAnswers"
+              @responseChanged="updateResponses"
               class="question-body"
           ></TransitionQuestion>
           <div :id="'required-hint-' + question.question" class="required-hint hidden">{{ $t('required-but-missing-hint') }}</div>
@@ -127,7 +128,7 @@ export default {
     this.$i18n.locale = this.language;
     return {
       parsedQuestConfig: JSON.parse(this.questionnaireConfig),
-      answers: {},
+      responses: {},
       currentIndex: 1,
       minIndex: 1,
       maxIndex: 1,
@@ -145,8 +146,8 @@ export default {
     }
   },
   methods: {
-    updateAnswers(e) {
-      this.answers[e.id] = e.answers;
+    updateResponses(e) {
+      this.responses[e.id] = {response: e.response, question: e.question, items: e.items}
     },
     setMaxIndex() {
       let indices = [];
@@ -185,15 +186,15 @@ export default {
         document.querySelectorAll("div[class*=required-hint]").forEach((el) => el.classList.remove("show"));
 
         if (this.parsedQuestConfig[q].required) {
-          let answers = this.answers[q];
-          if (answers instanceof Object) {
-            for (let i in answers) {
-              if (answers[i] === -99 || answers[i] === "-99") {
+          let response = this.responses[q].response;
+          if (response instanceof Object) {
+            for (let i in response) {
+              if (response[i] === -99 || response[i] === "-99") {
                 requiredButMissingElement.push("item-" + i);
                 missingQuestionIds.add(q);
               }
             }
-          } else if (answers === -99 || answers === "-99") {
+          } else if (response === -99 || response === "-99") {
             requiredButMissingElement.push(q);
             missingQuestionIds.add(q);
           }
@@ -205,6 +206,8 @@ export default {
       } else {
         requiredButMissingElement.forEach(e => {
           let id = "answer-" + e;
+          console.log(e);
+          console.log(id);
           document.getElementById(id).classList.add("required-but-missing");
         })
         missingQuestionIds.forEach(q => {
@@ -216,7 +219,7 @@ export default {
     },
     submitData() {
       let form = new FormData()
-      form.append("post_data", JSON.stringify(this.answers));
+      form.append("post_data", JSON.stringify(this.responses));
 
       let csrf = document.querySelector("input[name='csrfmiddlewaretoken']");
       form.append("csrfmiddlewaretoken", csrf.value);

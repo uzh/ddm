@@ -109,7 +109,6 @@ class ProjectDataAPI(APIView):
 
         # Gather project data in dictionary.
         blueprints = DonationBlueprint.objects.filter(project=project)
-        data_donations = DataDonation.objects.filter(project=project)
         q_responses = QuestionnaireResponse.objects.filter(project=project)
         participants = Participant.objects.filter(project=project)
         try:
@@ -123,7 +122,7 @@ class ProjectDataAPI(APIView):
             results = {
                 'project': ProjectSerializer(project).data,
                 'donations': donations,
-                'responses': [ResponseSerializer(r, decryptor=decryptor).data for r in q_responses],
+                'questionnaire': [ResponseSerializer(r, decryptor=decryptor).data for r in q_responses],
                 'participants': [ParticipantSerializer(p).data for p in participants]
             }
         except ValueError:

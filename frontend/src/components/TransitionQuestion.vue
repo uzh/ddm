@@ -6,8 +6,12 @@
 
 <script>
 export default {
-  name: "TransitionQuestion",
-  props: ['text'],
+  name: 'TransitionQuestion',
+  props: ['qid', 'text'],
+  emits: ['responseChanged'],
+  created() {
+    this.$emit('responseChanged', {id: this.qid, response: null, question: this.text, items: null});
+  },
 }
 </script>
 

@@ -347,7 +347,7 @@ class QuestionnaireView(ParticipationFlowBaseView):
                     message=msg
                 )
                 continue
-            question.validate_response(post_data[question_id])
+            question.validate_response(post_data[question_id]['response'])
 
         self.save_response(response)
 

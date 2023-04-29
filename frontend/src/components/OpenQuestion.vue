@@ -2,8 +2,8 @@
   <div>
     <div v-html="text"></div>
     <div :id="'answer-' + qid" class="question-response-body">
-      <input v-if="options.display == 'small'" type="text" :name="qid" @change="answerChanged($event)">
-      <textarea class="open-question-textarea" v-if="options.display == 'large'" type="text" :name="qid" @change="answerChanged($event)"></textarea>
+      <input v-if="options.display == 'small'" type="text" :name="qid" @change="responseChanged($event)">
+      <textarea class="open-question-textarea" v-if="options.display == 'large'" type="text" :name="qid" @change="responseChanged($event)"></textarea>
     </div>
   </div>
 </template>
@@ -12,19 +12,19 @@
 export default {
   name: 'OpenQuestion',
   props: ['qid', 'text', 'options'],
-  emits: ['answerChanged'],
+  emits: ['responseChanged'],
   data: function() {
     return {
-      answer: '-99'
+      response: '-99'
     }
   },
   created() {
-    this.$emit('answerChanged', {id: this.qid, answers: this.answer});
+    this.$emit('responseChanged', {id: this.qid, response: this.response, question: this.text, items: null});
   },
   methods: {
-    answerChanged(event) {
-      this.answer = event.target.value;
-      this.$emit('answerChanged', {id: this.qid, answers: this.answer});
+    responseChanged(event) {
+      this.response = event.target.value;
+      this.$emit('responseChanged', {id: this.qid, response: this.response, question: this.text, items: null});
     }
   }
 }

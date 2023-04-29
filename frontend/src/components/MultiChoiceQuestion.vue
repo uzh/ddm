@@ -4,7 +4,7 @@
     <div class="question-response-body">
       <div v-for="(item, id) in items" :key="id" class="question-choice-item form-check">
         <label class="form-check-label rb-cb-label">
-          <input class="form-check-input" type="checkbox" :name="item.id" :value="item.value" @change="answerChanged($event)">
+          <input class="form-check-input" type="checkbox" :name="item.id" :value="item.value" @change="responseChanged($event)">
           <span v-html="item.label"></span>
         </label>
       </div>
@@ -16,22 +16,22 @@
 export default {
   name: 'MultiChoiceQuestion',
   props: ['qid', 'text', 'items'],
-  emits: ['answerChanged'],
+  emits: ['responseChanged'],
   data: function() {
     return {
-      answer: {}
+      response: {}
     }
   },
   created() {
     this.items.forEach(i => {
-      this.answer[i.id] = false;
+      this.response[i.id] = false;
     })
-    this.$emit('answerChanged', {id: this.qid, answers: this.answer});
+    this.$emit('responseChanged', {id: this.qid, response: this.response, question: this.text, items: this.items});
   },
   methods: {
-    answerChanged(event) {
-      this.answer[event.target.name] = event.target.checked;
-      this.$emit('answerChanged', {id: this.qid, answers: this.answer});
+    responseChanged(event) {
+      this.response[event.target.name] = event.target.checked;
+      this.$emit('responseChanged', {id: this.qid, response: this.response, question: this.text, items: this.items});
     }
   }
 }

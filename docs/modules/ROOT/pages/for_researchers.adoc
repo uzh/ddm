@@ -7,14 +7,16 @@
 :showtitle!:
 
 
-This part of the documentation is addressed at the _users_ of the Data Donation Module (i.e., the researchers) and will explain:
+This part of the documentation is addressed at the _users_ of the Data Donation
+Module (i.e., the researchers) and will explain:
 
 - How to set up a data donation project.
 - How to monitor an ongoing data donation project.
 - How to download and work with the collected data.
 
 It is assumed that a server with DDM set up on it is running.
-Readers interested in setting up a server to run DDM for institutional use or their own research should turn to the xref:for_admins.adoc[Documentation for Administrators].
+Readers interested in setting up a server to run DDM for institutional use or their
+own research should turn to the xref:for_admins.adoc[Documentation for Administrators].
 For a general introduction to the module, see xref:index.adoc[this page].
 
 
@@ -113,9 +115,12 @@ Redirect target:: URL to which participants will redirected (only required if `r
 
 [TIP]
 ====
-The redirect URL can include variables that are populated with the respective values. Currently, the following variables are supported:
-An extracted URL parameter (see above), the participant id (as ``ddm_participant_id``), or the project id (as ``ddm_project_id``).
-Use the following syntax to include variables in the redirect target: e.g. ``https://redirect.url?param={{URLParameter}}&participant={{ddm_participant_id}}&project={{ddm_project_id}}``
+The redirect URL can include variables that are populated with the respective values.
+Currently, the following variables are supported:
+An extracted URL parameter (see above), the participant id (as ``ddm_participant_id``),
+or the project id (as ``ddm_project_id``).
+Use the following syntax to include variables in the redirect target:
+e.g. ``https://redirect.url?param={{URLParameter}}&participant={{ddm_participant_id}}&project={{ddm_project_id}}``
 ====
 
 
@@ -123,7 +128,8 @@ Use the following syntax to include variables in the redirect target: e.g. ``htt
 
 The following settings are available to customize the appearance of your data donation project:
 
-Header Image Left/Header Image Right:: Upload an image that will be displayed in the header of your project (e.g., an institution or project logo).
+Header Image Left/Header Image Right:: Upload an image that will be displayed in
+the header of your project (e.g., an institution or project logo).
 
 
 === Editing Project Configuration
@@ -139,6 +145,13 @@ data donation process. It consists of the following sections:
 ==== Briefing
 
 Briefing Text:: Text displayed to participants on the briefing page.
+
+[TIP]
+====
+in the briefing text, you can make use of dynamic template functionalities.
+You can read more about how to use dynamic templates
+xref:for_researchers.adoc#_including_data_dynamically_in_a_question[here].
+====
 
 Briefing Consent Mandatory:: If briefing consent is enabled, participants will
 have to explicitly indicate their consent at the bottom of the briefing page before
@@ -179,7 +192,8 @@ Index:: The position of the file uploader on the data donation page.
 Only relevant if multiple file uploaders are displayed – file uploaders with a
 lower index will be displayed closer to the top of the page.
 
-Associated Donation Blueprints:: The donation blueprints that apply to the expected file(s) collected with the file uploader.
+Associated Donation Blueprints:: The donation blueprints that apply to the
+expected file(s) collected with the file uploader.
 
 
 ===== Configure Instructions
@@ -216,11 +230,9 @@ Therefore, it is important to define a meaningful name.
 Description:: Description of what the blueprint will extract. If defined, the
 description will be visible for participants in the data donation step.
 
-Expected File Format:: The file format of the expected data donation. Currently, only JSON and CSV is implemented.
-
 Associated File Uploader:: The `File Uploader` for which the blueprint will be applied.
 
-Regex path:: Here, the path where the file is expected to be located within a ZIP file is defined.
+File path:: Here, the path where the file is expected to be located within a ZIP file is defined.
 Only necessary, if the Donation Blueprint is part of a Blueprint Container.
 
 WARNING: If a regex expression matches two files, DDM extracts the first one that matches the expression.
@@ -259,11 +271,25 @@ Expected fields:: The fields that must be contained in the donated file. If a fi
 one or more of the fields defined here, it will not be accepted as a donation.
 Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").
 
+Expected File Format:: The file format of the expected data donation. Currently, only JSON and CSV is implemented.
 
-// TODO: CSV specific settings
+====== JSON specific settings
 
+Extraction Root:: Indicates on which level of the files' data structure information
+should be extractet. If you want to extract information contained on the first
+level (e.g., `{'field to be extracted': value}`, you can leave this field empty.
+If you want to extract data located on a higher level, then you would provide
+the path to the parent field of the data you want to extract (e.g., if your json
+file is structured like this `{'friends': {'real_friends': [{'name to extract':
+name, 'date to extract': date}], 'fake friends': [{'name': name, 'date': date }]}}`
+and you want to extract the names and dates of real_friends, you would set the
+extraction root to `friends.real_friends`.
 
-// TODO: JSON specific settings
+====== CSV specific settings
+
+CSV Delimiter:: The delimiter used in the expected file (e.g., `,` or `;`). If
+left empty, the used Javascript function will try to infer the delimiter from
+the file structure.
 
 
 ===== Extraction Rules
@@ -279,20 +305,44 @@ Name:: The name of an extraction rule. For internal organisation only.
 Field:: The field to which the rule will be applied.
 
 Extraction Operator:: Defines the main logic of the extraction step. If empty, this indicates
-that you want to keep the field in the donated data. For all non-RegEx operations,
+that you want to keep the field in the donated data. For all non-regex operations,
 if an operations evaluates to True, the row will be deleted from the donated data
 (further explanations on the separate rules will follow).
 
 Comparison Value:: The value against which the data contained in the indicated field will be compared according to the selected comparison logic.
 
 Replacement Value:: Only required for operation "Replace match (regex)". The value
-that will be used as a replacement if the RegEx pattern matches.
+that will be used as a replacement if the regex pattern matches.
 
 
 ==== Questionnaire
 
-Researchers can optionally define a questionnaire consisting of one or more pages, each consisting of one or more questions.
-The questions will be displayed after the data donation.
+Researchers can optionally define a questionnaire that is displayed after the data donation.
+
+===== How the Questionnaire Works
+
+The questionnaire is displayed after the data donation step and consists of one
+or more pages, each consisting of one or more questions.
+
+A question can either be _general_ or be related to a file blueprint. +
+*General questions* are displayed to all participants, regardless if they successfully
+donated any data. +
+*Questions related to a file blueprint* are only displayed to those participants
+that successfully uploaded some data to the related file blueprint.
+This means that if the data extraction for a specific file blueprint either _fails_,
+_is not attempted_ or _zero data entries are extracted because all entries were filtered out_,
+the question will not be displayed. +
+For questions related to a file blueprint, the data extracted by the related blueprint
+for a given participant is available to be included in the question text
+(xref:for_researchers.adoc#_including_participant_specific_data_in_a_question[see below]
+for more information on how to include data in question texts).
+
+The questionnaire responses are only submitted to the server after all questions have been answered.
+This means that if a participants aborts the questionnaire after filling out, e.g., 2 out of
+4 questions, no responses will be collected and saved on the server.
+
+
+===== Question Configuration Settings
 
 Currently, the following question types are implemented:
 
@@ -303,62 +353,243 @@ Currently, the following question types are implemented:
 * Open Question
 * Transition Block (plain text, without any response options for the participant)
 
-Depending on the question types, the following attributes can be configured:
+Depending on the question type, the following attributes can be configured:
 
 Name:: Question name - only used for internal organisation.
 
 Blueprint (optional):: If associated to a blueprint, the data extracted by
 this blueprint for a given participant is available to be included in the question text
-(see [LOCATION] for more information on how to include data in question texts). // TODO: Add link.
+(xref:for_researchers.adoc#_including_participant_specific_data_in_a_question[see below]
+for more information on how to include data in question texts).
 If the associated blueprint did not extract any data, the question will not be displayed.
 If a question should always be displayed, select the option "General Question" here.
 
 Page:: Number of the page on which the question should be displayed.
 
-Text:: The question text that is displayed to participants.  // TODO: Extend description to explain inclusion of donated data.
+Index:: Order in which questions on the same page should be displayed.
+
+Variable Name:: The variable name associated to this question. Will be included
+in the data export. For items belonging to a question, the variable name will
+be constructed as follows: "question_variable_name-{item-value}".
+
+Text:: The question text that is displayed to participants.
 
 Required:: If a question is marked as required, the application will show a
-hint to the participant if they missed to answer this question.
+hint to the participant if they forgot to answer this question.
 This hint will only be shown once. This means that if a participant chooses to
 ignore the hint and clicks on 'continue', they are able to skip a required question.
 
-Randomize items:: Enable or disable randomization of items.
+Randomize items:: Enable or disable randomization of *all* items.
 
-Question Items:: The items that will be displayed in the answer part of the question.
+====== Question Items
+Here, the items belonging to this question are listed. Click on _edit_ to add and
+configure the following attributes of question items.
 
-Scale Configuration:: Configure how the scale displayed to participants to rate items will look like
-(only for Matrix Question and Semantic Differential).
+Label:: The label/text of the item that is displayed to participants related to an item.
+For semantic differential questions, this is the label displayed on the left-hand side of the scale.
 
+Label alt:: Only for semantic differential questions: the label displayed on the
+right-hand side of the scale.
+
+Index:: Defines the order in which the items are displayed.
+
+Value:: Is (_a_) the identifier of an item and (_b_) used to indicate which
+item(s) has or have been selected in the data export (only for Single and Multi
+Choice Questions).
+
+Randomize:: Instead of randomizing the order of all items with the _randomize_ setting
+on the question level, this setting allows randomizing only certain items while
+those for which this option is not ticked stay in their place (i.e., according to
+their index).
+
+Delete:: Tick this box if the item should be deleted. The item will be deleted
+as soon as you click on _Update Items_.
+
+====== Scale Configuration
+Configure the scale displayed to participants on which they will rate the items
+related to this question (only for Matrix Question and Semantic Differential).
+Click on _edit_ to add and configure the following attributes of a scale.
+
+Index:: Defines the order in which the items are displayed.
+
+Label:: The label/text that is displayed to participants associated to the scale point.
+
+Value:: Used to indicate which scale point has been selected in the data export.
+
+Add border:: Setting currently has no effect - still to be implemented.
+
+Delete:: Tick this box if the scale point should be deleted. The scale point
+will be deleted as soon as you click on _Update Scale Points_.
+
+
+===== Including Data Dynamically in a Question
+
+Depending on the question configuration it is possible to dynamically include both
+participant-related and donation-related data points in a question text.
+
+For this, DDM uses the https://docs.djangoproject.com/en/3.2/topics/templates/[Django template engine]
+to render question text dynamically for each participant.
+This means that researchers can include
+https://docs.djangoproject.com/en/3.2/ref/templates/builtins/[Django's built-in template tags and filters]
+in the question text to customize question texts as well as access data accessible
+through predefined variables. This also works for the briefing and debriefing pages.
+
+
+DDM provides two custom variables to be used:
+
+a. A variable called `participant` that contains information about the current participant
+(available in all questions).
+b. A variable called `data` that contains the data donated by the current participant
+(only available for questions that are related to a file blueprint).
+
+
+====== Participant-Related Data
+
+The participant related data contains the following information:
+
+[source, json]
+----
+{
+    "public_id": "S0meLonGCh4rSeQuence",
+    "data": {
+        "url_param": {
+            "parameter_a": "value a",
+            "parameter_b": "value b"
+        },
+        "briefing_consent": "1"   # or "0" if participant did not consent to take part in the study
+    },
+    "donation_info": {
+        "n_success": 1,           # number of successful donations by this participant
+        "n_pending": 1,           # number of pending (i.e., not attempted) donations by this participant
+        "n_failed": 0,            # number of attempted but failed donations by this participant
+        "n_no_data_extracted": 0  # number of donations by this participant where all entries were filtered out
+    }
+}
+----
+
+This information can be embedded in any question (i.e., general or blueprint related),
+any item label, in donation instructions, as well as in the briefing and
+debriefing text as follows:
+
+[source]
+--
+Dear participant I would like to tell you something about yourself.
+
+{% if participant.data.briefing_consent == "1" %}
+You did consent to take part in this study and for this we are really grateful.
+{% else %}
+Unfortunately, you did not consent to take part in the study but we respect your
+decision and completely understand! :')
+{% endif %}
+
+Your public ID is as follows: "{{ participant.public_id }}". Please take a photo
+of this ID. If you wnat to request the deletion of your data at some point in the
+future you can send an e-mail with your personal public ID to someone@mail.com
+and your data will be deleted from our servers.
+--
+
+A participant that consented to take part in the study will see this question as
+follows:
+
+[source]
+--
+Dear participant I would like to tell you something about yourself.
+
+You did consent to take part in this study and for this we are really grateful.
+
+Your public ID is as follows: "xHQVbrYUYXn5lklW3RGSeouX". Please take a photo
+of this ID. If you wnat to request the deletion of your data at some point in the
+future you can send an e-mail with your personal public ID to someone@mail.com
+and your data will be deleted from our servers.
+--
+
+====== Donation-Related Data
+
+If a question is related to a file blueprint, the data that was extracted from
+a participant's data donation through this file blueprint is available as a
+template variable called `data`.
+As in the case of the participant-related data, the donation-related data can
+be included in a question text definition following the same logic:
+
+[source]
+--
+This is the title of the last video you watched on YouTube: "{{ data.0.title }}"
+
+Please indicate below, why you watched this video.
+--
+
+This will be rendered as follows:
+
+[source]
+--
+This is the title of the last video you watched on YouTube: "Data Brokers: Last Week Tonight with John Oliver (HBO)"
+
+Please indicate below, why you watched this video.
+--
+
+The example above assumes that the donated data is structured as follows:
+`[{'title': 'Data Brokers: Last Week Tonight with John Oliver (HBO)', 'timestamp': '2022-12-19T08:49:18'},
+{'title': 'Title of second video', 'timestamp': '2022-12-16T11:43:02'}, ...]`.
 
 [TIP]
 ====
-*How to Include Donated Data in a Question*
+If you are starting to construct a dynamic question text, first include the
+complete data objects stored in the variables in your question text (e.g.,
+`{{ participant }}, {{ data }}`).
 
-It is possible to include information contained in the donated data or related to the participant in the question text.
-Questions that should integrate this behaviour must be linked to a donation blueprint
-The donated data related to the associated blueprint will then be available as a
-context variable an can be referenced in the question body as follows:
-`Display donated data: {{ data }}. Display participant data: {{ participant }}.`
-
-For this, DDM utilizes the `Django template engine <https://docs.djangoproject.com/en/3.2/topics/templates/>`_.
-The donated data will be available as a template variable "data" in the question text definition.
-This variable can be combined flexibly with Django's `built-in template tags and filters <https://docs.djangoproject.com/en/3.2/ref/templates/builtins/>`_.
-
-// TODO: Include Example.
-
-// TODO: Include a list of accessible template features.
+Next, open the link to your study in an anonymous browser window and go through
+the steps until you reach the questionnaire part. This way you can see how the
+data object is structured and figure out from there, how you can access the
+information on deeper levels of the data structure. You can then start to adjust
+the variables and reload the anonymous window every time you made a change to the
+question definition to see how your new specification will be rendered.
 ====
 
 
 ==== Debriefing
 
-Debriefing text:: Text displayed to participants on the briefing page.
+Debriefing text:: Text displayed to participants on the debriefing page.
+
+[TIP]
+====
+Sometimes you might want to display different debriefing texts depending on the
+previous actions of your participant (e.g., if a participant did indicate that
+they do not want to take part in the study, or if a participant did not attempt
+to donate any data).
+
+For this, you can make use of the templating engine and, for example, define the
+following debriefing page that displays a different text to a participant that
+did not attempt to donate any that compared to a participant who donated at least
+some data (the example assumes that two donations were expected in this study):
+
+[source]
+--
+{% if participant.donation_info.n_success > 0 %}
+Dear participant,
+
+Thank you very much for participating in our study. With your data donation, you
+made a great contribution towards advancing our understanding of algorithmic
+selection on the internet.
+{% endif %}
+
+{% if participant.donation_info.n_pending == 2 %}
+Dear participant,
+
+Thank you for your time. Because you did not attempt to donate any data, you are
+unfortunately not eligible to receive the participation reward.
+{% endif %}
+--
+
+You can read more about how to use dynamic templates
+xref:for_researchers.adoc#_including_data_dynamically_in_a_question[here].
+====
 
 
 === Data Center
 
-In the Data Center, you can find options to `A` access the collected data,
-`B` access the project logs, and `C` find some general field statistics about the progress of your project.
+In the Data Center, you can find options to (_a_) access the collected data,
+(_b_) access the project logs, and (_c_) find some general field statistics about
+the progress of your project.
 
 ==== Data Download: Accessing Collected Data Donations
 
@@ -378,22 +609,17 @@ sending the request to the API (see below for an example).
 [TIP]
 ====
 Through the admin interface, a project can only be accessed by the user who created it.
-This means that the internal download is only accessible for this project owner.
+This means that the internal download is only accessible for a project owner.
 The API token, on the other hand, can be used to share data access with colleagues working on the same project.
 However, be careful with whom you share this token as it exposes the sensitive data collected from participants.
 We recommend choosing a short expiration date for Tokens that you create.
 ====
 
-
-// TODO: Add Example with R
-
-// TODO: Add Example with Python
-
 ==== Data Structure
 
 When downloading your data, you will receive a .json file with the following structure:
 
-[source,json]
+[source, json]
 ----
 {
     "project": {
@@ -481,13 +707,42 @@ When downloading your data, you will receive a .json file with the following str
 
 ==== Project Log: Monitoring an on-going Project
 
-// TODO: Describe Exception Logs.
+The Project Log should help researchers to monitor their ongoing data collection
+and to identify potential problems occurring during the data donation.
+
+Two types of logs exist for each project: An _Exception Log_ and an _Event Log_.
+
+===== Exception Log
+The Exception Log lists all exceptions that participants encountered
+during the study. The log provides the following information:
+
+- The date and time when the exception occurred
+- The type of the exception (for a description of the type-codes, xref:topic_references.adoc#_exception_types[see here])
+- Which participant encountered the exception (if applicable)
+- For which file blueprint the exception occurred (if applicable)
+- If the exception was raised on the client-side (i.e., the participant's browser) or the server side
+- A message describing the exception
+
+
+===== Event Log
+The Event Log currently registers the following events:
+
+1. When an access token is created or deleted
+2. When the API endpoint for the project was called but authentication failed or permission was denied
+3. When a data download attempt was successful, failed or denied.
+4. When a data delete attempt was successful, failed, or denied.
+5. When a participant delete request was successful, failed, or denied.
+
 
 ==== Participation Statistics
 
-// TODO: Describe.
+The Participation Statistics currently display the following information:
 
-
+- _Donated Files_: The number of successfully donated files.
+- _Started_: The number of participants that started the study.
+- _Completed_: The number of participants that reached the debriefing page of the study.
+- _Completion Rate_: The number of started divided by the number of completed participations.
+- _Avrg. to complete_: The average time it took a participant from starting the study to reaching the debriefing page.
 
 === Danger Zone
 
@@ -500,7 +755,21 @@ With this option, you can delete all data collected for a given project.
 ==== Delete Participant
 
 You can delete the data for a given participant by providing their external participation id.
-// TODO: Explain this function further.
+
+[TIP]
+====
+You can show your participants their external participation id (also referred to
+as _public_id_) during the study (e.g., embedded in a _transition block_ as part
+of the questionnaire) and inform them that by providing their public ID they can
+request the deletion of their data in the future if they change their mind.
+
+This function can then help you to delete a participant from the database (if your
+study is still ongoing at the time a participant requests the deletion of their
+data).
+
+See xref:for_researchers.adoc#_participant_related_data[here] for an example of
+how this could be done.
+====
 
 ==== Delete Project
 

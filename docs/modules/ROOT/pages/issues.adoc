@@ -1,0 +1,14 @@
+= Reporting Issues and Getting Help
+:!toc:
+:stylesheet: ../static/css/custom.css
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: static/img/ddl_favicon_black.svg
+
+If you encounter issues or detect a bug, please open a new issue in the
+https://github.com/uzh/ddm[GitHub repository].
+
+If you need help navigating the application, please first look for a solution in
+the sections of this documentation. If you are stuck and don't find what you are
+looking for, feel free to contact us at datadonation@ikmz.uzh.ch.

@@ -9,3 +9,12 @@ can resume their participation. This endpoint is a URL containing the project
 url identifier as well as the external participant ID passed as a URL parameter
 `p`. This URL looks as follows:
 `https://your-domain.com/project-slug/continue?p=ExternalParticipantID`
+
+[TIP]
+====
+You can display this continuation link in the instructions to your participants
+by utilizing the Django templating functionality
+(xref:for_researchers.adoc#_participant_related_data[described here])
+as follows:
+`https.//your-domain.com/project-slug/continue?p={{ participant.public_id }}`
+====

@@ -21,7 +21,7 @@ include::topics/encryption.adoc[]
 include::topics/user_authentication.adoc[]
 
 
-== Exception Log
+== Exception Types
 include::topics/exception_logging.adoc[]
 
 

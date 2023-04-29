@@ -13,7 +13,7 @@ as it provides the possibility to host multiple independent data donation projec
 Nevertheless, it is also possible to use it for single projects.
 
 It is developed by the Media Use and Effects Division at the University of Zurich.
-The Data Donation Module is embedded in a larger initiative of the University of Zurich and the Digital
+The Data Donation Module is embedded in the Data Donation Lab, a larger initiative of the University of Zurich and the Digital
 Society Initiative to strengthen the exchange about the topic of data donations and
 promote this data collection approach. For more information, visit https://datadonation.uzh.ch.
 
@@ -35,8 +35,6 @@ and optionally obtain explicit consent for participation.
 Next, participants are presented with a user interface through which they can donate their data.
 This interface consists of `(1)` a set of instructions, `(2)` a data upload form, and `(3)` a feedback area.
 
-// TODO: Insert Screenshot of Donation Step
-
 The participation flow in this step looks as follows:
 
 a. The participant reads the instructions and downloads/finds the relevant file on their PC.
@@ -52,15 +50,10 @@ Steps `b` to `d` are all client-based and executed in the participant's browser.
 After the data donation, participants can optionally be presented with a questionnaire.
 Questions defined in this questionnaire can be configured to include data points from the donated data – either to
 enrich the donated data or to provide participants with insights into their personal data.
-// TODO: Link 'configured to include...' to the section, where this is described in more detail.
+
 
 *4) End/Debriefing Page* +
 Lastly, participants are presented with a debriefing page. From here, participants can optionally be redirected to another website or web application.
-
-
-=== Core Principles
-
-// TODO: Extend
 
 
 == Documentation Structure

@@ -255,7 +255,7 @@ class DonationProject(models.Model):
                     )
                     continue
 
-                if donation.consent:
+                if donation.consent and donation.status == 'success':
                     q_config[question.pk] = question.get_config(participant, view)
         return q_config
 
@@ -365,7 +365,7 @@ class FileUploader(models.Model):
         """ This model has a post_delete signal processor (see signals.py). """
         super().delete(*args, **kwargs)
 
-    def get_configs(self, participant_id=None):
+    def get_configs(self, participant_data=None):
         blueprints = self.donationblueprint_set.all()
         instructions = self.donationinstruction_set.all()
         configs = {
@@ -374,8 +374,7 @@ class FileUploader(models.Model):
             'blueprints': [bp.get_config() for bp in blueprints],
             'instructions': [{
                 'index': i.index,
-                'text': Template(i.text).render(
-                    Context({'participant_id': participant_id}))
+                'text': Template(i.text).render(Context({'participant': participant_data}))
             } for i in instructions]
         }
         return configs
@@ -655,7 +654,7 @@ class DataDonation(ModelWithEncryptedData):
     )
     time_submitted = models.DateTimeField(default=timezone.now)
     consent = models.BooleanField(default=False)
-    status = models.JSONField()  # 'success' if data was successfully donated; 'pending' otherwise
+    status = models.JSONField()
     data = models.BinaryField()
 
 

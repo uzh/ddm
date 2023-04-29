@@ -207,7 +207,7 @@ class DataDonationView(ParticipationFlowBaseView):
 
     def get_uploader_configs(self):
         project_uploaders = FileUploader.objects.filter(project=self.object)
-        uploader_configs = [fu.get_configs(self.participant.external_id) for fu in project_uploaders]
+        uploader_configs = [fu.get_configs(self.participant.get_context_data()) for fu in project_uploaders]
         return json.dumps(uploader_configs)
 
     def post(self, request, *args, **kwargs):

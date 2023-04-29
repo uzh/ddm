@@ -293,6 +293,16 @@ class Transition(QuestionBase):
 class QuestionItem(models.Model):
     class Meta:
         ordering = ['index']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['index', 'question'],
+                name='unique_item_index_per_question'
+            ),
+            models.UniqueConstraint(
+                fields=['value', 'question'],
+                name='unique_item_value_per_question'
+            ),
+        ]
 
     question = models.ForeignKey(
         'QuestionBase',

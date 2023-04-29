@@ -20,6 +20,10 @@
     </thead>
     {% endif %}
 
+    {% if form.non_field_errors %}
+      <tr><td class="border-bottom-0">{{ form.non_field_errors }}</td></tr>
+    {% endif %}
+
     <tr>
       {% for field in form.visible_fields %}
       <td>

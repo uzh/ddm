@@ -253,7 +253,23 @@ class DataDonationView(ParticipationFlowBaseView):
             return
 
         # Process donation data.
-        file_data = json.loads(unzipped_file.read('ul_data.json').decode('utf-8'))
+        try:
+            file_data = json.loads(unzipped_file.read('ul_data.json').decode('utf-8'))
+        except UnicodeDecodeError:
+            try:
+                file_data = json.loads(unzipped_file.read('ul_data.json').decode('latin-1'))
+            except ValueError:
+                msg = (
+                    'Donated data could not be decoded - '
+                    'tried both utf-8 and latin-1 decoding.'
+                )
+                ExceptionLogEntry.objects.create(
+                    project=self.object,
+                    raised_by=ExceptionRaisers.SERVER,
+                    message=msg
+                )
+                return
+
         for upload in file_data.keys():
             blueprint_id = upload
             blueprint_data = file_data[upload]

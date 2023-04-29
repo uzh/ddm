@@ -13,7 +13,7 @@
     <h1>{% translate "Welcome to this study!" %}</h1>
     <p>{% translate "Please define a description and welcome text for this project in the Project Hub." %}</p>
     {% else %}
-    {{ object.briefing_text | safe }}
+    {{ briefing | safe }}
     {% endif %}
   </div>
 

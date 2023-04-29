@@ -181,6 +181,11 @@ class BriefingView(ParticipationFlowBaseView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['participant'] = self.participant
+        template_context = {
+            'participant': self.participant.get_context_data()
+        }
+        briefing_template = Template(self.object.briefing_text)
+        context['briefing'] = briefing_template.render(Context(template_context))
         return context
 
     def extra_before_render(self, request):
@@ -383,12 +388,17 @@ class DebriefingView(ParticipationFlowBaseView):
     def get_context_data(self, **kwargs):
         """ Inject url parameters in redirect target. """
         context = super().get_context_data(**kwargs)
+
+        template_context = {
+            'participant': self.participant.get_context_data(),
+            'project_id': self.object.pk
+        }
+        debriefing_template = Template(self.object.debriefing_text)
+        context['debriefing'] = debriefing_template.render(Context(template_context))
+
         if self.object.redirect_enabled:
-            template = Template(self.object.redirect_target)
-            template_context = self.participant.extra_data['url_param']
-            template_context['ddm_participant_id'] = self.participant.external_id
-            template_context['ddm_project_id'] = self.object.pk
-            context['redirect_target'] = template.render(Context(template_context))
+            redirect_template = Template(self.object.redirect_target)
+            context['redirect_target'] = redirect_template.render(Context(template_context))
         else:
             context['redirect_target'] = None
         return context

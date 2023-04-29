@@ -312,9 +312,20 @@ class Participant(models.Model):
         """
         context_data = {
             'public_id': self.external_id,
-            'data': self.extra_data
+            'data': self.extra_data,
+            'donation_info': self.get_donation_info()
         }
         return context_data
+
+    def get_donation_info(self):
+        donations = DataDonation.objects.filter(participant=self)
+        donation_info = {
+            'n_success': donations.filter(status='success').count(),
+            'n_pending': donations.filter(status='pending').count(),
+            'n_failed': donations.filter(status='failed').count(),
+            'n_no_data_extracted': donations.filter(status='nothing extracted').count()
+        }
+        return donation_info
 
     def save(self, *args, **kwargs):
         if self.pk is None:

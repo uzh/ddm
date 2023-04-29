@@ -104,7 +104,7 @@
     <div class="d-flex flex-row align-items-center data-center-row border-bottom">
       <div class="w-15"><h5>Data Download</h5></div>
       <div class="me-5">
-        <p class="mb-0"><b>Direct Download:</b><br><a class="a-no-link ddm-btn ddm-btn-green" {% if not object.super_secret %}onclick="downloadData('{% url "ddm-data-api" object.pk %}', 'project_{{ object.pk }}_data')"{% else %}onclick="askSecret()"{% endif %}><i class="bi bi-download"></i> Download Data as JSON</a></p>
+        <p class="mb-0"><b>Direct Download:</b><br><a class="a-no-link ddm-btn ddm-btn-green" {% if not object.super_secret %}onclick="downloadData('{% url "ddm-data-api" object.pk %}', 'project_{{ object.pk }}_data_{% now "Y-m-d-G-i-s" %}')"{% else %}onclick="askSecret()"{% endif %}><i class="bi bi-download"></i> Download Data as JSON</a></p>
       </div>
       <div>
         <p class="mb-0"><b>Remote Download:</b><br><a href="{% url 'project-token' object.pk %}">Manage Access Token</a></p>

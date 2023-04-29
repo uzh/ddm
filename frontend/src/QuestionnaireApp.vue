@@ -2,8 +2,8 @@
 
 <template>
 
-  <template v-for="(question, id) in parsedQuestConfig" :key="id">
-    <div :data-page-index="question.index" v-show="currentIndex === question.index">
+  <template v-for="question in parsedQuestConfig" :key="question.question">
+    <div :data-page-index="question.page" v-show="currentPage === question.page">
 
       <template v-if="question.type === 'single_choice'">
         <div class="question-container">
@@ -129,16 +129,16 @@ export default {
     return {
       parsedQuestConfig: JSON.parse(this.questionnaireConfig),
       responses: {},
-      currentIndex: 1,
-      minIndex: 1,
-      maxIndex: 1,
+      currentPage: 1,
+      minPage: 1,
+      maxPage: 1,
       locale: this.language,
       displayedRequiredHint: false,
     }
   },
   created() {
-    this.setMaxIndex();
-    this.currentIndex = this.minIndex;
+    this.setMaxPage();
+    this.currentPage = this.minPage;
   },
   watch: {
     locale (val){
@@ -149,21 +149,21 @@ export default {
     updateResponses(e) {
       this.responses[e.id] = {response: e.response, question: e.question, items: e.items}
     },
-    setMaxIndex() {
-      let indices = [];
-      for (let key in this.parsedQuestConfig) {
-        indices.push(this.parsedQuestConfig[key].index)
-      }
-      this.minIndex = Math.min(...indices);
-      this.maxIndex = Math.max(...indices);
+    setMaxPage() {
+      let pages = [];
+      this.parsedQuestConfig.forEach(q =>
+          pages.push(q.page)
+      )
+      this.minPage = Math.min(...pages);
+      this.maxPage = Math.max(...pages);
     },
     next() {
       if (this.displayedRequiredHint || this.checkRequired()) {
-        if (this.currentIndex === this.maxIndex) {
+        if (this.currentPage === this.maxPage) {
           this.submitData();
         } else {
-          this.currentIndex += 1;
-          if (document.querySelector("[data-page-index='" + this.currentIndex + "']") === null) {
+          this.currentPage += 1;
+          if (document.querySelector("[data-page-index='" + this.currentPage + "']") === null) {
             this.next();
           }
         }
@@ -171,11 +171,11 @@ export default {
     },
     getActiveQuestions() {
       let activeQuestions = [];
-      for (let key in this.parsedQuestConfig) {
-        if (this.currentIndex === this.parsedQuestConfig[key].index) {
-          activeQuestions.push(key)
+      this.parsedQuestConfig.forEach(q => {
+        if (this.currentPage === q.page) {
+          activeQuestions.push(q)
         }
-      }
+      })
       return activeQuestions;
     },
     checkRequired() {
@@ -185,18 +185,18 @@ export default {
         document.querySelectorAll("div[id*=answer-], tr[id*=answer-]").forEach((el) => el.classList.remove("required-but-missing"));
         document.querySelectorAll("div[class*=required-hint]").forEach((el) => el.classList.remove("show"));
 
-        if (this.parsedQuestConfig[q].required) {
-          let response = this.responses[q].response;
+        if (q.required) {
+          let response = this.responses[q.question].response;
           if (response instanceof Object) {
             for (let i in response) {
               if (response[i] === -99 || response[i] === "-99") {
                 requiredButMissingElement.push("item-" + i);
-                missingQuestionIds.add(q);
+                missingQuestionIds.add(q.question);
               }
             }
           } else if (response === -99 || response === "-99") {
-            requiredButMissingElement.push(q);
-            missingQuestionIds.add(q);
+            requiredButMissingElement.push(q.question);
+            missingQuestionIds.add(q.question);
           }
         }
       })

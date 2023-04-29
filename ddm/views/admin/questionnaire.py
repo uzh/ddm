@@ -62,7 +62,7 @@ class QuestionFormMixin(ProjectMixin):
         'transition': Transition
     }
 
-    SHARED_FIELDS = ['name', 'blueprint', 'index', 'variable_name', 'text', 'required']
+    SHARED_FIELDS = ['name', 'blueprint', 'page', 'index', 'variable_name', 'text', 'required']
     QUESTION_FIELDS = {
         'single_choice': SHARED_FIELDS + ['randomize_items'],
         'multi_choice': SHARED_FIELDS + ['randomize_items'],

@@ -23,10 +23,12 @@
         <th class="border-bottom-0"></th>
         <th class="border-bottom-0"></th>
         <th class="border-bottom-0"></th>
+        <th class="border-bottom-0"></th>
       </tr>
       <tr class="lh-1 align-bottom border-bottom-dark">
         <th style="width: 16%"></th>
         <th class="fs-08">Page</th>
+        <th class="fs-08">Index</th>
         <th class="fs-08">Name</th>
         <th class="fs-08">Type</th>
         <th></th>
@@ -37,6 +39,7 @@
           {% if forloop.first %}
             <td rowspan="{{ general_questions|length }}"></td>
           {% endif %}
+          <td>{{ question.page }}</td>
           <td>{{ question.index }}</td>
           <td>{{ question.name }}</td>
           <td>{{ question.get_question_type_display }}</td>
@@ -66,10 +69,12 @@
       <th class="border-bottom-0"></th>
       <th class="border-bottom-0"></th>
       <th class="border-bottom-0"></th>
+      <th class="border-bottom-0"></th>
     </tr>
     <tr class="lh-1 align-bottom border-bottom-dark">
       <th style="width: 16%">Blueprint</th>
       <th class="fs-08">Page</th>
+      <th class="fs-08">Index</th>
       <th class="fs-08">Name</th>
       <th class="fs-08">Type</th>
       <th></th>
@@ -83,6 +88,7 @@
           {% if forloop.first %}
           <td rowspan="{{ blueprint.get_associated_questions|length }}" class="border-bottom-dark">{{ blueprint.name }}</td>
           {% endif %}
+          <td>{{ question.page }}</td>
           <td>{{ question.index }}</td>
           <td>{{ question.name }}</td>
           <td>{{ question.get_question_type_display }}</td>

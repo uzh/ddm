@@ -43,7 +43,8 @@ class QuestionBase(PolymorphicModel):
     )
 
     name = models.CharField(max_length=255)
-    index = models.PositiveIntegerField(default=1, verbose_name='Page')
+    page = models.PositiveIntegerField(default=1, verbose_name='Page')
+    index = models.PositiveIntegerField(default=1, verbose_name='Index')
 
     variable_name = models.SlugField(
         max_length=50,
@@ -67,7 +68,7 @@ class QuestionBase(PolymorphicModel):
     required = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ['index']
+        ordering = ['page', 'index']
         constraints = [
             models.UniqueConstraint(
                 fields=['variable_name', 'project'],
@@ -94,6 +95,7 @@ class QuestionBase(PolymorphicModel):
         config = {
             'question': self.pk,
             'type': self.question_type,
+            'page': self.page,
             'index': self.index,
             'text': self.text,
             'required': self.required,

@@ -140,7 +140,7 @@ class DonationProject(models.Model):
             'Always include <i>http://</i> or <i>https://</i> in the redirect target. '
             'If URL parameter extraction is enabled for this project, you can '
             'include the extracted URL parameters in the redirect target as follows: '
-            '"https://redirect.me/?redirectpara=<b>{{URLParameter}}</b>".')
+            '"https://redirect.me/?redirectpara=<b>{{participant.data.url_param.URLParameter}}</b>".')
     )
 
     # URL parameter extraction settings.

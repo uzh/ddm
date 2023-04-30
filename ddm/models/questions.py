@@ -60,7 +60,7 @@ class QuestionBase(PolymorphicModel):
             'If a question is linked to a File Blueprint, data points from the donated data associated with the linked donation blueprint can be included in the question text. '
             'This data can be included as "{{ data }}" in the question text. '
             'It is possible to subset the data object (e.g., to include the last datapoint you can use {{ data.0 }} or include advanced '
-            'rendering options included in the Django templating engine. For a more comprehensive overview and examples see [LINK TO BE INCLUDED]. '  # TODO: Include link
+            'rendering options included in the Django templating engine. For a more comprehensive overview and examples see the documentation. '
             'Additionally, information directly related to the participant can be included in the question text. '
             'This information can be referenced as "{{ participant }}".'
         )

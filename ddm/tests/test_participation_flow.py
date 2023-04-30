@@ -81,7 +81,6 @@ class ParticipationFlowBaseTestCase(TestCase):
         return participant
 
     def create_data_donation(self):
-        # Create a data donation for project 1.
         session = self.client.session
         participant_id = session[f'project-{self.project_base.pk}']['participant_id']
         participant = Participant.objects.get(pk=int(participant_id))
@@ -91,7 +90,7 @@ class ParticipationFlowBaseTestCase(TestCase):
             participant=participant,
             time_submitted=timezone.now(),
             consent=True,
-            status='{}',
+            status='success',
             data='{}'
         )
 
@@ -256,7 +255,7 @@ class TestRedirect(ParticipationFlowBaseTestCase):
 
     def test_redirect_single_parameter(self):
         self.project_base.expected_url_parameters = 'testparam'
-        self.project_base.redirect_target = 'http://test.test/?para={{testparam}}'
+        self.project_base.redirect_target = 'http://test.test/?para={{participant.data.url_param.testparam}}'
         self.project_base.save()
 
         self.client.get(self.briefing_url + '?testparam=test')
@@ -273,7 +272,7 @@ class TestRedirect(ParticipationFlowBaseTestCase):
 
     def test_redirect_multiple_parameters(self):
         self.project_base.expected_url_parameters = 'testparam;testparam2'
-        self.project_base.redirect_target = 'http://test.test/?para={{testparam}}&para2={{testparam2}}'
+        self.project_base.redirect_target = 'http://test.test/?para={{participant.data.url_param.testparam}}&para2={{participant.data.url_param.testparam2}}'
         self.project_base.save()
         self.client.get(self.briefing_url + '?testparam=test&testparam2=test2')
 

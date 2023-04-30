@@ -2,6 +2,7 @@ from ddm.models.core import (
     DataDonation, QuestionnaireResponse, ResearchProfile, DonationProject,
     Participant, DonationBlueprint
 )
+from ddm.models.questions import OpenQuestion
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -54,11 +55,18 @@ class TestAPIs(TestCase):
             status='{}',
             data='{"data": ["donated_data", "donated_data"]}'
         )
+        q = OpenQuestion.objects.create(
+            project=cls.project_base,
+            name='open question',
+            page=1,
+            index=1,
+            variable_name='open'
+        )
         QuestionnaireResponse.objects.create(
             project=cls.project_base,
             participant=cls.participant,
             time_submitted=timezone.now(),
-            data='{"data": ["response_data", "response_data"]}'
+            data=f'{{"{q.pk}": {{"response": "response_data", "question": "question text", "items": []}}}}'
         )
 
     def test_download_project_data_view_exists(self):

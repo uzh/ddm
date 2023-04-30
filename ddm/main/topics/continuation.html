@@ -50,7 +50,7 @@
     <a class="nav-link" href="../topic_references.html">Topic References</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../about.html">About</a>
+    <a class="nav-link" href="../issues.html">Reporting Issues and Getting Help</a>
   </li>
 </ul>
   </li>
@@ -91,54 +91,49 @@
 <div class="page-versions">
   <button class="version-menu-toggle" title="Show other versions of page">main</button>
   <div class="version-menu">
-    <a class="version is-current" href="languages.html">main</a>
-    <a class="version is-missing" href="../../develop/index.html">develop</a>
-    <a class="version is-missing" href="../../v1.0.0/index.html">v1.0.0</a>
+    <a class="version is-current" href="continuation.html">main</a>
+    <a class="version" href="../../develop/topics/continuation.html">develop</a>
+    <a class="version" href="../../v1.0.0/topics/continuation.html">v1.0.0</a>
   </div>
 </div>
-  <div class="edit-this-page"><a href="https://github.com/uzh/ddm/edit/main/docs/modules/ROOT/pages/topics/languages.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/uzh/ddm/edit/main/docs/modules/ROOT/pages/topics/continuation.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<div class="sect1">
-<h2 id="_translation"><a class="anchor" href="#_translation"></a>Translation</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>The administration interface for researchers currently only supports English.
-The participation interface currently supports English and German.</p>
+<p>Oftentimes, it can take some time between requesting a data takeout from a
+platform and actually being able to download this takeout. Therefore, researchers
+might want to provide their study participants with the possibility to pause their
+participation and continue with the study as soon as they were able to download
+their personal data takeout.</p>
 </div>
-<div class="sect2">
-<h3 id="_language_detection"><a class="anchor" href="#_language_detection"></a>Language Detection</h3>
 <div class="paragraph">
-<p>The language in which the interface for participants is displayed is determined
-by the default language of the participant&#8217;s browser.
-If a language is not implemented for the participant interface, it is displayed
-in English.</p>
+<p>To enable this, DDM offers a continuation endpoint through which participants
+can resume their participation. This endpoint is a URL containing the project
+url identifier as well as the external participant ID passed as a URL parameter
+<code>p</code>. This URL looks as follows:
+<code><a href="https://your-domain.com/project-slug/continue?p=ExternalParticipantID" class="bare">https://your-domain.com/project-slug/continue?p=ExternalParticipantID</a></code></p>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_adding_support_for_new_languages"><a class="anchor" href="#_adding_support_for_new_languages"></a>Adding Support for new Languages</h3>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>To add support for a new language, new locales must be added at two locations:</p>
+<p>You can display this continuation link in the instructions to your participants
+by utilizing the Django templating functionality
+(<a href="../for_researchers.html#_participant_related_data" class="xref page">described here</a>)
+as follows:
+<code>https.//your-domain.com/project-slug/continue?p={{ participant.public_id }}</code></p>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>In the Django code: <code>/ddm/locale/</code><br>
-A description of how to do this can be found here: <a href="https://docs.djangoproject.com/en/3.2/topics/i18n/translation/#localization-how-to-create-language-files" class="bare">https://docs.djangoproject.com/en/3.2/topics/i18n/translation/#localization-how-to-create-language-files</a></p>
-</li>
-<li>
-<p>In the code of the VUE component: <code>/frontend/src/translations/</code><br>
-Here, support for a new language can be added by appending the respective locale name
-as a first-level key to the json files and adding corresponding translations for all translation blocks.</p>
-</li>
-</ol>
-</div>
-</div>
-</div>
+</td>
+</tr>
+</table>
 </div>
 </article>
   </div>

@@ -50,7 +50,7 @@
     <a class="nav-link" href="topic_references.html">Topic References</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="about.html">About</a>
+    <a class="nav-link" href="issues.html">Reporting Issues and Getting Help</a>
   </li>
 </ul>
   </li>
@@ -356,12 +356,34 @@ affected dependencies and merge into main.</p>
 </li>
 </ul>
 </div>
-<div id="custom-footer">
-  <div>
-    <span class="footer-info">&copy; 2023 Data Donation Lab</span>|
-    <span class="footer-info">last updated: 03.02.2023</span>|
-    <span class="footer-info">Documentation for DDM v1.0.0</span>
-  </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_documentation"><a class="anchor" href="#_documentation"></a>Documentation</h3>
+<div class="paragraph">
+<p>This documentation is written in
+<a href="https://docs.asciidoctor.org/asciidoc/latest/syntax-quick-reference/">AsciiDoc</a>
+and compiled using <a href="https://docs.antora.org/antora/latest/">Antora</a>.</p>
+</div>
+<div class="paragraph">
+<p>The documentation UI uses the <a href="https://github.com/Nico-AP/antora-ddm-ui">Antora DDM UI</a>
+which is based on the <a href="https://gitlab.com/antora/antora-ui-default">default Antora UI</a>.</p>
+</div>
+<div class="paragraph">
+<p>To compile the documentation locally, you first need to install Antora following
+<a href="https://docs.antora.org/antora/latest/install-and-run-quickstart/">these instructions</a>.</p>
+</div>
+<div class="paragraph">
+<p>Next, you can compile the documentation locally using the <code>antora-playbook-local.yml</code> file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">(venv) .../ddm/docs&gt; npx antora antora-playbook-local.yml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Inspect the compiled documentation by opening <code>&#8230;&#8203;/ddm/docs/build/index.html</code> in
+your preferred browser.</p>
 </div>
 <script>
 document.addEventListener("DOMContentLoaded", function(event) {
@@ -375,7 +397,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
   })
 });
 </script>
-</div>
 </div>
 </div>
 </div>

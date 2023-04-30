@@ -115,12 +115,15 @@ Redirect target:: URL to which participants will redirected (only required if `r
 
 [TIP]
 ====
-The redirect URL can include variables that are populated with the respective values.
-Currently, the following variables are supported:
-An extracted URL parameter (see above), the participant id (as ``ddm_participant_id``),
-or the project id (as ``ddm_project_id``).
-Use the following syntax to include variables in the redirect target:
-e.g. ``https://redirect.url?param={{URLParameter}}&participant={{ddm_participant_id}}&project={{ddm_project_id}}``
+The redirect URL can include information on the participant and the project ID.
+For this, you can use variables that are populated with the respective values.
+Currently, the following variables are supported: The participant data is
+accessible with `{{ participant }}` and the project ID can be inserted with
+`{{ project_id }}`.
+E.g., `https://redirect.url?param={{participant.data.url_param.URLParameter}}&participant={{participant.public_id}}&project={{project_id}}`
+
+See xref:for_researchers.adoc#_participant_related_data[this section] for more
+information on the `{{ participant }}`-variable.
 ====
 
 

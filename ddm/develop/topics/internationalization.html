@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Untitled :: DDM Documentation</title>
-    <meta name="generator" content="Antora 3.1.2">
+    <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <script>var uiRootPath = '../../../_'</script>
     <link rel="icon" href="../../../_/img/ddl_favicon_black.svg" type="image/x-icon">
@@ -50,7 +50,7 @@
     <a class="nav-link" href="../topic_references.html">Topic References</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../about.html">About</a>
+    <a class="nav-link" href="../issues.html">Reporting Issues and Getting Help</a>
   </li>
 </ul>
   </li>
@@ -88,20 +88,17 @@
 <div class="page-versions">
   <button class="version-menu-toggle" title="Show other versions of page">develop</button>
   <div class="version-menu">
-    <a class="version" href="../../main/topics/languages.html">main</a>
-    <a class="version is-current" href="languages.html">develop</a>
+    <a class="version is-missing" href="../../main/index.html">main</a>
+    <a class="version is-current" href="internationalization.html">develop</a>
   </div>
 </div>
-  <div class="edit-this-page"><a href="https://github.com/uzh/ddm/edit/develop/docs/modules/ROOT/pages/topics/languages.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/uzh/ddm/edit/develop/docs/modules/ROOT/pages/topics/internationalization.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<div class="sect1">
-<h2 id="_translation"><a class="anchor" href="#_translation"></a>Translation</h2>
-<div class="sectionbody">
 <div class="paragraph">
 <p>The administration interface for researchers currently only supports English.
 The participation interface currently supports English and German.</p>
@@ -120,19 +117,31 @@ in English.</p>
 <div class="paragraph">
 <p>To add support for a new language, new locales must be added at two locations:</p>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>In the Django code: <code>/ddm/locale/</code><br>
-A description of how to do this can be found here: <a href="https://docs.djangoproject.com/en/3.2/topics/i18n/translation/#localization-how-to-create-language-files" class="bare">https://docs.djangoproject.com/en/3.2/topics/i18n/translation/#localization-how-to-create-language-files</a></p>
-</li>
-<li>
-<p>In the code of the VUE component: <code>/frontend/src/translations/</code><br>
-Here, support for a new language can be added by appending the respective locale name
-as a first-level key to the json files and adding corresponding translations for all translation blocks.</p>
-</li>
-</ol>
+<div class="sect3">
+<h4 id="_django_components"><a class="anchor" href="#_django_components"></a>Django Components</h4>
+<div class="paragraph">
+<p>Translations for the Django part of DDM are located at <code>/ddm/locale/</code>.</p>
 </div>
+<div class="paragraph">
+<p>An extensive description of how translation is handled by Django can be found here:
+<a href="https://docs.djangoproject.com/en/3.2/topics/i18n/translation/" class="bare">https://docs.djangoproject.com/en/3.2/topics/i18n/translation/</a></p>
+</div>
+<div class="paragraph">
+<p>To create the translation files, first run <code>django-admin makemessages -l de</code> in
+the <code>ddm</code> directory, where <code>de</code> is the locale name that you want to create.
+This command creates or updates a file located at <code>ddm/locale/de/LC_MESSAGES/django.po</code>.
+In this file, you can add your translations. Afterwards, run <code>django-admin compilemessages</code>
+to create a <code>django.mo</code> file, which will be used by gettext for translation.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_vue_components"><a class="anchor" href="#_vue_components"></a>Vue Components</h4>
+<div class="paragraph">
+<p>The translation files for the vue components are located at <code>/frontend/src/translations/</code>.</p>
+</div>
+<div class="paragraph">
+<p>Here, support for a new language can be added by appending the respective locale name
+as a first-level key to the json files and adding corresponding translations for all translation blocks.</p>
 </div>
 </div>
 </div>

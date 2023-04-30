@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Documentation for Researchers :: DDM Documentation</title>
-    <meta name="generator" content="Antora 3.1.2">
+    <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../_/css/site.css">
     <script>var uiRootPath = '../../_'</script>
     <link rel="icon" href="../../_/img/ddl_favicon_black.svg" type="image/x-icon">
@@ -50,7 +50,7 @@
     <a class="nav-link" href="topic_references.html">Topic References</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="about.html">About</a>
+    <a class="nav-link" href="issues.html">Reporting Issues and Getting Help</a>
   </li>
 </ul>
   </li>
@@ -107,7 +107,8 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This part of the documentation is addressed at the <em>users</em> of the Data Donation Module (i.e., the researchers) and will explain:</p>
+<p>This part of the documentation is addressed at the <em>users</em> of the Data Donation
+Module (i.e., the researchers) and will explain:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -124,7 +125,8 @@
 </div>
 <div class="paragraph">
 <p>It is assumed that a server with DDM set up on it is running.
-Readers interested in setting up a server to run DDM for institutional use or their own research should turn to the <a href="for_admins.html" class="xref page">Documentation for Administrators</a>.
+Readers interested in setting up a server to run DDM for institutional use or their
+own research should turn to the <a href="for_admins.html" class="xref page">Documentation for Administrators</a>.
 For a general introduction to the module, see <a href="index.html" class="xref page">this page</a>.</p>
 </div>
 </div>
@@ -298,9 +300,16 @@ If enabled, a redirect button will be displayed on the data donation end page th
 </td>
 <td class="content">
 <div class="paragraph">
-<p>The redirect URL can include variables that are populated with the respective values. Currently, the following variables are supported:
-An extracted URL parameter (see above), the participant id (as <code>ddm_participant_id</code>), or the project id (as <code>ddm_project_id</code>).
-Use the following syntax to include variables in the redirect target: e.g. <code><a href="https://redirect.url?param={{URLParameter}}&amp;participant={{ddm_participant_id}}&amp;project={{ddm_project_id}}" class="bare">https://redirect.url?param={{URLParameter}}&amp;participant={{ddm_participant_id}}&amp;project={{ddm_project_id}}</a></code></p>
+<p>The redirect URL can include information on the participant and the project ID.
+For this, you can use variables that are populated with the respective values.
+Currently, the following variables are supported: The participant data is
+accessible with <code>{{ participant }}</code> and the project ID can be inserted with
+<code>{{ project_id }}</code>.
+E.g., <code><a href="https://redirect.url?param={{participant.data.url_param.URLParameter}}&amp;participant={{participant.public_id}}&amp;project={{project_id}}" class="bare">https://redirect.url?param={{participant.data.url_param.URLParameter}}&amp;participant={{participant.public_id}}&amp;project={{project_id}}</a></code></p>
+</div>
+<div class="paragraph">
+<p>See <a href="#_participant_related_data">this section</a> for more
+information on the <code>{{ participant }}</code>-variable.</p>
 </div>
 </td>
 </tr>
@@ -316,7 +325,8 @@ Use the following syntax to include variables in the redirect target: e.g. <code
 <dl>
 <dt class="hdlist1">Header Image Left/Header Image Right</dt>
 <dd>
-<p>Upload an image that will be displayed in the header of your project (e.g., an institution or project logo).</p>
+<p>Upload an image that will be displayed in
+the header of your project (e.g., an institution or project logo).</p>
 </dd>
 </dl>
 </div>
@@ -352,6 +362,26 @@ data donation process. It consists of the following sections:</p>
 <dd>
 <p>Text displayed to participants on the briefing page.</p>
 </dd>
+</dl>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>in the briefing text, you can make use of dynamic template functionalities.
+You can read more about how to use dynamic templates
+<a href="#_including_data_dynamically_in_a_question">here</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="dlist">
+<dl>
 <dt class="hdlist1">Briefing Consent Mandatory</dt>
 <dd>
 <p>If briefing consent is enabled, participants will
@@ -412,7 +442,8 @@ lower index will be displayed closer to the top of the page.</p>
 </dd>
 <dt class="hdlist1">Associated Donation Blueprints</dt>
 <dd>
-<p>The donation blueprints that apply to the expected file(s) collected with the file uploader.</p>
+<p>The donation blueprints that apply to the
+expected file(s) collected with the file uploader.</p>
 </dd>
 </dl>
 </div>
@@ -430,9 +461,32 @@ For each instruction page, the following can be configured:</p>
 <dd>
 <p>The instruction text displayed to the participants.
 By default, researchers can also upload and include images or gifs to guide
-participants through the data donation process in this field (video upload is not supported -
-but videos hosted externally can still be embedded).  //TODO: Check if video can be embedded without problems.</p>
+participants through the data donation process in this field (currently, video upload is not supported).</p>
 </dd>
+</dl>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The participant&#8217;s external ID is available as a template variable to be included
+in the instruction text as follows: <code>{{ participant_id }}</code> which will be displayed
+to the participant as something like <code>IPI2wHDWrHODDRKuo8zo101S</code>. This is
+helpful to enable participants to continue the data donation at a later point in time
+(e.g., because it can take some time between requesting data takeout and being
+able to download it); read <a href="topic_references.html#_continuation" class="xref page">this section of the documentation</a> to find out how
+this can be done.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="dlist">
+<dl>
 <dt class="hdlist1">Index</dt>
 <dd>
 <p>The position of the page in the slideshow.</p>
@@ -459,15 +513,11 @@ Therefore, it is important to define a meaningful name.</p>
 <p>Description of what the blueprint will extract. If defined, the
 description will be visible for participants in the data donation step.</p>
 </dd>
-<dt class="hdlist1">Expected File Format</dt>
-<dd>
-<p>The file format of the expected data donation. Currently, only JSON and CSV is implemented.</p>
-</dd>
 <dt class="hdlist1">Associated File Uploader</dt>
 <dd>
 <p>The <code>File Uploader</code> for which the blueprint will be applied.</p>
 </dd>
-<dt class="hdlist1">Regex path</dt>
+<dt class="hdlist1">File path</dt>
 <dd>
 <p>Here, the path where the file is expected to be located within a ZIP file is defined.
 Only necessary, if the Donation Blueprint is part of a Blueprint Container.</p>
@@ -546,7 +596,43 @@ that can help you test regex patterns.</p>
 one or more of the fields defined here, it will not be accepted as a donation.
 Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").</p>
 </dd>
+<dt class="hdlist1">Expected File Format</dt>
+<dd>
+<p>The file format of the expected data donation. Currently, only JSON and CSV is implemented.</p>
+</dd>
 </dl>
+</div>
+<div class="sect5">
+<h6 id="_json_specific_settings"><a class="anchor" href="#_json_specific_settings"></a>JSON specific settings</h6>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Extraction Root</dt>
+<dd>
+<p>Indicates on which level of the files' data structure information
+should be extractet. If you want to extract information contained on the first
+level (e.g., <code>{'field to be extracted': value}</code>, you can leave this field empty.
+If you want to extract data located on a higher level, then you would provide
+the path to the parent field of the data you want to extract (e.g., if your json
+file is structured like this <code>{'friends': {'real_friends': [{'name to extract':
+name, 'date to extract': date}], 'fake friends': [{'name': name, 'date': date }]}}</code>
+and you want to extract the names and dates of real_friends, you would set the
+extraction root to <code>friends.real_friends</code>.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_csv_specific_settings"><a class="anchor" href="#_csv_specific_settings"></a>CSV specific settings</h6>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">CSV Delimiter</dt>
+<dd>
+<p>The delimiter used in the expected file (e.g., <code>,</code> or <code>;</code>). If
+left empty, the used Javascript function will try to infer the delimiter from
+the file structure.</p>
+</dd>
+</dl>
+</div>
 </div>
 </div>
 <div class="sect4">
@@ -573,7 +659,7 @@ you first have to add a rule for each field that you want to keep in your data.<
 <dt class="hdlist1">Extraction Operator</dt>
 <dd>
 <p>Defines the main logic of the extraction step. If empty, this indicates
-that you want to keep the field in the donated data. For all non-RegEx operations,
+that you want to keep the field in the donated data. For all non-regex operations,
 if an operations evaluates to True, the row will be deleted from the donated data
 (further explanations on the separate rules will follow).</p>
 </dd>
@@ -584,7 +670,7 @@ if an operations evaluates to True, the row will be deleted from the donated dat
 <dt class="hdlist1">Replacement Value</dt>
 <dd>
 <p>Only required for operation "Replace match (regex)". The value
-that will be used as a replacement if the RegEx pattern matches.</p>
+that will be used as a replacement if the regex pattern matches.</p>
 </dd>
 </dl>
 </div>
@@ -593,9 +679,36 @@ that will be used as a replacement if the RegEx pattern matches.</p>
 <div class="sect3">
 <h4 id="_questionnaire"><a class="anchor" href="#_questionnaire"></a>Questionnaire</h4>
 <div class="paragraph">
-<p>Researchers can optionally define a questionnaire consisting of one or more pages, each consisting of one or more questions.
-The questions will be displayed after the data donation.</p>
+<p>Researchers can optionally define a questionnaire that is displayed after the data donation.</p>
 </div>
+<div class="sect4">
+<h5 id="_how_the_questionnaire_works"><a class="anchor" href="#_how_the_questionnaire_works"></a>How the Questionnaire Works</h5>
+<div class="paragraph">
+<p>The questionnaire is displayed after the data donation step and consists of one
+or more pages, each consisting of one or more questions.</p>
+</div>
+<div class="paragraph">
+<p>A question can either be <em>general</em> or be related to a file blueprint.<br>
+<strong>General questions</strong> are displayed to all participants, regardless if they successfully
+donated any data.<br>
+<strong>Questions related to a file blueprint</strong> are only displayed to those participants
+that successfully uploaded some data to the related file blueprint.
+This means that if the data extraction for a specific file blueprint either <em>fails</em>,
+<em>is not attempted</em> or <em>zero data entries are extracted because all entries were filtered out</em>,
+the question will not be displayed.<br>
+For questions related to a file blueprint, the data extracted by the related blueprint
+for a given participant is available to be included in the question text
+(<a href="#_including_participant_specific_data_in_a_question">see below</a>
+for more information on how to include data in question texts).</p>
+</div>
+<div class="paragraph">
+<p>The questionnaire responses are only submitted to the server after all questions have been answered.
+This means that if a participants aborts the questionnaire after filling out, e.g., 2 out of
+4 questions, no responses will be collected and saved on the server.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_question_configuration_settings"><a class="anchor" href="#_question_configuration_settings"></a>Question Configuration Settings</h5>
 <div class="paragraph">
 <p>Currently, the following question types are implemented:</p>
 </div>
@@ -622,7 +735,7 @@ The questions will be displayed after the data donation.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>Depending on the question types, the following attributes can be configured:</p>
+<p>Depending on the question type, the following attributes can be configured:</p>
 </div>
 <div class="dlist">
 <dl>
@@ -634,7 +747,8 @@ The questions will be displayed after the data donation.</p>
 <dd>
 <p>If associated to a blueprint, the data extracted by
 this blueprint for a given participant is available to be included in the question text
-(see [LOCATION] for more information on how to include data in question texts). // TODO: Add link.
+(<a href="#_including_participant_specific_data_in_a_question">see below</a>
+for more information on how to include data in question texts).
 If the associated blueprint did not extract any data, the question will not be displayed.
 If a question should always be displayed, select the option "General Question" here.</p>
 </dd>
@@ -642,29 +756,268 @@ If a question should always be displayed, select the option "General Question" h
 <dd>
 <p>Number of the page on which the question should be displayed.</p>
 </dd>
+<dt class="hdlist1">Index</dt>
+<dd>
+<p>Order in which questions on the same page should be displayed.</p>
+</dd>
+<dt class="hdlist1">Variable Name</dt>
+<dd>
+<p>The variable name associated to this question. Will be included
+in the data export. For items belonging to a question, the variable name will
+be constructed as follows: "question_variable_name-{item-value}".</p>
+</dd>
 <dt class="hdlist1">Text</dt>
 <dd>
-<p>The question text that is displayed to participants.  // TODO: Extend description to explain inclusion of donated data.</p>
+<p>The question text that is displayed to participants.</p>
 </dd>
 <dt class="hdlist1">Required</dt>
 <dd>
 <p>If a question is marked as required, the application will show a
-hint to the participant if they missed to answer this question.
+hint to the participant if they forgot to answer this question.
 This hint will only be shown once. This means that if a participant chooses to
 ignore the hint and clicks on 'continue', they are able to skip a required question.</p>
 </dd>
 <dt class="hdlist1">Randomize items</dt>
 <dd>
-<p>Enable or disable randomization of items.</p>
+<p>Enable or disable randomization of <strong>all</strong> items.</p>
 </dd>
-<dt class="hdlist1">Question Items</dt>
+</dl>
+</div>
+<div class="sect5">
+<h6 id="_question_items"><a class="anchor" href="#_question_items"></a>Question Items</h6>
+<div class="paragraph">
+<p>Here, the items belonging to this question are listed. Click on <em>edit</em> to add and
+configure the following attributes of question items.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Label</dt>
 <dd>
-<p>The items that will be displayed in the answer part of the question.</p>
+<p>The label/text of the item that is displayed to participants related to an item.
+For semantic differential questions, this is the label displayed on the left-hand side of the scale.</p>
 </dd>
-<dt class="hdlist1">Scale Configuration</dt>
+<dt class="hdlist1">Label alt</dt>
 <dd>
-<p>Configure how the scale displayed to participants to rate items will look like
-(only for Matrix Question and Semantic Differential).</p>
+<p>Only for semantic differential questions: the label displayed on the
+right-hand side of the scale.</p>
+</dd>
+<dt class="hdlist1">Index</dt>
+<dd>
+<p>Defines the order in which the items are displayed.</p>
+</dd>
+<dt class="hdlist1">Value</dt>
+<dd>
+<p>Is (<em>a</em>) the identifier of an item and (<em>b</em>) used to indicate which
+item(s) has or have been selected in the data export (only for Single and Multi
+Choice Questions).</p>
+</dd>
+<dt class="hdlist1">Randomize</dt>
+<dd>
+<p>Instead of randomizing the order of all items with the <em>randomize</em> setting
+on the question level, this setting allows randomizing only certain items while
+those for which this option is not ticked stay in their place (i.e., according to
+their index).</p>
+</dd>
+<dt class="hdlist1">Delete</dt>
+<dd>
+<p>Tick this box if the item should be deleted. The item will be deleted
+as soon as you click on <em>Update Items</em>.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_scale_configuration"><a class="anchor" href="#_scale_configuration"></a>Scale Configuration</h6>
+<div class="paragraph">
+<p>Configure the scale displayed to participants on which they will rate the items
+related to this question (only for Matrix Question and Semantic Differential).
+Click on <em>edit</em> to add and configure the following attributes of a scale.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Index</dt>
+<dd>
+<p>Defines the order in which the items are displayed.</p>
+</dd>
+<dt class="hdlist1">Label</dt>
+<dd>
+<p>The label/text that is displayed to participants associated to the scale point.</p>
+</dd>
+<dt class="hdlist1">Value</dt>
+<dd>
+<p>Used to indicate which scale point has been selected in the data export.</p>
+</dd>
+<dt class="hdlist1">Add border</dt>
+<dd>
+<p>Setting currently has no effect - still to be implemented.</p>
+</dd>
+<dt class="hdlist1">Delete</dt>
+<dd>
+<p>Tick this box if the scale point should be deleted. The scale point
+will be deleted as soon as you click on <em>Update Scale Points</em>.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_including_data_dynamically_in_a_question"><a class="anchor" href="#_including_data_dynamically_in_a_question"></a>Including Data Dynamically in a Question</h5>
+<div class="paragraph">
+<p>Depending on the question configuration it is possible to dynamically include both
+participant-related and donation-related data points in a question text.</p>
+</div>
+<div class="paragraph">
+<p>For this, DDM uses the <a href="https://docs.djangoproject.com/en/3.2/topics/templates/">Django template engine</a>
+to render question text dynamically for each participant.
+This means that researchers can include
+<a href="https://docs.djangoproject.com/en/3.2/ref/templates/builtins/">Django&#8217;s built-in template tags and filters</a>
+in the question text to customize question texts as well as access data accessible
+through predefined variables. This also works for the briefing and debriefing pages.</p>
+</div>
+<div class="paragraph">
+<p>DDM provides two custom variables to be used:</p>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>A variable called <code>participant</code> that contains information about the current participant
+(available in all questions).</p>
+</li>
+<li>
+<p>A variable called <code>data</code> that contains the data donated by the current participant
+(only available for questions that are related to a file blueprint).</p>
+</li>
+</ol>
+</div>
+<div class="sect5">
+<h6 id="_participant_related_data"><a class="anchor" href="#_participant_related_data"></a>Participant-Related Data</h6>
+<div class="paragraph">
+<p>The participant related data contains the following information:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "public_id": "S0meLonGCh4rSeQuence",
+    "data": {
+        "url_param": {
+            "parameter_a": "value a",
+            "parameter_b": "value b"
+        },
+        "briefing_consent": "1"   # or "0" if participant did not consent to take part in the study
+    },
+    "donation_info": {
+        "n_success": 1,           # number of successful donations by this participant
+        "n_pending": 1,           # number of pending (i.e., not attempted) donations by this participant
+        "n_failed": 0,            # number of attempted but failed donations by this participant
+        "n_no_data_extracted": 0  # number of donations by this participant where all entries were filtered out
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This information can be embedded in any question (i.e., general or blueprint related),
+any item label, in donation instructions, as well as in the briefing and
+debriefing text as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Dear participant I would like to tell you something about yourself.
+
+{% if participant.data.briefing_consent == "1" %}
+You did consent to take part in this study and for this we are really grateful.
+{% else %}
+Unfortunately, you did not consent to take part in the study but we respect your
+decision and completely understand! :')
+{% endif %}
+
+Your public ID is as follows: "{{ participant.public_id }}". Please take a photo
+of this ID. If you wnat to request the deletion of your data at some point in the
+future you can send an e-mail with your personal public ID to someone@mail.com
+and your data will be deleted from our servers.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A participant that consented to take part in the study will see this question as
+follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Dear participant I would like to tell you something about yourself.
+
+You did consent to take part in this study and for this we are really grateful.
+
+Your public ID is as follows: "xHQVbrYUYXn5lklW3RGSeouX". Please take a photo
+of this ID. If you wnat to request the deletion of your data at some point in the
+future you can send an e-mail with your personal public ID to someone@mail.com
+and your data will be deleted from our servers.</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_donation_related_data"><a class="anchor" href="#_donation_related_data"></a>Donation-Related Data</h6>
+<div class="paragraph">
+<p>If a question is related to a file blueprint, the data that was extracted from
+a participant&#8217;s data donation through this file blueprint is available as a
+template variable called <code>data</code>.
+As in the case of the participant-related data, the donation-related data can
+be included in a question text definition following the same logic:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">This is the title of the last video you watched on YouTube: "{{ data.0.title }}"
+
+Please indicate below, why you watched this video.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will be rendered as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">This is the title of the last video you watched on YouTube: "Data Brokers: Last Week Tonight with John Oliver (HBO)"
+
+Please indicate below, why you watched this video.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The example above assumes that the donated data is structured as follows:
+<code>[{'title': 'Data Brokers: Last Week Tonight with John Oliver (HBO)', 'timestamp': '2022-12-19T08:49:18'},
+{'title': 'Title of second video', 'timestamp': '2022-12-16T11:43:02'}, &#8230;&#8203;]</code>.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you are starting to construct a dynamic question text, first include the
+complete data objects stored in the variables in your question text (e.g.,
+<code>{{ participant }}, {{ data }}</code>).</p>
+</div>
+<div class="paragraph">
+<p>Next, open the link to your study in an anonymous browser window and go through
+the steps until you reach the questionnaire part. This way you can see how the
+data object is structured and figure out from there, how you can access the
+information on deeper levels of the data structure. You can then start to adjust
+the variables and reload the anonymous window every time you made a change to the
+question definition to see how your new specification will be rendered.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_debriefing"><a class="anchor" href="#_debriefing"></a>Debriefing</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Debriefing text</dt>
+<dd>
+<p>Text displayed to participants on the debriefing page.</p>
 </dd>
 </dl>
 </div>
@@ -676,19 +1029,85 @@ ignore the hint and clicks on 'continue', they are able to skip a required quest
 </td>
 <td class="content">
 <div class="paragraph">
-<p><strong>How to Include Donated Data in a Question</strong></p>
+<p>Sometimes you might want to display different debriefing texts depending on the
+previous actions of your participant (e.g., if a participant did indicate that
+they do not want to take part in the study, or if a participant did not attempt
+to donate any data).</p>
 </div>
 <div class="paragraph">
-<p>It is possible to include information contained in the donated data or related to the participant in the question text.
-Questions that should integrate this behaviour must be linked to a donation blueprint
-The donated data related to the associated blueprint will then be available as a
-context variable an can be referenced in the question body as follows:
-<code>Display donated data: {{ data }}. Display participant data: {{ participant }}.</code></p>
+<p>For this, you can make use of the templating engine and, for example, define the
+following debriefing page that displays a different text to a participant that
+did not attempt to donate any that compared to a participant who donated at least
+some data (the example assumes that two donations were expected in this study):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">{% if participant.donation_info.n_success &gt; 0 %}
+Dear participant,
+
+Thank you very much for participating in our study. With your data donation, you
+made a great contribution towards advancing our understanding of algorithmic
+selection on the internet.
+{% endif %}
+
+{% if participant.donation_info.n_pending == 2 %}
+Dear participant,
+
+Thank you for your time. Because you did not attempt to donate any data, you are
+unfortunately not eligible to receive the participation reward.
+{% endif %}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>For this, DDM utilizes the `Django template engine &lt;<a href="https://docs.djangoproject.com/en/3.2/topics/templates/&gt;`" class="bare">https://docs.djangoproject.com/en/3.2/topics/templates/&gt;`</a><em>.
-The donated data will be available as a template variable "data" in the question text definition.
-This variable can be combined flexibly with Django&#8217;s `built-in template tags and filters &lt;<a href="https://docs.djangoproject.com/en/3.2/ref/templates/builtins/&gt;`" class="bare">https://docs.djangoproject.com/en/3.2/ref/templates/builtins/&gt;`</a></em>.</p>
+<p>You can read more about how to use dynamic templates
+<a href="#_including_data_dynamically_in_a_question">here</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_data_center"><a class="anchor" href="#_data_center"></a>Data Center</h3>
+<div class="paragraph">
+<p>In the Data Center, you can find options to (<em>a</em>) access the collected data,
+(<em>b</em>) access the project logs, and (<em>c</em>) find some general field statistics about
+the progress of your project.</p>
+</div>
+<div class="sect3">
+<h4 id="_data_download_accessing_collected_data_donations"><a class="anchor" href="#_data_download_accessing_collected_data_donations"></a>Data Download: Accessing Collected Data Donations</h4>
+<div class="paragraph">
+<p>There are two options to download your data:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Internal Download</strong>: When you are logged in, click on <em>Download Data as JSON</em>.
+This will gather your data from the database, and you will be able to download
+the json file in your browser.</p>
+</li>
+<li>
+<p><strong>External Download via API (advanced option)</strong>: There is also the
+possibility to download your data through an API endpoint remotely.
+For this, an API token has to be created which will need to be supplied when
+sending the request to the API (see below for an example).</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Through the admin interface, a project can only be accessed by the user who created it.
+This means that the internal download is only accessible for a project owner.
+The API token, on the other hand, can be used to share data access with colleagues working on the same project.
+However, be careful with whom you share this token as it exposes the sensitive data collected from participants.
+We recommend choosing a short expiration date for Tokens that you create.</p>
 </div>
 </td>
 </tr>
@@ -696,94 +1115,185 @@ This variable can be combined flexibly with Django&#8217;s `built-in template ta
 </div>
 </div>
 <div class="sect3">
-<h4 id="_debriefing"><a class="anchor" href="#_debriefing"></a>Debriefing</h4>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Debriefing text</dt>
-<dd>
-<p>Text displayed to participants on the briefing page.</p>
-</dd>
-</dl>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_data_center"><a class="anchor" href="#_data_center"></a>Data Center</h3>
-<div class="paragraph">
-<p>In the Data Center, you can find options to <code>A</code> access the collected data,
-<code>B</code> access the project logs, and <code>C</code> find some general field statistics about the progress of your project.</p>
-</div>
-<div class="sect3">
-<h4 id="_data_download_accessing_collected_data_donations"><a class="anchor" href="#_data_download_accessing_collected_data_donations"></a>Data Download: Accessing Collected Data Donations</h4>
+<h4 id="_data_structure"><a class="anchor" href="#_data_structure"></a>Data Structure</h4>
 <div class="paragraph">
 <p>When downloading your data, you will receive a .json file with the following structure:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  'project': {
-      'pk': 1,
-      'name': 'project name',
-      'date_created': '2022-12-19T08:49:18.363880+01:00'
-  },
-  'donations': {
-    'blueprint name 1': [
-      {'time_submitted': '2022-12-19T08:49:18.363880+01:00',
-       'consent': '_',  # TODO: List options
-       'status': '_',  # TODO: List options
-       'data': [{'extracted_field_1':  'value', 'extracted_field_2':  'value2', ...}],
-       'project': 1,
-       'participant': 1
-      },  # ...
+    "project": {
+        "pk": 1,
+        "name": "project name",
+        "date_created": "2022-12-19T08:49:18.363880+01:00"
+    },
+    "donations": {
+        "blueprint name 1": [
+            {
+                "participant": 1
+                "project": 1,
+                "time_submitted": "2022-12-19T08:49:18.363880+01:00",
+                "consent": true,
+                "status": "success",  # One of "success" (donation successful); "pending" (donation not attempted); "failed" (donation failed due to an error); "nothing extracted" (all data filtered out)
+                "data": [
+                    {
+                        "extracted_field_1":  "value1_entry1",
+                        "extracted_field_2":  "value2_entry1",
+                        # ...
+                    },
+                    {
+                        "extracted_field_1":  "value1_entry2",
+                        "extracted_field_2":  "value2_entry2",
+                        # ...
+                    },
+                    # etc.
+                ]
+            }
+        ],
+        "blueprint name 2": [
+            {
+                "participant": 1,
+                "project": 1,
+                "time_submitted": "...",
+                # etc.
+            }
+        ]
+    },
+    "questionnaire": [
+        {
+            "participant":  1,
+            "project":  1,
+            "time_submitted":  "2023-01-19T08:49:18.363880+01:00",
+            "responses": {
+                "variable_name": "answer to question",
+                "variable_name-item-value": "answer to item"
+            },
+            "meta_data":  {  # For data validation purposes: contains one entry per question consisting of meta information about how the question was presented to the participant:
+                "question-id": {
+                    "response": "1",  # Can be a dict of form {"item-id":  "item-response", ...} for question types with item responses
+                    "question": "question text in html format as displayed to participant",
+                    "items": [
+                        {
+                            "id": "33",
+                            "label": "label text in html format as displayed to participant",
+                            "label_alt": "alternative label text in html format as displayed to participant",  # only applies to semantic differential
+                            "index": "1",
+                            "value": "1",
+                            "randomize": false
+                        }
+                    ]
+                }
+            }
+        }
     ],
-    'blueprint name 2': [ ... ]
-  },
-  'responses': [{'time_submitted':  '', 'data':  {}, 'project':  1, 'participant':  1}],
-  'participants': [
-    {'pk':  1, 'project':  1, 'external_id':  '_', 'start_time':  '_', 'end_time':  '_', 'completed':  '_', 'extra_data':  '_'}
-  ]
+    "participants": [
+        {
+            "pk":  1,
+            "project":  1,
+            "external_id":  "DMXdpfVyksagfqql2cTgp8kF",
+            "start_time":  "2023-01-18T08:49:18.363880+01:00",
+            "end_time":  "2023-01-20T08:49:18.363880+01:00",
+            "completed":  true,
+            "extra_data":  {
+                "url_param": {
+                    "some_url_parameter": "some value extracted from this parameter when the briefing page was called.",
+                    # ...
+                }
+            }
+        }
+    ]
 }</code></pre>
 </div>
 </div>
+</div>
+<div class="sect3">
+<h4 id="_project_log_monitoring_an_on_going_project"><a class="anchor" href="#_project_log_monitoring_an_on_going_project"></a>Project Log: Monitoring an on-going Project</h4>
 <div class="paragraph">
-<p>There are two options to download your data:</p>
+<p>The Project Log should help researchers to monitor their ongoing data collection
+and to identify potential problems occurring during the data donation.</p>
+</div>
+<div class="paragraph">
+<p>Two types of logs exist for each project: An <em>Exception Log</em> and an <em>Event Log</em>.</p>
+</div>
+<div class="sect4">
+<h5 id="_exception_log"><a class="anchor" href="#_exception_log"></a>Exception Log</h5>
+<div class="paragraph">
+<p>The Exception Log lists all exceptions that participants encountered
+during the study. The log provides the following information:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The date and time when the exception occurred</p>
+</li>
+<li>
+<p>The type of the exception (for a description of the type-codes, <a href="topic_references.html#_exception_types" class="xref page">see here</a>)</p>
+</li>
+<li>
+<p>Which participant encountered the exception (if applicable)</p>
+</li>
+<li>
+<p>For which file blueprint the exception occurred (if applicable)</p>
+</li>
+<li>
+<p>If the exception was raised on the client-side (i.e., the participant&#8217;s browser) or the server side</p>
+</li>
+<li>
+<p>A message describing the exception</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_event_log"><a class="anchor" href="#_event_log"></a>Event Log</h5>
+<div class="paragraph">
+<p>The Event Log currently registers the following events:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Internal Download
-When you are logged in, click on {download label}. This will gather your data from the database and
-you will be able to download the json file in your browser.</p>
+<p>When an access token is created or deleted</p>
 </li>
 <li>
-<p>External Download via API (advanced option)
-There is also the possibility to download your data through an API endpoint remotely.
-For this, an API token has to be created which will need to be supplied when sending
-the request to the API (see below for an example).</p>
+<p>When the API endpoint for the project was called but authentication failed or permission was denied</p>
+</li>
+<li>
+<p>When a data download attempt was successful, failed or denied.</p>
+</li>
+<li>
+<p>When a data delete attempt was successful, failed, or denied.</p>
+</li>
+<li>
+<p>When a participant delete request was successful, failed, or denied.</p>
 </li>
 </ol>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre>Through the admin interface, a project can only be accessed by the user who created it.
-This means that the internal download is only accessible for this project owner.
-The API token, on the other hand, can be used to share data access with colleagues working on the same project.
-However, be careful with whom you share this token as it exposes the sensitive data collected from participants.
-We recommend to choose a short expiration date for Tokens that you create.</pre>
 </div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_data_structure"><a class="anchor" href="#_data_structure"></a>Data Structure</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_project_log_monitoring_an_on_going_project"><a class="anchor" href="#_project_log_monitoring_an_on_going_project"></a>Project Log: Monitoring an on-going Project</h4>
-
 </div>
 <div class="sect3">
 <h4 id="_participation_statistics"><a class="anchor" href="#_participation_statistics"></a>Participation Statistics</h4>
-
+<div class="paragraph">
+<p>The Participation Statistics currently display the following information:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><em>Donated Files</em>: The number of successfully donated files.</p>
+</li>
+<li>
+<p><em>Started</em>: The number of participants that started the study.</p>
+</li>
+<li>
+<p><em>Completed</em>: The number of participants that reached the debriefing page of the study.</p>
+</li>
+<li>
+<p><em>Completion Rate</em>: The number of started divided by the number of completed participations.</p>
+</li>
+<li>
+<p><em>Avrg. to complete</em>: The average time it took a participant from starting the study to reaching the debriefing page.</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -801,6 +1311,32 @@ We recommend to choose a short expiration date for Tokens that you create.</pre>
 <h4 id="_delete_participant"><a class="anchor" href="#_delete_participant"></a>Delete Participant</h4>
 <div class="paragraph">
 <p>You can delete the data for a given participant by providing their external participation id.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You can show your participants their external participation id (also referred to
+as <em>public_id</em>) during the study (e.g., embedded in a <em>transition block</em> as part
+of the questionnaire) and inform them that by providing their public ID they can
+request the deletion of their data in the future if they change their mind.</p>
+</div>
+<div class="paragraph">
+<p>This function can then help you to delete a participant from the database (if your
+study is still ongoing at the time a participant requests the deletion of their
+data).</p>
+</div>
+<div class="paragraph">
+<p>See <a href="#_participant_related_data">here</a> for an example of
+how this could be done.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect3">

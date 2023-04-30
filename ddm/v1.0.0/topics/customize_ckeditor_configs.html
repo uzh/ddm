@@ -28,7 +28,7 @@
   </nav>
 </header>
 <div class="body">
-<div class="nav-container" data-component="ddm" data-version="main">
+<div class="nav-container" data-component="ddm" data-version="v1.0.0">
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -50,7 +50,7 @@
     <a class="nav-link" href="../topic_references.html">Topic References</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../about.html">About</a>
+    <a class="nav-link" href="../issues.html">Reporting Issues and Getting Help</a>
   </li>
 </ul>
   </li>
@@ -60,20 +60,20 @@
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
     <span class="title">DDM</span>
-    <span class="version">main</span>
+    <span class="version">v1.0.0</span>
   </div>
   <ul class="components">
     <li class="component is-current">
-      <a class="title" href="../index.html">DDM</a>
+      <a class="title" href="../../main/index.html">DDM</a>
       <ul class="versions">
-        <li class="version is-current is-latest">
-          <a href="../index.html">main</a>
+        <li class="version is-latest">
+          <a href="../../main/index.html">main</a>
         </li>
         <li class="version">
           <a href="../../develop/index.html">develop</a>
         </li>
-        <li class="version">
-          <a href="../../v1.0.0/index.html">v1.0.0</a>
+        <li class="version is-current">
+          <a href="../index.html">v1.0.0</a>
         </li>
       </ul>
     </li>
@@ -85,18 +85,18 @@
 <main class="article">
 <div class="toolbar" role="navigation">
 <button class="nav-toggle"></button>
-  <a href="../index.html" class="home-link"></a>
+  <a href="../../main/index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
 </nav>
 <div class="page-versions">
-  <button class="version-menu-toggle" title="Show other versions of page">main</button>
+  <button class="version-menu-toggle" title="Show other versions of page">v1.0.0</button>
   <div class="version-menu">
-    <a class="version is-current" href="customize_admin_templates.html">main</a>
-    <a class="version" href="../../develop/topics/customize_admin_templates.html">develop</a>
-    <a class="version" href="../../v1.0.0/topics/customize_admin_templates.html">v1.0.0</a>
+    <a class="version" href="../../main/topics/customize_ckeditor_configs.html">main</a>
+    <a class="version" href="../../develop/topics/customize_ckeditor_configs.html">develop</a>
+    <a class="version is-current" href="customize_ckeditor_configs.html">v1.0.0</a>
   </div>
 </div>
-  <div class="edit-this-page"><a href="https://github.com/uzh/ddm/edit/main/docs/modules/ROOT/pages/topics/customize_admin_templates.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/uzh/ddm/blob/v1.0.0/docs/modules/ROOT/pages/topics/customize_ckeditor_configs.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
@@ -104,38 +104,30 @@
 </aside>
 <article class="doc">
 <div class="paragraph">
-<p>The default admin templates include a minimalistic header and footer that do not integrate any actions related to
-a researchers user account because authentication is handled by the main website (see <a href="#User Authentication">[User Authentication]</a>).</p>
+<p>DDM uses <a href="https://pypi.org/project/django-ckeditor/">Django CKEditor</a> for some of
+its forms.</p>
 </div>
 <div class="paragraph">
-<p>However, for your own project you may wish to replace the default header and/or footer within the admin interface
-to include your own branding and provide your users with some account management options such as a logout button.
-This can be done by using Django&#8217;s template inheritance.</p>
-</div>
-<div class="paragraph">
-<p>In your application create a new html template <code>your_application/templates/ddm/admin/base.html</code>. In this file,
-you can overwrite the header and/or footer as follows:</p>
+<p>A custom configuration of the CKEditor for ddm is implemented in the app itself.
+However, you can overwrite the default configuration by adding a <code>CKEDITOR_CONFIGS</code>
+setting to your projects settings.py that includes a setting named
+<code>'ddm_ckeditor'</code> that defines the CKEditor appearance for DDM:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">{% extends "ddm/admin/base.html" %}
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># settings.py
 
-{% block extrahead %}
-    &lt;!-- If you wish, you can integrate custom css files, favicon etc. here --&gt;
-{% endblock %}
-
-{% block header %}
-&lt;div&gt;
-    &lt;!-- Your Custom Header HTML --&gt;
-&lt;/div&gt;
-{% endblock %}
-
-{% block footer %}
-&lt;div&gt;
-    &lt;!-- Your Custom Footer HTML --&gt;
-&lt;/div&gt;
-{% endblock %}</code></pre>
+CKEDITOR_CONFIGS = {
+    'ddm_ckeditor': {
+        'toolbar': 'Basic',
+        # etc.
+    },
+}</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>For an overview of configuration options consult the
+<a href="https://github.com/django-ckeditor/django-ckeditor#example-ckeditor-configuration" class="bare">https://github.com/django-ckeditor/django-ckeditor#example-ckeditor-configuration</a> [Django CKEditor Repository].</p>
 </div>
 </article>
   </div>

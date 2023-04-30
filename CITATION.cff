@@ -10,6 +10,6 @@ authors:
   given-names: "Thomas N."
   orcid: "https://orcid.org/0000-0001-8088-0113"
 title: "Data Donation Module"
-version: 0.1.26
+version: 1.0.0
 date-released: 2022-11-30
 url: "https://github.com/uzh/ddm"

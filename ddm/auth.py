@@ -42,7 +42,9 @@ def user_is_owner(user, project_pk):
     project_pk.
     """
     donation_project = DonationProject.objects.get(pk=project_pk)
-    if donation_project.owner.user == user:
+    if donation_project.owner is None:
+        return False
+    elif donation_project.owner.user == user:
         return True
     else:
         return False

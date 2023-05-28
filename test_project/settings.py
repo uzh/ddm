@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.staticfiles',
     'ddm',
+    'ddm_pooled',
     'ckeditor',
     'ckeditor_uploader',
     'webpack_loader',
@@ -38,6 +39,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
+    'ddm_pooled.middleware.PooledProjectMiddleware'
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',  # Added for debugging purposes
 ]
 

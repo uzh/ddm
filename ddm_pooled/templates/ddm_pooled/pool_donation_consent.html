@@ -1,0 +1,41 @@
+{% extends "ddm/public/base.html" %}
+{% load static i18n %}
+
+{% block content %}
+  <div>
+
+    <div>
+      {% if consent_error %}
+        <p class="text-red mb-4"><i class="bi bi-exclamation-square-fill"></i> {% translate "Please indicate whether you want donate your data." %}</p>
+      {% endif %}
+
+      {% if pool_project.donation_briefing %}
+        {{ pool_project.donation_briefing | safe }}
+      {% endif %}
+    </div>
+
+    <form method="POST">
+      {% csrf_token %}
+
+      {% if pool_project.get_donation_consent %}
+        <div id="briefing-consent-answer">
+          <input type="radio" id="consent_yes" name="donation_consent" value="1" required>
+          <label for="consent_yes">
+            {% translate "I agree do donating my data to the project described above." %}
+          </label><br>
+          <input type="radio" id="consent_no" name="donation_consent" value="0">
+          <label for="consent_no">
+            {% translate "I do not want to donate my data to the project described above." %}
+          </label>
+        </div>
+      {% endif %}
+
+      <input
+          class="flow-btn"
+          type="submit"
+          value="{% translate 'Continue&nbsp;&nbsp;&#8250;' %}"
+      />
+    </form>
+
+  </div>
+{% endblock content %}

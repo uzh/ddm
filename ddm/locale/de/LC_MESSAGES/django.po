@@ -1,7 +1,7 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# Translations for DDM
+# Copyright (C) 2023
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Nico Pfiffner n.pfiffner@ikmz.uzh.ch, 2023.
 #
 #, fuzzy
 msgid ""

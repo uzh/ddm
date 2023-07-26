@@ -1,0 +1,35 @@
+# Translations for ddm_pooled.
+# Copyright (C) 2023
+# This file is distributed under the same license as the PACKAGE package.
+# Nico Pfiffner n.pfiffner@ikmz.uzh.ch, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-06-21 13:27+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\templates\ddm_pooled\pool_donation_consent.html:9
+msgid "Please indicate whether you want donate your data."
+msgstr "Bitte geben Sie an, ob Sie Ihre Daten spenden möchten."
+
+#: .\templates\ddm_pooled\pool_donation_consent.html:24
+msgid "I agree do donating my data to the project described above."
+msgstr "Ich bin damit einverstanden, meine Daten für das oben beschriebene Projekt zu spenden."
+
+#: .\templates\ddm_pooled\pool_donation_consent.html:28
+msgid "I do not want to donate my data to the project described above."
+msgstr "Ich möchte meine Daten nicht für das oben beschriebene Projekt spenden."
+
+#: .\templates\ddm_pooled\pool_donation_consent.html:36
+msgid "Continue&nbsp;&nbsp;&#8250;"
+msgstr "Weiter&nbsp;&nbsp;&#8250;"

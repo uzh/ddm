@@ -11,6 +11,7 @@
       :blueprints="uploadConfig.blueprints"
       :instructions="uploadConfig.instructions"
       :exception-url="this.exceptionUrl"
+      :pooled="this.pooled"
       @changedData="updatePostData"
   ></FileUploader>
 
@@ -72,6 +73,7 @@ export default {
     actionUrl: String,
     exceptionUrl: String,
     language: String,
+    pooled: Boolean
   },
   data() {
     this.$i18n.locale = this.language;

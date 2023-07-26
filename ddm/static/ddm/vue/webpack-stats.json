@@ -1,20 +1,10 @@
 {
   "status": "done",
   "assets": {
-    "css/vue_uploader.css": {
-      "name": "css/vue_uploader.css",
-      "path": "css\\vue_uploader.css",
-      "publicPath": "/static/ddm/vue/css/vue_uploader.css"
-    },
     "js/vue_uploader.js": {
       "name": "js/vue_uploader.js",
       "path": "js\\vue_uploader.js",
       "publicPath": "/static/ddm/vue/js/vue_uploader.js"
-    },
-    "css/vue_questionnaire.css": {
-      "name": "css/vue_questionnaire.css",
-      "path": "css\\vue_questionnaire.css",
-      "publicPath": "/static/ddm/vue/css/vue_questionnaire.css"
     },
     "js/vue_questionnaire.js": {
       "name": "js/vue_questionnaire.js",
@@ -35,32 +25,15 @@
       "name": "index.html",
       "path": "index.html",
       "publicPath": "/static/ddm/vue/index.html"
-    },
-    "js/vue_uploader.js.map": {
-      "name": "js/vue_uploader.js.map",
-      "path": "js\\vue_uploader.js.map",
-      "publicPath": "/static/ddm/vue/js/vue_uploader.js.map"
-    },
-    "js/vue_questionnaire.js.map": {
-      "name": "js/vue_questionnaire.js.map",
-      "path": "js\\vue_questionnaire.js.map",
-      "publicPath": "/static/ddm/vue/js/vue_questionnaire.js.map"
-    },
-    "js/chunk-vendors.js.map": {
-      "name": "js/chunk-vendors.js.map",
-      "path": "js\\chunk-vendors.js.map",
-      "publicPath": "/static/ddm/vue/js/chunk-vendors.js.map"
     }
   },
   "chunks": {
     "vue_uploader": [
       "js/chunk-vendors.js",
-      "css/vue_uploader.css",
       "js/vue_uploader.js"
     ],
     "vue_questionnaire": [
       "js/chunk-vendors.js",
-      "css/vue_questionnaire.css",
       "js/vue_questionnaire.js"
     ]
   },

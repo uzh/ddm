@@ -1,0 +1,72 @@
+Pooled Projects allow to set up one project that is used to collect data from
+multiple cohorts. It offers the option to gather the data belonging to a specific
+cohort through a dedicated API.
+
+This can be useful to display summary statistics covering a cohort
+(e.g., in a classroom or work place scenario).
+
+=== How to enable Pooled Projects
+
+To enable pooled project, first add the module `ddm_pooled` to your installed
+apps:
+
+[source, python]
+----
+# settings.py
+
+INSTALLED_APPS = [
+    # ...,
+    'ddm',
+    # ...,
+    'ddm_pooled'
+]
+----
+
+Next, enable the pooled projects middleware:
+
+[source, python]
+----
+# settings.py
+
+MIDDLEWARE = [
+    # ...,
+    'ddm_pooled.middleware.PooledProjectMiddleware'
+]
+----
+
+Finally, migrate your database and the option to create pooled projects will be
+enabled.
+
+
+=== How to create a pooled project
+
+`ddm_pooled` introduces a new model PooledProject. A PooledProject is an
+intermediary model that can be linked to a “regular” donation project.
+A pooled project offers some additional API endpoints that can be used to
+retrieve specific subsets of data stored for a given project.
+
+Currently, only system administrators can create pooled projects. To do so,
+go to the default Django administration site and in the section "DDM Pooled"
+create a new pooled project.
+
+
+=== API Endpoints
+
+`ddm_pooled` implements two API endpoints. Tokens are used for authentication.
+To create new tokens through the Django admin interface, add the following to
+your application's admin.py:
+
+[source, python]
+----
+from rest_framework.authtoken.admin import TokenAdmin
+
+TokenAdmin.raw_id_fields = ['user']
+----
+
+==== Participant API
+
+The participant api returns information on participants belonging to a
+provided pool.
+
+Endpoint: `/participants/participant-list`
+Response: `[{'pool_id': 'id', 'external_id': 'ext_id', 'status': 'started/completed'}]`

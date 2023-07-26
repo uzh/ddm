@@ -167,6 +167,7 @@
               </div>
             </div>
 
+            <template v-if="this.pooled === 'false'"> <!-- Check for ddm_pooled integration -->
             <div class="row">
               <div class="col feedback-col pb-5 pt-1">
                 <p class="fw-bold">{{ $t('donation-question') }}</p>
@@ -186,6 +187,7 @@
                 </div>
               </div>
             </div>
+            </template>
 
           </template>
 
@@ -222,6 +224,29 @@
         </template>
         </div>
       </div>
+
+        <!-- Part for ddm_pooled integration -->
+        <template v-if="this.pooled === 'true' && (uploadStatus === 'success' || uploadStatus === 'partial')">
+          <div class="row mt-5">
+            <div class="col feedback-col pb-5 pt-1">
+              <p class="fw-bold">{{ $t('pool-submit-question') }}</p>
+              <div class="consent-question-container">
+                <div class="question-choice-item">
+                  <label class="form-check-label rb-cb-label" for="pool-donate-agree">
+                    <input type="radio" id="pool-donate-agree" value="1" v-model="poolDonate" @change="emitToParent" required>
+                    {{ $t('donation-agree-pooled') }}
+                  </label>
+                </div>
+                <div class="question-choice-item">
+                  <label class="form-check-label rb-cb-label" for="pool-donate-disagree">
+                    <input type="radio" id="pool-donate-disagree" value="0" v-model="poolDonate" @change="emitToParent">
+                    {{ $t('donation-disagree-pooled') }}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
     </div>
   </div>
 
@@ -266,7 +291,8 @@ export default {
     instructions: Array,
     componentId: Number,
     name: String,
-    exceptionUrl: String
+    exceptionUrl: String,
+    pooled: String
   },
   emits: ['changedData'],
   data() {
@@ -276,7 +302,8 @@ export default {
       uploadAttempts: 0,
       generalErrors: [],
       ulModalInfoMsg: '',
-      ulModalInfoTitle: ''
+      ulModalInfoTitle: '',
+      poolDonate: '0'
     }
   },
   created() {
@@ -603,18 +630,32 @@ export default {
     emitToParent() {
       let dataToEmit = JSON.parse(JSON.stringify(this.blueprintData));
 
-      Object.keys(dataToEmit).forEach(key => {
-        if (dataToEmit[key].consent === '') {
-          dataToEmit[key].consent = null;
-          dataToEmit[key].extracted_data = [];
-        }
-        else if (dataToEmit[key].consent === 'false') {
-          dataToEmit[key].extracted_data = [];
-          dataToEmit[key].consent = false;
-        } else {
-          dataToEmit[key].consent = true;
-        }
-      })
+      if (this.pooled === 'false') {
+        Object.keys(dataToEmit).forEach(key => {
+          if (dataToEmit[key].consent === '') {
+            dataToEmit[key].consent = null;
+            dataToEmit[key].extracted_data = [];
+          }
+          else if (dataToEmit[key].consent === 'false') {
+            dataToEmit[key].extracted_data = [];
+            dataToEmit[key].consent = false;
+          } else {
+            dataToEmit[key].consent = true;
+          }
+        })
+      } else {
+        // Added for ddm_pooled integration.
+        let consent = this.poolDonate;
+        Object.keys(dataToEmit).forEach(key => {
+          if (consent === '0') {
+            dataToEmit[key].consent = false;
+            dataToEmit[key].extracted_data = [];
+          } else {
+            dataToEmit[key].consent = true;
+          }
+        })
+      }
+
       this.$emit('changedData', dataToEmit);
     },
 

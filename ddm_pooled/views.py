@@ -1,4 +1,4 @@
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import DetailView
@@ -6,11 +6,16 @@ from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import ParseError
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
-from ddm.models.core import DonationProject
+from ddm.models.core import DonationProject, DataDonation
+from ddm.models.encryption import Decryption
+from ddm.models.serializers import DonationSerializer
 from ddm_pooled.models import PoolParticipant, PooledProject
 from ddm_pooled.serializers import ParticipantSerializer
-from ddm_pooled.settings import POOL_KW, PROJECT_KW
+from ddm_pooled.settings import (
+    POOL_KW, PROJECT_KW, PARTICIPANT_KW, BLUEPRINT_KW
+)
 from ddm_pooled.utils import get_participant_from_request
 
 
@@ -87,4 +92,35 @@ class ParticipantViewSet(viewsets.ReadOnlyModelViewSet):
             raise ParseError()
 
 
-# TODO: Implement class DonationAPI(APIView):
+class DonationViewSet(viewsets.ReadOnlyModelViewSet):
+    """ API endpoint to retrieve the data donated by one specific participant. """
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = DonationSerializer
+
+    def get_donation(self):
+        project_id = self.request.query_params.get(PROJECT_KW, None)
+        participant_id = self.request.query_params.get(PARTICIPANT_KW, None)
+        blueprint_id = self.request.query_params.get(BLUEPRINT_KW, None)
+
+        if None in [project_id, participant_id, blueprint_id]:
+            raise ParseError()
+
+        pool_participant = PoolParticipant.objects.filter(
+            external_id=participant_id,
+            pooled_project__external_id=project_id
+        ).first()
+        if pool_participant is None:
+            raise ParseError()
+        else:
+            data_donation = DataDonation.objects.filter(
+                participant=pool_participant.participant,
+                blueprint__pk=blueprint_id
+            ).first()
+            return data_donation
+
+    def retrieve(self, request, pk=None):
+        donation = self.get_donation()
+        project = donation.project
+        decryptor = Decryption(project.secret_key, project.get_salt())
+        return Response(DonationSerializer(donation, secret=project.secret_key, decryptor=decryptor).data)

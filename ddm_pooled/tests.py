@@ -44,17 +44,17 @@ class ParticipantAPITests(APITestCase):
         Ensure the correct participant information is retrieved.
         """
         url = reverse('participant-list')
-        data = [{
+        data = {
             'pool_id': 'test_pool',
             'external_id': '1',
             'status': 'started'
-        }]
+        }
         self.client.force_authenticate(user=self.user)
         response = self.client.get(
             url, {POOL_KW: 'test_pool', PROJECT_KW: 'external_id'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
-        self.assertCountEqual(response.data, data)
+        self.assertCountEqual(dict(response.data[0]), data)
 
     def test_get_participants_without_poolid(self):
         """
@@ -82,10 +82,9 @@ class DonationAPITests(APITestCase):
             external_id='abc',
             start_time=timezone.now()
         )
-        PoolParticipant.objects.create(
+        cls.pool_participant = PoolParticipant.objects.create(
             participant=participant,
             pool_id='test_pool',
-            external_id='1',
             pooled_project=cls.pooled_project
         )
         blueprint = DonationBlueprint.objects.create(
@@ -122,7 +121,7 @@ class DonationAPITests(APITestCase):
         self.client.force_authenticate(user=self.user)
         get_params = {
             PROJECT_KW: 'external_id',
-            PARTICIPANT_KW: '1',
+            PARTICIPANT_KW: self.pool_participant.external_id,
             BLUEPRINT_KW: '1'
         }
         response = self.client.get(url, get_params, format='json')
@@ -176,3 +175,27 @@ class TestPoolDonateView(ParticipationFlowBaseTestCase):
         response = self.client.get(self.debriefing_url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'ddm/public/debriefing.html')
+
+
+class TestPoolParticipant(ParticipationFlowBaseTestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.pooled_project = PooledProject.objects.create(
+            project=cls.project_base, external_id='abc')
+        cls.participant = Participant.objects.create(
+            project=cls.project_base,
+            external_id='abc',
+            start_time=timezone.now()
+        )
+
+    def test_external_id_creation(self):
+        pool_participant = PoolParticipant(
+            participant=self.participant,
+            pool_id='some-pool',
+            pooled_project=self.pooled_project
+        )
+        self.assertEqual(pool_participant.external_id, '')
+        pool_participant.save()
+        self.assertEqual(len(pool_participant.external_id), 24)

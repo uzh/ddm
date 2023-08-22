@@ -8,6 +8,3 @@ class ParticipantSerializer(serializers.ModelSerializer):
     class Meta:
         model = PoolParticipant
         fields = ['external_id', 'pool_id', 'status']
-
-
-# TODO: Implement DataSerializer

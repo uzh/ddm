@@ -8,7 +8,7 @@ from rest_framework.exceptions import ParseError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from ddm.models.core import DonationProject, DataDonation
+from ddm.models.core import DonationProject, DataDonation, Participant
 from ddm.models.encryption import Decryption
 from ddm.models.serializers import DonationSerializer
 from ddm_pooled.models import PoolParticipant, PooledProject
@@ -77,7 +77,10 @@ class PoolDonateView(DetailView):
 
 
 class ParticipantViewSet(viewsets.ReadOnlyModelViewSet):
-    """ ViewSet for getting general participation information for a specific subset of a PooledProject """
+    """
+    ViewSet for getting general participation information for a specific subset
+    of a PooledProject.
+    """
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = ParticipantSerializer
@@ -89,11 +92,18 @@ class ParticipantViewSet(viewsets.ReadOnlyModelViewSet):
             return PoolParticipant.objects.filter(
                 pool_id=pool_id, pooled_project__external_id=project_id)
         else:
-            raise ParseError()
+            raise ParseError(detail='Pool ID is missing.')
 
 
 class DonationViewSet(viewsets.ReadOnlyModelViewSet):
-    """ API endpoint to retrieve the data donated by one specific participant. """
+    """
+    API endpoint to retrieve the data donated by one specific participant.
+
+    Required query parameters:
+    - external pool project id
+    - external pool participant id
+    - blueprint id
+    """
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = DonationSerializer
@@ -104,17 +114,18 @@ class DonationViewSet(viewsets.ReadOnlyModelViewSet):
         blueprint_id = self.request.query_params.get(BLUEPRINT_KW, None)
 
         if None in [project_id, participant_id, blueprint_id]:
-            raise ParseError()
+            raise ParseError(detail='Required query parameter is missing.')
 
-        pool_participant = PoolParticipant.objects.filter(
-            external_id=participant_id,
-            pooled_project__external_id=project_id
+        # TODO: Add project ID here to make sure, one must know both.
+        participant = Participant.objects.filter(
+            external_id=participant_id
         ).first()
-        if pool_participant is None:
-            raise ParseError()
+        if participant is None:
+            raise ParseError(detail='No participant found for the provided parameters.')
+
         else:
             data_donation = DataDonation.objects.filter(
-                participant=pool_participant.participant,
+                participant=participant,
                 blueprint__pk=blueprint_id
             ).first()
             return data_donation

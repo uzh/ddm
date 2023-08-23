@@ -57,7 +57,7 @@ class TestAPIs(TestCase):
             time_submitted=timezone.now(),
             consent=True,
             status='{}',
-            data='{"data": ["donated_data", "donated_data"]}'
+            data={'data': ['donated_data', 'donated_data']}
         )
         DataDonation.objects.create(
             project=cls.project_base,
@@ -66,7 +66,7 @@ class TestAPIs(TestCase):
             time_submitted=timezone.now(),
             consent=True,
             status='{}',
-            data='{"data": ["donated_data2", "donated_data2"]}'
+            data={'data': ['donated_data2', 'donated_data2']}
         )
         q = OpenQuestion.objects.create(
             project=cls.project_base,
@@ -193,3 +193,77 @@ class TestAPIs(TestCase):
             reverse('ddm-delete-participant', args=[self.project_base.pk, self.participant.external_id]), follow=True)
         self.assertEqual(response.status_code, 403)
         self.assertIsNotNone(Participant.objects.filter(external_id=self.participant.external_id).first())
+
+    def test_donations_api_get_with_valid_api_credentials(self):
+        token = self.project_base.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        expected_response = {
+            'donation blueprint': [{'data': ['donated_data', 'donated_data']},
+                                   {'data': ['donated_data2', 'donated_data2']}]
+        }
+        response = client.get(
+            reverse('donations-api', args=[self.project_base.pk]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, expected_response)
+
+        expected_response = {
+            'donation blueprint': [{'data': ['donated_data', 'donated_data']}]
+        }
+        response = client.get(
+            reverse('donations-api', args=[self.project_base.pk]), {'participants': str(self.participant.pk)})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, expected_response)
+
+    def test_donations_api_get_fails_with_invalid_api_credentials(self):
+        token = self.project_alt.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        response = client.delete(
+            reverse('donations-api', args=[self.project_base.pk]))
+        self.assertEqual(response.status_code, 401)
+
+    def test_donations_api_fails_with_no_api_credentials_created(self):
+        token = self.project_base.create_token()
+        key = token.key
+        token.delete()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + key)
+        response = client.delete(
+            reverse('donations-api', args=[self.project_base.pk]))
+        self.assertEqual(response.status_code, 401)
+
+    def test_responses_api_get_with_valid_api_credentials(self):
+        token = self.project_base.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+        expected_response = [{'open': 'response_data'}, {'open': 'response_data2'}]
+        response = client.get(
+            reverse('responses-api', args=[self.project_base.pk]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, expected_response)
+
+        expected_response = [{'open': 'response_data'}]
+        response = client.get(
+            reverse('responses-api', args=[self.project_base.pk]), {'participants': str(self.participant.pk)})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, expected_response)
+
+    def test_responses_api_get_fails_with_invalid_api_credentials(self):
+        token = self.project_alt.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        response = client.delete(
+            reverse('responses-api', args=[self.project_base.pk]))
+        self.assertEqual(response.status_code, 401)
+
+    def test_responses_api_fails_with_no_api_credentials_created(self):
+        token = self.project_base.create_token()
+        key = token.key
+        token.delete()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + key)
+        response = client.delete(
+            reverse('responses-api', args=[self.project_base.pk]))
+        self.assertEqual(response.status_code, 401)

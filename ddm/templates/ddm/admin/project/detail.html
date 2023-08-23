@@ -211,7 +211,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="ddm-btn" data-bs-dismiss="modal">Cancel</button>
-        <button id="delete-data-button" type="button" class="ddm-btn ddm-btn-red" data-bs-dismiss="modal" onclick="deleteData('{% url "ddm-data-api" object.pk %}', '{{csrf_token}}')">Yes, delete all data</button>
+        <button id="delete-data-button" type="button" class="ddm-btn ddm-btn-red" data-bs-dismiss="modal" onclick="deleteData('{% url "ddm-delete-data" object.pk %}', '{{csrf_token}}')">Yes, delete all data</button>
       </div>
     </div>
   </div>

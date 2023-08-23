@@ -40,6 +40,10 @@ class TestAPIs(TestCase):
             project=cls.project_base,
             start_time=timezone.now()
         )
+        cls.participant_two = Participant.objects.create(
+            project=cls.project_base,
+            start_time=timezone.now()
+        )
         blueprint = DonationBlueprint.objects.create(
             project=cls.project_base,
             name='donation blueprint',
@@ -55,6 +59,15 @@ class TestAPIs(TestCase):
             status='{}',
             data='{"data": ["donated_data", "donated_data"]}'
         )
+        DataDonation.objects.create(
+            project=cls.project_base,
+            blueprint=blueprint,
+            participant=cls.participant_two,
+            time_submitted=timezone.now(),
+            consent=True,
+            status='{}',
+            data='{"data": ["donated_data2", "donated_data2"]}'
+        )
         q = OpenQuestion.objects.create(
             project=cls.project_base,
             name='open question',
@@ -62,11 +75,17 @@ class TestAPIs(TestCase):
             index=1,
             variable_name='open'
         )
-        QuestionnaireResponse.objects.create(
+        cls.q_response = QuestionnaireResponse.objects.create(
             project=cls.project_base,
             participant=cls.participant,
             time_submitted=timezone.now(),
             data=f'{{"{q.pk}": {{"response": "response_data", "question": "question text", "items": []}}}}'
+        )
+        cls.q_response_two = QuestionnaireResponse.objects.create(
+            project=cls.project_base,
+            participant=cls.participant_two,
+            time_submitted=timezone.now(),
+            data=f'{{"{q.pk}": {{"response": "response_data2", "question": "question text", "items": []}}}}'
         )
 
     def test_download_project_data_view_exists(self):
@@ -115,32 +134,32 @@ class TestAPIs(TestCase):
     def test_delete_project_data_with_regular_login_owner(self):
         self.client.login(**self.base_creds)
         response = self.client.delete(
-            reverse('ddm-data-api', args=[self.project_base.pk]))
+            reverse('ddm-delete-data', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(response.data)
 
     def test_delete_project_data_fails_for_user_without_permission(self):
         self.client.login(**self.no_perm_creds)
         response = self.client.delete(
-            reverse('ddm-data-api', args=[self.project_base.pk]), follow=True)
+            reverse('ddm-delete-data', args=[self.project_base.pk]), follow=True)
         self.assertEqual(response.status_code, 403)
 
-    def test_delete_project_data_with_valid_api_credentials(self):
+    def test_delete_project_data_fails_with_valid_api_credentials(self):
         token = self.project_base.create_token()
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         response = client.delete(
-            reverse('ddm-data-api', args=[self.project_base.pk]))
-        self.assertEqual(response.status_code, 200)
+            reverse('ddm-delete-data', args=[self.project_base.pk]))
+        self.assertEqual(response.status_code, 403)
         self.assertIsNotNone(response.data)
 
-    def test_delete_project_data_with_invalid_api_credentials(self):
+    def test_delete_project_data_fails_with_invalid_api_credentials(self):
         token = self.project_alt.create_token()
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         response = client.delete(
-            reverse('ddm-data-api', args=[self.project_base.pk]))
-        self.assertEqual(response.status_code, 401)
+            reverse('ddm-delete-data', args=[self.project_base.pk]))
+        self.assertEqual(response.status_code, 403)
 
     def test_delete_project_data_with_no_api_credentials_created(self):
         token = self.project_base.create_token()
@@ -149,8 +168,8 @@ class TestAPIs(TestCase):
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + key)
         response = client.delete(
-            reverse('ddm-data-api', args=[self.project_base.pk]))
-        self.assertEqual(response.status_code, 401)
+            reverse('ddm-delete-data', args=[self.project_base.pk]))
+        self.assertEqual(response.status_code, 403)
 
     def test_participant_deletion_with_regular_login(self):
         self.client.login(**self.base_creds)

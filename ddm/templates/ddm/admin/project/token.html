@@ -13,12 +13,12 @@
     Access tokens are valid for a limited time (maximum 120 days). After the current token has expired, a new one must be created.
   </p>
   <p>
-    The download API endpoint for this project is <code class="text-dark">https://{{ request.get_host }}/{{ project.pk }}/download/</code>.<br>
+    The download API endpoint for this project is <code class="text-dark">https://{{ request.get_host }}/api/project/{{ project.pk }}/data/</code>.<br>
     When making a request, prefix your token with "Token " and include this string in the Authorization HTTP header.
     {% if project.super_secret %}
     Because this is a super secret project, the secret must also be provided in an HTTP header named "Super-Secret" (e.g., <code class="text-dark">GET https://{{ request.get_host }}/{{ project.pk }}/download/ -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b' -H 'Super-Secret: y0urSuperSecr3t'</code>).
     {% else %}
-    (e.g., <code class="text-dark">GET https://{{ request.get_host }}/{{ project.pk }}/download/ -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b'</code>).
+    (e.g., <code class="text-dark">GET https://{{ request.get_host }}/api/project/{{ project.pk }}/data/ -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b'</code>).
     {% endif %}
   </p>
   An example on how this can be used to retrieve the data directly from within your R- or Python-scripts can be found <a>here</a>. <!-- TODO: Link to example in documentation. -->

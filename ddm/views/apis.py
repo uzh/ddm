@@ -22,10 +22,13 @@ from rest_framework.response import Response
 from rest_framework import authentication, exceptions, permissions, status
 
 
-def user_is_allowed_to_download(user, project):
+def user_is_allowed(user, project):
     """
     Returns true if user is owner or collaborator of a project. False otherwise.
     """
+    if user.is_anonymous:
+        return False
+
     user_profile = ResearchProfile.objects.filter(user=user).first()
     if not user_profile:
         return False
@@ -36,18 +39,10 @@ def user_is_allowed_to_download(user, project):
             return True
 
 
-class ProjectDataAPI(APIView):
+class DDMAPIMixin:
     """
-    Download or delete data collected within a project.
-
-    * Token authentication for remote calls.
-    * Session authentication for browser access.
-    * Only project owners are able to access this view.
+    Mixin containing ddm-specific methods to be combined with DRF-views.
     """
-    authentication_classes = [ProjectTokenAuthenticator,
-                              authentication.SessionAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-
     def permission_denied(self, request, message=None, code=None):
         """
         If request is not permitted, determine what kind of exception to raise.
@@ -55,13 +50,13 @@ class ProjectDataAPI(APIView):
         """
         if request.authenticators and not request.successful_authenticator:
             self.create_event_log(
-                descr=f'Failed {request.method} Attempt',
+                descr='Failed Attempt',
                 msg='Authentication failed.'
             )
             raise exceptions.NotAuthenticated()
 
         self.create_event_log(
-            descr=f'Failed {request.method} Attempt',
+            descr='Failed Attempt',
             msg='Permission Denied.'
         )
         raise exceptions.PermissionDenied(detail=message, code=code)
@@ -72,9 +67,49 @@ class ProjectDataAPI(APIView):
 
     def create_event_log(self, descr, msg):
         """ Creates an event log entry related to the current project. """
+        if self.request is not None:
+            prefix = f'{self.request.get_full_path()} {self.request.method}: '
+        else:
+            prefix = ''
         return EventLogEntry.objects.create(project=self.get_project(),
-                                            description=descr,
+                                            description=f'{prefix}{descr}',
                                             message=msg)
+
+
+class ProjectDataAPI(APIView, DDMAPIMixin):
+    """
+    Download all data collected for a given donation project.
+
+    Returns:
+    - GET: A Response object with the complete data associated to a project (i.e.,
+    donated data, questionnaire responses, metadata) and status code.
+    - DELETE: A Response object with the status code.
+
+    Example Usage:
+    ```
+    GET /api/project/<project_pk>/data
+    {
+        'project': {<project information>},
+        'donations': {<collected donations per file blueprint>},
+        'questionnaire': {<questionnaire responses>}
+        'participants': {<participant information>}
+    }
+    ```
+
+    Authentication Methods:
+    - Token authentication for remote calls.
+    - Session authentication for access through web application (by verifying
+        that the requesting user is the project owner).
+
+    Error Responses:
+    - 400 Bad Request: If there's an issue with the input data.
+    - 401 Unauthorized: If authentication fails.
+    - 403 Forbidden: If a user is not permitted to access a project (session
+        authentication only).
+    """
+    authentication_classes = [ProjectTokenAuthenticator,
+                              authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
 
     @sensitive_variables()
     def get(self, request, format=None, *args, **kwargs):
@@ -83,7 +118,7 @@ class ProjectDataAPI(APIView):
         data donations and questionnaire responses.
         """
         project = self.get_project()
-        if not user_is_allowed_to_download(request.user, project):
+        if not user_is_allowed(request.user, project):
             self.create_event_log(
                 descr='Forbidden Download Request',
                 msg='Request user is not permitted to download the data.'
@@ -163,12 +198,43 @@ class ProjectDataAPI(APIView):
         response['Content-Disposition'] = 'attachment; filename=zipfile.zip'
         return response
 
+
+class DeleteProjectData(APIView, DDMAPIMixin):
+    """
+    Delete all data (i.e., data donations and questionnaire responses)
+    collected for a given donation project.
+
+    Returns:
+    - A Response object with the status code.
+
+    Example Usage:
+    ```
+    GET /api/project/<project_pk>/data/delete
+    {
+        'status': '200',
+        'data': {'message': 'Deleted <n donations> data donations and
+                            <n responses> questionnaire responses.'}
+    }
+    ```
+
+    Authentication Methods:
+    - Session authentication for access through web application (by verifying
+        that the requesting user is the project owner).
+
+    Error Responses:
+    - 400 Bad Request: If there's an issue with the input data.
+    - 401 Unauthorized: If authentication fails.
+    - 403 Forbidden: If a user is not permitted to access a project.
+    """
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
     def delete(self, request, format=None, *args, **kwargs):
         """
         Delete data donations and questionnaire requests associated with project.
         """
         project = self.get_project()
-        if not user_is_allowed_to_download(request.user, project):
+        if not user_is_allowed(request.user, project):
             self.create_event_log(
                 descr='Forbidden Deletion Request',
                 msg='Request user is not permitted to delete the project data.'
@@ -236,7 +302,7 @@ class ParticipantAPI(APIView):
         Delete participant related to current project by providing external_id.
         """
         project = self.get_project()
-        if not user_is_allowed_to_download(request.user, project):
+        if not user_is_allowed(request.user, project):
             self.create_event_log(
                 descr='Forbidden Deletion Request',
                 msg='Request user is not permitted to delete the project data.'

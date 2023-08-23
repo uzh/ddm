@@ -209,7 +209,7 @@ class DeleteProjectData(APIView, DDMAPIMixin):
 
     Example Usage:
     ```
-    GET /api/project/<project_pk>/data/delete
+    DELETE /api/project/<project_pk>/data/delete
     {
         'status': '200',
         'data': {'message': 'Deleted <n donations> data donations and
@@ -258,44 +258,29 @@ class DeleteProjectData(APIView, DDMAPIMixin):
         return Response(status=status.HTTP_200_OK, data={'message': msg})
 
 
-class ParticipantAPI(APIView):
+class DeleteParticipantAPI(APIView, DDMAPIMixin):
     """
     Delete a participant of an owned project by providing their external ID.
 
     * Session authentication for browser access.
     * Only project owners are able to access this view.
+
+    Returns:
+    - A Response object with the status code.
+
+    Authentication Methods:
+    - Token authentication for remote calls.
+    - Session authentication for access through web application (by verifying
+        that the requesting user is the project owner).
+
+    Error Responses:
+    - 400 Bad Request: If there's an issue with the input data.
+    - 401 Unauthorized: If authentication fails.
+    - 403 Forbidden: If a user is not permitted to access a project.
     """
     authentication_classes = [ProjectTokenAuthenticator,
                               authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
-
-    def permission_denied(self, request, message=None, code=None):
-        """
-        If request is not permitted, determine what kind of exception to raise.
-        Added EventLog entries.
-        """
-        if request.authenticators and not request.successful_authenticator:
-            self.create_event_log(
-                descr='Failed participant deletion Attempt',
-                msg='Authentication failed.'
-            )
-            raise exceptions.NotAuthenticated()
-
-        self.create_event_log(
-            descr='Failed participant deletion Attempt',
-            msg='Permission Denied.'
-        )
-        raise exceptions.PermissionDenied(detail=message, code=code)
-
-    def get_project(self):
-        """ Returns project instance. """
-        return DonationProject.objects.filter(pk=self.kwargs['pk']).first()
-
-    def create_event_log(self, descr, msg):
-        """ Creates an event log entry related to the current project. """
-        return EventLogEntry.objects.create(project=self.get_project(),
-                                            description=descr,
-                                            message=msg)
 
     def delete(self, request, format=None, *args, **kwargs):
         """

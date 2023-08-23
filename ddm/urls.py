@@ -3,7 +3,7 @@ from django.views.generic import RedirectView
 
 from ddm.views import admin, participation_flow
 from ddm.views.apis import (
-    ExceptionAPI, ProjectDataAPI, ParticipantAPI, DeleteProjectData #DonationsAPI, ResponsesAPI
+    ExceptionAPI, ProjectDataAPI, DeleteParticipantAPI, DeleteProjectData
 )
 
 
@@ -63,6 +63,7 @@ authentication_patterns = [
 api_patterns = [
     path('project/<int:pk>/data', ProjectDataAPI.as_view(), name='ddm-data-api'),
     path('project/<int:pk>/data/delete', DeleteProjectData.as_view(), name='ddm-delete-data'),
+    path('project/<int:pk>/participant/<slug:participant_id>/delete', DeleteParticipantAPI.as_view(), name='ddm-delete-participant')
 ]
 
 urlpatterns = [
@@ -71,6 +72,5 @@ urlpatterns = [
     path(r'projects/', include(admin_patterns)),
     path(r'auth/', include(authentication_patterns)),
     path(r'<int:pk>/exceptions/', ExceptionAPI.as_view(), name='ddm-exceptions-api'),
-    path(r'<int:pk>/delete-participant/<slug:participant_id>', ParticipantAPI.as_view(), name='ddm-participant-api'),
     path(r'api/', include(api_patterns))
 ]

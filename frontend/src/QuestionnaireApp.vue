@@ -252,6 +252,12 @@ export default {
   padding-bottom: 50px;
   padding-top: 50px;
 }
+@media (max-width: 992px) {
+  .question-container {
+    margin: 0;
+  }
+}
+
 .question-body {
   padding-left: 30px;
   padding-right: 30px;

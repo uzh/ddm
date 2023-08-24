@@ -68,7 +68,7 @@ class QuestionFormMixin(ProjectMixin):
         'multi_choice': SHARED_FIELDS + ['randomize_items'],
         'matrix': SHARED_FIELDS + ['randomize_items'],
         'semantic_diff': SHARED_FIELDS + ['randomize_items'],
-        'open': SHARED_FIELDS,
+        'open': SHARED_FIELDS + ['display'],
         'transition': SHARED_FIELDS
     }
 

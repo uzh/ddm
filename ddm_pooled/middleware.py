@@ -1,8 +1,8 @@
-from ddm.models.core import DonationProject, Participant
+from ddm.models.core import DonationProject
 from ddm.views.participation_flow import (
     BriefingView, DebriefingView, DataDonationView, create_participation_session
 )
-from ddm_pooled.models import PooledProject, PoolParticipant
+from ddm_pooled.models import PooledProject
 from ddm_pooled.settings import POOL_KW
 from ddm_pooled.utils import get_participant_from_request
 from django.shortcuts import redirect
@@ -34,25 +34,11 @@ class PooledProjectMiddleware(MiddlewareMixin):
 
             if view_class is BriefingView:
                 create_participation_session(request, project)
-                required_params = [POOL_KW]
-                if not all(p in request.GET for p in required_params):
-                    # TODO: add general information or render exception view
-                    pass
+                participant = get_participant_from_request(request, project)
 
-                try:
-                    participant = get_participant_from_request(request, project)
-                except (KeyError, Participant.DoesNotExist):
-                    return
-
-                try:
-                    PoolParticipant.objects.get(participant=participant)
-                except PoolParticipant.DoesNotExist:
-                    PoolParticipant.objects.create(
-                        participant=participant,
-                        pool_id=request.GET.get(POOL_KW, 'default_pool'),
-                        pooled_project=pooled_project
-                    )
-
+                participant.extra_data['pool_id'] = request.GET.get(POOL_KW, None)
+                participant.extra_data['pool_donate'] = None
+                participant.save()
                 return
 
             if view_class is DataDonationView:
@@ -60,18 +46,11 @@ class PooledProjectMiddleware(MiddlewareMixin):
                 return
 
             if view_class is DebriefingView:
-                try:
-                    participant = PoolParticipant.objects.get(
-                        participant=get_participant_from_request(request, project))
-                except (KeyError, Participant.DoesNotExist,
-                        PoolParticipant.DoesNotExist):
-                    return
-
-                if pooled_project.get_donation_consent and participant.pool_donate is None:
+                participant = get_participant_from_request(request, project)
+                if pooled_project.get_donation_consent and participant.extra_data['pool_donate'] is None:
                     return redirect(reverse('ddm-pool-donate', args=[project.slug]))
                 else:
                     return
-
         return
 
     @staticmethod

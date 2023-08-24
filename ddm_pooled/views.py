@@ -6,15 +6,12 @@ from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import ParseError
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 
-from ddm.models.core import DonationProject, DataDonation, Participant
-from ddm.models.encryption import Decryption
-from ddm.models.serializers import DonationSerializer
-from ddm_pooled.models import PoolParticipant, PooledProject
+from ddm.models.core import DonationProject, Participant
+from ddm_pooled.models import PooledProject
 from ddm_pooled.serializers import ParticipantSerializer
 from ddm_pooled.settings import (
-    POOL_KW, PROJECT_KW, PARTICIPANT_KW, BLUEPRINT_KW
+    POOL_KW, PROJECT_KW
 )
 from ddm_pooled.utils import get_participant_from_request
 
@@ -52,13 +49,12 @@ class PoolDonateView(DetailView):
             return self.render_to_response(context)
 
         participant = get_participant_from_request(request, self.get_object())
-        pool_participant = PoolParticipant.objects.get(participant=participant)
         if consent == '1':
-            pool_participant.pool_donate = True
+            participant.extra_data['pool_donate'] = True
         elif consent == '0':
-            pool_participant.pool_donate = False
+            participant.extra_data['pool_donate'] = False
 
-        pool_participant.save()
+        participant.save()
         return redirect(self.get_success_url())
 
     def get_context_data(self, **kwargs):
@@ -89,49 +85,11 @@ class ParticipantViewSet(viewsets.ReadOnlyModelViewSet):
         project_id = self.request.query_params.get(PROJECT_KW, None)
         pool_id = self.request.query_params.get(POOL_KW, None)
         if pool_id is not None:
-            return PoolParticipant.objects.filter(
-                pool_id=pool_id, pooled_project__external_id=project_id)
+            pooled_project = PooledProject.objects.filter(external_id=project_id).first()
+            queryset = Participant.objects.filter(
+                project=pooled_project.project,
+                extra_data__pool_id=pool_id
+            )
+            return queryset
         else:
             raise ParseError(detail='Pool ID is missing.')
-
-
-class DonationViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    API endpoint to retrieve the data donated by one specific participant.
-
-    Required query parameters:
-    - external pool project id
-    - external pool participant id
-    - blueprint id
-    """
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-    serializer_class = DonationSerializer
-
-    def get_donation(self):
-        project_id = self.request.query_params.get(PROJECT_KW, None)
-        participant_id = self.request.query_params.get(PARTICIPANT_KW, None)
-        blueprint_id = self.request.query_params.get(BLUEPRINT_KW, None)
-
-        if None in [project_id, participant_id, blueprint_id]:
-            raise ParseError(detail='Required query parameter is missing.')
-
-        # TODO: Add project ID here to make sure, one must know both.
-        participant = Participant.objects.filter(
-            external_id=participant_id
-        ).first()
-        if participant is None:
-            raise ParseError(detail='No participant found for the provided parameters.')
-
-        else:
-            data_donation = DataDonation.objects.filter(
-                participant=participant,
-                blueprint__pk=blueprint_id
-            ).first()
-            return data_donation
-
-    def retrieve(self, request, pk=None):
-        donation = self.get_donation()
-        project = donation.project
-        decryptor = Decryption(project.secret_key, project.get_salt())
-        return Response(DonationSerializer(donation, secret=project.secret_key, decryptor=decryptor).data)

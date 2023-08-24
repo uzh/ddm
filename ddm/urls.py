@@ -9,6 +9,7 @@ from ddm.views.apis import (
 
 
 participation_flow_patterns = [
+    path(r'', participation_flow.participation_redirect_view, name='participation-redirect'),
     path(r'briefing/', participation_flow.BriefingView.as_view(), name='briefing'),
     path(r'data-donation/', participation_flow.DataDonationView.as_view(), name='data-donation'),
     path(r'questionnaire/', participation_flow.QuestionnaireView.as_view(), name='questionnaire'),

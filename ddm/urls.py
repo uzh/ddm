@@ -9,7 +9,7 @@ from ddm.views.apis import (
 
 
 participation_flow_patterns = [
-    path(r'', participation_flow.participation_redirect_view, name='participation-redirect'),
+    #path(r'', participation_flow.participation_redirect_view, name='participation-redirect'),
     path(r'briefing/', participation_flow.BriefingView.as_view(), name='briefing'),
     path(r'data-donation/', participation_flow.DataDonationView.as_view(), name='data-donation'),
     path(r'questionnaire/', participation_flow.QuestionnaireView.as_view(), name='questionnaire'),
@@ -72,7 +72,7 @@ api_patterns = [
 
 urlpatterns = [
     path(r'', RedirectView.as_view(pattern_name='project-list'), name='ddm-landing-page'),
-    path(r'<slug:slug>/', include(participation_flow_patterns)),
+    path(r'studies/<slug:slug>/', include(participation_flow_patterns)),
     path(r'projects/', include(admin_patterns)),
     path(r'auth/', include(authentication_patterns)),
     path(r'<int:pk>/exceptions/', ExceptionAPI.as_view(), name='ddm-exceptions-api'),

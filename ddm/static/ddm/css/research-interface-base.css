@@ -109,6 +109,7 @@
     border: 1px solid #ddd;
     border-radius: 3px;
     height: 30px;
+    display: block;
 }
 
 

@@ -9,6 +9,7 @@ from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.decorators import method_decorator
 from django.utils.safestring import SafeString
+from django.views.generic import RedirectView
 from django.views.generic.detail import DetailView
 from django.views.decorators.cache import cache_page
 
@@ -141,6 +142,13 @@ class ParticipationFlowBaseView(DetailView):
         self.participant = self.get_participant_from_session(request)
         self.current_step = self.get_current_step_from_participant(self.participant)
         return
+
+
+def participation_redirect_view(request, slug):
+    """
+    Redirect user to briefing page if url does not contain a step indicator.
+    """
+    return redirect('briefing', slug)
 
 
 class BriefingView(ParticipationFlowBaseView):

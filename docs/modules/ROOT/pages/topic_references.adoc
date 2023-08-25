@@ -31,3 +31,7 @@ include::topics/internationalization.adoc[]
 
 == Continuation
 include::topics/continuation.adoc[]
+
+
+== API Endpoints
+include::topics/apis.adoc[]

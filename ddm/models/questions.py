@@ -268,7 +268,9 @@ class OpenQuestion(QuestionBase):
         max_length=20,
         blank=False,
         choices=DisplayOptions.choices,
-        default=DisplayOptions.LARGE
+        default=DisplayOptions.LARGE,
+        help_text='"Small" displays a one-line textfield, "Large" a multiline '
+                  'textfield as input.'
     )
 
     def create_config(self):

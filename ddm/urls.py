@@ -2,10 +2,14 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 
 from ddm.views import admin, participation_flow
-from ddm.views.apis import ExceptionAPI, ProjectDataAPI, ParticipantAPI
+from ddm.views.apis import (
+    ExceptionAPI, ProjectDataAPI, DeleteParticipantAPI, DeleteProjectData,
+    DonationsAPI, ResponsesAPI
+)
 
 
 participation_flow_patterns = [
+    path(r'', participation_flow.participation_redirect_view, name='participation-redirect'),
     path(r'briefing/', participation_flow.BriefingView.as_view(), name='briefing'),
     path(r'data-donation/', participation_flow.DataDonationView.as_view(), name='data-donation'),
     path(r'questionnaire/', participation_flow.QuestionnaireView.as_view(), name='questionnaire'),
@@ -58,12 +62,19 @@ authentication_patterns = [
     path(r'no-permission/', admin.DdmNoPermissionView.as_view(), name='ddm-no-permission'),
 ]
 
+api_patterns = [
+    path('project/<int:pk>/data', ProjectDataAPI.as_view(), name='ddm-data-api'),
+    path('project/<int:pk>/data/delete', DeleteProjectData.as_view(), name='ddm-delete-data'),
+    path('project/<int:pk>/donations', DonationsAPI.as_view(), name='donations-api'),
+    path('project/<int:pk>/responses', ResponsesAPI.as_view(), name='responses-api'),
+    path('project/<int:pk>/participant/<slug:participant_id>/delete', DeleteParticipantAPI.as_view(), name='ddm-delete-participant')
+]
+
 urlpatterns = [
     path(r'', RedirectView.as_view(pattern_name='project-list'), name='ddm-landing-page'),
     path(r'<slug:slug>/', include(participation_flow_patterns)),
     path(r'projects/', include(admin_patterns)),
     path(r'auth/', include(authentication_patterns)),
-    path(r'<int:pk>/data/', ProjectDataAPI.as_view(), name='ddm-data-api'),
     path(r'<int:pk>/exceptions/', ExceptionAPI.as_view(), name='ddm-exceptions-api'),
-    path(r'<int:pk>/delete-participant/<slug:participant_id>', ParticipantAPI.as_view(), name='ddm-participant-api'),
+    path(r'api/', include(api_patterns))
 ]

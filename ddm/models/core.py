@@ -33,6 +33,9 @@ class ResearchProfile(models.Model):
     created = models.DateTimeField('date registered', default=timezone.now)
     ignore_email_restriction = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.user.email
+
 
 def project_header_dir_path(instance, filename):
     return f'project_{instance.pk}/headers/{filename}'

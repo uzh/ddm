@@ -9,7 +9,6 @@ from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.decorators import method_decorator
 from django.utils.safestring import SafeString
-from django.views.generic import RedirectView
 from django.views.generic.detail import DetailView
 from django.views.decorators.cache import cache_page
 
@@ -19,6 +18,28 @@ from ddm.models.core import (
 )
 from ddm.models.logs import ExceptionLogEntry, ExceptionRaisers
 from ddm.models.questions import QuestionBase
+
+
+def get_participation_session_id(project):
+    """
+    Return id under which project related information is stored in a
+    participant's session.
+    """
+    return f'project-{project.pk}'
+
+
+def create_participation_session(request, project):
+    """ Creates a new participation session if none does yet exist. """
+    session_id = get_participation_session_id(project)
+
+    if not request.session.get(session_id):
+        participant = Participant.objects.create(
+            project=project,
+            start_time=timezone.now()
+        )
+        request.session[session_id] = {'participant_id': participant.id}
+        request.session.modified = True
+    return
 
 
 class ParticipationFlowBaseView(DetailView):
@@ -59,14 +80,6 @@ class ParticipationFlowBaseView(DetailView):
         return redirect(self.steps[self.current_step + 1],
                         slug=self.object.slug)
 
-    def register_project_in_session(self, request):
-        if not request.session.get(self.get_session_id()):
-            request.session[self.get_session_id()] = {
-                'participant_id': None
-            }
-            request.session.modified = True
-        return
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
@@ -75,19 +88,13 @@ class ParticipationFlowBaseView(DetailView):
         })
         return context
 
-    def get_session_id(self):
-        """
-        Return id under which project related information is stored in a
-        participant's session.
-        """
-        return f'project-{self.object.pk}'
-
     def get_participant_from_session(self, request):
         """
         Gets participant from session. If participant has not yet been created,
         creates new participant and saves it to session.
         """
-        participant_id = request.session[self.get_session_id()]['participant_id']
+        session_id = get_participation_session_id(self.object)
+        participant_id = request.session[session_id]['participant_id']
         try:
             participant = Participant.objects.get(pk=participant_id)
         except Participant.DoesNotExist:
@@ -95,11 +102,12 @@ class ParticipationFlowBaseView(DetailView):
                 project=self.object,
                 start_time=timezone.now()
             )
-            request.session[self.get_session_id()]['participant_id'] = participant.id
+            request.session[session_id]['participant_id'] = participant.id
             request.session.modified = True
         return participant
 
-    def get_current_step_from_participant(self, participant):
+    @staticmethod
+    def get_current_step_from_participant(participant):
         """
         Gets current step from information stored in participant's session.
         """
@@ -129,7 +137,7 @@ class ParticipationFlowBaseView(DetailView):
 
     def _initialize_values(self, request):
         self.object = self.get_object()
-        self.register_project_in_session(request)
+        create_participation_session(request, self.object)
         self.participant = self.get_participant_from_session(request)
         self.current_step = self.get_current_step_from_participant(self.participant)
         return

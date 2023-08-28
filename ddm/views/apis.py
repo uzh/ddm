@@ -411,7 +411,7 @@ class DonationsAPI(APIView, DDMAPIMixin):
         participants = self.request.query_params.get('participants')
         if participants is not None:
             return blueprint.datadonation_set.filter(
-                participant__in=participants.split(','))
+                participant__external_id__in=participants.split(','))
         else:
             return blueprint.datadonation_set.all()
 
@@ -495,7 +495,7 @@ class ResponsesAPI(APIView, DDMAPIMixin):
         participants = self.request.query_params.get('participants')
         if participants is not None:
             return QuestionnaireResponse.objects.filter(
-                project=project, participant__in=participants.split(','))
+                project=project, participant__external_id__in=participants.split(','))
         else:
             return QuestionnaireResponse.objects.filter(project=project)
 

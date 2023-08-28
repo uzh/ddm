@@ -211,7 +211,7 @@ class TestAPIs(TestCase):
             'donation blueprint': [{'data': ['donated_data', 'donated_data']}]
         }
         response = client.get(
-            reverse('donations-api', args=[self.project_base.pk]), {'participants': str(self.participant.pk)})
+            reverse('donations-api', args=[self.project_base.pk]), {'participants': str(self.participant.external_id)})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, expected_response)
 
@@ -246,7 +246,7 @@ class TestAPIs(TestCase):
 
         expected_response = [{'open': 'response_data'}]
         response = client.get(
-            reverse('responses-api', args=[self.project_base.pk]), {'participants': str(self.participant.pk)})
+            reverse('responses-api', args=[self.project_base.pk]), {'participants': str(self.participant.external_id)})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, expected_response)
 

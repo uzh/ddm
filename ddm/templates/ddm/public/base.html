@@ -22,24 +22,13 @@
 <div class="container public-header">
   {% block public-header %}
   <div class="row align-items-center">
-    {% if project.img_header_left %}
-    <div class="col">
-      <img src="{{ project.img_header_left.url }}" height="80px">
+    <div class="col text-center">
+      <img class="float-md-start" src="{% if project.img_header_left %}{{ project.img_header_left.url }}{% elif default_header_left %}{{ default_header_left }}{% endif %}" height="80px">
     </div>
-    {% elif default_header_left %}
-      <div class="col">
-        <img src="{{ default_header_left }}" height="80px">
-      </div>
-    {% endif %}
-    {% if project.img_header_right %}
-    <div class="col">
-      <img class="float-end" src="{{ project.img_header_right.url }}" height="80px">
+
+    <div class="col text-center">
+      <img class="float-md-end" src="{% if project.img_header_right %}{{ project.img_header_right.url }}{% elif default_header_right %}{{ default_header_right }}{% endif %}" height="80px">
     </div>
-    {% elif default_header_right %}
-      <div class="col">
-        <img class="float-end" src="{{ default_header_right }}" height="80px">
-      </div>
-    {% endif %}
   </div>
   {% endblock public-header %}
 </div>

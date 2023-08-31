@@ -8,7 +8,7 @@
   <form id="uploader-form" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     <div id="uapp"
-         class="container text-black"
+         class="container text-black ps-0 pe-0"
          data-upload-config='{{ uploader_configs }}'
          data-action-url='{{ request.build_absolute_uri }}'
          data-exception-url='{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url "ddm-exceptions-api" project_id %}'

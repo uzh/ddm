@@ -1,17 +1,5 @@
 <template>
   <div :id="'carousel-' + componentId" class="carousel carousel-dark slide" data-bs-interval="false" data-bs-ride="carousel">
-    <div class="carousel-indicators">
-      <button
-          v-for="(i, index) in instructions"
-          :key="index"
-          type="button"
-          :data-bs-target="'#carousel-' + componentId"
-          :data-bs-slide-to="index"
-          :aria-label="'Step ' + index"
-          :class="{ 'active': index === 0 }"
-          :aria-current="index === 0"
-      ></button>
-    </div>
     <div class="carousel-inner">
       <div
           v-for="(i, index) in instructions"
@@ -29,6 +17,18 @@
       <span class="carousel-control-next-icon" aria-hidden="true"></span>
       <span class="visually-hidden">Next</span>
     </button>
+    <div class="carousel-indicators">
+      <button
+          v-for="(i, index) in instructions"
+          :key="index"
+          type="button"
+          :data-bs-target="'#carousel-' + componentId"
+          :data-bs-slide-to="index"
+          :aria-label="'Step ' + index"
+          :class="{ 'active': index === 0 }"
+          :aria-current="index === 0"
+      ></button>
+    </div>
   </div>
 </template>
 
@@ -58,7 +58,22 @@ export default {
   padding-left: 42px;
   padding-right: 42px;
 }
+@media (max-width: 768px) {
+  .carousel-inner {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .carousel-control-next,
+  .carousel-control-prev {
+    width: 30px;
+    opacity: 0.1;
+  }
+}
 .carousel-item {
   transition: transform .3s ease, opacity .3s ease-out
+}
+.carousel-indicators {
+  position: static;
+  padding-top: 20px;
 }
 </style>

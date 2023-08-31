@@ -15,7 +15,7 @@
         <tr :id="'answer-item-' + item.id">
           <td class="mq-table-td-item" v-html="item.label"></td>
           <td v-for="(point, id) in scale" :key="id" class="mq-table-td-input">
-            <label><input type="radio" :name="item.id" :value="point.value" @change="responseChanged($event)"></label>
+            <label><input type="radio" :name="item.id" :value="point.value" @change="responseChanged($event)"><span class="ps-2 d-sm-none" v-html="point.label"></span></label>
           </td>
         </tr>
       </template>

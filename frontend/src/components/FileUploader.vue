@@ -14,7 +14,7 @@
       <div class="accordion-body border">
         <div class="row align-items-center">
           <div class="col-auto ul-status-icon"><i class="bi bi-signpost"></i></div>
-          <div class="col-auto"><b>{{ $t('instructions') }}</b></div>
+          <div class="col-auto"><h5>{{ $t('instructions') }}</h5></div>
           <div class="col accordion-header" :id="'acc-instr-head-'+componentId">
             <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#acc-instr-body-'+componentId" aria-expanded="true" :aria-controls="'acc-instr-body-'+componentId">
             </button>
@@ -22,7 +22,7 @@
         </div>
 
         <div :id="'acc-instr-body-'+componentId" class="accordion-collapse collapse show" aria-labelledby="headingOne" :data-bs-parent="'#ul-acc-'+componentId">
-          <div class="accordion-body">
+          <div class="accordion-body ps-0 pe-0">
             <DonationInstructions :instructions="instructions" :component-id="componentId"></DonationInstructions>
           </div>
         </div>
@@ -39,7 +39,7 @@
           <div class="col-auto ul-status-icon"><i class="bi bi-upload"></i></div>
 
           <div class="col-auto ul-status-description">
-            <p v-if="!uploadAttempts"><b>{{ $t('upload-file') }}:</b></p>
+            <h5 v-if="!uploadAttempts">{{ $t('upload-file') }}:</h5>
             <p v-else-if="uploadAttempts">{{ $t('upload-different-file') }}:</p>
           </div>
 
@@ -111,12 +111,13 @@
       </div>
       </div>
       <!-- UPLOAD FEEDBACK -->
-      <div class="accordion-body border">
-      <div class="row ul-feedback-container">
-        <div class="col-auto ul-status-icon"><i class="bi bi-clipboard-data"></i></div>
-        <div class="col extraction-information-container">
-          <div class="col"><b>{{ $t('data-extraction') }}</b></div>
-            <div class="col pb-4">
+
+      <div class="accordion-body border border-bottom-0">
+        <div class="row align-items-center">
+          <div class="col-auto ul-status-icon"><i class="bi bi-clipboard-data"></i></div>
+          <div class="col extraction-information-container">
+            <div class="col"><h5>{{ $t('data-extraction') }}</h5></div>
+            <div class="col">
               <template v-if="uploadStatus === 'pending'">
                 {{ $t('data-extraction-intro') }}:
               </template>
@@ -124,104 +125,118 @@
                 {{ $t('extracted-data-intro') }}:
               </template>
             </div>
-        <template v-for="bp in blueprints" :key="bp">
-        <div class="ul-status row align-items-center pt-2 pb-2" :class="{ 'ul-success': blueprintData[bp.id.toString()].status === 'success', 'ul-failed': blueprintData[bp.id.toString()].status === 'failed'}">
-
-          <!-- Pending -->
-          <template v-if="blueprintData[bp.id.toString()].status === 'pending'">
-            <div class="col w-small bp-ul-icon"><i class="bi bi-file-earmark-fill text-grey"></i></div>
-            <div class="col-4 bp-description">{{ bp.name }}</div>
-            <div class="col bp-ul-status">{{ bp.description }}</div>
-          </template>
-
-          <!-- Success -->
-          <template v-if="blueprintData[bp.id.toString()].status === 'success'">
-            <div class="row pb-2">
-              <div class="col w-small bp-ul-icon"><i class="bi bi-file-earmark-check-fill text-success"></i></div>
-              <div class="col-4 bp-description">{{ bp.name }}</div>
-            </div>
-
-            <div class="row fs-09">
-              <div class="col feedback-col">
-                <div>{{ $t('extracted-data') }}:</div>
-                <div class="data-donation-container pb-3">
-                  <div :id="'donation-container-'+bp.id.toString()" class="ul-data-container ul-data-condensed bg-white">
-                    <table :id="'ul-result-' + bp.id.toString()" class="table table-sm">
-                      <thead>
-                      <tr>
-                        <th v-for="field in bp.fields_to_extract" :key="field">{{ field }}</th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      <tr v-for="row in blueprintData[bp.id.toString()].extracted_data" :key="row">
-                        <template v-for="field in bp.fields_to_extract" :key="field">
-                          <td v-if="field in row" :key="row">{{ row[field] }}</td>
-                          <td v-else>–</td>
-                        </template>
-                      </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <div :id="'expansion-control-'+bp.id.toString()" class="ul-data-expansion-control control-condensed"><a class="text-decoration-none fw-bold" :id="'collapse-toggle-'+bp.id.toString()" v-on:click="showHideData(bp.id.toString())"><span :id="'donation-container-'+ bp.id.toString() + '-toggle-label'">{{ $t('show-extracted-data') }}</span></a></div>
-                </div>
-              </div>
-            </div>
-
-            <template v-if="this.pooled === 'false'"> <!-- Check for ddm_pooled integration -->
-            <div class="row">
-              <div class="col feedback-col pb-5 pt-1">
-                <p class="fw-bold">{{ $t('donation-question') }}</p>
-                <div class="consent-question-container">
-                  <div class="question-choice-item">
-                    <label class="form-check-label rb-cb-label" :for="'donate-agree-'+bp.id.toString()">
-                      <input type="radio" :id="'donate-agree-'+bp.id.toString()" value="true" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent" required>
-                       {{ $t('donation-agree') }}
-                    </label>
-                  </div>
-                  <div class="question-choice-item">
-                    <label class="form-check-label rb-cb-label" :for="'donate-disagree-'+bp.id.toString()">
-                      <input type="radio" :id="'donate-disagree-'+bp.id.toString()" value="false" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent">
-                       {{ $t('donation-disagree') }}
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-            </template>
-
-          </template>
-
-          <!-- Nothing Extracted -->
-          <template v-if="blueprintData[bp.id.toString()].status === 'nothing extracted'">
-            <div class="col w-small bp-ul-icon"><i class="bi bi-file-earmark-x-fill text-grey"></i></div>
-            <div class="col-4 bp-description">{{ bp.name }}</div>
-            <div class="col bp-ul-status">
-              <template v-if="blueprintData[bp.id.toString()].errors.length">
-                <p v-for="e in blueprintData[bp.id.toString()].errors" :key="e">{{ e }}</p>
-              </template>
-              <p v-else>{{ $t('extraction-failed') }}</p>
-            </div>
-            <div class="col-auto bp-ul-data"></div>
-            <div class="col-auto bp-ul-consent"></div>
-          </template>
-
-          <!-- Failed -->
-          <template v-if="blueprintData[bp.id.toString()].status === 'failed'">
-            <div class="col w-small bp-ul-icon"><i class="bi bi-file-earmark-x-fill text-danger"></i></div>
-            <div class="col-4 bp-description">{{ bp.name }}</div>
-            <div class="col bp-ul-status">
-              <template v-if="blueprintData[bp.id.toString()].errors.length">
-                <p v-for="e in blueprintData[bp.id.toString()].errors" :key="e">{{ e }}</p>
-              </template>
-              <p v-else>{{ $t('extraction-failed') }}</p>
-            </div>
-            <div class="col-auto bp-ul-data"></div>
-            <div class="col-auto bp-ul-consent"></div>
-          </template>
-
+          </div>
         </div>
+      </div>
 
-        </template>
+      <div class="accordion-body border border-top-0">
+      <div class="container ul-feedback-container">
+        <div class="row">
+          <div class="col extraction-information-container">
+            <template v-for="bp in blueprints" :key="bp">
+            <div class="ul-status row align-items-start pt-2 pb-2" :class="{ 'ul-success': blueprintData[bp.id.toString()].status === 'success', 'ul-failed': blueprintData[bp.id.toString()].status === 'failed'}">
+
+              <!-- Pending -->
+              <template v-if="blueprintData[bp.id.toString()].status === 'pending'">
+                <div class="col w-small bp-ul-icon"><i class="bi bi-file-earmark-fill text-grey"></i></div>
+                <div class="col">
+                  <div class="col bp-description pb-2">{{ bp.name }}</div>
+                  <div class="col bp-ul-status">{{ bp.description }}</div>
+                </div>
+              </template>
+
+              <!-- Success -->
+              <template v-if="blueprintData[bp.id.toString()].status === 'success'">
+                <div class="row pb-2">
+                  <div class="col w-small bp-ul-icon"><i class="bi bi-file-earmark-check-fill text-success"></i></div>
+                  <div class="col">
+                    <div class="col bp-description pb-2">{{ bp.name }}</div>
+                    <div class="col bp-ul-status">{{ bp.description }}</div>
+                  </div>
+                </div>
+
+                <div class="row pt-2">
+                  <div class="col feedback-col">
+                    <div>{{ $t('extracted-data') }}:</div>
+                    <div class="data-donation-container pb-3 fs-09">
+                      <div :id="'donation-container-'+bp.id.toString()" class="ul-data-container ul-data-condensed bg-white">
+                        <table :id="'ul-result-' + bp.id.toString()" class="table table-sm">
+                          <thead>
+                          <tr>
+                            <th v-for="field in bp.fields_to_extract" :key="field">{{ field }}</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          <tr v-for="row in blueprintData[bp.id.toString()].extracted_data" :key="row">
+                            <template v-for="field in bp.fields_to_extract" :key="field">
+                              <td v-if="field in row" :key="row">{{ row[field] }}</td>
+                              <td v-else>–</td>
+                            </template>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div :id="'expansion-control-'+bp.id.toString()" class="ul-data-expansion-control control-condensed"><a class="text-decoration-none fw-bold" :id="'collapse-toggle-'+bp.id.toString()" v-on:click="showHideData(bp.id.toString())"><span :id="'donation-container-'+ bp.id.toString() + '-toggle-label'">{{ $t('show-extracted-data') }}</span></a></div>
+                    </div>
+                  </div>
+                </div>
+
+                <template v-if="this.pooled === 'false'"> <!-- Check for ddm_pooled integration -->
+                <div class="row">
+                  <div class="col feedback-col pb-5 pt-1">
+                    <p class="fw-bold">{{ $t('donation-question') }}</p>
+                    <div class="consent-question-container">
+                      <div class="question-choice-item">
+                        <label class="form-check-label rb-cb-label" :for="'donate-agree-'+bp.id.toString()">
+                          <input type="radio" :id="'donate-agree-'+bp.id.toString()" value="true" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent" required>
+                           {{ $t('donation-agree') }}
+                        </label>
+                      </div>
+                      <div class="question-choice-item">
+                        <label class="form-check-label rb-cb-label" :for="'donate-disagree-'+bp.id.toString()">
+                          <input type="radio" :id="'donate-disagree-'+bp.id.toString()" value="false" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent">
+                           {{ $t('donation-disagree') }}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                </template>
+
+              </template>
+
+              <!-- Nothing Extracted -->
+              <template v-if="blueprintData[bp.id.toString()].status === 'nothing extracted'">
+                <div class="col w-small bp-ul-icon"><i class="bi bi-file-earmark-x-fill text-grey"></i></div>
+                <div class="col-4 bp-description">{{ bp.name }}</div>
+                <div class="col bp-ul-status">
+                  <template v-if="blueprintData[bp.id.toString()].errors.length">
+                    <p v-for="e in blueprintData[bp.id.toString()].errors" :key="e">{{ e }}</p>
+                  </template>
+                  <p v-else>{{ $t('extraction-failed') }}</p>
+                </div>
+                <div class="col-auto bp-ul-data"></div>
+                <div class="col-auto bp-ul-consent"></div>
+              </template>
+
+              <!-- Failed -->
+              <template v-if="blueprintData[bp.id.toString()].status === 'failed'">
+                <div class="col w-small bp-ul-icon"><i class="bi bi-file-earmark-x-fill text-danger"></i></div>
+                <div class="col-4 bp-description">{{ bp.name }}</div>
+                <div class="col bp-ul-status">
+                  <template v-if="blueprintData[bp.id.toString()].errors.length">
+                    <p v-for="e in blueprintData[bp.id.toString()].errors" :key="e">{{ e }}</p>
+                  </template>
+                  <p v-else>{{ $t('extraction-failed') }}</p>
+                </div>
+                <div class="col-auto bp-ul-data"></div>
+                <div class="col-auto bp-ul-consent"></div>
+              </template>
+
+            </div>
+
+            </template>
+          </div>
         </div>
       </div>
 
@@ -812,6 +827,11 @@ export default {
 .accordion-button {
   border-radius: 0 !important;
 }
+@media (max-width: 768px) {
+  .accordion-body {
+    padding: 10px 5px;
+  }
+}
 .form-check-label {
   cursor: pointer;
 }
@@ -840,9 +860,13 @@ export default {
   max-height: 250px;
   overflow: hidden;
 }
+.ul-data-condensed table {
+  color: gray;
+}
 .ul-data-expanded {
   max-height: 500px;
   overflow-y: scroll;
+  color: black;
 }
 .ul-data-container th {
   position: sticky;
@@ -899,5 +923,15 @@ export default {
 }
 .ul-status-message {
   padding-left: 25px;
+}
+.ul-data-container table {
+  background: #e3e3e31c;
+  table-layout: fixed;
+  max-width: 1000px;
+  width: 1000px;
+}
+.ul-data-container table td {
+  max-width: 33%;
+  word-break: break-all;
 }
 </style>

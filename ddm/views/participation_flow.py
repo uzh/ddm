@@ -237,7 +237,7 @@ class DataDonationView(ParticipationFlowBaseView):
         return json.dumps(uploader_configs)
 
     def post(self, request, *args, **kwargs):
-        super().post(request, **kwargs)
+        super().post(request, **kwargs)  # TODO: Check if this is obsolete
         self.process_uploads(request.FILES)
         redirect_url = reverse(self.steps[self.current_step + 1],
                                kwargs={'slug': self.object.slug})

@@ -662,7 +662,7 @@ export default {
         // Added for ddm_pooled integration.
         let consent = this.poolDonate;
         Object.keys(dataToEmit).forEach(key => {
-          if (consent === '0') {
+          if (consent === '0' || consent === 'false') {
             dataToEmit[key].consent = false;
             dataToEmit[key].extracted_data = [];
           } else {

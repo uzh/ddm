@@ -14,7 +14,7 @@
       <template v-for="(item, id) in items" :key="id">
         <tr :id="'answer-item-' + item.id">
           <td class="mq-table-td-item" v-html="item.label"></td>
-          <td v-for="(point, id) in scale" :key="id" class="mq-table-td-input">
+          <td v-for="(point, id) in scale" :key="id" :class="['mq-table-td-input', { 'border-start': point.add_border, 'border-secondary': point.add_border }]">
             <label><input type="radio" :name="item.id" :value="point.value" @change="responseChanged($event)"><span class="ps-2 d-sm-none" v-html="point.label"></span></label>
           </td>
         </tr>

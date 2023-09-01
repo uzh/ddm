@@ -285,6 +285,9 @@ export default {
 @media (max-width: 768px) {
   .default-modal {
     width: 85%;
+    top: 5%;
+    max-height: 90%;
+    overflow-y: scroll;
   }
 }
 

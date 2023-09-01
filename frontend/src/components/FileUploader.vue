@@ -186,13 +186,13 @@
                   <div class="col feedback-col pb-5 pt-1">
                     <p class="fw-bold">{{ $t('donation-question') }}</p>
                     <div class="consent-question-container">
-                      <div class="question-choice-item">
+                      <div class="question-choice-item pt-3 pt-lg-0">
                         <label class="form-check-label rb-cb-label" :for="'donate-agree-'+bp.id.toString()">
                           <input type="radio" :id="'donate-agree-'+bp.id.toString()" value="true" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent" required>
                            {{ $t('donation-agree') }}
                         </label>
                       </div>
-                      <div class="question-choice-item">
+                      <div class="question-choice-item pt-3 pt-lg-0">
                         <label class="form-check-label rb-cb-label" :for="'donate-disagree-'+bp.id.toString()">
                           <input type="radio" :id="'donate-disagree-'+bp.id.toString()" value="false" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent">
                            {{ $t('donation-disagree') }}
@@ -246,13 +246,13 @@
             <div class="col feedback-col pb-5 pt-1">
               <p class="fw-bold">{{ $t('pool-submit-question') }}</p>
               <div class="consent-question-container">
-                <div class="question-choice-item">
+                <div class="question-choice-item pt-3 pt-lg-0">
                   <label class="form-check-label rb-cb-label" for="pool-donate-agree">
                     <input type="radio" id="pool-donate-agree" value="1" v-model="poolDonate" @change="emitToParent" required>
                     {{ $t('donation-agree-pooled') }}
                   </label>
                 </div>
-                <div class="question-choice-item">
+                <div class="question-choice-item pt-3 pt-lg-0">
                   <label class="form-check-label rb-cb-label" for="pool-donate-disagree">
                     <input type="radio" id="pool-donate-disagree" value="0" v-model="poolDonate" @change="emitToParent">
                     {{ $t('donation-disagree-pooled') }}

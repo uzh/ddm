@@ -188,7 +188,7 @@
                     <div class="consent-question-container">
                       <div class="question-choice-item pt-3 pt-lg-0">
                         <label class="form-check-label rb-cb-label" :for="'donate-agree-'+bp.id.toString()">
-                          <input type="radio" :id="'donate-agree-'+bp.id.toString()" value="true" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent" required>
+                          <input type="radio" :id="'donate-agree-'+bp.id.toString()" value="true" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent" checked="checked" required>
                            {{ $t('donation-agree') }}
                         </label>
                       </div>

@@ -248,13 +248,13 @@
               <div class="consent-question-container">
                 <div class="question-choice-item pt-3 pt-lg-0">
                   <label class="form-check-label rb-cb-label" for="pool-donate-agree">
-                    <input type="radio" id="pool-donate-agree" value="1" v-model="poolDonate" @change="emitToParent" required>
+                    <input type="radio" id="pool-donate-agree" value="true" v-model="poolDonate" @change="emitToParent" required>
                     {{ $t('donation-agree-pooled') }}
                   </label>
                 </div>
                 <div class="question-choice-item pt-3 pt-lg-0">
                   <label class="form-check-label rb-cb-label" for="pool-donate-disagree">
-                    <input type="radio" id="pool-donate-disagree" value="0" v-model="poolDonate" @change="emitToParent">
+                    <input type="radio" id="pool-donate-disagree" value="false" v-model="poolDonate" @change="emitToParent">
                     {{ $t('donation-disagree-pooled') }}
                   </label>
                 </div>

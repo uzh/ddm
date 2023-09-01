@@ -355,5 +355,5 @@ class ScalePoint(models.Model):
     add_border = models.BooleanField(default=False)
 
     def serialize_to_config(self):
-        scale_config = model_to_dict(self, exclude=['question', 'add_border'])
+        scale_config = model_to_dict(self, exclude=['question'])
         return scale_config

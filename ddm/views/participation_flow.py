@@ -76,9 +76,14 @@ class ParticipationFlowBaseView(DetailView):
         return self.render_to_response(context)
 
     def post(self, request, *arges, **kwargs):
-        self.set_step_completed()
-        return redirect(self.steps[self.current_step + 1],
-                        slug=self.object.slug)
+        # Account for 'page back' action in browser
+        if self.steps[self.current_step] == self.step_name:
+            self.set_step_completed()
+            return redirect(self.steps[self.current_step + 1],
+                            slug=self.object.slug)
+        else:
+            return redirect(self.steps[self.current_step], slug=self.object.slug)
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

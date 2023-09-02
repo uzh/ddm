@@ -318,7 +318,7 @@ export default {
       generalErrors: [],
       ulModalInfoMsg: '',
       ulModalInfoTitle: '',
-      poolDonate: '0'
+      poolDonate: true
     }
   },
   created() {

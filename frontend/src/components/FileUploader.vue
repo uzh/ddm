@@ -327,7 +327,7 @@ export default {
       let id = bp.id;
       let blueprintInfo = {
         name_uploaded_file: null,
-        consent: '',
+        consent: 'true',
         extracted_data: [],
         status: 'pending',
         errors: []

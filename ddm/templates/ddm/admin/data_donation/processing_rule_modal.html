@@ -5,7 +5,7 @@
         <h4>Rule Configuration</h4>
         <div class="ddm-admin-form">
           {% for field in form %}
-            {% if field.name in 'name,field,execution_order,input_type,comparison_operator,comparison_value,replacement_value' %}
+            {% if field.name in 'name,field,regex_field,execution_order,input_type,comparison_operator,comparison_value,replacement_value' %}
               <p>
                 {{ field.label_tag }}
                 <span class="helptext">{{ field.help_text }}</span>

@@ -491,6 +491,7 @@ export default {
         let nEntriesWithMissingFields = 0;
         let nEntriesFilteredOut = 0;
 
+        // Limit the number of messages posted to the project logs.
         let nMsgsPosted = 0;
         let maxMsgs = 10;
 
@@ -513,12 +514,18 @@ export default {
             return;
           }
 
-          // Match (potential) regex variable names to the actual keys contained in an entry.
+          // Match variable names to the keys contained in an entry.
           let rules = blueprint.filter_rules;
           let keyMap = new Map();
           rules.forEach(rule => {
-            let keyRegex = new RegExp(rule.field);
-            let keys = Object.keys(entry).filter(key => keyRegex.test(key));
+            let keys = Object.keys(entry);
+            if (rule.regex_field) {
+              let fieldRegex = new RegExp(rule.field);
+              keys = keys.filter(key => fieldRegex.test(key));
+            } else {
+              let field = rule.field;
+              keys = keys.filter(key => field === key);
+            }
 
             if(keys.length > 1) {
               if (nMsgsPosted < maxMsgs) {

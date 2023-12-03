@@ -108,7 +108,8 @@ class ProcessingRuleForm(forms.ModelForm):
 
     class Meta:
         model = ProcessingRule
-        fields = ['execution_order', 'name', 'field', 'comparison_operator', 'comparison_value', 'replacement_value']
+        fields = ['execution_order', 'name', 'field', 'regex_field',
+                  'comparison_operator', 'comparison_value', 'replacement_value']
         widgets = {
             'field': TextInput(),
             'comparison_value': Textarea(attrs={'cols': 60, 'rows': 1}),

@@ -279,7 +279,7 @@ Expected File Format:: The file format of the expected data donation. Currently,
 ====== JSON specific settings
 
 Extraction Root:: Indicates on which level of the files' data structure information
-should be extractet. If you want to extract information contained on the first
+should be extracted. If you want to extract information contained on the first
 level (e.g., `{'field to be extracted': value}`, you can leave this field empty.
 If you want to extract data located on a higher level, then you would provide
 the path to the parent field of the data you want to extract (e.g., if your json
@@ -305,7 +305,10 @@ Execution Order:: The order in which the extraction rules are applied to a file.
 
 Name:: The name of an extraction rule. For internal organisation only.
 
-Field:: The field to which the rule will be applied.
+Field:: The field to which the rule will be applied. This can either be a "normal" string or a
+regular expression (regex). If the latter is the case, you must also select `regex field` (see below).
+
+Regex field:: Select if you use a regex expression in the `Field` setting of this rule.
 
 Extraction Operator:: Defines the main logic of the extraction step. If empty, this indicates
 that you want to keep the field in the donated data. For all non-regex operations,

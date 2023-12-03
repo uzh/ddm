@@ -497,18 +497,25 @@ export default {
 
         fileContent.forEach(entry => {
 
-          // Check if all expected fields are here
+          // Check if file contains all expected fields
           let missingFields = [];
-          if (!blueprint.expected_fields.every(element => {
-            let eleRegex = new RegExp(element);
-            if (Object.keys(entry).filter(entry => eleRegex.test(entry)).length > 0){
-              return true;
+          if (!blueprint.expected_fields.every(field => {
+
+            if (blueprint.exp_fields_regex_matching) {
+              let fieldRegex = new RegExp(field);
+              if (Object.keys(entry).filter(key => fieldRegex.test(key)).length > 0){
+                return true;
+              }
+            } else if (Object.keys(entry).filter(key => field === key).length > 0) {
+                return true;
             } else {
-              missingFields.push(element)
+              missingFields.push(field)
               nEntriesWithMissingFields += 1;
               return false;
-            }})) {
-            // Go to next entry and record exception
+            }
+          })) {
+            // TODO: Check wheter and how to implement this:
+            //  Go to next entry and record exception
             // let errorMsg = `Entry does not contain the expected field(s) "${missingFields.toString()}".`;
             // uploader.postError(4203, errorMsg, blueprint.id);
             return;

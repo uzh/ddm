@@ -37,5 +37,7 @@
       "js/vue_questionnaire.js"
     ]
   },
-  "publicPath": "/static/ddm/vue/"
+  "publicPath": "/static/ddm/vue/",
+  "error": "ESLintError",
+  "message": "[eslint] \nC:\\Files\\Arbeit\\Projekte\\Data Donation Lab\\Code\\DDM\\ddm\\frontend\\src\\components\\FileUploader.vue\n  510:52  error  'field' is not defined  no-undef\n\n✖ 1 problem (1 error, 0 warnings)\n"
 }

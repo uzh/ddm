@@ -82,8 +82,9 @@ class BlueprintEditForm(forms.ModelForm):
 
     class Meta:
         model = DonationBlueprint
-        fields = ['name', 'description', 'regex_path', 'exp_file_format', 'csv_delimiter',
-                  'file_uploader', 'json_extraction_root', 'expected_fields']
+        fields = ['name', 'description', 'regex_path', 'exp_file_format',
+                  'csv_delimiter', 'file_uploader', 'json_extraction_root',
+                  'expected_fields', 'expected_fields_regex_matching']
         widgets = {
             'expected_fields': forms.Textarea(attrs={'rows': 1}),
             'regex_path': forms.Textarea(attrs={'rows': 1}),

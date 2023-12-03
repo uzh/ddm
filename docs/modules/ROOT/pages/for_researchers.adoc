@@ -271,8 +271,13 @@ that can help you test regex patterns.
 ====
 
 Expected fields:: The fields that must be contained in the donated file. If a file does not contain
-one or more of the fields defined here, it will not be accepted as a donation.
+*all* fields defined here, it will not be accepted as a donation. +
 Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").
+You can also use regular expressions (regex) to match expected fields - for this, you
+must enable the `expected field regex matching` option (see below).
+
+Expected field regex matching:: Select if you use a regex expression in the `Expected fields`
+setting.
 
 Expected File Format:: The file format of the expected data donation. Currently, only JSON and CSV is implemented.
 

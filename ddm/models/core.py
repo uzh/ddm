@@ -466,6 +466,12 @@ class DonationBlueprint(models.Model):
         )
     )
 
+    expected_fields_regex_matching = models.BooleanField(
+        default=False,
+        null=False,
+        help_text='Select if you use regex expressions in the "Excpected fields".'
+    )
+
     file_uploader = models.ForeignKey(
         'FileUploader',
         null=True,
@@ -505,6 +511,7 @@ class DonationBlueprint(models.Model):
             'format': self.exp_file_format,
             'json_extraction_root': self.json_extraction_root,
             'expected_fields': json.loads("[" + str(self.expected_fields) + "]"),
+            'exp_fields_regex_matching': self.expected_fields_regex_matching,
             'fields_to_extract': self.get_fields_to_extract(),
             'regex_path': self.regex_path,
             'filter_rules': self.get_filter_rules(),

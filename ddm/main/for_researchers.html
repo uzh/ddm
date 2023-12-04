@@ -597,8 +597,15 @@ that can help you test regex patterns.</p>
 <dt class="hdlist1">Expected fields</dt>
 <dd>
 <p>The fields that must be contained in the donated file. If a file does not contain
-one or more of the fields defined here, it will not be accepted as a donation.
-Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").</p>
+<strong>all</strong> fields defined here, it will not be accepted as a donation.<br>
+Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").
+You can also use regular expressions (regex) to match expected fields - for this, you
+must enable the <code>expected field regex matching</code> option (see below).</p>
+</dd>
+<dt class="hdlist1">Expected field regex matching</dt>
+<dd>
+<p>Select if you use a regex expression in the <code>Expected fields</code>
+setting.</p>
 </dd>
 <dt class="hdlist1">Expected File Format</dt>
 <dd>
@@ -613,7 +620,7 @@ Put the field names in double quotes (") and separate them with commas ("Field A
 <dt class="hdlist1">Extraction Root</dt>
 <dd>
 <p>Indicates on which level of the files' data structure information
-should be extractet. If you want to extract information contained on the first
+should be extracted. If you want to extract information contained on the first
 level (e.g., <code>{'field to be extracted': value}</code>, you can leave this field empty.
 If you want to extract data located on a higher level, then you would provide
 the path to the parent field of the data you want to extract (e.g., if your json
@@ -658,7 +665,12 @@ you first have to add a rule for each field that you want to keep in your data.<
 </dd>
 <dt class="hdlist1">Field</dt>
 <dd>
-<p>The field to which the rule will be applied.</p>
+<p>The field to which the rule will be applied. This can either be a "normal" string or a
+regular expression (regex). If the latter is the case, you must also select <code>regex field</code> (see below).</p>
+</dd>
+<dt class="hdlist1">Regex field</dt>
+<dd>
+<p>Select if you use a regex expression in the <code>Field</code> setting of this rule.</p>
 </dd>
 <dt class="hdlist1">Extraction Operator</dt>
 <dd>

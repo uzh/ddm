@@ -163,13 +163,13 @@
                         <table :id="'ul-result-' + bp.id.toString()" class="table table-sm">
                           <thead>
                           <tr>
-                            <th v-for="field in bp.fields_to_extract" :key="field">{{ field }}</th>
+                            <th v-for="value in blueprintData[bp.id.toString()].extracted_fields.values()" :key="value">{{ value }}</th>
                           </tr>
                           </thead>
                           <tbody>
                           <tr v-for="row in blueprintData[bp.id.toString()].extracted_data" :key="row">
-                            <template v-for="field in bp.fields_to_extract" :key="field">
-                              <td v-if="field in row" :key="row">{{ row[field] }}</td>
+                            <template v-for="key in blueprintData[bp.id.toString()].extracted_fields.keys()" :key="key">
+                              <td v-if="key in row" :key="row">{{ row[key] }}</td> <!-- TODO: if Key in row -> value -->
                               <td v-else>–</td>
                             </template>
                           </tr>
@@ -329,6 +329,7 @@ export default {
         name_uploaded_file: null,
         consent: 'true',
         extracted_data: [],
+        extracted_fields: new Map(),
         status: 'pending',
         errors: []
       }
@@ -490,94 +491,140 @@ export default {
         let nEntriesWithMissingFields = 0;
         let nEntriesFilteredOut = 0;
 
+        // Limit the number of messages posted to the project logs.
+        let nMsgsPosted = 0;
+        let maxMsgs = 10;
+
         fileContent.forEach(entry => {
 
-          // Check if all expected fields are here
+          // Check if file contains all expected fields
           let missingFields = [];
-          if (!blueprint.expected_fields.every(element => {
-            if (Object.keys(entry).includes(element)) {
-              return true;
+          if (!blueprint.expected_fields.every(field => {
+
+            if (blueprint.exp_fields_regex_matching) {
+              let fieldRegex = new RegExp(field);
+              if (Object.keys(entry).filter(key => fieldRegex.test(key)).length > 0){
+                return true;
+              }
+            } else if (Object.keys(entry).filter(key => field === key).length > 0) {
+                return true;
             } else {
-              missingFields.push(element)
+              missingFields.push(field)
               nEntriesWithMissingFields += 1;
               return false;
-            }})) {
-            // Go to next entry and record exception
+            }
+          })) {
+            // TODO: Check wheter and how to implement this:
+            //  Go to next entry and record exception
             // let errorMsg = `Entry does not contain the expected field(s) "${missingFields.toString()}".`;
             // uploader.postError(4203, errorMsg, blueprint.id);
             return;
           }
 
+          // Match variable names to the keys contained in an entry.
+          let rules = blueprint.filter_rules;
+          let keyMap = new Map();
+          rules.forEach(rule => {
+            let keys = Object.keys(entry);
+            if (rule.regex_field) {
+              let fieldRegex = new RegExp(rule.field);
+              keys = keys.filter(key => fieldRegex.test(key));
+            } else {
+              let field = rule.field;
+              keys = keys.filter(key => field === key);
+            }
+
+            if(keys.length > 1) {
+              if (nMsgsPosted < maxMsgs) {
+                let errorMsg = `More than 1 key matches for variable "${rule.field}": ${keys}; Associated "${keys[0]}" to variable.`;
+                uploader.postError(4203, errorMsg, blueprint.id);
+                nMsgsPosted++;
+              }
+            } else if(keys.length === 0) {
+              if (nMsgsPosted < maxMsgs) {
+                let errorMsg = `No key matches for variable "${rule.field}": ${Object.keys(entry)}`;
+                uploader.postError(4203, errorMsg, blueprint.id);
+                nMsgsPosted++;
+              }
+            } else {
+              keyMap.set(rule.field, keys[0]);
+            }
+          })
+
           // Apply filters, Pop unused keys and add to result.
           let result = {};
           try {
-            let rules = blueprint.filter_rules
             if (rules.length > 0) {
               rules.forEach(rule => {
-                let key = rule.field;
+                let key = keyMap.get(rule.field);
+
+                if (key === 'undefined') {
+                  throw `Field "${key}" not in entry.`
+                }
+
                 switch (rule.comparison_operator) {
                   case null:
-                    result[key] = entry[key];
+                    result[rule.field] = entry[key];
                     break;
                   case '==':
                     if (entry[key] !== rule.comparison_value) {
-                      // result[key] = entry[key]
-                      // pass
+                      // keep entry
                     } else {
+                      // discard entry
                       throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
                     }
                     break;
                   case '!=':
                     if (entry[key] === rule.comparison_value) {
-                      // result[key] = entry[key]
-                      // pass
+                      // keep entry
                     } else {
+                      // discard entry
                       throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
                     }
                     break;
                   case '<=':
                     if (entry[key] > rule.comparison_value) {
-                      // result[key] = entry[key]
-                      // pass
+                      // keep entry
                     } else {
+                      // discard entry
                       throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
                     }
                     break;
                   case '>=':
                     if (entry[key] < rule.comparison_value) {
-                      // result[key] = entry[key]
-                      // pass
+                      // keep entry
                     } else {
+                      // discard entry
                       throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
                     }
                     break;
                   case '<':
                     if (entry[key] >= rule.comparison_value) {
-                      // result[key] = entry[key]
-                      // pass
+                      // keep entry
                     } else {
+                      // discard entry
                       throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
                     }
                     break;
                   case '>':
                     if (entry[key] <= rule.comparison_value) {
-                      // result[key] = entry[key]
-                      // pass
+                      // keep entry
                     } else {
+                      // discard entry
                       throw `Field "${key}" matches filter value "${rule.comparison_value}".`
                     }
                     break;
                   case 'regex-delete-match':
                     if (key in result) {
                       let newValue = entry[key].replaceAll(RegExp(rule.comparison_value, 'g'), '');
-                      result[key] = newValue;
+                      result[rule.field] = newValue;
                       entry[key] = newValue;
                     }
                     break;
                   case 'regex-replace-match':
                     if (key in result) {
                       let newValue = entry[key].replaceAll(RegExp(rule.comparison_value, 'g'), rule.replacement_value);
-                      result[key] = newValue;
+                      result[rule.field] = newValue;
                       entry[key] = newValue;
                     }
                     break;
@@ -585,9 +632,9 @@ export default {
                     if (key in entry) {
                       let comparisonValue = RegExp(rule.comparison_value, 'g');
                       if (!comparisonValue.test(entry[key])) {
-                        // result[key] = entry[key];
-                        // pass
+                        // keep entry
                       } else {
+                        // discard entry
                         throw `Field "${key}" matches RegExp "${rule.comparison_value}".`
                       }
                     }
@@ -601,6 +648,11 @@ export default {
             nEntriesFilteredOut += 1;
             // uploader.postError(4206, `${e}`, blueprint.id)
           }
+
+          for (let [key, value] of  keyMap.entries()) {
+            uploader.blueprintData[blueprintID].extracted_fields.set(key, value);
+          }
+
         })
         uploader.blueprintData[blueprintID].extracted_data = extractedData;
         if (nEntriesWithMissingFields === fileContent.length) {

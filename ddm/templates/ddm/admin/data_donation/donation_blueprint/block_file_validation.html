@@ -1,0 +1,17 @@
+<div class="ddm-admin-form pt-5">
+  <h4>Data Extraction Settings</h4>
+
+  <p>Data Extraction is a two-step process consisting of first the <b>file validation</b> and second the <b>data extraction</b>.</p>
+
+  <h5><b>File Validation</b></h5>
+  <ul>
+    <li>First, it is checked whether the expected file is included in the uploaded data (only applies to ZIP uploads).
+      If the associated File Uploader expects a ZIP Upload, the correct file is identified
+      using the provided <code>file path</code> (this is skipped for single file uploads).</li>
+    <li>Second, it is checked whether the uploaded file is in the <code>expected file format</code>.</li>
+    <li>Third, it is checked whether the identified file contains <b>all</b> <code>expected fields</code>.</li>
+    <li>
+      If any of these validation steps fail, the participant will be shown an
+      exception message explaining what went wrong and no data is extracted.</li>
+  </ul>
+</div>

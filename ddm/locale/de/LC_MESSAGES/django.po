@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-28 13:58+0200\n"
+"POT-Creation-Date: 2023-12-06 10:45+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,31 +18,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\templates\ddm\public\base.html:57
+#: .\templates\ddm\public\base.html:46
 msgid "Contact"
 msgstr "Kontakt"
 
-#: .\templates\ddm\public\base.html:60
+#: .\templates\ddm\public\base.html:49
 msgid "What happens with my data?"
 msgstr "Was passiert mit meinen Daten?"
 
-#: .\templates\ddm\public\base.html:72
+#: .\templates\ddm\public\base.html:61
 msgid "Contact Information"
 msgstr "Kontaktinformationen"
 
-#: .\templates\ddm\public\base.html:86
+#: .\templates\ddm\public\base.html:75
 msgid "Data Protection Statement"
 msgstr "Datenschutzerklärung"
 
-#: .\templates\ddm\public\briefing.html:11
+#: .\templates\ddm\public\briefing.html:9
 msgid "Please indicate whether you want to continue with this study."
 msgstr "Bitte geben Sie an, ob Sie mit dieser Studie fortfahren möchten."
 
-#: .\templates\ddm\public\briefing.html:15
+#: .\templates\ddm\public\briefing.html:13
 msgid "Welcome to this study!"
 msgstr "Herzlich willkommen zu dieser Studie!"
 
-#: .\templates\ddm\public\briefing.html:16
+#: .\templates\ddm\public\briefing.html:14
 msgid ""
 "Please define a description and welcome text for this project in the Project "
 "Hub."
@@ -50,7 +50,8 @@ msgstr ""
 "Bitte definieren Sie eine Beschreibung und einen Begrüßungstext für dieses "
 "Projekt im Project Hub."
 
-#: .\templates\ddm\public\briefing.html:35
+#: .\templates\ddm\public\briefing.html:33
+#: .\templates\ddm\public\debriefing.html:17
 msgid "Continue&nbsp;&nbsp;&#8250;"
 msgstr "Weiter&nbsp;&nbsp;&#8250;"
 
@@ -63,8 +64,9 @@ msgid ""
 "Unfortunately, we could not find a study participation started for the given "
 "ID. However, you can access the study by clicking on the following link:"
 msgstr ""
-"Leider konnten wir für die angegebene ID keine begonnene Studienteilnahme finden."
-"Wenn Sie die Studie trotzdem aufrufen möchten, klicken Sie auf den folgenden Link:"
+"Leider konnten wir für die angegebene ID keine begonnene Studienteilnahme "
+"finden.Wenn Sie die Studie trotzdem aufrufen möchten, klicken Sie auf den "
+"folgenden Link:"
 
 #: .\templates\ddm\public\continuation_not_found.html:9
 msgid "Go to Study"
@@ -79,9 +81,3 @@ msgid "You have reached the end of the study and can now close this window."
 msgstr ""
 "Sie haben das Ende der Studie erreicht und können dieses Fenster nun "
 "schliessen."
-
-#: .\templates\ddm\public\debriefing.html:17
-#, fuzzy
-#| msgid "Continue&nbsp;&nbsp;&#8250;"
-msgid "Leave Page&nbsp;&nbsp;&#8250;"
-msgstr "Weiter&nbsp;&nbsp;&#8250;"

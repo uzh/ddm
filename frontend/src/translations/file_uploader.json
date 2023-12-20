@@ -13,7 +13,7 @@
     "extracted-files": "Extracted files",
     "upload-success-short": "Successfully Uploaded",
     "upload-failed-short": "Upload Failed",
-    "show-extracted-data": "Show all my data",
+    "show-extracted-data": "Show data",
     "hide-extracted-data": "Show less",
     "donation-question": "Do you agree to donate and submit the data listed above?",
     "donation-agree": "Yes, I agree to submit these data",
@@ -45,7 +45,8 @@
     "ul-partial-modal-body": "<p>Only parts of the data could be uploaded successfully.</p><p>In the 'Data Donation' section you will find more information on which file a problem occurred. This information may help you to identify and fix the problem.</p><p>If not, you can inspect the uploaded data, indicate whether you want to donate the data or not, and continue.</p>",
     "ul-nothing-extracted-modal-title": "Upload Successful but No Data Extracted",
     "ul-nothing-extracted-modal-body": "<p>The data was successfully uploaded but no data were extracted. It is possible, that your data file did not contain any information relevant to this research project.</p><p>If you think you chose the wrong file, you can try the upload again. Otherwise, you can continue by clicking on 'submit data'.</p>",
-    "extracted-data": "Extracted data"
+    "extracted-data": "The following data were extracted:",
+    "extraction-disclaimer": "The rows {lower} to {upper} from a total of {total} extracted data entries are displayed."
   },
   "de": {
     "instructions": "Instruktionen",
@@ -61,7 +62,7 @@
     "extracted-files": "Ausgelesene Dateien",
     "upload-success-short": "erfolgreich hochgeladen",
     "upload-failed-short": "Upload fehlgeschlagen",
-    "show-extracted-data": "Alle meine Daten anzeigen",
+    "show-extracted-data": "Daten anzeigen",
     "hide-extracted-data": "weniger anzeigen",
     "donation-question": "Sind Sie damit einverstanden, diese Daten zu spenden?",
     "donation-agree": "Ja, ich bin damit einverstanden, diese Daten zu spenden und an die Forschenden zu übermitteln.",
@@ -88,11 +89,12 @@
     "ul-success-modal-title": "Upload abgeschlossen",
     "ul-success-modal-body": "Alle Daten wurden erfolgreich hochgeladen. Bitte schauen Sie sich die hochgeladenen Daten an und geben Sie jeweils an, ob Sie die Daten spenden möchten oder nicht.",
     "ul-failed-modal-title": "Es ist ein Fehler aufgetreten",
-    "ul-failed-modal-body": "Leider ist beim Hochladen ihrer Datei ein Fehler aufgetreten. Bitte schauen Sie sich die Fehlerbeschreibung in den Abschnitten 'Date hochladen' und 'Datenspende' an und versuchen Sie es gegebenenfalls erneut.",
+    "ul-failed-modal-body": "Leider ist beim Hochladen ihrer Datei ein Fehler aufgetreten. Bitte schauen Sie sich die Fehlerbeschreibung in den Abschnitten 'Daten hochladen' und 'Datenspende' an und versuchen Sie es gegebenenfalls erneut.",
     "ul-partial-modal-title": "Upload teilweise erfolgreich",
     "ul-partial-modal-body": "<p>Es konnte nur ein Teil der Daten erfolgreich hochgeladen werden.</p><p>Im Bereich 'Datenspende' finden Sie weitere Informationen dazu, bei welchen Daten ein Problem aufgetreten ist. Gegebenenfalls helfen Ihnen diese Informationen das Problem zu identifizieren und zu beheben.</p><p>Falls nicht, können Sie sich die erfolgreich hochgeladenen Daten anschauen und entscheiden, ob Sie diese Daten spenden möchten oder nicht.</p>",
     "ul-nothing-extracted-modal-title": "Upload erfolgreich, jedoch wurden keine Daten ausgelesen",
     "ul-nothing-extracted-modal-body": "<p>Die Daten wurden erfolgreich verarbeitet, aber es wurden keine Daten extrahiert. Es ist möglich, dass Ihre Datei keine für dieses Forschungsprojekt relevanten Informationen enthält.</p><p>Wenn Sie denken, dass Sie die falsche Datei ausgewählt haben, können Sie den Upload erneut versuchen.</p><p>Andernfalls können Sie fortfahren, indem Sie auf 'Daten übermitteln' klicken.</p>",
-    "extracted-data": "Ausgelesene Daten"
+    "extracted-data": "Die folgenden Daten wurden ausgelesen:",
+    "extraction-disclaimer": "Es werden die Zeilen {lower} bis {upper} von insgesamt {total} ausgelesenen Einträgen angezeigt."
   }
 }

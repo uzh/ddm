@@ -157,8 +157,10 @@
 
                 <div class="row pt-2">
                   <div class="col feedback-col">
-                    <div>{{ $t('extracted-data') }}:</div>
-                    <div class="data-donation-container pb-3 fs-09">
+                    <div>
+                      {{ $t('extracted-data') }}
+                    </div>
+                    <div class="data-donation-container pb-3 pt-3 fs-09">
                       <div :id="'donation-container-'+bp.id.toString()" class="ul-data-container ul-data-condensed bg-white">
                         <table :id="'ul-result-' + bp.id.toString()" class="table table-sm">
                           <thead>
@@ -167,14 +169,23 @@
                           </tr>
                           </thead>
                           <tbody>
-                          <tr v-for="row in blueprintData[bp.id.toString()].extracted_data" :key="row">
+                          <tr v-for="row in blueprintData[bp.id.toString()].extracted_data.slice(blueprintData[bp.id.toString()].fb_pos_lower, blueprintData[bp.id.toString()].fb_pos_upper)" :key="row">
                             <template v-for="key in blueprintData[bp.id.toString()].extracted_fields.keys()" :key="key">
-                              <td v-if="key in row" :key="row">{{ row[key] }}</td> <!-- TODO: if Key in row -> value -->
+                              <td v-if="key in row" :key="row">{{ row[key] }}</td>
                               <td v-else>–</td>
                             </template>
                           </tr>
+
                           </tbody>
                         </table>
+                        <div class="pb-2">
+                          <a class="btn btn-secondary btn-sm me-2" v-if="blueprintData[bp.id.toString()].fb_pos_lower > 14" v-on:click="updateFbPos(bp.id.toString(), 'down')" >Vorherige Seite</a>
+                          <a class="btn btn-secondary btn-sm" v-if="blueprintData[bp.id.toString()].fb_pos_upper < blueprintData[bp.id.toString()].extracted_data.length" v-on:click="updateFbPos(bp.id.toString(), 'up')" >Nächste Seite</a>
+                        </div>
+
+                        <p class="pb-3">
+                          {{ $t('extraction-disclaimer', { lower: blueprintData[bp.id.toString()].fb_pos_lower, upper: blueprintData[bp.id.toString()].fb_pos_upper, total: blueprintData[bp.id.toString()].extracted_data.length }) }}
+                        </p>
                       </div>
                       <div :id="'expansion-control-'+bp.id.toString()" class="ul-data-expansion-control control-condensed"><a class="text-decoration-none fw-bold" :id="'collapse-toggle-'+bp.id.toString()" v-on:click="showHideData(bp.id.toString())"><span :id="'donation-container-'+ bp.id.toString() + '-toggle-label'">{{ $t('show-extracted-data') }}</span></a></div>
                     </div>
@@ -188,13 +199,13 @@
                     <div class="consent-question-container">
                       <div class="question-choice-item pt-3 pt-lg-0">
                         <label class="form-check-label rb-cb-label" :for="'donate-agree-'+bp.id.toString()">
-                          <input type="radio" :id="'donate-agree-'+bp.id.toString()" value="true" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent" checked="checked" required>
+                          <input type="radio" :id="'donate-agree-'+bp.id.toString()" :name="'agreement-'+bp.id.toString()" value="true" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent" checked="checked" required>
                            {{ $t('donation-agree') }}
                         </label>
                       </div>
                       <div class="question-choice-item pt-3 pt-lg-0">
                         <label class="form-check-label rb-cb-label" :for="'donate-disagree-'+bp.id.toString()">
-                          <input type="radio" :id="'donate-disagree-'+bp.id.toString()" value="false" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent">
+                          <input type="radio" :id="'donate-disagree-'+bp.id.toString()" :name="'agreement-'+bp.id.toString()" value="false" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent">
                            {{ $t('donation-disagree') }}
                         </label>
                       </div>
@@ -327,11 +338,13 @@ export default {
       let id = bp.id;
       let blueprintInfo = {
         name_uploaded_file: null,
-        consent: 'true',
+        consent: 'false',
         extracted_data: [],
         extracted_fields: new Map(),
         status: 'pending',
-        errors: []
+        errors: [],
+        fb_pos_lower: 0,
+        fb_pos_upper: 15
       }
       this.blueprintData[id.toString()] = blueprintInfo
     })
@@ -370,6 +383,7 @@ export default {
                 })
                 if (!reHasMatched) {
                   uploader.postError(4180, uploader.$t('error-regex-not-matched'), blueprint.id);
+                  uploader.postError(4181, `Files in uploaded folder: ${Object.keys(z.files)}`, blueprint.id);
                   uploader.recordError(uploader.$t('error-regex-not-matched'), blueprint.id.toString());
                 }
               })
@@ -505,6 +519,10 @@ export default {
               let fieldRegex = new RegExp(field);
               if (Object.keys(entry).filter(key => fieldRegex.test(key)).length > 0){
                 return true;
+              } else {
+                missingFields.push(field)
+                nEntriesWithMissingFields += 1;
+                return false;
               }
             } else if (Object.keys(entry).filter(key => field === key).length > 0) {
                 return true;
@@ -514,7 +532,7 @@ export default {
               return false;
             }
           })) {
-            // TODO: Check wheter and how to implement this:
+            // TODO: Check whether and how to implement this:
             //  Go to next entry and record exception
             // let errorMsg = `Entry does not contain the expected field(s) "${missingFields.toString()}".`;
             // uploader.postError(4203, errorMsg, blueprint.id);
@@ -557,7 +575,6 @@ export default {
             if (rules.length > 0) {
               rules.forEach(rule => {
                 let key = keyMap.get(rule.field);
-
                 if (key === 'undefined') {
                   throw `Field "${key}" not in entry.`
                 }
@@ -699,7 +716,7 @@ export default {
 
       if (this.pooled === 'false') {
         Object.keys(dataToEmit).forEach(key => {
-          if (dataToEmit[key].consent === '') {
+          if (dataToEmit[key].consent === null) {
             dataToEmit[key].consent = null;
             dataToEmit[key].extracted_data = [];
           }
@@ -777,22 +794,23 @@ export default {
     updateStatus() {
       let bpErrorCount = 0;
       let bpNothingExtracted = 0;
-      let nBlueprints = Object.keys(this.blueprintData).length
+      let nBlueprints = Object.keys(this.blueprintData).length;
       for (let bp in this.blueprintData){
         if (this.blueprintData[bp].errors.length) {
           let errorSet = new Set(this.blueprintData[bp].errors);
 
           if (errorSet.size === 1 && errorSet.has(this.$t('error-all-fields-filtered-out'))) {
             this.blueprintData[bp].status = 'nothing extracted';
-            this.blueprintData[bp].consent = false;
+            this.blueprintData[bp].consent = 'false';
             bpNothingExtracted += 1;
           } else {
             this.blueprintData[bp].status = 'failed';
-            this.blueprintData[bp].consent = false;
+            this.blueprintData[bp].consent = 'false';
             bpErrorCount += 1;
           }
         } else {
           this.blueprintData[bp].status = 'success';
+          this.blueprintData[bp].consent = 'true';
         }
       }
 
@@ -835,16 +853,16 @@ export default {
       let elementId = 'donation-container-' + bpId;
       let target = document.getElementById(elementId);
       let targetLabel = document.getElementById(elementId.concat('-toggle-label'));
-      let controlElement = document.getElementById('expansion-control-' + bpId)
+      let controlElement = document.getElementById('expansion-control-' + bpId);
 
       let newLabel = '';
       if (target.classList.contains('ul-data-condensed')) {
         target.classList.replace('ul-data-condensed', 'ul-data-expanded');
-        controlElement.classList.replace('control-condensed', 'control-expanded')
+        controlElement.classList.replace('control-condensed', 'control-expanded');
         newLabel = this.$t('hide-extracted-data');
       } else {
         target.classList.replace('ul-data-expanded', 'ul-data-condensed');
-        controlElement.classList.replace('control-expanded', 'control-condensed')
+        controlElement.classList.replace('control-expanded', 'control-condensed');
         newLabel = this.$t('show-extracted-data');
       }
       targetLabel.innerHTML = newLabel;
@@ -854,6 +872,22 @@ export default {
       this.$refs.ulInfoModal.style.display = 'none';
       this.$refs.modalBackdrop.style.display = 'none';
     },
+
+    updateFbPos(bpId, dir) {
+      let bp = this.blueprintData[bpId];
+      if (dir === 'up') {
+        bp.fb_pos_lower += 15;
+        bp.fb_pos_upper += 15;
+      } else {
+        if (bp.fb_pos_lower < 15) {
+          bp.fb_pos_lower = 0;
+          bp.fb_pos_upper = 15;
+        } else {
+          bp.fb_pos_lower -= 15;
+          bp.fb_pos_upper -= 15;
+        }
+      }
+    }
   },
 }
 </script>
@@ -916,8 +950,8 @@ export default {
   color: gray;
 }
 .ul-data-expanded {
-  max-height: 500px;
-  overflow-y: scroll;
+  /* max-height: 500px; */
+  /* overflow-y: scroll; */
   color: black;
 }
 .ul-data-container th {
@@ -985,5 +1019,8 @@ export default {
 .ul-data-container table td {
   max-width: 33%;
   word-break: break-all;
+}
+.btn-secondary:hover {
+  color: white !important;
 }
 </style>

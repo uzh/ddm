@@ -232,7 +232,13 @@ export default {
       let zip = new JSZip();
 
       zip.file("ul_data.json", JSON.stringify(this.postData))
-          .generateAsync({type: "blob"})
+          .generateAsync({
+            type: "blob",
+            compression: "DEFLATE",
+            compressionOptions: {
+              level: 5
+            }
+          })
           .then(blob => {
             form.append("post_data", blob);
 

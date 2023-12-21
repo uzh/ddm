@@ -199,7 +199,7 @@
                     <div class="consent-question-container">
                       <div class="question-choice-item pt-3 pt-lg-0">
                         <label class="form-check-label rb-cb-label" :for="'donate-agree-'+bp.id.toString()">
-                          <input type="radio" :id="'donate-agree-'+bp.id.toString()" :name="'agreement-'+bp.id.toString()" value="true" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent" checked="checked" required>
+                          <input type="radio" :id="'donate-agree-'+bp.id.toString()" :name="'agreement-'+bp.id.toString()" value="true" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent" required>
                            {{ $t('donation-agree') }}
                         </label>
                       </div>
@@ -338,7 +338,7 @@ export default {
       let id = bp.id;
       let blueprintInfo = {
         name_uploaded_file: null,
-        consent: 'false',
+        consent: null,
         extracted_data: [],
         extracted_fields: new Map(),
         status: 'pending',
@@ -453,8 +453,11 @@ export default {
 
       setTimeout(() => {
         uploader.updateStatus();
-        uploader.emitToParent();
-        }, 1000);
+        uploader.$nextTick(function () {
+          uploader.emitToParent();
+        });
+      }, 1000);
+
     },
 
     /**
@@ -672,6 +675,7 @@ export default {
 
         })
         uploader.blueprintData[blueprintID].extracted_data = extractedData;
+        extractedData = null;
         if (nEntriesWithMissingFields === fileContent.length) {
           let errorMsg = `No data extracted: Expected fields missing in ${nEntriesWithMissingFields}/${fileContent.length} entries.`;
           uploader.postError(4201, errorMsg, blueprint.id);
@@ -689,6 +693,13 @@ export default {
         } else if (nEntriesFilteredOut > 0) {
           let msg = `${nEntriesFilteredOut}/${fileContent.length} rows omitted due to a filter rule match.`;
           uploader.postError(4206, msg, blueprint.id);
+        }
+
+        try {
+          let msg = `${uploader.blueprintData[blueprintID].extracted_data.length} entries were extracted.`;
+          uploader.postError(7004, msg, blueprint.id);
+        } catch {
+          // continue regardless of error
         }
       }
     },
@@ -810,43 +821,45 @@ export default {
           }
         } else {
           this.blueprintData[bp].status = 'success';
-          this.blueprintData[bp].consent = 'true';
+          // this.blueprintData[bp].consent = 'true';
         }
       }
 
-      let modalIcon = document.getElementById('ul-modal-info-icon');
+      this.$nextTick(function () {
+        let modalIcon = document.getElementById('ul-modal-info-icon');
 
-      if (!this.generalErrors.length && bpErrorCount === 0 && bpNothingExtracted === 0) {
-        this.uploadStatus = 'success';
-        modalIcon.className = 'bi bi-file-check text-success';
-        this.ulModalInfoTitle = this.$t('ul-success-modal-title');
-        this.ulModalInfoMsg = this.$t('ul-success-modal-body');
+        if (!this.generalErrors.length && bpErrorCount === 0 && bpNothingExtracted === 0) {
+          this.uploadStatus = 'success';
+          modalIcon.className = 'bi bi-file-check text-success';
+          this.ulModalInfoTitle = this.$t('ul-success-modal-title');
+          this.ulModalInfoMsg = this.$t('ul-success-modal-body');
 
-      } else if (!this.generalErrors.length && bpNothingExtracted > 0 && bpErrorCount === 0) {
-        this.uploadStatus = 'partial';
-        modalIcon.className = 'bi bi-exclamation-diamond text-orange';
-        this.ulModalInfoTitle = this.$t('ul-nothing-extracted-modal-title');
-        this.ulModalInfoMsg = this.$t('ul-nothing-extracted-modal-body');
+        } else if (!this.generalErrors.length && bpNothingExtracted > 0 && bpErrorCount === 0) {
+          this.uploadStatus = 'partial';
+          modalIcon.className = 'bi bi-exclamation-diamond text-orange';
+          this.ulModalInfoTitle = this.$t('ul-nothing-extracted-modal-title');
+          this.ulModalInfoMsg = this.$t('ul-nothing-extracted-modal-body');
 
-      } else if (!this.generalErrors.length && (bpErrorCount < nBlueprints)) {
-        this.uploadStatus = 'partial';
-        modalIcon.className = 'bi bi-exclamation-diamond text-orange';
-        this.ulModalInfoTitle = this.$t('ul-partial-modal-title');
-        this.ulModalInfoMsg = this.$t('ul-partial-modal-body');
+        } else if (!this.generalErrors.length && (bpErrorCount < nBlueprints)) {
+          this.uploadStatus = 'partial';
+          modalIcon.className = 'bi bi-exclamation-diamond text-orange';
+          this.ulModalInfoTitle = this.$t('ul-partial-modal-title');
+          this.ulModalInfoMsg = this.$t('ul-partial-modal-body');
 
-      } else {
-        this.uploadStatus = 'failed';
-        modalIcon.className = 'bi bi-x-octagon text-danger';
-        this.ulModalInfoTitle = this.$t('ul-failed-modal-title');
-        this.ulModalInfoMsg = this.$t('ul-failed-modal-body');
+        } else {
+          this.uploadStatus = 'failed';
+          modalIcon.className = 'bi bi-x-octagon text-danger';
+          this.ulModalInfoTitle = this.$t('ul-failed-modal-title');
+          this.ulModalInfoMsg = this.$t('ul-failed-modal-body');
 
-        for (let bp in this.blueprintData){
-          this.blueprintData[bp].status = 'failed';
+          for (let bp in this.blueprintData){
+            this.blueprintData[bp].status = 'failed';
+          }
         }
-      }
 
-      this.$refs.ulInfoModal.style.display = 'block';
-      this.$refs.modalBackdrop.style.display = 'block';
+        this.$refs.ulInfoModal.style.display = 'block';
+        this.$refs.modalBackdrop.style.display = 'block';
+      });
     },
 
     showHideData(bpId) {

@@ -326,6 +326,8 @@ class Participant(models.Model):
             'n_success': donations.filter(status='success').count(),
             'n_pending': donations.filter(status='pending').count(),
             'n_failed': donations.filter(status='failed').count(),
+            'n_consent': donations.filter(status='success', consent=True).count(),
+            'n_no_consent': donations.filter(status='success', consent=False).count(),
             'n_no_data_extracted': donations.filter(status='nothing extracted').count()
         }
         return donation_info
@@ -372,6 +374,14 @@ class FileUploader(models.Model):
         verbose_name='Upload type',
     )
 
+    combined_consent = models.BooleanField(
+        default=False,
+        verbose_name='All-in-one consent',
+        help_text='If enabled, participants will be asked to consent to submit '
+                  'all uploaded data at once. Otherwise, participant will be asked to '
+                  'consent to the submission of the data separately for each blueprint.'
+    )
+
     def __str__(self):
         return self.name
 
@@ -385,6 +395,7 @@ class FileUploader(models.Model):
         configs = {
             'upload_type': self.upload_type,
             'name': self.name,
+            'combined_consent': self.combined_consent,
             'blueprints': [bp.get_config() for bp in blueprints],
             'instructions': [{
                 'index': i.index,

@@ -192,7 +192,7 @@
                   </div>
                 </div>
 
-                <template v-if="this.pooled === 'false'"> <!-- Check for ddm_pooled integration -->
+                <template v-if="this.combinedConsent === false">
                 <div class="row">
                   <div class="col feedback-col pb-5 pt-1">
                     <p class="fw-bold">{{ $t('donation-question') }}</p>
@@ -251,22 +251,21 @@
         </div>
       </div>
 
-        <!-- Part for ddm_pooled integration -->
-        <template v-if="this.pooled === 'true' && (uploadStatus === 'success' || uploadStatus === 'partial')">
+        <template v-if="this.combinedConsent === true && (uploadStatus === 'success' || uploadStatus === 'partial')">
           <div class="row mt-5">
             <div class="col feedback-col pb-5 pt-1">
-              <p class="fw-bold">{{ $t('pool-submit-question') }}</p>
+              <p class="fw-bold">{{ $t('donation-question') }}</p>
               <div class="consent-question-container">
                 <div class="question-choice-item pt-3 pt-lg-0">
-                  <label class="form-check-label rb-cb-label" for="pool-donate-agree">
-                    <input type="radio" id="pool-donate-agree" value="true" v-model="poolDonate" @change="emitToParent" required>
-                    {{ $t('donation-agree-pooled') }}
+                  <label class="form-check-label rb-cb-label" for="combined-donate-agree">
+                    <input type="radio" id="combined-donate-agree" value="true" v-model="combinedDonation" @change="emitToParent" required>
+                    {{ $t('donation-agree') }}
                   </label>
                 </div>
                 <div class="question-choice-item pt-3 pt-lg-0">
-                  <label class="form-check-label rb-cb-label" for="pool-donate-disagree">
-                    <input type="radio" id="pool-donate-disagree" value="false" v-model="poolDonate" @change="emitToParent">
-                    {{ $t('donation-disagree-pooled') }}
+                  <label class="form-check-label rb-cb-label" for="combined-donate-disagree">
+                    <input type="radio" id="combined-donate-disagree" value="false" v-model="combinedDonation" @change="emitToParent">
+                    {{ $t('donation-disagree') }}
                   </label>
                 </div>
               </div>
@@ -318,7 +317,7 @@ export default {
     componentId: Number,
     name: String,
     exceptionUrl: String,
-    pooled: String
+    combinedConsent: Boolean
   },
   emits: ['changedData'],
   data() {
@@ -329,7 +328,7 @@ export default {
       generalErrors: [],
       ulModalInfoMsg: '',
       ulModalInfoTitle: '',
-      poolDonate: true
+      combinedDonation: null
     }
   },
   created() {
@@ -725,7 +724,7 @@ export default {
     emitToParent() {
       let dataToEmit = JSON.parse(JSON.stringify(this.blueprintData));
 
-      if (this.pooled === 'false') {
+      if (this.combinedConsent === false) {
         Object.keys(dataToEmit).forEach(key => {
           if (dataToEmit[key].consent === null) {
             dataToEmit[key].consent = null;
@@ -739,10 +738,9 @@ export default {
           }
         })
       } else {
-        // Added for ddm_pooled integration.
-        let consent = this.poolDonate;
+        let consent = this.combinedDonation;
         Object.keys(dataToEmit).forEach(key => {
-          if (consent === '0' || consent === 'false') {
+          if (consent === 'false') {
             dataToEmit[key].consent = false;
             dataToEmit[key].extracted_data = [];
           } else {

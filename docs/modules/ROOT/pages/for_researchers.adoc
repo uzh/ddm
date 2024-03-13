@@ -187,22 +187,26 @@ The data donation step can incorporate multiple File Uploaders.
 
 ===== Configure File Uploader
 
-Name:: Name of the File Uploader. Will be publicly visible to participants in the header of the file uplaoder.
+Name:: Name of the File Uploader. Will be publicly visible to participants in the header of the File Uplaoder.
 
 Upload Type:: Either "single file" or "zip file".
 
 Index:: The position of the file uploader on the data donation page.
-Only relevant if multiple file uploaders are displayed – file uploaders with a
+Only relevant if multiple File Uploaders are displayed – File Uploaders with a
 lower index will be displayed closer to the top of the page.
 
+All-in-one consent:: If enabled, participants will be asked to consent to submit
+all uploaded data at once. Otherwise, participant will be asked to consent to
+the submission of the data separately for each blueprint.
+
 Associated Donation Blueprints:: The donation blueprints that apply to the
-expected file(s) collected with the file uploader.
+expected file(s) collected with the File Uploader.
 
 
 ===== Configure Instructions
 
 Donation Instructions consist of one or multiple instruction pages.
-Instruction pages are displayed as a slide show at the top of file uploader.
+Instruction pages are displayed as a slide show at the top of File Uploader.
 For each instruction page, the following can be configured:
 
 Text:: The instruction text displayed to the participants.
@@ -470,9 +474,11 @@ The participant related data contains the following information:
         "briefing_consent": "1"   # or "0" if participant did not consent to take part in the study
     },
     "donation_info": {
-        "n_success": 1,           # number of successful donations by this participant
-        "n_pending": 1,           # number of pending (i.e., not attempted) donations by this participant
-        "n_failed": 0,            # number of attempted but failed donations by this participant
+        "n_success": 1,           # number of successfully uploaded blueprints by this participant (regardless of consent).
+        "n_pending": 1,           # number of pending (i.e., not attempted) blueprint uploads.
+        "n_failed": 0,            # number of blueprints where an upload was attempted but failed.
+        "n_consent": 1,           # number of successful uploads to which donation consent was given.
+        "n_no_consent": 0,        # number of successful uploads to which no donation consent was given.
         "n_no_data_extracted": 0  # number of donations by this participant where all entries were filtered out
     }
 }

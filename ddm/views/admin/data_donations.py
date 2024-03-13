@@ -46,7 +46,7 @@ class FileUploaderCreate(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, Crea
     """ View to create a new file uploader. """
     model = FileUploader
     template_name = 'ddm/admin/data_donation/file_uploader/create.html'
-    fields = ['name', 'upload_type']
+    fields = ['name', 'upload_type', 'combined_consent']
     success_message = 'File Uploader was created successfully.'
 
     def form_valid(self, form):
@@ -65,7 +65,7 @@ class FileUploaderEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, Update
     """ View to edit the details of an existing file uploader. """
     model = FileUploader
     template_name = 'ddm/admin/data_donation/file_uploader/edit.html'
-    fields = ['name', 'upload_type', 'index']
+    fields = ['name', 'upload_type', 'combined_consent', 'index']
     success_message = 'Blueprint Uploader "%(name)s" was successfully updated.'
 
     def get_context_data(self, **kwargs):

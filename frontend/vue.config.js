@@ -49,7 +49,7 @@ module.exports = {
         config
             .plugin('BundleTracker')
             .use(BundleTracker, [{
-                filename: '../ddm/static/ddm/vue/webpack-stats.json',
+                filename: 'webpack-stats.json',
                 path: '../ddm/static/ddm/vue',
                 relativePath: true
             }]);

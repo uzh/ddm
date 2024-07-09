@@ -47,6 +47,9 @@ class DonationProject(models.Model):
         max_length=50,
         help_text='Project Name - for internal organisation only (can still be changed later).'
     )
+
+    # Note: Value of "date_created" attribute must not be changed after
+    # instance creation as it is used for en-/decryption.
     date_created = models.DateTimeField(default=timezone.now)
     owner = models.ForeignKey(
         'ResearchProfile',

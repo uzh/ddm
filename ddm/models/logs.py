@@ -40,5 +40,5 @@ class EventLogEntry(models.Model):
         'DonationProject',
         on_delete=models.CASCADE
     )
-    description = models.CharField(max_length=100)
+    description = models.TextField()
     message = models.TextField()

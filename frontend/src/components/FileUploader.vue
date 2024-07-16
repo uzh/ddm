@@ -635,22 +635,37 @@ export default {
                     break;
                   case 'regex-delete-match':
                     if (key in result) {
-                      let newValue = entry[key].replaceAll(RegExp(rule.comparison_value, 'g'), '');
+                      let originalValue = entry[key];
+                      if (typeof entry[key] !== 'string') {
+                        originalValue = JSON.stringify(entry[key]);
+                      }
+
+                      let newValue = originalValue.replaceAll(RegExp(rule.comparison_value, 'g'), '');
                       result[rule.field] = newValue;
                       entry[key] = newValue;
                     }
                     break;
                   case 'regex-replace-match':
                     if (key in result) {
-                      let newValue = entry[key].replaceAll(RegExp(rule.comparison_value, 'g'), rule.replacement_value);
+                      let originalValue = entry[key];
+                      if (typeof entry[key] !== 'string') {
+                        originalValue = JSON.stringify(entry[key]);
+                      }
+
+                      let newValue = originalValue.replaceAll(RegExp(rule.comparison_value, 'g'), rule.replacement_value);
                       result[rule.field] = newValue;
                       entry[key] = newValue;
                     }
                     break;
                   case 'regex-delete-row':
                     if (key in entry) {
+                      let originalValue = entry[key];
+                      if (typeof entry[key] !== 'string') {
+                        originalValue = JSON.stringify(entry[key]);
+                      }
+
                       let comparisonValue = RegExp(rule.comparison_value, 'g');
-                      if (!comparisonValue.test(entry[key])) {
+                      if (!comparisonValue.test(originalValue)) {
                         // keep entry
                       } else {
                         // discard entry

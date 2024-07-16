@@ -2,7 +2,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "test": "vitest"
   },
   "name": "vue_frontend",
   "version": "0.1.0",
@@ -12,6 +13,7 @@
     "core-js": "^3.36.0",
     "csv-parse": "^5.5.5",
     "jszip": "^3.10.1",
+    "luxon": "^3.4.4",
     "papaparse": "^5.4.1",
     "vue": "^3.4.21",
     "vue-i18n": "^9.10.1",

@@ -305,6 +305,17 @@ import JSZip from "jszip";
 import DonationInstructions from "./DonationInstructions";
 import axios from "axios";
 import Papa from 'papaparse';
+import {
+  regexDeleteMatch,
+  regexReplaceMatch,
+  regexDeleteRow,
+  valueIsEqual,
+  valueIsNotEqual,
+  valueIsSmallerOrEqual,
+  valueIsGreaterOrEqual,
+  valueIsSmaller,
+  valueIsGreater
+} from '../utils/FileUploaderExtractionFunctions'
 
 
 export default {
@@ -586,88 +597,78 @@ export default {
                     result[rule.field] = entry[key];
                     break;
                   case '==':
-                    if (entry[key] !== rule.comparison_value) {
-                      // keep entry
-                    } else {
+                    if (valueIsEqual(entry[key], rule.comparison_value)) {
                       // discard entry
                       throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
                     }
                     break;
                   case '!=':
-                    if (entry[key] === rule.comparison_value) {
-                      // keep entry
-                    } else {
+                    if (valueIsNotEqual(entry[key], rule.comparison_value)) {
                       // discard entry
                       throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
                     }
                     break;
                   case '<=':
-                    if (entry[key] > rule.comparison_value) {
-                      // keep entry
-                    } else {
+                    if (valueIsSmallerOrEqual(entry[key], rule.comparison_value)) {
                       // discard entry
                       throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
                     }
                     break;
                   case '>=':
-                    if (entry[key] < rule.comparison_value) {
-                      // keep entry
-                    } else {
+                    if (valueIsGreaterOrEqual(entry[key], rule.comparison_value)) {
                       // discard entry
                       throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
                     }
                     break;
                   case '<':
-                    if (entry[key] >= rule.comparison_value) {
-                      // keep entry
-                    } else {
+                    if (valueIsSmaller(entry[key], rule.comparison_value)) {
                       // discard entry
                       throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
                     }
                     break;
                   case '>':
-                    if (entry[key] <= rule.comparison_value) {
-                      // keep entry
-                    } else {
+                    if (valueIsGreater(entry[key], rule.comparison_value)) {
                       // discard entry
-                      throw `Field "${key}" matches filter value "${rule.comparison_value}".`
+                      throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
                     }
                     break;
                   case 'regex-delete-match':
                     if (key in result) {
-                      let originalValue = entry[key];
-                      if (typeof entry[key] !== 'string') {
-                        originalValue = JSON.stringify(entry[key]);
+                      try {
+                        let newValue = regexDeleteMatch(entry[key], rule.comparison_value);
+                        result[rule.field] = newValue;
+                        entry[key] = newValue;
+                      } catch {
+                        let errorMsg = `RegexDeleteMatch failed for field ${rule.field}.`;
+                        uploader.postError(4220, errorMsg, blueprint.id);
+                        result[rule.field] = entry[key];
                       }
-
-                      let newValue = originalValue.replaceAll(RegExp(rule.comparison_value, 'g'), '');
-                      result[rule.field] = newValue;
-                      entry[key] = newValue;
                     }
                     break;
                   case 'regex-replace-match':
                     if (key in result) {
-                      let originalValue = entry[key];
-                      if (typeof entry[key] !== 'string') {
-                        originalValue = JSON.stringify(entry[key]);
+                      try {
+                        let newValue = regexReplaceMatch(entry[key], rule.comparison_value, rule.replacement_value);
+                        result[rule.field] = newValue;
+                        entry[key] = newValue;
+                      } catch {
+                        let errorMsg = `RegexReplaceMatch failed for field ${rule.field}.`;
+                        uploader.postError(4221, errorMsg, blueprint.id);
+                        result[rule.field] = entry[key];
                       }
-
-                      let newValue = originalValue.replaceAll(RegExp(rule.comparison_value, 'g'), rule.replacement_value);
-                      result[rule.field] = newValue;
-                      entry[key] = newValue;
                     }
                     break;
                   case 'regex-delete-row':
                     if (key in entry) {
-                      let originalValue = entry[key];
-                      if (typeof entry[key] !== 'string') {
-                        originalValue = JSON.stringify(entry[key]);
+                      let deleteRow = false;
+                      try {
+                        deleteRow = regexDeleteRow(entry[key], rule.comparison_value);
+                      } catch {
+                        let errorMsg = `RegexDeleteRow failed for field ${rule.field}.`;
+                        uploader.postError(4222, errorMsg, blueprint.id);
+                        break;
                       }
-
-                      let comparisonValue = RegExp(rule.comparison_value, 'g');
-                      if (!comparisonValue.test(originalValue)) {
-                        // keep entry
-                      } else {
+                      if (deleteRow) {
                         // discard entry
                         throw `Field "${key}" matches RegExp "${rule.comparison_value}".`
                       }
@@ -680,7 +681,6 @@ export default {
             extractedData.push(result);
           } catch (e) {
             nEntriesFilteredOut += 1;
-            // uploader.postError(4206, `${e}`, blueprint.id)
           }
 
           for (let [key, value] of  keyMap.entries()) {

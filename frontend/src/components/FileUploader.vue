@@ -354,7 +354,8 @@ export default {
         status: 'pending',
         errors: [],
         fb_pos_lower: 0,
-        fb_pos_upper: 15
+        fb_pos_upper: 15,
+        error_log: {},
       }
       this.blueprintData[id.toString()] = blueprintInfo
     })
@@ -518,10 +519,6 @@ export default {
         let nEntriesWithMissingFields = 0;
         let nEntriesFilteredOut = 0;
 
-        // Limit the number of messages posted to the project logs.
-        let nMsgsPosted = 0;
-        let maxMsgs = 10;
-
         fileContent.forEach(entry => {
 
           // Check if file contains all expected fields
@@ -566,17 +563,11 @@ export default {
             }
 
             if(keys.length > 1) {
-              if (nMsgsPosted < maxMsgs) {
-                let errorMsg = `More than 1 key matches for variable "${rule.field}": ${keys}; Associated "${keys[0]}" to variable.`;
-                uploader.postError(4203, errorMsg, blueprint.id);
-                nMsgsPosted++;
-              }
+              let errorMsg = `More than 1 key matches for variable "${rule.field}": ${keys}; Associated "${keys[0]}" to variable.`;
+              uploader.postError(4203, errorMsg, blueprint.id);
             } else if(keys.length === 0) {
-              if (nMsgsPosted < maxMsgs) {
-                let errorMsg = `No key matches for variable "${rule.field}": ${Object.keys(entry)}`;
-                uploader.postError(4203, errorMsg, blueprint.id);
-                nMsgsPosted++;
-              }
+              let errorMsg = `No key matches for variable "${rule.field}": ${Object.keys(entry)}`;
+              uploader.postError(4203, errorMsg, blueprint.id);
             } else {
               keyMap.set(rule.field, keys[0]);
             }
@@ -801,6 +792,20 @@ export default {
      * @param {number}  blueprintID ID of related blueprint. Default is null.
      */
     postError(code, msg, blueprintID=null) {
+      // Limit the number of times an error message is posted to the server.
+      if (blueprintID != null) {
+        let bp = this.blueprintData[blueprintID];
+        if (!(code in bp.error_log)) {
+          bp.error_log[code] = 1;
+        } else {
+          bp.error_log[code] += 1;
+        }
+        console.log(bp.error_log)
+        if (bp.error_log[code] > 5) {
+          return;
+        }
+      }
+
       let data = {
         'status_code': code,
         'message': this.name + ': ' + msg,

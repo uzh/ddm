@@ -18,14 +18,15 @@
     "webpack-bundle-tracker": "^3.0.1"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.23.10",
     "@intlify/vue-i18n-loader": "^4.2.0",
     "@vue/cli-plugin-babel": "^5.0.8",
     "@vue/cli-plugin-eslint": "^5.0.8",
     "@vue/cli-service": "^5.0.8",
     "@vue/compiler-sfc": "^3.4.21",
-    "@babel/eslint-parser": "^7.23.10",
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^9.23.0",
+    "vitest": "^2.0.3",
     "vue-cli-plugin-i18n": "^2.3.2",
     "webpack-cli": "^5.1.4"
   },

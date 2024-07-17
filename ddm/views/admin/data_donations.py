@@ -162,7 +162,8 @@ class BlueprintEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, UpdateVie
         context = super().get_context_data(**kwargs)
         available_file_uploaders = FileUploader.objects.filter(project_id=self.kwargs['project_pk'])
         context['form'].fields['file_uploader'].queryset = available_file_uploaders
-        context['formset'] = ProcessingRuleInlineFormset(instance=self.object)
+        context['formset'] = ProcessingRuleInlineFormset(
+            instance=self.object, queryset=self.object.processingrule_set.order_by('execution_order'))
         return context
 
     def post(self, request, *args, **kwargs):

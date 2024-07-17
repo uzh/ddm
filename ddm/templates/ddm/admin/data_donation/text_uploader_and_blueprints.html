@@ -1,0 +1,11 @@
+<p>
+  An <code>Uploader</code> can either be configured to accept a single file (e.g., one JSON file) or a ZIP container as upload. <br>
+  Each Uploader can be assigned <i>one or multiple File Blueprints</i>.<br>
+  Usually, an Uploader relates to one data export (e.g., to a Google Data Takeout or a TikTok Data Takeout).
+</p>
+
+<p>
+  A <code>File Blueprint</code> defines how the data contained in a single file (e.g., in a .json or a .csv file) will be validated and extracted. <br>
+  If a File Blueprint is assigned to a ZIP Uploader, the path (or name) of the file must be provided to identify the correct file in the ZIP container.
+  The validation and extraction logic will then be applied to the first file in a ZIP container that matches this path.
+</p>

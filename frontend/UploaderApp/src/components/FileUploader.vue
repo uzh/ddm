@@ -800,7 +800,6 @@ export default {
         } else {
           bp.error_log[code] += 1;
         }
-        console.log(bp.error_log)
         if (bp.error_log[code] > 5) {
           return;
         }

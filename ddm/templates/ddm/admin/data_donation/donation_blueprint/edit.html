@@ -13,6 +13,8 @@
   {{ form.non_field_errors }}
 
   <div class="ddm-admin-form">
+    <h5>General Settings</h5>
+
     {% for field in form %}
     {% if field.name not in "expected_fields,expected_fields_regex_matching,regex_path,exp_file_format,csv_delimiter,json_extraction_root" %}
     <p>
@@ -25,9 +27,13 @@
     {% endfor %}
   </div>
 
-  {% include "ddm/admin/data_donation/donation_blueprint/block_file_validation.html" %}
+  <hr class="mt-5 mb-5">
 
   <div class="ddm-admin-form">
+    <h5>File Validation Settings</h5>
+
+    {% include "ddm/admin/components/info_collapsible.html" with element_id="filevalidation" title="How the file validation works" include_path="ddm/admin/data_donation/donation_blueprint/block_file_validation.html" body="" %}
+
     {% for field in form %}
     {% if field.name in "expected_fields,expected_fields_regex_matching,regex_path,exp_file_format,csv_delimiter,json_extraction_root" %}
     <p>
@@ -40,12 +46,16 @@
     {% endfor %}
   </div>
 
-  {% include "ddm/admin/data_donation/donation_blueprint/block_data_extraction.html" %}
+  <hr class="mt-5 mb-5">
 
-  {{ formset.management_form }}
   <div class="ddm-admin-form">
-    <h6>Extraction Rules</h6>
-    <table id="inlineform-table" class="table table-borderless">
+    <h5>Data Extraction Settings</h5>
+    {% include "ddm/admin/components/info_collapsible.html" with element_id="dataextraction" title="How the data extraction works" include_path="ddm/admin/data_donation/donation_blueprint/block_data_extraction.html" body="" %}
+
+    {{ formset.management_form }}
+
+    <b>Extraction Rules</b>
+    <table id="inlineform-table" class="table table-borderless fs-08">
       <tr class="border-bottom">
         <th>Order</th>
         <th>Rule name</th>
@@ -138,8 +148,8 @@
     {% for field in formset.empty_form %}
     {% if field.name in 'name,field,regex_field,execution_order,input_type,comparison_operator,comparison_value,replacement_value' %}
     <p {% if field.name in 'replacement_value,comparison_value' %}style="display: none"{% endif %}>
-      {{ field.label }}
-      <span class="helptext"><br>{{ field.help_text }}</span>
+      {{ field.label_tag }}
+      <span class="helptext">{{ field.help_text }}</span>
       {{ field }}
       {{ field.errors }}
       <span class="form-error" style="display: none; color: red;">Please provide a value for this field.</span>
@@ -149,7 +159,9 @@
     </div>
   </div>
 
-  <input class="ddm-btn" type="submit" value="Save Blueprint">
+  <hr class="mt-5 mb-5">
+
+  <input class="ddm-btn mt-3" type="submit" value="Save Blueprint">
   <p class="mt-3">
     <a href="{% url 'data-donation-overview' project.pk %}">&#129040; Back</a>
   </p>

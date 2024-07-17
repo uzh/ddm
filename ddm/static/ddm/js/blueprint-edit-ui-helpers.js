@@ -83,7 +83,7 @@ closeModal = function(id) {
  * On OK-click in modal, update filter settings overview.
  */
 $( "body" ).on("click", "button[class*='ddm-modal-ok']", function() {
-  const current_id = $(this).attr("id").match(/\d/)[0];
+  const current_id = $(this).attr("id").match(/\d+/)[0];
   hideErrorMessages(current_id);
   if (checkNoFieldsMissing(current_id)) {
     updateRuleDescription(current_id);
@@ -93,7 +93,7 @@ $( "body" ).on("click", "button[class*='ddm-modal-ok']", function() {
 });
 
 $( "body" ).on("click", "button[class*='ddm-modal-cancel']", function() {
-  const current_id = $(this).attr("id").match(/\d/)[0];
+  const current_id = $(this).attr("id").match(/\d+/)[0];
   let e = $("#execution_order-" + current_id);
 
   if ($.trim(e.text()) === 'None') {
@@ -111,8 +111,8 @@ $( "body" ).on("click", "button[class*='ddm-modal-cancel']", function() {
 $(document).ready(function() {
   let IDs = new Set();
   $("[id^=id_processingrule_set-]").each(function() {
-    if( /\d/.test($( this ).attr("id")) ) {
-      IDs.add($( this ).attr("id").match(/\d/)[0]);
+    if( /\d+/.test($( this ).attr("id")) ) {
+      IDs.add($( this ).attr("id").match(/\d+/)[0]);
     }
   });
   for ( const id of IDs ) {
@@ -127,8 +127,8 @@ $(document).ready(function() {
 $("#add-inline-form").on("click", function() {
   let IDs = [];
   $("[id^=id_processingrule_set-]").each(function() {
-    if( /\d/.test($(this).attr("id"))) {
-      IDs.push($(this).attr("id").match(/\d/)[0]);
+    if( /\d+/.test($(this).attr("id"))) {
+      IDs.push($(this).attr("id").match(/\d+/)[0]);
     }
   });
   let formIdx;

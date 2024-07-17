@@ -17,16 +17,15 @@ hideOrShowReplacementAndComparisonValue = function( id ) {
 }
 
 $( "body" ).on("change", "select[id$='-comparison_operator']", function() {
-  const current_id = $(this).attr("id").match(/\d/)[0];
+  const current_id = $(this).attr("id").match(/\d+/)[0];
   hideOrShowReplacementAndComparisonValue(current_id);
-
 });
 
 $(document).ready(function() {
   let IDs = new Set();
   $("[id$=-comparison_operator]").each(function() {
-    if( /\d/.test($( this ).attr("id")) ) {
-      IDs.add($( this ).attr("id").match(/\d/)[0]);
+    if( /\d+/.test($( this ).attr("id")) ) {
+      IDs.add($( this ).attr("id").match(/\d+/)[0]);
     }
   });
   for ( const id of IDs ) {

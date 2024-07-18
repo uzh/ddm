@@ -1,5 +1,5 @@
 {% extends "ddm/public/base.html" %}
-{% load i18n static ddm_graphs %}
+{% load i18n static %}
 {% get_current_language as LANGUAGE_CODE %}
 {% load render_bundle from webpack_loader %}
 
@@ -26,7 +26,6 @@
 {% endblock content %}
 
 {% block extrascripts %}
-  <script src="{% static 'ddm/js/bokeh/bokeh-3.0.3.min.js' %}"></script>
   {% for script in extra_scripts %}
   {{ script|safe }}
   {% endfor %}

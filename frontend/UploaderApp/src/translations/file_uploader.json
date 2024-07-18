@@ -8,7 +8,7 @@
     "upload-success": "Upload was successful",
     "upload-failed": "Upload failed",
     "choose-different-file": "select a different file",
-    "choose-file": "Select file",
+    "choose-file": "Select File",
     "file-is-being-uploaded": "file is being uploaded",
     "extracted-files": "Extracted files",
     "upload-success-short": "Successfully Uploaded",
@@ -18,7 +18,7 @@
     "donation-question": "Do you agree to donate and submit the data listed above?",
     "donation-agree": "Yes, I agree to submit these data",
     "donation-disagree": "No, I do not want to submit these data",
-    "extracted-data-intro": "The following data have been extracted and will be transmitted to the researchers with your consent",
+    "extracted-data-intro": "The following data have been extracted and will be submitted to the researchers with your consent",
     "file": "file",
     "error-multiple-files": "More than one file uploaded, but only one is expected.",
     "error-not-zip": "A zip-file is expected but another file type was uploaded.",
@@ -42,8 +42,10 @@
     "ul-partial-modal-body": "<p>Only parts of the data could be uploaded successfully.</p><p>In the 'Data Donation' section you will find more information on which file a problem occurred. This information may help you to identify and fix the problem.</p><p>If not, you can inspect the uploaded data, indicate whether you want to donate the data or not, and continue.</p>",
     "ul-nothing-extracted-modal-title": "Upload Successful but No Data Extracted",
     "ul-nothing-extracted-modal-body": "<p>The data was successfully uploaded but no data were extracted. It is possible, that your data file did not contain any information relevant to this research project.</p><p>If you think you chose the wrong file, you can try the upload again. Otherwise, you can continue by clicking on 'submit data'.</p>",
-    "extracted-data": "The following data were extracted:",
-    "extraction-disclaimer": "The rows {lower} to {upper} from a total of {total} extracted data entries are displayed."
+    "extracted-data": "If you consent to the donation, the following data will be submitted:",
+    "extraction-disclaimer": "The rows {lower} to {upper} from a total of {total} extracted data entries are displayed.",
+    "previous-page": "previous page",
+    "next-page": "next page"
   },
   "de": {
     "instructions": "Instruktionen",
@@ -79,7 +81,7 @@
     "extraction-failed": "Es konnten nicht alle erwarteten Dateien ausgelesen werden.",
     "partial-upload-status": "Nur teilweise hochgeladen",
     "partial-upload-message": "Der Zip-Container wurde erfolgreich hochgeladen, aber es wurden nicht alle Daten erfolgreich extrahiert (siehe unten)",
-    "data-extraction-intro": "Die folgenden Informationen werden aus dem ausgewählten File ausgelesen",
+    "data-extraction-intro": "Die folgenden Informationen werden aus der ausgewählten Datei ausgelesen",
     "ul-success-modal-title": "Upload abgeschlossen",
     "ul-success-modal-body": "Alle Daten wurden erfolgreich hochgeladen. Bitte schauen Sie sich die hochgeladenen Daten an und geben Sie jeweils an, ob Sie die Daten spenden möchten oder nicht.",
     "ul-failed-modal-title": "Es ist ein Fehler aufgetreten",
@@ -88,7 +90,9 @@
     "ul-partial-modal-body": "<p>Es konnte nur ein Teil der Daten erfolgreich hochgeladen werden.</p><p>Im Bereich 'Datenspende' finden Sie weitere Informationen dazu, bei welchen Daten ein Problem aufgetreten ist. Gegebenenfalls helfen Ihnen diese Informationen das Problem zu identifizieren und zu beheben.</p><p>Falls nicht, können Sie sich die erfolgreich hochgeladenen Daten anschauen und entscheiden, ob Sie diese Daten spenden möchten oder nicht.</p>",
     "ul-nothing-extracted-modal-title": "Upload erfolgreich, jedoch wurden keine Daten ausgelesen",
     "ul-nothing-extracted-modal-body": "<p>Die Daten wurden erfolgreich verarbeitet, aber es wurden keine Daten extrahiert. Es ist möglich, dass Ihre Datei keine für dieses Forschungsprojekt relevanten Informationen enthält.</p><p>Wenn Sie denken, dass Sie die falsche Datei ausgewählt haben, können Sie den Upload erneut versuchen.</p><p>Andernfalls können Sie fortfahren, indem Sie auf 'Daten übermitteln' klicken.</p>",
-    "extracted-data": "Die folgenden Daten wurden ausgelesen:",
-    "extraction-disclaimer": "Es werden die Zeilen {lower} bis {upper} von insgesamt {total} ausgelesenen Einträgen angezeigt."
+    "extracted-data": "Wenn Sie der Datenspende zustimmen, werden die folgenden Daten übermittelt:",
+    "extraction-disclaimer": "Es werden die Zeilen {lower} bis {upper} von insgesamt {total} ausgelesenen Einträgen angezeigt.",
+    "previous-page": "vorherige Seite",
+    "next-page": "nächste Seite"
   }
 }

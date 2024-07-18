@@ -162,30 +162,41 @@
                     </div>
                     <div class="data-donation-container pb-3 pt-3 fs-09">
                       <div :id="'donation-container-'+bp.id.toString()" class="ul-data-container ul-data-condensed bg-white">
-                        <table :id="'ul-result-' + bp.id.toString()" class="table table-sm">
-                          <thead>
-                          <tr>
-                            <th v-for="value in blueprintData[bp.id.toString()].extracted_fields.values()" :key="value">{{ value }}</th>
-                          </tr>
-                          </thead>
-                          <tbody>
-                          <tr v-for="row in blueprintData[bp.id.toString()].extracted_data.slice(blueprintData[bp.id.toString()].fb_pos_lower, blueprintData[bp.id.toString()].fb_pos_upper)" :key="row">
-                            <template v-for="key in blueprintData[bp.id.toString()].extracted_fields.keys()" :key="key">
-                              <td v-if="key in row" :key="row">{{ row[key] }}</td>
-                              <td v-else>–</td>
-                            </template>
-                          </tr>
+                        <div class="data-donation-table">
+                          <table :id="'ul-result-' + bp.id.toString()" class="table table-sm">
+                            <thead>
+                            <tr>
+                              <th v-for="value in blueprintData[bp.id.toString()].extracted_fields.values()" :key="value">{{ value }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="row in blueprintData[bp.id.toString()].extracted_data.slice(blueprintData[bp.id.toString()].fb_pos_lower, blueprintData[bp.id.toString()].fb_pos_upper)" :key="row">
+                              <template v-for="key in blueprintData[bp.id.toString()].extracted_fields.keys()" :key="key">
+                                <td v-if="key in row" :key="row">{{ row[key] }}</td>
+                                <td v-else>–</td>
+                              </template>
+                            </tr>
 
-                          </tbody>
-                        </table>
-                        <div class="pb-2">
-                          <a class="btn btn-secondary btn-sm me-2" v-if="blueprintData[bp.id.toString()].fb_pos_lower > 14" v-on:click="updateFbPos(bp.id.toString(), 'down')" >Vorherige Seite</a>
-                          <a class="btn btn-secondary btn-sm" v-if="blueprintData[bp.id.toString()].fb_pos_upper < blueprintData[bp.id.toString()].extracted_data.length" v-on:click="updateFbPos(bp.id.toString(), 'up')" >Nächste Seite</a>
+                            </tbody>
+                          </table>
                         </div>
+                        <div class="data-table-navigation">
+                          <div class="pb-2">
+                            <a class="btn btn-secondary btn-sm me-2" v-if="blueprintData[bp.id.toString()].fb_pos_lower > 14" v-on:click="updateFbPos(bp.id.toString(), 'down')" >{{ $t('previous-page') }}</a>
+                            <span class="btn-secondary btn-sm me-2 btn-light text-muted user-select-none btn-muted" v-if="blueprintData[bp.id.toString()].fb_pos_lower <= 14">{{ $t('previous-page') }}</span>
+                            <a class="btn btn-secondary btn-sm" v-if="blueprintData[bp.id.toString()].fb_pos_upper < blueprintData[bp.id.toString()].extracted_data.length" v-on:click="updateFbPos(bp.id.toString(), 'up')" >{{ $t('next-page') }}</a>
+                            <span class="btn-secondary btn-sm btn-light text-muted user-select-none btn-muted" v-if="blueprintData[bp.id.toString()].fb_pos_upper >= blueprintData[bp.id.toString()].extracted_data.length">{{ $t('next-page') }}</span>
+                          </div>
 
-                        <p class="pb-3">
-                          {{ $t('extraction-disclaimer', { lower: blueprintData[bp.id.toString()].fb_pos_lower + 1, upper: blueprintData[bp.id.toString()].fb_pos_upper, total: blueprintData[bp.id.toString()].extracted_data.length }) }}
-                        </p>
+                          <div class="pb-3">
+                            <p class="pb-3">
+                              {{ $t('extraction-disclaimer', { lower: blueprintData[bp.id.toString()].fb_pos_lower + 1, upper: blueprintData[bp.id.toString()].fb_pos_upper, total: blueprintData[bp.id.toString()].extracted_data.length }) }}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+
                       </div>
                       <div :id="'expansion-control-'+bp.id.toString()" class="ul-data-expansion-control control-condensed"><a class="text-decoration-none fw-bold" :id="'collapse-toggle-'+bp.id.toString()" v-on:click="showHideData(bp.id.toString())"><span :id="'donation-container-'+ bp.id.toString() + '-toggle-label'">{{ $t('show-extracted-data') }}</span></a></div>
                     </div>
@@ -990,6 +1001,7 @@ export default {
   z-index: 1;
   background-color: white !important;
   box-shadow: 0px 1px black;
+  min-width: 200px;
 }
 .ul-data-expansion-control {
   text-align: center;
@@ -1042,15 +1054,20 @@ export default {
 }
 .ul-data-container table {
   background: #e3e3e31c;
-  table-layout: fixed;
-  max-width: 1000px;
-  width: 1000px;
+  table-layout: auto;
+  min-width: 100%;
 }
 .ul-data-container table td {
   max-width: 33%;
   word-break: break-all;
 }
-.btn-secondary:hover {
+.data-donation-table {
+  width: 100%;
+  overflow-x: scroll;
+  margin-bottom: 15px;
+  display: block;
+}
+.btn-secondary:not(.btn-muted):hover {
   color: white !important;
 }
 </style>

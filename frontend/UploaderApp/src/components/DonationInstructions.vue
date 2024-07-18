@@ -1,33 +1,34 @@
 <template>
-  <div :id="'carousel-' + componentId" class="carousel carousel-dark slide" data-bs-interval="false" data-bs-ride="carousel">
+  <div :id="'carousel-' + componentId" class="carousel carousel-dark slide" data-bs-interval="false" data-bs-ride="carousel" data-bs-wrap="false" >
+
     <div class="carousel-inner">
       <div
           v-for="(i, index) in instructions"
           :key="index"
           class="carousel-item"
-          :class="{ 'active': index === 0 }"
+          :class="{ 'active': index === currentStep }"
           v-html="i.text">
       </div>
     </div>
-    <button class="carousel-control-prev" type="button" :data-bs-target="'#carousel-' + componentId" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" :data-bs-target="'#carousel-' + componentId" data-bs-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
-    </button>
-    <div class="carousel-indicators">
-      <button
-          v-for="(i, index) in instructions"
-          :key="index"
+
+    <div class="d-flex justify-content-between align-items-center slide-area">
+      <div>
+        <button class="slide-control-arrow" type="button" :data-bs-target="'#carousel-' + componentId" @click="stepDown">‹</button>
+      </div>
+      <div v-for="(i, index) in instructions" :key="index">
+        <button
           type="button"
           :data-bs-target="'#carousel-' + componentId"
-          :data-bs-slide-to="index"
           :aria-label="'Step ' + index"
-          :class="{ 'active': index === 0 }"
-          :aria-current="index === 0"
-      ></button>
+          :class="{ 'active active-item': index === currentStep }"
+          :aria-current="index === currentStep"
+          class="step-indicator d-hide"
+          @click="currentStep = index"
+      >•</button>
+      </div>
+      <div>
+        <button class="slide-control-arrow" type="button" :data-bs-target="'#carousel-' + componentId" @click="stepUp">›</button>
+      </div>
     </div>
   </div>
 </template>
@@ -40,9 +41,22 @@ export default {
     componentId: Number
   },
   data() {
-    return {}
+    return {
+      currentStep: 0,
+    }
   },
-  methods: {}
+  methods: {
+    stepDown() {
+      if (this.currentStep > 0) {
+        this.currentStep -= 1;
+      }
+    },
+    stepUp() {
+      if (this.currentStep < (this.instructions.length - 1)) {
+        this.currentStep += 1;
+      }
+    }
+  }
 }
 </script>
 
@@ -75,5 +89,31 @@ export default {
 .carousel-indicators {
   position: static;
   padding-top: 20px;
+}
+.step-indicator {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: darkgray;
+}
+.active-item {
+  color: #545454;
+}
+.slide-control-arrow {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: darkgray;
+  font-weight: bold;
+}
+.slide-area {
+  margin-left: 33%;
+  margin-right: 33%;
+  background-color: #f5f5f5;
+  border-radius: 50px;
+  height: 20px;
+  margin-bottom: 25px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 </style>

@@ -184,7 +184,7 @@
                         </div>
 
                         <p class="pb-3">
-                          {{ $t('extraction-disclaimer', { lower: blueprintData[bp.id.toString()].fb_pos_lower, upper: blueprintData[bp.id.toString()].fb_pos_upper, total: blueprintData[bp.id.toString()].extracted_data.length }) }}
+                          {{ $t('extraction-disclaimer', { lower: blueprintData[bp.id.toString()].fb_pos_lower + 1, upper: blueprintData[bp.id.toString()].fb_pos_upper, total: blueprintData[bp.id.toString()].extracted_data.length }) }}
                         </p>
                       </div>
                       <div :id="'expansion-control-'+bp.id.toString()" class="ul-data-expansion-control control-condensed"><a class="text-decoration-none fw-bold" :id="'collapse-toggle-'+bp.id.toString()" v-on:click="showHideData(bp.id.toString())"><span :id="'donation-container-'+ bp.id.toString() + '-toggle-label'">{{ $t('show-extracted-data') }}</span></a></div>

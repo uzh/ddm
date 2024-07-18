@@ -1,5 +1,26 @@
+<i18n src="../translations/donation_instructions.json"></i18n>
+
 <template>
   <div :id="'carousel-' + componentId" class="carousel carousel-dark slide" data-bs-interval="false" data-bs-ride="carousel" data-bs-wrap="false" >
+
+    <div class="d-flex justify-content-between align-items-center slide-area">
+      <div class="slide-control-steps-heading">{{ $t('steps') }}</div>
+      <div v-for="(i, index) in instructions" :key="index" class="flex-grow-1 text-center">
+        <button
+            type="button"
+            :data-bs-target="'#carousel-' + componentId"
+            :aria-label="'Step ' + index"
+            :class="{ 'active active-item': index <= currentStep }"
+            :aria-current="index === currentStep"
+            class="step-indicator d-hide"
+            @click="currentStep = index"
+        >•</button>
+      </div>
+      <div class="slide-control-done-container">
+        <div class="slide-control-done" :class="{ 'opacity-0': currentStep < (instructions.length - 1) }">✓</div>
+      </div>
+    </div>
+
 
     <div class="carousel-inner">
       <div
@@ -11,25 +32,24 @@
       </div>
     </div>
 
-    <div class="d-flex justify-content-between align-items-center slide-area">
-      <div>
-        <button class="slide-control-arrow" type="button" :data-bs-target="'#carousel-' + componentId" @click="stepDown">‹</button>
-      </div>
-      <div v-for="(i, index) in instructions" :key="index">
-        <button
-          type="button"
-          :data-bs-target="'#carousel-' + componentId"
-          :aria-label="'Step ' + index"
-          :class="{ 'active active-item': index === currentStep }"
-          :aria-current="index === currentStep"
-          class="step-indicator d-hide"
-          @click="currentStep = index"
-      >•</button>
-      </div>
-      <div>
-        <button class="slide-control-arrow" type="button" :data-bs-target="'#carousel-' + componentId" @click="stepUp">›</button>
-      </div>
-    </div>
+    <button
+        class="carousel-control-prev"
+        :class="{ 'd-none': currentStep === 0 }"
+        type="button"
+        data-bs-target="#carousel-0"
+        @click="stepDown">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button
+        class="carousel-control-next"
+        :class="{ 'd-none': currentStep === (instructions.length - 1) }"
+        type="button"
+        data-bs-target="#carousel-0"
+        @click="stepUp">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
   </div>
 </template>
 
@@ -86,34 +106,40 @@ export default {
 .carousel-item {
   transition: transform .3s ease, opacity .3s ease-out
 }
-.carousel-indicators {
-  position: static;
-  padding-top: 20px;
-}
 .step-indicator {
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.65rem;
   color: darkgray;
 }
 .active-item {
   color: #545454;
 }
-.slide-control-arrow {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: darkgray;
+.slide-control-done {
+  color: #198754;
   font-weight: bold;
+  width: 25px;
+  font-size: 1.2rem;
+  margin-bottom: -4px;
 }
 .slide-area {
-  margin-left: 33%;
-  margin-right: 33%;
-  background-color: #f5f5f5;
+  background-color: #f5f5f599;
   border-radius: 50px;
-  height: 20px;
-  margin-bottom: 25px;
+  height: 25px;
+  margin: 10px 0% 40px;
   padding-left: 10px;
   padding-right: 10px;
+  padding-bottom: 2px;
+}
+.slide-control-steps-heading {
+  color: #545454;
+  font-weight: bold;
+  padding-right: 5%;
+  padding-top: 3px;
+  padding-left: 1%;
+}
+.slide-control-done-container {
+  padding-left: 3%;
+  padding-right: 1%;
 }
 </style>

@@ -432,7 +432,7 @@ in the ZIP container in the case of a ZIP upload) is extracted.</p>
 <dl>
 <dt class="hdlist1">Name</dt>
 <dd>
-<p>Name of the File Uploader. Will be publicly visible to participants in the header of the file uplaoder.</p>
+<p>Name of the File Uploader. Will be publicly visible to participants in the header of the File Uplaoder.</p>
 </dd>
 <dt class="hdlist1">Upload Type</dt>
 <dd>
@@ -441,13 +441,19 @@ in the ZIP container in the case of a ZIP upload) is extracted.</p>
 <dt class="hdlist1">Index</dt>
 <dd>
 <p>The position of the file uploader on the data donation page.
-Only relevant if multiple file uploaders are displayed – file uploaders with a
+Only relevant if multiple File Uploaders are displayed – File Uploaders with a
 lower index will be displayed closer to the top of the page.</p>
+</dd>
+<dt class="hdlist1">All-in-one consent</dt>
+<dd>
+<p>If enabled, participants will be asked to consent to submit
+all uploaded data at once. Otherwise, participant will be asked to consent to
+the submission of the data separately for each blueprint.</p>
 </dd>
 <dt class="hdlist1">Associated Donation Blueprints</dt>
 <dd>
 <p>The donation blueprints that apply to the
-expected file(s) collected with the file uploader.</p>
+expected file(s) collected with the File Uploader.</p>
 </dd>
 </dl>
 </div>
@@ -456,7 +462,7 @@ expected file(s) collected with the file uploader.</p>
 <h5 id="_configure_instructions"><a class="anchor" href="#_configure_instructions"></a>Configure Instructions</h5>
 <div class="paragraph">
 <p>Donation Instructions consist of one or multiple instruction pages.
-Instruction pages are displayed as a slide show at the top of file uploader.
+Instruction pages are displayed as a slide show at the top of File Uploader.
 For each instruction page, the following can be configured:</p>
 </div>
 <div class="dlist">
@@ -674,11 +680,97 @@ regular expression (regex). If the latter is the case, you must also select <cod
 </dd>
 <dt class="hdlist1">Extraction Operator</dt>
 <dd>
-<p>Defines the main logic of the extraction step. If empty, this indicates
-that you want to keep the field in the donated data. For all non-regex operations,
-if an operations evaluates to True, the row will be deleted from the donated data
-(further explanations on the separate rules will follow).</p>
+<p>Defines the main logic of the extraction step.</p>
 </dd>
+</dl>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p><strong>Overview of available extraction operators</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Extraction Operator</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Keep Field</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Keep this field in the uploaded data.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">–</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Equal (==)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete row/entry if the value contained in the given <code>field</code> equals the <code>comparison value</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Works for strings, integers, and dates<sup>1</sup>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Not Equal (!=)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete row/entry if the value contained in the given <code>field</code> does not equal the <code>comparison value</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Works for strings, integers, and dates<sup>1</sup>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Greater than (&gt;)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete row/entry if the value contained in the given <code>field</code> is greater than the <code>comparison value</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Works for integers and dates<sup>1</sup>. String values are skipped and the row will be kept in the data.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Smaller than (&lt;)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete row/entry if the value contained in the given <code>field</code> is smaller than the <code>comparison value</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Works for integers and dates<sup>1</sup>. String values are skipped and the row will be kept in the data.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Greater than or equal (&gt;=)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete row/entry if the value contained in the given <code>field</code> is greater than or equal to the <code>comparison value</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Works for integers and dates<sup>1</sup>. String values are skipped and the row will be kept in the data.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Smaller than or equal (&#8656;)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete row/entry if the value contained in the given <code>field</code> is smaller than or equal to the <code>comparison value</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Works for integers and dates<sup>1</sup>. String values are skipped and the row will be kept in the data.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete match (regex)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete parts of the value contained in the given <code>field</code> that match the given <code>regular expression (regex)</code>
+      (e.g., if the <code>regular expression (regex)</code> = "^Watched " and a field contains the value "Watched video XY" the following
+      value will be kept in the uploaded data: "video XY").</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All field values are converted to strings before this operation is applied.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Replace match (regex)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Replace parts of the value contained in the given <code>field</code> that match the given <code>regular expression (regex)</code>
+      (e.g., if the <code>regular expression (regex)</code> = "<span class="\w-\.">@([\w-]</span>\.)+[\w-]{2,4}" and
+      the <code>replacement value</code> = "<em>anonymized</em>" and a field contains the value "some text <a href="mailto:email@address.com">email@address.com</a>" the following
+      value will be kept in the uploaded data: "some text <em>anonymized</em>").</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All field values are converted to strings before this operation is applied.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete row when match (regex)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete row/entry if the value contained in the given <code>field</code> matches the given <code>regular expression (regex)</code> (e.g., if
+      <code>regular expression (regex)</code> = "^Watched " and a field contains the value "Watched video XY"
+      the row/entry will be deleted from the uploaded data).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All field values are converted to strings before this operation is applied.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><span class="small"><sup>1</sup>Dates are inferred from string values if they are formatted according to ISO, RFC2822, or HTTP standards,
+and only if both the field value and the comparison value follow the same format.
+Otherwise, the entry will be treated as a regular string.</span></p>
+</div>
+</div>
+</div>
+<div class="dlist">
+<dl>
 <dt class="hdlist1">Comparison Value</dt>
 <dd>
 <p>The value against which the data contained in the indicated field will be compared according to the selected comparison logic.</p>
@@ -922,9 +1014,11 @@ through predefined variables. This also works for the briefing and debriefing pa
         "briefing_consent": "1"   # or "0" if participant did not consent to take part in the study
     },
     "donation_info": {
-        "n_success": 1,           # number of successful donations by this participant
-        "n_pending": 1,           # number of pending (i.e., not attempted) donations by this participant
-        "n_failed": 0,            # number of attempted but failed donations by this participant
+        "n_success": 1,           # number of successfully uploaded blueprints by this participant (regardless of consent).
+        "n_pending": 1,           # number of pending (i.e., not attempted) blueprint uploads.
+        "n_failed": 0,            # number of blueprints where an upload was attempted but failed.
+        "n_consent": 1,           # number of successful uploads to which donation consent was given.
+        "n_no_consent": 0,        # number of successful uploads to which no donation consent was given.
         "n_no_data_extracted": 0  # number of donations by this participant where all entries were filtered out
     }
 }</code></pre>

@@ -10,6 +10,7 @@ class DonationProjectAdmin(admin.ModelAdmin):
     Provides an overview of all active Donation Projects.
     """
     list_display = ['name', 'owner', 'date_created', 'edit_link']
+    readonly_fields = ['date_created']
 
     def has_add_permission(self, request, obj=None):
         return False

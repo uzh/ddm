@@ -11,7 +11,7 @@
       :blueprints="uploadConfig.blueprints"
       :instructions="uploadConfig.instructions"
       :exception-url="this.exceptionUrl"
-      :pooled="this.pooled"
+      :combined-consent="uploadConfig.combined_consent"
       @changedData="updatePostData"
   ></FileUploader>
 
@@ -72,8 +72,7 @@ export default {
     uploadConfig: String,
     actionUrl: String,
     exceptionUrl: String,
-    language: String,
-    pooled: Boolean
+    language: String
   },
   data() {
     this.$i18n.locale = this.language;
@@ -270,7 +269,7 @@ export default {
 
 <style>
 #uapp {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: Nunito Sans, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;

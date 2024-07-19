@@ -3,11 +3,11 @@ const path = require('path');
 
 const pages = {
     'vue_uploader': {
-        entry: './src/uploader.js',
+        entry: './UploaderApp/src/uploader.js',
         chunks: ['chunk-vendors']
     },
     'vue_questionnaire': {
-        entry: './src/questionnaire.js',
+        entry: './QuestionnaireApp/src/questionnaire.js',
         chunks: ['chunk-vendors']
     }
 }
@@ -49,7 +49,7 @@ module.exports = {
         config
             .plugin('BundleTracker')
             .use(BundleTracker, [{
-                filename: '../ddm/static/ddm/vue/webpack-stats.json',
+                filename: 'webpack-stats.json',
                 path: '../ddm/static/ddm/vue',
                 relativePath: true
             }]);

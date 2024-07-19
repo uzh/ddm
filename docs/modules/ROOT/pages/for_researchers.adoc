@@ -187,22 +187,26 @@ The data donation step can incorporate multiple File Uploaders.
 
 ===== Configure File Uploader
 
-Name:: Name of the File Uploader. Will be publicly visible to participants in the header of the file uplaoder.
+Name:: Name of the File Uploader. Will be publicly visible to participants in the header of the File Uplaoder.
 
 Upload Type:: Either "single file" or "zip file".
 
 Index:: The position of the file uploader on the data donation page.
-Only relevant if multiple file uploaders are displayed – file uploaders with a
+Only relevant if multiple File Uploaders are displayed – File Uploaders with a
 lower index will be displayed closer to the top of the page.
 
+All-in-one consent:: If enabled, participants will be asked to consent to submit
+all uploaded data at once. Otherwise, participant will be asked to consent to
+the submission of the data separately for each blueprint.
+
 Associated Donation Blueprints:: The donation blueprints that apply to the
-expected file(s) collected with the file uploader.
+expected file(s) collected with the File Uploader.
 
 
 ===== Configure Instructions
 
 Donation Instructions consist of one or multiple instruction pages.
-Instruction pages are displayed as a slide show at the top of file uploader.
+Instruction pages are displayed as a slide show at the top of File Uploader.
 For each instruction page, the following can be configured:
 
 Text:: The instruction text displayed to the participants.
@@ -315,10 +319,71 @@ regular expression (regex). If the latter is the case, you must also select `reg
 
 Regex field:: Select if you use a regex expression in the `Field` setting of this rule.
 
-Extraction Operator:: Defines the main logic of the extraction step. If empty, this indicates
-that you want to keep the field in the donated data. For all non-regex operations,
-if an operations evaluates to True, the row will be deleted from the donated data
-(further explanations on the separate rules will follow).
+Extraction Operator:: Defines the main logic of the extraction step.
+
+====
+*Overview of available extraction operators*
+
+[%header,cols=3*]
+|===
+|Extraction Operator
+|Description
+|Note
+
+|Keep Field
+|Keep this field in the uploaded data.
+|–
+
+|Equal (==)
+|Delete row/entry if the value contained in the given `field` equals the `comparison value`.
+|Works for strings, integers, and dates^1^.
+
+|Not Equal (!=)
+|Delete row/entry if the value contained in the given `field` does not equal the `comparison value`.
+|Works for strings, integers, and dates^1^.
+
+|Greater than (>)
+|Delete row/entry if the value contained in the given `field` is greater than the `comparison value`.
+|Works for integers and dates^1^. String values are skipped and the row will be kept in the data.
+
+|Smaller than (<)
+|Delete row/entry if the value contained in the given `field` is smaller than the `comparison value`.
+|Works for integers and dates^1^. String values are skipped and the row will be kept in the data.
+
+|Greater than or equal (>=)
+|Delete row/entry if the value contained in the given `field` is greater than or equal to the `comparison value`.
+|Works for integers and dates^1^. String values are skipped and the row will be kept in the data.
+
+|Smaller than or equal (<=)
+|Delete row/entry if the value contained in the given `field` is smaller than or equal to the `comparison value`.
+|Works for integers and dates^1^. String values are skipped and the row will be kept in the data.
+
+|Delete match (regex)
+|Delete parts of the value contained in the given `field` that match the given `regular expression (regex)`
+      (e.g., if the `regular expression (regex)` = "^Watched " and a field contains the value "Watched video XY" the following
+      value will be kept in the uploaded data: "video XY").
+|All field values are converted to strings before this operation is applied.
+
+|Replace match (regex)
+|Replace parts of the value contained in the given `field` that match the given `regular expression (regex)`
+      (e.g., if the `regular expression (regex)` = "[\w-\.]+@([\w-]+\.)+[\w-]{2,4}" and
+      the `replacement value` = "_anonymized_" and a field contains the value "some text email@address.com" the following
+      value will be kept in the uploaded data: "some text _anonymized_").
+|All field values are converted to strings before this operation is applied.
+
+|Delete row when match (regex)
+|Delete row/entry if the value contained in the given `field` matches the given `regular expression (regex)` (e.g., if
+      `regular expression (regex)` = "^Watched " and a field contains the value "Watched video XY"
+      the row/entry will be deleted from the uploaded data).
+|All field values are converted to strings before this operation is applied.
+
+|===
+
+[small]#^1^Dates are inferred from string values if they are formatted according to ISO, RFC2822, or HTTP standards,
+and only if both the field value and the comparison value follow the same format.
+Otherwise, the entry will be treated as a regular string.#
+
+====
 
 Comparison Value:: The value against which the data contained in the indicated field will be compared according to the selected comparison logic.
 
@@ -470,9 +535,11 @@ The participant related data contains the following information:
         "briefing_consent": "1"   # or "0" if participant did not consent to take part in the study
     },
     "donation_info": {
-        "n_success": 1,           # number of successful donations by this participant
-        "n_pending": 1,           # number of pending (i.e., not attempted) donations by this participant
-        "n_failed": 0,            # number of attempted but failed donations by this participant
+        "n_success": 1,           # number of successfully uploaded blueprints by this participant (regardless of consent).
+        "n_pending": 1,           # number of pending (i.e., not attempted) blueprint uploads.
+        "n_failed": 0,            # number of blueprints where an upload was attempted but failed.
+        "n_consent": 1,           # number of successful uploads to which donation consent was given.
+        "n_no_consent": 0,        # number of successful uploads to which no donation consent was given.
         "n_no_data_extracted": 0  # number of donations by this participant where all entries were filtered out
     }
 }

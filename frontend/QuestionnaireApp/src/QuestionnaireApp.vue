@@ -102,12 +102,12 @@
 </template>
 
 <script>
-import SingleChoiceQuestion from "./components/SingleChoiceQuestion.vue";
-import MultiChoiceQuestion from "./components/MultiChoiceQuestion.vue";
-import OpenQuestion from "./components/OpenQuestion";
-import MatrixQuestion from "./components/MatrixQuestion";
-import SemanticDifferential from "./components/SemanticDifferential";
-import TransitionQuestion from "./components/TransitionQuestion";
+import SingleChoiceQuestion from "./components/QuestionSingleChoice.vue";
+import MultiChoiceQuestion from "./components/QuestionMultiChoice.vue";
+import OpenQuestion from "./components/QuestionOpen.vue";
+import MatrixQuestion from "./components/QuestionMatrix.vue";
+import SemanticDifferential from "./components/QuestionSemanticDifferential.vue";
+import TransitionQuestion from "./components/QuestionTransition.vue";
 
 export default {
   name: 'QApp',

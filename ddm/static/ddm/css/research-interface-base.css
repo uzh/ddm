@@ -21,6 +21,10 @@
     align-items: center;
 }
 
+.fs-08 {
+    font-size: 0.8rem !important;
+}
+
 .ddm-nav-icon {
     color: #1a1a1a !important;
     font-size: 1.5rem;
@@ -168,7 +172,6 @@
 .ddm-admin-section-body {
     padding: 20px;
     border-radius: 0 0 5px 5px;
-    background: #fbfbfb;
  }
 .ddm-admin-section-body tbody {
     border-top: none !important;
@@ -391,4 +394,52 @@
 }
 .version-info {
     color: lightgray;
+}
+
+.ddm-info-accordion {
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+    margin: 15px 10PX 25px 10px;
+}
+
+.ddm-info-accordion-header {
+    background: #f2f2f2;
+}
+
+.ddm-info-accordion-button {
+    padding: 5px 15px;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+}
+
+.ddm-info-accordion-button:after {
+    content: "\F229";
+    font-family: "bootstrap-icons";
+    display: inline-block;
+    float: right;
+    transition-duration: .35s;
+}
+
+.ddm-info-accordion-button:not(.collapsed):after {
+    content: "\F229";
+    font-family: "bootstrap-icons";
+    display: inline-block;
+    transform: rotate(-180deg);
+    transition-duration: .35s;
+    float: right;
+}
+
+.ddm-info-accordion-body {
+    padding: 15px 21px;
+    border-bottom: 1px solid lightgrey;
+}
+
+.ddm-info-accordion-body ol {
+    line-height: 1.5rem;
+}
+
+.ddm-info-accordion-body li {
+    padding-left: 5px;
 }

@@ -162,37 +162,48 @@
                     </div>
                     <div class="data-donation-container pb-3 pt-3 fs-09">
                       <div :id="'donation-container-'+bp.id.toString()" class="ul-data-container ul-data-condensed bg-white">
-                        <table :id="'ul-result-' + bp.id.toString()" class="table table-sm">
-                          <thead>
-                          <tr>
-                            <th v-for="value in blueprintData[bp.id.toString()].extracted_fields.values()" :key="value">{{ value }}</th>
-                          </tr>
-                          </thead>
-                          <tbody>
-                          <tr v-for="row in blueprintData[bp.id.toString()].extracted_data.slice(blueprintData[bp.id.toString()].fb_pos_lower, blueprintData[bp.id.toString()].fb_pos_upper)" :key="row">
-                            <template v-for="key in blueprintData[bp.id.toString()].extracted_fields.keys()" :key="key">
-                              <td v-if="key in row" :key="row">{{ row[key] }}</td>
-                              <td v-else>–</td>
-                            </template>
-                          </tr>
+                        <div class="data-donation-table">
+                          <table :id="'ul-result-' + bp.id.toString()" class="table table-sm">
+                            <thead>
+                            <tr>
+                              <th v-for="value in blueprintData[bp.id.toString()].extracted_fields.values()" :key="value">{{ value }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="row in blueprintData[bp.id.toString()].extracted_data.slice(blueprintData[bp.id.toString()].fb_pos_lower, blueprintData[bp.id.toString()].fb_pos_upper)" :key="row">
+                              <template v-for="key in blueprintData[bp.id.toString()].extracted_fields.keys()" :key="key">
+                                <td v-if="key in row" :key="row">{{ row[key] }}</td>
+                                <td v-else>–</td>
+                              </template>
+                            </tr>
 
-                          </tbody>
-                        </table>
-                        <div class="pb-2">
-                          <a class="btn btn-secondary btn-sm me-2" v-if="blueprintData[bp.id.toString()].fb_pos_lower > 14" v-on:click="updateFbPos(bp.id.toString(), 'down')" >Vorherige Seite</a>
-                          <a class="btn btn-secondary btn-sm" v-if="blueprintData[bp.id.toString()].fb_pos_upper < blueprintData[bp.id.toString()].extracted_data.length" v-on:click="updateFbPos(bp.id.toString(), 'up')" >Nächste Seite</a>
+                            </tbody>
+                          </table>
                         </div>
+                        <div class="data-table-navigation">
+                          <div class="pb-2">
+                            <a class="btn btn-secondary btn-sm me-2" v-if="blueprintData[bp.id.toString()].fb_pos_lower > 14" v-on:click="updateFbPos(bp.id.toString(), 'down')" >{{ $t('previous-page') }}</a>
+                            <span class="btn-secondary btn-sm me-2 btn-light text-muted user-select-none btn-muted" v-if="blueprintData[bp.id.toString()].fb_pos_lower <= 14">{{ $t('previous-page') }}</span>
+                            <a class="btn btn-secondary btn-sm" v-if="blueprintData[bp.id.toString()].fb_pos_upper < blueprintData[bp.id.toString()].extracted_data.length" v-on:click="updateFbPos(bp.id.toString(), 'up')" >{{ $t('next-page') }}</a>
+                            <span class="btn-secondary btn-sm btn-light text-muted user-select-none btn-muted" v-if="blueprintData[bp.id.toString()].fb_pos_upper >= blueprintData[bp.id.toString()].extracted_data.length">{{ $t('next-page') }}</span>
+                          </div>
 
-                        <p class="pb-3">
-                          {{ $t('extraction-disclaimer', { lower: blueprintData[bp.id.toString()].fb_pos_lower, upper: blueprintData[bp.id.toString()].fb_pos_upper, total: blueprintData[bp.id.toString()].extracted_data.length }) }}
-                        </p>
+                          <div class="pb-3">
+                            <p class="pb-3">
+                              {{ $t('extraction-disclaimer', { lower: blueprintData[bp.id.toString()].fb_pos_lower + 1, upper: blueprintData[bp.id.toString()].fb_pos_upper, total: blueprintData[bp.id.toString()].extracted_data.length }) }}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+
                       </div>
                       <div :id="'expansion-control-'+bp.id.toString()" class="ul-data-expansion-control control-condensed"><a class="text-decoration-none fw-bold" :id="'collapse-toggle-'+bp.id.toString()" v-on:click="showHideData(bp.id.toString())"><span :id="'donation-container-'+ bp.id.toString() + '-toggle-label'">{{ $t('show-extracted-data') }}</span></a></div>
                     </div>
                   </div>
                 </div>
 
-                <template v-if="this.pooled === 'false'"> <!-- Check for ddm_pooled integration -->
+                <template v-if="this.combinedConsent === false">
                 <div class="row">
                   <div class="col feedback-col pb-5 pt-1">
                     <p class="fw-bold">{{ $t('donation-question') }}</p>
@@ -251,22 +262,21 @@
         </div>
       </div>
 
-        <!-- Part for ddm_pooled integration -->
-        <template v-if="this.pooled === 'true' && (uploadStatus === 'success' || uploadStatus === 'partial')">
+        <template v-if="this.combinedConsent === true && (uploadStatus === 'success' || uploadStatus === 'partial')">
           <div class="row mt-5">
             <div class="col feedback-col pb-5 pt-1">
-              <p class="fw-bold">{{ $t('pool-submit-question') }}</p>
+              <p class="fw-bold">{{ $t('donation-question') }}</p>
               <div class="consent-question-container">
                 <div class="question-choice-item pt-3 pt-lg-0">
-                  <label class="form-check-label rb-cb-label" for="pool-donate-agree">
-                    <input type="radio" id="pool-donate-agree" value="true" v-model="poolDonate" @change="emitToParent" required>
-                    {{ $t('donation-agree-pooled') }}
+                  <label class="form-check-label rb-cb-label" for="combined-donate-agree">
+                    <input type="radio" id="combined-donate-agree" value="true" v-model="combinedDonation" @change="emitToParent" required>
+                    {{ $t('donation-agree') }}
                   </label>
                 </div>
                 <div class="question-choice-item pt-3 pt-lg-0">
-                  <label class="form-check-label rb-cb-label" for="pool-donate-disagree">
-                    <input type="radio" id="pool-donate-disagree" value="false" v-model="poolDonate" @change="emitToParent">
-                    {{ $t('donation-disagree-pooled') }}
+                  <label class="form-check-label rb-cb-label" for="combined-donate-disagree">
+                    <input type="radio" id="combined-donate-disagree" value="false" v-model="combinedDonation" @change="emitToParent">
+                    {{ $t('donation-disagree') }}
                   </label>
                 </div>
               </div>
@@ -306,6 +316,17 @@ import JSZip from "jszip";
 import DonationInstructions from "./DonationInstructions";
 import axios from "axios";
 import Papa from 'papaparse';
+import {
+  regexDeleteMatch,
+  regexReplaceMatch,
+  regexDeleteRow,
+  valueIsEqual,
+  valueIsNotEqual,
+  valueIsSmallerOrEqual,
+  valueIsGreaterOrEqual,
+  valueIsSmaller,
+  valueIsGreater
+} from '../utils/FileUploaderExtractionFunctions'
 
 
 export default {
@@ -318,7 +339,7 @@ export default {
     componentId: Number,
     name: String,
     exceptionUrl: String,
-    pooled: String
+    combinedConsent: Boolean
   },
   emits: ['changedData'],
   data() {
@@ -329,7 +350,7 @@ export default {
       generalErrors: [],
       ulModalInfoMsg: '',
       ulModalInfoTitle: '',
-      poolDonate: true
+      combinedDonation: null
     }
   },
   created() {
@@ -344,7 +365,8 @@ export default {
         status: 'pending',
         errors: [],
         fb_pos_lower: 0,
-        fb_pos_upper: 15
+        fb_pos_upper: 15,
+        error_log: {},
       }
       this.blueprintData[id.toString()] = blueprintInfo
     })
@@ -508,10 +530,6 @@ export default {
         let nEntriesWithMissingFields = 0;
         let nEntriesFilteredOut = 0;
 
-        // Limit the number of messages posted to the project logs.
-        let nMsgsPosted = 0;
-        let maxMsgs = 10;
-
         fileContent.forEach(entry => {
 
           // Check if file contains all expected fields
@@ -556,17 +574,11 @@ export default {
             }
 
             if(keys.length > 1) {
-              if (nMsgsPosted < maxMsgs) {
-                let errorMsg = `More than 1 key matches for variable "${rule.field}": ${keys}; Associated "${keys[0]}" to variable.`;
-                uploader.postError(4203, errorMsg, blueprint.id);
-                nMsgsPosted++;
-              }
+              let errorMsg = `More than 1 key matches for variable "${rule.field}": ${keys}; Associated "${keys[0]}" to variable.`;
+              uploader.postError(4203, errorMsg, blueprint.id);
             } else if(keys.length === 0) {
-              if (nMsgsPosted < maxMsgs) {
-                let errorMsg = `No key matches for variable "${rule.field}": ${Object.keys(entry)}`;
-                uploader.postError(4203, errorMsg, blueprint.id);
-                nMsgsPosted++;
-              }
+              let errorMsg = `No key matches for variable "${rule.field}": ${Object.keys(entry)}`;
+              uploader.postError(4203, errorMsg, blueprint.id);
             } else {
               keyMap.set(rule.field, keys[0]);
             }
@@ -587,73 +599,78 @@ export default {
                     result[rule.field] = entry[key];
                     break;
                   case '==':
-                    if (entry[key] !== rule.comparison_value) {
-                      // keep entry
-                    } else {
+                    if (valueIsEqual(entry[key], rule.comparison_value)) {
                       // discard entry
                       throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
                     }
                     break;
                   case '!=':
-                    if (entry[key] === rule.comparison_value) {
-                      // keep entry
-                    } else {
+                    if (valueIsNotEqual(entry[key], rule.comparison_value)) {
                       // discard entry
                       throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
                     }
                     break;
                   case '<=':
-                    if (entry[key] > rule.comparison_value) {
-                      // keep entry
-                    } else {
+                    if (valueIsSmallerOrEqual(entry[key], rule.comparison_value)) {
                       // discard entry
                       throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
                     }
                     break;
                   case '>=':
-                    if (entry[key] < rule.comparison_value) {
-                      // keep entry
-                    } else {
+                    if (valueIsGreaterOrEqual(entry[key], rule.comparison_value)) {
                       // discard entry
                       throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
                     }
                     break;
                   case '<':
-                    if (entry[key] >= rule.comparison_value) {
-                      // keep entry
-                    } else {
+                    if (valueIsSmaller(entry[key], rule.comparison_value)) {
                       // discard entry
                       throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
                     }
                     break;
                   case '>':
-                    if (entry[key] <= rule.comparison_value) {
-                      // keep entry
-                    } else {
+                    if (valueIsGreater(entry[key], rule.comparison_value)) {
                       // discard entry
-                      throw `Field "${key}" matches filter value "${rule.comparison_value}".`
+                      throw `Field "${key}" matches filter value "${rule.comparison_value}" for entry.`
                     }
                     break;
                   case 'regex-delete-match':
                     if (key in result) {
-                      let newValue = entry[key].replaceAll(RegExp(rule.comparison_value, 'g'), '');
-                      result[rule.field] = newValue;
-                      entry[key] = newValue;
+                      try {
+                        let newValue = regexDeleteMatch(entry[key], rule.comparison_value);
+                        result[rule.field] = newValue;
+                        entry[key] = newValue;
+                      } catch {
+                        let errorMsg = `RegexDeleteMatch failed for field ${rule.field}.`;
+                        uploader.postError(4220, errorMsg, blueprint.id);
+                        result[rule.field] = entry[key];
+                      }
                     }
                     break;
                   case 'regex-replace-match':
                     if (key in result) {
-                      let newValue = entry[key].replaceAll(RegExp(rule.comparison_value, 'g'), rule.replacement_value);
-                      result[rule.field] = newValue;
-                      entry[key] = newValue;
+                      try {
+                        let newValue = regexReplaceMatch(entry[key], rule.comparison_value, rule.replacement_value);
+                        result[rule.field] = newValue;
+                        entry[key] = newValue;
+                      } catch {
+                        let errorMsg = `RegexReplaceMatch failed for field ${rule.field}.`;
+                        uploader.postError(4221, errorMsg, blueprint.id);
+                        result[rule.field] = entry[key];
+                      }
                     }
                     break;
                   case 'regex-delete-row':
                     if (key in entry) {
-                      let comparisonValue = RegExp(rule.comparison_value, 'g');
-                      if (!comparisonValue.test(entry[key])) {
-                        // keep entry
-                      } else {
+                      let deleteRow = false;
+                      try {
+                        deleteRow = regexDeleteRow(entry[key], rule.comparison_value);
+                      } catch {
+                        let errorMsg = `RegexDeleteRow failed for field ${rule.field}.`;
+                        uploader.postError(4222, errorMsg, blueprint.id);
+                        break;
+                      }
+                      if (deleteRow) {
                         // discard entry
                         throw `Field "${key}" matches RegExp "${rule.comparison_value}".`
                       }
@@ -666,7 +683,6 @@ export default {
             extractedData.push(result);
           } catch (e) {
             nEntriesFilteredOut += 1;
-            // uploader.postError(4206, `${e}`, blueprint.id)
           }
 
           for (let [key, value] of  keyMap.entries()) {
@@ -725,7 +741,7 @@ export default {
     emitToParent() {
       let dataToEmit = JSON.parse(JSON.stringify(this.blueprintData));
 
-      if (this.pooled === 'false') {
+      if (this.combinedConsent === false) {
         Object.keys(dataToEmit).forEach(key => {
           if (dataToEmit[key].consent === null) {
             dataToEmit[key].consent = null;
@@ -739,10 +755,9 @@ export default {
           }
         })
       } else {
-        // Added for ddm_pooled integration.
-        let consent = this.poolDonate;
+        let consent = this.combinedDonation;
         Object.keys(dataToEmit).forEach(key => {
-          if (consent === '0' || consent === 'false') {
+          if (consent === 'false') {
             dataToEmit[key].consent = false;
             dataToEmit[key].extracted_data = [];
           } else {
@@ -788,6 +803,19 @@ export default {
      * @param {number}  blueprintID ID of related blueprint. Default is null.
      */
     postError(code, msg, blueprintID=null) {
+      // Limit the number of times an error message is posted to the server.
+      if (blueprintID != null) {
+        let bp = this.blueprintData[blueprintID];
+        if (!(code in bp.error_log)) {
+          bp.error_log[code] = 1;
+        } else {
+          bp.error_log[code] += 1;
+        }
+        if (bp.error_log[code] > 5) {
+          return;
+        }
+      }
+
       let data = {
         'status_code': code,
         'message': this.name + ': ' + msg,
@@ -973,6 +1001,7 @@ export default {
   z-index: 1;
   background-color: white !important;
   box-shadow: 0px 1px black;
+  min-width: 200px;
 }
 .ul-data-expansion-control {
   text-align: center;
@@ -1025,15 +1054,20 @@ export default {
 }
 .ul-data-container table {
   background: #e3e3e31c;
-  table-layout: fixed;
-  max-width: 1000px;
-  width: 1000px;
+  table-layout: auto;
+  min-width: 100%;
 }
 .ul-data-container table td {
   max-width: 33%;
   word-break: break-all;
 }
-.btn-secondary:hover {
+.data-donation-table {
+  width: 100%;
+  overflow-x: scroll;
+  margin-bottom: 15px;
+  display: block;
+}
+.btn-secondary:not(.btn-muted):hover {
   color: white !important;
 }
 </style>

@@ -80,6 +80,21 @@ _Description:_ A filter rule applied and the entry was deleted. +
 _Exception Message:_ TODO
 
 
+*4220: Regex error (delete match)* +
+_Description:_ An error occurred during the regex comparison (likely due to a regex misspecification in the extraction rule). +
+_Exception Message:_ TODO
+
+
+*4221: Regex error (replace match)* +
+_Description:_ An error occurred during the regex comparison (likely due to a regex misspecification in the extraction rule). +
+_Exception Message:_ TODO
+
+
+*4222: Regex error (delete row)* +
+_Description:_ An error occurred during the regex comparison (likely due to a regex misspecification in the extraction rule). +
+_Exception Message:_ TODO
+
+
 *4299: Entry Not Containing Expected Fields* +
 _Description:_ An entry did not contain one or more of the expected fields. +
 _Exception Message:_ TODO

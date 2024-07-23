@@ -139,7 +139,7 @@ class QuestionBase(PolymorphicModel):
     @staticmethod
     def render_text(text, donated_data, participant_data, view):
         if text is not None:
-            text = '{% load ddm_graphs static %}\n' + text
+            text = '{% load static %}\n' + text
         template = Template(text)
         return template.render(Context(
             {'data': donated_data, 'participant': participant_data, 'view': view})

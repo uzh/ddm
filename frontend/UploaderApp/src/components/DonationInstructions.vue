@@ -3,7 +3,7 @@
 <template>
   <div :id="'carousel-' + componentId" class="carousel carousel-dark slide" data-bs-interval="false" data-bs-ride="carousel" data-bs-wrap="false" >
 
-    <div class="d-flex justify-content-between align-items-center slide-area">
+    <div v-if="instructions.length > 1" class="d-flex justify-content-between align-items-center slide-area">
       <div class="slide-control-steps-heading">{{ $t('steps') }}</div>
       <div v-for="(i, index) in instructions" :key="index" class="flex-grow-1 text-center">
         <button

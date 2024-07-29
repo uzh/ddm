@@ -10,6 +10,23 @@ authors:
   given-names: "Thomas N."
   orcid: "https://orcid.org/0000-0001-8088-0113"
 title: "Data Donation Module"
-version: 1.0.0
-date-released: 2023-04-30
+version: v1.0.17
+date-released: 2024-07-29
 url: "https://github.com/uzh/ddm"
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Pfiffner"
+    given-names: "Nico"
+    orcid: "https://orcid.org/0000-0003-3347-5267"
+  - family-names: "Witlox"
+    given-names: "Pim"
+  - family-names: "Friemel"
+    given-names: "Thomas N."
+    orcid: "https://orcid.org/0000-0001-8088-0113"
+  doi: "https://doi.org/10.5117/CCR2024.2.4.PFIF "
+  journal: "Computational Communication Research"
+  title: "Data Donation Module: A Web Application for Collecting and Enriching Data Donations"
+  issue: 2
+  volume: 6
+  year: 2024

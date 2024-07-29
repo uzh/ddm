@@ -317,4 +317,4 @@ yarn-error.log
 .idea
 
 docs/*.html
-ddm_test_env
+ddm_test_env*

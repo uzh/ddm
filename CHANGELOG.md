@@ -1,9 +1,21 @@
 # Changelog
 
-## 1.0.16 - 2024-07-19
+## 1.0.17 - 2024-07-29
 
 _Download of collected data donations is only possible through the API not through the admin interface. 
 Fix and comprehensive documentation will be released in a subsequent version._
+
+### Changed
+- Hide instruction steps bar if only one instruction page is defined. ([`600ba44`](https://github.com/uzh/ddm/commit/600ba44))
+- Updated citation. ([`2a23537`](https://github.com/uzh/ddm/commit/2a23537))
+
+### Fixed
+- Remove deprecated 'ddm_graph' template tag from question rendering. ([`a3881d5`](https://github.com/uzh/ddm/commit/a3881d5))
+
+
+## 1.0.16 - 2024-07-19
+
+_Questionnaire was not working in this version due to the inclusion of a deprecated template tag (see fix in v1.0.17)._ 
 
 ### Changed
 

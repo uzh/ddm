@@ -77,7 +77,6 @@ class QuestionBase(PolymorphicModel):
         ]
 
     def __init__(self, *args, **kwargs):
-        kwargs['question_type'] = self.DEFAULT_QUESTION_TYPE
         super().__init__(*args, **kwargs)
 
     def __str__(self):

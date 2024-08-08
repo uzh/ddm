@@ -1,0 +1,50 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cybersecurity-for-democracy-django-ddm"
+dynamic = ["version"]
+description = "A Django app to setup data donation projects."
+readme = "README.md"
+license = "GPL-3.0"
+requires-python = ">=3.8"
+authors = [
+    { name = "Nico Pfiffner", email = "n.pfiffner@ikmz.uzh.ch" },
+]
+classifiers = [
+    "Environment :: Web Environment",
+    "Framework :: Django",
+    "Framework :: Django :: 3.2",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+]
+dependencies = [
+    "django-ckeditor",
+    "django-polymorphic",
+    "django-webpack-loader",
+    "Django>=5.1,<6",
+    "djangorestframework",
+    "pycryptodome",
+    "setuptools",
+    "pillow",
+]
+
+[project.urls]
+Documentation = "https://uzh.github.io/ddm/"
+Homepage = "https://github.com/uzh/ddm"
+Website = "https://datadonation.uzh.ch"
+
+[tool.hatch.version]
+path = "ddm/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/ddm",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["ddm/"]

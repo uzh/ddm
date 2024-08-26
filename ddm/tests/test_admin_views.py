@@ -269,5 +269,5 @@ class TestProjectListView(TestCase):
         response = self.client.get(reverse('project-list'))
         object_list = response.context['object_list']
         expected_queryset = DonationProject.objects.filter(owner__user=self.owner)
-        self.assertQuerysetEqual(
+        self.assertQuerySetEqual(
             object_list, list(expected_queryset), ordered=False)

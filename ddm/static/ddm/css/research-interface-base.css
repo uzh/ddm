@@ -443,3 +443,7 @@
 .ddm-info-accordion-body li {
     padding-left: 5px;
 }
+
+.item-set-table input[type="text"]{
+    width: 100%;
+}

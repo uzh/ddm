@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.0.18 - 2024-09-19
+
+_Download of collected data donations is only possible through the API not through the admin interface. 
+Fix and comprehensive documentation will be released in a subsequent version._
+
+### Changed
+- Questionnaire: Optimize mobile layout of matrix questions and semantic differential type questions. ([`b1607e7`](https://github.com/uzh/ddm/commit/b1607e7), 
+[`0c60352`](https://github.com/uzh/ddm/commit/0c60352), [`b6b9b58`](https://github.com/uzh/ddm/commit/b6b9b58))
+- Questionnaire: Jump to top of page after clicking on 'next page'. ([`fb55c10`](https://github.com/uzh/ddm/commit/fb55c10))
+- Allow customization of briefing consent labels through html. ([`32d7c59`](https://github.com/uzh/ddm/commit/32d7c59))
+
+
 ## 1.0.17 - 2024-07-29
 
 _Download of collected data donations is only possible through the API not through the admin interface. 

@@ -29,7 +29,12 @@
 }
 
 /* MATRIX QUESTION */
-.mq-table,
+.mq-table {
+	display: table;
+	table-layout: fixed;
+	width:100%;
+	text-align: center;
+}
 .dq-table {
 	display: table;
 	table-layout: fixed;
@@ -266,5 +271,12 @@
     .dq-table-td-item-left,
     .dq-table-td-item-right {
         hyphens: manual;
+    }
+}
+@media (max-width: 768px) {
+    .mq-table thead tr th:first-child,
+    .mq-table tbody tr td:first-child {
+        width: 30%;
+        padding-left: 5px;
     }
 }

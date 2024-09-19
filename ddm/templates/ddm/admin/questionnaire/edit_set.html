@@ -8,7 +8,7 @@
 <form method="post">
   {% csrf_token %}
   {{ formset.management_form }}
-  <table class="table mt-4">
+  <table class="table mt-4 item-set-table">
 
     {% for form in formset.forms %}
 

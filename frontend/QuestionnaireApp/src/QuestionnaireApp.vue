@@ -94,7 +94,7 @@
       <button
           class="flow-btn"
           type="button"
-          @click="next"
+          @click="next(), scrollToTop()"
       >{{ $t('next-btn-label') }}&nbsp;&nbsp;&#8250;</button>
     </div>
   </div>
@@ -146,6 +146,19 @@ export default {
     }
   },
   methods: {
+    scrollToTop() {
+      this.$nextTick(() => {
+        setTimeout(() => {
+          document.documentElement.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
+        }, 100);
+      });
+    },
     updateResponses(e) {
       this.responses[e.id] = {response: e.response, question: e.question, items: e.items}
     },
@@ -206,8 +219,6 @@ export default {
       } else {
         requiredButMissingElement.forEach(e => {
           let id = "answer-" + e;
-          console.log(e);
-          console.log(id);
           document.getElementById(id).classList.add("required-but-missing");
         })
         missingQuestionIds.forEach(q => {

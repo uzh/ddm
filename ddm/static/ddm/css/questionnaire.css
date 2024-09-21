@@ -221,7 +221,7 @@
 
 	.mq-table thead tr th:first-child,
 	.mq-table tbody tr td:first-child {
-		width: auto;
+		width: 100% !important;
 		padding-left: 10px;
 		padding-bottom: 5px;
 	}

@@ -81,7 +81,6 @@
     </tr>
 
     {% for blueprint in donation_blueprints %}
-      {{ blueprint.file_uploader }}
       {% if blueprint.file_uploader is not None %}
         {% for question in blueprint.get_associated_questions %}
         <tr {% if forloop.last %}class="border-bottom-dark"{% endif %}>

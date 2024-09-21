@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.19 - 2024-09-21
+
+_Download of collected data donations is only possible through the API not through the admin interface. 
+Fix and comprehensive documentation will be released in a subsequent version._
+
+### Fixed
+- Fixed mobile layout of matrix question items ([`5e87ac5`](https://github.com/uzh/ddm/commit/5e87ac5).
+
+
 ## 1.0.18 - 2024-09-19
 
 _Download of collected data donations is only possible through the API not through the admin interface. 

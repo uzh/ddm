@@ -6,7 +6,7 @@ from ddm.models.core import (
     DataDonation, DonationProject, QuestionnaireResponse, ResearchProfile,
     DonationBlueprint, Participant
 )
-from ddm.models.encryption import Encryption, Decryption
+from ddm.encryption.models import Encryption, Decryption
 
 
 User = get_user_model()

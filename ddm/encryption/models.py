@@ -1,15 +1,16 @@
+import base64
+import json
+
+from io import BytesIO
+from struct import pack
+
+from django.db import models
+from django.views.decorators.debug import sensitive_variables
+
 from Crypto.Cipher import PKCS1_OAEP, AES
 from Crypto.Hash import HMAC
 from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes
-from django.db import models
-from io import BytesIO
-from struct import pack
-
-import base64
-import json
-
-from django.views.decorators.debug import sensitive_variables
 
 
 class ModelWithEncryptedData(models.Model):

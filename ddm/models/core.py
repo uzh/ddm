@@ -20,7 +20,7 @@ from django.views.decorators.debug import sensitive_variables
 
 from ddm.auth.models import ProjectAccessToken
 from ddm.encryption.models import Encryption, ModelWithEncryptedData
-from ddm.models.logs import ExceptionLogEntry, ExceptionRaisers, EventLogEntry
+from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers, EventLogEntry
 
 
 class ResearchProfile(models.Model):

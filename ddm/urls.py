@@ -1,6 +1,7 @@
 from django.urls import path, include
 from django.views.generic import RedirectView
 
+from ddm.logging.views import ProjectLogsView
 from ddm.views import admin, participation_flow
 from ddm.views.apis import (
     ExceptionAPI, ProjectDataAPI, DeleteParticipantAPI, DeleteProjectData,
@@ -56,7 +57,7 @@ admin_patterns = [
     path(r'<int:pk>/token/', auth_views.ProjectTokenView.as_view(), name='project-token'),
     path(r'<int:project_pk>/questionnaire/', include(question_patterns)),
     path(r'<int:project_pk>/data-donation/', include(data_donation_patterns)),
-    path(r'<int:project_pk>/logs/', admin.ProjectLogsView.as_view(), name='project-logs'),
+    path(r'<int:project_pk>/logs/', ProjectLogsView.as_view(), name='project-logs'),
 ]
 
 authentication_patterns = [

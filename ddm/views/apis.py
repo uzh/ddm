@@ -12,7 +12,7 @@ from ddm.models.core import (
     Participant, DonationBlueprint
 )
 from ddm.encryption.models import Decryption
-from ddm.models.logs import EventLogEntry, ExceptionLogEntry
+from ddm.logging.models import EventLogEntry, ExceptionLogEntry
 from ddm.models.serializers import (
     DonationSerializer, ResponseSerializer, ProjectSerializer, ParticipantSerializer
 )

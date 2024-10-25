@@ -9,7 +9,7 @@ from django.template import Context, Template
 from polymorphic.models import PolymorphicModel
 
 from ddm.models.core import DataDonation
-from ddm.models.logs import ExceptionLogEntry, ExceptionRaisers
+from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers
 
 
 class QuestionType(models.TextChoices):

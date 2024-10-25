@@ -6,7 +6,7 @@ from django.utils import timezone
 from rest_framework import exceptions
 from rest_framework.authentication import TokenAuthentication, get_authorization_header
 
-from ddm.models.logs import EventLogEntry
+from ddm.logging.models import EventLogEntry
 
 
 class ProjectAccessToken(models.Model):

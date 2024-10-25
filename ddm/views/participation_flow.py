@@ -16,7 +16,7 @@ from ddm.models.core import (
     DonationBlueprint, DonationProject, Participant, QuestionnaireResponse,
     FileUploader
 )
-from ddm.models.logs import ExceptionLogEntry, ExceptionRaisers
+from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers
 from ddm.models.questions import QuestionBase
 
 

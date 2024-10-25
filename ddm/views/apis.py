@@ -6,12 +6,12 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.views.decorators.debug import sensitive_variables
 
-from ddm.models.auth import ProjectTokenAuthenticator
+from ddm.auth.models import ProjectTokenAuthenticator
 from ddm.models.core import (
     DataDonation, DonationProject, QuestionnaireResponse, ResearchProfile,
     Participant, DonationBlueprint
 )
-from ddm.models.encryption import Decryption
+from ddm.encryption.models import Decryption
 from ddm.models.logs import EventLogEntry, ExceptionLogEntry
 from ddm.models.serializers import (
     DonationSerializer, ResponseSerializer, ProjectSerializer, ParticipantSerializer

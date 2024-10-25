@@ -4,12 +4,11 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from django.contrib.auth import get_user_model
-
-from ddm.models.auth import ProjectTokenAuthenticator, ProjectAccessToken
-from ddm.models.core import ResearchProfile, DonationProject
-from ddm.auth import email_is_valid, user_is_owner, user_is_permitted
-
 from rest_framework import exceptions
+
+from ddm.auth.models import ProjectTokenAuthenticator, ProjectAccessToken
+from ddm.models.core import ResearchProfile, DonationProject
+from ddm.auth.utils import email_is_valid, user_is_owner, user_is_permitted
 
 
 User = get_user_model()

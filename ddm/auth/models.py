@@ -1,11 +1,12 @@
 import binascii
 import os
 
-from ddm.models.logs import EventLogEntry
 from django.db import models
 from django.utils import timezone
 from rest_framework import exceptions
 from rest_framework.authentication import TokenAuthentication, get_authorization_header
+
+from ddm.models.logs import EventLogEntry
 
 
 class ProjectAccessToken(models.Model):
@@ -15,7 +16,7 @@ class ProjectAccessToken(models.Model):
     """
     key = models.CharField(max_length=40, primary_key=True)
     project = models.OneToOneField(
-        'DonationProject', related_name='donation_project',
+        'ddm.DonationProject', related_name='donation_project',
         on_delete=models.CASCADE, verbose_name='Donation Project'
     )
     created = models.DateTimeField(auto_now_add=True)

@@ -1,15 +1,14 @@
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
-from ddm.forms import APITokenCreationForm, ProjectCreateForm
-from ddm.models.auth import ProjectAccessToken
+from ddm.forms import ProjectCreateForm
 from ddm.models.core import DonationProject, ResearchProfile
-from ddm.views.admin.auth import DdmAuthMixin
+from ddm.auth.views import DdmAuthMixin
 
 
 class ProjectList(DdmAuthMixin, ListView):
@@ -134,38 +133,3 @@ class ProjectLogsView(SuccessMessageMixin, DdmAuthMixin, TemplateView):
             'exceptions': self.get_exception_logs()
         })
         return context
-
-
-class ProjectAPITokenView(SuccessMessageMixin, DdmAuthMixin, FormView):
-    """ View to see existing access token or generate a new one. """
-    template_name = 'ddm/admin/project/token.html'
-    form_class = APITokenCreationForm
-
-    def get_project(self):
-        """ Returns current project. """
-        project_id = self.kwargs.get('pk')
-        return DonationProject.objects.filter(pk=project_id).first()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        project = self.get_project()
-        context.update({
-            'project': project,
-            'token': ProjectAccessToken.objects.filter(project=project).first()
-        })
-        return context
-
-    def form_valid(self, form):
-        """ If form is valid, either create new token or delete existing one. """
-        project = self.get_project()
-        if form.cleaned_data['action'] == 'create':
-            project.create_token(expiration_days=form.cleaned_data['expiration_days'])
-
-        if form.cleaned_data['action'] == 'delete':
-            token = project.get_token()
-            token.delete()
-
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse('project-token', kwargs={'pk': self.kwargs.get('pk')})

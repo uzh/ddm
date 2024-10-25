@@ -8,14 +8,16 @@ from django.views.decorators.debug import sensitive_variables
 
 from ddm.auth.models import ProjectTokenAuthenticator
 from ddm.models.core import (
-    DataDonation, DonationProject, QuestionnaireResponse, ResearchProfile,
-    Participant, DonationBlueprint
+    DataDonation, DonationProject, ResearchProfile, Participant,
+    DonationBlueprint
 )
 from ddm.encryption.models import Decryption
 from ddm.logging.models import EventLogEntry, ExceptionLogEntry
 from ddm.models.serializers import (
-    DonationSerializer, ResponseSerializer, ProjectSerializer, ParticipantSerializer
+    DonationSerializer, ProjectSerializer, ParticipantSerializer
 )
+from ddm.questionnaire.models import QuestionnaireResponse
+from ddm.questionnaire.serializers import ResponseSerializer
 
 from rest_framework.views import APIView
 from rest_framework.response import Response

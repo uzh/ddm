@@ -5,13 +5,13 @@ from django.urls import reverse
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
+from ddm.auth.views import DdmAuthMixin
 from ddm.models.core import DonationBlueprint, DonationProject
-from ddm.models.questions import (
+from ddm.questionnaire.models import (
     QuestionBase, QuestionType, SingleChoiceQuestion, MultiChoiceQuestion,
     OpenQuestion, MatrixQuestion, SemanticDifferential, Transition, QuestionItem,
     ScalePoint
 )
-from . import DdmAuthMixin
 
 
 class ProjectMixin:

@@ -8,6 +8,7 @@ from ddm.views.apis import (
     DonationsAPI, ResponsesAPI
 )
 import ddm.auth.views as auth_views
+import ddm.questionnaire.views as questionnaire_views
 
 
 participation_flow_patterns = [
@@ -20,12 +21,12 @@ participation_flow_patterns = [
 ]
 
 question_patterns = [
-    path(r'', admin.QuestionnaireOverview.as_view(), name='questionnaire-overview'),
-    path(r'<slug:question_type>/create/', admin.QuestionCreate.as_view(), name='question-create'),
-    path(r'<slug:question_type>/<int:pk>/edit/', admin.QuestionEdit.as_view(), name='question-edit'),
-    path(r'<slug:question_type>/<int:pk>/delete/', admin.QuestionDelete.as_view(), name='question-delete'),
-    path(r'<slug:question_type>/<int:pk>/items/', admin.ItemEdit.as_view(), name='question-items'),
-    path(r'<slug:question_type>/<int:pk>/scale/', admin.ScaleEdit.as_view(), name='question-scale'),
+    path(r'', questionnaire_views.QuestionnaireOverview.as_view(), name='questionnaire-overview'),
+    path(r'<slug:question_type>/create/', questionnaire_views.QuestionCreate.as_view(), name='question-create'),
+    path(r'<slug:question_type>/<int:pk>/edit/', questionnaire_views.QuestionEdit.as_view(), name='question-edit'),
+    path(r'<slug:question_type>/<int:pk>/delete/', questionnaire_views.QuestionDelete.as_view(), name='question-delete'),
+    path(r'<slug:question_type>/<int:pk>/items/', questionnaire_views.ItemEdit.as_view(), name='question-items'),
+    path(r'<slug:question_type>/<int:pk>/scale/', questionnaire_views.ScaleEdit.as_view(), name='question-scale'),
 ]
 
 instruction_patterns = [

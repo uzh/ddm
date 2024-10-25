@@ -1,8 +1,8 @@
 from ddm.models.core import (
-    DataDonation, QuestionnaireResponse, ResearchProfile, DonationProject,
-    Participant, DonationBlueprint
+    DataDonation, ResearchProfile, DonationProject, Participant,
+    DonationBlueprint
 )
-from ddm.models.questions import OpenQuestion
+from ddm.questionnaire.models import OpenQuestion, QuestionnaireResponse
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse

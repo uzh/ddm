@@ -6,7 +6,7 @@ from ddm.models.core import (
     DonationProject, ResearchProfile, DonationBlueprint, FileUploader,
     DonationInstruction, Participant
 )
-from ddm.models.questions import (
+from ddm.questionnaire.models import (
     MatrixQuestion, SingleChoiceQuestion, OpenQuestion, MultiChoiceQuestion,
     SemanticDifferential, Transition
 )

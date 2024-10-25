@@ -13,11 +13,10 @@ from django.views.generic.detail import DetailView
 from django.views.decorators.cache import cache_page
 
 from ddm.models.core import (
-    DonationBlueprint, DonationProject, Participant, QuestionnaireResponse,
-    FileUploader
+    DonationBlueprint, DonationProject, Participant, FileUploader
 )
 from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers
-from ddm.models.questions import QuestionBase
+from ddm.questionnaire.models import QuestionBase, QuestionnaireResponse
 
 
 def get_participation_session_id(project):

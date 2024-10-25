@@ -73,7 +73,7 @@ class Migration(migrations.Migration):
             options={
                 'abstract': False,
             },
-            bases=(ddm.models.questions.ScaleMixin, 'ddm.questionbase', models.Model),
+            bases=(ddm.questionnaire.models.ScaleMixin, 'ddm.questionbase', models.Model),
         ),
         migrations.CreateModel(
             name='MultiChoiceQuestion',
@@ -107,7 +107,7 @@ class Migration(migrations.Migration):
             options={
                 'abstract': False,
             },
-            bases=(ddm.models.questions.ScaleMixin, 'ddm.questionbase', models.Model),
+            bases=(ddm.questionnaire.models.ScaleMixin, 'ddm.questionbase', models.Model),
         ),
         migrations.CreateModel(
             name='SingleChoiceQuestion',

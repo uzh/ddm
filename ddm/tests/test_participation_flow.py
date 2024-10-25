@@ -7,7 +7,7 @@ from ddm.models.core import (
     DataDonation, Participant, ResearchProfile, DonationProject,
     DonationBlueprint, FileUploader
 )
-from ddm.models.questions import OpenQuestion
+from ddm.questionnaire.models import OpenQuestion
 
 
 User = get_user_model()

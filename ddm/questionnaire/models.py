@@ -1,13 +1,14 @@
 import random
 
 from ckeditor_uploader.fields import RichTextUploadingField
+from polymorphic.models import PolymorphicModel
 
 from django.db import models
 from django.forms import model_to_dict
 from django.template import Context, Template
+from django.utils import timezone
 
-from polymorphic.models import PolymorphicModel
-
+from ddm.encryption.models import ModelWithEncryptedData
 from ddm.models.core import DataDonation
 from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers
 
@@ -24,11 +25,11 @@ class QuestionType(models.TextChoices):
 
 class QuestionBase(PolymorphicModel):
     project = models.ForeignKey(
-        'DonationProject',
+        'ddm.DonationProject',
         on_delete=models.CASCADE
     )
     blueprint = models.ForeignKey(
-        'DonationBlueprint',
+        'ddm.DonationBlueprint',
         on_delete=models.CASCADE,
         null=True,
         blank=True
@@ -357,3 +358,11 @@ class ScalePoint(models.Model):
     def serialize_to_config(self):
         scale_config = model_to_dict(self, exclude=['question'])
         return scale_config
+
+
+class QuestionnaireResponse(ModelWithEncryptedData):
+    # Will only ever be deleted, when the project is deleted.
+    project = models.ForeignKey('ddm.DonationProject', on_delete=models.CASCADE)
+    participant = models.ForeignKey('ddm.Participant', on_delete=models.CASCADE)
+    time_submitted = models.DateTimeField(default=timezone.now)
+    data = models.BinaryField()

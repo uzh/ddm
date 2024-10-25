@@ -3,10 +3,11 @@ from django.test import TestCase, override_settings
 from django.utils import timezone
 
 from ddm.models.core import (
-    DataDonation, DonationProject, QuestionnaireResponse, ResearchProfile,
-    DonationBlueprint, Participant
+    DataDonation, DonationProject, ResearchProfile, DonationBlueprint,
+    Participant
 )
 from ddm.encryption.models import Encryption, Decryption
+from ddm.questionnaire.models import QuestionnaireResponse
 
 
 User = get_user_model()

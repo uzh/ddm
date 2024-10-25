@@ -344,14 +344,6 @@ class Participant(models.Model):
         super().save(*args, **kwargs)
 
 
-class QuestionnaireResponse(ModelWithEncryptedData):
-    # Will only ever be deleted, when the project is deleted.
-    project = models.ForeignKey('DonationProject', on_delete=models.CASCADE)
-    participant = models.ForeignKey('Participant', on_delete=models.CASCADE)
-    time_submitted = models.DateTimeField(default=timezone.now)
-    data = models.BinaryField()
-
-
 COMMA_SEPARATED_STRINGS_VALIDATOR = RegexValidator(
     r'^((["][^"]+["]))(\s*,\s*((["][^"]+["])))*[,\s]*$',
     message=(

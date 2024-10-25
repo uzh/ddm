@@ -8,6 +8,7 @@ from ddm.views.apis import (
     DonationsAPI, ResponsesAPI
 )
 import ddm.auth.views as auth_views
+import ddm.datadonation.views as datadonation_views
 import ddm.questionnaire.views as questionnaire_views
 
 
@@ -30,20 +31,20 @@ question_patterns = [
 ]
 
 instruction_patterns = [
-    path(r'', admin.InstructionOverview.as_view(), name='instruction-overview'),
-    path(r'create/', admin.InstructionCreate.as_view(), name='instruction-create'),
-    path(r'<int:pk>/edit/', admin.InstructionEdit.as_view(), name='instruction-edit'),
-    path(r'<int:pk>/delete/', admin.InstructionDelete.as_view(), name='instruction-delete'),
+    path(r'', datadonation_views.InstructionOverview.as_view(), name='instruction-overview'),
+    path(r'create/', datadonation_views.InstructionCreate.as_view(), name='instruction-create'),
+    path(r'<int:pk>/edit/', datadonation_views.InstructionEdit.as_view(), name='instruction-edit'),
+    path(r'<int:pk>/delete/', datadonation_views.InstructionDelete.as_view(), name='instruction-delete'),
 ]
 
 data_donation_patterns = [
-    path(r'', admin.data_donations.DataDonationOverview.as_view(), name='data-donation-overview'),
-    path(r'blueprint/create/', admin.BlueprintCreate.as_view(), name='blueprint-create'),
-    path(r'blueprint/<int:pk>/edit/', admin.BlueprintEdit.as_view(), name='blueprint-edit'),
-    path(r'blueprint/<int:pk>/delete/', admin.BlueprintDelete.as_view(), name='blueprint-delete'),
-    path(r'file-uploader/create/', admin.FileUploaderCreate.as_view(), name='file-uploader-create'),
-    path(r'file-uploader/<int:pk>/edit/', admin.FileUploaderEdit.as_view(), name='file-uploader-edit'),
-    path(r'file-uploader/<int:pk>/delete/', admin.FileUploaderDelete.as_view(), name='file-uploader-delete'),
+    path(r'', datadonation_views.DataDonationOverview.as_view(), name='data-donation-overview'),
+    path(r'blueprint/create/', datadonation_views.BlueprintCreate.as_view(), name='blueprint-create'),
+    path(r'blueprint/<int:pk>/edit/', datadonation_views.BlueprintEdit.as_view(), name='blueprint-edit'),
+    path(r'blueprint/<int:pk>/delete/', datadonation_views.BlueprintDelete.as_view(), name='blueprint-delete'),
+    path(r'file-uploader/create/', datadonation_views.FileUploaderCreate.as_view(), name='file-uploader-create'),
+    path(r'file-uploader/<int:pk>/edit/', datadonation_views.FileUploaderEdit.as_view(), name='file-uploader-edit'),
+    path(r'file-uploader/<int:pk>/delete/', datadonation_views.FileUploaderDelete.as_view(), name='file-uploader-delete'),
     path(r'file-uploader/<int:file_uploader_pk>/instructions/', include(instruction_patterns)),
 ]
 

@@ -5,23 +5,19 @@ import zipfile
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.views.decorators.debug import sensitive_variables
-
-from ddm.auth.models import ProjectTokenAuthenticator
-from ddm.models.core import (
-    DataDonation, DonationProject, ResearchProfile, Participant,
-    DonationBlueprint
-)
-from ddm.encryption.models import Decryption
-from ddm.logging.models import EventLogEntry, ExceptionLogEntry
-from ddm.models.serializers import (
-    DonationSerializer, ProjectSerializer, ParticipantSerializer
-)
-from ddm.questionnaire.models import QuestionnaireResponse
-from ddm.questionnaire.serializers import ResponseSerializer
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import authentication, exceptions, permissions, status
+
+from ddm.auth.models import ProjectTokenAuthenticator
+from ddm.datadonation.models import DataDonation, DonationBlueprint
+from ddm.datadonation.serializers import DonationSerializer
+from ddm.encryption.models import Decryption
+from ddm.logging.models import EventLogEntry, ExceptionLogEntry
+from ddm.models.core import DonationProject, ResearchProfile, Participant
+from ddm.models.serializers import ProjectSerializer, ParticipantSerializer
+from ddm.questionnaire.models import QuestionnaireResponse
+from ddm.questionnaire.serializers import ResponseSerializer
 
 
 def user_is_allowed(user, project):

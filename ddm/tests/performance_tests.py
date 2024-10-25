@@ -8,10 +8,8 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
-from ddm.models.core import (
-    ResearchProfile, DonationProject, FileUploader, DonationBlueprint,
-    Participant, DataDonation
-)
+from ddm.datadonation.models import DataDonation, DonationBlueprint, FileUploader
+from ddm.models.core import DonationProject, Participant, ResearchProfile
 
 
 User = get_user_model()

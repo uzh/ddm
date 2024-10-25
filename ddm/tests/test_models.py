@@ -1,9 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from ddm.models.core import (
-    DonationInstruction, ResearchProfile, DonationProject, FileUploader
-)
+from ddm.datadonation.models import DonationInstruction, FileUploader
+from ddm.models.core import DonationProject, ResearchProfile
 
 
 User = get_user_model()

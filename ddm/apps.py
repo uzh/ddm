@@ -7,7 +7,7 @@ class DdmConfig(AppConfig):
     verbose_name = 'Data Donation Module'
 
     def ready(self):
-        from ddm import signals
+        from ddm.datadonation import signals
 
         # Add default settings for DDM if they are not defined in main application's settings.py.
         from django.conf import settings

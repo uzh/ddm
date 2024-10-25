@@ -12,10 +12,9 @@ from django.utils.safestring import SafeString
 from django.views.generic.detail import DetailView
 from django.views.decorators.cache import cache_page
 
-from ddm.models.core import (
-    DonationBlueprint, DonationProject, Participant, FileUploader
-)
+from ddm.datadonation.models import DonationBlueprint, FileUploader
 from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers
+from ddm.models.core import DonationProject, Participant
 from ddm.questionnaire.models import QuestionBase, QuestionnaireResponse
 
 

@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'ddm.auth',
     'ddm.logging',
     'ddm.questionnaire',
+    'ddm.datadonation',
     'ckeditor',
     'ckeditor_uploader',
     'webpack_loader',

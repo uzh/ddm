@@ -3,10 +3,8 @@ from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
-from ddm.models.core import (
-    DataDonation, Participant, ResearchProfile, DonationProject,
-    DonationBlueprint, FileUploader
-)
+from ddm.datadonation.models import DataDonation, DonationBlueprint, FileUploader
+from ddm.models.core import DonationProject, Participant, ResearchProfile
 from ddm.questionnaire.models import OpenQuestion
 
 

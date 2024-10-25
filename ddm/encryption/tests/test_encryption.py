@@ -2,11 +2,9 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.utils import timezone
 
-from ddm.models.core import (
-    DataDonation, DonationProject, ResearchProfile, DonationBlueprint,
-    Participant
-)
+from ddm.datadonation.models import DataDonation, DonationBlueprint
 from ddm.encryption.models import Encryption, Decryption
+from ddm.models.core import DonationProject, Participant, ResearchProfile
 from ddm.questionnaire.models import QuestionnaireResponse
 
 

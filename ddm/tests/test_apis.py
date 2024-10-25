@@ -1,13 +1,15 @@
-from ddm.models.core import (
-    DataDonation, ResearchProfile, DonationProject, Participant,
-    DonationBlueprint
-)
-from ddm.questionnaire.models import OpenQuestion, QuestionnaireResponse
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
+
 from rest_framework.test import APIClient
+
+from ddm.datadonation.models import DataDonation, DonationBlueprint
+from ddm.models.core import (
+   DonationProject, Participant, ResearchProfile
+)
+from ddm.questionnaire.models import OpenQuestion, QuestionnaireResponse
 
 
 User = get_user_model()

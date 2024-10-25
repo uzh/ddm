@@ -1,15 +1,15 @@
 import random
 
-from ckeditor_uploader.fields import RichTextUploadingField
-from polymorphic.models import PolymorphicModel
-
 from django.db import models
 from django.forms import model_to_dict
 from django.template import Context, Template
 from django.utils import timezone
 
+from ckeditor_uploader.fields import RichTextUploadingField
+from polymorphic.models import PolymorphicModel
+
 from ddm.encryption.models import ModelWithEncryptedData
-from ddm.models.core import DataDonation
+from ddm.datadonation.models import DataDonation
 from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers
 
 
@@ -29,7 +29,7 @@ class QuestionBase(PolymorphicModel):
         on_delete=models.CASCADE
     )
     blueprint = models.ForeignKey(
-        'ddm.DonationBlueprint',
+        'ddm_datadonation.DonationBlueprint',
         on_delete=models.CASCADE,
         null=True,
         blank=True

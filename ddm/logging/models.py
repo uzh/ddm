@@ -19,7 +19,7 @@ class ExceptionLogEntry(models.Model):
         on_delete=models.SET_NULL
     )
     blueprint = models.ForeignKey(
-        'ddm.DonationBlueprint',
+        'ddm_datadonation.DonationBlueprint',
         null=True,
         on_delete=models.CASCADE
     )

@@ -2,10 +2,11 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
-from ddm.models.core import (
-    DonationProject, ResearchProfile, DonationBlueprint, FileUploader,
-    DonationInstruction, Participant
+
+from ddm.datadonation.models import (
+    DonationBlueprint, DonationInstruction, FileUploader
 )
+from ddm.models.core import DonationProject, ResearchProfile, Participant
 from ddm.questionnaire.models import (
     MatrixQuestion, SingleChoiceQuestion, OpenQuestion, MultiChoiceQuestion,
     SemanticDifferential, Transition

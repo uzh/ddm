@@ -1,13 +1,14 @@
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
-from django.http import Http404, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
-from ddm.forms import BlueprintEditForm, ProcessingRuleInlineFormset
-from ddm.models.core import DonationBlueprint, DonationInstruction, DonationProject, FileUploader
+from ddm.datadonation.forms import BlueprintEditForm, ProcessingRuleInlineFormset
+from ddm.datadonation.models import DonationBlueprint, DonationInstruction, FileUploader
+from ddm.models.core import DonationProject
 from ddm.views.admin import DdmAuthMixin
 
 

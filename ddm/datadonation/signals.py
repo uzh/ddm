@@ -1,7 +1,7 @@
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
-from ddm.models.core import DonationInstruction, FileUploader
+from ddm.datadonation.models import DonationInstruction, FileUploader
 
 
 @receiver(post_delete, sender=DonationInstruction)

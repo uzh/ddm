@@ -2,23 +2,24 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 
 from ddm.logging.views import ProjectLogsView
-from ddm.views import admin, participation_flow
+from ddm.views import admin
 from ddm.views.apis import (
     ExceptionAPI, ProjectDataAPI, DeleteParticipantAPI, DeleteProjectData,
     DonationsAPI, ResponsesAPI
 )
 import ddm.auth.views as auth_views
 import ddm.datadonation.views as datadonation_views
+import ddm.participation.views as participation_views
 import ddm.questionnaire.views as questionnaire_views
 
 
-participation_flow_patterns = [
-    path(r'', participation_flow.participation_redirect_view, name='participation-redirect'),
-    path(r'briefing/', participation_flow.BriefingView.as_view(), name='briefing'),
-    path(r'data-donation/', participation_flow.DataDonationView.as_view(), name='data-donation'),
-    path(r'questionnaire/', participation_flow.QuestionnaireView.as_view(), name='questionnaire'),
-    path(r'debriefing/', participation_flow.DebriefingView.as_view(), name='debriefing'),
-    path(r'continue/', participation_flow.ContinuationView.as_view(), name='continuation')
+participation_patterns = [
+    path(r'', participation_views.participation_redirect_view, name='participation-redirect'),
+    path(r'briefing/', participation_views.BriefingView.as_view(), name='briefing'),
+    path(r'data-donation/', participation_views.DataDonationView.as_view(), name='data-donation'),
+    path(r'questionnaire/', participation_views.QuestionnaireView.as_view(), name='questionnaire'),
+    path(r'debriefing/', participation_views.DebriefingView.as_view(), name='debriefing'),
+    path(r'continue/', participation_views.ContinuationView.as_view(), name='continuation')
 ]
 
 question_patterns = [
@@ -76,7 +77,7 @@ api_patterns = [
 
 urlpatterns = [
     path(r'', RedirectView.as_view(pattern_name='project-list'), name='ddm-landing-page'),
-    path(r'studies/<slug:slug>/', include(participation_flow_patterns)),
+    path(r'studies/<slug:slug>/', include(participation_patterns)),
     path(r'projects/', include(admin_patterns)),
     path(r'auth/', include(authentication_patterns)),
     path(r'<int:pk>/exceptions/', ExceptionAPI.as_view(), name='ddm-exceptions-api'),

@@ -363,6 +363,6 @@ class ScalePoint(models.Model):
 class QuestionnaireResponse(ModelWithEncryptedData):
     # Will only ever be deleted, when the project is deleted.
     project = models.ForeignKey('ddm.DonationProject', on_delete=models.CASCADE)
-    participant = models.ForeignKey('ddm.Participant', on_delete=models.CASCADE)
+    participant = models.ForeignKey('ddm_participation.Participant', on_delete=models.CASCADE)
     time_submitted = models.DateTimeField(default=timezone.now)
     data = models.BinaryField()

@@ -9,7 +9,8 @@ from django.urls import reverse
 from django.utils import timezone
 
 from ddm.datadonation.models import DataDonation, DonationBlueprint, FileUploader
-from ddm.models.core import DonationProject, Participant, ResearchProfile
+from ddm.models.core import DonationProject, ResearchProfile
+from ddm.participation.models import Participant
 
 
 User = get_user_model()

@@ -352,7 +352,7 @@ class DataDonation(ModelWithEncryptedData):
         on_delete=models.SET_NULL
     )
     participant = models.ForeignKey(
-        'ddm.Participant',
+        'ddm_participation.Participant',
         on_delete=models.CASCADE
     )
     time_submitted = models.DateTimeField(default=timezone.now)

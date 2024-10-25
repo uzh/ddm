@@ -6,9 +6,8 @@ from django.utils import timezone
 from rest_framework.test import APIClient
 
 from ddm.datadonation.models import DataDonation, DonationBlueprint
-from ddm.models.core import (
-   DonationProject, Participant, ResearchProfile
-)
+from ddm.models.core import DonationProject, ResearchProfile
+from ddm.participation.models import Participant
 from ddm.questionnaire.models import OpenQuestion, QuestionnaireResponse
 
 

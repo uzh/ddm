@@ -1,6 +1,6 @@
 from django.test import SimpleTestCase
 from django.urls import reverse, resolve
-from ddm.views import participation_flow
+import ddm.participation.views as participation_views
 
 
 class TestParticipationFlowUrls(SimpleTestCase):
@@ -9,26 +9,26 @@ class TestParticipationFlowUrls(SimpleTestCase):
         url = reverse('briefing', args=['project-slug'])
         self.assertEqual(
             resolve(url).func.view_class,
-            participation_flow.BriefingView
+            participation_views.BriefingView
         )
 
     def test_project_datadonation_url_resolves(self):
         url = reverse('data-donation', args=['project-slug'])
         self.assertEqual(
             resolve(url).func.view_class,
-            participation_flow.DataDonationView
+            participation_views.DataDonationView
         )
 
     def test_project_questionnaire_url_resolves(self):
         url = reverse('questionnaire', args=['project-slug'])
         self.assertEqual(
             resolve(url).func.view_class,
-            participation_flow.QuestionnaireView
+            participation_views.QuestionnaireView
         )
 
     def test_project_debriefing_url_resolves(self):
         url = reverse('debriefing', args=['project-slug'])
         self.assertEqual(
             resolve(url).func.view_class,
-            participation_flow.DebriefingView
+            participation_views.DebriefingView
         )

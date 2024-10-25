@@ -14,7 +14,7 @@ class ExceptionLogEntry(models.Model):
         on_delete=models.CASCADE
     )
     participant = models.ForeignKey(
-        'ddm.Participant',
+        'ddm_participation.Participant',
         null=True,
         on_delete=models.SET_NULL
     )

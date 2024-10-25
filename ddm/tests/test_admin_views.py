@@ -6,7 +6,8 @@ from django.utils import timezone
 from ddm.datadonation.models import (
     DonationBlueprint, DonationInstruction, FileUploader
 )
-from ddm.models.core import DonationProject, ResearchProfile, Participant
+from ddm.models.core import DonationProject, ResearchProfile
+from ddm.participation.models import Participant
 from ddm.questionnaire.models import (
     MatrixQuestion, SingleChoiceQuestion, OpenQuestion, MultiChoiceQuestion,
     SemanticDifferential, Transition

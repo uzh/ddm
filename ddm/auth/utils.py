@@ -20,6 +20,23 @@ def email_is_valid(email_string):
     return True
 
 
+def user_has_project_access(user, project):
+    """
+    Returns true if user is owner or collaborator of a project. False otherwise.
+    """
+    if user.is_anonymous:
+        return False
+
+    user_profile = ResearchProfile.objects.filter(user=user).first()
+    if not user_profile:
+        return False
+    else:
+        if project.owner != user_profile:
+            return False
+        else:
+            return True
+
+
 def user_is_permitted(user):
     """
     Check if a user has access permission.

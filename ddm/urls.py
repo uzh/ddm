@@ -1,16 +1,18 @@
 from django.urls import path, include
 from django.views.generic import RedirectView
 
-from ddm.logging.views import ProjectLogsView
-from ddm.views.apis import (
-    ExceptionAPI, ProjectDataAPI, DeleteParticipantAPI, DeleteProjectData,
-    DonationsAPI, ResponsesAPI
-)
 import ddm.auth.views as auth_views
 import ddm.datadonation.views as datadonation_views
 import ddm.participation.views as participation_views
 import ddm.projects.views as projects_views
 import ddm.questionnaire.views as questionnaire_views
+
+from ddm.datadonation.apis import DonationsAPI
+from ddm.logging.apis import ExceptionAPI
+from ddm.logging.views import ProjectLogsView
+from ddm.participation.apis import DeleteParticipantAPI
+from ddm.projects.apis import ProjectDataAPI, DeleteProjectData
+from ddm.questionnaire.apis import ResponsesAPI
 
 
 participation_patterns = [

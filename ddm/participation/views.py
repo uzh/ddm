@@ -155,7 +155,7 @@ def participation_redirect_view(request, slug):
 
 
 class BriefingView(ParticipationFlowBaseView):
-    template_name = 'ddm/public/briefing.html'
+    template_name = 'participation/briefing.html'
     step_name = 'briefing'
 
     def post(self, request, *args, **kwargs):
@@ -221,7 +221,7 @@ class BriefingView(ParticipationFlowBaseView):
 
 @method_decorator(cache_page(0), name='dispatch')
 class DataDonationView(ParticipationFlowBaseView):
-    template_name = 'ddm/public/data_donation.html'
+    template_name = 'participation/data_donation.html'
     step_name = 'data-donation'
 
     def get_context_data(self, **kwargs):
@@ -315,7 +315,7 @@ class DataDonationView(ParticipationFlowBaseView):
 
 
 class QuestionnaireView(ParticipationFlowBaseView):
-    template_name = 'ddm/public/questionnaire.html'
+    template_name = 'participation/questionnaire.html'
     step_name = 'questionnaire'
 
     def setup(self, request, *args, **kwargs):
@@ -402,7 +402,7 @@ class QuestionnaireView(ParticipationFlowBaseView):
 
 
 class DebriefingView(ParticipationFlowBaseView):
-    template_name = 'ddm/public/debriefing.html'
+    template_name = 'participation/debriefing.html'
     step_name = 'debriefing'
 
     def get_context_data(self, **kwargs):
@@ -441,7 +441,7 @@ class ContinuationView(DetailView):
     """
     model = DonationProject
     context_object_name = 'project'
-    template_name = 'ddm/public/continuation_not_found.html'
+    template_name = 'participation/continuation_not_found.html'
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()

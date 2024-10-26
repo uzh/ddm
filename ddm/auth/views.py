@@ -53,7 +53,7 @@ class DdmRegisterResearchProfileView(CreateView):
     """
     model = ResearchProfile
     form_class = ResearchProfileConfirmationForm
-    template_name = 'ddm/admin/auth/confirm_profile.html'
+    template_name = 'auth/confirm_profile.html'
     success_url = reverse_lazy('project-list')
 
     def dispatch(self, request, *args, **kwargs):
@@ -82,7 +82,7 @@ class DdmNoPermissionView(TemplateView):
     * Unauthenticated users are redirected to the login page.
     * Logged-in users with permission and a research profile are redirected to the project list.
     """
-    template_name = 'ddm/admin/auth/no_permission.html'
+    template_name = 'auth/no_permission.html'
 
     def dispatch(self, request, *args, **kwargs):
         if request.method == 'GET':
@@ -96,7 +96,7 @@ class DdmNoPermissionView(TemplateView):
 
 class ProjectTokenView(SuccessMessageMixin, DdmAuthMixin, FormView):
     """ View to see existing access token or generate a new one. """
-    template_name = 'ddm/admin/project/token.html'
+    template_name = 'auth/token.html'
     form_class = TokenCreationForm
 
     def get_project(self):

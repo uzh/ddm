@@ -13,7 +13,7 @@ from ddm.auth.views import DdmAuthMixin
 class ProjectList(DdmAuthMixin, ListView):
     """ View to display a list of existing donation projects. """
     model = DonationProject
-    template_name = 'ddm/admin/project/list.html'
+    template_name = 'projects/list.html'
 
     def get_queryset(self):
         return DonationProject.objects.filter(owner__user=self.request.user)
@@ -22,7 +22,7 @@ class ProjectList(DdmAuthMixin, ListView):
 class ProjectCreate(SuccessMessageMixin, DdmAuthMixin, CreateView):
     """ View to create a new donation project. """
     model = DonationProject
-    template_name = 'ddm/admin/project/create.html'
+    template_name = 'projects/create.html'
     form_class = ProjectCreateForm
     success_message = 'Project was created successfully.'
 
@@ -39,13 +39,13 @@ class ProjectCreate(SuccessMessageMixin, DdmAuthMixin, CreateView):
 class ProjectDetail(DdmAuthMixin, DetailView):
     """ View to display landing page for project. """
     model = DonationProject
-    template_name = 'ddm/admin/project/detail.html'
+    template_name = 'projects/detail.html'
 
 
 class ProjectEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     """ View to edit the details of an existing donation project. """
     model = DonationProject
-    template_name = 'ddm/admin/project/edit.html'
+    template_name = 'projects/edit.html'
     fields = [
         'name', 'slug', 'contact_information', 'data_protection_statement',
         'url_parameter_enabled', 'expected_url_parameters',
@@ -70,7 +70,7 @@ class ProjectEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
 class ProjectDelete(DdmAuthMixin, DeleteView):
     """ View to display a list of existing donation projects. """
     model = DonationProject
-    template_name = 'ddm/admin/project/delete.html'
+    template_name = 'projects/delete.html'
     success_url = reverse_lazy('project-list')
     success_message = 'Project was deleted.'
 
@@ -82,7 +82,7 @@ class ProjectDelete(DdmAuthMixin, DeleteView):
 class BriefingEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     """ View to edit the briefing page. """
     model = DonationProject
-    template_name = 'ddm/admin/project/edit-briefing.html'
+    template_name = 'projects/edit-briefing.html'
     fields = ['briefing_text', 'briefing_consent_enabled', 'briefing_consent_label_yes', 'briefing_consent_label_no']
     success_message = 'Briefing page successfully updated.'
 
@@ -103,7 +103,6 @@ class BriefingEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
 class DebriefingEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     """ View to edit the debriefing page. """
     model = DonationProject
-    template_name = 'ddm/admin/project/edit-debriefing.html'
+    template_name = 'projects/edit-debriefing.html'
     fields = ['debriefing_text']
     success_message = 'Debriefing page successfully updated.'
-

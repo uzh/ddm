@@ -31,7 +31,7 @@ class QuestionnaireOverview(ProjectMixin, DdmAuthMixin, ListView):
     """ View to list all donation blueprints associated with a project. """
     model = DonationBlueprint
     context_object_name = 'donation_blueprints'
-    template_name = 'ddm/admin/questionnaire/list.html'
+    template_name = 'questionnaire/list.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -90,7 +90,7 @@ class QuestionFormMixin(ProjectMixin):
 
 class QuestionCreate(SuccessMessageMixin, DdmAuthMixin, QuestionFormMixin, CreateView):
     """ View to create question. """
-    template_name = 'ddm/admin/questionnaire/create.html'
+    template_name = 'questionnaire/create.html'
     success_message = 'New %(question_type)s was created.'
 
     def get_initial(self):
@@ -123,7 +123,7 @@ class QuestionCreate(SuccessMessageMixin, DdmAuthMixin, QuestionFormMixin, Creat
 class QuestionEdit(SuccessMessageMixin, DdmAuthMixin, QuestionFormMixin, UpdateView):
     """ View to edit question. """
     model = QuestionBase
-    template_name = 'ddm/admin/questionnaire/edit.html'
+    template_name = 'questionnaire/edit.html'
     success_message = 'Question "%(name)s" was successfully updated.'
 
     def get_success_url(self):
@@ -138,7 +138,7 @@ class QuestionEdit(SuccessMessageMixin, DdmAuthMixin, QuestionFormMixin, UpdateV
 class QuestionDelete(DdmAuthMixin, ProjectMixin, DeleteView):
     """ View to delete question. """
     model = QuestionBase
-    template_name = 'ddm/admin/questionnaire/delete.html'
+    template_name = 'questionnaire/delete.html'
     success_message = 'Question "%s" was deleted.'
 
     def get_success_url(self):
@@ -192,7 +192,7 @@ class ItemEdit(SuccessMessageMixin, DdmAuthMixin, InlineFormsetMixin, UpdateView
     """ View to edit the items associated with a question. """
     model = QuestionBase
     formset_model = QuestionItem
-    template_name = 'ddm/admin/questionnaire/edit_set.html'
+    template_name = 'questionnaire/edit_set.html'
     context_title = 'Items'
     success_message = 'Question items updated.'
 
@@ -210,7 +210,7 @@ class ScaleEdit(SuccessMessageMixin, DdmAuthMixin, InlineFormsetMixin, UpdateVie
     """ View to edit the scale associated with a question. """
     model = QuestionBase
     formset_model = ScalePoint
-    template_name = 'ddm/admin/questionnaire/edit_set.html'
+    template_name = 'questionnaire/edit_set.html'
     context_title = 'Scale Points'
     success_message = 'Question scale updated.'
 

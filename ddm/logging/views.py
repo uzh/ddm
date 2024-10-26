@@ -7,7 +7,7 @@ from ddm.projects.models import DonationProject
 
 class ProjectLogsView(SuccessMessageMixin, DdmAuthMixin, TemplateView):
     """ View that lists all exceptions related to a project. """
-    template_name = 'ddm/admin/project/project_logs/overview.html'
+    template_name = 'logging/overview.html'
 
     def get_project(self):
         project_id = self.kwargs.get('project_pk')

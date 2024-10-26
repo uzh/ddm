@@ -117,7 +117,7 @@ class TestBriefingView(ParticipationFlowBaseTestCase):
     def test_project_briefing_view_GET_valid_url(self):
         response = self.client.get(self.briefing_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'ddm/public/briefing.html')
+        self.assertTemplateUsed(response, 'participation/briefing.html')
 
     def test_project_briefing_view_GET_invalid_url(self):
         response = self.client.get(self.briefing_url_invalid, follow=True)
@@ -161,7 +161,7 @@ class TestBriefingView(ParticipationFlowBaseTestCase):
         response = self.client.post(self.briefing_url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'ddm/public/briefing.html')
+        self.assertTemplateUsed(response, 'participation/briefing.html')
 
 
 class TestDonationView(ParticipationFlowBaseTestCase):
@@ -177,7 +177,7 @@ class TestDonationView(ParticipationFlowBaseTestCase):
     def test_data_donation_GET_valid_url(self):
         response = self.client.get(self.dd_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'ddm/public/data_donation.html')
+        self.assertTemplateUsed(response, 'participation/data_donation.html')
 
     def test_data_donation_GET_invalid_url(self):
         response = self.client.get(self.dd_url_invalid, follow=True)
@@ -207,7 +207,7 @@ class TestQuestionnaireView(ParticipationFlowBaseTestCase):
     def test_questionnaire_GET_valid_url(self):
         response = self.client.get(self.quest_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'ddm/public/questionnaire.html')
+        self.assertTemplateUsed(response, 'participation/questionnaire.html')
 
     def test_questionnaire_GET_invalid_url(self):
         response = self.client.get(self.quest_url_invalid, follow=True)
@@ -236,7 +236,7 @@ class TestDebriefingView(ParticipationFlowBaseTestCase):
     def test_project_debriefing_GET_valid_url(self):
         response = self.client.get(self.debriefing_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'ddm/public/debriefing.html')
+        self.assertTemplateUsed(response, 'participation/debriefing.html')
 
     def test_project_debriefing_GET_invalid_url(self):
         response = self.client.get(self.debriefing_url_invalid, follow=True)

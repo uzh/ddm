@@ -9,8 +9,8 @@ from django.views.generic.base import TemplateView
 from ddm.auth.forms import TokenCreationForm
 from ddm.auth.models import ProjectAccessToken
 from ddm.auth.utils import user_is_permitted, user_is_owner
-from ddm.forms import ResearchProfileConfirmationForm
-from ddm.models.core import DonationProject, ResearchProfile
+from ddm.projects.forms import ResearchProfileConfirmationForm
+from ddm.projects.models import DonationProject, ResearchProfile
 
 
 User = get_user_model()

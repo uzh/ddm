@@ -14,8 +14,8 @@ from django.views.decorators.cache import cache_page
 
 from ddm.datadonation.models import DonationBlueprint, FileUploader
 from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers
-from ddm.models.core import DonationProject
 from ddm.participation.models import Participant
+from ddm.projects.models import DonationProject
 from ddm.questionnaire.models import QuestionBase, QuestionnaireResponse
 
 

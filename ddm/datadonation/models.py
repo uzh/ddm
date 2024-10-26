@@ -24,7 +24,7 @@ COMMA_SEPARATED_STRINGS_VALIDATOR = RegexValidator(
 
 class FileUploader(models.Model):
     name = models.CharField(max_length=250)
-    project = models.ForeignKey('ddm.DonationProject', on_delete=models.CASCADE)
+    project = models.ForeignKey('ddm_projects.DonationProject', on_delete=models.CASCADE)
     index = models.PositiveIntegerField()
 
     class UploadTypes(models.TextChoices):
@@ -77,7 +77,7 @@ class FileUploader(models.Model):
 
 class DonationBlueprint(models.Model):
     project = models.ForeignKey(
-        'ddm.DonationProject',
+        'ddm_projects.DonationProject',
         on_delete=models.CASCADE
     )
     name = models.CharField(
@@ -343,7 +343,7 @@ class ProcessingRule(models.Model):
 
 class DataDonation(ModelWithEncryptedData):
     project = models.ForeignKey(
-        'ddm.DonationProject',
+        'ddm_projects.DonationProject',
         on_delete=models.CASCADE
     )
     blueprint = models.ForeignKey(

@@ -1,9 +1,8 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from django.forms import inlineformset_factory, TextInput, Textarea
 
-from ddm.models.core import ResearchProfile, DonationProject, DonationBlueprint, ProcessingRule, FileUploader
+from ddm.projects.models import DonationProject, ResearchProfile
 
 User = get_user_model()
 
@@ -76,65 +75,3 @@ class ResearchProfileConfirmationForm(forms.ModelForm):
         if self.cleaned_data['user'].pk != self.expected_user_id:
             raise ValidationError('User is not set as expected.', code='not allowed')
         return super().save()
-
-
-class BlueprintEditForm(forms.ModelForm):
-
-    class Meta:
-        model = DonationBlueprint
-        fields = ['name', 'description', 'regex_path', 'exp_file_format',
-                  'csv_delimiter', 'file_uploader', 'json_extraction_root',
-                  'expected_fields', 'expected_fields_regex_matching']
-        widgets = {
-            'expected_fields': forms.Textarea(attrs={'rows': 1}),
-            'regex_path': forms.Textarea(attrs={'rows': 1}),
-            'description': forms.Textarea(attrs={'rows': 3}),
-        }
-
-    def clean(self):
-        related_file_uploader = self.data.get('file_uploader', None)
-        regex = self.data.get('regex_path', None)
-
-        if related_file_uploader:
-            file_uploader = FileUploader.objects.get(pk=related_file_uploader)
-            if file_uploader.upload_type == FileUploader.UploadTypes.ZIP_FILE and regex in ['', None]:
-                raise ValidationError(
-                    'Donation Blueprints that belong to a ZIP file uploader must define '
-                    'a regex pattern.'
-                )
-        super().clean()
-
-
-class ProcessingRuleForm(forms.ModelForm):
-
-    class Meta:
-        model = ProcessingRule
-        fields = ['execution_order', 'name', 'field', 'regex_field',
-                  'comparison_operator', 'comparison_value', 'replacement_value']
-        widgets = {
-            'field': TextInput(),
-            'comparison_value': Textarea(attrs={'cols': 60, 'rows': 1}),
-            'replacement_value': Textarea(attrs={'cols': 60, 'rows': 1}),
-        }
-
-
-ProcessingRuleInlineFormset = inlineformset_factory(
-    DonationBlueprint,
-    ProcessingRule,
-    form=ProcessingRuleForm,
-    extra=0
-)
-
-
-class APITokenCreationForm(forms.Form):
-    expiration_days = forms.IntegerField(
-        initial=30,
-        min_value=1,
-        max_value=90,
-        required=True
-    )
-    action = forms.CharField(
-        max_length=20,
-        initial='create',
-        widget=forms.HiddenInput()
-    )

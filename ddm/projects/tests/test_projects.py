@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
-from ddm.models.core import DonationProject, ResearchProfile
+from ddm.projects.models import DonationProject, ResearchProfile
 
 
 User = get_user_model()

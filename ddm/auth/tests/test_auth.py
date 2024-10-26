@@ -7,8 +7,8 @@ from django.contrib.auth import get_user_model
 from rest_framework import exceptions
 
 from ddm.auth.models import ProjectTokenAuthenticator, ProjectAccessToken
-from ddm.models.core import ResearchProfile, DonationProject
 from ddm.auth.utils import email_is_valid, user_is_owner, user_is_permitted
+from ddm.projects.models import ResearchProfile, DonationProject
 
 
 User = get_user_model()

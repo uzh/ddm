@@ -2,7 +2,6 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 
 from ddm.logging.views import ProjectLogsView
-from ddm.views import admin
 from ddm.views.apis import (
     ExceptionAPI, ProjectDataAPI, DeleteParticipantAPI, DeleteProjectData,
     DonationsAPI, ResponsesAPI
@@ -10,6 +9,7 @@ from ddm.views.apis import (
 import ddm.auth.views as auth_views
 import ddm.datadonation.views as datadonation_views
 import ddm.participation.views as participation_views
+import ddm.projects.views as projects_views
 import ddm.questionnaire.views as questionnaire_views
 
 
@@ -50,13 +50,13 @@ data_donation_patterns = [
 ]
 
 admin_patterns = [
-    path(r'', admin.ProjectList.as_view(), name='project-list'),
-    path(r'create/', admin.ProjectCreate.as_view(), name='project-create'),
-    path(r'<int:pk>/', admin.ProjectDetail.as_view(), name='project-detail'),
-    path(r'<int:pk>/edit/', admin.ProjectEdit.as_view(), name='project-edit'),
-    path(r'<int:pk>/delete/', admin.ProjectDelete.as_view(), name='project-delete'),
-    path(r'<int:pk>/briefing/', admin.BriefingEdit.as_view(), name='briefing-edit'),
-    path(r'<int:pk>/debriefing/', admin.DebriefingEdit.as_view(), name='debriefing-edit'),
+    path(r'', projects_views.ProjectList.as_view(), name='project-list'),
+    path(r'create/', projects_views.ProjectCreate.as_view(), name='project-create'),
+    path(r'<int:pk>/', projects_views.ProjectDetail.as_view(), name='project-detail'),
+    path(r'<int:pk>/edit/', projects_views.ProjectEdit.as_view(), name='project-edit'),
+    path(r'<int:pk>/delete/', projects_views.ProjectDelete.as_view(), name='project-delete'),
+    path(r'<int:pk>/briefing/', projects_views.BriefingEdit.as_view(), name='briefing-edit'),
+    path(r'<int:pk>/debriefing/', projects_views.DebriefingEdit.as_view(), name='debriefing-edit'),
     path(r'<int:pk>/token/', auth_views.ProjectTokenView.as_view(), name='project-token'),
     path(r'<int:project_pk>/questionnaire/', include(question_patterns)),
     path(r'<int:project_pk>/data-donation/', include(data_donation_patterns)),

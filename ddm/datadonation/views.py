@@ -8,8 +8,8 @@ from django.views.generic.list import ListView
 
 from ddm.datadonation.forms import BlueprintEditForm, ProcessingRuleInlineFormset
 from ddm.datadonation.models import DonationBlueprint, DonationInstruction, FileUploader
-from ddm.models.core import DonationProject
-from ddm.views.admin import DdmAuthMixin
+from ddm.projects.models import DonationProject
+from ddm.projects.views import DdmAuthMixin
 
 
 class BlueprintMixin:

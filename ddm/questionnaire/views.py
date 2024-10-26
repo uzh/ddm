@@ -7,7 +7,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from ddm.auth.views import DdmAuthMixin
 from ddm.datadonation.models import DonationBlueprint
-from ddm.models.core import DonationProject
+from ddm.projects.models import DonationProject
 from ddm.questionnaire.models import (
     QuestionBase, QuestionType, SingleChoiceQuestion, MultiChoiceQuestion,
     OpenQuestion, MatrixQuestion, SemanticDifferential, Transition, QuestionItem,

@@ -25,7 +25,7 @@ class QuestionType(models.TextChoices):
 
 class QuestionBase(PolymorphicModel):
     project = models.ForeignKey(
-        'ddm.DonationProject',
+        'ddm_projects.DonationProject',
         on_delete=models.CASCADE
     )
     blueprint = models.ForeignKey(
@@ -362,7 +362,7 @@ class ScalePoint(models.Model):
 
 class QuestionnaireResponse(ModelWithEncryptedData):
     # Will only ever be deleted, when the project is deleted.
-    project = models.ForeignKey('ddm.DonationProject', on_delete=models.CASCADE)
+    project = models.ForeignKey('ddm_projects.DonationProject', on_delete=models.CASCADE)
     participant = models.ForeignKey('ddm_participation.Participant', on_delete=models.CASCADE)
     time_submitted = models.DateTimeField(default=timezone.now)
     data = models.BinaryField()

@@ -19,7 +19,7 @@ def create_asciidigits_id():
 
 
 class Participant(models.Model):
-    project = models.ForeignKey('ddm.DonationProject', on_delete=models.CASCADE)
+    project = models.ForeignKey('ddm_projects.DonationProject', on_delete=models.CASCADE)
 
     external_id = models.CharField(
         unique=True, null=False,

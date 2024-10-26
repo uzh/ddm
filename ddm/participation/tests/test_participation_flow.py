@@ -4,8 +4,8 @@ from django.urls import reverse
 from django.utils import timezone
 
 from ddm.datadonation.models import DataDonation, DonationBlueprint, FileUploader
-from ddm.models.core import DonationProject, ResearchProfile
 from ddm.participation.models import Participant
+from ddm.projects.models import DonationProject, ResearchProfile
 from ddm.questionnaire.models import OpenQuestion
 
 

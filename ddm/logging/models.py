@@ -10,7 +10,7 @@ class ExceptionRaisers(models.TextChoices):
 class ExceptionLogEntry(models.Model):
     date = models.DateTimeField(default=timezone.now)
     project = models.ForeignKey(
-        'ddm.DonationProject',
+        'ddm_projects.DonationProject',
         on_delete=models.CASCADE
     )
     participant = models.ForeignKey(
@@ -37,7 +37,7 @@ class ExceptionLogEntry(models.Model):
 class EventLogEntry(models.Model):
     date = models.DateTimeField(default=timezone.now)
     project = models.ForeignKey(
-        'ddm.DonationProject',
+        'ddm_projects.DonationProject',
         on_delete=models.CASCADE
     )
     description = models.TextField()

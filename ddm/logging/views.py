@@ -2,7 +2,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import TemplateView
 
 from ddm.auth.views import DdmAuthMixin
-from ddm.models.core import DonationProject
+from ddm.projects.models import DonationProject
 
 
 class ProjectLogsView(SuccessMessageMixin, DdmAuthMixin, TemplateView):

@@ -14,8 +14,8 @@ from ddm.datadonation.models import DataDonation, DonationBlueprint
 from ddm.datadonation.serializers import DonationSerializer
 from ddm.encryption.models import Decryption
 from ddm.logging.models import EventLogEntry, ExceptionLogEntry
-from ddm.models.core import DonationProject, ResearchProfile
-from ddm.models.serializers import ProjectSerializer
+from ddm.projects.models import DonationProject, ResearchProfile
+from ddm.projects.serializers import ProjectSerializer
 from ddm.participation.models import Participant
 from ddm.participation.serializers import ParticipantSerializer
 from ddm.questionnaire.models import QuestionnaireResponse

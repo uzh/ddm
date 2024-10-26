@@ -1,8 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from ddm.forms import ProjectCreateForm
-from ddm.models.core import ResearchProfile
+from ddm.projects.forms import ProjectCreateForm
+from ddm.projects.models import ResearchProfile
 
 
 User = get_user_model()

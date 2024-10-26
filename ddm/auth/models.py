@@ -16,7 +16,7 @@ class ProjectAccessToken(models.Model):
     """
     key = models.CharField(max_length=40, primary_key=True)
     project = models.OneToOneField(
-        'ddm.DonationProject', related_name='donation_project',
+        'ddm_projects.DonationProject', related_name='donation_project',
         on_delete=models.CASCADE, verbose_name='Donation Project'
     )
     created = models.DateTimeField(auto_now_add=True)

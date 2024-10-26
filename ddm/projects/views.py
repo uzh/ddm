@@ -5,8 +5,8 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
-from ddm.forms import ProjectCreateForm
-from ddm.models.core import DonationProject, ResearchProfile
+from ddm.projects.forms import ProjectCreateForm
+from ddm.projects.models import DonationProject, ResearchProfile
 from ddm.auth.views import DdmAuthMixin
 
 

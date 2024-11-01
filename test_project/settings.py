@@ -62,7 +62,7 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
                 'django.template.context_processors.i18n',
-                'ddm.context_processors.add_ddm_version'
+                'ddm.core.context_processors.add_ddm_version'
             ],
         },
     },

@@ -78,7 +78,7 @@
     <input class="ddm-btn" type="submit" value="Create Token">
     {% block cancel %}
     <p>
-      <a href="{% url 'project-detail' project.pk %}">&#129040; Back</a>
+      <a href="{% url 'ddm_projects:detail' project.pk %}">&#129040; Back</a>
     </p>
     {% endblock %}
   </div>
@@ -86,7 +86,7 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-<a href="{% url 'project-list' %}">Projects</a> /
-<a href="{% url 'project-detail' project.pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'ddm_projects:list' %}">Projects</a> /
+<a href="{% url 'ddm_projects:detail' project.pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
 Manage Access Token
 {% endblock %}

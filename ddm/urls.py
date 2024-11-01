@@ -1,87 +1,30 @@
 from django.urls import path, include
 from django.views.generic import RedirectView
 
-import ddm.auth.views as auth_views
-import ddm.datadonation.views as datadonation_views
-import ddm.participation.views as participation_views
-import ddm.projects.views as projects_views
-import ddm.questionnaire.views as questionnaire_views
-
 from ddm.datadonation.apis import DonationsAPI
-from ddm.logging.apis import ExceptionAPI
-from ddm.logging.views import ProjectLogsView
 from ddm.participation.apis import DeleteParticipantAPI
 from ddm.projects.apis import ProjectDataAPI, DeleteProjectData
 from ddm.questionnaire.apis import ResponsesAPI
 
 
-participation_patterns = [
-    path(r'', participation_views.participation_redirect_view, name='participation-redirect'),
-    path(r'briefing/', participation_views.BriefingView.as_view(), name='briefing'),
-    path(r'data-donation/', participation_views.DataDonationView.as_view(), name='data-donation'),
-    path(r'questionnaire/', participation_views.QuestionnaireView.as_view(), name='questionnaire'),
-    path(r'debriefing/', participation_views.DebriefingView.as_view(), name='debriefing'),
-    path(r'continue/', participation_views.ContinuationView.as_view(), name='continuation')
-]
-
-question_patterns = [
-    path(r'', questionnaire_views.QuestionnaireOverview.as_view(), name='questionnaire-overview'),
-    path(r'<slug:question_type>/create/', questionnaire_views.QuestionCreate.as_view(), name='question-create'),
-    path(r'<slug:question_type>/<int:pk>/edit/', questionnaire_views.QuestionEdit.as_view(), name='question-edit'),
-    path(r'<slug:question_type>/<int:pk>/delete/', questionnaire_views.QuestionDelete.as_view(), name='question-delete'),
-    path(r'<slug:question_type>/<int:pk>/items/', questionnaire_views.ItemEdit.as_view(), name='question-items'),
-    path(r'<slug:question_type>/<int:pk>/scale/', questionnaire_views.ScaleEdit.as_view(), name='question-scale'),
-]
-
-instruction_patterns = [
-    path(r'', datadonation_views.InstructionOverview.as_view(), name='instruction-overview'),
-    path(r'create/', datadonation_views.InstructionCreate.as_view(), name='instruction-create'),
-    path(r'<int:pk>/edit/', datadonation_views.InstructionEdit.as_view(), name='instruction-edit'),
-    path(r'<int:pk>/delete/', datadonation_views.InstructionDelete.as_view(), name='instruction-delete'),
-]
-
-data_donation_patterns = [
-    path(r'', datadonation_views.DataDonationOverview.as_view(), name='data-donation-overview'),
-    path(r'blueprint/create/', datadonation_views.BlueprintCreate.as_view(), name='blueprint-create'),
-    path(r'blueprint/<int:pk>/edit/', datadonation_views.BlueprintEdit.as_view(), name='blueprint-edit'),
-    path(r'blueprint/<int:pk>/delete/', datadonation_views.BlueprintDelete.as_view(), name='blueprint-delete'),
-    path(r'file-uploader/create/', datadonation_views.FileUploaderCreate.as_view(), name='file-uploader-create'),
-    path(r'file-uploader/<int:pk>/edit/', datadonation_views.FileUploaderEdit.as_view(), name='file-uploader-edit'),
-    path(r'file-uploader/<int:pk>/delete/', datadonation_views.FileUploaderDelete.as_view(), name='file-uploader-delete'),
-    path(r'file-uploader/<int:file_uploader_pk>/instructions/', include(instruction_patterns)),
-]
-
-admin_patterns = [
-    path(r'', projects_views.ProjectList.as_view(), name='project-list'),
-    path(r'create/', projects_views.ProjectCreate.as_view(), name='project-create'),
-    path(r'<int:pk>/', projects_views.ProjectDetail.as_view(), name='project-detail'),
-    path(r'<int:pk>/edit/', projects_views.ProjectEdit.as_view(), name='project-edit'),
-    path(r'<int:pk>/delete/', projects_views.ProjectDelete.as_view(), name='project-delete'),
-    path(r'<int:pk>/briefing/', projects_views.BriefingEdit.as_view(), name='briefing-edit'),
-    path(r'<int:pk>/debriefing/', projects_views.DebriefingEdit.as_view(), name='debriefing-edit'),
-    path(r'<int:pk>/token/', auth_views.ProjectTokenView.as_view(), name='project-token'),
-    path(r'<int:project_pk>/questionnaire/', include(question_patterns)),
-    path(r'<int:project_pk>/data-donation/', include(data_donation_patterns)),
-    path(r'<int:project_pk>/logs/', ProjectLogsView.as_view(), name='project-logs'),
-]
-
-authentication_patterns = [
-    path(r'no-permission/', auth_views.DdmNoPermissionView.as_view(), name='ddm-no-permission'),
-]
-
-api_patterns = [
-    path('project/<int:pk>/data', ProjectDataAPI.as_view(), name='ddm-data-api'),
-    path('project/<int:pk>/data/delete', DeleteProjectData.as_view(), name='ddm-delete-data'),
-    path('project/<int:pk>/donations', DonationsAPI.as_view(), name='donations-api'),
-    path('project/<int:pk>/responses', ResponsesAPI.as_view(), name='responses-api'),
-    path('project/<int:pk>/participant/<slug:participant_id>/delete', DeleteParticipantAPI.as_view(), name='ddm-delete-participant')
-]
+api_patterns = (
+    [
+        path('project/<int:pk>/data', ProjectDataAPI.as_view(), name='project_data'),
+        path('project/<int:pk>/data/delete', DeleteProjectData.as_view(), name='project_data_delete'),
+        path('project/<int:pk>/donations', DonationsAPI.as_view(), name='donations'),
+        path('project/<int:pk>/responses', ResponsesAPI.as_view(), name='responses'),
+        path('project/<int:pk>/participant/<slug:participant_id>/delete', DeleteParticipantAPI.as_view(), name='participant_delete')
+    ],
+    'ddm_apis'
+)
 
 urlpatterns = [
-    path(r'', RedirectView.as_view(pattern_name='project-list'), name='ddm-landing-page'),
-    path(r'studies/<slug:slug>/', include(participation_patterns)),
-    path(r'projects/', include(admin_patterns)),
-    path(r'auth/', include(authentication_patterns)),
-    path(r'<int:pk>/exceptions/', ExceptionAPI.as_view(), name='ddm-exceptions-api'),
+    path(r'', RedirectView.as_view(pattern_name='ddm_projects:list'), name='ddm_landing'),
+    path(r'studies/<slug:slug>/', include('ddm.participation.urls', namespace='participation')),
+    path(r'projects/', include('ddm.projects.urls', namespace='ddm_projects')),
+    path(r'projects/<int:project_pk>/questionnaire/', include('ddm.questionnaire.urls', namespace='questionnaire')),
+    path(r'projects/<int:project_pk>/data-donation/', include('ddm.datadonation.urls', namespace='datadonation')),
+    path(r'', include('ddm.logging.urls', namespace='ddm_logs')),
+    path(r'', include('ddm.auth.urls', namespace='ddm_auth')),
     path(r'api/', include(api_patterns))
 ]

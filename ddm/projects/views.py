@@ -71,7 +71,7 @@ class ProjectDelete(DdmAuthMixin, DeleteView):
     """ View to display a list of existing donation projects. """
     model = DonationProject
     template_name = 'projects/delete.html'
-    success_url = reverse_lazy('project-list')
+    success_url = reverse_lazy('ddm_projects:list')
     success_message = 'Project was deleted.'
 
     def delete(self, request, *args, **kwargs):

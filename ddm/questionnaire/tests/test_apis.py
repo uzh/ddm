@@ -96,13 +96,13 @@ class TestAPIs(TestCase):
 
         expected_response = [{'open': 'response_data'}, {'open': 'response_data2'}]
         response = client.get(
-            reverse('responses-api', args=[self.project_base.pk]))
+            reverse('ddm_apis:responses', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, expected_response)
 
         expected_response = [{'open': 'response_data'}]
         response = client.get(
-            reverse('responses-api', args=[self.project_base.pk]), {'participants': str(self.participant.external_id)})
+            reverse('ddm_apis:responses', args=[self.project_base.pk]), {'participants': str(self.participant.external_id)})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, expected_response)
 
@@ -111,7 +111,7 @@ class TestAPIs(TestCase):
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         response = client.delete(
-            reverse('responses-api', args=[self.project_base.pk]))
+            reverse('ddm_apis:responses', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 401)
 
     def test_responses_api_fails_with_no_api_credentials_created(self):
@@ -121,5 +121,5 @@ class TestAPIs(TestCase):
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + key)
         response = client.delete(
-            reverse('responses-api', args=[self.project_base.pk]))
+            reverse('ddm_apis:responses', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 401)

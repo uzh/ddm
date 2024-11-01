@@ -139,31 +139,31 @@ class TestAdminViewAuthentication(TestCase):
     def get_admin_urls(cls, project_pk):
         urls = []
         project_related_views = [
-            'project-edit',
-            'project-delete',
-            'briefing-edit',
-            'debriefing-edit',
-            'data-donation-overview',
-            'blueprint-create',
-            'questionnaire-overview'
+            'ddm_projects:edit',
+            'ddm_projects:delete',
+            'ddm_projects:briefing_edit',
+            'ddm_projects:debriefing_edit',
+            'datadonation:overview',
+            'datadonation:blueprints:create',
+            'questionnaire:overview'
         ]
         for view in project_related_views:
             urls.append(reverse(view, args=[project_pk]))
 
-        blueprint_related_views = ['blueprint-edit', 'blueprint-delete']
+        blueprint_related_views = ['datadonation:blueprints:edit', 'datadonation:blueprints:delete']
         for view in blueprint_related_views:
             urls.append(reverse(view, args=[project_pk, cls.blueprint.pk]))
 
         uploader_related_views = [
-            'file-uploader-edit',
-            'file-uploader-delete',
-            'instruction-overview',
-            'instruction-create'
+            'datadonation:uploaders:edit',
+            'datadonation:uploaders:delete',
+            'datadonation:instructions:overview',
+            'datadonation:instructions:create'
         ]
         for view in uploader_related_views:
             urls.append(reverse(view, args=[project_pk, cls.file_uploader.pk]))
 
-        instruction_related_views = ['instruction-edit', 'instruction-delete']
+        instruction_related_views = ['datadonation:instructions:edit', 'datadonation:instructions:delete']
         for view in instruction_related_views:
             urls.append(
                 reverse(view, args=[project_pk, cls.file_uploader.pk, cls.instruction.pk]))
@@ -178,29 +178,29 @@ class TestAdminViewAuthentication(TestCase):
         ]
         for question in questions:
             urls.append(
-                reverse('question-create', args=[project_pk, question[0]]))
+                reverse('questionnaire:create', args=[project_pk, question[0]]))
 
-        for view in ['question-edit', 'question-delete']:
+        for view in ['questionnaire:edit', 'questionnaire:delete']:
             for question in questions:
                 urls.append(
                     reverse(view, args=[project_pk, question[0], question[1]]))
 
         item_views = [
-            reverse('question-items',
+            reverse('questionnaire:items',
                     args=[project_pk, 'single_choice', cls.sc_quest.pk]),
-            reverse('question-items',
+            reverse('questionnaire:items',
                     args=[project_pk, 'multi_choice', cls.mc_quest.pk]),
-            reverse('question-items',
+            reverse('questionnaire:items',
                     args=[project_pk, 'matrix', cls.matrix_quest.pk]),
-            reverse('question-items',
+            reverse('questionnaire:items',
                     args=[project_pk, 'semantic_diff', cls.diff_quest.pk]),
         ]
         urls += item_views
 
         scale_views = [
-            reverse('question-scale',
+            reverse('questionnaire:scale',
                     args=[project_pk, 'matrix', cls.matrix_quest.pk]),
-            reverse('question-scale',
+            reverse('questionnaire:scale',
                     args=[project_pk, 'semantic_diff', cls.diff_quest.pk]),
         ]
         urls += scale_views
@@ -225,7 +225,7 @@ class TestAdminViewAuthentication(TestCase):
 
     def test_non_owner_logged_in_returns_404(self):
         for url in self.urls:
-            if url in [reverse('project-list'), reverse('project-create')]:
+            if url in [reverse('ddm_projects:list'), reverse('ddm_projects:create')]:
                 pass
             else:
                 self.client.login(**self.non_owner_creds)
@@ -243,12 +243,12 @@ class TestAdminViewAuthentication(TestCase):
 
     def test_user_wo_permission_logged_in_redirects_to_no_permission_view(self):
         for url in self.urls_no_perm:
-            if url in [reverse('project-list'), reverse('project-create')]:
+            if url in [reverse('ddm_projects:list'), reverse('ddm_projects:create')]:
                 pass
             else:
                 self.client.login(**self.not_permitted_creds)
                 response = self.client.get(url, follow=True)
-                self.assertRedirects(response, reverse('ddm-no-permission'))
+                self.assertRedirects(response, reverse('ddm_auth:no_permission'))
 
 
 @override_settings(DDM_SETTINGS={'EMAIL_PERMISSION_CHECK':  r'.*(\.|@)mail\.com$', })
@@ -268,7 +268,7 @@ class TestProjectListView(TestCase):
 
     def test_project_list_returns_correct_queryset(self):
         self.client.login(**self.owner_creds)
-        response = self.client.get(reverse('project-list'))
+        response = self.client.get(reverse('ddm_projects:list'))
         object_list = response.context['object_list']
         expected_queryset = DonationProject.objects.filter(owner__user=self.owner)
         self.assertQuerysetEqual(

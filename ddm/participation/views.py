@@ -50,10 +50,10 @@ class ParticipationFlowBaseView(DetailView):
     context_object_name = 'project'
 
     steps = [
-        'briefing',
-        'data-donation',
-        'questionnaire',
-        'debriefing'
+        'participation:briefing',
+        'participation:datadonation',
+        'participation:questionnaire',
+        'participation:debriefing'
     ]
     participant = None
     current_step = None
@@ -151,12 +151,12 @@ def participation_redirect_view(request, slug):
     """
     Redirect user to briefing page if url does not contain a step indicator.
     """
-    return redirect('briefing', slug)
+    return redirect('participation:briefing', slug)
 
 
 class BriefingView(ParticipationFlowBaseView):
     template_name = 'participation/briefing.html'
-    step_name = 'briefing'
+    step_name = 'participation:briefing'
 
     def post(self, request, *args, **kwargs):
         """
@@ -222,7 +222,7 @@ class BriefingView(ParticipationFlowBaseView):
 @method_decorator(cache_page(0), name='dispatch')
 class DataDonationView(ParticipationFlowBaseView):
     template_name = 'participation/data_donation.html'
-    step_name = 'data-donation'
+    step_name = 'participation:datadonation'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -238,8 +238,7 @@ class DataDonationView(ParticipationFlowBaseView):
     def post(self, request, *args, **kwargs):
         super().post(request, **kwargs)  # TODO: Check if this is obsolete
         self.process_uploads(request.FILES)
-        redirect_url = reverse(self.steps[self.current_step + 1],
-                               kwargs={'slug': self.object.slug})
+        redirect_url = reverse(self.steps[self.current_step + 1], kwargs={'slug': self.object.slug})
         return HttpResponseRedirect(redirect_url)
 
     def process_uploads(self, files):
@@ -316,7 +315,7 @@ class DataDonationView(ParticipationFlowBaseView):
 
 class QuestionnaireView(ParticipationFlowBaseView):
     template_name = 'participation/questionnaire.html'
-    step_name = 'questionnaire'
+    step_name = 'participation:questionnaire'
 
     def setup(self, request, *args, **kwargs):
         """ Reset extra_scripts """
@@ -403,7 +402,7 @@ class QuestionnaireView(ParticipationFlowBaseView):
 
 class DebriefingView(ParticipationFlowBaseView):
     template_name = 'participation/debriefing.html'
-    step_name = 'debriefing'
+    step_name = 'participation:debriefing'
 
     def get_context_data(self, **kwargs):
         """ Inject url parameters in redirect target. """

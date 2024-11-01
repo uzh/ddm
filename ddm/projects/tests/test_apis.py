@@ -91,19 +91,19 @@ class TestAPIs(TestCase):
 
     def test_download_project_data_view_exists(self):
         response = self.client.get(
-            reverse('ddm-data-api', args=[self.project_base.pk]))
+            reverse('ddm_apis:project_data', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 401)
 
     def test_download_project_data_with_regular_login_owner(self):
         self.client.login(**self.base_creds)
         response = self.client.get(
-            reverse('ddm-data-api', args=[self.project_base.pk]))
+            reverse('ddm_apis:project_data', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 200)
 
     def test_download_project_data_fails_for_user_without_permission(self):
         self.client.login(**self.no_perm_creds)
         response = self.client.get(
-            reverse('ddm-data-api', args=[self.project_base.pk]), follow=True)
+            reverse('ddm_apis:project_data', args=[self.project_base.pk]), follow=True)
         self.assertEqual(response.status_code, 403)
 
     def test_download_project_data_with_valid_api_credentials(self):
@@ -111,7 +111,7 @@ class TestAPIs(TestCase):
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         response = client.get(
-            reverse('ddm-data-api', args=[self.project_base.pk]))
+            reverse('ddm_apis:project_data', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 200)
 
     def test_download_project_data_with_invalid_api_credentials(self):
@@ -119,7 +119,7 @@ class TestAPIs(TestCase):
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         response = client.get(
-            reverse('ddm-data-api', args=[self.project_base.pk]))
+            reverse('ddm_apis:project_data', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 401)
 
     def test_download_project_data_with_no_api_credentials_created(self):
@@ -129,20 +129,20 @@ class TestAPIs(TestCase):
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + key)
         response = client.get(
-            reverse('ddm-data-api', args=[self.project_base.pk]))
+            reverse('ddm_apis:project_data', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 401)
 
     def test_delete_project_data_with_regular_login_owner(self):
         self.client.login(**self.base_creds)
         response = self.client.delete(
-            reverse('ddm-delete-data', args=[self.project_base.pk]))
+            reverse('ddm_apis:project_data_delete', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(response.data)
 
     def test_delete_project_data_fails_for_user_without_permission(self):
         self.client.login(**self.no_perm_creds)
         response = self.client.delete(
-            reverse('ddm-delete-data', args=[self.project_base.pk]), follow=True)
+            reverse('ddm_apis:project_data_delete', args=[self.project_base.pk]), follow=True)
         self.assertEqual(response.status_code, 403)
 
     def test_delete_project_data_fails_with_valid_api_credentials(self):
@@ -150,7 +150,7 @@ class TestAPIs(TestCase):
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         response = client.delete(
-            reverse('ddm-delete-data', args=[self.project_base.pk]))
+            reverse('ddm_apis:project_data_delete', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 403)
         self.assertIsNotNone(response.data)
 
@@ -159,7 +159,7 @@ class TestAPIs(TestCase):
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         response = client.delete(
-            reverse('ddm-delete-data', args=[self.project_base.pk]))
+            reverse('ddm_apis:project_data_delete', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 403)
 
     def test_delete_project_data_with_no_api_credentials_created(self):
@@ -169,5 +169,5 @@ class TestAPIs(TestCase):
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + key)
         response = client.delete(
-            reverse('ddm-delete-data', args=[self.project_base.pk]))
+            reverse('ddm_apis:project_data_delete', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 403)

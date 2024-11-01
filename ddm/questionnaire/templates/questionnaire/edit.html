@@ -26,7 +26,7 @@
     <input class="ddm-btn" type="submit" value="Update Question">
     {% block cancel %}
     <p>
-      <a href="{% url 'questionnaire-overview' project_pk %}">&#129040; Back</a>
+      <a href="{% url 'questionnaire:overview' project_pk %}">&#129040; Back</a>
     </p>
     {% endblock %}
   </div>
@@ -62,7 +62,7 @@
     {% endfor %}
     </table>
 
-    <p><a class="ddm-btn" href="{% url 'question-items' project_pk object.question_type object.pk %}">Edit Items</a></p>
+    <p><a class="ddm-btn" href="{% url 'questionnaire:items' project_pk object.question_type object.pk %}">Edit Items</a></p>
   </div>
 </div>
 {% endif %}
@@ -91,20 +91,20 @@
       <tr><td>No scale points defined.</td></tr>
     {% endfor %}
     </table>
-    <p><a class="ddm-btn" href="{% url 'question-scale' project_pk object.question_type object.pk %}">Edit Scale Points</a></p>
+    <p><a class="ddm-btn" href="{% url 'questionnaire:scale' project_pk object.question_type object.pk %}">Edit Scale Points</a></p>
   </div>
 </div>
 {% endif %}
 
 <div class="mt-3">
-  <a href="{% url 'questionnaire-overview' project_pk %}">&#129040; Back</a>
+  <a href="{% url 'questionnaire:overview' project_pk %}">&#129040; Back</a>
 </div>
 {% endblock %}
 
 
 {% block breadcrumbs %}
-<a href="{% url 'project-list' %}">Projects</a> /
-<a href="{% url 'project-detail' project_pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
-<a href="{% url 'questionnaire-overview' project_pk %}">Questionnaire</a> /
+<a href="{% url 'ddm_projects:list' %}">Projects</a> /
+<a href="{% url 'ddm_projects:detail' project_pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'questionnaire:overview' project_pk %}">Questionnaire</a> /
 Edit Question
 {% endblock %}

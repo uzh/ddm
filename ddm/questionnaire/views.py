@@ -111,7 +111,7 @@ class QuestionCreate(SuccessMessageMixin, DdmAuthMixin, QuestionFormMixin, Creat
             'question_type': self.kwargs['question_type'],
             'pk': self.object.pk
         }
-        return reverse('question-edit', kwargs=kwargs)
+        return reverse('questionnaire:edit', kwargs=kwargs)
 
     def get_success_message(self, cleaned_data):
         return self.success_message % dict(
@@ -132,7 +132,7 @@ class QuestionEdit(SuccessMessageMixin, DdmAuthMixin, QuestionFormMixin, UpdateV
             'question_type': self.kwargs['question_type'],
             'pk': self.kwargs['pk']
         }
-        return reverse('question-edit', kwargs=success_kwargs)
+        return reverse('questionnaire:edit', kwargs=success_kwargs)
 
 
 class QuestionDelete(DdmAuthMixin, ProjectMixin, DeleteView):
@@ -142,7 +142,7 @@ class QuestionDelete(DdmAuthMixin, ProjectMixin, DeleteView):
     success_message = 'Question "%s" was deleted.'
 
     def get_success_url(self):
-        return reverse('questionnaire-overview', kwargs={'project_pk': self.kwargs['project_pk']})
+        return reverse('questionnaire:overview', kwargs={'project_pk': self.kwargs['project_pk']})
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, self.success_message % self.get_object().name)
@@ -203,7 +203,7 @@ class ItemEdit(SuccessMessageMixin, DdmAuthMixin, InlineFormsetMixin, UpdateView
             'question_type': question.question_type,
             'pk': question.pk
         }
-        return reverse('question-items', kwargs=success_kwargs)
+        return reverse('questionnaire:items', kwargs=success_kwargs)
 
 
 class ScaleEdit(SuccessMessageMixin, DdmAuthMixin, InlineFormsetMixin, UpdateView):
@@ -221,4 +221,4 @@ class ScaleEdit(SuccessMessageMixin, DdmAuthMixin, InlineFormsetMixin, UpdateVie
             'question_type': question.question_type,
             'pk': question.pk
         }
-        return reverse('question-scale', kwargs=success_kwargs)
+        return reverse('questionnaire:scale', kwargs=success_kwargs)

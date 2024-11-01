@@ -173,7 +173,7 @@ class DonationBlueprint(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('blueprint-edit', args=[str(self.project_id), str(self.id)])
+        return reverse('datadonation:blueprints:edit', args=[str(self.project_id), str(self.id)])
 
     def get_slug(self):
         return 'blueprint'

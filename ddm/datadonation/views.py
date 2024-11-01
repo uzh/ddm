@@ -24,7 +24,7 @@ class BlueprintMixin:
         return context
 
     def get_success_url(self):
-        return reverse('data-donation-overview', kwargs={'project_pk': self.kwargs['project_pk']})
+        return reverse('datadonation:overview', kwargs={'project_pk': self.kwargs['project_pk']})
 
 
 class DataDonationOverview(DdmAuthMixin, BlueprintMixin, ListView):
@@ -59,7 +59,7 @@ class FileUploaderCreate(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, Crea
             'project_pk': self.kwargs['project_pk'],
             'pk': self.object.pk
         }
-        return reverse('file-uploader-edit', kwargs=kwargs)
+        return reverse('datadonation:uploaders:edit', kwargs=kwargs)
 
 
 class FileUploaderEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, UpdateView):
@@ -146,7 +146,7 @@ class BlueprintCreate(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, CreateV
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('blueprint-edit', kwargs={'project_pk': self.object.project.pk, 'pk': self.object.pk})
+        return reverse('datadonation:blueprints:edit', kwargs={'project_pk': self.object.project.pk, 'pk': self.object.pk})
 
 
 class BlueprintEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, UpdateView):
@@ -157,7 +157,7 @@ class BlueprintEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, UpdateVie
     success_message = 'Blueprint "%(name)s" was successfully updated.'
 
     def get_success_url(self):
-        return reverse('data-donation-overview', kwargs={'project_pk': self.object.project.pk})
+        return reverse('datadonation:overview', kwargs={'project_pk': self.object.project.pk})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -213,7 +213,7 @@ class InstructionMixin:
     def get_success_url(self):
         kwargs = {'project_pk': self.kwargs['project_pk'],
                   'file_uploader_pk': self.kwargs['file_uploader_pk']}
-        return reverse('instruction-overview', kwargs=kwargs)
+        return reverse('datadonation:instructions:overview', kwargs=kwargs)
 
 
 class InstructionOverview(DdmAuthMixin, InstructionMixin, ListView):

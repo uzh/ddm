@@ -29,11 +29,11 @@ class DdmAuthMixin:
             if not request.user.is_authenticated:
                 return redirect('ddm-login')
             elif not user_is_permitted(request.user):
-                return redirect('ddm-no-permission')
+                return redirect('ddm_auth:no_permission')
             elif not ResearchProfile.objects.filter(user=request.user).exists():
                 ResearchProfile.objects.create(user=request.user)
             else:
-                if request.path not in [reverse('project-list'), reverse('project-create')]:
+                if request.path not in [reverse('ddm_projects:list'), reverse('ddm_projects:create')]:
                     if 'project_pk' in self.kwargs:
                         project_pk = self.kwargs['project_pk']
                     else:
@@ -54,16 +54,16 @@ class DdmRegisterResearchProfileView(CreateView):
     model = ResearchProfile
     form_class = ResearchProfileConfirmationForm
     template_name = 'auth/confirm_profile.html'
-    success_url = reverse_lazy('project-list')
+    success_url = reverse_lazy('ddm_projects:list')
 
     def dispatch(self, request, *args, **kwargs):
         if request.method == 'GET':
             if not request.user.is_authenticated:
                 return redirect('ddm-login')
             elif not user_is_permitted(request.user):
-                return redirect('ddm-no-permission')
+                return redirect('ddm_auth:no_permission')
             elif ResearchProfile.objects.filter(user=request.user).exists():
-                return redirect('project-list')
+                return redirect('ddm_projects:list')
         return super().dispatch(request, *args, **kwargs)
 
     def get_initial(self):
@@ -72,7 +72,7 @@ class DdmRegisterResearchProfileView(CreateView):
         return self.initial
 
     def form_invalid(self, form):
-        return HttpResponseRedirect(reverse('ddm-no-permission'))
+        return HttpResponseRedirect(reverse('ddm_auth:no_permission'))
 
 
 class DdmNoPermissionView(TemplateView):
@@ -90,7 +90,7 @@ class DdmNoPermissionView(TemplateView):
                 return redirect('ddm-login')
             elif (user_is_permitted(request.user) and
                   ResearchProfile.objects.filter(user=request.user).exists()):
-                return redirect('project-list')
+                return redirect('ddm_projects:list')
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -126,4 +126,4 @@ class ProjectTokenView(SuccessMessageMixin, DdmAuthMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('project-token', kwargs={'pk': self.kwargs.get('pk')})
+        return reverse('ddm_auth:project_token', kwargs={'pk': self.kwargs.get('pk')})

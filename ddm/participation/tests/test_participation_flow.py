@@ -50,23 +50,23 @@ class ParticipationFlowBaseTestCase(TestCase):
 
         # URLs for project with questionnaire.
         slug_base = cls.project_base.slug
-        cls.briefing_url = reverse('briefing', args=[slug_base])
-        cls.dd_url = reverse('data-donation', args=[slug_base])
-        cls.quest_url = reverse('questionnaire', args=[slug_base])
-        cls.debriefing_url = reverse('debriefing', args=[slug_base])
+        cls.briefing_url = reverse('participation:briefing', args=[slug_base])
+        cls.dd_url = reverse('participation:datadonation', args=[slug_base])
+        cls.quest_url = reverse('participation:questionnaire', args=[slug_base])
+        cls.debriefing_url = reverse('participation:debriefing', args=[slug_base])
 
         # URLs for project without questionnaire.
         slug_alt = cls.project_alt.slug
-        cls.briefing_url_no_quest = reverse('briefing', args=[slug_alt])
-        cls.dd_url_no_quest = reverse('data-donation', args=[slug_alt])
-        cls.quest_url_no_quest = reverse('questionnaire', args=[slug_alt])
-        cls.debriefing_url_no_quest = reverse('debriefing', args=[slug_alt])
+        cls.briefing_url_no_quest = reverse('participation:briefing', args=[slug_alt])
+        cls.dd_url_no_quest = reverse('participation:datadonation', args=[slug_alt])
+        cls.quest_url_no_quest = reverse('participation:questionnaire', args=[slug_alt])
+        cls.debriefing_url_no_quest = reverse('participation:debriefing', args=[slug_alt])
 
         # URLs for non-existing project.
-        cls.briefing_url_invalid = reverse('briefing', args=['nope'])
-        cls.dd_url_invalid = reverse('data-donation', args=['nope'])
-        cls.quest_url_invalid = reverse('questionnaire', args=['nope'])
-        cls.debriefing_url_invalid = reverse('debriefing', args=['nope'])
+        cls.briefing_url_invalid = reverse('participation:briefing', args=['nope'])
+        cls.dd_url_invalid = reverse('participation:datadonation', args=['nope'])
+        cls.quest_url_invalid = reverse('participation:questionnaire', args=['nope'])
+        cls.debriefing_url_invalid = reverse('participation:debriefing', args=['nope'])
 
     def initialize_project_and_session(self):
         self.client = Client()

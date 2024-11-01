@@ -168,7 +168,7 @@ class DonationProject(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('project-detail', args=[str(self.id)])
+        return reverse('ddm_projects:detail', args=[str(self.id)])
 
     def get_salt(self):
         return str(self.date_created)

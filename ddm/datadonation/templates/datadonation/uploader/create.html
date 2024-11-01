@@ -6,11 +6,11 @@
 
 {% block submit_label %}Create Uploader{% endblock %}
 
-{% block cancel_target %}{% url 'data-donation-overview' project.pk %}{% endblock %}
+{% block cancel_target %}{% url 'datadonation:overview' project.pk %}{% endblock %}
 
 {% block breadcrumbs %}
-<a href="{% url 'project-list' %}">Projects</a> /
-<a href="{% url 'project-detail' project.pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
-<a href="{% url 'data-donation-overview' project.pk %}">Data Donation</a> /
+<a href="{% url 'ddm_projects:list' %}">Projects</a> /
+<a href="{% url 'ddm_projects:detail' project.pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'datadonation:overview' project.pk %}">Data Donation</a> /
 Create Uploader
 {% endblock %}

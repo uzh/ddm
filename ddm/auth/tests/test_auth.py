@@ -60,13 +60,13 @@ class TestAuthenticationFlow(TestCase):
 
     def test_ddm_no_permission_view_200(self):
         self.client.login(**self.not_permitted_creds)
-        response = self.client.get(reverse('ddm-no-permission'), follow=True)
+        response = self.client.get(reverse('ddm_auth:no_permission'), follow=True)
         self.assertEqual(response.status_code, 200)
 
     def test_ddm_no_permission_view_redirect_to_project_list(self):
         self.client.login(**self.base_creds)
-        response = self.client.get(reverse('ddm-no-permission'), follow=True)
-        self.assertRedirects(response, reverse('project-list'))
+        response = self.client.get(reverse('ddm_auth:no_permission'), follow=True)
+        self.assertRedirects(response, reverse('ddm_projects:list'))
 
 
 class TestAuthCustomTokenAuthenticator(TestCase):

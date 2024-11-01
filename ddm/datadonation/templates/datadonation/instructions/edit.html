@@ -8,15 +8,15 @@
 
 {% block cancel %}
 <p>
-  <a href="{% url 'instruction-overview' project_pk file_uploader.pk %}">&#129040; Back</a>
+  <a href="{% url 'datadonation:instructions:overview' project_pk file_uploader.pk %}">&#129040; Back</a>
 </p>
 {% endblock %}
 
 {% block breadcrumbs %}
-<a href="{% url 'project-list' %}">Projects</a> /
-<a href="{% url 'project-detail' project_pk %}">"{{ file_uploader.project.name|truncatechars:15 }}" Project</a> /
-<a href="{% url 'data-donation-overview' project_pk %}">Data Donation</a> /
-<a href="{% url 'file-uploader-edit' project_pk file_uploader.pk %}">File Uploader "{{ file_uploader.name|truncatechars:15 }}"</a> /
-<a href="{% url 'instruction-overview' project_pk file_uploader.pk %}">Instructions</a> /
+<a href="{% url 'ddm_projects:list' %}">Projects</a> /
+<a href="{% url 'ddm_projects:detail' project_pk %}">"{{ file_uploader.project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'datadonation:overview' project_pk %}">Data Donation</a> /
+<a href="{% url 'datadonation:uploaders:edit' project_pk file_uploader.pk %}">File Uploader "{{ file_uploader.name|truncatechars:15 }}"</a> /
+<a href="{% url 'datadonation:instructions:overview' project_pk file_uploader.pk %}">Instructions</a> /
 Edit Instruction Page
 {% endblock %}

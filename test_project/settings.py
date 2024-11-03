@@ -92,11 +92,11 @@ LANGUAGES = [
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-    os.path.join(DDM_DIR, 'static'),
+    os.path.join(PROJECT_DIR, 'test_project', 'static'),
 )
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
+MEDIA_ROOT = os.path.join(PROJECT_DIR, 'test_project', 'media')
 
 WEBPACK_LOADER = {
     'DEFAULT': {

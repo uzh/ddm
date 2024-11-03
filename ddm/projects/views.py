@@ -67,16 +67,15 @@ class ProjectEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
             return self.form_invalid(form)
 
 
-class ProjectDelete(DdmAuthMixin, DeleteView):
+class ProjectDelete(SuccessMessageMixin, DdmAuthMixin, DeleteView):
     """ View to display a list of existing donation projects. """
     model = DonationProject
     template_name = 'projects/delete.html'
     success_url = reverse_lazy('ddm_projects:list')
-    success_message = 'Project was deleted.'
+    success_message = 'Project "%s" was deleted.'
 
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, self.success_message)
-        return super().delete(request, *args, **kwargs)
+    def get_success_message(self, cleaned_data):
+        return self.success_message % self.object.name
 
 
 class BriefingEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):

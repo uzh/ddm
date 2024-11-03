@@ -135,18 +135,17 @@ class QuestionEdit(SuccessMessageMixin, DdmAuthMixin, QuestionFormMixin, UpdateV
         return reverse('questionnaire:edit', kwargs=success_kwargs)
 
 
-class QuestionDelete(DdmAuthMixin, ProjectMixin, DeleteView):
+class QuestionDelete(SuccessMessageMixin, DdmAuthMixin, ProjectMixin, DeleteView):
     """ View to delete question. """
     model = QuestionBase
     template_name = 'questionnaire/delete.html'
     success_message = 'Question "%s" was deleted.'
 
+    def get_success_message(self, cleaned_data):
+        return self.success_message % self.object.name
+
     def get_success_url(self):
         return reverse('questionnaire:overview', kwargs={'project_pk': self.kwargs['project_pk']})
-
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, self.success_message % self.get_object().name)
-        return super().delete(request, *args, **kwargs)
 
 
 class InlineFormsetMixin(ProjectMixin):

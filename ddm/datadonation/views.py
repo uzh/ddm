@@ -117,15 +117,14 @@ class FileUploaderEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, Update
         return HttpResponseRedirect(self.get_success_url())
 
 
-class FileUploaderDelete(DdmAuthMixin, BlueprintMixin, DeleteView):
+class FileUploaderDelete(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, DeleteView):
     """ View to delete an existing blueprint uploader. """
     model = FileUploader
     template_name = 'datadonation/uploader/delete.html'
     success_message = 'File Uploader "%s" was deleted.'
 
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, self.success_message % self.get_object().name)
-        return super().delete(request, *args, **kwargs)
+    def get_success_message(self, cleaned_data):
+        return self.success_message % self.object.name
 
 
 class BlueprintCreate(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, CreateView):
@@ -192,15 +191,14 @@ class BlueprintEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, UpdateVie
         return self.render_to_response(self.get_context_data(form=form, formset=formset))
 
 
-class BlueprintDelete(DdmAuthMixin, BlueprintMixin, DeleteView):
+class BlueprintDelete(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, DeleteView):
     """ View to delete an existing donation blueprint. """
     model = DonationBlueprint
     template_name = 'datadonation/blueprint/delete.html'
     success_message = 'Blueprint "%s" was deleted.'
 
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, self.success_message % self.get_object().name)
-        return super().delete(request, *args, **kwargs)
+    def get_success_message(self, cleaned_data):
+        return self.success_message % self.object.name
 
 
 class InstructionMixin:
@@ -259,12 +257,11 @@ class InstructionEdit(SuccessMessageMixin, DdmAuthMixin, InstructionMixin, Updat
     success_message = 'Instruction page was successfully updated.'
 
 
-class InstructionDelete(DdmAuthMixin, InstructionMixin, DeleteView):
+class InstructionDelete(SuccessMessageMixin, DdmAuthMixin, InstructionMixin, DeleteView):
     """ View to delete an instruction page. """
     model = DonationInstruction
     template_name = 'datadonation/instructions/delete.html'
     success_message = 'Instruction page was deleted.'
 
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, self.success_message)
-        return super().delete(request, *args, **kwargs)
+    def get_success_message(self, cleaned_data):
+        return self.success_message % self.object.name

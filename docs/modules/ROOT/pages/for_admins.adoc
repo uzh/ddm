@@ -183,25 +183,25 @@ DDM_SETTINGS = {
 
 Include the DDM urls in your projects urls.py:
 
-[source, python]
+[source,python]
 ----
 # urls.py
 
 urlpatterns = [
     # ...
-    path('ddm/', include('ddm.urls')),
+    path('ddm/', include('ddm.core.urls')),
 ]
 ----
 
 Configure login and logout endpoints for DDM in urls.py:
 
-[source, python]
+[source,python]
 ----
 # urls.py
 
 urlpatterns = [
     ...
-    path('ddm/', include('ddm.urls')),
+    path('ddm/', include('ddm.core.urls')),
     path('login/', auth_views.LoginView.as_view(template_name='auth/login.html'), name='ddm-login'),  # You can choose whatever path and template you like
     path('logout/', auth_views.LogoutView.as_view(), name='ddm-logout'),  # You can choose whatever path and template you like
     path('ckeditor5/', include('django_ckeditor_5.urls')),  # This is the endpoint that handles file uploads through the CKEditor.

@@ -28,11 +28,10 @@ INSTALLED_APPS = [
     'ddm.participation',
     'ddm.projects',
     'ddm.core',
-    'ckeditor',
-    'ckeditor_uploader',
     'webpack_loader',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_ckeditor_5',
     # 'debug_toolbar',  # Added for debugging purposes
 ]
 
@@ -123,10 +122,13 @@ AUTH_PASSWORD_VALIDATORS = [
 LOGIN_REDIRECT_URL = '/projects/'
 LOGOUT_REDIRECT_URL = '/login/'
 
-CKEDITOR_RESTRICT_BY_USER = True
-CKEDITOR_UPLOAD_PATH = 'uploads/'
-
 DDM_DEFAULT_HEADER_IMG_LEFT = '/media/project_10/headers/DDLabLogo.png'
 DDM_DEFAULT_HEADER_IMG_RIGHT = '/media/project_10/headers/IKMZ_Logo.png'
 
 # INTERNAL_IPS = ["127.0.0.1", ]  # Added for debugging purposes
+
+
+# ckeditor 5 configuration
+CKEDITOR_5_FILE_UPLOAD_PERMISSION = 'authenticated'
+CKEDITOR_5_ALLOW_ALL_FILE_TYPES = True
+CKEDITOR_5_UPLOAD_FILE_TYPES = ['jpeg', 'pdf', 'png', 'mp4']

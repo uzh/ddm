@@ -1,11 +1,10 @@
-from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
-from ddm.projects.forms import ProjectCreateForm
+from ddm.projects.forms import ProjectCreateForm, ProjectEditForm, BriefingEditForm, DebriefingEditForm
 from ddm.projects.models import DonationProject, ResearchProfile
 from ddm.auth.views import DdmAuthMixin
 
@@ -46,12 +45,7 @@ class ProjectEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     """ View to edit the details of an existing donation project. """
     model = DonationProject
     template_name = 'projects/edit.html'
-    fields = [
-        'name', 'slug', 'contact_information', 'data_protection_statement',
-        'url_parameter_enabled', 'expected_url_parameters',
-        'redirect_enabled', 'redirect_target',
-        'img_header_left', 'img_header_right'
-    ]
+    form_class = ProjectEditForm
     success_message = 'Project details successfully updated.'
 
     def form_valid(self, form):
@@ -82,7 +76,7 @@ class BriefingEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     """ View to edit the briefing page. """
     model = DonationProject
     template_name = 'projects/edit-briefing.html'
-    fields = ['briefing_text', 'briefing_consent_enabled', 'briefing_consent_label_yes', 'briefing_consent_label_no']
+    form_class = BriefingEditForm
     success_message = 'Briefing page successfully updated.'
 
     def form_valid(self, form):
@@ -103,5 +97,5 @@ class DebriefingEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     """ View to edit the debriefing page. """
     model = DonationProject
     template_name = 'projects/edit-debriefing.html'
-    fields = ['debriefing_text']
+    form_class = DebriefingEditForm
     success_message = 'Debriefing page successfully updated.'

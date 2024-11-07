@@ -1,6 +1,5 @@
 import json
 
-from ckeditor_uploader.fields import RichTextUploadingField
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
@@ -362,7 +361,7 @@ class DataDonation(ModelWithEncryptedData):
 
 
 class DonationInstruction(models.Model):
-    text = RichTextUploadingField(null=True, blank=True, config_name='ddm_ckeditor')
+    text = models.TextField()
     index = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
 
     file_uploader = models.ForeignKey(

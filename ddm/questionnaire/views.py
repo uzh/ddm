@@ -1,9 +1,10 @@
-from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import inlineformset_factory
 from django.urls import reverse
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+
+from django_ckeditor_5.widgets import CKEditor5Widget
 
 from ddm.auth.views import DdmAuthMixin
 from ddm.datadonation.models import DonationBlueprint
@@ -85,6 +86,7 @@ class QuestionFormMixin(ProjectMixin):
         context['form'].fields['blueprint'].queryset = DonationBlueprint.objects.filter(
             project_id=self.kwargs['project_pk'])
         context['form'].fields['blueprint'].empty_label = 'General Question – no Blueprint assigned'
+        context['form'].fields['text'].widget = CKEditor5Widget(config_name='ddm_ckeditor_temp_func')
         return context
 
 

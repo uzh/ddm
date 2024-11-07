@@ -5,7 +5,6 @@ from django.forms import model_to_dict
 from django.template import Context, Template
 from django.utils import timezone
 
-from ckeditor_uploader.fields import RichTextUploadingField
 from polymorphic.models import PolymorphicModel
 
 from ddm.encryption.models import ModelWithEncryptedData
@@ -54,9 +53,8 @@ class QuestionBase(PolymorphicModel):
         help_text='Will be used in the data export to identify responses to this question.'
     )
 
-    text = RichTextUploadingField(
-        null=True, blank=True,
-        config_name='ddm_ckeditor',
+    text = models.TextField(
+        blank=True,
         help_text=(
             'If a question is linked to a File Blueprint, data points from the donated data associated with the linked donation blueprint can be included in the question text. '
             'This data can be included as "{{ data }}" in the question text. '

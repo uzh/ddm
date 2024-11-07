@@ -1,9 +1,6 @@
 import datetime
 import os
 
-from ckeditor.fields import RichTextField
-from ckeditor_uploader.fields import RichTextUploadingField
-
 from django.conf import settings
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.db import models
@@ -56,19 +53,16 @@ class DonationProject(models.Model):
     )
 
     # Public information.
-    contact_information = RichTextField(
-        null=True,
+    contact_information = models.TextField(
         blank=False,
         verbose_name='Contact information',
         help_text=(
             'Please provide the contact information of the person responsible '
             'for the conduction of this study (Name, professional address, e-mail, tel, ...). The contact information will be '
             'accessible for participants during the data donation. The field is mandatory.'
-        ),
-        config_name='ddm_ckeditor'
+        )
     )
-    data_protection_statement = RichTextField(
-        null=True,
+    data_protection_statement = models.TextField(
         blank=False,
         verbose_name='Data Protection Statement',
         help_text=(
@@ -77,7 +71,6 @@ class DonationProject(models.Model):
             'collected, how it will be stored, and who will have access to the data. '
             'The field is mandatory.'
         ),
-        config_name='ddm_ckeditor'
     )
 
     # Information affecting participation flow.
@@ -88,10 +81,9 @@ class DonationProject(models.Model):
                   'participants can access the project '
                   '(e.g, https://root.url/url-identifier).'
     )
-    briefing_text = RichTextUploadingField(
-        null=True, blank=True,
+    briefing_text = models.TextField(
+        blank=False,
         verbose_name='Briefing Text',
-        config_name='ddm_ckeditor',
         help_text=(
             'This text will be displayed to participants in the first step before '
             'beginning the data donation. Here, you should introduce your study, '
@@ -107,10 +99,9 @@ class DonationProject(models.Model):
     )
     briefing_consent_label_yes = models.CharField(max_length=255, blank=True)
     briefing_consent_label_no = models.CharField(max_length=255, blank=True)
-    debriefing_text = RichTextUploadingField(
-        null=True, blank=True,
+    debriefing_text = models.TextField(
+        blank=False,
         verbose_name='Debriefing Text',
-        config_name='ddm_ckeditor',
         help_text='This text will be displayed to participants on the last page '
                   'of the study (i.e., after the data donation and the questionnaire).'
     )

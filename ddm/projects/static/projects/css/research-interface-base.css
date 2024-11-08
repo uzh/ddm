@@ -1,3 +1,17 @@
+.research-interface {
+    font-family: 'Nunito Sans', sans-serif;
+}
+
+.research-interface a,
+.a-no-link {
+    color: #007b74;
+    text-decoration: none;
+    cursor: pointer;
+}
+.research-interface a:hover {
+    color: #005955;
+}
+
 .project-setup-card {
     display: flex;
     flex: 1 0 0%;

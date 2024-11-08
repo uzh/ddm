@@ -1,5 +1,7 @@
 {% extends 'core/page_with_form.html' %}
 
+{% load static %}
+
 {% block page_title %}Create New Project{% endblock %}
 
 {% block main_heading %}Create Donation Project {{ object.name }}{% endblock %}
@@ -90,15 +92,5 @@ Create New Project
 
 {% block scripts %}
 {{ block.super }}
-<script>
-  $( "#id_super_secret" ).change(function() {
-    $( "#id_secret" ).val("");
-    $( "#id_secret_confirm" ).val("");
-    if( $( this ).is(":checked")) {
-      $( "#secret-definition" ).show();
-    } else {
-      $( "#secret-definition" ).hide();
-    }
-  })
-</script>
+  <script src="{% static 'projects/js/project-create-utils.js' %}"></script>
 {% endblock %}

@@ -19,7 +19,7 @@ Once you have cloned or forked the GitHub repository, activate your local virtua
 
 [source]
 ----
-(venv) SomePath/ddm> pip install -r requirements.txt
+(venv) <...>/ddm> pip install -r requirements.txt
 ----
 
 ===== Adjust Test Configuration
@@ -42,7 +42,7 @@ To start the development server use the following commands:
 
 [source]
 ----
-(venv) SomePath/ddm/test_project> python manage.py runserver
+(venv) <...>/ddm/test_project> python manage.py runserver
 ----
 
 ===== Create Database Migrations
@@ -51,7 +51,7 @@ To create new migrations based on the changes made to the models, run:
 
 [source]
 ----
-(venv) SomePath/ddm/test_project> python manage.py makemigrations
+(venv) <...>/ddm/test_project> python manage.py makemigrations
 ----
 
 ===== Apply migrations
@@ -60,7 +60,7 @@ To apply existing migrations to your local database, run: footnote:[If you are r
 
 [source]
 ----
-(venv) SomePath/ddm/test_project> python manage.py migrate
+(venv) <...>/ddm/test_project> python manage.py migrate
 ----
 
 ===== Run Unit Tests
@@ -69,26 +69,37 @@ To run unit tests, use:
 
 [source]
 ----
-(venv) SomePath/ddm/test_project> python manage.py test ddm
+(venv) <...>/ddm/test_project> python manage.py test ddm
 ----
 
 === Vue Integration
 
 ==== Development
 
-To run the app in development mode, you will need to serve both Django’s dev server and the webpack development server. From the frontend directory, run:
+First, install the appropriate node.js version according to the `.node-version` file. Then, install the
+node dependencies:
+
 [source]
 ----
-(venv) SomePath/ddm/frontend> npm run serve
+(venv) <...>/ddm/frontend> npm install
+----
+
+To run the app in development mode, you will need to serve both Django’s dev server and the webpack development server:
+From the frontend directory, run:
+
+[source]
+----
+(venv) <...>/ddm/frontend> npm run serve
 ----
 
 And, in a separate terminal in the Django root directory, run the Django development server:
 [source]
 ----
-(venv) SomePath/ddm/test_project> python manage.py runserver
+(venv) <...>/ddm/test_project> python manage.py runserver
 ----
 
-Open your locally hosted Django app in a browser (e.g. http://localhost:8000).
+Open your locally hosted Django app in a browser (e.g. http://localhost:8000). Changes to the vue code will trigger an
+automatic reload of the page in the browser.
 
 ==== Production Deployment
 
@@ -178,9 +189,9 @@ https://docs.antora.org/antora/latest/install-and-run-quickstart/[these instruct
 Next, you can compile the documentation locally using the `antora-playbook-local.yml` file:
 [source]
 ----
-(venv) .../ddm/docs> npx antora antora-playbook-local.yml
+(venv) <...>/ddm/docs> npx antora antora-playbook-local.yml
 ----
-Inspect the compiled documentation by opening `.../ddm/docs/build/index.html` in
+Inspect the compiled documentation by opening `<...>/ddm/docs/build/index.html` in
 your preferred browser.
 
 

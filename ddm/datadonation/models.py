@@ -3,11 +3,11 @@ import json
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
-from django.template import Context, Template
 from django.urls import reverse
 from django.utils import timezone
 
 from ddm.auth.models import ProjectAccessToken
+from ddm.core.utils.user_content.template import render_user_content
 from ddm.encryption.models import ModelWithEncryptedData
 from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers, EventLogEntry
 
@@ -62,7 +62,7 @@ class FileUploader(models.Model):
             'blueprints': [bp.get_config() for bp in blueprints],
             'instructions': [{
                 'index': i.index,
-                'text': Template(i.text).render(Context({'participant': participant_data}))
+                'text': i.render(participant_data),
             } for i in instructions]
         }
         return configs
@@ -439,3 +439,6 @@ class DonationInstruction(models.Model):
     def delete(self, *args, **kwargs):
         """ This model has a post_delete signal processor (see signals.py). """
         super().delete(*args, **kwargs)
+
+    def render(self, context=None):
+        return render_user_content(self.text, context)

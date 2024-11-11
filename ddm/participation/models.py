@@ -41,10 +41,12 @@ class Participant(models.Model):
         template as a context variable.
         """
         context_data = {
-            'public_id': self.external_id,
-            'data': self.extra_data,
-            'donation_info': self.get_donation_info()
+            'participant_id': self.external_id,
+            'url_parameter': self.extra_data['url_param'],
+            'donation_info': self.get_donation_info(),
         }
+        if 'briefing_consent' in self.extra_data:
+            context_data['briefing_consent'] = self.extra_data['briefing_consent']
         return context_data
 
     def get_donation_info(self):

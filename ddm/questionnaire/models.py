@@ -2,11 +2,11 @@ import random
 
 from django.db import models
 from django.forms import model_to_dict
-from django.template import Context, Template
 from django.utils import timezone
 
 from polymorphic.models import PolymorphicModel
 
+from ddm.core.utils.user_content.template import render_user_content
 from ddm.encryption.models import ModelWithEncryptedData
 from ddm.datadonation.models import DataDonation
 from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers
@@ -128,22 +128,15 @@ class QuestionBase(PolymorphicModel):
             donated_data = data_donation.get_decrypted_data(
                 secret=self.project.secret_key, salt=self.project.get_salt())
 
-        participant_data = participant.get_context_data()
+        context = {}
+        context.update(participant.get_context_data())
+        context.update({'donated_data': donated_data})
 
-        config['text'] = self.render_text(config['text'], donated_data, participant_data, view)
+        config['text'] = render_user_content(config['text'], context)
         for index, item in enumerate(config['items']):
-            item['label'] = self.render_text(item['label'], donated_data, participant_data, view)
-            item['label_alt'] = self.render_text(item['label_alt'], donated_data, participant_data, view)
+            item['label'] = render_user_content(item['label'], context)
+            item['label_alt'] = render_user_content(item['label_alt'], context)
         return config
-
-    @staticmethod
-    def render_text(text, donated_data, participant_data, view):
-        if text is not None:
-            text = '{% load static %}\n' + text
-        template = Template(text)
-        return template.render(Context(
-            {'data': donated_data, 'participant': participant_data, 'view': view})
-        )
 
     def validate_response(self, response):
         return

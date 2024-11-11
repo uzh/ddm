@@ -254,7 +254,7 @@ class TestRedirect(ParticipationFlowBaseTestCase):
 
     def test_redirect_single_parameter(self):
         self.project_base.expected_url_parameters = 'testparam'
-        self.project_base.redirect_target = 'http://test.test/?para={{participant.data.url_param.testparam}}'
+        self.project_base.redirect_target = 'http://test.test/?para={{url_parameter.testparam}}'
         self.project_base.save()
 
         self.client.get(self.briefing_url + '?testparam=test')
@@ -271,7 +271,7 @@ class TestRedirect(ParticipationFlowBaseTestCase):
 
     def test_redirect_multiple_parameters(self):
         self.project_base.expected_url_parameters = 'testparam;testparam2'
-        self.project_base.redirect_target = 'http://test.test/?para={{participant.data.url_param.testparam}}&para2={{participant.data.url_param.testparam2}}'
+        self.project_base.redirect_target = 'http://test.test/?para={{url_parameter.testparam}}&para2={{url_parameter.testparam2}}'
         self.project_base.save()
         self.client.get(self.briefing_url + '?testparam=test&testparam2=test2')
 

@@ -4,7 +4,6 @@ import zipfile
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, reverse
-from django.template import Context, Template
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.decorators import method_decorator
@@ -12,6 +11,7 @@ from django.utils.safestring import SafeString
 from django.views.generic.detail import DetailView
 from django.views.decorators.cache import cache_page
 
+from ddm.core.utils.user_content.template import render_user_content
 from ddm.datadonation.models import DonationBlueprint, FileUploader
 from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers
 from ddm.participation.models import Participant
@@ -201,11 +201,8 @@ class BriefingView(ParticipationFlowBaseView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['participant'] = self.participant
-        template_context = {
-            'participant': self.participant.get_context_data()
-        }
-        briefing_template = Template(self.object.briefing_text)
-        context['briefing'] = briefing_template.render(Context(template_context))
+        participant_info = self.participant.get_context_data()
+        context['briefing'] = render_user_content(self.object.briefing_text, participant_info)
         return context
 
     def extra_before_render(self, request):
@@ -408,16 +405,12 @@ class DebriefingView(ParticipationFlowBaseView):
         """ Inject url parameters in redirect target. """
         context = super().get_context_data(**kwargs)
 
-        template_context = {
-            'participant': self.participant.get_context_data(),
-            'project_id': self.object.pk
-        }
-        debriefing_template = Template(self.object.debriefing_text)
-        context['debriefing'] = debriefing_template.render(Context(template_context))
+        template_context = self.participant.get_context_data()
+        template_context.update({'project_id': self.object.pk})
+        context['debriefing'] = render_user_content(self.object.debriefing_text, template_context)
 
         if self.object.redirect_enabled:
-            redirect_template = Template(self.object.redirect_target)
-            context['redirect_target'] = redirect_template.render(Context(template_context))
+            context['redirect_target'] = render_user_content(self.object.redirect_target, template_context)
         else:
             context['redirect_target'] = None
         return context

@@ -9,7 +9,7 @@ from polymorphic.models import PolymorphicModel
 from ddm.core.utils.user_content.template import render_user_content
 from ddm.encryption.models import ModelWithEncryptedData
 from ddm.datadonation.models import DataDonation
-from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers
+from ddm.questionnaire.exceptions import QuestionValidationError
 
 
 class QuestionType(models.TextChoices):
@@ -105,14 +105,6 @@ class QuestionBase(PolymorphicModel):
         }
         return config
 
-    def log_exception(self, msg):
-        ExceptionLogEntry.objects.create(
-            project=self.project,
-            blueprint=self.blueprint,
-            raised_by=ExceptionRaisers.SERVER,
-            message='Questionnaire Response Processing Exception: ' + msg
-        )
-
     def render_config_content(self, config, participant, view):
         """
         Renders references to donated data or participant data in question or
@@ -138,9 +130,6 @@ class QuestionBase(PolymorphicModel):
             item['label_alt'] = render_user_content(item['label_alt'], context)
         return config
 
-    def validate_response(self, response):
-        return
-
 
 class ItemMixin(models.Model):
     randomize_items = models.BooleanField(default=False)
@@ -162,26 +151,32 @@ class ItemMixin(models.Model):
             random.shuffle(config['items'])
         return config
 
-    def validate_response(self, response):
-        # Validate that all items have a response.
-        item_ids = [str(i) for i in list(self.questionitem_set.all().values_list('id', flat=True))]
-        if not sorted(item_ids) == sorted(response.keys()):
-            if len(item_ids) > len(response.keys()):
-                msg = ('Some responses are missing for '
-                       f'{self.DEFAULT_QUESTION_TYPE} with ID '
-                       f'{self.id}. Got no response for items '
-                       f'{[i for i in item_ids if i not in response.keys()]}.')
-                self.log_exception(msg)
-            elif len(item_ids) < len(response.keys()):
-                msg = (f'Got unexpected response keys for '
-                       f'{self.DEFAULT_QUESTION_TYPE} with ID {self.id}.'
-                       f'Unexpected keys: {[k for k in response.keys() if k not in item_ids]}.')
-                self.log_exception(msg)
-            else:
-                msg = (f'Response does not match the expected items. Items: '
-                       f'{sorted(item_ids)}; Keys: {sorted(response.keys())}.')
-                self.log_exception(msg)
-        return
+    def validate_item_response(self, response):
+        """
+        Checks if all expected item ids are present in response.
+        Expects the response to be a dictionary of the form:
+        {'item id as string': <item response>, ...}
+
+        Raises a KeyError if validation fails.
+        """
+        question_items = self.questionitem_set.all().values_list('id', flat=True)
+        item_ids = [str(i) for i in list(question_items)]
+        response_keys = [str(k) for k in response.keys()]
+        if sorted(item_ids) == sorted(response_keys):
+            return True
+
+        if len(item_ids) > len(response_keys):
+            missing_items = [i for i in item_ids if i not in response_keys]
+            raise KeyError(f'Missing expected items: {missing_items}.')
+        elif len(item_ids) < len(response_keys):
+            unexpected_items = [k for k in response_keys if k not in item_ids]
+            raise KeyError(
+                f'Unexpected item ids for {self.DEFAULT_QUESTION_TYPE} '
+                f'with ID {self.id}: {unexpected_items}.')
+        else:
+            raise KeyError(
+                f'Received response items ({sorted(response_keys)}) do '
+                f'not match the expected items ({sorted(item_ids)}).')
 
 
 class ScaleMixin:
@@ -196,59 +191,119 @@ class ScaleMixin:
             config['scale'].append(point.serialize_to_config())
         return config
 
-    def validate_response(self, response):
-        super().validate_response(response)
-        valid_values = list(self.scalepoint_set.all().values_list('value', flat=True))
+    def validate_scale_response(self, response):
+        """
+        Checks if all responses are possible values according to the scale
+        definition.
+        {'item id as string': <item response>, ...}
+
+        Raises a KeyError if validation fails.
+        """
+        scale_points = self.scalepoint_set.all()
+        valid_values = list(scale_points.values_list('value', flat=True))
         valid_values.append(-99)
-        for k, val in response.items():
+
+        errors = []
+        for item, value in response.items():
+            if isinstance(value, float):
+                raise QuestionValidationError(
+                    question=self,
+                    message=f'Response {value} is of type float.')
+
             try:
-                if int(val) not in valid_values:
-                    msg = (f'Got invalid response "{k}: {val}" for {self.DEFAULT_QUESTION_TYPE} '
-                           f'question with ID {self.id}.')
-                    self.log_exception(msg)
-            except ValueError as e:
-                msg = (f'Got ValueError for {self.DEFAULT_QUESTION_TYPE} question with '
-                       f'ID {self.id}: {e}')
-                self.log_exception(msg)
-        return
+                value = int(value)
+            except (ValueError, TypeError):
+                errors.append(f'Response {value} for item {item} '
+                              f'cannot be converted to int.')
+                continue
+
+            if int(value) not in valid_values:
+                errors.append(f'Got invalid response "{item}: {value}"')
+
+        return errors
 
 
 class SingleChoiceQuestion(ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.SINGLE_CHOICE
 
-    def validate_response(self, response):
-        valid_values = list(self.questionitem_set.all().values_list('value', flat=True))
+    def get_valid_values(self):
+        """
+        Valid response values include all related item values
+        (QuestionItem.value) plus -99 which indicates that a question was not
+        answered/skipped.
+        """
+        question_items = self.questionitem_set.all()
+        valid_values = list(question_items.values_list('value', flat=True))
         valid_values.append(-99)
+        return valid_values
+
+    def validate_response(self, response):
+        """
+        Expects the response to be a single value as either an integer or a
+        string that can be converted to an integer.
+        """
+        valid_values = self.get_valid_values()
+
+        if isinstance(response, float):
+            raise QuestionValidationError(
+                question=self,
+                message=f'{response} is of type float.')
 
         try:
-            if int(response) not in valid_values:
-                msg = (f'Got invalid response "{response}" for single choice '
-                       f'question with ID {self.id}.')
-                self.log_exception(msg)
-        except ValueError as e:
-            msg = (f'Got ValueError for single choice question with '
-                   f'ID {self.id}: {e}')
-            self.log_exception(msg)
-        return
+            response = int(response)
+        except (ValueError, TypeError):
+            raise QuestionValidationError(
+                question=self,
+                message=f'{response} cannot be converted to int.')
+
+        if response not in valid_values:
+            raise QuestionValidationError(
+                question=self,
+                message=f'{response} invalid; valid values: {valid_values}.')
+        return True
 
 
 class MultiChoiceQuestion(ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.MULTI_CHOICE
 
-    def validate_response(self, response):
-        super().validate_response(response)
+    def get_valid_values(self):
+        """
+        Valid response values include 0 (item not selected), 1 (item selected),
+        and -99 which indicates that a question was not answered/skipped.
+        """
         valid_values = [0, 1, -99]
-        for k, val in response.items():
+        return valid_values
+
+    def validate_response(self, response):
+        """
+        Expects the response to be a dictionary of the form:
+        {'item id as string': <1/0/-99>, ...}
+        """
+        errors = []
+        try:
+            self.validate_item_response(response)
+        except KeyError as e:
+            errors.append(e)
+
+        valid_values = self.get_valid_values()
+        for item, value in response.items():
+            if isinstance(value, float):
+                errors.append(f'Got invalid response {value} for item {item}.')
+                continue
+
             try:
-                if int(val) not in valid_values:
-                    msg = (f'Got invalid response "{k}: {val}" for '
-                           f'{self.DEFAULT_QUESTION_TYPE} with ID {self.id}.')
-                    self.log_exception(msg)
-            except ValueError as e:
-                msg = (f'Got ValueError for multi choice question with '
-                       f'ID {self.id}: {e}')
-                self.log_exception(msg)
-        return
+                value = int(value)
+            except (ValueError, TypeError):
+                errors.append(f'Response {response} for item {item} '
+                              f'cannot be converted to int.')
+                continue
+
+            if value not in valid_values:
+                errors.append(f'Got invalid response {value} for item {item}.')
+
+        if errors:
+            raise QuestionValidationError(question=self, item_errors=errors)
+        return True
 
 
 class OpenQuestion(QuestionBase):
@@ -272,19 +327,66 @@ class OpenQuestion(QuestionBase):
         return config
 
     def validate_response(self, response):
-        return
+        """ Any value representable as a String is a valid response. """
+        try:
+            str(response)
+        except TypeError:
+            raise QuestionValidationError(question=self)
+        return True
 
 
 class MatrixQuestion(ScaleMixin, ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.MATRIX
 
+    def validate_response(self, response):
+        """
+        Expects the response to be a dictionary of the form:
+        {'item id as string': <1/0/-99>, ...}
+        """
+        item_errors = []
+        try:
+            self.validate_item_response(response)
+        except KeyError as e:
+            item_errors.append(e)
+
+        scale_errors = self.validate_scale_response(response)
+
+        if scale_errors or item_errors:
+            raise QuestionValidationError(
+                question=self, scale_errors=scale_errors, item_errors=item_errors)
+        return True
+
 
 class SemanticDifferential(ScaleMixin, ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.SEMANTIC_DIFF
 
+    def validate_response(self, response):
+        """
+        Expects the response to be a dictionary of the form:
+        {'item id as string': <1/0/-99>, ...}
+        """
+        item_errors = []
+        try:
+            self.validate_item_response(response)
+        except KeyError as e:
+            item_errors.append(e)
+
+        scale_errors = self.validate_scale_response(response)
+
+        if scale_errors or item_errors:
+            raise QuestionValidationError(
+                question=self, scale_errors=scale_errors, item_errors=item_errors)
+        return True
+
 
 class Transition(QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.TRANSITION
+
+    def validate_response(self, response):
+        """
+        No validation necessary, as this is just a placeholder question type.
+        """
+        return True
 
 
 class QuestionItem(models.Model):

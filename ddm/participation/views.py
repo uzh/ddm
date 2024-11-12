@@ -13,10 +13,10 @@ from django.views.decorators.cache import cache_page
 
 from ddm.core.utils.user_content.template import render_user_content
 from ddm.datadonation.models import DonationBlueprint, FileUploader
-from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers
+from ddm.logging.utils import log_server_exception
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject
-from ddm.questionnaire.models import QuestionBase, QuestionnaireResponse
+from ddm.questionnaire.services import save_questionnaire_to_db
 
 
 def get_participation_session_id(project):
@@ -205,14 +205,21 @@ class BriefingView(ParticipationFlowBaseView):
         context['briefing'] = render_user_content(self.object.briefing_text, participant_info)
         return context
 
+    def extract_url_parameter(self, request):
+        """
+        Extract URL parameters on first call of the view and save to
+        participant.extra_data.
+        """
+        if not self.participant.extra_data['url_param']:
+            for param in self.object.get_expected_url_parameters():
+                self.participant.extra_data['url_param'][param] = request.GET.get(param, None)
+            self.participant.save()
+        return
+
     def extra_before_render(self, request):
         """ Extract URL parameters if this option has been enabled. """
         if self.object.url_parameter_enabled:
-            # Only extract URL parameters on the first call of the view.
-            if not self.participant.extra_data['url_param']:
-                for param in self.object.get_expected_url_parameters():
-                    self.participant.extra_data['url_param'][param] = request.GET.get(param, None)
-                self.participant.save()
+            self.extract_url_parameter(request)
         return
 
 
@@ -241,36 +248,23 @@ class DataDonationView(ParticipationFlowBaseView):
     def process_uploads(self, files):
         try:
             file = files['post_data']
-        except MultiValueDictKeyError as err:
+        except MultiValueDictKeyError as e:
             msg = ('Data Donation Processing Exception: Did not receive '
-                   f'expected data file from client. {err}')
-            ExceptionLogEntry.objects.create(
-                project=self.object,
-                raised_by=ExceptionRaisers.SERVER,
-                message=msg
-            )
+                   f'expected data file from client. {e}')
+            log_server_exception(self.object, msg)
             return
 
         if not zipfile.is_zipfile(file):
             msg = ('Data Donation Processing Exception: Data file received '
                    'from client is not a zip file.')
-            ExceptionLogEntry.objects.create(
-                project=self.object,
-                raised_by=ExceptionRaisers.SERVER,
-                message=msg
-            )
+            log_server_exception(self.object, msg)
             return
 
         # Check if zip file contains expected file.
         unzipped_file = zipfile.ZipFile(file, 'r')
         if 'ul_data.json' not in unzipped_file.namelist():
-            msg = ('Data Donation Processing Exception: "ul_data.json" is not '
-                   'in namelist.')
-            ExceptionLogEntry.objects.create(
-                project=self.object,
-                raised_by=ExceptionRaisers.SERVER,
-                message=msg
-            )
+            msg = 'Data Donation Processing Exception: "ul_data.json" is not in namelist.'
+            log_server_exception(self.object, msg)
             return
 
         # Process donation data.
@@ -280,15 +274,8 @@ class DataDonationView(ParticipationFlowBaseView):
             try:
                 file_data = json.loads(unzipped_file.read('ul_data.json').decode('latin-1'))
             except ValueError:
-                msg = (
-                    'Donated data could not be decoded - '
-                    'tried both utf-8 and latin-1 decoding.'
-                )
-                ExceptionLogEntry.objects.create(
-                    project=self.object,
-                    raised_by=ExceptionRaisers.SERVER,
-                    message=msg
-                )
+                msg = 'Donated data could not be decoded - tried both utf-8 and latin-1 decoding.'
+                log_server_exception(self.object, msg)
                 return
 
         for upload in file_data.keys():
@@ -297,15 +284,11 @@ class DataDonationView(ParticipationFlowBaseView):
             try:
                 blueprint = DonationBlueprint.objects.get(pk=blueprint_id,
                                                           project=self.object)
-            except DonationBlueprint.DoesNotExist as e:
+            except DonationBlueprint.DoesNotExist:
                 msg = ('Data Donation Processing Exception: Referenced '
                        f'blueprint with id={blueprint_id} does not exist for '
                        'this project.')
-                ExceptionLogEntry.objects.create(
-                    project=self.object,
-                    raised_by=ExceptionRaisers.SERVER,
-                    message=msg
-                )
+                log_server_exception(self.object, msg)
                 return
             blueprint.process_donation(blueprint_data, self.participant)
 
@@ -346,8 +329,7 @@ class QuestionnaireView(ParticipationFlowBaseView):
     def post(self, request, *args, **kwargs):
         super().post(request, **kwargs)
         self.process_response(request.POST)
-        return redirect(self.steps[self.current_step + 1],
-                        slug=self.object.slug)
+        return redirect(self.steps[self.current_step + 1], slug=self.object.slug)
 
     def process_response(self, response):
         try:
@@ -355,46 +337,11 @@ class QuestionnaireView(ParticipationFlowBaseView):
         except MultiValueDictKeyError:
             msg = ('Questionnaire Post Exception: POST did not contain '
                    'expected key "post_data".')
-            ExceptionLogEntry.objects.create(
-                project=self.object,
-                raised_by=ExceptionRaisers.SERVER,
-                message=msg
-            )
+            log_server_exception(self.object, msg)
             return
 
-        for question_id in post_data:
-            try:
-                question = QuestionBase.objects.get(pk=int(question_id))
-            except QuestionBase.doesNotExist:
-                msg = ('Questionnaire Post Exception:'
-                       f'Question with id={question_id} does not exist.')
-                ExceptionLogEntry.objects.create(
-                    project=self.object,
-                    raised_by=ExceptionRaisers.SERVER,
-                    message=msg
-                )
-                continue
-            except ValueError:
-                msg = ('Questionnaire Post Exception: Received invalid '
-                       f'question_id ({question_id}) in questionnaire '
-                       f'post_data.')
-                ExceptionLogEntry.objects.create(
-                    project=self.object,
-                    raised_by=ExceptionRaisers.SERVER,
-                    message=msg
-                )
-                continue
-            question.validate_response(post_data[question_id]['response'])
-
-        self.save_response(response)
-
-    def save_response(self, response):
-        QuestionnaireResponse.objects.create(
-            project=self.object,
-            participant=self.participant,
-            time_submitted=timezone.now(),
-            data=response['post_data']
-        )
+        save_questionnaire_to_db(post_data, self.object, self.participant)
+        return
 
 
 class DebriefingView(ParticipationFlowBaseView):

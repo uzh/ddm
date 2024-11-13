@@ -193,9 +193,6 @@ class DonationBlueprint(models.Model):
         }
         return config
 
-    def get_instructions(self):
-        return [{'index': i.index, 'text': i.text} for i in self.donationinstruction_set.all()]
-
     def get_associated_questions(self):
         return self.questionbase_set.all()
 
@@ -232,7 +229,7 @@ class DonationBlueprint(models.Model):
                    f'expected information. Expected fields: {response_fields}; '
                    f'Present fields: {data.keys()}.')
             ExceptionLogEntry.objects.create(
-                project=self.oproject,
+                project=self.project,
                 blueprint=self,
                 raised_by=ExceptionRaisers.SERVER,
                 message=msg

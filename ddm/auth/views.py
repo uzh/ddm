@@ -8,7 +8,7 @@ from django.views.generic.base import TemplateView
 
 from ddm.auth.forms import TokenCreationForm
 from ddm.auth.models import ProjectAccessToken
-from ddm.auth.utils import user_is_permitted, user_is_owner
+from ddm.auth.utils import user_is_permitted, user_has_project_access
 from ddm.projects.forms import ResearchProfileConfirmationForm
 from ddm.projects.models import DonationProject, ResearchProfile
 
@@ -32,47 +32,22 @@ class DdmAuthMixin:
                 return redirect('ddm_auth:no_permission')
             elif not ResearchProfile.objects.filter(user=request.user).exists():
                 ResearchProfile.objects.create(user=request.user)
-            else:
-                if request.path not in [reverse('ddm_projects:list'), reverse('ddm_projects:create')]:
-                    if 'project_pk' in self.kwargs:
-                        project_pk = self.kwargs['project_pk']
-                    else:
-                        project_pk = self.kwargs['pk']
-                    if not user_is_owner(request.user, project_pk) and not request.user.is_superuser:
-                        raise Http404()
+
+            if request.path not in [reverse('ddm_projects:list'), reverse('ddm_projects:create')]:
+                if 'project_pk' in self.kwargs:
+                    project_pk = self.kwargs['project_pk']
+                else:
+                    project_pk = self.kwargs['pk']
+
+                try:
+                    project = DonationProject.objects.get(pk=project_pk)
+                except DonationProject.DoesNotExist:
+                    raise Http404()
+
+                if (not user_has_project_access(request.user, project) and
+                        not request.user.is_superuser):
+                    raise Http404()
         return super().dispatch(request, *args, **kwargs)
-
-
-class DdmRegisterResearchProfileView(CreateView):
-    """
-    View to create a research profile for a user.
-    Implements the following redirects:
-    * Logged-in users with a research profile are redirected to the project list.
-    * Unauthenticated users are redirected to the login page.
-    * Users without permission rights are redirected to the no-permission view.
-    """
-    model = ResearchProfile
-    form_class = ResearchProfileConfirmationForm
-    template_name = 'auth/confirm_profile.html'
-    success_url = reverse_lazy('ddm_projects:list')
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.method == 'GET':
-            if not request.user.is_authenticated:
-                return redirect('ddm-login')
-            elif not user_is_permitted(request.user):
-                return redirect('ddm_auth:no_permission')
-            elif ResearchProfile.objects.filter(user=request.user).exists():
-                return redirect('ddm_projects:list')
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_initial(self):
-        self.initial = super().get_initial()
-        self.initial.update({'user': self.request.user.pk})
-        return self.initial
-
-    def form_invalid(self, form):
-        return HttpResponseRedirect(reverse('ddm_auth:no_permission'))
 
 
 class DdmNoPermissionView(TemplateView):

@@ -1,3 +1,5 @@
+from distutils.command.clean import clean
+
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -93,6 +95,23 @@ class ProjectEditForm(forms.ModelForm):
             'contact_information': CKEditor5Widget(config_name='ddm_ckeditor'),
         }
 
+    def clean(self):
+        cleaned_data = super().clean()
+        url_parameter_enabled = cleaned_data.get('url_parameter_enabled', False)
+        expected_url_parameters = cleaned_data.get('expected_url_parameters', '')
+
+        if url_parameter_enabled and not expected_url_parameters:
+            self.add_error('expected_url_parameters',
+                           'URL parameter is enabled but no parameter is defined to be extracted.')
+
+        redirect_enabled = cleaned_data.get('redirect_enabled', False)
+        redirect_target = cleaned_data.get('redirect_target', '')
+        if redirect_enabled and not redirect_target:
+            self.add_error('redirect_target',
+                           'Redirect is enabled but no redirect target is defined.')
+
+        return cleaned_data
+
 
 class BriefingEditForm(forms.ModelForm):
     class Meta:
@@ -107,6 +126,20 @@ class BriefingEditForm(forms.ModelForm):
             'briefing_text': CKEditor5Widget(config_name='ddm_ckeditor'),
         }
 
+    def clean(self):
+        cleaned_data = super().clean()
+
+        consent_enabled = cleaned_data.get('briefing_consent_enabled', False)
+        consent_label_yes = cleaned_data.get('briefing_consent_label_yes', '')
+        consent_label_no = cleaned_data.get('briefing_consent_label_no', '')
+        consent_label_error_msg = 'When briefing consent is enabled, a consent label must be provided.'
+
+        if consent_enabled and not consent_label_yes:
+            self.add_error('briefing_consent_label_yes', consent_label_error_msg)
+
+        if consent_enabled and not consent_label_no:
+            self.add_error('briefing_consent_label_no', consent_label_error_msg)
+        return cleaned_data
 
 class DebriefingEditForm(forms.ModelForm):
     class Meta:

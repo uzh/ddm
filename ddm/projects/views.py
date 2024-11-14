@@ -48,18 +48,6 @@ class ProjectEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     form_class = ProjectEditForm
     success_message = 'Project details successfully updated.'
 
-    def form_valid(self, form):
-        if form.cleaned_data['url_parameter_enabled'] and form.cleaned_data['expected_url_parameters'] == '':
-            form.add_error('expected_url_parameters', 'URL parameter is enabled but no parameter is defined.')
-
-        if form.cleaned_data['redirect_enabled'] and form.cleaned_data['redirect_target'] == '':
-            form.add_error('redirect_target', 'Redirect is enabled but no redirect target is defined.')
-
-        if form.is_valid():
-            return super().form_valid(form)
-        else:
-            return self.form_invalid(form)
-
 
 class ProjectDelete(SuccessMessageMixin, DdmAuthMixin, DeleteView):
     """ View to display a list of existing donation projects. """
@@ -78,19 +66,6 @@ class BriefingEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     template_name = 'projects/edit-briefing.html'
     form_class = BriefingEditForm
     success_message = 'Briefing page successfully updated.'
-
-    def form_valid(self, form):
-        consent_label_error_msg = 'When briefing consent is enabled, a consent label must be provided.'
-        if form.cleaned_data['briefing_consent_enabled'] and form.cleaned_data['briefing_consent_label_yes'] == '':
-            form.add_error('briefing_consent_label_yes', consent_label_error_msg)
-
-        if form.cleaned_data['briefing_consent_enabled'] and form.cleaned_data['briefing_consent_label_no'] == '':
-            form.add_error('briefing_consent_label_no', consent_label_error_msg)
-
-        if form.is_valid():
-            return super().form_valid(form)
-        else:
-            return self.form_invalid(form)
 
 
 class DebriefingEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):

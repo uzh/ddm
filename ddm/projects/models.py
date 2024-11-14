@@ -215,12 +215,26 @@ class DonationProject(models.Model):
         statistics = {
             'n_started': participants.count(),
             'n_completed': participants.filter(completed=True).count(),
-            'completion_rate': participants.filter(completed=True).count() / participants.count() if participants.count() > 0 else 0,
+            'completion_rate': self.get_completion_rate(participants),
             'n_donations': DataDonation.objects.filter(project=self, status='success').count(),
             'n_errors': ExceptionLogEntry.objects.filter(project=self).count(),
-            'average_time': str(participants.filter(completed=True).aggregate(v=Avg(F('end_time')-F('start_time')))['v']).split(".")[0]
+            'average_time': self.get_average_completion_time(participants),
         }
         return statistics
+
+    def get_completion_rate(self, participants=None):
+        if participants is None:
+            participants = Participant.objects.filter(project=self)
+        if participants.count() > 0:
+            return participants.filter(completed=True).count() / participants.count()
+        else:
+            return 0
+
+    def get_average_completion_time(self, participants=None):
+        if participants is None:
+            participants = Participant.objects.filter(project=self)
+        return str(participants.filter(completed=True).aggregate(
+            v=Avg(F('end_time') - F('start_time')))['v']).split(".")[0]
 
     def get_questionnaire_config(self, participant, view):
         """

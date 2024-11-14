@@ -1,15 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import HttpResponseRedirect, Http404
+from django.http import Http404
 from django.shortcuts import reverse, redirect
-from django.urls import reverse_lazy
-from django.views.generic import CreateView, FormView
+from django.views.generic import FormView
 from django.views.generic.base import TemplateView
 
 from ddm.auth.forms import TokenCreationForm
 from ddm.auth.models import ProjectAccessToken
 from ddm.auth.utils import user_is_permitted, user_has_project_access
-from ddm.projects.forms import ResearchProfileConfirmationForm
 from ddm.projects.models import DonationProject, ResearchProfile
 
 
@@ -27,17 +25,21 @@ class DdmAuthMixin:
     def dispatch(self, request, *args, **kwargs):
         if request.method == 'GET':
             if not request.user.is_authenticated:
-                return redirect('ddm-login')
-            elif not user_is_permitted(request.user):
-                return redirect('ddm_auth:no_permission')
-            elif not ResearchProfile.objects.filter(user=request.user).exists():
+                return redirect('ddm_login')
+
+            if not ResearchProfile.objects.filter(user=request.user).exists():
                 ResearchProfile.objects.create(user=request.user)
+
+            if not user_is_permitted(request.user):
+                return redirect('ddm_auth:no_permission')
 
             if request.path not in [reverse('ddm_projects:list'), reverse('ddm_projects:create')]:
                 if 'project_pk' in self.kwargs:
                     project_pk = self.kwargs['project_pk']
-                else:
+                elif 'pk' in self.kwargs:
                     project_pk = self.kwargs['pk']
+                else:
+                    raise Http404()
 
                 try:
                     project = DonationProject.objects.get(pk=project_pk)
@@ -62,7 +64,7 @@ class DdmNoPermissionView(TemplateView):
     def dispatch(self, request, *args, **kwargs):
         if request.method == 'GET':
             if not request.user.is_authenticated:
-                return redirect('ddm-login')
+                return redirect('ddm_login')
             elif (user_is_permitted(request.user) and
                   ResearchProfile.objects.filter(user=request.user).exists()):
                 return redirect('ddm_projects:list')

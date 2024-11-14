@@ -24,7 +24,8 @@ class BlueprintMixin:
         return context
 
     def get_success_url(self):
-        return reverse('datadonation:overview', kwargs={'project_pk': self.kwargs['project_pk']})
+        return reverse('datadonation:overview',
+                       kwargs={'project_pk': self.kwargs['project_pk']})
 
 
 class DataDonationOverview(DdmAuthMixin, BlueprintMixin, ListView):
@@ -85,13 +86,8 @@ class FileUploaderEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, Update
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-
-        # Add custom error.
+        form = self.get_form()
         selected_blueprints = [int(k[3:]) for k in self.request.POST.keys() if k.startswith('bp-')]
-
-        # Validate form.
         if form.is_valid():
             return self.form_valid(form, selected_blueprints)
         else:
@@ -145,7 +141,8 @@ class BlueprintCreate(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, CreateV
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('datadonation:blueprints:edit', kwargs={'project_pk': self.object.project.pk, 'pk': self.object.pk})
+        return reverse('datadonation:blueprints:edit',
+                       kwargs={'project_pk': self.object.project.pk, 'pk': self.object.pk})
 
 
 class BlueprintEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, UpdateView):
@@ -168,8 +165,7 @@ class BlueprintEdit(SuccessMessageMixin, DdmAuthMixin, BlueprintMixin, UpdateVie
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
+        form = self.get_form()
         formset = ProcessingRuleInlineFormset(self.request.POST, instance=self.object)
         if form.is_valid() and formset.is_valid():
             return self.form_valid(form, formset)

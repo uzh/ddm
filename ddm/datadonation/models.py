@@ -143,7 +143,7 @@ class DonationBlueprint(models.Model):
     expected_fields_regex_matching = models.BooleanField(
         default=False,
         null=False,
-        help_text='Select if you use regex expressions in the "Excpected fields".'
+        help_text='Select if you use regex expressions in the "Expected fields".'
     )
 
     file_uploader = models.ForeignKey(

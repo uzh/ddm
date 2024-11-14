@@ -22,7 +22,8 @@ class ModelWithEncryptedData(models.Model):
     def save(self, *args, **kwargs):
 
         if 'encryptor' in kwargs:
-            self.data = kwargs['encryptor'].encrypt(self.data)
+            encryptor = kwargs.pop('encryptor')
+            self.data = encryptor.encrypt(self.data)
         else:
             secret = kwargs['secret'] if 'secret' in kwargs else self.project.secret_key
             self.data = Encryption(secret, self.project.get_salt(), self.project.public_key).encrypt(self.data)

@@ -39,7 +39,7 @@ def save_questionnaire_to_db(
     for question_id in data:
         try:
             question = QuestionBase.objects.get(pk=int(question_id))
-        except QuestionBase.doesNotExist:
+        except QuestionBase.DoesNotExist:
             msg = ('Questionnaire Post Exception:'
                    f'Question with id={question_id} does not exist.')
             log_server_exception(project, msg)

@@ -1,5 +1,6 @@
 import json
 import zipfile
+from json import JSONDecodeError
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
@@ -82,7 +83,6 @@ class ParticipationFlowBaseView(DetailView):
                             slug=self.object.slug)
         else:
             return redirect(self.steps[self.current_step], slug=self.object.slug)
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -248,7 +248,7 @@ class DataDonationView(ParticipationFlowBaseView):
     def process_uploads(self, files):
         try:
             file = files['post_data']
-        except MultiValueDictKeyError as e:
+        except (MultiValueDictKeyError, KeyError) as e:
             msg = ('Data Donation Processing Exception: Did not receive '
                    f'expected data file from client. {e}')
             log_server_exception(self.object, msg)
@@ -277,6 +277,10 @@ class DataDonationView(ParticipationFlowBaseView):
                 msg = 'Donated data could not be decoded - tried both utf-8 and latin-1 decoding.'
                 log_server_exception(self.object, msg)
                 return
+        except JSONDecodeError:
+            msg = 'JSON decode error in donated data.'
+            log_server_exception(self.object, msg)
+            return
 
         for upload in file_data.keys():
             blueprint_id = upload

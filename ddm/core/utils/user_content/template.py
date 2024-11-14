@@ -12,6 +12,9 @@ def preprocess_user_content(content: str) -> str:
     Helper function to convert numeric html codes to characters to ensure the functionality of the custom
     templating features.
     """
+    if not content:
+        return ''
+
     content = content.replace('&gt;', '>')
     content = content.replace('&lt;', '<')
     return content

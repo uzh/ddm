@@ -14,7 +14,7 @@ from ddm.projects.models import DonationProject, ResearchProfile
 User = get_user_model()
 
 
-class DdmAuthMixin:
+class DDMAuthMixin:
     """
     Mixin for Class Based Views that handles redirects as follows:
     - unauthenticated users => login page.
@@ -71,7 +71,7 @@ class DdmNoPermissionView(TemplateView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class ProjectTokenView(SuccessMessageMixin, DdmAuthMixin, FormView):
+class ProjectTokenView(SuccessMessageMixin, DDMAuthMixin, FormView):
     """ View to see existing access token or generate a new one. """
     template_name = 'auth/token.html'
     form_class = TokenCreationForm

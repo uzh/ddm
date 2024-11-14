@@ -6,7 +6,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from django_ckeditor_5.widgets import CKEditor5Widget
 
-from ddm.auth.views import DdmAuthMixin
+from ddm.auth.views import DDMAuthMixin
 from ddm.datadonation.models import DonationBlueprint
 from ddm.projects.models import DonationProject
 from ddm.questionnaire.models import (
@@ -28,7 +28,7 @@ class ProjectMixin:
         return DonationProject.objects.get(pk=self.kwargs['project_pk'])
 
 
-class QuestionnaireOverview(ProjectMixin, DdmAuthMixin, ListView):
+class QuestionnaireOverview(ProjectMixin, DDMAuthMixin, ListView):
     """ View to list all donation blueprints associated with a project. """
     model = DonationBlueprint
     context_object_name = 'donation_blueprints'
@@ -90,7 +90,7 @@ class QuestionFormMixin(ProjectMixin):
         return context
 
 
-class QuestionCreate(SuccessMessageMixin, DdmAuthMixin, QuestionFormMixin, CreateView):
+class QuestionCreate(SuccessMessageMixin, DDMAuthMixin, QuestionFormMixin, CreateView):
     """ View to create question. """
     template_name = 'questionnaire/create.html'
     success_message = 'New %(question_type)s was created.'
@@ -122,7 +122,7 @@ class QuestionCreate(SuccessMessageMixin, DdmAuthMixin, QuestionFormMixin, Creat
         )
 
 
-class QuestionEdit(SuccessMessageMixin, DdmAuthMixin, QuestionFormMixin, UpdateView):
+class QuestionEdit(SuccessMessageMixin, DDMAuthMixin, QuestionFormMixin, UpdateView):
     """ View to edit question. """
     model = QuestionBase
     template_name = 'questionnaire/edit.html'
@@ -137,7 +137,7 @@ class QuestionEdit(SuccessMessageMixin, DdmAuthMixin, QuestionFormMixin, UpdateV
         return reverse('questionnaire:edit', kwargs=success_kwargs)
 
 
-class QuestionDelete(SuccessMessageMixin, DdmAuthMixin, ProjectMixin, DeleteView):
+class QuestionDelete(SuccessMessageMixin, DDMAuthMixin, ProjectMixin, DeleteView):
     """ View to delete question. """
     model = QuestionBase
     template_name = 'questionnaire/delete.html'
@@ -189,7 +189,7 @@ class InlineFormsetMixin(ProjectMixin):
         return excluded_fields
 
 
-class ItemEdit(SuccessMessageMixin, DdmAuthMixin, InlineFormsetMixin, UpdateView):
+class ItemEdit(SuccessMessageMixin, DDMAuthMixin, InlineFormsetMixin, UpdateView):
     """ View to edit the items associated with a question. """
     model = QuestionBase
     formset_model = QuestionItem
@@ -207,7 +207,7 @@ class ItemEdit(SuccessMessageMixin, DdmAuthMixin, InlineFormsetMixin, UpdateView
         return reverse('questionnaire:items', kwargs=success_kwargs)
 
 
-class ScaleEdit(SuccessMessageMixin, DdmAuthMixin, InlineFormsetMixin, UpdateView):
+class ScaleEdit(SuccessMessageMixin, DDMAuthMixin, InlineFormsetMixin, UpdateView):
     """ View to edit the scale associated with a question. """
     model = QuestionBase
     formset_model = ScalePoint

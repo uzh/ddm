@@ -1,11 +1,11 @@
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import TemplateView
 
-from ddm.auth.views import DdmAuthMixin
+from ddm.auth.views import DDMAuthMixin
 from ddm.projects.models import DonationProject
 
 
-class ProjectLogsView(SuccessMessageMixin, DdmAuthMixin, TemplateView):
+class ProjectLogsView(SuccessMessageMixin, DDMAuthMixin, TemplateView):
     """ View that lists all exceptions related to a project. """
     template_name = 'logging/overview.html'
 

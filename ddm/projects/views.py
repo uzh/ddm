@@ -6,10 +6,10 @@ from django.views.generic.list import ListView
 
 from ddm.projects.forms import ProjectCreateForm, ProjectEditForm, BriefingEditForm, DebriefingEditForm
 from ddm.projects.models import DonationProject, ResearchProfile
-from ddm.auth.views import DdmAuthMixin
+from ddm.auth.views import DDMAuthMixin
 
 
-class ProjectList(DdmAuthMixin, ListView):
+class ProjectList(DDMAuthMixin, ListView):
     """ View to display a list of existing donation projects. """
     model = DonationProject
     template_name = 'projects/list.html'
@@ -18,7 +18,7 @@ class ProjectList(DdmAuthMixin, ListView):
         return DonationProject.objects.filter(owner__user=self.request.user)
 
 
-class ProjectCreate(SuccessMessageMixin, DdmAuthMixin, CreateView):
+class ProjectCreate(SuccessMessageMixin, DDMAuthMixin, CreateView):
     """ View to create a new donation project. """
     model = DonationProject
     template_name = 'projects/create.html'
@@ -35,13 +35,13 @@ class ProjectCreate(SuccessMessageMixin, DdmAuthMixin, CreateView):
         return super().form_valid(form)
 
 
-class ProjectDetail(DdmAuthMixin, DetailView):
+class ProjectDetail(DDMAuthMixin, DetailView):
     """ View to display landing page for project. """
     model = DonationProject
     template_name = 'projects/detail.html'
 
 
-class ProjectEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
+class ProjectEdit(SuccessMessageMixin, DDMAuthMixin, UpdateView):
     """ View to edit the details of an existing donation project. """
     model = DonationProject
     template_name = 'projects/edit.html'
@@ -49,7 +49,7 @@ class ProjectEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     success_message = 'Project details successfully updated.'
 
 
-class ProjectDelete(SuccessMessageMixin, DdmAuthMixin, DeleteView):
+class ProjectDelete(SuccessMessageMixin, DDMAuthMixin, DeleteView):
     """ View to display a list of existing donation projects. """
     model = DonationProject
     template_name = 'projects/delete.html'
@@ -60,7 +60,7 @@ class ProjectDelete(SuccessMessageMixin, DdmAuthMixin, DeleteView):
         return self.success_message % self.object.name
 
 
-class BriefingEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
+class BriefingEdit(SuccessMessageMixin, DDMAuthMixin, UpdateView):
     """ View to edit the briefing page. """
     model = DonationProject
     template_name = 'projects/edit-briefing.html'
@@ -68,7 +68,7 @@ class BriefingEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
     success_message = 'Briefing page successfully updated.'
 
 
-class DebriefingEdit(SuccessMessageMixin, DdmAuthMixin, UpdateView):
+class DebriefingEdit(SuccessMessageMixin, DDMAuthMixin, UpdateView):
     """ View to edit the debriefing page. """
     model = DonationProject
     template_name = 'projects/edit-debriefing.html'

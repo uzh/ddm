@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.views.generic import TemplateView
 
-from ddm.auth.views import DdmAuthMixin
+from ddm.auth.views import DDMAuthMixin
 from ddm.projects.models import ResearchProfile, DonationProject
 
 User = get_user_model()
@@ -86,7 +86,7 @@ class TestProjectTokenView(TestCase):
         self.assertRedirects(response, reverse('ddm_login'))
 
 
-class TestView(DdmAuthMixin, TemplateView):
+class TestView(DDMAuthMixin, TemplateView):
     template_name = 'auth/no_permission.html'
 
 

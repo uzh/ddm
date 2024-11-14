@@ -15,7 +15,7 @@ User = get_user_model()
 
 
 @override_settings(DDM_SETTINGS={'EMAIL_PERMISSION_CHECK':  r'.*(\.|@)mail\.com$', })
-class TestAPIs(TestCase):
+class TestResponsesAPI(TestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
@@ -36,6 +36,9 @@ class TestAPIs(TestCase):
             name='Base Project', slug='base', owner=base_profile)
         cls.project_alt = DonationProject.objects.create(
             name='Alt Project', slug='alternative', owner=no_perm_profile)
+        cls.super_secret_project = DonationProject.objects.create(
+            name='Secret project', slug='secret', owner=base_profile, super_secret=True
+        )
 
         cls.participant = Participant.objects.create(
             project=cls.project_base,
@@ -89,7 +92,7 @@ class TestAPIs(TestCase):
             data=f'{{"{q.pk}": {{"response": "response_data2", "question": "question text", "items": []}}}}'
         )
 
-    def test_responses_api_get_with_valid_api_credentials(self):
+    def test_GET_with_valid_api_credentials(self):
         token = self.project_base.create_token()
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
@@ -102,11 +105,12 @@ class TestAPIs(TestCase):
 
         expected_response = [{'open': 'response_data'}]
         response = client.get(
-            reverse('ddm_apis:responses', args=[self.project_base.pk]), {'participants': str(self.participant.external_id)})
+            reverse('ddm_apis:responses', args=[self.project_base.pk]),
+            {'participants': str(self.participant.external_id)})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, expected_response)
 
-    def test_responses_api_get_fails_with_invalid_api_credentials(self):
+    def test_GET_fails_with_invalid_api_credentials(self):
         token = self.project_alt.create_token()
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
@@ -114,12 +118,20 @@ class TestAPIs(TestCase):
             reverse('ddm_apis:responses', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 401)
 
-    def test_responses_api_fails_with_no_api_credentials_created(self):
+    def test_GET_fails_with_no_api_credentials_created(self):
         token = self.project_base.create_token()
         key = token.key
         token.delete()
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + key)
-        response = client.delete(
+        response = client.get(
             reverse('ddm_apis:responses', args=[self.project_base.pk]))
         self.assertEqual(response.status_code, 401)
+
+    def test_GET_disallowed_for_super_secret_project(self):
+        token = self.super_secret_project.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        response = client.get(
+            reverse('ddm_apis:responses', args=[self.super_secret_project.pk]))
+        self.assertEqual(response.status_code, 405)

@@ -145,7 +145,9 @@ class TestAdminViewAuthentication(TestCase):
             'ddm_projects:debriefing_edit',
             'datadonation:overview',
             'datadonation:blueprints:create',
-            'questionnaire:overview'
+            'questionnaire:overview',
+            'ddm_logging:project_logs',
+            'ddm_auth:project_token'
         ]
         for view in project_related_views:
             urls.append(reverse(view, args=[project_pk]))
@@ -209,7 +211,7 @@ class TestAdminViewAuthentication(TestCase):
     def test_logged_out_redirects_to_login_view(self):
         for url in self.urls:
             response = self.client.get(url, follow=True)
-            self.assertRedirects(response, reverse('ddm-login'))
+            self.assertRedirects(response, reverse('ddm_login'))
 
     def test_superuser_logged_in_returns_200(self):
         for url in self.urls:
@@ -232,13 +234,16 @@ class TestAdminViewAuthentication(TestCase):
                 response = self.client.get(url, follow=True)
                 self.assertEqual(response.status_code, 404)
 
-    def test_user_without_profile_logged_in_creates_profile_and_returns_200(self):
+    def test_user_without_profile_logged_in_creates_profile_and_returns(self):
         for url in self.urls:
             self.assertFalse(ResearchProfile.objects.filter(user=self.wo_profile_user).exists())
             self.client.login(**self.wo_profile_creds)
             response = self.client.get(url, follow=True)
             self.assertTrue(ResearchProfile.objects.filter(user=self.wo_profile_user).exists())
-            self.assertEqual(response.status_code, 200)
+            if url in [reverse('ddm_projects:list'), reverse('ddm_projects:create')]:
+                self.assertEqual(response.status_code, 200)
+            else:
+                self.assertEqual(response.status_code, 404)
             ResearchProfile.objects.get(user=self.wo_profile_user).delete()
 
     def test_user_wo_permission_logged_in_redirects_to_no_permission_view(self):

@@ -1,10 +1,20 @@
+import io
+import json
+import zipfile
+
 from django.contrib.auth import get_user_model
-from django.test import Client, TestCase, override_settings
+from django.contrib.sessions.middleware import SessionMiddleware
+from django.test import Client, TestCase, override_settings, RequestFactory
 from django.urls import reverse
 from django.utils import timezone
 
 from ddm.datadonation.models import DataDonation, DonationBlueprint, FileUploader
+from ddm.logging.models import ExceptionLogEntry
 from ddm.participation.models import Participant
+from ddm.participation.views import (
+    DataDonationView, ContinuationView, DebriefingView,
+    QuestionnaireView, BriefingView
+)
 from ddm.projects.models import DonationProject, ResearchProfile
 from ddm.questionnaire.models import OpenQuestion
 
@@ -117,7 +127,7 @@ class TestBriefingView(ParticipationFlowBaseTestCase):
     def test_project_briefing_view_GET_valid_url(self):
         response = self.client.get(self.briefing_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'participation/briefing.html')
+        self.assertTemplateUsed(response, BriefingView.template_name)
 
     def test_project_briefing_view_GET_invalid_url(self):
         response = self.client.get(self.briefing_url_invalid, follow=True)
@@ -161,7 +171,7 @@ class TestBriefingView(ParticipationFlowBaseTestCase):
         response = self.client.post(self.briefing_url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'participation/briefing.html')
+        self.assertTemplateUsed(response, BriefingView.template_name)
 
 
 class TestDonationView(ParticipationFlowBaseTestCase):
@@ -174,10 +184,30 @@ class TestDonationView(ParticipationFlowBaseTestCase):
         participant.current_step = 1
         participant.save()
 
+    def initialize_view(self):
+        request = RequestFactory().get('/sadf/<slug:slug>/')
+        middleware = SessionMiddleware(lambda req: None)
+        middleware.process_request(request)
+        request.session.save()
+        view = DataDonationView()
+        view.setup(request, **{'slug': self.project_base.slug})
+        return view
+
+    @staticmethod
+    def get_zip_file(file_name, file_content):
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            try:
+                zip_file.writestr(file_name, file_content.encode('utf-8'))
+            except UnicodeEncodeError:
+                zip_file.writestr(file_name, file_content.encode('utf-8', errors='replace'))
+        zip_buffer.seek(0)
+        return zip_buffer
+
     def test_data_donation_GET_valid_url(self):
         response = self.client.get(self.dd_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'participation/data_donation.html')
+        self.assertTemplateUsed(response, DataDonationView.template_name)
 
     def test_data_donation_GET_invalid_url(self):
         response = self.client.get(self.dd_url_invalid, follow=True)
@@ -187,6 +217,94 @@ class TestDonationView(ParticipationFlowBaseTestCase):
         response = self.client.post(self.dd_url)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.quest_url)
+
+    def test_process_uploads_invalid_post_data(self):
+        view = self.initialize_view()
+        files = {}
+        exceptions_count_before = ExceptionLogEntry.objects.count()
+        view.process_uploads(files)
+        exceptions_count_after = ExceptionLogEntry.objects.count()
+        last_exception = ExceptionLogEntry.objects.order_by('date').last()
+        self.assertEqual(exceptions_count_before, (exceptions_count_after - 1))
+        self.assertIn('not receive expected data file from client',
+                      last_exception.message)
+
+    def test_process_uploads_non_zip_file(self):
+        view = self.initialize_view()
+        files = {'post_data': 'This is not a zip file.'}
+        exceptions_count_before = ExceptionLogEntry.objects.count()
+        view.process_uploads(files)
+        exceptions_count_after = ExceptionLogEntry.objects.count()
+        last_exception = ExceptionLogEntry.objects.order_by('date').last()
+        self.assertEqual(exceptions_count_before, (exceptions_count_after - 1))
+        self.assertIn('not a zip file', last_exception.message)
+
+    def test_process_uploads_zip_file_with_missing_content(self):
+        view = self.initialize_view()
+        zip_buffer = self.get_zip_file('invalid_name.json', '{}')
+        files = {'post_data': zip_buffer}
+        exceptions_count_before = ExceptionLogEntry.objects.count()
+        view.process_uploads(files)
+        exceptions_count_after = ExceptionLogEntry.objects.count()
+        last_exception = ExceptionLogEntry.objects.order_by('date').last()
+        self.assertEqual(exceptions_count_before, (exceptions_count_after - 1))
+        self.assertIn('"ul_data.json" is not in namelist',
+                      last_exception.message)
+
+    def test_process_uploads_invalid_encoding(self):
+        view = self.initialize_view()
+        invalid_string = 'Hello, 你好, مرحبا, \ud83d'
+        zip_buffer = self.get_zip_file('ul_data.json', invalid_string)
+        files = {'post_data': zip_buffer}
+        exceptions_count_before = ExceptionLogEntry.objects.count()
+        view.process_uploads(files)
+        exceptions_count_after = ExceptionLogEntry.objects.count()
+        last_exception = ExceptionLogEntry.objects.order_by('date').last()
+        self.assertEqual(exceptions_count_before, (exceptions_count_after - 1))
+        self.assertIn('decode error in donated data',
+                      last_exception.message)
+
+    def test_process_uploads_json_error(self):
+        view = self.initialize_view()
+        zip_buffer = self.get_zip_file('ul_data.json', '{12: "some data"}')
+        files = {'post_data': zip_buffer}
+        exceptions_count_before = ExceptionLogEntry.objects.count()
+        view.process_uploads(files)
+        exceptions_count_after = ExceptionLogEntry.objects.count()
+        last_exception = ExceptionLogEntry.objects.order_by('date').last()
+        self.assertEqual(exceptions_count_before, (exceptions_count_after - 1))
+        self.assertIn('decode error in donated data',
+                      last_exception.message)
+
+    def test_process_uploads_blueprint_does_not_exist(self):
+        view = self.initialize_view()
+        zip_buffer = self.get_zip_file('ul_data.json', '{"12": "some data"}')
+        files = {'post_data': zip_buffer}
+        exceptions_count_before = ExceptionLogEntry.objects.count()
+        view.process_uploads(files)
+        exceptions_count_after = ExceptionLogEntry.objects.count()
+        last_exception = ExceptionLogEntry.objects.order_by('date').last()
+        self.assertEqual(exceptions_count_before, (exceptions_count_after - 1))
+        self.assertIn('blueprint with id=', last_exception.message)
+
+    def test_process_uploads_valid_post_data(self):
+        view = self.initialize_view()
+        valid_data = {
+            f'{self.blueprint.pk}' : {
+                'consent': True,
+                'extracted_data': [],
+                'status': 'complete'
+            }
+        }
+        zip_buffer = self.get_zip_file('ul_data.json', json.dumps(valid_data))
+        files = {'post_data': zip_buffer}
+        exceptions_count_before = ExceptionLogEntry.objects.count()
+        donation_count_before = DataDonation.objects.count()
+        view.process_uploads(files)
+        exceptions_count_after = ExceptionLogEntry.objects.count()
+        donation_count_after = DataDonation.objects.count()
+        self.assertEqual(exceptions_count_before, exceptions_count_after)
+        self.assertEqual(donation_count_before + 1, donation_count_after)
 
 
 class TestQuestionnaireView(ParticipationFlowBaseTestCase):
@@ -207,7 +325,7 @@ class TestQuestionnaireView(ParticipationFlowBaseTestCase):
     def test_questionnaire_GET_valid_url(self):
         response = self.client.get(self.quest_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'participation/questionnaire.html')
+        self.assertTemplateUsed(response, QuestionnaireView.template_name)
 
     def test_questionnaire_GET_invalid_url(self):
         response = self.client.get(self.quest_url_invalid, follow=True)
@@ -236,7 +354,7 @@ class TestDebriefingView(ParticipationFlowBaseTestCase):
     def test_project_debriefing_GET_valid_url(self):
         response = self.client.get(self.debriefing_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'participation/debriefing.html')
+        self.assertTemplateUsed(response, DebriefingView.template_name)
 
     def test_project_debriefing_GET_invalid_url(self):
         response = self.client.get(self.debriefing_url_invalid, follow=True)
@@ -284,3 +402,27 @@ class TestRedirect(ParticipationFlowBaseTestCase):
             response.context['redirect_target'],
             'http://test.test/?para=test&para2=test2'
         )
+
+
+class TestContinuationView(ParticipationFlowBaseTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.initialize_project_and_session()
+
+    def test_render_without_participant(self):
+        new_client = Client()
+        url = reverse('participation:continuation', args=[self.project_base.slug])
+        response = new_client.get(url, data={'p': 'some-non-existing-id'}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, ContinuationView.template_name)
+
+    def test_redirect_continuation(self):
+        self.client.get(self.briefing_url)
+        self.client.post(self.briefing_url)
+        self.client.get(self.dd_url)
+        participant = self.get_participant(self.project_base.pk)
+        url = reverse('participation:continuation', args=[self.project_base.slug])
+        new_client = Client()
+        response = new_client.get(url, data={'p': participant.external_id}, follow=True)
+        self.assertRedirects(response, self.dd_url)

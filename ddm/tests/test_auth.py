@@ -128,7 +128,7 @@ class TestAuthCustomTokenAuthenticator(TestCase):
         expired_token = ProjectAccessToken.objects.create(
             project=self.project,
             created=timezone.now(),
-            expiration_date=datetime.datetime(2022, 2, 2, 22, 22).replace(tzinfo=timezone.utc)
+            expiration_date=datetime.datetime(2022, 2, 2, 22, 22).replace(tzinfo=datetime.timezone.utc)
         )
         self.assertRaises(
             exceptions.AuthenticationFailed,

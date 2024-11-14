@@ -7,3 +7,6 @@ class DDMDataDonationConfig(AppConfig):
     name = 'ddm.datadonation'
     label = 'ddm_datadonation'
     verbose_name = _('DDM Data Donation')
+
+    def ready(self):
+        import ddm.datadonation.signals

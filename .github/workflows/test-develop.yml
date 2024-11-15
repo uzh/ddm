@@ -46,6 +46,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install psycopg2 mysqlclient
+        pip install -r test_project/dev_requirements.txt
     - name: Run Tests With ${{ matrix.db }}
       env:
         DB: ${{ matrix.db }}
@@ -54,6 +55,7 @@ jobs:
         DB_USER: ${{ matrix.db_user }}
         DB_PASSWORD: password
         DB_PORT: ${{ matrix.db_port }}
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
       run: |
         python test_project/manage.py test ddm
 

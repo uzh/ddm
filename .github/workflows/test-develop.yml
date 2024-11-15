@@ -63,5 +63,5 @@ jobs:
 
   trigger-publish-docs:
     needs: build-test
-    if: success() # Ensures this job only runs if build-test is successful
-    uses: ./.github/workflows/publish-docs.yml@develop
+    if: success()
+    uses: ./.github/workflows/publish-docs.yml

@@ -14,16 +14,18 @@
   <nav class="navbar">
     <div class="navbar-brand">
       <div>
-        <a class="navbar-item" href="../../.."><img src="../../../_/img/DDM_Logo_Weiss.svg" height="50px"></a>
+        <a class="navbar-item" href="../../.."><img src="../../../_/img/DDM_Logo_Schwarz.svg" height="50px"></a>
       </div>
       <div class="navbar-slogan">
         <a class="navbar-item" href="../../..">Data Donation Module Documentation</a>
       </div>
+      <!--
       <button class="navbar-burger" data-target="topbar-nav">
         <span></span>
         <span></span>
         <span></span>
       </button>
+      -->
     </div>
   </nav>
 </header>
@@ -33,24 +35,26 @@
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
   <nav class="nav-menu">
+    <!-- 
     <h3 class="title"><a href="../index.html">DDM</a></h3>
+     -->
 <ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../for_researchers.html">For Researchers</a>
+    <a class="nav-link nav-link-1" href="../for_researchers.html">For Researchers</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../for_admins.html">For System Administrators</a>
+    <a class="nav-link nav-link-1" href="../for_admins.html">For System Administrators</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../for_developers.html">For Developers</a>
+    <a class="nav-link nav-link-1" href="../for_developers.html">For Developers</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../topic_references.html">Topic References</a>
+    <a class="nav-link nav-link-1" href="../topic_references.html">Topic References</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../issues.html">Reporting Issues and Getting Help</a>
+    <a class="nav-link nav-link-1" href="../issues.html">Reporting Issues and Getting Help</a>
   </li>
 </ul>
   </li>
@@ -85,10 +89,13 @@
 <main class="article">
 <div class="toolbar" role="navigation">
 <button class="nav-toggle"></button>
+<!--
   <a href="../../main/index.html" class="home-link"></a>
-<nav class="breadcrumbs" aria-label="breadcrumbs">
+-->
+<!-- <nav class="breadcrumbs" aria-label="breadcrumbs">
 </nav>
-<div class="page-versions">
+ -->
+<!-- <div class="page-versions">
   <button class="version-menu-toggle" title="Show other versions of page">develop</button>
   <div class="version-menu">
     <a class="version" href="../../main/topics/customize_ckeditor_configs.html">main</a>
@@ -96,42 +103,59 @@
     <a class="version" href="../../v1.0.0/topics/customize_ckeditor_configs.html">v1.0.0</a>
   </div>
 </div>
-  <div class="edit-this-page"><a href="https://github.com/uzh/ddm/edit/develop/docs/modules/ROOT/pages/topics/customize_ckeditor_configs.adoc">Edit this Page</a></div>
-  </div>
+ -->
+<!--
+-->
+</div>
   <div class="content">
-<aside class="toc sidebar" data-title="Contents" data-levels="2">
+<aside class="toc sidebar" data-levels="2">
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<div class="paragraph">
-<p>DDM uses <a href="https://pypi.org/project/django-ckeditor/">Django CKEditor</a> for some of
-its forms.</p>
+  <nav class="breadcrumbs-article" aria-label="breadcrumbs">
+</nav>
+  <div class="paragraph">
+<p>DDM uses <a href="https://pypi.org/project/django-ckeditor-5/">django-ckeditor-5</a> as richt text editor used in some
+form fields.</p>
 </div>
 <div class="paragraph">
-<p>A custom configuration of the CKEditor for ddm is implemented in the app itself.
-However, you can overwrite the default configuration by adding a <code>CKEDITOR_CONFIGS</code>
-setting to your projects settings.py that includes a setting named
-<code>'ddm_ckeditor'</code> that defines the CKEditor appearance for DDM:</p>
+<p>DDM includes two custom configurations of the CKEditor, <code>ddm_ckeditor</code> and <code>ddm_ckeditor_temp_func</code>.</p>
+</div>
+<div class="paragraph">
+<p><code>ddm_ckeditor</code> is the configuration for the standard text editor used in DDM without any additional functionality.</p>
+</div>
+<div class="paragraph">
+<p><code>ddm_ckeditor_temp_func</code> is used for text fields that allow the inclusion of Django template tags (see
+the section on <a href="../for_researchers.html#_including_data_dynamically_in_a_question" class="xref page">including data dynamically in a question</a>)
+and implements a special html tag "&lt;template-func&gt;" that is used to include template functionality.</p>
+</div>
+<div class="paragraph">
+<p>Although we do not recommend it, you can overwrite the default configuration in your settings.py if needed:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># settings.py
 
-CKEDITOR_CONFIGS = {
+CKEDITOR_5_CONFIGS = {
     'ddm_ckeditor': {
         'toolbar': 'Basic',
         # etc.
     },
+    'ddm_ckeditor_temp_func': {
+        # ...
+    }
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>For an overview of configuration options consult the
-<a href="https://github.com/django-ckeditor/django-ckeditor#example-ckeditor-configuration" class="bare">https://github.com/django-ckeditor/django-ckeditor#example-ckeditor-configuration</a> [Django CKEditor Repository].</p>
+<p>For an overview of configuration options consult the django-ckeditor-5 repository
+(<a href="https://github.com/hvlads/django-ckeditor-5" class="bare">https://github.com/hvlads/django-ckeditor-5</a>) or the official documentation of
+CKEditor 5 (<a href="https://ckeditor.com/docs/ckeditor5/latest/index.html" class="bare">https://ckeditor.com/docs/ckeditor5/latest/index.html</a>).</p>
 </div>
-</article>
+  </article>
   </div>
 </main>
+<div id="overlay"></div>
 </div>
 <footer class="footer">
   <div class="footer-content-bite"><a href="https://datadonation.uzh.ch"><img src="../../../_/img/DataDonationLab_Logo_Schwarz.svg" height="50px"></a></div>

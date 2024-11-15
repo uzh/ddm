@@ -16,6 +16,8 @@ jobs:
         db: [sqlite, mysql] # postgres
         python-version: [3.8, 3.11]
         include:
+          - db: sqlite
+            db_engine: django.db.backends.sqlite3
           - db: mysql
             db_port: 3306
             db_engine: django.db.backends.mysql

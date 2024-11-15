@@ -61,21 +61,7 @@ jobs:
       run: |
         python test_project/manage.py test ddm
 
-  publish-docs:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '16'
-      - name: Install Antora
-        run: npm i antora
-      - name: Generate Site
-        run: npx antora docs/antora-playbook.yml
-      - name: Publish to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/build/site
+  trigger-publish-docs:
+    needs: build-test
+    if: success() # Ensures this job only runs if build-test is successful
+    uses: ./.github/workflows/publish-docs.yml@develop

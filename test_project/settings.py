@@ -21,11 +21,17 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.staticfiles',
     'ddm',
-    'ckeditor',
-    'ckeditor_uploader',
+    'ddm.auth',
+    'ddm.logging',
+    'ddm.questionnaire',
+    'ddm.datadonation',
+    'ddm.participation',
+    'ddm.projects',
+    'ddm.core',
     'webpack_loader',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_ckeditor_5',
     # 'debug_toolbar',  # Added for debugging purposes
 ]
 
@@ -55,7 +61,7 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
                 'django.template.context_processors.i18n',
-                'ddm.context_processors.add_ddm_version'
+                'ddm.core.context_processors.add_ddm_version'
             ],
         },
     },
@@ -85,17 +91,17 @@ LANGUAGES = [
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-    os.path.join(DDM_DIR, 'static'),
+    os.path.join(PROJECT_DIR, 'test_project', 'static'),
 )
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
+MEDIA_ROOT = os.path.join(PROJECT_DIR, 'test_project', 'media')
 
 WEBPACK_LOADER = {
     'DEFAULT': {
         'CACHE': True,
-        'BUNDLE_DIR_NAME': 'ddm/vue/',
-        'STATS_FILE': os.path.join(DDM_DIR, 'static', 'ddm', 'vue', 'webpack-stats.json'),
+        'BUNDLE_DIR_NAME': 'core/vue/',
+        'STATS_FILE': os.path.join(DDM_DIR, 'core', 'static', 'core', 'vue', 'webpack-stats.json'),
         'POLL_INTERVAL': 0.1,
         'TIMEOUT': None,
         'IGNORE': [r'.+\.hot-update.js', r'.+\.map']
@@ -116,10 +122,13 @@ AUTH_PASSWORD_VALIDATORS = [
 LOGIN_REDIRECT_URL = '/projects/'
 LOGOUT_REDIRECT_URL = '/login/'
 
-CKEDITOR_RESTRICT_BY_USER = True
-CKEDITOR_UPLOAD_PATH = 'uploads/'
-
 DDM_DEFAULT_HEADER_IMG_LEFT = '/media/project_10/headers/DDLabLogo.png'
 DDM_DEFAULT_HEADER_IMG_RIGHT = '/media/project_10/headers/IKMZ_Logo.png'
 
 # INTERNAL_IPS = ["127.0.0.1", ]  # Added for debugging purposes
+
+
+# ckeditor 5 configuration
+CKEDITOR_5_FILE_UPLOAD_PERMISSION = 'authenticated'
+CKEDITOR_5_ALLOW_ALL_FILE_TYPES = True
+CKEDITOR_5_UPLOAD_FILE_TYPES = ['jpeg', 'pdf', 'png', 'mp4']

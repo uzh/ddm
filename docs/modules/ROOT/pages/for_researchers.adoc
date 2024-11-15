@@ -503,10 +503,10 @@ will be deleted as soon as you click on _Update Scale Points_.
 Depending on the question configuration it is possible to dynamically include both
 participant-related and donation-related data points in a question text.
 
-For this, DDM uses the https://docs.djangoproject.com/en/3.2/topics/templates/[Django template engine]
+For this, DDM uses a restricted version of the Django templating system.
 to render question text dynamically for each participant.
 This means that researchers can include
-https://docs.djangoproject.com/en/3.2/ref/templates/builtins/[Django's built-in template tags and filters]
+https://docs.djangoproject.com/en/4.2/ref/templates/builtins/[Django's built-in template tags and filters]
 in the question text to customize question texts as well as access data accessible
 through predefined variables. This also works for the briefing and debriefing pages.
 
@@ -518,6 +518,7 @@ a. A variable called `participant` that contains information about the current p
 b. A variable called `data` that contains the data donated by the current participant
 (only available for questions that are related to a file blueprint).
 
+// TODO: THe above must be replaced/deleted.
 
 ====== Participant-Related Data
 

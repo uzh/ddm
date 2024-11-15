@@ -1,0 +1,93 @@
+.public-header {
+    height: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 40px;
+}
+
+.public-footer {
+    margin-top: 40px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-top: 1px solid #ddd;
+}
+.public-footer a,
+.public-footer p{
+    font-size: 0.8rem !important;
+    text-decoration: none;
+}
+
+.flow-btn {
+    background-color: black;
+    font-size: 1.1rem;
+    min-width: 140px;
+    float: right;
+    color: white !important;
+    transition: none;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    margin-top: 20px;
+    padding: .375rem;
+    border-radius: .25rem;
+    border: none;
+}
+.flow-btn:hover {
+    background-color: #2f2f2f;
+    color: white !important;
+}
+
+a {
+    color: #0068b3;
+}
+a:hover {
+    color: #00518d !important;
+}
+
+.text-red {
+    color: #ab0000;
+}
+.bg-success-light {
+    background-color: #55ff5517;
+}
+.consent-checkbox {
+    width: 1.3rem;
+    height: 1.3rem;
+}
+.consent-checkbox:checked {
+    background-color: #198754;
+    border-color: #198754;
+}
+.upload-other {
+    cursor: pointer;
+    color: #7f887f;
+    text-decoration: none;
+}
+.upload-other:hover {
+    color: #5a5f5a;
+}
+.select-file-btn {
+    background: #eaeaea;
+    line-height: 1;
+    color: black;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: 1px solid grey;
+    margin-left: 2rem;
+    padding: 0.4rem;
+    border-radius: 0.25rem;
+}
+.select-file-btn:hover {
+    background: #d5d5d5;
+}
+.modal-close {
+    font-size: 0.8rem;
+}
+#briefing-consent-answer label {
+    cursor: pointer;
+}
+
+.carousel-item p {
+  margin-bottom: 0.5rem !important;
+}

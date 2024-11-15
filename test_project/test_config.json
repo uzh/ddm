@@ -1,5 +1,0 @@
-{
-  "SECRET_KEY": "testkey",
-  "DB_ENGINE": "django.db.backends.sqlite3",
-  "DB_NAME": "ddm_test_env"
-}

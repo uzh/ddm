@@ -90,8 +90,14 @@ First, add the necessary entries to INSTALLED_APPS in your settings.py:
 INSTALLED_APPS = [
     # ...,
     'ddm',
-    'ckeditor',
-    'ckeditor_uploader',
+    'ddm.auth',
+    'ddm.logging',
+    'ddm.questionnaire',
+    'ddm.datadonation',
+    'ddm.participation',
+    'ddm.projects',
+    'ddm.core',
+    'django_ckeditor_5',
     'webpack_loader',
     'rest_framework',
     'rest_framework.authtoken',
@@ -108,8 +114,8 @@ Add the following configuration for webpack-loader to your settings.py:
 WEBPACK_LOADER = {
     'DEFAULT': {
         'CACHE': True,
-        'BUNDLE_DIR_NAME': 'ddm/vue/',
-        'STATS_FILE': os.path.join(STATIC_ROOT, 'ddm/vue/webpack-stats.json'),
+        'BUNDLE_DIR_NAME': 'core/vue/',
+        'STATS_FILE': os.path.join(STATIC_ROOT, 'core/vue/webpack-stats.json'),
         'POLL_INTERVAL': 0.1,
         'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
     }
@@ -132,7 +138,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 # ...
-                'ddm.context_processors.add_ddm_version'  # Add this.
+                'ddm.core.context_processors.add_ddm_version'  # Add this.
             ],
         },
     },
@@ -141,14 +147,15 @@ TEMPLATES = [
 
 
 Configure CKEditor settings in your settings.py to allow your users to upload
-images and gifs in instructions and question texts:
+images, videos and PDFs in instructions and question texts (see https://github.com/hvlads/django-ckeditor-5 for
+further information):
 
 [source, python]
 ----
 # settings.py
-
-CKEDITOR_RESTRICT_BY_USER = True  # Files uploaded by one user can only be accessed by this particular user
-CKEDITOR_UPLOAD_PATH = 'uploads/'
+CKEDITOR_5_FILE_UPLOAD_PERMISSION = 'authenticated'
+CKEDITOR_5_ALLOW_ALL_FILE_TYPES = True
+CKEDITOR_5_UPLOAD_FILE_TYPES = ['jpeg', 'pdf', 'png', 'mp4']
 ----
 
 Add time zone support to your settings.py:
@@ -176,27 +183,28 @@ DDM_SETTINGS = {
 
 Include the DDM urls in your projects urls.py:
 
-[source, python]
+[source,python]
 ----
 # urls.py
 
 urlpatterns = [
     # ...
-    path('ddm/', include('ddm.urls')),
+    path('ddm/', include('ddm.core.urls')),
 ]
 ----
 
 Configure login and logout endpoints for DDM in urls.py:
 
-[source, python]
+[source,python]
 ----
 # urls.py
 
 urlpatterns = [
     ...
-    path('ddm/', include('ddm.urls')),
-    path('login/', auth_views.LoginView.as_view(template_name='ddm/admin/auth/login.html'), name='ddm-login'),  # You can choose whatever path and template you like
-    path('logout/', auth_views.LogoutView.as_view(), name='ddm-logout'),  # You can choose whatever path and template you like
+    path('ddm/', include('ddm.core.urls')),
+    path('login/', auth_views.LoginView.as_view(template_name='auth/login.html'), name='ddm_login'),  # You can choose whatever path and template you like
+    path('logout/', auth_views.LogoutView.as_view(), name='ddm_logout'),  # You can choose whatever path and template you like
+    path('ckeditor5/', include('django_ckeditor_5.urls')),  # This is the endpoint that handles file uploads through the CKEditor.
 ]
 ----
 
@@ -220,22 +228,6 @@ Not doing this will cause ddm.tests.test_apis.test_participant_deletion_with_reg
 In practice, the participant API still seems to work properly despite the test failing, however,
 unexpected behaviour cannot be ruled out at this point. This will be fixed in a future version.
 ====
-
-Furthermore, add the following to your urls.py:
-
-[source, python]
-----
-# urls.py
-
-urlpatterns = [
-    ...
-    path('ckeditor/', include('ckeditor_uploader.urls')),
-]
-----
-
-DDM uses a custom CKEditor toolbar for instruction and question text definitions
-that can optionally be customized (xref:topics/customize_ckeditor_configs.adoc[find out more])
-
 
 ==== Apply Database Migrations
 
@@ -276,6 +268,11 @@ in the left and/or right part of the public header in your settings.py as follow
 DDM_DEFAULT_HEADER_IMG_LEFT = '/path/to/logo_left.png'
 DDM_DEFAULT_HEADER_IMG_RIGHT = '/path/to/logo_right.png'
 ----
+
+=== Customizing CKEditor
+
+DDM uses a custom CKEditor toolbar for instruction and question text definitions
+that can optionally be customized (xref:topics/customize_ckeditor_configs.adoc[find out more])
 
 
 == Further Resources

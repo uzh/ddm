@@ -61,7 +61,7 @@ class BlueprintEditTestCase(TestCase):
         bp_name_after = DonationBlueprint.objects.get(pk=self.blueprint.pk).name
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse('datadonation:overview', kwargs={'project_pk': 1}))
+        self.assertEqual(response.url, reverse('datadonation:overview', kwargs={'project_pk': self.project.pk}))
         self.assertNotEqual(bp_name_before, bp_name_after)
 
     def test_post_invalid_data(self):
@@ -140,7 +140,7 @@ class FileUploaderEditTestCase(TestCase):
         bp_b_uploader_after = DonationBlueprint.objects.get(pk=self.blueprint_b.pk).file_uploader
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse('datadonation:overview', kwargs={'project_pk': 1}))
+        self.assertEqual(response.url, reverse('datadonation:overview', kwargs={'project_pk': self.project.pk}))
         self.assertEqual(FileUploader.objects.get(pk=self.file_uploader.pk).name, valid_data['name'])
         self.assertNotEqual(bp_a_uploader_before, bp_a_uploader_after)
         self.assertNotEqual(bp_b_uploader_before, bp_b_uploader_after)

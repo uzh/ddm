@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>DDM | Questionnaire Configuration</title>
+    <link rel="prev" href="questionnaire_overview.html">
+    <link rel="next" href="questionnaire_data_integration.html">
+    <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../../../_/css/site.css">
+    <script>var uiRootPath = '../../../../../_'</script>
+    <link rel="icon" href="../../../../../_/img/ddl_favicon_black.svg" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div>
+        <a class="navbar-item" href="../../../../.."><img src="../../../../../_/img/DDM_Logo_Schwarz.svg" height="50px"></a>
+      </div>
+      <div class="navbar-slogan">
+        <a class="navbar-item" href="../../../../..">Data Donation Module Documentation</a>
+      </div>
+      <!--
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      -->
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="ddm" data-version="develop">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <!-- 
+    <h3 class="title"><a href="../../../index.html">DDM</a></h3>
+     -->
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-link-1" href="../../../index.html"><strong>DDM Documentation</strong></a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle nav-item-toggle-level-1"></button>
+    <a class="nav-link nav-link-1" href="../../index.html">Researchers</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-link-2" href="../../create_project.html">Create a Project</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-link-2" href="../../project_hub.html">Project Hub</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-link-2" href="../../general_project_settings.html">General Project Settings</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle nav-item-toggle-level-2"></button>
+    <a class="nav-link nav-link-2" href="../index.html">Project Configuration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../briefing.html">Briefing Page</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle nav-item-toggle-level-3"></button>
+    <span class="nav-text nav-text-3">Data Donation</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link nav-link-4" href="../datadonation/datadonation_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link nav-link-4" href="../datadonation/datadonation_configuration.html">Configuration</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle nav-item-toggle-level-3"></button>
+    <span class="nav-text nav-text-3">Questionnaire</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link nav-link-4" href="questionnaire_overview.html">Overview</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="4">
+    <a class="nav-link nav-link-4" href="questionnaire_configuration.html">Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link nav-link-4" href="questionnaire_data_integration.html">Data Integration</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../debriefing.html">Debriefing Page</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle nav-item-toggle-level-2"></button>
+    <a class="nav-link nav-link-2" href="../../data_center.html">Data Center</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../data_center/data_download.html">Download</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../data_center/project_logs.html">Project Logs</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../data_center/participation_statistics.html">Statistics</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-link-2" href="../../danger_zone.html">Danger Zone</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle nav-item-toggle-level-2"></button>
+    <a class="nav-link nav-link-2" href="../../topics/index.html">Topics</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../topics/apis.html">APIs</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../topics/continuation.html">Continuation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../topics/project_logs.html">Project Logs</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../topics/templating_features.html">Template Rendering</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle nav-item-toggle-level-1"></button>
+    <a class="nav-link nav-link-1" href="../../../administrators/index.html">Administrators</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-link-2" href="../../../administrators/installation.html">Installation Guide</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle nav-item-toggle-level-2"></button>
+    <a class="nav-link nav-link-2" href="../../../administrators/topics/index.html">Topic References</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../../administrators/topics/customize_ckeditor_configs.html">CKEditor Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../../administrators/topics/customize_admin_templates.html">Template Customization</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../../administrators/topics/user_authentication.html">User Authentication</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle nav-item-toggle-level-1"></button>
+    <a class="nav-link nav-link-1" href="../../../developers/index.html">Developers</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle nav-item-toggle-level-2"></button>
+    <span class="nav-text nav-text-2">Topics</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../../developers/topics/documentation.html">Documentation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../../developers/topics/encryption.html">Encryption</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../../developers/topics/internationalization.html">Internationalization</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">DDM</span>
+    <span class="version">develop</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../../../../main/index.html">DDM</a>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../main/index.html">main</a>
+        </li>
+        <li class="version is-current">
+          <a href="../../../index.html">develop</a>
+        </li>
+        <li class="version">
+          <a href="../../../../v1.0.19/index.html">v1.0.19</a>
+        </li>
+        <li class="version">
+          <a href="../../../../v1.0.0/index.html">v1.0.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<!--
+-->
+<!-- <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">DDM</a></li>
+    <li><a href="../../index.html">Researchers</a></li>
+    <li><a href="../index.html">Project Configuration</a></li>
+    <li>Questionnaire</li>
+    <li><a href="questionnaire_configuration.html">Configuration</a></li>
+  </ul>
+</nav>
+ -->
+<!-- <div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">develop</button>
+  <div class="version-menu">
+    <a class="version is-missing" href="../../../../main/index.html">main</a>
+    <a class="version is-current" href="questionnaire_configuration.html">develop</a>
+    <a class="version is-missing" href="../../../../v1.0.19/index.html">v1.0.19</a>
+    <a class="version is-missing" href="../../../../v1.0.0/index.html">v1.0.0</a>
+  </div>
+</div>
+ -->
+<!--
+-->
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+  <nav class="breadcrumbs-article" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">DDM</a></li>
+    <li>        <a href="../../index.html">Researchers</a>
+</li>
+    <li>        <a href="../index.html">Project Configuration</a>
+</li>
+    <li>Questionnaire</li>
+    <li>        <span class="is-current">Configuration</span>
+</li>
+  </ul>
+</nav>
+  <h1 class="page">Questionnaire Configuration</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This page explains the settings related to the configuration of the questionnaire and its questions.
+As shown before, the following question types are implemented:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Single Choice Question:</p>
+<div class="imageblock text-left">
+<div class="content">
+<img src="../../_images/questionnaire_singlechoice.png" alt="Single Choice Question Screenshot" width="80%">
+</div>
+</div>
+</li>
+<li>
+<p>Multi Choice Question</p>
+<div class="imageblock text-left">
+<div class="content">
+<img src="../../_images/questionnaire_multichoice.png" alt="Multi Choice Question Screenshot" width="80%">
+</div>
+</div>
+</li>
+<li>
+<p>Matrix Question</p>
+<div class="imageblock text-left">
+<div class="content">
+<img src="../../_images/questionnaire_matrix.png" alt="Matrix Question Screenshot" width="80%">
+</div>
+</div>
+</li>
+<li>
+<p>Semantic Differential</p>
+<div class="imageblock text-left">
+<div class="content">
+<img src="../../_images/questionnaire_semanticdifferential.png" alt="Semantic Differential Screenshot" width="80%">
+</div>
+</div>
+</li>
+<li>
+<p>Open Question</p>
+<div class="imageblock text-left">
+<div class="content">
+<img src="../../_images/questionnaire_open.png" alt="Open Question Screenshot" width="80%">
+</div>
+</div>
+</li>
+<li>
+<p>Text Block (plain text, without any response options for the participant)</p>
+<div class="imageblock text-left">
+<div class="content">
+<img src="../../_images/questionnaire_textblock.png" alt="Text Block Screenshot" width="80%">
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Depending on the question type, different configuration options are available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_general_settings"><a class="anchor" href="#_general_settings"></a>General Settings</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following configuration settings are available for all question types:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Name</dt>
+<dd>
+<p>A question name. This name is only used for internal organisation and is not visible to participants.</p>
+</dd>
+<dt class="hdlist1">Blueprint</dt>
+<dd>
+<p>A question can either be <em>general</em> or related to a
+<a href="../datadonation/datadonation_configuration.html" class="xref page"><em>Blueprint</em></a>.</p>
+<div class="paragraph">
+<p><strong>General questions</strong> are displayed to all participants, regardless if they successfully
+donated any data.<br>
+<strong>Questions related to a Blueprint</strong> are only displayed to those participants
+that successfully uploaded some data to the related file blueprint.
+This means that if no donated data were extracted by the related Blueprint (either because the
+extraction <em>failed</em>, <em>was not attempted</em> or <em>all entries were filtered out by the extraction rules</em>),
+the question will not be displayed.</p>
+</div>
+<div class="paragraph">
+<p>Consult the section on <a href="questionnaire_data_integration.html" class="xref page">
+integrating donated data in the questionnaire</a> for more information.</p>
+</div>
+</dd>
+<dt class="hdlist1">Page</dt>
+<dd>
+<p>Number of the page on which the question will be displayed.</p>
+</dd>
+<dt class="hdlist1">Index</dt>
+<dd>
+<p>Order in which questions on the same page will be displayed.</p>
+</dd>
+<dt class="hdlist1">Variable Name</dt>
+<dd>
+<p>The variable name associated to a question. This name will be included
+in the data export. For items belonging to a question, the variable name will
+be constructed as follows: "question_variable_name-{item-value}".</p>
+</dd>
+<dt class="hdlist1">Text</dt>
+<dd>
+<p>The question text that is displayed to participants.</p>
+</dd>
+<dt class="hdlist1">Required</dt>
+<dd>
+<p>If a question is marked as required, the application will show a
+hint to the participant if they forgot to answer this question.
+This hint will only be shown once. This means that if a participant chooses to
+ignore the hint and clicks on 'continue', they are able to skip a required question.</p>
+</dd>
+<dt class="hdlist1">Randomize items</dt>
+<dd>
+<p>Enable or disable randomization of <strong>all</strong> items.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_specific_settings"><a class="anchor" href="#_specific_settings"></a>Specific Settings</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_question_items"><a class="anchor" href="#_question_items"></a>Question Items</h3>
+<div class="paragraph">
+<p>For Single Choice Questions, Multiple Choice Questions, Matrix Questions and Semantic Differentials,
+participants answer in relation to question items. To configure question items, the following
+settings are available:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Label</dt>
+<dd>
+<p>The label/text of the item that is displayed to participants related to an item.
+For semantic differential questions, this is the label displayed on the left-hand side of the scale.</p>
+</dd>
+<dt class="hdlist1">Label alt</dt>
+<dd>
+<p>Only for semantic differential questions: the label displayed on the
+right-hand side of the scale.</p>
+</dd>
+<dt class="hdlist1">Index</dt>
+<dd>
+<p>Defines the order in which the items are displayed.</p>
+</dd>
+<dt class="hdlist1">Value</dt>
+<dd>
+<p>Is (<em>a</em>) the identifier of an item and (<em>b</em>) used to indicate which
+item(s) has or have been selected in the data export (only for Single and Multi
+Choice Questions).</p>
+</dd>
+<dt class="hdlist1">Randomize</dt>
+<dd>
+<p>Instead of randomizing the order of all items with the <em>randomize</em> setting
+on the question level, this setting allows randomizing only certain items while
+those for which this option is not ticked stay in their place (i.e., according to
+their index).</p>
+</dd>
+<dt class="hdlist1">Delete</dt>
+<dd>
+<p>Tick this box if the item should be deleted. The item will be deleted
+as soon as you click on <em>Update Items</em>.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_scale_configuration"><a class="anchor" href="#_scale_configuration"></a>Scale Configuration</h3>
+<div class="paragraph">
+<p>For Matrix Questions and Semantic Differentials, participants give their answers (or in other words: rate
+the question items) with the configured question scale.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Index</dt>
+<dd>
+<p>Defines the order in which the items are displayed.</p>
+</dd>
+<dt class="hdlist1">Label</dt>
+<dd>
+<p>The label/text that is displayed to participants associated to the scale point.</p>
+</dd>
+<dt class="hdlist1">Value</dt>
+<dd>
+<p>Used to indicate which scale point has been selected in the data export.</p>
+</dd>
+<dt class="hdlist1">Add border</dt>
+<dd>
+<p>Setting currently has no effect - Still need to be implemented.</p>
+</dd>
+<dt class="hdlist1">Delete</dt>
+<dd>
+<p>Tick this box if the scale point should be deleted. The scale point
+will be deleted as soon as you click on <em>Update Scale Points</em>.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+  <nav class="pagination">
+  <span class="prev"><a href="questionnaire_overview.html">Overview</a></span>
+  <span class="next"><a href="questionnaire_data_integration.html">Data Integration</a></span>
+</nav>
+</article>
+  </div>
+</main>
+<div id="overlay"></div>
+</div>
+<footer class="footer">
+  <div class="footer-content-bite"><a href="https://datadonation.uzh.ch"><img src="../../../../../_/img/DataDonationLab_Logo_Schwarz.svg" height="50px"></a></div>
+  <div class="footer-content-bite">© Data Donation Lab, 2023-present</div>
+  <div class="footer-content-bite"><a href="https://github.com/uzh/ddm">DDM on GitHub</a></div>
+</footer>
+<script id="site-script" src="../../../../../_/js/site.js" data-ui-root-path="../../../../../_"></script>
+<script async src="../../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

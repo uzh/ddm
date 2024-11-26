@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>DDM | Data Donation Configuration</title>
+    <link rel="prev" href="datadonation_overview.html">
+    <link rel="next" href="../questionnaire/questionnaire_overview.html">
+    <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../../../_/css/site.css">
+    <script>var uiRootPath = '../../../../../_'</script>
+    <link rel="icon" href="../../../../../_/img/ddl_favicon_black.svg" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div>
+        <a class="navbar-item" href="../../../../.."><img src="../../../../../_/img/DDM_Logo_Schwarz.svg" height="50px"></a>
+      </div>
+      <div class="navbar-slogan">
+        <a class="navbar-item" href="../../../../..">Data Donation Module Documentation</a>
+      </div>
+      <!--
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      -->
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="ddm" data-version="develop">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <!-- 
+    <h3 class="title"><a href="../../../index.html">DDM</a></h3>
+     -->
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-link-1" href="../../../index.html"><strong>DDM Documentation</strong></a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle nav-item-toggle-level-1"></button>
+    <a class="nav-link nav-link-1" href="../../index.html">Researchers</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-link-2" href="../../create_project.html">Create a Project</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-link-2" href="../../project_hub.html">Project Hub</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-link-2" href="../../general_project_settings.html">General Project Settings</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle nav-item-toggle-level-2"></button>
+    <a class="nav-link nav-link-2" href="../index.html">Project Configuration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../briefing.html">Briefing Page</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle nav-item-toggle-level-3"></button>
+    <span class="nav-text nav-text-3">Data Donation</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link nav-link-4" href="datadonation_overview.html">Overview</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="4">
+    <a class="nav-link nav-link-4" href="datadonation_configuration.html">Configuration</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle nav-item-toggle-level-3"></button>
+    <span class="nav-text nav-text-3">Questionnaire</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link nav-link-4" href="../questionnaire/questionnaire_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link nav-link-4" href="../questionnaire/questionnaire_configuration.html">Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link nav-link-4" href="../questionnaire/questionnaire_data_integration.html">Data Integration</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../debriefing.html">Debriefing Page</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle nav-item-toggle-level-2"></button>
+    <a class="nav-link nav-link-2" href="../../data_center.html">Data Center</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../data_center/data_download.html">Download</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../data_center/project_logs.html">Project Logs</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../data_center/participation_statistics.html">Statistics</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-link-2" href="../../danger_zone.html">Danger Zone</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle nav-item-toggle-level-2"></button>
+    <a class="nav-link nav-link-2" href="../../topics/index.html">Topics</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../topics/apis.html">APIs</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../topics/continuation.html">Continuation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../topics/project_logs.html">Project Logs</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../topics/templating_features.html">Template Rendering</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle nav-item-toggle-level-1"></button>
+    <a class="nav-link nav-link-1" href="../../../administrators/index.html">Administrators</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-link-2" href="../../../administrators/installation.html">Installation Guide</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle nav-item-toggle-level-2"></button>
+    <a class="nav-link nav-link-2" href="../../../administrators/topics/index.html">Topic References</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../../administrators/topics/customize_ckeditor_configs.html">CKEditor Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../../administrators/topics/customize_admin_templates.html">Template Customization</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../../administrators/topics/user_authentication.html">User Authentication</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle nav-item-toggle-level-1"></button>
+    <a class="nav-link nav-link-1" href="../../../developers/index.html">Developers</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle nav-item-toggle-level-2"></button>
+    <span class="nav-text nav-text-2">Topics</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../../developers/topics/documentation.html">Documentation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../../developers/topics/encryption.html">Encryption</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../../developers/topics/internationalization.html">Internationalization</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">DDM</span>
+    <span class="version">develop</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../../../../main/index.html">DDM</a>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../main/index.html">main</a>
+        </li>
+        <li class="version is-current">
+          <a href="../../../index.html">develop</a>
+        </li>
+        <li class="version">
+          <a href="../../../../v1.0.19/index.html">v1.0.19</a>
+        </li>
+        <li class="version">
+          <a href="../../../../v1.0.0/index.html">v1.0.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<!--
+-->
+<!-- <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">DDM</a></li>
+    <li><a href="../../index.html">Researchers</a></li>
+    <li><a href="../index.html">Project Configuration</a></li>
+    <li>Data Donation</li>
+    <li><a href="datadonation_configuration.html">Configuration</a></li>
+  </ul>
+</nav>
+ -->
+<!-- <div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">develop</button>
+  <div class="version-menu">
+    <a class="version is-missing" href="../../../../main/index.html">main</a>
+    <a class="version is-current" href="datadonation_configuration.html">develop</a>
+    <a class="version is-missing" href="../../../../v1.0.19/index.html">v1.0.19</a>
+    <a class="version is-missing" href="../../../../v1.0.0/index.html">v1.0.0</a>
+  </div>
+</div>
+ -->
+<!--
+-->
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+  <nav class="breadcrumbs-article" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">DDM</a></li>
+    <li>        <a href="../../index.html">Researchers</a>
+</li>
+    <li>        <a href="../index.html">Project Configuration</a>
+</li>
+    <li>Data Donation</li>
+    <li>        <span class="is-current">Configuration</span>
+</li>
+  </ul>
+</nav>
+  <h1 class="page">Data Donation Configuration</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The data donation can be configured using so-called <code>Uploaders</code>, <code>Instructions</code>, and <code>Blueprints</code>.
+An Uploader essentially represents an upload form through which one file can be uploaded (either a ZIP container
+or a single file).
+For each Uploader, a set of <code>Instructions</code> for participants can be created that show how they can access and
+upload the requested file.
+A Blueprint is used to define what data will be extracted from the file
+that participants upload through the Uploader. Each Uploader has one or multiple associated Blueprints (although
+if an Uploader expects a single file, only one Blueprint can be associated with it).</p>
+</div>
+<div class="paragraph">
+<p>To configure the data donation step, go to the <a href="../../project_hub.html" class="xref page">Project Hub</a> and click on
+<em>Data Donation</em> in the Project Configuration section. You can then configure the Uploaders, Instructions, and
+Blueprints on the following page:</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="../../_images/datadonation_admin_page.png" alt="Data Donation Admin Page Screenshot" width="95%">
+</div>
+<div class="title">Figure 1. Data Donation Admin Page</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configure_uploader"><a class="anchor" href="#_configure_uploader"></a>Configure Uploader</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When creating an Uploader, you have the following configuration options:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Name</dt>
+<dd>
+<p>Name of the Uploader. Will be publicly visible to participants in the header of the Uploader on the
+data donation page.</p>
+</dd>
+<dt class="hdlist1">Upload Type</dt>
+<dd>
+<p>Either "single file" or "zip file" depending on whether your participants are expected to upload
+a single file (e.g., CSV or JSON File) or a ZIP-container.</p>
+</dd>
+<dt class="hdlist1">Index</dt>
+<dd>
+<p>The position of the Uploader on the data donation page. Uploaders with a
+lower index will be displayed closer to the top of the page. This setting only has an effect, if you use
+multiple Uploaders in the same project.</p>
+</dd>
+<dt class="hdlist1">All-in-one consent</dt>
+<dd>
+<p>By default, participants will be asked to consent to the donation of the data associated with each Blueprint.
+If all-in-one consent is enabled, participants will instead be asked to consent to submit
+all uploaded data at once. The all-in-one consent question will be displayed at the bottom of the</p>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
+<div class="content">
+<img src="../../_images/datadonation_after_upload_page.png" alt="Data Donation Page Screenshot Default" width="95%">
+</div>
+<div class="title">Figure 2. Default Consent</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
+<div class="content">
+<img src="../../_images/datadonation_after_upload_page_allinone.png" alt="Data Donation Page Screenshot all-in-one consent" width="95%">
+</div>
+<div class="title">Figure 3. All-in-One Consent</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt class="hdlist1">Associated Blueprints</dt>
+<dd>
+<p>The Blueprints associated to this Uploader. Only associated Blueprints will be
+applied to the files uploaded through a particular Uploader.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configure_instructions"><a class="anchor" href="#_configure_instructions"></a>Configure Instructions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Once an Uploader is created, you can add Instructions to it.
+Donation Instructions consist of one or multiple instruction pages.
+Instruction pages are displayed as a slide show at the top of the Uploader on the donation page
+(see the figures on the <a href="datadonation_overview.html" class="xref page">data donation overview page</a>).
+For each instruction page, the following can be configured:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Text</dt>
+<dd>
+<p>The instruction text displayed to the participants.
+Researchers can also upload and include images or gifs to guide
+participants through the data donation process in this field (currently, video upload is not supported).</p>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The participant&#8217;s external ID is available as a template variable to be included
+in the instruction text as follows: <code>{{ participant_id }}</code> which will be displayed
+to the participant as something like <code>IPI2wHDWrHODDRKuo8zo101S</code>. This is
+helpful to enable participants to continue the data donation at a later point in time
+(e.g., because it can take some time between requesting data takeout and being
+able to download it); read <a href="../../topics/continuation.html" class="xref page">this section of the documentation</a> to find out how
+this can be done.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</dd>
+<dt class="hdlist1">Index</dt>
+<dd>
+<p>The order of the page in the slideshow.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If no instructions are defined for an Uploader, the instruction section will
+be hidden in the participation view.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configure_blueprints"><a class="anchor" href="#_configure_blueprints"></a>Configure Blueprints</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When creating a Blueprint, you have the following configuration options:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Name</dt>
+<dd>
+<p>Name of the Blueprint. Will be publicly visible to participants.
+Therefore, it is important to define a meaningful name (e.g., "Watch History", "Liked Posts" or similar).</p>
+</dd>
+<dt class="hdlist1">Description</dt>
+<dd>
+<p>Description of what information the Blueprint will extract from the uploaded file.
+If defined, the description will be visible for participants in the data donation step.</p>
+</dd>
+<dt class="hdlist1">Associated Uploader</dt>
+<dd>
+<p>The <code>Uploader</code> to which the Blueprint is associated.</p>
+</dd>
+<dt class="hdlist1">File path</dt>
+<dd>
+<p>Here, the path where the file is expected to be located within a ZIP file is defined.
+Only necessary, if the Blueprint is associated to a Uploader that expects a ZIP file.</p>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+If a regex expression matches two files, DDM extracts the first one that matches the expression.
+Afterward, it does not look any further, even if the matched file does not match the expected fields.
+Therefore, be careful to choose regex expressions that will only match the expected file.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><strong>Examples for regex paths to match files</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Regex</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>^MyActivities.json</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Matches a file named <code>MyActivities.json</code> that is located at the root of the ZIP file.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>^SpecificFolder/MyActivities\.json</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Matches a file named <code>MyActivities.json</code> that is located in a folder named <code>SpecificFolder</code> in the root of the ZIP file.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>.*MyActivities\.json</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Matches file if the filename ends with <code>MyActivities.json</code> that can be located anywhere in the ZIP file. Warning: This also matches e.g. <code>BogusMyAcitivties.json</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>(^MyActivities\.json|^MeineAktivitäten\.json|^MieAttivita\.json)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Matches a file that is located at the root of the ZIP file and either named <code>MyActivities.json</code>, <code>MeineAktivitäten.json</code>, or <code>MieAttivita.json</code>.
+Can be helpful to match the same file in different languages.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>You can find about more about regex <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions">here</a>.
+On this website, you will <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#tools">also find some Tools</a>
+that can help you test regex patterns.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</dd>
+<dt class="hdlist1">Expected fields</dt>
+<dd>
+<p>The fields that must be contained in the file from which information should be extracted.
+If a file does not contain <strong>all</strong> fields defined here, No Information will be extracted.<br>
+Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").
+You can also use regular expressions (regex) to match expected fields - for this, you
+must enable the <code>expected field regex matching</code> option (see below).</p>
+</dd>
+<dt class="hdlist1">Expected field regex matching</dt>
+<dd>
+<p>Select if you use a regex expression in the <code>Expected fields</code>
+setting.</p>
+</dd>
+<dt class="hdlist1">Expected File Format</dt>
+<dd>
+<p>The file format of the file from which information should be extracted.
+Currently, only JSON and CSV is implemented.</p>
+</dd>
+</dl>
+</div>
+<div class="sect2">
+<h3 id="_json_specific_settings"><a class="anchor" href="#_json_specific_settings"></a>JSON specific settings</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Extraction Root</dt>
+<dd>
+<p>Indicates on which level of the files' data structure information
+should be extracted. If you want to extract information contained on the first
+level (e.g., <code>{'field to be extracted': value}</code>, you can leave this field empty.
+If you want to extract data located on a higher level, then you would provide
+the path to the parent field of the data you want to extract (e.g., if your json
+file is structured like this <code>{'friends': {'real_friends': [{'name to extract':
+name, 'date to extract': date}], 'fake friends': [{'name': name, 'date': date }]}}</code>
+and you want to extract the names and dates of real_friends, you would set the
+extraction root to <code>friends.real_friends</code>.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_csv_specific_settings"><a class="anchor" href="#_csv_specific_settings"></a>CSV specific settings</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">CSV Delimiter</dt>
+<dd>
+<p>The delimiter used in the expected file (e.g., <code>,</code> or <code>;</code>). If
+left empty, the used Javascript function will try to infer the delimiter from
+the file structure.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_extraction_rules"><a class="anchor" href="#_extraction_rules"></a>Extraction Rules</h3>
+<div class="paragraph">
+<p>The settings above are used to identify and validate the correct file from which data should be extracted.
+When the file validation is successful, the Blueprint will start to extract information from the file.
+For this, it uses <code>Extraction Rules</code> which will be applied to the file one after another.</p>
+</div>
+<div class="paragraph">
+<p>The base assumption for the extraction of the data contained in a file is
+that you do not want any data. This means that when you configure your extraction rules,
+you first have to add a "Keep Field"-rule for each field that you want to keep in your data (see the setting
+<code>Extraction Operator</code> below).</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Execution Order</dt>
+<dd>
+<p>The order in which the extraction rules are applied to a file.</p>
+</dd>
+<dt class="hdlist1">Name</dt>
+<dd>
+<p>The name of an extraction rule. For internal organisation only.</p>
+</dd>
+<dt class="hdlist1">Field</dt>
+<dd>
+<p>The field to which the rule will be applied. This can either be a "normal" string or a
+regular expression (regex). If the latter is the case, you must also select <code>regex field</code> (below).</p>
+</dd>
+<dt class="hdlist1">Regex field</dt>
+<dd>
+<p>Select if you use a regex expression in the <code>Field</code> setting of this rule.</p>
+</dd>
+<dt class="hdlist1">Extraction Operator</dt>
+<dd>
+<p>Defines the main logic of the extraction step. Below, you see the list of available extraction
+operators:</p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Extraction Operator</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Keep Field</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Keep this field in the uploaded data.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">–</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Equal (==)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete row/entry if the value contained in the given <code>field</code> equals the <code>comparison value</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Works for strings, integers, and dates<sup>1</sup>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Not Equal (!=)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete row/entry if the value contained in the given <code>field</code> does not equal the <code>comparison value</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Works for strings, integers, and dates<sup>1</sup>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Greater than (&gt;)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete row/entry if the value contained in the given <code>field</code> is greater than the <code>comparison value</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Works for integers and dates<sup>1</sup>. String values are skipped and the row will be kept in the data.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Smaller than (&lt;)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete row/entry if the value contained in the given <code>field</code> is smaller than the <code>comparison value</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Works for integers and dates<sup>1</sup>. String values are skipped and the row will be kept in the data.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Greater than or equal (&gt;=)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete row/entry if the value contained in the given <code>field</code> is greater than or equal to the <code>comparison value</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Works for integers and dates<sup>1</sup>. String values are skipped and the row will be kept in the data.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Smaller than or equal (&#8656;)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete row/entry if the value contained in the given <code>field</code> is smaller than or equal to the <code>comparison value</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Works for integers and dates<sup>1</sup>. String values are skipped and the row will be kept in the data.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete match (regex)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete parts of the value contained in the given <code>field</code> that match the given <code>regular expression (regex)</code>
+      (e.g., if the <code>regular expression (regex)</code> = "^Watched " and a field contains the value "Watched video XY" the following
+      value will be kept in the uploaded data: "video XY").</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All field values are converted to strings before this operation is applied.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Replace match (regex)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Replace parts of the value contained in the given <code>field</code> that match the given <code>regular expression (regex)</code>
+      (e.g., if the <code>regular expression (regex)</code> = "<span class="\w-\.">@([\w-]</span>\.)+[\w-]{2,4}" and
+      the <code>replacement value</code> = "<em>anonymized</em>" and a field contains the value "some text <a href="mailto:email@address.com">email@address.com</a>" the following
+      value will be kept in the uploaded data: "some text <em>anonymized</em>").</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All field values are converted to strings before this operation is applied.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete row when match (regex)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete row/entry if the value contained in the given <code>field</code> matches the given <code>regular expression (regex)</code> (e.g., if
+      <code>regular expression (regex)</code> = "^Watched " and a field contains the value "Watched video XY"
+      the row/entry will be deleted from the uploaded data).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All field values are converted to strings before this operation is applied.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><span class="small"><sup>1</sup> Dates are inferred from string values if they are formatted according to ISO, RFC2822, or HTTP standards,
+and only if both the field value and the comparison value follow the same format.
+Otherwise, the entry will be treated as a regular string.</span></p>
+</div>
+</dd>
+<dt class="hdlist1">Comparison Value</dt>
+<dd>
+<p>The value against which the data contained in the indicated field will be compared according
+to the selected Extraction Operator.</p>
+</dd>
+<dt class="hdlist1">Replacement Value</dt>
+<dd>
+<p>Only required for operation "Replace match (regex)". The value
+that will be used as a replacement if the regex pattern matches.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+  <nav class="pagination">
+  <span class="prev"><a href="datadonation_overview.html">Overview</a></span>
+  <span class="next"><a href="../questionnaire/questionnaire_overview.html">Overview</a></span>
+</nav>
+</article>
+  </div>
+</main>
+<div id="overlay"></div>
+</div>
+<footer class="footer">
+  <div class="footer-content-bite"><a href="https://datadonation.uzh.ch"><img src="../../../../../_/img/DataDonationLab_Logo_Schwarz.svg" height="50px"></a></div>
+  <div class="footer-content-bite">© Data Donation Lab, 2023-present</div>
+  <div class="footer-content-bite"><a href="https://github.com/uzh/ddm">DDM on GitHub</a></div>
+</footer>
+<script id="site-script" src="../../../../../_/js/site.js" data-ui-root-path="../../../../../_"></script>
+<script async src="../../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>DDM | Questionnaire Overview</title>
+    <link rel="prev" href="../datadonation/datadonation_configuration.html">
+    <link rel="next" href="questionnaire_configuration.html">
+    <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../../../_/css/site.css">
+    <script>var uiRootPath = '../../../../../_'</script>
+    <link rel="icon" href="../../../../../_/img/ddl_favicon_black.svg" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div>
+        <a class="navbar-item" href="../../../../.."><img src="../../../../../_/img/DDM_Logo_Schwarz.svg" height="50px"></a>
+      </div>
+      <div class="navbar-slogan">
+        <a class="navbar-item" href="../../../../..">Data Donation Module Documentation</a>
+      </div>
+      <!--
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      -->
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="ddm" data-version="develop">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <!-- 
+    <h3 class="title"><a href="../../../index.html">DDM</a></h3>
+     -->
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-link-1" href="../../../index.html"><strong>DDM Documentation</strong></a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle nav-item-toggle-level-1"></button>
+    <a class="nav-link nav-link-1" href="../../index.html">Researchers</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-link-2" href="../../create_project.html">Create a Project</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-link-2" href="../../project_hub.html">Project Hub</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-link-2" href="../../general_project_settings.html">General Project Settings</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle nav-item-toggle-level-2"></button>
+    <a class="nav-link nav-link-2" href="../index.html">Project Configuration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../briefing.html">Briefing Page</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle nav-item-toggle-level-3"></button>
+    <span class="nav-text nav-text-3">Data Donation</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link nav-link-4" href="../datadonation/datadonation_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link nav-link-4" href="../datadonation/datadonation_configuration.html">Configuration</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle nav-item-toggle-level-3"></button>
+    <span class="nav-text nav-text-3">Questionnaire</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="4">
+    <a class="nav-link nav-link-4" href="questionnaire_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link nav-link-4" href="questionnaire_configuration.html">Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link nav-link-4" href="questionnaire_data_integration.html">Data Integration</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../debriefing.html">Debriefing Page</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle nav-item-toggle-level-2"></button>
+    <a class="nav-link nav-link-2" href="../../data_center.html">Data Center</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../data_center/data_download.html">Download</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../data_center/project_logs.html">Project Logs</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../data_center/participation_statistics.html">Statistics</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-link-2" href="../../danger_zone.html">Danger Zone</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle nav-item-toggle-level-2"></button>
+    <a class="nav-link nav-link-2" href="../../topics/index.html">Topics</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../topics/apis.html">APIs</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../topics/continuation.html">Continuation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../topics/project_logs.html">Project Logs</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../topics/templating_features.html">Template Rendering</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle nav-item-toggle-level-1"></button>
+    <a class="nav-link nav-link-1" href="../../../administrators/index.html">Administrators</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-link-2" href="../../../administrators/installation.html">Installation Guide</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle nav-item-toggle-level-2"></button>
+    <a class="nav-link nav-link-2" href="../../../administrators/topics/index.html">Topic References</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../../administrators/topics/customize_ckeditor_configs.html">CKEditor Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../../administrators/topics/customize_admin_templates.html">Template Customization</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../../administrators/topics/user_authentication.html">User Authentication</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle nav-item-toggle-level-1"></button>
+    <a class="nav-link nav-link-1" href="../../../developers/index.html">Developers</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle nav-item-toggle-level-2"></button>
+    <span class="nav-text nav-text-2">Topics</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../../developers/topics/documentation.html">Documentation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../../developers/topics/encryption.html">Encryption</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../../developers/topics/internationalization.html">Internationalization</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">DDM</span>
+    <span class="version">develop</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../../../../main/index.html">DDM</a>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../main/index.html">main</a>
+        </li>
+        <li class="version is-current">
+          <a href="../../../index.html">develop</a>
+        </li>
+        <li class="version">
+          <a href="../../../../v1.0.19/index.html">v1.0.19</a>
+        </li>
+        <li class="version">
+          <a href="../../../../v1.0.0/index.html">v1.0.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<!--
+-->
+<!-- <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">DDM</a></li>
+    <li><a href="../../index.html">Researchers</a></li>
+    <li><a href="../index.html">Project Configuration</a></li>
+    <li>Questionnaire</li>
+    <li><a href="questionnaire_overview.html">Overview</a></li>
+  </ul>
+</nav>
+ -->
+<!-- <div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">develop</button>
+  <div class="version-menu">
+    <a class="version is-missing" href="../../../../main/index.html">main</a>
+    <a class="version is-current" href="questionnaire_overview.html">develop</a>
+    <a class="version is-missing" href="../../../../v1.0.19/index.html">v1.0.19</a>
+    <a class="version is-missing" href="../../../../v1.0.0/index.html">v1.0.0</a>
+  </div>
+</div>
+ -->
+<!--
+-->
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+  <nav class="breadcrumbs-article" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">DDM</a></li>
+    <li>        <a href="../../index.html">Researchers</a>
+</li>
+    <li>        <a href="../index.html">Project Configuration</a>
+</li>
+    <li>Questionnaire</li>
+    <li>        <span class="is-current">Overview</span>
+</li>
+  </ul>
+</nav>
+  <h1 class="page">Questionnaire Overview</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Researchers can define a questionnaire that is displayed <strong>after</strong> the data donation step. It consists of one
+or more pages, each consisting of one or more questions.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_participants_perspective"><a class="anchor" href="#_participants_perspective"></a>Participants' Perspective</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>From the participants' perspective, the questionnaire will look something like this:</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="../../_images/questionnaire_page.png" alt="Questionnaire Page Screenshot" width="95%">
+</div>
+<div class="title">Figure 1. Questionnaire</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_question_types"><a class="anchor" href="#_question_types"></a>Question Types</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following question types are available in the questionnaire:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Single Choice Question</p>
+</li>
+<li>
+<p>Multi Choice Question</p>
+</li>
+<li>
+<p>Matrix Question</p>
+</li>
+<li>
+<p>Semantic Differential</p>
+</li>
+<li>
+<p>Open Question</p>
+</li>
+<li>
+<p>Transition Block (plain text, without any response options for the participant)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can find more details on the <a href="questionnaire_configuration.html" class="xref page">
+Questionnaire Configuration</a> page.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_integrate_donated_data_in_questionnaire"><a class="anchor" href="#_integrate_donated_data_in_questionnaire"></a>Integrate Donated Data in Questionnaire</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The questionnaire also offers the option to integrate parts of the donated data in the question text
+or the question items. For example, if participants donate a watch history, you could
+include the last watched element as part of a question to obtain responses in relation to that element
+(e.g., "Why have you watched &lt;TITLE OF LAST ELEMENT&gt;"). The part <em>&lt;TITLE OF LAST ELEMENT&gt;</em> will then be
+rendered for each participant individually, based on their donated data.</p>
+</div>
+<div class="paragraph">
+<p>You can <a href="questionnaire_data_integration.html" class="xref page">find out more about the
+possibility to render data dynamically here</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_notes_on_the_questionnaire_flow"><a class="anchor" href="#_notes_on_the_questionnaire_flow"></a>Notes on the Questionnaire Flow</h2>
+<div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Currently, DDM&#8217;s built-in questionnaire does not offer the possibility to hide/display questions depending on
+the responses to previous questions in the questionnaire. Therefore, we recommend to use the built-in questionnaire
+in cases where either (A) you want to include information from the donated data in the question text or (B) your
+questionnaire is short and follows a simple structure. In other cases, we currently recommend to implement the
+questionnaire in a dedicated survey software to which you redirect your participants from the debriefing page.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The questionnaire responses are only submitted to the server after all questions have been answered.
+This means that if a participants aborts the questionnaire after filling out, e.g., 2 out of
+4 questions, no responses will be collected and saved on the server.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+  <nav class="pagination">
+  <span class="prev"><a href="../datadonation/datadonation_configuration.html">Configuration</a></span>
+  <span class="next"><a href="questionnaire_configuration.html">Configuration</a></span>
+</nav>
+</article>
+  </div>
+</main>
+<div id="overlay"></div>
+</div>
+<footer class="footer">
+  <div class="footer-content-bite"><a href="https://datadonation.uzh.ch"><img src="../../../../../_/img/DataDonationLab_Logo_Schwarz.svg" height="50px"></a></div>
+  <div class="footer-content-bite">© Data Donation Lab, 2023-present</div>
+  <div class="footer-content-bite"><a href="https://github.com/uzh/ddm">DDM on GitHub</a></div>
+</footer>
+<script id="site-script" src="../../../../../_/js/site.js" data-ui-root-path="../../../../../_"></script>
+<script async src="../../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

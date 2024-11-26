@@ -10,7 +10,7 @@
     The collected data of a project can be accessed remotely through the download API.
     For this to work, an access token must be created. Access tokens are project-specific.
     <br>
-    Access tokens are valid for a limited time (maximum 120 days). After the current token has expired, a new one must be created.
+    Access tokens are valid for a limited time (maximum 90 days). After the current token has expired, a new one must be created.
   </p>
   <p>
     The download API endpoint for this project is <code class="text-dark">https://{{ request.get_host }}/api/project/{{ project.pk }}/data/</code>.<br>

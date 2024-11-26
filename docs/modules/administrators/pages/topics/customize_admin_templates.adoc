@@ -1,3 +1,12 @@
+= Customizing Templates
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
 The default admin templates include a minimalistic header and footer that do not integrate any actions related to
 a researchers user account because authentication is handled by the main website (see <<User Authentication>>).
 

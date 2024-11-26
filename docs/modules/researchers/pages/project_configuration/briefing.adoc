@@ -1,0 +1,45 @@
+= Briefing Page
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+The briefing page is the first part of your project, that participants will see and interact with. The purpose of the
+briefing page is to onboard your participants and brief them about your project and the steps ahead.
+Additionally, you can obtain informed consent for the general study participation.
+
+== Participants' Perspective
+
+To the participants, the briefing page will look something like this:
+
+[.text-center]
+.Briefing Page
+image::briefing_page.png["Briefing Page Screenshot",95%]
+
+
+[#_configuration_options]
+== Configuration Options
+
+You can access the configuration options for the briefing page in _Project Hub > Project Configuration > Briefing_.
+To configure the briefing page, you have the following options.
+
+Briefing Text:: Text displayed to participants on the briefing page.
++
+[TIP]
+====
+In the briefing text, you can make use of dynamic template functionalities.
+You can read more about how to use dynamic templates
+xref:researchers:topics/templating_features.adoc[here].
+====
+
+Briefing Consent Mandatory:: If briefing consent is enabled, participants will
+have to explicitly indicate their consent at the bottom of the briefing page before
+they can continue. If a participant does indicate that they to do not consent,
+they will be redirected to the debriefing page.
+
+Briefing consent label yes:: The label displayed to participants to indicate consent.
+
+Briefing consent label no:: The label displayed to participants to reject consent.

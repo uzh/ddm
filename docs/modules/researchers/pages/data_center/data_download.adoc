@@ -1,0 +1,136 @@
+= Data Download: Accessing the Collected Data
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+[.text-center]
+.Data Download Section
+image::data_download_section.png["Project Statistics Section",95%]
+
+There are two options to download your data. The first option is to use the internal download option in the
+xref:researchers:project_hub.adoc[Project Hub].
+The second one is to download the data externally via the API.
+
+== Download Through the Project Hub
+
+To download the data, go to the Project Hub, scroll down to the section "Data Center" and click on
+"Download Data as JSON". This will gather your data from the database, and you will be able to download your data as a
+ZIP folder through your browser. The actual data is stored in a file called "data.json" in the ZIP container. This data
+file is structured as follows:
+
+[source, json]
+----
+{
+    "project": {
+        "pk": 1,
+        "name": "project name",
+        "date_created": "2022-12-19T08:49:18.363880+01:00"
+    },
+    "donations": {
+        "blueprint name 1": [
+            {
+                "participant": 1
+                "project": 1,
+                "time_submitted": "2022-12-19T08:49:18.363880+01:00",
+                "consent": true,
+                "status": "success",  # One of "success" (donation successful); "pending" (donation not attempted); "failed" (donation failed due to an error); "nothing extracted" (all data filtered out)
+                "data": [
+                    {
+                        "extracted_field_1":  "value1_entry1",
+                        "extracted_field_2":  "value2_entry1",
+                        # ...
+                    },
+                    {
+                        "extracted_field_1":  "value1_entry2",
+                        "extracted_field_2":  "value2_entry2",
+                        # ...
+                    },
+                    # etc.
+                ]
+            }
+        ],
+        "blueprint name 2": [
+            {
+                "participant": 1,
+                "project": 1,
+                "time_submitted": "...",
+                # etc.
+            }
+        ]
+    },
+    "questionnaire": [
+        {
+            "participant":  1,
+            "project":  1,
+            "time_submitted":  "2023-01-19T08:49:18.363880+01:00",
+            "responses": {
+                "variable_name": "answer to question",
+                "variable_name-item-value": "answer to item"
+            },
+            "meta_data":  {  # For data validation purposes: contains one entry per question consisting of meta information about how the question was presented to the participant:
+                "question-id": {
+                    "response": "1",  # Can be a dict of form {"item-id":  "item-response", ...} for question types with item responses
+                    "question": "question text in html format as displayed to participant",
+                    "items": [
+                        {
+                            "id": "33",
+                            "label": "label text in html format as displayed to participant",
+                            "label_alt": "alternative label text in html format as displayed to participant",  # only applies to semantic differential
+                            "index": "1",
+                            "value": "1",
+                            "randomize": false
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "participants": [
+        {
+            "pk":  1,
+            "project":  1,
+            "external_id":  "DMXdpfVyksagfqql2cTgp8kF",
+            "start_time":  "2023-01-18T08:49:18.363880+01:00",
+            "end_time":  "2023-01-20T08:49:18.363880+01:00",
+            "completed":  true,
+            "extra_data":  {
+                "url_param": {
+                    "some_url_parameter": "some value extracted from this parameter when the briefing page was called.",
+                    # ...
+                }
+            }
+        }
+    ]
+}
+----
+
+[NOTE]
+====
+For larger donation projects where you collect large data donations from many participants, this download option is
+inefficient, and you may run into problems (i.e., the download will fail). In these cases, you should download
+your data directly via the API (see below).
+====
+
+== Download via API
+
+To download your data via the API, you first have to create an API token. You can do so by going to the "Data Center"
+section in your Project Hub, and then clicking on "Manage Access Token". In the page that opens you can create an
+API token that is used to authenticate your external download request.
+
+A list of available API endpoints and a more detailed description on how to use them can be found in the
+xref:researchers:topics/apis.adoc[API section of the documentation].
+
+// TODO: Add explanation on how to do so in Python and R.
+
+[TIP]
+====
+Through the admin interface, a project can only be accessed by the user who created it.
+This means that the internal download is only accessible for a project owner.
+The API token, on the other hand, can be used to share data access with colleagues working on the same project.
+However, be careful with whom you share this token as it exposes the sensitive data collected from participants.
+We recommend choosing a short expiration date for Tokens that you create.
+====

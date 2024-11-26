@@ -1,0 +1,30 @@
+= The Project Hub
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+The _Project Hub_ is the main starting point for configuring your project.
+
+[.text-center]
+.Project Hub
+image::project_hub.png["Project Hub", 90%]
+
+From the Project Hub, you can access all settings and information that are relevant for your data donation project.
+It consists of four main areas:
+
+
+1. *Project Details*: General settings for your project.
+
+2. *Project Configuration*: Here, you can configure each step that your participants will go through when taking
+part in your project.
+
+3. *Data Center*: Here, you can download the collected data, access your project's logs, and find some general
+participation statistics.
+// TODO: Add link to, e.g., project's logs.
+
+4. *Danger Zone*: Here, you find options to delete the project, the project's data, or the data belonging to specific
+participants.

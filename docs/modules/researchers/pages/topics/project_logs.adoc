@@ -1,10 +1,19 @@
+= Project Logs
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
 This page describes the implemented exceptions that are logged in a project's exception log.
 
-=== Exceptions Caught on Client Side
+== Exceptions Caught on Client Side
 
-==== Exceptions During Data Donation (4xxx)
+=== Exceptions During Data Donation (4xxx)
 
-===== File Messages (41xx)
+==== File Messages (41xx)
 File errors relate to exceptions raised during uploading and reading a file,
 but before the read contents of a file are processed.
 
@@ -48,7 +57,7 @@ _Description:_ An unexpected exception occurred while processing a single file. 
 _Exception Message:_ TODO
 
 
-===== Processing Messages (42xx)
+==== Processing Messages (42xx)
 
 *4201: All Expected Fields Missing* +
 _Description:_ None of the entries in the supplied file did contain the expected fields as defined in the blueprint. +
@@ -100,6 +109,6 @@ _Description:_ An entry did not contain one or more of the expected fields. +
 _Exception Message:_ TODO
 
 
-==== Exceptions During Questionnaire (5xxx)
+=== Exceptions During Questionnaire (5xxx)
 
-NOTE: To be implemented
+NOTE: Currently, not implemented. May be implemented in the future.

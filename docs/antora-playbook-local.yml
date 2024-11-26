@@ -1,6 +1,10 @@
 site:
   title: DDM Documentation
-  start_page: ddm::index.adoc
+  start_page: index.adoc
+asciidoc:
+  attributes:
+    page-pagination: '@'
+    favicon: ddl_favicon_black.svg
 content:
   sources:
     - url: ../

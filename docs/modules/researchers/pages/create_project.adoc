@@ -1,0 +1,56 @@
+= Creating a Data Donation Project
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+This page demonstrates how to create a new Donation Project.
+
+
+== Project List
+
+When you access DDM, you will see a list of all your Donation Projects:
+
+[.text-center]
+.Project List
+image::project_list.png["Project List Screenshot", 90%]
+
+To create a new data donation project, click on `+ Create New Project`.
+
+== Set up a New Project
+
+When creating a new project, you will see this page:
+
+[.text-center]
+.Project Create Form
+image::project_create.png["Project Create Form Screenshot", 90%]
+
+On this page, you define the following settings (you can
+also modify most of the settings once the project has been created):
+
+Project Name:: Name of the project. Visible to participants in the browser's title bar or a page's tab.
+
+URL Identifier:: Identifier that is included in the URL through which participants can access the project (e.g, https://root.url/project-slug).
+
+Contact Information:: Contact information of the researcher responsible for the project.
+Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.
+
+Data Protection Statement:: Data protection statement that describes how the data is processed.
+Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.
+
+Super Secret:: When creating a "super secret" project, you will have to provide
+a project password, which will be used to encrypt all collected data donations and survey responses
+(for more information on how collected data is encrypted, see xref:developers:topics/encryption.adoc[here]).
+This password will not be saved by the application, and the data collected for
+this project can only be encrypted by entering the password that was used as a super secret
+when the project was created.
+Please note that there is no way to recover or reset this password if it is lost.
+Furthermore, also note that making a project "super secret" will limit the
+functionality of the module: it won’t be possible to create followup questions based on the data donation
+(i.e., data points from the data donation cannot be referenced in a question).
+
+Once you click on `Create Project` your project will be created and you will be redirected to the
+Project Hub of your newly created project.

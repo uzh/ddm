@@ -1,0 +1,13 @@
+= Documentation for System Administrators
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+This section of the documentation is targeted at people who want to set up a server running the DDM to host data
+donation projects (e.g., for personal use or use at an institutional level). It contains consists of two main parts:
+First, a section on xref:administrators:installation.adoc[how to install DDM] and then a number of
+xref:administrators:topics/index.adoc[topic references] that can be useful to further customize the installation of DDM.

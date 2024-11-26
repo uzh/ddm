@@ -1,3 +1,12 @@
+= User Authentication
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
 The Data Donation Module uses the default Django user management to authenticate users.
 
 For production use in the context of an academic institution we recommend implementing
@@ -22,7 +31,8 @@ urlpatterns = [
 ]
 ----
 
-Either, you define your own template ('myapp/login.html'), or you can reuse or customize the default DDM login template ('ddm/admin/auth/login.html' or 'ddm/admin/auth/login_oidc.html' if you use OIDC authentication).
+Either, you define your own template ('myapp/login.html'), or you can reuse or customize the default DDM login template
+('ddm/admin/auth/login.html' or 'ddm/admin/auth/login_oidc.html' if you use OIDC authentication).
 
 *Define Proper redirect paths in your settings.py:*
 
@@ -33,11 +43,11 @@ LOGIN_REDIRECT_URL = '/auth/researcher/'
 LOGOUT_REDIRECT_URL = '/login/'
 ----
 
-=== Authentication With OpenID Connect (OIDC)
+== Authentication With OpenID Connect (OIDC)
 
 We recommend using the package link:https://github.com/mozilla/mozilla-django-oidc[mozilla-django-oidc] for OIDC authentication.
 
-==== Setup
+=== Setup
 
 To enable OIDC authentication with mozilla-django-oidc, follow these steps (see also the official mozilla-django-oidc documentation):
 

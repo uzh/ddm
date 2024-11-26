@@ -1,0 +1,14 @@
+= Topic Reference for System Administrators
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+Here, you will find further information on the following topics:
+
+- xref:administrators:topics/customize_ckeditor_configs.adoc[CKEditor Configuration]
+- xref:administrators:topics/customize_admin_templates.adoc[Template Customization]
+- xref:administrators:topics/user_authentication.adoc[User Authentication]

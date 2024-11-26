@@ -1,3 +1,13 @@
+= APIs
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+
 DDM offers several interfaces to retrieve different parts of the data collected for a
 given project. For example, it is possible to retrieve only the data donations,
 only the questionnaire responses, or the complete data including data donations,
@@ -12,13 +22,11 @@ personalized insights based on the data they just donated to a project. This can
 serve as a great incentive for participation.
 * build custom dashboards to track the progress of your data collection in more detail.
 
-
 For this, DDM implements RESTful APIs. Currently, only GET requests are allowed
 through these endpoints.
 
 
-=== Authentication Schemes
-
+== Authentication
 The APIs listed here can be accessed using Token authentication. A Token
 is always associated to a specific project and must be created through the
 web application (on the main project site, go to the _Project Hub_ and in the
@@ -26,6 +34,8 @@ _Data Center_ click on _Manage Access Token_).
 
 Token expiration can be set to a maximum of 90 days after which they must be renewed.
 
+== Available Endpoints
+Currently, three API-endpoints are available for researchers: the Data API, the Donations API, and the Responses API.
 
 === Data API
 

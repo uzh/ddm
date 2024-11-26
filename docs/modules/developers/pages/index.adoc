@@ -5,6 +5,8 @@
 :last-update-label!:
 :favicon: static/img/ddl_favicon_black.svg
 
+This section of the documentation is targeted at people who contribute to the development of DDM or who want to
+learn more about its development in general.
 
 == Development Guidelines
 
@@ -195,4 +197,4 @@ Inspect the compiled documentation by opening `<...>/ddm/docs/build/index.html` 
 your preferred browser.
 
 
-include::components/scripts.adoc[]
+include::ROOT:components/scripts.adoc[]

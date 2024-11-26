@@ -8,7 +8,7 @@
 {% block main_body %}
 
 {# PROJECT DETAILS #}
-<div class="ddm-admin-section">
+<div id="project-details" class="ddm-admin-section">
   <div class="ddm-admin-section-header">
     Project Details <span class="inline-edit"><a href="{% url 'ddm_projects:edit' object.pk %}"><i class="bi bi-pencil-square"></i> Edit</a></span>
   </div>
@@ -39,7 +39,7 @@
 
 
 {# PROJECT CONFIGURATION #}
-<div class="ddm-admin-section">
+<div id="project-configuration" class="ddm-admin-section">
   <div class="ddm-admin-section-header">Project Configuration</div>
   <div class="ddm-admin-section-body">
     <div class="container">
@@ -97,11 +97,11 @@
 
 
 {# DATA CENTER #}
-<div class="ddm-admin-section">
+<div id="data-center" class="ddm-admin-section">
   <div class="ddm-admin-section-header">Data Center</div>
   <div class="ddm-admin-section-body">
 
-    <div class="d-flex flex-row align-items-center data-center-row border-bottom">
+    <div id="data-download-section" class="d-flex flex-row align-items-center data-center-row border-bottom">
       <div class="w-15"><h5>Data Download</h5></div>
       <div class="me-5">
         <p class="mb-0"><b>Direct Download:</b><br><a class="a-no-link ddm-btn ddm-btn-green" {% if not object.super_secret %}onclick="downloadData('{% url "ddm_apis:project_data" object.pk %}', 'project_{{ object.pk }}_data_{% now "Y-m-d-G-i-s" %}')"{% else %}onclick="askSecret()"{% endif %}><i class="bi bi-download"></i> Download Data as JSON</a></p>
@@ -112,7 +112,7 @@
     </div>
 
     {% with stats=object.get_statistics %}
-    <div class="d-flex flex-row align-items-center data-center-row border-bottom">
+    <div id="project-log-section" class="d-flex flex-row align-items-center data-center-row border-bottom">
       <div class="w-15"><h5>Project Log</h5></div>
       <div><a href="{% url 'ddm_logs:project_logs' object.pk %}">Show Project Log</a></div>
       <div class="col ps-4">
@@ -120,7 +120,7 @@
       </div>
     </div>
 
-    <div class="d-flex flex-row align-items-center data-center-row">
+    <div id="participation-statistics-section" class="d-flex flex-row align-items-center data-center-row">
       <div class="w-15"><h5>Participation Statistics</h5></div>
       <div class="row col fw-bold text-center project-statistics-container">
           <div class="col">
@@ -178,7 +178,7 @@
 
 
 {# DANGER ZONE #}
-<div class="ddm-admin-section">
+<div id="danger-zone" class="ddm-admin-section">
   <div class="ddm-admin-section-header">Danger Zone</div>
   <div class="ddm-admin-section-body">
     <div>

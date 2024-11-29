@@ -79,6 +79,12 @@ class QuestionFormMixin(ProjectMixin):
         self.fields = self.QUESTION_FIELDS[self.kwargs['question_type']]
         return super().get_queryset()
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        if self.kwargs['question_type'] == 'transition':
+            del form.fields['required']
+        return form
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         question_type_label = QuestionType(self.kwargs['question_type']).label

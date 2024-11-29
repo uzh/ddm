@@ -28,7 +28,8 @@ Each of these sections contains a set of settings that are described below.
 Project Name:: The name of the project. Visible to participants in the browser's title bar or a page's tab.
 
 URL Identifier:: The URL Identifier is a string that is added to the participation URL (e.g, www.some.url/*project-slug*).
-Your participants will take part in your project via this URL.
+Your participants will take part in your project via this URL. The URL Identifier Can only contain letters,
+hyphens, numbers or underscores.
 
 
 == Public Project Information

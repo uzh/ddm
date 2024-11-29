@@ -39,7 +39,10 @@ class DonationProject(models.Model):
     # Basic information for internal organization.
     name = models.CharField(
         max_length=50,
-        help_text='Project Name - for internal organisation only (can still be changed later).'
+        help_text=(
+            'Project Name - for internal organisation only (can still be '
+            'changed later).'
+        )
     )
 
     # Note: Value of "date_created" attribute must not be changed after
@@ -58,8 +61,9 @@ class DonationProject(models.Model):
         verbose_name='Contact information',
         help_text=(
             'Please provide the contact information of the person responsible '
-            'for the conduction of this study (Name, professional address, e-mail, tel, ...). The contact information will be '
-            'accessible for participants during the data donation. The field is mandatory.'
+            'for the conduction of this study (Name, professional address, e-mail, '
+            'tel, ...). The contact information will be accessible for '
+            'participants during the data donation. The field is mandatory.'
         )
     )
     data_protection_statement = models.TextField(
@@ -68,8 +72,8 @@ class DonationProject(models.Model):
         help_text=(
             'Please provide a data protection statement for your data donation '
             'collection. This should include the purpose for which the data is '
-            'collected, how it will be stored, and who will have access to the data. '
-            'The field is mandatory.'
+            'collected, how it will be stored, and who will have access to the '
+            'data. The field is mandatory.'
         ),
     )
 
@@ -79,7 +83,8 @@ class DonationProject(models.Model):
         verbose_name='URL Identifier',
         help_text='Identifier that is included in the URL through which '
                   'participants can access the project '
-                  '(e.g, https://root.url/url-identifier).'
+                  '(e.g, https://root.url/url-identifier). Can only contain '
+                  'letters, hyphens, numbers or underscores.'
     )
     briefing_text = models.TextField(
         blank=False,

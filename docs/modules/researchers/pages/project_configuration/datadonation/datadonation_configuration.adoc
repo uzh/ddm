@@ -160,9 +160,8 @@ extraction root to `friends.real_friends`.
 
 === CSV specific settings
 
-CSV Delimiter:: The delimiter used in the expected file (e.g., `,` or `;`). If
-left empty, the used Javascript function will try to infer the delimiter from
-the file structure.
+CSV Delimiter:: This field allows you to specify the character that separates values in the
+expected CSV file. (e.g., `,`, `;` or `\t`). If left empty, DDM will try to infer the delimiter from the file structure.
 
 
 === Extraction Rules

@@ -127,7 +127,13 @@ class DonationBlueprint(models.Model):
     csv_delimiter = models.CharField(
         max_length=10,
         default="",
-        blank=True
+        blank=True,
+        help_text=(
+            'This field allows you to specify the character that separates '
+            'values in the expected CSV file (e.g., , ; or \\t).'
+            ' If left empty, DDM will try to infer the delimiter from the '
+            'file structure.'
+        )
     )
 
     expected_fields = models.TextField(

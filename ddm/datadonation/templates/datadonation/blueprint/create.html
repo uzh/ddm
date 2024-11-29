@@ -24,6 +24,8 @@ Create File Blueprint
     {{ form.non_field_errors }}
 
     <div class="ddm-admin-form">
+      <h5>General Settings</h5>
+
       {% for field in form %}
         {% if field.name not in "expected_fields,expected_fields_regex_matching,regex_path,exp_file_format,csv_delimiter,json_extraction_root" %}
           <p>
@@ -36,22 +38,28 @@ Create File Blueprint
       {% endfor %}
     </div>
 
-    {% include "datadonation/blueprint/block_file_validation.html" %}
+    <hr class="mt-5 mb-5">
 
     <div class="ddm-admin-form">
+      <h5>File Validation Settings</h5>
+
+      {% include "core/components/info_collapsible.html" with element_id="filevalidation" title="How the file validation works" include_path="datadonation/blueprint/block_file_validation.html" body="" %}
+
       {% for field in form %}
-        {% if field.name in "expected_fields,expected_fields_regex_matching,regex_path,exp_file_format,csv_delimiter,json_extraction_root" %}
-          <p>
-            {{ field.label_tag }}
-            {{ field.errors }}
-            <span class="helptext">{{ field.help_text }}</span>
-            {{ field }}
-          </p>
-        {% endif %}
+      {% if field.name in "expected_fields,expected_fields_regex_matching,regex_path,exp_file_format,csv_delimiter,json_extraction_root" %}
+      <p>
+        {{ field.label_tag }}
+        {{ field.errors }}
+        <span class="helptext">{{ field.help_text }}</span>
+        {{ field }}
+      </p>
+      {% endif %}
       {% endfor %}
     </div>
 
-    <div class="pb-3"><i>You will be able to define the extraction rules once you have saved and created the File blueprint.</i></div>
+    <hr class="mt-5 mb-5">
+
+    <div class="pb-3"><i>You will be able to define the data extraction settings once you have saved and created the File Blueprint.</i></div>
 
     <input class="ddm-btn" type="submit" value="Create Blueprint">
     <p class="mt-3">

@@ -83,7 +83,7 @@ This can be configured using the following settings:
 Redirect enabled:: Enable or disable the redirection of your participants when they have completed your project.
 If enabled, a redirect button will be displayed on the data donation end page that redirects to the URL defined in the `Redirect target` setting.
 
-Redirect target:: URL to which participants will redirected (only required if `redirect` is enabled).
+Redirect address:: The URL to which participants will be redirected (only required if `redirect` is enabled).
 
 [TIP]
 ====

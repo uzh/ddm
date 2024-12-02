@@ -9,14 +9,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '16'
+
       - name: Install Antora
         run: npm i antora
+
       - name: Generate Site
         run: npx antora docs/antora-playbook.yml
+
       - name: Publish to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:

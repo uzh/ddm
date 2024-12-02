@@ -1,11 +1,7 @@
-# Runs a build test every time a commit is pushed to branch 'develop'.
-# Runs a build test and merges develop into main every time a tag with pattern 'v*' is pushed.
-
-name: Test Develop
+name: Test DDM
 
 on:
-  push:
-    branches: [ develop ]
+  workflow_call:
 
 jobs:
   build-test:
@@ -64,8 +60,3 @@ jobs:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
       run: |
         python test_project/manage.py test ddm
-
-  trigger-publish-docs:
-    needs: build-test
-    if: success()
-    uses: ./.github/workflows/publish-docs.yml

@@ -4,6 +4,7 @@
 :stem: latexmath
 :last-update-label!:
 :showtitle!:
+:page-pagination:
 
 
 This part of the documentation is targeted at researchers who want to set up a data donation project using DDM.

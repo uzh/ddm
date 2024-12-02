@@ -10,10 +10,6 @@ on:
 jobs:
 
   test-ddm:
-    uses: ./.github/workflows/test-ddm.yml
-
-  publish-docs:
-    needs: test-ddm
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
@@ -69,6 +65,11 @@ jobs:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
       run: |
         python test_project/manage.py test ddm
+
+  publish-docs:
+    needs: test-ddm
+    if: success()
+    uses: ./.github/workflows/publish-docs.yml
 
   deploy:
     needs: test-ddm

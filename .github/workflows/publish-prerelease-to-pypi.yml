@@ -1,12 +1,11 @@
 # Runs a build test every time a commit is pushed to branch 'main'.
 
-name: Test and Publish Python Package
+name: Test and Publish Pre-Release Version of Python Package
 
 on:
   push:
     tags:
-      - 'v*[ab]*'
-      - 'v*rc*'
+      - 'v*+(a|b|rc)*'
 
 jobs:
 

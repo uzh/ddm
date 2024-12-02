@@ -5,7 +5,7 @@ name: Test and Publish Pre-Release Version of Python Package
 on:
   push:
     tags:
-      - 'v*+(a|b|rc)*'
+      - 'pre*'
 
 jobs:
 
@@ -38,8 +38,8 @@ jobs:
 
       - name: Update package version in files
         run: |
-          sed -i "s/__version__/${PKG_VERSION#v}/g" setup.cfg
-          sed -i "s/__version__/${PKG_VERSION#v}/g" ddm/__init__.py
+          sed -i "s/__version__/${PKG_VERSION#pre}/g" setup.cfg
+          sed -i "s/__version__/${PKG_VERSION#pre}/g" ddm/__init__.py
 
       - name: Build package
         run: python -m build

@@ -6,7 +6,7 @@ name: Merge to Main
 on:
   push:
     tags:
-      - 'v+([0-9]).+([0-9])?(.+([0-9]))'  # Matches v1.2 or v1.2.3
+      - 'v*'
 
 jobs:
   build-test:

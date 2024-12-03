@@ -1,5 +1,41 @@
 # Changelog
 
+## 2.0 - Upcoming
+
+This release marks a significant update, restructuring the codebase to enhance the maintainability and scalability of DDM. 
+The application has been modularized into smaller sub-apps, each focused on a specific aspect of the application logic. 
+Additionally, the update includes an improved user interface and user experience, making DDM more accessible to 
+researchers. The accompanying documentation has also been extensively revamped.
+
+**Important:** Due to the comprehensive restructuring, v2.0 introduces breaking changes. 
+Upgrading from version 1.x to 2.x will result in the loss of configured questionnaires in existing projects. 
+Furthermore, migrating requires several adjustments to the settings.
+
+Below, the key updates are highlighted, including breaking changes, new features, and guidance for a seamless migration.
+
+### Breaking Changes
+
+- **Loss of Configured Questionnaires:** 
+Upgrading from 1.x to 2.x will result in the loss of configured questionnaires in existing projects. 
+This is due to migration challenges caused by the polymorphic structure of the QuestionBase model. 
+To retain existing configurations, create a database backup and write a custom script to re-import the old questionnaire data. 
+Since the structure of the models in the questionnaire app remains unchanged, re-creating objects based on the v1.x configurations should be feasible.
+- **Deprecated Function:** 
+The `ddm.auth.user_is_allowed` function has been removed in v2.0. Replace it with `ddm_auth.utils.user_has_project_access`.
+
+
+### Migration Guide
+
+To migrate from 1.x to 2.0, follow the installation steps outlined in the updated administrator documentation, 
+particularly regarding included apps and template context processors.
+
+If you have integrated DDM functionality into your own code, ensure the following updates are made:
+
+- **Update Imports:** Functions and models have been moved to specific sub-apps.
+- **Update URL References:** URL patterns have been renamed, and URL namespaces have been introduced for each sub-app.
+- **Update Template and Static File Paths:** Templates and static files have been reorganized, with resources now 
+housed in their respective sub-app directories instead of the top-level.
+
 ## 1.0.19 - 2024-09-21
 
 _Download of collected data donations is only possible through the API not through the admin interface. 

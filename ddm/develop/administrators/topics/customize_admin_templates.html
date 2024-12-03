@@ -280,12 +280,12 @@ to include your own branding and provide your users with some account management
 This can be done by using Django&#8217;s template inheritance.</p>
 </div>
 <div class="paragraph">
-<p>In your application create a new html template <code>your_application/templates/ddm/admin/base.html</code>. In this file,
+<p>In your application create a new html template <code>your_application/templates/ddm_core/base.html</code>. In this file,
 you can overwrite the header and/or footer as follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">{% extends "ddm/admin/base.html" %}
+<pre class="highlightjs highlight"><code class="language-none hljs">{% extends "ddm_core/base.html" %}
 
 {% block extrahead %}
     &lt;!-- If you wish, you can integrate custom css files, favicon etc. here --&gt;

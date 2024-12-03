@@ -53,7 +53,7 @@ class TestExceptionAPI(TestCase):
 
     def test_valid_post(self):
         client = Client()
-        client.get(reverse('participation:briefing', args=[self.project.slug]))
+        client.get(reverse('ddm_participation:briefing', args=[self.project.slug]))
         exceptions_count_before = ExceptionLogEntry.objects.count()
         client.post(self.post_url, self.post_data)
         exceptions_count_after = ExceptionLogEntry.objects.count()

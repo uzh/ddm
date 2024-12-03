@@ -87,7 +87,7 @@ class TestProjectTokenView(TestCase):
 
 
 class TestView(DDMAuthMixin, TemplateView):
-    template_name = 'auth/no_permission.html'
+    template_name = 'ddm_auth/no_permission.html'
 
 
 @override_settings(DDM_SETTINGS={'EMAIL_PERMISSION_CHECK':  r'.*(\.|@)mail\.com$', })

@@ -60,23 +60,23 @@ class ParticipationFlowBaseTestCase(TestCase):
 
         # URLs for project with questionnaire.
         slug_base = cls.project_base.slug
-        cls.briefing_url = reverse('participation:briefing', args=[slug_base])
-        cls.dd_url = reverse('participation:datadonation', args=[slug_base])
-        cls.quest_url = reverse('participation:questionnaire', args=[slug_base])
-        cls.debriefing_url = reverse('participation:debriefing', args=[slug_base])
+        cls.briefing_url = reverse('ddm_participation:briefing', args=[slug_base])
+        cls.dd_url = reverse('ddm_participation:datadonation', args=[slug_base])
+        cls.quest_url = reverse('ddm_participation:questionnaire', args=[slug_base])
+        cls.debriefing_url = reverse('ddm_participation:debriefing', args=[slug_base])
 
         # URLs for project without questionnaire.
         slug_alt = cls.project_alt.slug
-        cls.briefing_url_no_quest = reverse('participation:briefing', args=[slug_alt])
-        cls.dd_url_no_quest = reverse('participation:datadonation', args=[slug_alt])
-        cls.quest_url_no_quest = reverse('participation:questionnaire', args=[slug_alt])
-        cls.debriefing_url_no_quest = reverse('participation:debriefing', args=[slug_alt])
+        cls.briefing_url_no_quest = reverse('ddm_participation:briefing', args=[slug_alt])
+        cls.dd_url_no_quest = reverse('ddm_participation:datadonation', args=[slug_alt])
+        cls.quest_url_no_quest = reverse('ddm_participation:questionnaire', args=[slug_alt])
+        cls.debriefing_url_no_quest = reverse('ddm_participation:debriefing', args=[slug_alt])
 
         # URLs for non-existing project.
-        cls.briefing_url_invalid = reverse('participation:briefing', args=['nope'])
-        cls.dd_url_invalid = reverse('participation:datadonation', args=['nope'])
-        cls.quest_url_invalid = reverse('participation:questionnaire', args=['nope'])
-        cls.debriefing_url_invalid = reverse('participation:debriefing', args=['nope'])
+        cls.briefing_url_invalid = reverse('ddm_participation:briefing', args=['nope'])
+        cls.dd_url_invalid = reverse('ddm_participation:datadonation', args=['nope'])
+        cls.quest_url_invalid = reverse('ddm_participation:questionnaire', args=['nope'])
+        cls.debriefing_url_invalid = reverse('ddm_participation:debriefing', args=['nope'])
 
     def initialize_project_and_session(self):
         self.client = Client()
@@ -412,7 +412,7 @@ class TestContinuationView(ParticipationFlowBaseTestCase):
 
     def test_render_without_participant(self):
         new_client = Client()
-        url = reverse('participation:continuation', args=[self.project_base.slug])
+        url = reverse('ddm_participation:continuation', args=[self.project_base.slug])
         response = new_client.get(url, data={'p': 'some-non-existing-id'}, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, ContinuationView.template_name)
@@ -422,7 +422,7 @@ class TestContinuationView(ParticipationFlowBaseTestCase):
         self.client.post(self.briefing_url)
         self.client.get(self.dd_url)
         participant = self.get_participant(self.project_base.pk)
-        url = reverse('participation:continuation', args=[self.project_base.slug])
+        url = reverse('ddm_participation:continuation', args=[self.project_base.slug])
         new_client = Client()
         response = new_client.get(url, data={'p': participant.external_id}, follow=True)
         self.assertRedirects(response, self.dd_url)

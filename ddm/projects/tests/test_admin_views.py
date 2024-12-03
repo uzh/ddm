@@ -143,29 +143,29 @@ class TestAdminViewAuthentication(TestCase):
             'ddm_projects:delete',
             'ddm_projects:briefing_edit',
             'ddm_projects:debriefing_edit',
-            'datadonation:overview',
-            'datadonation:blueprints:create',
-            'questionnaire:overview',
+            'ddm_datadonation:overview',
+            'ddm_datadonation:blueprints:create',
+            'ddm_questionnaire:overview',
             'ddm_logging:project_logs',
             'ddm_auth:project_token'
         ]
         for view in project_related_views:
             urls.append(reverse(view, args=[project_pk]))
 
-        blueprint_related_views = ['datadonation:blueprints:edit', 'datadonation:blueprints:delete']
+        blueprint_related_views = ['ddm_datadonation:blueprints:edit', 'ddm_datadonation:blueprints:delete']
         for view in blueprint_related_views:
             urls.append(reverse(view, args=[project_pk, cls.blueprint.pk]))
 
         uploader_related_views = [
-            'datadonation:uploaders:edit',
-            'datadonation:uploaders:delete',
-            'datadonation:instructions:overview',
-            'datadonation:instructions:create'
+            'ddm_datadonation:uploaders:edit',
+            'ddm_datadonation:uploaders:delete',
+            'ddm_datadonation:instructions:overview',
+            'ddm_datadonation:instructions:create'
         ]
         for view in uploader_related_views:
             urls.append(reverse(view, args=[project_pk, cls.file_uploader.pk]))
 
-        instruction_related_views = ['datadonation:instructions:edit', 'datadonation:instructions:delete']
+        instruction_related_views = ['ddm_datadonation:instructions:edit', 'ddm_datadonation:instructions:delete']
         for view in instruction_related_views:
             urls.append(
                 reverse(view, args=[project_pk, cls.file_uploader.pk, cls.instruction.pk]))
@@ -180,29 +180,29 @@ class TestAdminViewAuthentication(TestCase):
         ]
         for question in questions:
             urls.append(
-                reverse('questionnaire:create', args=[project_pk, question[0]]))
+                reverse('ddm_questionnaire:create', args=[project_pk, question[0]]))
 
-        for view in ['questionnaire:edit', 'questionnaire:delete']:
+        for view in ['ddm_questionnaire:edit', 'ddm_questionnaire:delete']:
             for question in questions:
                 urls.append(
                     reverse(view, args=[project_pk, question[0], question[1]]))
 
         item_views = [
-            reverse('questionnaire:items',
+            reverse('ddm_questionnaire:items',
                     args=[project_pk, 'single_choice', cls.sc_quest.pk]),
-            reverse('questionnaire:items',
+            reverse('ddm_questionnaire:items',
                     args=[project_pk, 'multi_choice', cls.mc_quest.pk]),
-            reverse('questionnaire:items',
+            reverse('ddm_questionnaire:items',
                     args=[project_pk, 'matrix', cls.matrix_quest.pk]),
-            reverse('questionnaire:items',
+            reverse('ddm_questionnaire:items',
                     args=[project_pk, 'semantic_diff', cls.diff_quest.pk]),
         ]
         urls += item_views
 
         scale_views = [
-            reverse('questionnaire:scale',
+            reverse('ddm_questionnaire:scale',
                     args=[project_pk, 'matrix', cls.matrix_quest.pk]),
-            reverse('questionnaire:scale',
+            reverse('ddm_questionnaire:scale',
                     args=[project_pk, 'semantic_diff', cls.diff_quest.pk]),
         ]
         urls += scale_views

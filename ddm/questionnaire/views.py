@@ -32,7 +32,7 @@ class QuestionnaireOverview(ProjectMixin, DDMAuthMixin, ListView):
     """ View to list all donation blueprints associated with a project. """
     model = DonationBlueprint
     context_object_name = 'donation_blueprints'
-    template_name = 'questionnaire/list.html'
+    template_name = 'ddm_questionnaire/list.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -98,7 +98,7 @@ class QuestionFormMixin(ProjectMixin):
 
 class QuestionCreate(SuccessMessageMixin, DDMAuthMixin, QuestionFormMixin, CreateView):
     """ View to create question. """
-    template_name = 'questionnaire/create.html'
+    template_name = 'ddm_questionnaire/create.html'
     success_message = 'New %(question_type)s was created.'
 
     def get_initial(self):
@@ -119,7 +119,7 @@ class QuestionCreate(SuccessMessageMixin, DDMAuthMixin, QuestionFormMixin, Creat
             'question_type': self.kwargs['question_type'],
             'pk': self.object.pk
         }
-        return reverse('questionnaire:edit', kwargs=kwargs)
+        return reverse('ddm_questionnaire:edit', kwargs=kwargs)
 
     def get_success_message(self, cleaned_data):
         return self.success_message % dict(
@@ -131,7 +131,7 @@ class QuestionCreate(SuccessMessageMixin, DDMAuthMixin, QuestionFormMixin, Creat
 class QuestionEdit(SuccessMessageMixin, DDMAuthMixin, QuestionFormMixin, UpdateView):
     """ View to edit question. """
     model = QuestionBase
-    template_name = 'questionnaire/edit.html'
+    template_name = 'ddm_questionnaire/edit.html'
     success_message = 'Question "%(name)s" was successfully updated.'
 
     def get_success_url(self):
@@ -140,20 +140,20 @@ class QuestionEdit(SuccessMessageMixin, DDMAuthMixin, QuestionFormMixin, UpdateV
             'question_type': self.kwargs['question_type'],
             'pk': self.kwargs['pk']
         }
-        return reverse('questionnaire:edit', kwargs=success_kwargs)
+        return reverse('ddm_questionnaire:edit', kwargs=success_kwargs)
 
 
 class QuestionDelete(SuccessMessageMixin, DDMAuthMixin, ProjectMixin, DeleteView):
     """ View to delete question. """
     model = QuestionBase
-    template_name = 'questionnaire/delete.html'
+    template_name = 'ddm_questionnaire/delete.html'
     success_message = 'Question "%s" was deleted.'
 
     def get_success_message(self, cleaned_data):
         return self.success_message % self.object.name
 
     def get_success_url(self):
-        return reverse('questionnaire:overview', kwargs={'project_pk': self.kwargs['project_pk']})
+        return reverse('ddm_questionnaire:overview', kwargs={'project_pk': self.kwargs['project_pk']})
 
 
 class InlineFormsetMixin(ProjectMixin):
@@ -199,7 +199,7 @@ class ItemEdit(SuccessMessageMixin, DDMAuthMixin, InlineFormsetMixin, UpdateView
     """ View to edit the items associated with a question. """
     model = QuestionBase
     formset_model = QuestionItem
-    template_name = 'questionnaire/edit_set.html'
+    template_name = 'ddm_questionnaire/edit_set.html'
     context_title = 'Items'
     success_message = 'Question items updated.'
 
@@ -210,14 +210,14 @@ class ItemEdit(SuccessMessageMixin, DDMAuthMixin, InlineFormsetMixin, UpdateView
             'question_type': question.question_type,
             'pk': question.pk
         }
-        return reverse('questionnaire:items', kwargs=success_kwargs)
+        return reverse('ddm_questionnaire:items', kwargs=success_kwargs)
 
 
 class ScaleEdit(SuccessMessageMixin, DDMAuthMixin, InlineFormsetMixin, UpdateView):
     """ View to edit the scale associated with a question. """
     model = QuestionBase
     formset_model = ScalePoint
-    template_name = 'questionnaire/edit_set.html'
+    template_name = 'ddm_questionnaire/edit_set.html'
     context_title = 'Scale Points'
     success_message = 'Question scale updated.'
 
@@ -228,4 +228,4 @@ class ScaleEdit(SuccessMessageMixin, DDMAuthMixin, InlineFormsetMixin, UpdateVie
             'question_type': question.question_type,
             'pk': question.pk
         }
-        return reverse('questionnaire:scale', kwargs=success_kwargs)
+        return reverse('ddm_questionnaire:scale', kwargs=success_kwargs)

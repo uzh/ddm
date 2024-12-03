@@ -32,7 +32,7 @@ urlpatterns = [
 ----
 
 Either, you define your own template ('myapp/login.html'), or you can reuse or customize the default DDM login template
-('ddm/admin/auth/login.html' or 'ddm/admin/auth/login_oidc.html' if you use OIDC authentication).
+('ddm_auth/login.html' or 'ddm_auth/login_oidc.html' if you use OIDC authentication).
 
 *Define Proper redirect paths in your settings.py:*
 

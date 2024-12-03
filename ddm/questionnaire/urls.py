@@ -3,7 +3,7 @@ from django.urls import path
 from ddm.questionnaire import views
 
 
-app_name = 'questionnaire'
+app_name = 'ddm_questionnaire'
 urlpatterns = [
     path(r'', views.QuestionnaireOverview.as_view(), name='overview'),
     path(r'<slug:question_type>/create/', views.QuestionCreate.as_view(), name='create'),

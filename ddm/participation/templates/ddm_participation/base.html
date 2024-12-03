@@ -1,0 +1,95 @@
+{% load static i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{% block title %}{{ project.name }}{% endblock title %}</title>
+
+  <link rel="stylesheet" href="{% static 'ddm_core/css/bootstrap/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'ddm_core/css/bootstrap/bootstrap-icons.css' %}">
+  <link href="{% static 'ddm_core/css/fonts.css' %}" rel="stylesheet">
+  <link href="{% static 'ddm_participation/css/public-base.css' %}" rel="stylesheet">
+
+  {% block extrahead %}{% endblock extrahead %}
+
+</head>
+<body>
+<div id="ddm-participation-main" class="container">
+  <div class="container public-header">
+    {% block public-header %}
+    <div class="row align-items-center">
+      <div class="col text-center">
+        <img class="float-md-start" src="{% if project.img_header_left %}{{ project.img_header_left.url }}{% elif default_header_left %}{{ default_header_left }}{% endif %}" height="80px">
+      </div>
+
+      <div class="col text-center">
+        <img class="float-md-end" src="{% if project.img_header_right %}{{ project.img_header_right.url }}{% elif default_header_right %}{{ default_header_right }}{% endif %}" height="80px">
+      </div>
+    </div>
+    {% endblock public-header %}
+  </div>
+
+  <div class="container public-main">
+    <div class="row">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+
+  <div class="container public-footer">
+    {% block public-footer %}
+    <div class="row justify-content-md-center">
+      <div class="col-md-auto text-center">
+        <a type="button" data-bs-toggle="modal" data-bs-target="#contactModal">{% translate "Contact" %}</a>
+      </div>
+      <div class="col-md-auto text-center">
+        <a type="button" data-bs-toggle="modal" data-bs-target="#dataProtectionModal">{% translate "What happens with my data?" %}</a>
+      </div>
+    </div>
+    {% endblock public-footer %}
+  </div>
+
+</div>
+
+
+</div>
+
+<div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactInformation" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header fw-bold pb-2 pt-2">
+        {% translate "Contact Information" %}
+        <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pb-2 pt-2">
+        {% autoescape on %}{{ project.contact_information|safe }}{% endautoescape %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="dataProtectionModal" tabindex="-1" aria-labelledby="dataProtection" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header fw-bold pb-2 pt-2">
+        {% translate "Data Protection Statement" %}
+        <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pb-2 pt-2">
+        {% autoescape on %}{{ project.data_protection_statement|safe }}{% endautoescape %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'ddm_core/js/jquery/jquery-3.6.2.min.js' %}"></script>
+<script src="{% static 'ddm_core/js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+
+{% block extrascripts %}{% endblock extrascripts %}
+
+</body>
+</html>

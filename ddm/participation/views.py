@@ -51,10 +51,10 @@ class ParticipationFlowBaseView(DetailView):
     context_object_name = 'project'
 
     steps = [
-        'participation:briefing',
-        'participation:datadonation',
-        'participation:questionnaire',
-        'participation:debriefing'
+        'ddm_participation:briefing',
+        'ddm_participation:datadonation',
+        'ddm_participation:questionnaire',
+        'ddm_participation:debriefing'
     ]
     participant = None
     current_step = None
@@ -151,12 +151,12 @@ def participation_redirect_view(request, slug):
     """
     Redirect user to briefing page if url does not contain a step indicator.
     """
-    return redirect('participation:briefing', slug)
+    return redirect('ddm_participation:briefing', slug)
 
 
 class BriefingView(ParticipationFlowBaseView):
-    template_name = 'participation/briefing.html'
-    step_name = 'participation:briefing'
+    template_name = 'ddm_participation/briefing.html'
+    step_name = 'ddm_participation:briefing'
 
     def post(self, request, *args, **kwargs):
         """
@@ -225,8 +225,8 @@ class BriefingView(ParticipationFlowBaseView):
 
 @method_decorator(cache_page(0), name='dispatch')
 class DataDonationView(ParticipationFlowBaseView):
-    template_name = 'participation/data_donation.html'
-    step_name = 'participation:datadonation'
+    template_name = 'ddm_participation/data_donation.html'
+    step_name = 'ddm_participation:datadonation'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -298,8 +298,8 @@ class DataDonationView(ParticipationFlowBaseView):
 
 
 class QuestionnaireView(ParticipationFlowBaseView):
-    template_name = 'participation/questionnaire.html'
-    step_name = 'participation:questionnaire'
+    template_name = 'ddm_participation/questionnaire.html'
+    step_name = 'ddm_participation:questionnaire'
 
     def setup(self, request, *args, **kwargs):
         """ Reset extra_scripts """
@@ -349,8 +349,8 @@ class QuestionnaireView(ParticipationFlowBaseView):
 
 
 class DebriefingView(ParticipationFlowBaseView):
-    template_name = 'participation/debriefing.html'
-    step_name = 'participation:debriefing'
+    template_name = 'ddm_participation/debriefing.html'
+    step_name = 'ddm_participation:debriefing'
 
     def get_context_data(self, **kwargs):
         """ Inject url parameters in redirect target. """
@@ -384,7 +384,7 @@ class ContinuationView(DetailView):
     """
     model = DonationProject
     context_object_name = 'project'
-    template_name = 'participation/continuation_not_found.html'
+    template_name = 'ddm_participation/continuation_not_found.html'
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()

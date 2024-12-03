@@ -31,7 +31,7 @@ uploader_patterns = (
     'uploaders'
 )
 
-app_name = 'datadonation'
+app_name = 'ddm_datadonation'
 urlpatterns = [
     path(r'', views.DataDonationOverview.as_view(), name='overview'),
     path(r'blueprint/', include(blueprint_patterns)),

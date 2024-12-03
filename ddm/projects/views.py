@@ -12,7 +12,7 @@ from ddm.auth.views import DDMAuthMixin
 class ProjectList(DDMAuthMixin, ListView):
     """ View to display a list of existing donation projects. """
     model = DonationProject
-    template_name = 'projects/list.html'
+    template_name = 'ddm_projects/list.html'
 
     def get_queryset(self):
         return DonationProject.objects.filter(owner__user=self.request.user)
@@ -21,7 +21,7 @@ class ProjectList(DDMAuthMixin, ListView):
 class ProjectCreate(SuccessMessageMixin, DDMAuthMixin, CreateView):
     """ View to create a new donation project. """
     model = DonationProject
-    template_name = 'projects/create.html'
+    template_name = 'ddm_projects/create.html'
     form_class = ProjectCreateForm
     success_message = 'Project was created successfully.'
 
@@ -38,13 +38,13 @@ class ProjectCreate(SuccessMessageMixin, DDMAuthMixin, CreateView):
 class ProjectDetail(DDMAuthMixin, DetailView):
     """ View to display landing page for project. """
     model = DonationProject
-    template_name = 'projects/detail.html'
+    template_name = 'ddm_projects/detail.html'
 
 
 class ProjectEdit(SuccessMessageMixin, DDMAuthMixin, UpdateView):
     """ View to edit the details of an existing donation project. """
     model = DonationProject
-    template_name = 'projects/edit.html'
+    template_name = 'ddm_projects/edit.html'
     form_class = ProjectEditForm
     success_message = 'Project details successfully updated.'
 
@@ -52,7 +52,7 @@ class ProjectEdit(SuccessMessageMixin, DDMAuthMixin, UpdateView):
 class ProjectDelete(SuccessMessageMixin, DDMAuthMixin, DeleteView):
     """ View to display a list of existing donation projects. """
     model = DonationProject
-    template_name = 'projects/delete.html'
+    template_name = 'ddm_projects/delete.html'
     success_url = reverse_lazy('ddm_projects:list')
     success_message = 'Project "%s" was deleted.'
 
@@ -63,7 +63,7 @@ class ProjectDelete(SuccessMessageMixin, DDMAuthMixin, DeleteView):
 class BriefingEdit(SuccessMessageMixin, DDMAuthMixin, UpdateView):
     """ View to edit the briefing page. """
     model = DonationProject
-    template_name = 'projects/edit-briefing.html'
+    template_name = 'ddm_projects/edit-briefing.html'
     form_class = BriefingEditForm
     success_message = 'Briefing page successfully updated.'
 
@@ -71,6 +71,6 @@ class BriefingEdit(SuccessMessageMixin, DDMAuthMixin, UpdateView):
 class DebriefingEdit(SuccessMessageMixin, DDMAuthMixin, UpdateView):
     """ View to edit the debriefing page. """
     model = DonationProject
-    template_name = 'projects/edit-debriefing.html'
+    template_name = 'ddm_projects/edit-debriefing.html'
     form_class = DebriefingEditForm
     success_message = 'Debriefing page successfully updated.'

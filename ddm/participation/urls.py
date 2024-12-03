@@ -3,7 +3,7 @@ from django.urls import path
 from ddm.participation import views
 
 
-app_name = 'participation'
+app_name = 'ddm_participation'
 urlpatterns = [
     path(r'', views.participation_redirect_view, name='redirect'),
     path(r'briefing/', views.BriefingView.as_view(), name='briefing'),

@@ -8,8 +8,8 @@ asciidoc:
 content:
   sources:
     - url: ../
-      branches: [main, develop]
-      tags: [v1.0.0]
+      branches: [develop]
+      tags: [v1.0.19, v1.0.0]
       version: true
       start_path: docs
 ui:

@@ -39,13 +39,13 @@ class QuestionnaireOverview(ProjectMixin, DDMAuthMixin, ListView):
         question_types = QuestionType.choices
         context.update({
             'question_types': question_types,
-            'general_questions': self.get_general_questions()
+            'questions': self.get_all_questions()
         })
         return context
 
-    def get_general_questions(self):
+    def get_all_questions(self):
         project = self.get_project()
-        return project.questionbase_set.filter(blueprint=None)
+        return project.questionbase_set.all()
 
     def get_queryset(self):
         return super().get_queryset().filter(project_id=self.kwargs['project_pk'])

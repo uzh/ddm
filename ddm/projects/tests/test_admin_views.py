@@ -139,6 +139,7 @@ class TestAdminViewAuthentication(TestCase):
     def get_admin_urls(cls, project_pk):
         urls = []
         project_related_views = [
+            'ddm_projects:detail',
             'ddm_projects:edit',
             'ddm_projects:delete',
             'ddm_projects:briefing_edit',

@@ -114,7 +114,7 @@
     {% with stats=object.get_statistics %}
     <div id="project-log-section" class="d-flex flex-row align-items-center data-center-row border-bottom">
       <div class="w-15"><h5>Project Log</h5></div>
-      <div><a href="{% url 'ddm_logs:project_logs' object.pk %}">Show Project Log</a></div>
+      <div><a href="{% url 'ddm_logging:project_logs' object.pk %}">Show Project Log</a></div>
       <div class="col ps-4">
         <p class="mb-0">(Registered Exceptions: {{ stats.n_errors }})</p>
       </div>

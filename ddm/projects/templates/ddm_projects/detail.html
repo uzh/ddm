@@ -30,6 +30,10 @@
         </td>
       </tr>
       <tr>
+        <td>Status:</td>
+        <td>{% if object.active %}Project is <b>active</b> and participation is possible{% else %}Project is <b>inactive</b> and participation is not possible{% endif %}</td>
+      </tr>
+      <tr>
         <td>Project Type:</td>
         <td>{% if object.super_secret %}Super Secret Project{% else %}Regular Project{% endif %}</td>
       </tr>

@@ -152,6 +152,12 @@ class DonationProject(models.Model):
                   'Semikolons are not allowed as part of the expected url parameters.'
     )
 
+    active = models.BooleanField(
+        default=True,
+        verbose_name='Active',
+        help_text='Participants can only take part in a project if it is active.'
+    )
+
     @sensitive_variables()
     def __init__(self, *args, **kwargs):
         self.secret_key = settings.SECRET_KEY

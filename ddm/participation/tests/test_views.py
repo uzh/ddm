@@ -65,6 +65,8 @@ class ParticipationFlowBaseTestCase(TestCase):
         cls.quest_url = reverse('ddm_participation:questionnaire', args=[slug_base])
         cls.debriefing_url = reverse('ddm_participation:debriefing', args=[slug_base])
 
+        cls.inactive_info_page = reverse('ddm_participation:project_inactive', args=[slug_base])
+
         # URLs for project without questionnaire.
         slug_alt = cls.project_alt.slug
         cls.briefing_url_no_quest = reverse('ddm_participation:briefing', args=[slug_alt])
@@ -173,6 +175,15 @@ class TestBriefingView(ParticipationFlowBaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, BriefingView.template_name)
 
+    def test_project_inactive_redirects_to_info_page(self):
+        self.project_base.active = False
+        self.project_base.save()
+
+        response = self.client.get(self.briefing_url, follow=True)
+        self.assertRedirects(response, self.inactive_info_page)
+
+        self.project_base.active = True
+        self.project_base.save()
 
 class TestDonationView(ParticipationFlowBaseTestCase):
 
@@ -306,6 +317,15 @@ class TestDonationView(ParticipationFlowBaseTestCase):
         self.assertEqual(exceptions_count_before, exceptions_count_after)
         self.assertEqual(donation_count_before + 1, donation_count_after)
 
+    def test_project_inactive_redirects_to_info_page(self):
+        self.project_base.active = False
+        self.project_base.save()
+
+        response = self.client.get(self.dd_url)
+        self.assertRedirects(response, self.inactive_info_page)
+
+        self.project_base.active = True
+        self.project_base.save()
 
 class TestQuestionnaireView(ParticipationFlowBaseTestCase):
 
@@ -340,6 +360,15 @@ class TestQuestionnaireView(ParticipationFlowBaseTestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.debriefing_url)
 
+    def test_project_inactive_redirects_to_info_page(self):
+        self.project_base.active = False
+        self.project_base.save()
+
+        response = self.client.get(self.quest_url)
+        self.assertRedirects(response, self.inactive_info_page)
+
+        self.project_base.active = True
+        self.project_base.save()
 
 class TestDebriefingView(ParticipationFlowBaseTestCase):
 
@@ -360,6 +389,15 @@ class TestDebriefingView(ParticipationFlowBaseTestCase):
         response = self.client.get(self.debriefing_url_invalid, follow=True)
         self.assertEqual(response.status_code, 404)
 
+    def test_project_inactive_redirects_to_info_page(self):
+        self.project_base.active = False
+        self.project_base.save()
+
+        response = self.client.get(self.debriefing_url)
+        self.assertRedirects(response, self.inactive_info_page)
+
+        self.project_base.active = True
+        self.project_base.save()
 
 class TestRedirect(ParticipationFlowBaseTestCase):
 

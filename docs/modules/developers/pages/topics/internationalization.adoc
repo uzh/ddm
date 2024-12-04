@@ -29,9 +29,9 @@ An extensive description of how translation is handled by Django can be found he
 https://docs.djangoproject.com/en/3.2/topics/i18n/translation/
 
 To create the translation files, first run `django-admin makemessages -l de` in
-the `ddm` directory, where `de` is the locale name that you want to create.
+the respective `ddm` sub-app directory, where `de` is the locale name that you want to create.
 This command creates or updates a file located at `ddm/locale/de/LC_MESSAGES/django.po`.
-In this file, you can add your translations. Afterwards, run `django-admin compilemessages`
+In this file, you can add your translations. Afterward, run `django-admin compilemessages`
 to create a `django.mo` file, which will be used by gettext for translation.
 
 === Vue Components

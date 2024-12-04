@@ -1,12 +1,10 @@
-from distutils.command.clean import clean
-
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
 from django_ckeditor_5.widgets import CKEditor5Widget
 
-from ddm.projects.models import DonationProject, ResearchProfile
+from ddm.projects.models import DonationProject
 
 User = get_user_model()
 
@@ -81,6 +79,7 @@ class ProjectEditForm(forms.ModelForm):
         fields = [
             'name',
             'slug',
+            'active',
             'contact_information',
             'data_protection_statement',
             'url_parameter_enabled',

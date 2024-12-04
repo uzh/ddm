@@ -31,6 +31,9 @@ URL Identifier:: The URL Identifier is a string that is added to the participati
 Your participants will take part in your project via this URL. The URL Identifier Can only contain letters,
 hyphens, numbers or underscores.
 
+Active:: Set a project to active or inactive. Participants can only take part in an active project. If participants open
+the link to an inactive project, they will be redirected to an information page telling them that participation in this
+project is currently not possible.
 
 == Public Project Information
 

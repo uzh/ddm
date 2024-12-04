@@ -9,6 +9,7 @@ from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.decorators import method_decorator
 from django.utils.safestring import SafeString
+from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.decorators.cache import cache_page
 
@@ -66,6 +67,11 @@ class ParticipationFlowBaseView(DetailView):
         self._initialize_values(request)
 
     def get(self, request, *args, **kwargs):
+        # Check if project is active.
+        if not self.object.active:
+            return redirect(
+                'ddm_participation:project_inactive', slug=self.object.slug)
+
         # Redirect to previous step if necessary.
         if not self.steps[self.current_step] == self.step_name:
             return redirect(self.steps[self.current_step], slug=self.object.slug)
@@ -79,10 +85,11 @@ class ParticipationFlowBaseView(DetailView):
         # Account for 'page back' action in browser
         if self.steps[self.current_step] == self.step_name:
             self.set_step_completed()
-            return redirect(self.steps[self.current_step + 1],
-                            slug=self.object.slug)
+            return redirect(
+                self.steps[self.current_step + 1], slug=self.object.slug)
         else:
-            return redirect(self.steps[self.current_step], slug=self.object.slug)
+            return redirect(
+                self.steps[self.current_step], slug=self.object.slug)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -311,6 +318,11 @@ class QuestionnaireView(ParticipationFlowBaseView):
         Skip questionnaire if no questions are defined and redirect to next step.
         Otherwise, render questionnaire.
         """
+        # Check if project is active.
+        if not self.object.active:
+            return redirect(
+                'ddm_participation:project_inactive', slug=self.object.slug)
+
         # Redirect to previous step if necessary.
         if not self.steps[self.current_step] == self.step_name:
             return redirect(self.steps[self.current_step], slug=self.object.slug)
@@ -405,3 +417,7 @@ class ContinuationView(DetailView):
         }
         request.session.modified = True
         return
+
+
+class ProjectInactiveView(TemplateView):
+    template_name = 'ddm_participation/project_inactive.html'

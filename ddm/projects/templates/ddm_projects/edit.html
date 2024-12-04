@@ -29,7 +29,7 @@
         <div id="baseSettings" class="accordion-collapse collapse show" aria-labelledby="flush-baseSettings">
           <div class="ddm-accordion-content">
           {% for field in form %}
-            {% if field.name in "name,slug" %}
+            {% if field.name in "name,slug,active" %}
               {% include "ddm_core/components/form_field_basic.html" %}
             {% endif %}
           {% endfor %}

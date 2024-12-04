@@ -13,6 +13,11 @@ Furthermore, migrating requires several adjustments to the settings.
 
 Below, the key updates are highlighted, including breaking changes, new features, and guidance for a seamless migration.
 
+### Added
+
+- Add to set a donation project to active/inactive. Participation is only possible in active projects.
+
+
 ### Breaking Changes
 
 - **Loss of Configured Questionnaires:** 

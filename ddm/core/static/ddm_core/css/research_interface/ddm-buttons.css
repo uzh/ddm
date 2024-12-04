@@ -24,3 +24,9 @@
 .ddm-btn-large:hover {
     -webkit-filter: brightness(70%);
 }
+
+.ddm-btn-red {
+    background-color: #840600;
+    border: 0;
+    min-width: 160px;
+}

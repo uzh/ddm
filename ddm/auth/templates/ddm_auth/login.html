@@ -27,7 +27,7 @@
       <form method='post'>
         {% csrf_token %}
 
-        <div class="ddm-admin-form ddm-form auth-form">
+        <div class="ddm-form auth-form">
           {{ form.as_p }}
           <input id="login-btn" class="ddm-btn-large mt-3 w-75" type="submit" value="{% block submit_label %}Login{% endblock submit_label %}">
         </div>

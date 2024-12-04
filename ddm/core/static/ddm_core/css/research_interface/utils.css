@@ -1,0 +1,32 @@
+.fs-08 {
+    font-size: 0.8rem !important;
+}
+
+.lh-1 {
+    line-height: 1;
+}
+
+.small-font {
+    font-size: 0.9rem !important;
+}
+
+.small-inputs input,
+.small-inputs select {
+    font-size: 0.9rem !important;
+    padding: 0.1rem 0.3rem 0.1rem 0.3rem;
+}
+
+.small-inputs input:focus,
+.small-inputs select:focus {
+    border: 1px solid grey;
+    box-shadow: none;
+}
+
+.border-bottom-dark {
+    border-bottom: 1px solid #1a1a1a;
+}
+
+.w-15 {
+    width: 15%;
+    min-width: 180px;
+}

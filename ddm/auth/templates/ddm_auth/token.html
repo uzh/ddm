@@ -27,7 +27,7 @@
 <div class="ddm-admin-section">
   <div class="ddm-admin-section-header">Current Token</div>
   <div class="ddm-admin-section-body">
-    <div class="ddm-admin-form">
+    <div>
       {% if token %}
       <div>
         <div class="row">
@@ -59,7 +59,7 @@
   {% csrf_token %}
   {{ form.media }}
 
-  <div class="ddm-admin-form">
+  <div>
     {% if form.errors %}
     <p class="error-disclaimer"><i class="bi bi-exclamation-square-fill"></i> The form could not be processed. Please
       check the issues highlighted below.</p>

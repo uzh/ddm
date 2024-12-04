@@ -23,7 +23,7 @@ Create File Blueprint
     {{ form.media }}
     {{ form.non_field_errors }}
 
-    <div class="ddm-admin-form">
+    <div>
       <h5>General Settings</h5>
 
       {% for field in form %}
@@ -40,7 +40,7 @@ Create File Blueprint
 
     <hr class="mt-5 mb-5">
 
-    <div class="ddm-admin-form">
+    <div>
       <h5>File Validation Settings</h5>
 
       {% include "ddm_core/components/info_collapsible.html" with element_id="filevalidation" title="How the file validation works" include_path="ddm_datadonation/blueprint/block_file_validation.html" body="" %}

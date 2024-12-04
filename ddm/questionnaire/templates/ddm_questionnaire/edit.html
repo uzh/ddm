@@ -11,7 +11,7 @@
   {% csrf_token %}
   {{ form.media }}
 
-  <div class="ddm-admin-form">
+  <div>
     {% for field in form %}
     {% if field.name not in "expected_fields,extracted_fields" %}
     <p>

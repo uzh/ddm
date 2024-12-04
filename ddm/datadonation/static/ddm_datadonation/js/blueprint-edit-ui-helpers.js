@@ -141,7 +141,7 @@ $("#add-inline-form").on("click", function() {
   // Add new modal.
   let newModal = $("[id^=configuration-]").first().clone();
   newModal.attr("id", "configuration-" + formIdx );
-  newModal.find( ".ddm-admin-form" ).replaceWith($("#empty-form").html().replace(/__prefix__/g, formIdx));
+  newModal.find( ".rule-configuration-form" ).replaceWith($("#empty-form").html().replace(/__prefix__/g, formIdx));
   newModal.find( "button" ).attr("id", "ddm-modal-ok-" + formIdx );
   newModal.find("input[id*='execution_order']").val(formIdx + 1);
   $("[id^=configuration-]").last().after(newModal);

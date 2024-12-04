@@ -7,7 +7,7 @@
 {% block main_top %}
 <p>You are about to delete the following blueprint:</p>
 
-<div class="ddm-admin-form">
+<div>
   <p>
     <label>Name:</label>
     {{ object.name }}
@@ -22,7 +22,7 @@
 <div class="mt-4">
   <div>
     <p>The following questions and instructions associated with this blueprint will also be deleted:</p>
-    <div class="ddm-admin-form">
+    <div>
       <p><b>Instructions:</b></p>
       <ul>
         {% for instruction in object.instruction_set.all %}

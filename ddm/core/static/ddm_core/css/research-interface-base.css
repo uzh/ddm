@@ -158,6 +158,27 @@
     color: lightgray;
 }
 
-.item-set-table input[type="text"]{
+.item-set-table input[type="text"],
+.item-set-table input[type="number"] {
     width: 100%;
+}
+
+.item-set-table .num-input-col {
+	width: 5%;
+	min-width: 80px;
+}
+
+.item-set-table .check-input-col {
+	width: 8%;
+	min-width: 80px;
+    text-align: center;
+}
+
+.item-set-table td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.item-set-table .checkmark {
+	display: inline-block;
 }

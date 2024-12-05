@@ -1,4 +1,4 @@
-{% extends 'ddm_core/page_with_form.html' %}
+{% extends "ddm_core/page_with_form.html" %}
 
 {% block page_title %}Edit {{ context_title }}{% endblock %}
 
@@ -8,14 +8,22 @@
 <form method="post">
   {% csrf_token %}
   {{ formset.management_form }}
-  <table class="table mt-4 item-set-table">
+  <table class="table mt-4 item-set-table border-bottom">
 
     {% for form in formset.forms %}
 
     {% if forloop.first %}
     <thead>
     <tr>
-      {% for field in form.visible_fields %}<th>{{ field.label }}</th>{% endfor %}
+      {% for field in form.visible_fields %}
+        <th
+            {% if field.label in "Index,Value" %}
+              class="num-input-col"
+            {% elif field.label in "Randomize,Löschen,Add border,Delete" or field.label == "Löschen" %}
+              class="check-input-col"
+            {% endif %}
+        >{{ field.label }}</th>
+      {% endfor %}
     </tr>
     </thead>
     {% endif %}
@@ -24,9 +32,9 @@
       <tr><td class="border-bottom-0">{{ form.non_field_errors }}</td></tr>
     {% endif %}
 
-    <tr>
+    <tr class="border-bottom-0">
       {% for field in form.visible_fields %}
-      <td>
+      <td class="border-bottom-0">
         {% if forloop.first %}
         {% for hidden in form.hidden_fields %}
         {{ hidden }}

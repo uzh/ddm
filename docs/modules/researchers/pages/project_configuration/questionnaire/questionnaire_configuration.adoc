@@ -87,13 +87,13 @@ For Single Choice Questions, Multiple Choice Questions, Matrix Questions and Sem
 participants answer in relation to question items. To configure question items, the following
 settings are available:
 
+Index:: Defines the order in which the items are displayed.
+
 Label:: The label/text of the item that is displayed to participants related to an item.
 For semantic differential questions, this is the label displayed on the left-hand side of the scale.
 
 Label Right:: Only for semantic differential questions. The label displayed on the
 right-hand side of the scale.
-
-Index:: Defines the order in which the items are displayed.
 
 Value:: Is (_a_) the identifier of an item and (_b_) used to indicate which
 item(s) has or have been selected in the data export (only for Single and Multi

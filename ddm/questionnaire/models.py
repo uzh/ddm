@@ -407,6 +407,7 @@ class QuestionItem(models.Model):
         'QuestionBase',
         on_delete=models.CASCADE
     )
+    index = models.IntegerField()
     label = models.CharField(
         max_length=255,
         null=True,
@@ -418,7 +419,6 @@ class QuestionItem(models.Model):
         blank=True,
         verbose_name="Label Right"
     )
-    index = models.IntegerField()
     value = models.IntegerField()
     randomize = models.BooleanField(default=False)
 

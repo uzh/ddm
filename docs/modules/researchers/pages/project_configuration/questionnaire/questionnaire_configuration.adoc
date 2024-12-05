@@ -90,7 +90,7 @@ settings are available:
 Label:: The label/text of the item that is displayed to participants related to an item.
 For semantic differential questions, this is the label displayed on the left-hand side of the scale.
 
-Label alt:: Only for semantic differential questions: the label displayed on the
+Label Right:: Only for semantic differential questions. The label displayed on the
 right-hand side of the scale.
 
 Index:: Defines the order in which the items are displayed.

@@ -416,6 +416,7 @@ class QuestionItem(models.Model):
         max_length=255,
         null=True,
         blank=True,
+        verbose_name="Label Right"
     )
     index = models.IntegerField()
     value = models.IntegerField()

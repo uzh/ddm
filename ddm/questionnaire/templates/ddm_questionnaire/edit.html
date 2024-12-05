@@ -44,7 +44,12 @@
       {% if forloop.first %}
       <thead>
       <tr>
-        <th>Label</th>
+        {% if object.question_type == "semantic_diff" %}
+          <th>Label</th>
+          <th>Label Right</th>
+        {% else %}
+          <th>Label</th>
+        {% endif %}
         <th>Index</th>
         <th>Value</th>
         <th>Randomize</th>
@@ -52,7 +57,12 @@
       </thead>
       {% endif %}
       <tr>
-        <td>{{ item.label }}</td>
+        {% if object.question_type == "semantic_diff" %}
+          <td>{{ item.label }}</td>
+          <td>{{ item.label_alt }}</td>
+        {% else %}
+          <td>{{ item.label }}</td>
+        {% endif %}
         <td>{{ item.index }}</td>
         <td>{{ item.value }}</td>
         <td>{{ item.randomize }}</td>

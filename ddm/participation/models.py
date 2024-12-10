@@ -1,10 +1,8 @@
-import random
-import string
-
 from django.core.validators import MinLengthValidator
 from django.db import models
 
 from ddm.auth.models import ProjectAccessToken
+from ddm.core.utils.misc import create_asciidigits_id
 from ddm.datadonation.models import DataDonation
 from ddm.logging.models import ExceptionLogEntry, EventLogEntry
 
@@ -12,10 +10,6 @@ from ddm.logging.models import ExceptionLogEntry, EventLogEntry
 def get_extra_data_default():
     """ Return default value for Participant.extra_data. """
     return dict(url_param=dict())
-
-
-def create_asciidigits_id():
-    return ''.join(random.choices(string.ascii_letters + string.digits, k=24))
 
 
 class Participant(models.Model):
@@ -63,8 +57,8 @@ class Participant(models.Model):
 
     def save(self, *args, **kwargs):
         if self.pk is None:
-            new_external_id = create_asciidigits_id()
+            new_external_id = create_asciidigits_id(24)
             while len(Participant.objects.filter(external_id=new_external_id)) != 0:
-                new_external_id = create_asciidigits_id()
+                new_external_id = create_asciidigits_id(24)
             self.external_id = new_external_id
         super().save(*args, **kwargs)

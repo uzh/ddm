@@ -36,7 +36,7 @@ class BlueprintEditTestCase(TestCase):
         )
 
         cls.url = reverse('ddm_datadonation:blueprints:edit',
-                          kwargs={'pk': cls.blueprint.pk, 'project_pk': cls.project.pk})
+                          kwargs={'pk': cls.blueprint.pk, 'project_url_id': cls.project.url_id})
 
     def test_post_valid_data(self):
         valid_data = {
@@ -61,7 +61,10 @@ class BlueprintEditTestCase(TestCase):
         bp_name_after = DonationBlueprint.objects.get(pk=self.blueprint.pk).name
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse('ddm_datadonation:overview', kwargs={'project_pk': self.project.pk}))
+        self.assertEqual(
+            response.url,
+            reverse('ddm_datadonation:overview', kwargs={'project_url_id': self.project.url_id})
+        )
         self.assertNotEqual(bp_name_before, bp_name_after)
 
     def test_post_invalid_data(self):
@@ -122,7 +125,7 @@ class FileUploaderEditTestCase(TestCase):
         )
 
         cls.url = reverse('ddm_datadonation:uploaders:edit',
-                          kwargs={'pk': cls.file_uploader.pk, 'project_pk': cls.project.pk})
+                          kwargs={'pk': cls.file_uploader.pk, 'project_url_id': cls.project.url_id})
 
     def test_post_valid_data(self):
         valid_data = {
@@ -140,10 +143,22 @@ class FileUploaderEditTestCase(TestCase):
         bp_b_uploader_after = DonationBlueprint.objects.get(pk=self.blueprint_b.pk).file_uploader
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse('ddm_datadonation:overview', kwargs={'project_pk': self.project.pk}))
-        self.assertEqual(FileUploader.objects.get(pk=self.file_uploader.pk).name, valid_data['name'])
-        self.assertNotEqual(bp_a_uploader_before, bp_a_uploader_after)
-        self.assertNotEqual(bp_b_uploader_before, bp_b_uploader_after)
+        self.assertEqual(
+            response.url,
+            reverse('ddm_datadonation:overview', kwargs={'project_url_id': self.project.url_id})
+        )
+        self.assertEqual(
+            FileUploader.objects.get(pk=self.file_uploader.pk).name,
+            valid_data['name']
+        )
+        self.assertNotEqual(
+            bp_a_uploader_before,
+            bp_a_uploader_after
+        )
+        self.assertNotEqual(
+            bp_b_uploader_before,
+            bp_b_uploader_after
+        )
 
     def test_post_invalid_data(self):
         invalid_data = {
@@ -164,5 +179,11 @@ class FileUploaderEditTestCase(TestCase):
         self.assertNotEqual(
             FileUploader.objects.get(pk=self.file_uploader.pk).name,
             invalid_data['name'])
-        self.assertEqual(bp_a_uploader_before, bp_a_uploader_after)
-        self.assertEqual(bp_b_uploader_before, bp_b_uploader_after)
+        self.assertEqual(
+            bp_a_uploader_before,
+            bp_a_uploader_after
+        )
+        self.assertEqual(
+            bp_b_uploader_before,
+            bp_b_uploader_after
+        )

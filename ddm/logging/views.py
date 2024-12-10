@@ -10,8 +10,8 @@ class ProjectLogsView(SuccessMessageMixin, DDMAuthMixin, TemplateView):
     template_name = 'ddm_logging/overview.html'
 
     def get_project(self):
-        project_id = self.kwargs.get('project_pk')
-        return DonationProject.objects.filter(pk=project_id).first()
+        project_url_id = self.kwargs.get('project_url_id')
+        return DonationProject.objects.filter(url_id=project_url_id).first()
 
     def get_event_logs(self):
         project = self.get_project()

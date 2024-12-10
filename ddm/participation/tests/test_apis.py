@@ -95,17 +95,23 @@ class TestAPIs(TestCase):
         external_id = new_participant.external_id
 
         response = self.client.delete(
-            reverse('ddm_apis:participant_delete', args=[self.project_base.pk, external_id]))
+            reverse('ddm_apis:participant_delete',
+                    args=[self.project_base.url_id, external_id]))
         self.assertEqual(response.status_code, 200)
-        self.assertIsNone(Participant.objects.filter(external_id=external_id).first())
+        self.assertIsNone(Participant.objects.filter(
+            external_id=external_id).first())
 
         response = self.client.delete(
-            reverse('ddm_apis:participant_delete', args=[self.project_base.pk, 'some_bogus_id']))
+            reverse('ddm_apis:participant_delete',
+                    args=[self.project_base.url_id, 'some_bogus_id']))
         self.assertEqual(response.status_code, 404)
 
     def test_participant_deletion_fails_for_user_without_permission(self):
         self.client.login(**self.no_perm_creds)
         response = self.client.delete(
-            reverse('ddm_apis:participant_delete', args=[self.project_base.pk, self.participant.external_id]), follow=True)
+            reverse('ddm_apis:participant_delete',
+                    args=[self.project_base.url_id, self.participant.external_id]
+            ), follow=True)
         self.assertEqual(response.status_code, 403)
-        self.assertIsNotNone(Participant.objects.filter(external_id=self.participant.external_id).first())
+        self.assertIsNotNone(Participant.objects.filter(
+            external_id=self.participant.external_id).first())

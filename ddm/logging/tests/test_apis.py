@@ -36,7 +36,7 @@ class TestExceptionAPI(TestCase):
             regex_path='/this/file.json'
         )
 
-        cls.post_url = reverse('ddm_logging:exceptions_api', args=[cls.project.pk])
+        cls.post_url = reverse('ddm_logging:exceptions_api', args=[cls.project.url_id])
         cls.post_data = {
             'blueprint': cls.blueprint.pk,
             'status_code': 1,

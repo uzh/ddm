@@ -130,13 +130,13 @@ class TestAdminViewAuthentication(TestCase):
         )
 
         # Define list of admin urls for owned project.
-        cls.urls = cls.get_admin_urls(cls.project_owned.pk)
+        cls.urls = cls.get_admin_urls(cls.project_owned.url_id)
 
         # Define list of admin urls for non-owned project.
-        cls.urls_no_perm = cls.get_admin_urls(cls.project_not_owned.pk)
+        cls.urls_no_perm = cls.get_admin_urls(cls.project_not_owned.url_id)
 
     @classmethod
-    def get_admin_urls(cls, project_pk):
+    def get_admin_urls(cls, project_url_id):
         urls = []
         project_related_views = [
             'ddm_projects:detail',
@@ -151,11 +151,11 @@ class TestAdminViewAuthentication(TestCase):
             'ddm_auth:project_token'
         ]
         for view in project_related_views:
-            urls.append(reverse(view, args=[project_pk]))
+            urls.append(reverse(view, args=[project_url_id]))
 
         blueprint_related_views = ['ddm_datadonation:blueprints:edit', 'ddm_datadonation:blueprints:delete']
         for view in blueprint_related_views:
-            urls.append(reverse(view, args=[project_pk, cls.blueprint.pk]))
+            urls.append(reverse(view, args=[project_url_id, cls.blueprint.pk]))
 
         uploader_related_views = [
             'ddm_datadonation:uploaders:edit',
@@ -164,12 +164,12 @@ class TestAdminViewAuthentication(TestCase):
             'ddm_datadonation:instructions:create'
         ]
         for view in uploader_related_views:
-            urls.append(reverse(view, args=[project_pk, cls.file_uploader.pk]))
+            urls.append(reverse(view, args=[project_url_id, cls.file_uploader.pk]))
 
         instruction_related_views = ['ddm_datadonation:instructions:edit', 'ddm_datadonation:instructions:delete']
         for view in instruction_related_views:
             urls.append(
-                reverse(view, args=[project_pk, cls.file_uploader.pk, cls.instruction.pk]))
+                reverse(view, args=[project_url_id, cls.file_uploader.pk, cls.instruction.pk]))
 
         questions = [
             ('single_choice', cls.sc_quest.pk),
@@ -181,30 +181,30 @@ class TestAdminViewAuthentication(TestCase):
         ]
         for question in questions:
             urls.append(
-                reverse('ddm_questionnaire:create', args=[project_pk, question[0]]))
+                reverse('ddm_questionnaire:create', args=[project_url_id, question[0]]))
 
         for view in ['ddm_questionnaire:edit', 'ddm_questionnaire:delete']:
             for question in questions:
                 urls.append(
-                    reverse(view, args=[project_pk, question[0], question[1]]))
+                    reverse(view, args=[project_url_id, question[0], question[1]]))
 
         item_views = [
             reverse('ddm_questionnaire:items',
-                    args=[project_pk, 'single_choice', cls.sc_quest.pk]),
+                    args=[project_url_id, 'single_choice', cls.sc_quest.pk]),
             reverse('ddm_questionnaire:items',
-                    args=[project_pk, 'multi_choice', cls.mc_quest.pk]),
+                    args=[project_url_id, 'multi_choice', cls.mc_quest.pk]),
             reverse('ddm_questionnaire:items',
-                    args=[project_pk, 'matrix', cls.matrix_quest.pk]),
+                    args=[project_url_id, 'matrix', cls.matrix_quest.pk]),
             reverse('ddm_questionnaire:items',
-                    args=[project_pk, 'semantic_diff', cls.diff_quest.pk]),
+                    args=[project_url_id, 'semantic_diff', cls.diff_quest.pk]),
         ]
         urls += item_views
 
         scale_views = [
             reverse('ddm_questionnaire:scale',
-                    args=[project_pk, 'matrix', cls.matrix_quest.pk]),
+                    args=[project_url_id, 'matrix', cls.matrix_quest.pk]),
             reverse('ddm_questionnaire:scale',
-                    args=[project_pk, 'semantic_diff', cls.diff_quest.pk]),
+                    args=[project_url_id, 'semantic_diff', cls.diff_quest.pk]),
         ]
         urls += scale_views
         return urls

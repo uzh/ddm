@@ -238,7 +238,7 @@ class DataDonationView(ParticipationFlowBaseView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['uploader_configs'] = SafeString(self.get_uploader_configs())
-        context['project_id'] = self.object.pk
+        context['project_url_id'] = self.object.url_id
         return context
 
     def get_uploader_configs(self):
@@ -369,7 +369,7 @@ class DebriefingView(ParticipationFlowBaseView):
         context = super().get_context_data(**kwargs)
 
         template_context = self.participant.get_context_data()
-        template_context.update({'project_id': self.object.pk})
+        template_context.update({'project_id': self.object.url_id})
         context['debriefing'] = render_user_content(self.object.debriefing_text, template_context)
 
         if self.object.redirect_enabled:

@@ -34,15 +34,13 @@ class DDMAuthMixin:
                 return redirect('ddm_auth:no_permission')
 
             if request.path not in [reverse('ddm_projects:list'), reverse('ddm_projects:create')]:
-                if 'project_pk' in self.kwargs:
-                    project_pk = self.kwargs['project_pk']
-                elif 'pk' in self.kwargs:
-                    project_pk = self.kwargs['pk']
+                if 'project_url_id' in self.kwargs:
+                    project_id = self.kwargs['project_url_id']
                 else:
                     raise Http404()
 
                 try:
-                    project = DonationProject.objects.get(pk=project_pk)
+                    project = DonationProject.objects.get(url_id=project_id)
                 except DonationProject.DoesNotExist:
                     raise Http404()
 
@@ -78,8 +76,8 @@ class ProjectTokenView(SuccessMessageMixin, DDMAuthMixin, FormView):
 
     def get_project(self):
         """ Returns current project. """
-        project_id = self.kwargs.get('pk')
-        return DonationProject.objects.filter(pk=project_id).first()
+        project_url_id = self.kwargs.get('project_url_id')
+        return DonationProject.objects.filter(url_id=project_url_id).first()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -103,4 +101,4 @@ class ProjectTokenView(SuccessMessageMixin, DDMAuthMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('ddm_auth:project_token', kwargs={'pk': self.kwargs.get('pk')})
+        return reverse('ddm_auth:project_token', kwargs={'project_url_id': self.kwargs.get('project_url_id')})

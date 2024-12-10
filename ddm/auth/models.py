@@ -86,15 +86,14 @@ class ProjectTokenAuthenticator(TokenAuthentication):
             raise exceptions.AuthenticationFailed(msg)
 
         try:
-            project_pk = request.parser_context['kwargs'].get('pk', None)
-            project_pk = int(project_pk)
+            project_id = request.parser_context['kwargs'].get('project_url_id', None)
         except ValueError:
             msg = 'Invalid project identifier provided.'
             raise exceptions.AuthenticationFailed(msg)
 
-        return self.authenticate_credentials(token, project_pk)
+        return self.authenticate_credentials(token, project_id)
 
-    def authenticate_credentials(self, key, project_pk):
+    def authenticate_credentials(self, key, project_id):
         model = self.get_model()
         try:
             token = model.objects.select_related('project').get(key=key)
@@ -106,7 +105,7 @@ class ProjectTokenAuthenticator(TokenAuthentication):
             msg = 'Token has expired. You can create a new one in the admin backend.'
             raise exceptions.AuthenticationFailed(msg)
 
-        if token.project.pk != project_pk:
+        if token.project.url_id != project_id:
             msg = 'The provided token does not belong to the requested project.'
             raise exceptions.AuthenticationFailed(msg)
 

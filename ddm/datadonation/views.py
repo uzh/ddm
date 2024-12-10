@@ -16,16 +16,18 @@ class BlueprintMixin:
     """ Mixin for all blueprint related views. """
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        file_uploaders = FileUploader.objects.filter(project__pk=self.kwargs['project_pk'])
+        file_uploaders = FileUploader.objects.filter(project__url_id=self.kwargs['project_url_id'])
         context.update({
-            'project': DonationProject.objects.get(pk=self.kwargs['project_pk']),
+            'project': DonationProject.objects.get(url_id=self.kwargs['project_url_id']),
             'file_uploader_meta': {str(fu.pk): fu.upload_type for fu in file_uploaders}
         })
         return context
 
     def get_success_url(self):
-        return reverse('ddm_datadonation:overview',
-                       kwargs={'project_pk': self.kwargs['project_pk']})
+        return reverse(
+            'ddm_datadonation:overview',
+            kwargs={'project_url_id': self.kwargs['project_url_id']}
+        )
 
 
 class DataDonationOverview(DDMAuthMixin, BlueprintMixin, ListView):
@@ -40,7 +42,7 @@ class DataDonationOverview(DDMAuthMixin, BlueprintMixin, ListView):
         return context
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(project_id=self.kwargs['project_pk'])
+        queryset = super().get_queryset().filter(project__url_id=self.kwargs['project_url_id'])
         return queryset
 
 
@@ -52,12 +54,14 @@ class FileUploaderCreate(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, Crea
     success_message = 'File Uploader was created successfully.'
 
     def form_valid(self, form):
-        form.instance.project_id = self.kwargs['project_pk']
+        project_url_id = self.kwargs['project_url_id']
+        project = DonationProject.objects.get(url_id=project_url_id)
+        form.instance.project_id = project.pk
         return super().form_valid(form)
 
     def get_success_url(self):
         kwargs = {
-            'project_pk': self.kwargs['project_pk'],
+            'project_url_id': self.kwargs['project_url_id'],
             'pk': self.object.pk
         }
         return reverse('ddm_datadonation:uploaders:edit', kwargs=kwargs)
@@ -81,7 +85,7 @@ class FileUploaderEdit(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, Update
         the current or no file uploader.
         """
         relevant_blueprints = DonationBlueprint.objects.filter(
-            Q(file_uploader=self.object) | Q(file_uploader=None), project__pk=self.kwargs['project_pk'])
+            Q(file_uploader=self.object) | Q(file_uploader=None), project__url_id=self.kwargs['project_url_id'])
         return relevant_blueprints
 
     def post(self, request, *args, **kwargs):
@@ -132,17 +136,19 @@ class BlueprintCreate(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, CreateV
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        available_file_uploaders = FileUploader.objects.filter(project_id=self.kwargs['project_pk'])
+        available_file_uploaders = FileUploader.objects.filter(project__url_id=self.kwargs['project_url_id'])
         context['form'].fields['file_uploader'].queryset = available_file_uploaders
         return context
 
     def form_valid(self, form):
-        form.instance.project_id = self.kwargs['project_pk']
+        project_url_id = self.kwargs['project_url_id']
+        project = DonationProject.objects.get(url_id=project_url_id)
+        form.instance.project_id = project.pk
         return super().form_valid(form)
 
     def get_success_url(self):
         return reverse('ddm_datadonation:blueprints:edit',
-                       kwargs={'project_pk': self.object.project.pk, 'pk': self.object.pk})
+                       kwargs={'project_url_id': self.object.project.url_id, 'pk': self.object.pk})
 
 
 class BlueprintEdit(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, UpdateView):
@@ -153,11 +159,15 @@ class BlueprintEdit(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, UpdateVie
     success_message = 'Blueprint "%(name)s" was successfully updated.'
 
     def get_success_url(self):
-        return reverse('ddm_datadonation:overview', kwargs={'project_pk': self.object.project.pk})
+        return reverse(
+            'ddm_datadonation:overview',
+            kwargs={'project_url_id': self.object.project.url_id}
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        available_file_uploaders = FileUploader.objects.filter(project_id=self.kwargs['project_pk'])
+        available_file_uploaders = FileUploader.objects.filter(
+            project__url_id=self.kwargs['project_url_id'])
         context['form'].fields['file_uploader'].queryset = available_file_uploaders
         context['formset'] = ProcessingRuleInlineFormset(
             instance=self.object, queryset=self.object.processingrule_set.order_by('execution_order'))
@@ -200,12 +210,12 @@ class BlueprintDelete(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, DeleteV
 class InstructionMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update({'project_pk': self.kwargs['project_pk']})
+        context.update({'project_url_id': self.kwargs['project_url_id']})
         context.update({'file_uploader': FileUploader.objects.get(pk=self.kwargs['file_uploader_pk'])})
         return context
 
     def get_success_url(self):
-        kwargs = {'project_pk': self.kwargs['project_pk'],
+        kwargs = {'project_url_id': self.kwargs['project_url_id'],
                   'file_uploader_pk': self.kwargs['file_uploader_pk']}
         return reverse('ddm_datadonation:instructions:overview', kwargs=kwargs)
 

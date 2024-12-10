@@ -13,12 +13,12 @@
     Access tokens are valid for a limited time (maximum 90 days). After the current token has expired, a new one must be created.
   </p>
   <p>
-    The download API endpoint for this project is <code class="text-dark">https://{{ request.get_host }}/api/project/{{ project.pk }}/data/</code>.<br>
+    The download API endpoint for this project is <code class="text-dark">https://{{ request.get_host }}/api/project/{{ project.url_id }}/data/</code>.<br>
     When making a request, prefix your token with "Token " and include this string in the Authorization HTTP header.
     {% if project.super_secret %}
-    Because this is a super secret project, the secret must also be provided in an HTTP header named "Super-Secret" (e.g., <code class="text-dark">GET https://{{ request.get_host }}/{{ project.pk }}/download/ -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b' -H 'Super-Secret: y0urSuperSecr3t'</code>).
+    Because this is a super secret project, the secret must also be provided in an HTTP header named "Super-Secret" (e.g., <code class="text-dark">GET https://{{ request.get_host }}/{{ project.url_id }}/download/ -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b' -H 'Super-Secret: y0urSuperSecr3t'</code>).
     {% else %}
-    (e.g., <code class="text-dark">GET https://{{ request.get_host }}/api/project/{{ project.pk }}/data/ -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b'</code>).
+    (e.g., <code class="text-dark">GET https://{{ request.get_host }}/api/project/{{ project.url_id }}/data/ -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b'</code>).
     {% endif %}
   </p>
   An example on how this can be used to retrieve the data directly from within your R- or Python-scripts can be found <a>here</a>. <!-- TODO: Link to example in documentation. -->
@@ -78,7 +78,7 @@
     <input class="ddm-btn" type="submit" value="Create Token">
     {% block cancel %}
     <p>
-      <a href="{% url 'ddm_projects:detail' project.pk %}">&#129040; Back</a>
+      <a href="{% url 'ddm_projects:detail' project.url_id %}">&#129040; Back</a>
     </p>
     {% endblock %}
   </div>
@@ -87,6 +87,6 @@
 
 {% block breadcrumbs %}
 <a href="{% url 'ddm_projects:list' %}">Projects</a> /
-<a href="{% url 'ddm_projects:detail' project.pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'ddm_projects:detail' project.url_id %}">"{{ project.name|truncatechars:15 }}" Project</a> /
 Manage Access Token
 {% endblock %}

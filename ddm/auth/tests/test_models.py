@@ -36,7 +36,7 @@ class TestCustomTokenAuthenticator(TestCase):
 
     def test_valid_token_without_expiration(self):
         validated_token = self.authenticator.authenticate_credentials(
-            self.token, self.project.pk)[1]
+            self.token, self.project.url_id)[1]
         self.assertEqual(self.token, validated_token)
 
     def test_valid_token_with_expiration(self):
@@ -47,7 +47,7 @@ class TestCustomTokenAuthenticator(TestCase):
             expiration_date=timezone.now() + datetime.timedelta(days=2)
         )
         validated_token = self.authenticator.authenticate_credentials(
-            token, self.project.pk)[1]
+            token, self.project.url_id)[1]
         self.assertEqual(token, validated_token)
 
     def test_invalid_token(self):
@@ -55,14 +55,14 @@ class TestCustomTokenAuthenticator(TestCase):
         self.assertRaises(
             exceptions.AuthenticationFailed,
             self.authenticator.authenticate_credentials,
-            token, self.project.pk
+            token, self.project.url_id
         )
 
     def test_without_token(self):
         self.assertRaises(
             exceptions.AuthenticationFailed,
             self.authenticator.authenticate_credentials,
-            None, self.project.pk
+            None, self.project.url_id
         )
 
     def test_expired_token(self):
@@ -75,5 +75,5 @@ class TestCustomTokenAuthenticator(TestCase):
         self.assertRaises(
             exceptions.AuthenticationFailed,
             self.authenticator.authenticate_credentials,
-            expired_token, self.project.pk
+            expired_token, self.project.url_id
         )

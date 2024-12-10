@@ -7,7 +7,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from PIL import Image
 
 BASE_URL = 'http://127.0.0.1:8000/'
-PROJECT_ID = 20
+PROJECT_ID = 'F1svPg1v'
 PROJECT_SLUG = 'your-individual-url'
 FILE_UPLOADER_ID = 27
 

@@ -98,7 +98,7 @@ class TestAPIs(TestCase):
                                    {'data': ['donated_data2', 'donated_data2']}]
         }
         response = client.get(
-            reverse('ddm_apis:donations', args=[self.project_base.pk]))
+            reverse('ddm_apis:donations', args=[self.project_base.url_id]))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, expected_response)
 
@@ -106,7 +106,9 @@ class TestAPIs(TestCase):
             'donation blueprint': [{'data': ['donated_data', 'donated_data']}]
         }
         response = client.get(
-            reverse('ddm_apis:donations', args=[self.project_base.pk]), {'participants': str(self.participant.external_id)})
+            reverse('ddm_apis:donations', args=[self.project_base.url_id]),
+            {'participants': str(self.participant.external_id)}
+        )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, expected_response)
 
@@ -115,7 +117,7 @@ class TestAPIs(TestCase):
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         response = client.delete(
-            reverse('ddm_apis:donations', args=[self.project_base.pk]))
+            reverse('ddm_apis:donations', args=[self.project_base.url_id]))
         self.assertEqual(response.status_code, 401)
 
     def test_donations_api_fails_with_no_api_credentials_created(self):
@@ -125,5 +127,5 @@ class TestAPIs(TestCase):
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + key)
         response = client.delete(
-            reverse('ddm_apis:donations', args=[self.project_base.pk]))
+            reverse('ddm_apis:donations', args=[self.project_base.url_id]))
         self.assertEqual(response.status_code, 401)

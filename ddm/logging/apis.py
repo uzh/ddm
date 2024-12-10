@@ -16,11 +16,11 @@ class ExceptionAPI(APIView):
         """
         Log exception messages received from client.
         """
-        project_id = self.kwargs['pk']
-        project = DonationProject.objects.get(pk=project_id)
+        project_url_id = self.kwargs['project_url_id']
+        project = DonationProject.objects.get(url_id=project_url_id)
 
         try:
-            participant_id = request.session[f'project-{project_id}']['participant_id']
+            participant_id = request.session[f'project-{project.pk}']['participant_id']
             participant = Participant.objects.get(pk=participant_id)
         except KeyError:
             participant = None

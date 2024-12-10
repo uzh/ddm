@@ -20,12 +20,12 @@ class ProjectMixin:
     """ Mixin for all blueprint related views. """
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update({'project_pk': self.kwargs['project_pk']})
+        context.update({'project_url_id': self.kwargs['project_url_id']})
         context.update({'project': self.get_project()})
         return context
 
     def get_project(self):
-        return DonationProject.objects.get(pk=self.kwargs['project_pk'])
+        return DonationProject.objects.get(url_id=self.kwargs['project_url_id'])
 
 
 class QuestionnaireOverview(ProjectMixin, DDMAuthMixin, ListView):
@@ -48,7 +48,7 @@ class QuestionnaireOverview(ProjectMixin, DDMAuthMixin, ListView):
         return project.questionbase_set.all()
 
     def get_queryset(self):
-        return super().get_queryset().filter(project_id=self.kwargs['project_pk'])
+        return super().get_queryset().filter(project__url_id=self.kwargs['project_url_id'])
 
 
 class QuestionFormMixin(ProjectMixin):
@@ -90,7 +90,7 @@ class QuestionFormMixin(ProjectMixin):
         question_type_label = QuestionType(self.kwargs['question_type']).label
         context.update({'question_type': question_type_label})
         context['form'].fields['blueprint'].queryset = DonationBlueprint.objects.filter(
-            project_id=self.kwargs['project_pk'])
+            project__url_id=self.kwargs['project_url_id'])
         context['form'].fields['blueprint'].empty_label = 'General Question – no Blueprint assigned'
         context['form'].fields['text'].widget = CKEditor5Widget(config_name='ddm_ckeditor_temp_func')
         return context
@@ -109,13 +109,13 @@ class QuestionCreate(SuccessMessageMixin, DDMAuthMixin, QuestionFormMixin, Creat
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['instance'] = self.QUESTION_CLASSES[self.kwargs['question_type']](
-            project_id=self.kwargs['project_pk'],
+            project=self.get_project(),
         )
         return kwargs
 
     def get_success_url(self):
         kwargs = {
-            'project_pk': self.kwargs['project_pk'],
+            'project_url_id': self.kwargs['project_url_id'],
             'question_type': self.kwargs['question_type'],
             'pk': self.object.pk
         }
@@ -136,7 +136,7 @@ class QuestionEdit(SuccessMessageMixin, DDMAuthMixin, QuestionFormMixin, UpdateV
 
     def get_success_url(self):
         success_kwargs = {
-            'project_pk': self.kwargs['project_pk'],
+            'project_url_id': self.kwargs['project_url_id'],
             'question_type': self.kwargs['question_type'],
             'pk': self.kwargs['pk']
         }
@@ -153,7 +153,8 @@ class QuestionDelete(SuccessMessageMixin, DDMAuthMixin, ProjectMixin, DeleteView
         return self.success_message % self.object.name
 
     def get_success_url(self):
-        return reverse('ddm_questionnaire:overview', kwargs={'project_pk': self.kwargs['project_pk']})
+        return reverse(
+        'ddm_questionnaire:overview', kwargs={'project_url_id': self.kwargs['project_url_id']})
 
 
 class InlineFormsetMixin(ProjectMixin):
@@ -206,7 +207,7 @@ class ItemEdit(SuccessMessageMixin, DDMAuthMixin, InlineFormsetMixin, UpdateView
     def get_success_url(self):
         question = self.get_object()
         success_kwargs = {
-            'project_pk': self.kwargs['project_pk'],
+            'project_url_id': self.kwargs['project_url_id'],
             'question_type': question.question_type,
             'pk': question.pk
         }
@@ -224,7 +225,7 @@ class ScaleEdit(SuccessMessageMixin, DDMAuthMixin, InlineFormsetMixin, UpdateVie
     def get_success_url(self):
         question = self.get_object()
         success_kwargs = {
-            'project_pk': self.kwargs['project_pk'],
+            'project_url_id': self.kwargs['project_url_id'],
             'question_type': question.question_type,
             'pk': question.pk
         }

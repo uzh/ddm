@@ -99,13 +99,13 @@ class TestResponsesAPI(TestCase):
 
         expected_response = [{'open': 'response_data'}, {'open': 'response_data2'}]
         response = client.get(
-            reverse('ddm_apis:responses', args=[self.project_base.pk]))
+            reverse('ddm_apis:responses', args=[self.project_base.url_id]))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, expected_response)
 
         expected_response = [{'open': 'response_data'}]
         response = client.get(
-            reverse('ddm_apis:responses', args=[self.project_base.pk]),
+            reverse('ddm_apis:responses', args=[self.project_base.url_id]),
             {'participants': str(self.participant.external_id)})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, expected_response)
@@ -115,7 +115,7 @@ class TestResponsesAPI(TestCase):
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         response = client.delete(
-            reverse('ddm_apis:responses', args=[self.project_base.pk]))
+            reverse('ddm_apis:responses', args=[self.project_base.url_id]))
         self.assertEqual(response.status_code, 401)
 
     def test_GET_fails_with_no_api_credentials_created(self):
@@ -125,7 +125,7 @@ class TestResponsesAPI(TestCase):
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + key)
         response = client.get(
-            reverse('ddm_apis:responses', args=[self.project_base.pk]))
+            reverse('ddm_apis:responses', args=[self.project_base.url_id]))
         self.assertEqual(response.status_code, 401)
 
     def test_GET_disallowed_for_super_secret_project(self):
@@ -133,5 +133,5 @@ class TestResponsesAPI(TestCase):
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         response = client.get(
-            reverse('ddm_apis:responses', args=[self.super_secret_project.pk]))
+            reverse('ddm_apis:responses', args=[self.super_secret_project.url_id]))
         self.assertEqual(response.status_code, 405)

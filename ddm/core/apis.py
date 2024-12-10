@@ -24,7 +24,7 @@ class DDMAPIMixin:
 
     def get_project(self):
         """ Returns project instance. """
-        return DonationProject.objects.filter(pk=self.kwargs['pk']).first()
+        return DonationProject.objects.filter(url_id=self.kwargs['project_url_id']).first()
 
     def create_event_log(self, descr, msg):
         """ Creates an event log entry related to the current project. """

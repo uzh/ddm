@@ -24,13 +24,13 @@
   </div>
   <input class="ddm-btn ddm-btn-red" type="submit" value="Delete project">
   <p class="mt-3">
-    <a href="{% url 'ddm_projects:detail' object.pk %}">&#129040; Cancel</a>
+    <a href="{% url 'ddm_projects:detail' object.url_id %}">&#129040; Cancel</a>
   </p>
 </form>
 {% endblock %}
 
 {% block breadcrumbs %}
 <a href="{% url 'ddm_projects:list' %}">Projects</a> /
-<a href="{% url 'ddm_projects:detail' object.pk %}">"{{ object.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'ddm_projects:detail' object.url_id %}">"{{ object.name|truncatechars:15 }}" Project</a> /
 Delete
 {% endblock %}

@@ -11,6 +11,7 @@ from django.utils.safestring import mark_safe
 from django.views.decorators.debug import sensitive_variables
 
 from ddm.auth.models import ProjectAccessToken
+from ddm.core.utils.misc import create_asciidigits_id
 from ddm.datadonation.models import DataDonation
 from ddm.encryption.models import Encryption
 from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers, EventLogEntry
@@ -36,6 +37,8 @@ def project_header_dir_path(instance, filename):
 
 
 class DonationProject(models.Model):
+    url_id = models.SlugField(unique=True, max_length=8)
+
     # Basic information for internal organization.
     name = models.CharField(
         max_length=50,
@@ -170,7 +173,7 @@ class DonationProject(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('ddm_projects:detail', args=[str(self.id)])
+        return reverse('ddm_projects:detail', args=[str(self.url_id)])
 
     def get_salt(self):
         return str(self.date_created)
@@ -203,6 +206,12 @@ class DonationProject(models.Model):
 
         if not self.public_key:
             self.public_key = Encryption.get_public_key(self.secret, str(self.date_created))
+
+        if not self.url_id:
+            self.url_id = create_asciidigits_id(8)
+            while DonationProject.objects.filter(url_id=self.url_id).exists():
+                self.url_id = create_asciidigits_id(8)
+
         super().save(*args, **kwargs)
 
     @property

@@ -128,7 +128,7 @@
     <input class="ddm-btn" type="submit" value="Update Project">
     {% block cancel %}
       <p>
-        <a href="{% url 'ddm_projects:detail' object.pk %}">&#129040; Cancel</a>
+        <a href="{% url 'ddm_projects:detail' object.url_id %}">&#129040; Cancel</a>
       </p>
     {% endblock %}
   </div>
@@ -137,7 +137,7 @@
 
 {% block breadcrumbs %}
 <a href="{% url 'ddm_projects:list' %}">Projects</a> /
-<a href="{% url 'ddm_projects:detail' object.pk %}">"{{ object.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'ddm_projects:detail' object.url_id %}">"{{ object.name|truncatechars:15 }}" Project</a> /
 Edit Details
 {% endblock %}
 

@@ -35,3 +35,9 @@ class TestDonationProject(TestCase):
         ]
         for key in statistics_keys:
             self.assertIn(key, self.project.get_statistics())
+
+    def test_create_url_id(self):
+        new_project = DonationProject.objects.create(
+            name='test project', slug='test', owner=self.user_profile)
+        self.assertIsNotNone(new_project.url_id)
+        self.assertEqual(len(new_project.url_id), 8)

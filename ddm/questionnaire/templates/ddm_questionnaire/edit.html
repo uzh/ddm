@@ -26,7 +26,7 @@
     <input class="ddm-btn" type="submit" value="Update Question">
     {% block cancel %}
     <p>
-      <a href="{% url 'ddm_questionnaire:overview' project_pk %}">&#129040; Back</a>
+      <a href="{% url 'ddm_questionnaire:overview' project_url_id %}">&#129040; Back</a>
     </p>
     {% endblock %}
   </div>
@@ -72,7 +72,7 @@
     {% endfor %}
     </table>
 
-    <p><a class="ddm-btn" href="{% url 'ddm_questionnaire:items' project_pk object.question_type object.pk %}">Edit Items</a></p>
+    <p><a class="ddm-btn" href="{% url 'ddm_questionnaire:items' project_url_id object.question_type object.pk %}">Edit Items</a></p>
   </div>
 </div>
 {% endif %}
@@ -101,20 +101,20 @@
       <tr><td>No scale points defined.</td></tr>
     {% endfor %}
     </table>
-    <p><a class="ddm-btn" href="{% url 'ddm_questionnaire:scale' project_pk object.question_type object.pk %}">Edit Scale Points</a></p>
+    <p><a class="ddm-btn" href="{% url 'ddm_questionnaire:scale' project_url_id object.question_type object.pk %}">Edit Scale Points</a></p>
   </div>
 </div>
 {% endif %}
 
 <div class="mt-3">
-  <a href="{% url 'ddm_questionnaire:overview' project_pk %}">&#129040; Back</a>
+  <a href="{% url 'ddm_questionnaire:overview' project_url_id %}">&#129040; Back</a>
 </div>
 {% endblock %}
 
 
 {% block breadcrumbs %}
 <a href="{% url 'ddm_projects:list' %}">Projects</a> /
-<a href="{% url 'ddm_projects:detail' project_pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
-<a href="{% url 'ddm_questionnaire:overview' project_pk %}">Questionnaire</a> /
+<a href="{% url 'ddm_projects:detail' project_url_id %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'ddm_questionnaire:overview' project_url_id %}">Questionnaire</a> /
 Edit Question
 {% endblock %}

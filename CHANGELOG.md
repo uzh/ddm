@@ -16,7 +16,7 @@ Below, the key updates are highlighted, including breaking changes, new features
 ### Added
 
 - Add to set a donation project to active/inactive. Participation is only possible in active projects.
-
+- Add `url_id` attribute to DonationProject model and use this random 8-character url_id for all URLs exposed in the research interface. 
 
 ### Breaking Changes
 

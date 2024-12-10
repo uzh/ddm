@@ -28,14 +28,14 @@
       {% for uploader in file_uploaders %}
       <tr>
         <td>{{ uploader.index }}</td>
-        <td>{{ uploader.name }} (<a href="{% url 'ddm_datadonation:uploaders:edit' project.pk uploader.pk %}">Edit</a> | <a href="{% url 'ddm_datadonation:uploaders:delete' project.pk uploader.pk %}">Delete</a>)</td>
+        <td>{{ uploader.name }} (<a href="{% url 'ddm_datadonation:uploaders:edit' project.url_id uploader.pk %}">Edit</a> | <a href="{% url 'ddm_datadonation:uploaders:delete' project.url_id uploader.pk %}">Delete</a>)</td>
         <td>{{ uploader.upload_type }}</td>
-        <td><a href="{% url 'ddm_datadonation:instructions:overview' project.pk uploader.pk %}">Edit Instructions</a></td>
+        <td><a href="{% url 'ddm_datadonation:instructions:overview' project.url_id uploader.pk %}">Edit Instructions</a></td>
         <td>
           {% if uploader.donationblueprint_set.all %}
           <ul>
             {% for blueprint in uploader.donationblueprint_set.all %}
-            <li>{{ blueprint.name }} (<a href="{{ blueprint.get_absolute_url }}">Edit</a> | <a href="{% url 'ddm_datadonation:blueprints:delete' project.pk blueprint.pk %}">Delete</a>)</li>
+            <li>{{ blueprint.name }} (<a href="{{ blueprint.get_absolute_url }}">Edit</a> | <a href="{% url 'ddm_datadonation:blueprints:delete' project.url_id blueprint.pk %}">Delete</a>)</li>
             {% endfor %}
           </ul>
           {% else %}
@@ -49,8 +49,8 @@
       </tr>
       {% endfor %}
     </table>
-    <a class="ddm-btn" href="{% url 'ddm_datadonation:uploaders:create' project.pk %}"><b>+</b>&nbsp;&nbsp;Create new Uploader</a>
-    <a class="ddm-btn" href="{% url 'ddm_datadonation:blueprints:create' project.pk %}"><b>+</b>&nbsp;&nbsp;Create new File Blueprint</a>
+    <a class="ddm-btn" href="{% url 'ddm_datadonation:uploaders:create' project.url_id %}"><b>+</b>&nbsp;&nbsp;Create new Uploader</a>
+    <a class="ddm-btn" href="{% url 'ddm_datadonation:blueprints:create' project.url_id %}"><b>+</b>&nbsp;&nbsp;Create new File Blueprint</a>
   </div>
 </div>
 
@@ -65,7 +65,7 @@
       {% for blueprint in lonely_blueprints %}
       <tr>
         <td>{{ blueprint.name }}</td>
-        <td><a href="{{ blueprint.get_absolute_url }}">Edit</a> | <a href="{% url 'ddm_datadonation:blueprints:delete' project.pk blueprint.pk %}">Delete</a></td>
+        <td><a href="{{ blueprint.get_absolute_url }}">Edit</a> | <a href="{% url 'ddm_datadonation:blueprints:delete' project.url_id blueprint.pk %}">Delete</a></td>
       </tr>
       {% empty %}
       <tr>
@@ -73,18 +73,18 @@
       </tr>
       {% endfor %}
     </table>
-    <a class="ddm-btn" href="{% url 'ddm_datadonation:blueprints:create' project.pk %}"><b>+</b>&nbsp;&nbsp;Create new File Blueprint</a>
+    <a class="ddm-btn" href="{% url 'ddm_datadonation:blueprints:create' project.url_id %}"><b>+</b>&nbsp;&nbsp;Create new File Blueprint</a>
   </div>
 </div>
 
 <div>
-  <a href="{% url 'ddm_projects:detail' project.pk %}">&#129040; Back</a>
+  <a href="{% url 'ddm_projects:detail' project.url_id %}">&#129040; Back</a>
 </div>
 
 {% endblock %}
 
 {% block breadcrumbs %}
 <a href="{% url 'ddm_projects:list' %}">Projects</a> /
-<a href="{% url 'ddm_projects:detail' project.pk %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'ddm_projects:detail' project.url_id %}">"{{ project.name|truncatechars:15 }}" Project</a> /
 Data Donation Overview
 {% endblock %}

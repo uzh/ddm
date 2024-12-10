@@ -155,7 +155,7 @@ class TestDownloadAPIPerformance(PerformanceTest):
             with cProfile.Profile() as profiler:
                 header = {'Super-Secret': None}
                 profiler.enable()
-                self.client.get(reverse('ddm_apis:project_data', args=[self.project.pk]), **header)
+                self.client.get(reverse('ddm_apis:project_data', args=[self.project.url_id]), **header)
                 profiler.disable()
 
                 # Get statistics.

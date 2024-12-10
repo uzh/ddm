@@ -65,7 +65,7 @@ class TestProjectTokenView(TestCase):
         self.client.login(**self.valid_creds)
         response = self.client.get(
             reverse('ddm_auth:project_token',
-                    args=[self.project.pk]),
+                    args=[self.project.url_id]),
             follow=True)
         self.assertEqual(response.status_code, 200)
 
@@ -73,7 +73,7 @@ class TestProjectTokenView(TestCase):
         self.client.login(**self.not_permitted_creds)
         response = self.client.get(
             reverse('ddm_auth:project_token',
-                    args=[self.project.pk]),
+                    args=[self.project.url_id]),
             follow=True)
         self.assertRedirects(response, reverse('ddm_auth:no_permission'))
 
@@ -81,7 +81,7 @@ class TestProjectTokenView(TestCase):
         self.client.logout()
         response = self.client.get(
             reverse('ddm_auth:project_token',
-                    args=[self.project.pk]),
+                    args=[self.project.url_id]),
             follow=True)
         self.assertRedirects(response, reverse('ddm_login'))
 
@@ -149,10 +149,10 @@ class TestDDMAuthMixin(TestCase):
         request = self.factory.get('/test-url/')
         request.user = self.not_owner
         with self.assertRaises(Http404):
-            self.view(request, **{'pk': self.project.pk})
+            self.view(request, **{'project_url_id': self.project.url_id})
 
     def test_dispatch_valid_user(self):
         request = self.factory.get('/test-url/')
         request.user = self.valid_user
-        response = self.view(request, **{'pk': self.project.pk})
+        response = self.view(request, **{'project_url_id': self.project.url_id})
         self.assertEqual(response.status_code, 200)

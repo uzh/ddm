@@ -13,6 +13,10 @@
   {{ form.non_field_errors }}
 
   <div>
+    <p><b>Blueprint ID:</b> {{ object.pk }}</p>
+  </div>
+
+  <div class="mt-5">
     <h5>General Settings</h5>
 
     {% for field in form %}

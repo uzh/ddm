@@ -8,156 +8,296 @@
 :page-pagination:
 
 
-DDM offers several interfaces to retrieve different parts of the data collected for a
-given project. For example, it is possible to retrieve only the data donations,
-only the questionnaire responses, or the complete data including data donations,
-questionnaire responses and metadata.
+DDM provides RESTful APIs to access specific components of data collected for a project. You can retrieve
+general information on a project configuration and its blueprints and participants, data donations, or
+questionnaire responses.
 
-This can be useful to, for example:
+Examples of use cases include:
 
-* access specific parts of the data collected for a project directly from within your R-
-or Python-analysis scripts.
-* provide your participants with a personalized dashboard or report containing
-personalized insights based on the data they just donated to a project. This can
-serve as a great incentive for participation.
-* build custom dashboards to track the progress of your data collection in more detail.
+* Accessing specific data directly from your R or Python analysis scripts.
+* Providing participants with personalized dashboards or reports containing insights based on the donated data. This can
+serve as an incentive for participation.
+* Building custom dashboards to monitor the data collection in more detail.
 
-For this, DDM implements RESTful APIs. Currently, only GET requests are allowed
-through these endpoints.
+Currently, the APIs only support GET requests.
 
 
 == Authentication
-The APIs listed here can be accessed using Token authentication. A Token
-is always associated to a specific project and must be created through the
-web application (on the main project site, go to the _Project Hub_ and in the
-_Data Center_ click on _Manage Access Token_).
-
-Token expiration can be set to a maximum of 90 days after which they must be renewed.
+The APIs use Token-based authentication, with each token linked to a specific project.
+Tokens must be generated via the web application (navigate to the _Project Hub > Data Center > Manage Access Token_).
+Tokens expire after a maximum of 90 days and must be renewed as needed.
 
 == Available Endpoints
-Currently, three API-endpoints are available for researchers: the Data API, the Donations API, and the Responses API.
+Currently, three API-endpoints are available for researchers: the Project Overview API, the Donations API, and the Responses API.
 
-=== Data API
 
-Description:: Download all data collected for a given donation project.
+=== Project Overview API
 
-URL:: /api/project/<project ID>/data
+Description:: Endpoint to fetch project-related metadata, including information participants, blueprint configuration,
+and project configuration.
+
+URL:: /api/project/`project URL ID`/overview
 
 Allowed Methods:: `GET`
 
-Implemented Query Parameters:: None
+Request::
+*Headers:*
++
+[%header,cols=3*]
+|===
+|Header
+|Required
+|Description
 
-Response:: Returns a ZIP-Folder containing a json file with the following structure:
-[source, json]
+|`Authorization`
+|Yes
+|Bearer token for authentication (supplied as `Token <project API token>`.
+|===
+
+Response::
+*Success Response (200)*:
++
+[source, JSON]
 ----
 {
-    "project": {
-        "pk": 1,
-        "name": "project name",
-        "date_created": "2022-12-19T08:49:18.363880+01:00"
-    },
-    "donations": {
-        "blueprint name 1": [
-            {
-                "participant": 1
-                "project": 1,
-                "time_submitted": "2022-12-19T08:49:18.363880+01:00",
-                "consent": true,
-                "status": "success",  # One of "success" (donation successful); "pending" (donation not attempted); "failed" (donation failed due to an error); "nothing extracted" (all data filtered out)
-                "data": [
-                    {
-                        "extracted_field_1":  "value1_entry1",
-                        "extracted_field_2":  "value2_entry1",
-                        # ...
-                    },
-                    {
-                        "extracted_field_1":  "value1_entry2",
-                        "extracted_field_2":  "value2_entry2",
-                        # ...
-                    },
-                    # etc.
-                ]
-            }
-        ],
-        "blueprint name 2": [
-            {
-                "participant": 1,
-                "project": 1,
-                "time_submitted": "...",
-                # etc.
-            }
-        ]
-    },
-    "questionnaire": [
-        {
-            "participant":  1,
-            "project":  1,
-            "time_submitted":  "2023-01-19T08:49:18.363880+01:00",
-            "responses": {
-                "variable_name": "answer to question",
-                "variable_name-item-value": "answer to item"
-            },
-            "meta_data":  {  # For data validation purposes: contains one entry per question consisting of meta information about how the question was presented to the participant:
-                "question-id": {
-                    "response": "1",  # Can be a dict of form {"item-id":  "item-response", ...} for question types with item responses
-                    "question": "question text in html format as displayed to participant",
-                    "items": [
-                        {
-                            "id": "33",
-                            "label": "label text in html format as displayed to participant",
-                            "label_alt": "alternative label text in html format as displayed to participant",  # only applies to semantic differential
-                            "index": "1",
-                            "value": "1",
-                            "randomize": false
-                        }
-                    ]
-                }
-            }
-        }
-    ],
     "participants": [
         {
-            "pk":  1,
-            "project":  1,
-            "external_id":  "DMXdpfVyksagfqql2cTgp8kF",
-            "start_time":  "2023-01-18T08:49:18.363880+01:00",
-            "end_time":  "2023-01-20T08:49:18.363880+01:00",
-            "completed":  true,
-            "extra_data":  {
-                "url_param": {
-                    "some_url_parameter": "some value extracted from this parameter when the briefing page was called.",
-                    # ...
-                }
-            }
+            "external_id": <string - participant id>,
+            "start_time": <string - datetime as iso string>,
+            "end_time": <string - datetime as iso string>,
+            "completed": <boolean>,
+            "extra_data": <dictionary - holding any extra data saved in relation to the participant>
+        },
+        {
+            <...>
         }
-    ]
+    ],
+    "blueprints": [
+        {
+            "id": <integer - blueprint id>,
+            "name": <string - blueprint name>,
+            "description": <string - blueprint description>,
+            "format": <string - format>,
+            "json_extraction_root": <string - designation of the extraction root>,
+            "expected_fields": <list - of expected fields>,
+            "exp_fields_regex_matching": <boolean>,
+            "fields_to_extract": <list - of strings indicating the fields that are extracted by the blueprint>,
+            "regex_path": <string - indicating the path to the file in an uploaded zip container>,
+            "filter_rules": <list - of the filter rules applied to the uploaded donations>,
+            "csv_delimiter": <string - indicating the csv delimiter>
+        },
+        {
+            <...>
+        }
+    ],
+    "project": {
+        "url_id": <string - id of the project>,
+        "name": <string - project name>,
+        "date_created": <string - datetime as iso string>,
+        "contact_information": <string>,
+        "data_protection_statement": <string>,
+        "slug": <string - project slug>,
+        "url_parameter_enabled": <boolean>>,
+        "expected_url_parameters": <string>,
+        "active": <boolean>
+    },
+    "metadata": {
+        "n_blueprints": <integer>,
+        "n_participants": <integer>
+    }
 }
 ----
++
+*Error Responses:*
++
+[%header,cols=3*]
+|===
+|Status Code
+|Error Message
+|Description
+
+|401
+|Authentication failed.
+|The authentication token is missing or invalid.
+
+|403
+|Permission Denied.
+|The authentication failed.
+
+|404
+|Project not found.
+|No project could be found for the provided project URL ID.
+
+|405
+|Endpoint disabled for super secret projects.
+|This endpoint is currently not available for super secret projects.
+|===
++
+
 
 Example::
 [source]
 ----
-GET /api/project/4/data HTTPS
+GET /api/project/4/overview HTTPS
 Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
 Host: <hostname>
-
-zip-file
 ----
+
+[source, json]
+----
+{
+    "participants": [
+        {
+            "external_id": "XWKAo60jQ1yqH4R1Pp7MRl5b",
+            "start_time": "2025-01-14T15:37:26.349500+01:00",
+            "end_time": null,
+            "completed": false,
+            "extra_data": {"url_param": {}}
+        },
+        {
+            "external_id": "3sJhlxVDGaarD2BAiMjYGXxP",
+            # <...>
+            "extra_data": {"url_param": {}}
+        }
+    ],
+    "blueprints": [
+        {
+            "id": 1,
+            "name": "donation blueprint",
+            "description": null,
+            "format": "json",
+            "json_extraction_root": "",
+            "expected_fields": ["a", "b"],
+            "exp_fields_regex_matching": false,
+            "fields_to_extract": [],
+            "regex_path": null,
+            "filter_rules": [],
+            "csv_delimiter": ""
+        },
+        {
+            "id": 2,
+            # <...>
+            "csv_delimiter": ""
+        }
+    ],
+    "project": {
+        "url_id": "96kJT3b2",
+        "name": "Base Project",
+        "date_created": "2025-01-14T15:52:33.369407+01:00",
+        "contact_information": "Contact Infos",
+        "data_protection_statement": "Some Statement",
+        "slug": "base",
+        "url_parameter_enabled": false,
+        "expected_url_parameters": "",
+        "active": true
+    },
+    "metadata": {
+        "n_blueprints": 2,
+        "n_participants": 2
+    }
+}
+----
+
 
 === Donations API
 
-Description:: Download all data collected for a given donation project.
+Description:: Retrieve data donations for a given donation project.
 
-URL:: /api/project/<project ID>/donations
+URL:: /api/project/`project URL ID`/donations
 
 Allowed Methods:: `GET`
 
-Implemented Query Parameters:: `participants`, `blueprints`; both can be supplied
-as a comma-separated list of _external participant IDs_ or _blueprint IDs_. If not
-specified, donations for all participants/blueprints associated with a project will be
-returned.
+Request::
+*URL Parameters:*
++
+[%header,cols=4*]
+|===
+|Parameter
+|Type
+|Required
+|Description
 
-Response:: Returns a json object containing all donated data matching the query parameters.
+|`participants`
+|string
+|Yes
+|A comma-separated list of _external participant IDs_ for which the donations should be returned (e.g., "id1,id2,id3").
+
+|`blueprints`
+|string
+|No
+|A comma-separated list of _Blueprint IDs_ for which the donations should be returned. If not specified, donations
+for all blueprints associated with the project are returned.
+|===
++
+*Headers:*
++
+[%header,cols=3*]
+|===
+|Header
+|Required
+|Description
+
+|`Authorization`
+|Yes
+|Bearer token for authentication (supplied as `Token <project API token>`.
+|===
+
+Response::
+*Success Response (200)*:
++
+[source, JSON]
+----
+{
+   "blueprints": {
+      "<str - first blueprint id>": {
+         "blueprint_name": <string - blueprint name>,
+         "donations": [
+            {
+               "participant": <string - participant id>,
+               "data": <list - holding extracted datapoints>,
+               "time_submitted": <string - datetime as iso string>,
+               "status": <string - information on donation status>,
+               "consent": <boolean - whether participant has consented to the donation>
+            },
+            {
+               <...>
+            }
+         ]
+      },
+      "<str - second blueprint id>":{
+        <...>
+      }
+   },
+   "metadata": {}
+}
+----
++
+*Error Responses:*
++
+[%header,cols=3*]
+|===
+|Status Code
+|Error Message
+|Description
+
+|401
+|Authentication failed.
+|The authentication token is missing or invalid.
+
+|403
+|Permission Denied.
+|The authentication failed.
+
+|404
+|Project not found.
+|No project could be found for the provided project URL ID.
+
+|405
+|Endpoint disabled for super secret projects.
+|This endpoint is currently not available for super secret projects.
+|===
++
+
 
 Example::
 [source]
@@ -165,41 +305,186 @@ Example::
 GET /api/project/4/donations HTTPS
 Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
 Host: <hostname>
+----
 
+[source, json]
+----
 {
-    'Blueprint 1': [
-        [<donations participant 1>], [<donations participant 2>], [<donations participant 3>]
-    ],
-    'Blueprint Zwei': [
-        [<donations participant 1>], [<donations participant 2>], [<donations participant 3>]
-    ]
+    "blueprints": {
+        "1": {
+            "blueprint_name": "donation blueprint",
+            "donations": [
+                {
+                    "participant": "riZVabtDI5jCpO6tvQQOTG6A",
+                    "data": ["data1_pA_bpA", "data2_pA_bpA"],
+                    "time_submitted": "2025-01-15T09:16:36.453322+01:00",
+                    "status": "{}",
+                    "consent": true
+                },
+                {
+                    "participant": "wm2tpQIFFIWaqYbgizwTif8S",
+                    "data": ["data1_pB_bpA", "data2_pB_bpA"],
+                    "time_submitted": "2025-01-15T09:16:36.456329+01:00",
+                    "status": "{}",
+                    "consent": true}]
+                }
+        },
+        "2": {
+            "blueprint_name": "donation blueprint",
+            "donations": [
+                {
+                    "participant": "4CovG8u7QWZyQGJ5UX5zfzUV",
+                    "data": ["data1_pA_bpB", "data2_pA_bpB"],
+                    "time_submitted": "2025-01-15T09:19:55.397809+01:00",
+                    "status": "{}",
+                    "consent": true
+                },
+                {
+                    "participant": "wm2tpQIFFIWaqYbgizwTif8S",
+                    "data": ["data1_pB_bpB", "data2_pB_bpB"],
+                    "time_submitted": "2025-01-15T09:16:36.456329+01:00",
+                    "status": "{}",
+                    "consent": true}]
+                }
+            ]
+        }
+    },
+    "metadata": {
+        "n_blueprints": 2
+    }
 }
+----
 
-
+[source]
+----
 GET /api/project/4/donations?participants=1,2&blueprints=1 HTTPS
 Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
 Host: <hostname>
+----
 
+[source, json]
+----
 {
-    'Blueprint 1': [[<donations participant 1>], [<donations participant 2>]]
+    "blueprints": {
+        "1": {
+            "blueprint_name": "donation blueprint",
+            "donations": [
+                {
+                    "participant": "riZVabtDI5jCpO6tvQQOTG6A",
+                    "data": ["data1_pA_bpA", "data2_pA_bpA"],
+                    "time_submitted": "2025-01-15T09:16:36.453322+01:00",
+                    "status": "{}",
+                    "consent": true
+                },
+                {
+                    "participant": "wm2tpQIFFIWaqYbgizwTif8S",
+                    "data": ["data1_pB_bpA", "data2_pB_bpA"],
+                    "time_submitted": "2025-01-15T09:16:36.456329+01:00",
+                    "status": "{}",
+                    "consent": true
+                }
+            ]
+        }
+    },
+    "metadata": {
+        "n_blueprints": 1
+    }
 }
+
 ----
 
 
 === Responses API
 
-Description:: Download all questionnaire responses collected for a given donation project.
+Description:: Retrieve questionnaire responses collected in a given donation project.
 
-URL:: /api/project/<project ID>/responses
+URL:: /api/project/`project URL ID`/donations
 
 Allowed Methods:: `GET`
 
-Implemented Query Parameters:: `participants`; can be supplied
-as a comma-separated list of _external participant IDs_. If not
+Request::
+*URL Parameters:*
++
+[%header,cols=4*]
+|===
+|Parameter
+|Type
+|Required
+|Description
+
+|`participants`
+|string
+|No
+|A comma-separated list of _external participant IDs_ for which the donations should be returned. If not
 specified, donations for all participants associated with a project will be
 returned.
 
-Response:: Returns a json object containing all questionnaire responses matching the query parameters.
+|`include_snapshot`
+|string
+|No
+|If include_snapshot is 'true', the API response will include a snapshot of the questionnaire configuration at the time
+the questionnaire was completed for each participant. Otherwise, the snapshot will be omitted.
+|===
++
+*Headers:*
++
+[%header,cols=3*]
+|===
+|Header
+|Required
+|Description
+
+|`Authorization`
+|Yes
+|Bearer token for authentication (supplied as `Token <project API token>`.
+|===
+
+Response::
+*Success Response (200)*:
++
+[source,JSON]
+----
+{
+  "responses": [
+    {
+      "participant": <string - id of participant>,
+      "response_data": <dictionary - consisting of variable_name:answer_value pairs>,
+      "time_submitted": <string - datetime as iso string>,
+      "questionnaire_snapshot": <dictionary - holding information on the questionnaire configuration at time_submitted>,
+    }
+  ],
+  "metadata": {
+    "n_responses": <int - number of responses>
+  }
+}
+----
++
+*Error Responses:*
++
+[%header,cols=3*]
+|===
+|Status Code
+|Error Message
+|Description
+
+|401
+|Authentication failed.
+|The authentication token is missing or invalid.
+
+|403
+|Permission Denied.
+|The authentication failed.
+
+|404
+|Project not found.
+|No project could be found for the provided project URL ID.
+
+|405
+|Endpoint disabled for super secret projects.
+|This endpoint is currently not available for super secret projects.
+|===
++
+
 
 Example::
 [source]
@@ -207,20 +492,43 @@ Example::
 GET /api/project/4/responses HTTPS
 Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
 Host: <hostname>
+----
 
-[
-    {'variable_a': 'response', 'variable_b': 'response'},
-    {'variable_a': 'response', 'variable_b': 'response'},
-    {'variable_a': 'response', 'variable_b': 'response'}
-]
+[source, json]
+----
+{
+    "responses": [
+        {
+            "participant": "T1qPRp6oOuyYkptNODlegD3h",
+            "response_data": {"varname_question_a": "response_data"}
+            "time_submitted": "2025-01-14T13:19:21.998413+01:00"
+        },
+        {
+            "participant": "cSCslglsu2Mv0j0ryz8lGrcA",
+            "responses": {"varname_question_a": "response_data2"}}
+            "time_submitted": "2025-01-14T13:19:21.998413+01:00",
+    ],
+    "metadata": {"n_responses": 2}
+}
+----
 
-
-GET /api/project/4/responses?participants=1,2 HTTPS
+[source]
+----
+GET /api/project/4/responses?participants=cSCslglsu2Mv0j0ryz8lGrcA&include_snapshot=true HTTPS
 Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
 Host: <hostname>
+----
 
-[
-    {'variable_a': 'response', 'variable_b': 'response'},
-    {'variable_a': 'response', 'variable_b': 'response'}
-]
+[source, json]
+----
+{
+    "responses": [
+        {
+            "participant": "cSCslglsu2Mv0j0ryz8lGrcA",
+            "responses": {"varname_question_a": "response_data2"}}
+            "time_submitted": "2025-01-14T13:19:21.998413+01:00",
+            "questionnaire_snapshot": {"1": {"response": "response_data2", "question": "question text", "items": []}},
+    ],
+    "metadata": {"n_responses": 1}
+}
 ----

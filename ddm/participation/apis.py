@@ -5,7 +5,7 @@ from rest_framework import authentication, permissions, status
 
 from ddm.auth.models import ProjectTokenAuthenticator
 from ddm.auth.utils import user_has_project_access
-from ddm.core.apis import DDMAPIMixin
+from ddm.apis.views import DDMAPIMixin
 from ddm.participation.models import Participant
 
 

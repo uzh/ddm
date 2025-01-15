@@ -153,7 +153,10 @@ class TestAdminViewAuthentication(TestCase):
         for view in project_related_views:
             urls.append(reverse(view, args=[project_url_id]))
 
-        blueprint_related_views = ['ddm_datadonation:blueprints:edit', 'ddm_datadonation:blueprints:delete']
+        blueprint_related_views = [
+            'ddm_datadonation:blueprints:edit',
+            'ddm_datadonation:blueprints:delete'
+        ]
         for view in blueprint_related_views:
             urls.append(reverse(view, args=[project_url_id, cls.blueprint.pk]))
 
@@ -166,7 +169,10 @@ class TestAdminViewAuthentication(TestCase):
         for view in uploader_related_views:
             urls.append(reverse(view, args=[project_url_id, cls.file_uploader.pk]))
 
-        instruction_related_views = ['ddm_datadonation:instructions:edit', 'ddm_datadonation:instructions:delete']
+        instruction_related_views = [
+            'ddm_datadonation:instructions:edit',
+            'ddm_datadonation:instructions:delete'
+        ]
         for view in instruction_related_views:
             urls.append(
                 reverse(view, args=[project_url_id, cls.file_uploader.pk, cls.instruction.pk]))

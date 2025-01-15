@@ -112,7 +112,7 @@
     <div id="data-download-section" class="d-flex flex-row align-items-center data-center-row border-bottom">
       <div class="w-15"><h5>Data Download</h5></div>
       <div class="me-5">
-        <p class="mb-0"><b>Direct Download:</b><br><a class="a-no-link ddm-btn ddm-btn-green" {% if not object.super_secret %}onclick="downloadData('{% url "ddm_apis:project_data" object.url_id %}', 'project_{{ object.url_id }}_data_{% now "Y-m-d-G-i-s" %}')"{% else %}onclick="askSecret()"{% endif %}><i class="bi bi-download"></i> Download Data as JSON</a></p>
+        <p class="mb-0"><b>Direct Download:</b><br><a class="a-no-link ddm-btn ddm-btn-green" {% if not object.super_secret %}onclick="downloadData('TODO: Replace new URL', 'project_{{ object.url_id }}_data_{% now "Y-m-d-G-i-s" %}')"{% else %}onclick="askSecret()"{% endif %}><i class="bi bi-download"></i> Download Data as JSON</a></p>
       </div>
       <div>
         <p class="mb-0"><b>Remote Download:</b><br><a href="{% url 'ddm_auth:project_token' object.url_id %}">Manage Access Token</a></p>
@@ -175,7 +175,7 @@
       </div>
       <div class="modal-footer">
         <button id="cancel-secret" type="button" class="ddm-btn" data-bs-dismiss="modal">Cancel</button>
-        <button id="submit-secret" type="button" class="ddm-btn" onclick="downloadData('{% url "ddm_apis:project_data" object.url_id %}', 'project_{{ object.url_id }}_data', true)">Download Data</button>
+        <button id="submit-secret" type="button" class="ddm-btn" onclick="downloadData('TODO: Replace new URL', 'project_{{ object.url_id }}_data', true)">Download Data</button>
       </div>
     </div>
   </div>

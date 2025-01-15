@@ -415,3 +415,43 @@ class TestAPIs(TestCase):
         self.assertEqual(response.status_code, 401)
         self.assertIsNotNone(Participant.objects.filter(
             external_id=external_id).first())
+
+    def test_delete_project_data_with_regular_login_owner(self):
+        self.client.login(**self.base_creds)
+        response = self.client.delete(
+            reverse('ddm_apis:project_data_delete', args=[self.project_base.url_id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNotNone(response.data)
+
+    def test_delete_project_data_fails_for_user_without_permission(self):
+        self.client.login(**self.no_perm_creds)
+        response = self.client.delete(
+            reverse('ddm_apis:project_data_delete', args=[self.project_base.url_id]), follow=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_delete_project_data_fails_with_valid_api_credentials(self):
+        token = self.project_base.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        response = client.delete(
+            reverse('ddm_apis:project_data_delete', args=[self.project_base.url_id]))
+        self.assertEqual(response.status_code, 403)
+        self.assertIsNotNone(response.data)
+
+    def test_delete_project_data_fails_with_invalid_api_credentials(self):
+        token = self.project_alt.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        response = client.delete(
+            reverse('ddm_apis:project_data_delete', args=[self.project_base.url_id]))
+        self.assertEqual(response.status_code, 403)
+
+    def test_delete_project_data_with_no_api_credentials_created(self):
+        token = self.project_base.create_token()
+        key = token.key
+        token.delete()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + key)
+        response = client.delete(
+            reverse('ddm_apis:project_data_delete', args=[self.project_base.url_id]))
+        self.assertEqual(response.status_code, 403)

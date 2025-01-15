@@ -6,8 +6,10 @@ from django.utils.timezone import localtime
 
 from rest_framework.test import APIClient
 
-from ddm.apis.serializers import ParticipantSerializer, ResponseSerializer, ResponseSerializerWithSnapshot, \
+from ddm.apis.serializers import (
+    ParticipantSerializer, ResponseSerializer, ResponseSerializerWithSnapshot,
     ProjectSerializer
+)
 from ddm.datadonation.models import DataDonation, DonationBlueprint
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject, ResearchProfile
@@ -338,3 +340,78 @@ class TestAPIs(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertDictEqual(response.data, expected_response)
+
+    def test_participant_deletion_with_regular_login(self):
+        self.client.login(**self.base_creds)
+
+        new_participant = Participant.objects.create(
+            project=self.project_base, start_time=timezone.now())
+        external_id = new_participant.external_id
+
+        response = self.client.delete(
+            reverse('ddm_apis:participant_delete',
+                    args=[self.project_base.url_id, external_id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(Participant.objects.filter(
+            external_id=external_id).first())
+
+        response = self.client.delete(
+            reverse('ddm_apis:participant_delete',
+                    args=[self.project_base.url_id, 'some_bogus_id']))
+        self.assertEqual(response.status_code, 404)
+
+    def test_participant_deletion_fails_for_user_without_permission(self):
+        self.client.login(**self.no_perm_creds)
+
+        new_participant = Participant.objects.create(
+            project=self.project_base, start_time=timezone.now())
+        external_id = new_participant.external_id
+
+        response = self.client.delete(
+            reverse('ddm_apis:participant_delete',
+                    args=[self.project_base.url_id, external_id]
+            ), follow=True)
+        self.assertEqual(response.status_code, 403)
+        self.assertIsNotNone(Participant.objects.filter(
+            external_id=external_id).first())
+
+    def test_participant_deletion_with_token(self):
+        token = self.project_base.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+        new_participant = Participant.objects.create(
+            project=self.project_base, start_time=timezone.now())
+        external_id = new_participant.external_id
+
+        response = client.delete(
+            reverse('ddm_apis:participant_delete',
+                    args=[self.project_base.url_id, external_id]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(Participant.objects.filter(
+            external_id=external_id).first())
+
+        response = client.delete(
+            reverse('ddm_apis:participant_delete',
+                    args=[self.project_base.url_id, 'some_bogus_id']))
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_participant_deletion_fails_with_invalid_token(self):
+        token = self.project_alt.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+        new_participant = Participant.objects.create(
+            project=self.project_base, start_time=timezone.now())
+        external_id = new_participant.external_id
+
+        response = client.delete(
+            reverse('ddm_apis:participant_delete',
+                    args=[self.project_base.url_id, external_id]
+                    ), follow=True)
+
+        self.assertEqual(response.status_code, 401)
+        self.assertIsNotNone(Participant.objects.filter(
+            external_id=external_id).first())

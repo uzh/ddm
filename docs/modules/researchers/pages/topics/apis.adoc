@@ -19,8 +19,6 @@ Examples of use cases include:
 serve as an incentive for participation.
 * Building custom dashboards to monitor the data collection in more detail.
 
-Currently, the APIs only support GET requests.
-
 
 == Authentication
 The APIs use Token-based authentication, with each token linked to a specific project.
@@ -28,7 +26,8 @@ Tokens must be generated via the web application (navigate to the _Project Hub >
 Tokens expire after a maximum of 90 days and must be renewed as needed.
 
 == Available Endpoints
-Currently, three API-endpoints are available for researchers: the Project Overview API, the Donations API, and the Responses API.
+Currently, three API-endpoints are available for researchers: the Project Overview API, the Donations API,
+the Responses API, and the Delete Participant API.
 
 
 === Project Overview API
@@ -138,7 +137,7 @@ Response::
 Example::
 [source]
 ----
-GET /api/project/4/overview HTTPS
+GET /api/project/KPHn7aw7/overview HTTPS
 Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
 Host: <hostname>
 ----
@@ -302,7 +301,7 @@ Response::
 Example::
 [source]
 ----
-GET /api/project/4/donations HTTPS
+GET /api/project/KPHn7aw7/donations HTTPS
 Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
 Host: <hostname>
 ----
@@ -357,7 +356,7 @@ Host: <hostname>
 
 [source]
 ----
-GET /api/project/4/donations?participants=1,2&blueprints=1 HTTPS
+GET /api/project/KPHn7aw7/donations?participants=1,2&blueprints=1 HTTPS
 Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
 Host: <hostname>
 ----
@@ -489,7 +488,7 @@ Response::
 Example::
 [source]
 ----
-GET /api/project/4/responses HTTPS
+GET /api/project/KPHn7aw7/responses HTTPS
 Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
 Host: <hostname>
 ----
@@ -514,7 +513,7 @@ Host: <hostname>
 
 [source]
 ----
-GET /api/project/4/responses?participants=cSCslglsu2Mv0j0ryz8lGrcA&include_snapshot=true HTTPS
+GET /api/project/KPHn7aw7/responses?participants=cSCslglsu2Mv0j0ryz8lGrcA&include_snapshot=true HTTPS
 Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
 Host: <hostname>
 ----
@@ -530,5 +529,78 @@ Host: <hostname>
             "questionnaire_snapshot": {"1": {"response": "response_data2", "question": "question text", "items": []}},
     ],
     "metadata": {"n_responses": 1}
+}
+----
+
+
+=== Delete Participant API
+
+Description:: Delete a specific participant including the related responses and donations from the database.
+
+URL:: /api/project/`project URL ID`/participant/`participant_id`/delete
+
+Allowed Methods:: `DELETE`
+
+Request::
+*URL Parameters:* No parameters supported for this endpoint.
++
+*Headers:*
++
+[%header,cols=3*]
+|===
+|Header
+|Required
+|Description
+
+|`Authorization`
+|Yes
+|Bearer token for authentication (supplied as `Token <project API token>`.
+|===
+
+Response::
+*Success Response (200)*:
++
+[source,JSON]
+----
+{
+  "message": "Participant with external id '<participant ID>' successfully deleted."
+}
+----
++
+*Error Responses:*
++
+[%header,cols=3*]
+|===
+|Status Code
+|Error Message
+|Description
+
+|401
+|Authentication failed.
+|The authentication token is missing or invalid.
+
+|403
+|Permission Denied.
+|The authentication failed.
+
+|404
+|Project not found.
+|No participant could be found for the provided ID.
+|===
++
+
+
+Example::
+[source]
+----
+DELETE /api/project/KPHn7aw7/participant/I8RohmYJrcaCLxHP1bnEuuHn/delete HTTPS
+Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+Host: <hostname>
+----
+
+[source, json]
+----
+{
+  "message": "Participant with external id 'I8RohmYJrcaCLxHP1bnEuuHn' successfully deleted."
 }
 ----

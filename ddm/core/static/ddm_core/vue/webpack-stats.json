@@ -4,54 +4,54 @@
     "css/vue_questionnaire.css": {
       "name": "css/vue_questionnaire.css",
       "path": "css\\vue_questionnaire.css",
-      "publicPath": "/static/core/vue/css/vue_questionnaire.css"
+      "publicPath": "/static/ddm_core/vue/css/vue_questionnaire.css"
     },
     "css/vue_uploader.css": {
       "name": "css/vue_uploader.css",
       "path": "css\\vue_uploader.css",
-      "publicPath": "/static/core/vue/css/vue_uploader.css"
+      "publicPath": "/static/ddm_core/vue/css/vue_uploader.css"
     },
     "favicon.ico": {
       "name": "favicon.ico",
       "path": "favicon.ico",
-      "publicPath": "/static/core/vue/favicon.ico",
+      "publicPath": "/static/ddm_core/vue/favicon.ico",
       "sourceFilename": "public/favicon.ico"
     },
     "index.html": {
       "name": "index.html",
       "path": "index.html",
-      "publicPath": "/static/core/vue/index.html",
+      "publicPath": "/static/ddm_core/vue/index.html",
       "sourceFilename": "public/index.html"
     },
     "js/chunk-vendors.js": {
       "name": "js/chunk-vendors.js",
       "path": "js\\chunk-vendors.js",
-      "publicPath": "/static/core/vue/js/chunk-vendors.js"
+      "publicPath": "/static/ddm_core/vue/js/chunk-vendors.js"
     },
     "js/chunk-vendors.js.map": {
       "name": "js/chunk-vendors.js.map",
       "path": "js\\chunk-vendors.js.map",
-      "publicPath": "/static/core/vue/js/chunk-vendors.js.map"
+      "publicPath": "/static/ddm_core/vue/js/chunk-vendors.js.map"
     },
     "js/vue_questionnaire.js": {
       "name": "js/vue_questionnaire.js",
       "path": "js\\vue_questionnaire.js",
-      "publicPath": "/static/core/vue/js/vue_questionnaire.js"
+      "publicPath": "/static/ddm_core/vue/js/vue_questionnaire.js"
     },
     "js/vue_questionnaire.js.map": {
       "name": "js/vue_questionnaire.js.map",
       "path": "js\\vue_questionnaire.js.map",
-      "publicPath": "/static/core/vue/js/vue_questionnaire.js.map"
+      "publicPath": "/static/ddm_core/vue/js/vue_questionnaire.js.map"
     },
     "js/vue_uploader.js": {
       "name": "js/vue_uploader.js",
       "path": "js\\vue_uploader.js",
-      "publicPath": "/static/core/vue/js/vue_uploader.js"
+      "publicPath": "/static/ddm_core/vue/js/vue_uploader.js"
     },
     "js/vue_uploader.js.map": {
       "name": "js/vue_uploader.js.map",
       "path": "js\\vue_uploader.js.map",
-      "publicPath": "/static/core/vue/js/vue_uploader.js.map"
+      "publicPath": "/static/ddm_core/vue/js/vue_uploader.js.map"
     }
   },
   "chunks": {
@@ -66,5 +66,5 @@
       "js/vue_uploader.js"
     ]
   },
-  "publicPath": "/static/core/vue/"
+  "publicPath": "/static/ddm_core/vue/"
 }

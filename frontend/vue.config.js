@@ -16,8 +16,8 @@ module.exports = {
     pages: pages,
     filenameHashing: false,
     runtimeCompiler: true,
-    publicPath: '/static/core/vue/',
-    outputDir: path.resolve('../ddm/core/static/core/vue'),
+    publicPath: '/static/ddm_core/vue/',
+    outputDir: path.resolve('../ddm/core/static/ddm_core/vue'),
 
     devServer: {
         hot: false,
@@ -58,7 +58,7 @@ module.exports = {
             .plugin('BundleTracker')
             .use(BundleTracker, [{
                 filename: 'webpack-stats.json',
-                path: '../ddm/core/static/core/vue',
+                path: '../ddm/core/static/ddm_core/vue',
                 relativePath: true
             }]);
 

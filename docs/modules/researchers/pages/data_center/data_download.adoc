@@ -13,107 +13,76 @@ image::data_download_section.png["Project Statistics Section",95%]
 
 There are two options to download your data. The first option is to use the internal download option in the
 xref:researchers:project_hub.adoc[Project Hub].
-The second one is to download the data externally via the API.
+The second one is to download the data through the API.
 
 == Download Through the Project Hub
 
-To download the data, go to the Project Hub, scroll down to the section "Data Center" and click on
-"Download Data as JSON". This will gather your data from the database, and you will be able to download your data as a
-ZIP folder through your browser. The actual data is stored in a file called "data.json" in the ZIP container. This data
-file is structured as follows:
+Downloading the data through the Project Hub is a two-step process.
 
-[source, json]
-----
-{
-    "project": {
-        "pk": 1,
-        "name": "project name",
-        "date_created": "2022-12-19T08:49:18.363880+01:00"
-    },
-    "donations": {
-        "blueprint name 1": [
-            {
-                "participant": 1
-                "project": 1,
-                "time_submitted": "2022-12-19T08:49:18.363880+01:00",
-                "consent": true,
-                "status": "success",  # One of "success" (donation successful); "pending" (donation not attempted); "failed" (donation failed due to an error); "nothing extracted" (all data filtered out)
-                "data": [
-                    {
-                        "extracted_field_1":  "value1_entry1",
-                        "extracted_field_2":  "value2_entry1",
-                        # ...
-                    },
-                    {
-                        "extracted_field_1":  "value1_entry2",
-                        "extracted_field_2":  "value2_entry2",
-                        # ...
-                    },
-                    # etc.
-                ]
-            }
-        ],
-        "blueprint name 2": [
-            {
-                "participant": 1,
-                "project": 1,
-                "time_submitted": "...",
-                # etc.
-            }
-        ]
-    },
-    "questionnaire": [
-        {
-            "participant":  1,
-            "project":  1,
-            "time_submitted":  "2023-01-19T08:49:18.363880+01:00",
-            "responses": {
-                "variable_name": "answer to question",
-                "variable_name-item-value": "answer to item"
-            },
-            "meta_data":  {  # For data validation purposes: contains one entry per question consisting of meta information about how the question was presented to the participant:
-                "question-id": {
-                    "response": "1",  # Can be a dict of form {"item-id":  "item-response", ...} for question types with item responses
-                    "question": "question text in html format as displayed to participant",
-                    "items": [
-                        {
-                            "id": "33",
-                            "label": "label text in html format as displayed to participant",
-                            "label_alt": "alternative label text in html format as displayed to participant",  # only applies to semantic differential
-                            "index": "1",
-                            "value": "1",
-                            "randomize": false
-                        }
-                    ]
-                }
-            }
-        }
-    ],
-    "participants": [
-        {
-            "pk":  1,
-            "project":  1,
-            "external_id":  "DMXdpfVyksagfqql2cTgp8kF",
-            "start_time":  "2023-01-18T08:49:18.363880+01:00",
-            "end_time":  "2023-01-20T08:49:18.363880+01:00",
-            "completed":  true,
-            "extra_data":  {
-                "url_param": {
-                    "some_url_parameter": "some value extracted from this parameter when the briefing page was called.",
-                    # ...
-                }
-            }
-        }
-    ]
-}
-----
+First, go to the Project Hub, scroll down to the section "Data Center" and download the Participation Overview:
+
+[.text-center]
+.Participation Overview Download
+image::download_participation_overview.png["Participation Overview Download",95%]
+
+This will download a CSV file containing one row for every participant that has started participaiton in the project
+(i.e., this also contains participants that have not completed the donation). The file includes the following variables:
+
+[%header,cols=2*]
+|===
+| Variable/Column
+| Description
+
+|participant_id
+|The ID of the participant.
+
+|start_time
+|Date and time in ISO 8601 format when the participant first accessed the project
+(e.g., "2024-07-16 20:30:40.863581+00:00").
+
+|end_time
+|Date and time in ISO 8601 format when the participant accessed the debriefing page of the project
+(e.g., "2024-07-16 22:25:30.1634581+00:00").
+
+|current_step
+|The last step of the participation flow that the participant has accessed
+("1" = Briefing page, "2" = data donation step, "3" = questionnaire, "4" = debriefing page).
+
+|completed
+|Indicates whether the participant has completed the participation
+(True/False).
+
+|extra_data
+|Contains any extra data recorded in relation to a participation
+(e.g., extracted URL parameters).
+
+|blueprint_<X>_name
+|The name of the blueprint with ID "X".
+
+|blueprint_<X>_time_submitted
+|Date and time in ISO 8601 format when the participant has submitted their donation for blueprint X.
+
+|blueprint_<X>_consent
+|Indicates whether the participant has consented to the donation of their data related to blueprint X.
+
+|blueprint_<X>_status
+|Indicates the status of the participant's donation in relation to blueprint X
+("success" = donation was successful, "pending" = data donation step reached but donation not attempted,
+"failed" = donation attempted but donation failed due to an error, "nothing extracted" = all data filtered out)
+
+|donation_download_link
+|A link though which the donation for the participant can be downloaded. Can be opened in the browser where
+you are logged in to DDM.
+|===
+
+Next, you can download the data donations for each participant through the included donation download links.
 
 [NOTE]
 ====
-For larger donation projects where you collect large data donations from many participants, this download option is
-inefficient, and you may run into problems (i.e., the download will fail). In these cases, you should download
-your data directly via the API (see below).
+For larger donation projects where you collect data donations from many participants,
+it may be more convenient to download the data donations through the API (see below).
 ====
+
 
 == Download via API
 
@@ -123,8 +92,6 @@ API token that is used to authenticate your external download request.
 
 A list of available API endpoints and a more detailed description on how to use them can be found in the
 xref:researchers:topics/apis.adoc[API section of the documentation].
-
-// TODO: Add explanation on how to do so in Python and R.
 
 [TIP]
 ====

@@ -1,0 +1,12 @@
+{% extends 'ddm_core/page_with_form.html' %}
+
+{% block page_title %}Download Donations{% endblock %}
+
+{% block main_heading %}Download Donations for {{ participant_id }}{% endblock %}
+
+{% block submit_label %}Download Donations{% endblock %}
+
+{% block cancel_target %}{% url 'ddm_projects:detail' project.url_id %}{% endblock %}
+
+{% block breadcrumbs %}
+{% endblock %}

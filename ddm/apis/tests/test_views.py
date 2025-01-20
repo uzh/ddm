@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.test import TestCase, override_settings
+from django.test import TestCase, override_settings, Client
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.timezone import localtime
@@ -162,9 +162,8 @@ class TestAPIs(TestCase):
                 'n_participants': 2
             }
         }
-        response = client.get(
-            reverse('ddm_apis:project_overview', args=[self.project_base.url_id])
-        )
+        url = reverse('ddm_apis:project_overview', args=[self.project_base.url_id])
+        response = client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertDictEqual(response.data, expected_response)
 
@@ -205,11 +204,11 @@ class TestAPIs(TestCase):
             }
         }
 
-        response = client.get(
-            reverse(
-                'ddm_apis:donations', args=[self.project_base.url_id]
-            ) + f'?participants={self.participant_a.external_id},blablub'
-        )
+        url = reverse(
+            'ddm_apis:donations',
+            args=[self.project_base.url_id]
+        ) + f'?participants={self.participant_a.external_id},nonsense'
+        response = client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertDictEqual(response.data, expected_response)
 
@@ -244,13 +243,16 @@ class TestAPIs(TestCase):
                 'n_blueprints': 1
             }
         }
-        response = client.get(
-            reverse(
-                'ddm_apis:donations', args=[self.project_base.url_id]
-            ) + f'?blueprints={self.blueprint_a.pk},123&'
-                f'participants={self.participant_a.external_id},'
-                f'{self.participant_b.external_id}'
+        url = reverse(
+            'ddm_apis:donations',
+            args=[self.project_base.url_id]
         )
+        query_string = (
+            f'?blueprints={self.blueprint_a.pk},123&'
+            f'participants={self.participant_a.external_id},'
+            f'{self.participant_b.external_id}'
+        )
+        response = client.get(url + query_string)
         self.assertEqual(response.status_code, 200)
         self.assertDictEqual(response.data, expected_response)
 
@@ -259,17 +261,17 @@ class TestAPIs(TestCase):
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
-        response = client.get(
-            reverse('ddm_apis:donations', args=[self.project_base.url_id])
-        )
+        url = reverse('ddm_apis:donations', args=[self.project_base.url_id])
+        response = client.get(url)
         self.assertEqual(response.status_code, 400)
 
     def test_donations_api_get_fails_with_invalid_api_credentials(self):
         token = self.project_alt.create_token()
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
-        response = client.get(
-            reverse('ddm_apis:donations', args=[self.project_base.url_id]))
+
+        url = reverse('ddm_apis:donations', args=[self.project_base.url_id])
+        response = client.get(url)
         self.assertEqual(response.status_code, 401)
 
     def test_donations_api_fails_with_no_api_credentials_created(self):
@@ -278,8 +280,8 @@ class TestAPIs(TestCase):
         token.delete()
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + key)
-        response = client.get(
-            reverse('ddm_apis:donations', args=[self.project_base.url_id]))
+        url = reverse('ddm_apis:donations', args=[self.project_base.url_id])
+        response = client.get(url)
         self.assertEqual(response.status_code, 401)
 
     def test_donations_api_returns_404_with_non_existing_project(self):
@@ -287,8 +289,8 @@ class TestAPIs(TestCase):
         key = token.key
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + key)
-        response = client.get(
-            reverse('ddm_apis:donations', args=['non-existing-id']))
+        url = reverse('ddm_apis:donations', args=['non-existing-id'])
+        response = client.get(url)
         self.assertEqual(response.status_code, 404)
 
     def test_donations_api_returns_405_for_super_secret_project(self):
@@ -296,8 +298,8 @@ class TestAPIs(TestCase):
         key = token.key
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + key)
-        response = client.get(
-            reverse('ddm_apis:donations', args=[self.project_super_secret.url_id]))
+        url = reverse('ddm_apis:donations', args=[self.project_super_secret.url_id])
+        response = client.get(url)
         self.assertEqual(response.status_code, 405)
 
     def test_responses_api_get_with_valid_api_credentials(self):
@@ -314,9 +316,8 @@ class TestAPIs(TestCase):
                 'n_responses': len(self.project_base.questionnaireresponse_set.all())
             }
         }
-        response = client.get(
-            reverse('ddm_apis:responses', args=[self.project_base.url_id])
-        )
+        url = reverse('ddm_apis:responses', args=[self.project_base.url_id])
+        response = client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertDictEqual(response.data, expected_response)
 
@@ -334,10 +335,9 @@ class TestAPIs(TestCase):
                 'n_responses': len(self.project_base.questionnaireresponse_set.all())
             }
         }
-        response = client.get(
-            reverse('ddm_apis:responses', args=[self.project_base.url_id])
-            + f'?include_snapshot=true'
-        )
+        url = reverse('ddm_apis:responses', args=[self.project_base.url_id])
+        query_string = f'?include_snapshot=true'
+        response = client.get(url + query_string)
         self.assertEqual(response.status_code, 200)
         self.assertDictEqual(response.data, expected_response)
 
@@ -348,16 +348,20 @@ class TestAPIs(TestCase):
             project=self.project_base, start_time=timezone.now())
         external_id = new_participant.external_id
 
-        response = self.client.delete(
-            reverse('ddm_apis:participant_delete',
-                    args=[self.project_base.url_id, external_id]))
+        url = reverse(
+            'ddm_apis:participant_delete',
+            args=[self.project_base.url_id, external_id]
+        )
+        response = self.client.delete(url)
         self.assertEqual(response.status_code, 200)
         self.assertIsNone(Participant.objects.filter(
             external_id=external_id).first())
 
-        response = self.client.delete(
-            reverse('ddm_apis:participant_delete',
-                    args=[self.project_base.url_id, 'some_bogus_id']))
+        url = reverse(
+            'ddm_apis:participant_delete',
+            args=[self.project_base.url_id, 'nonsense_id']
+        )
+        response = self.client.delete(url)
         self.assertEqual(response.status_code, 404)
 
     def test_participant_deletion_fails_for_user_without_permission(self):
@@ -367,10 +371,11 @@ class TestAPIs(TestCase):
             project=self.project_base, start_time=timezone.now())
         external_id = new_participant.external_id
 
-        response = self.client.delete(
-            reverse('ddm_apis:participant_delete',
-                    args=[self.project_base.url_id, external_id]
-            ), follow=True)
+        url = reverse(
+            'ddm_apis:participant_delete',
+            args=[self.project_base.url_id, external_id]
+        )
+        response = self.client.delete(url, follow=True)
         self.assertEqual(response.status_code, 403)
         self.assertIsNotNone(Participant.objects.filter(
             external_id=external_id).first())
@@ -384,17 +389,21 @@ class TestAPIs(TestCase):
             project=self.project_base, start_time=timezone.now())
         external_id = new_participant.external_id
 
-        response = client.delete(
-            reverse('ddm_apis:participant_delete',
-                    args=[self.project_base.url_id, external_id]))
+        url = reverse(
+            'ddm_apis:participant_delete',
+            args=[self.project_base.url_id, external_id]
+        )
+        response = client.delete(url)
 
         self.assertEqual(response.status_code, 200)
         self.assertIsNone(Participant.objects.filter(
             external_id=external_id).first())
 
-        response = client.delete(
-            reverse('ddm_apis:participant_delete',
-                    args=[self.project_base.url_id, 'some_bogus_id']))
+        url = reverse(
+            'ddm_apis:participant_delete',
+            args=[self.project_base.url_id, 'some_bogus_id']
+        )
+        response = client.delete(url)
 
         self.assertEqual(response.status_code, 404)
 
@@ -407,10 +416,11 @@ class TestAPIs(TestCase):
             project=self.project_base, start_time=timezone.now())
         external_id = new_participant.external_id
 
-        response = client.delete(
-            reverse('ddm_apis:participant_delete',
-                    args=[self.project_base.url_id, external_id]
-                    ), follow=True)
+        url = reverse(
+            'ddm_apis:participant_delete',
+            args=[self.project_base.url_id, external_id]
+        )
+        response = client.delete(url, follow=True)
 
         self.assertEqual(response.status_code, 401)
         self.assertIsNotNone(Participant.objects.filter(
@@ -418,23 +428,32 @@ class TestAPIs(TestCase):
 
     def test_delete_project_data_with_regular_login_owner(self):
         self.client.login(**self.base_creds)
-        response = self.client.delete(
-            reverse('ddm_apis:project_data_delete', args=[self.project_base.url_id]))
+        url = reverse(
+            'ddm_apis:project_data_delete',
+            args=[self.project_base.url_id]
+        )
+        response = self.client.delete(url)
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(response.data)
 
     def test_delete_project_data_fails_for_user_without_permission(self):
         self.client.login(**self.no_perm_creds)
-        response = self.client.delete(
-            reverse('ddm_apis:project_data_delete', args=[self.project_base.url_id]), follow=True)
+        url = reverse(
+            'ddm_apis:project_data_delete',
+            args=[self.project_base.url_id]
+        )
+        response = self.client.delete(url, follow=True)
         self.assertEqual(response.status_code, 403)
 
     def test_delete_project_data_fails_with_valid_api_credentials(self):
         token = self.project_base.create_token()
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
-        response = client.delete(
-            reverse('ddm_apis:project_data_delete', args=[self.project_base.url_id]))
+        url = reverse(
+            'ddm_apis:project_data_delete',
+            args=[self.project_base.url_id]
+        )
+        response = client.delete(url)
         self.assertEqual(response.status_code, 403)
         self.assertIsNotNone(response.data)
 
@@ -442,8 +461,11 @@ class TestAPIs(TestCase):
         token = self.project_alt.create_token()
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
-        response = client.delete(
-            reverse('ddm_apis:project_data_delete', args=[self.project_base.url_id]))
+        url = reverse(
+            'ddm_apis:project_data_delete',
+            args=[self.project_base.url_id]
+        )
+        response = client.delete(url)
         self.assertEqual(response.status_code, 403)
 
     def test_delete_project_data_with_no_api_credentials_created(self):
@@ -452,6 +474,36 @@ class TestAPIs(TestCase):
         token.delete()
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + key)
-        response = client.delete(
-            reverse('ddm_apis:project_data_delete', args=[self.project_base.url_id]))
+        url = reverse(
+            'ddm_apis:project_data_delete',
+            args=[self.project_base.url_id]
+        )
+        response = client.delete(url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_download_project_detail_view_valid_login(self):
+        self.client.login(**self.base_creds)
+        url = reverse(
+            'ddm_apis:download_project_details',
+            args=[self.project_base.url_id]
+        )
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_download_project_detail_view_invalid_login(self):
+        self.client.login(**self.no_perm_creds)
+        url = reverse(
+            'ddm_apis:download_project_details',
+            args=[self.project_base.url_id]
+        )
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_download_project_detail_view_not_logged_in(self):
+        client = Client()
+        url = reverse(
+            'ddm_apis:download_project_details',
+            args=[self.project_base.url_id]
+        )
+        response = client.get(url, follow=True)
         self.assertEqual(response.status_code, 403)

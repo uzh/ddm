@@ -77,3 +77,9 @@ ProcessingRuleInlineFormset = inlineformset_factory(
     form=ProcessingRuleForm,
     extra=0
 )
+
+
+class SecretInputForm(forms.Form):
+    secret = forms.CharField(
+        widget=forms.PasswordInput()
+    )

@@ -4,6 +4,7 @@
 @import url('research_interface/ddm-accordion.css');
 @import url('research_interface/ddm-buttons.css');
 @import url('research_interface/load-spinner.css');
+@import url('research_interface/progress-bar.css');
 @import url('research_interface/utils.css');
 
 .research-interface {

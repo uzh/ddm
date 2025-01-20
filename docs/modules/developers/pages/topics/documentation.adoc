@@ -57,5 +57,6 @@ For Windows and Firefox, this process looks as follows:
 
 ==== Run Selenium Script
 
-// TODO: Add section.
+1. Open a new terminal, go to ddm/test_project/ and run ddm locally: `python manage.py runserver`
 
+2. Run ddm/docs/update_screenshots.py

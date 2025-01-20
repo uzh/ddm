@@ -1,6 +1,7 @@
 from django.core.exceptions import BadRequest, ObjectDoesNotExist
-from django.http import Http404
+from django.http import Http404, StreamingHttpResponse
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.views.decorators.debug import sensitive_variables
 from rest_framework import exceptions, permissions, authentication, status
 from rest_framework.generics import ListAPIView
@@ -393,3 +394,163 @@ class DeleteProjectData(APIView, DDMAPIMixin):
         msg = (f'Deleted {n_deleted_donations} data donations and '
                f'{n_deleted_responses} questionnaire responses.')
         return Response(status=status.HTTP_200_OK, data={'message': msg})
+
+
+class DownloadProjectDetailsView(APIView, DDMAPIMixin):
+    """
+    Returns a CSV file containing high level participation information for a
+    project.
+
+    Each line of the CSV file represents one participant and holds the following
+    information:
+    - participant ID
+    - start time of participation
+    - end time of participation
+    - current step of participation
+    - completed (boolean)
+    - extra data collected on participant-level
+    - download link for donations
+    - for each blueprint:
+    -- name
+    -- time submitted
+    -- consent
+    -- status
+
+    Returns a StreamingHttpResponse.
+    """
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            self.project = self.get_project()
+        except Http404 as e:
+            raise Http404(str(e))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_participants(self):
+        return self.project.participant_set.all()
+
+    def get_blueprints(self):
+        return self.project.donationblueprint_set.all()
+
+    def get_donations(self, participant):
+        return participant.datadonation_set.all()
+
+    def get_csv_header(self, blueprints):
+        participant_header = self.get_participant_header()
+        blueprint_header = self.get_blueprint_header(blueprints)
+        return participant_header + blueprint_header + 'donation_download_link\n'
+
+    @staticmethod
+    def get_participant_header():
+        participant_header = (
+            'participant_id,'
+            'start_time,'
+            'end_time,'
+            'current_step,'
+            'completed,'
+            'extra_data,'
+        )
+        return participant_header
+
+    @staticmethod
+    def get_participant_data(participant):
+        participant_info = (
+            f'"{participant.external_id}",'
+            f'"{participant.start_time}",'
+            f'"{participant.end_time}",'
+            f'"{participant.current_step}",'
+            f'"{participant.completed}",'
+            f'"{participant.extra_data}",'
+        )
+        return participant_info
+
+    @staticmethod
+    def get_blueprint_header(blueprints):
+        header = ''
+        for blueprint in blueprints:
+            pk = blueprint.pk
+            blueprint_header = (
+                f'blueprint_{pk}_name,'
+                f'blueprint_{pk}_time_submitted,'
+                f'blueprint_{pk}_consent,'
+                f'blueprint_{pk}_status,'
+            )
+            header += blueprint_header
+        return header
+
+    def get_blueprint_donation_data(self, blueprints, participant):
+        blueprint_data = ''
+        n_donations = 0
+        donations = self.get_donations(participant)
+        for blueprint in blueprints:
+            donation = donations.filter(blueprint=blueprint).first()
+            if donation:
+                data = (
+                    f'"{blueprint.name}",'
+                    f'"{donation.time_submitted}",'
+                    f'"{donation.consent}",'
+                    f'"{donation.status}",'
+                )
+                n_donations += 1
+            else:
+                data = (
+                    f'{None},'
+                    f'{None},'
+                    f'{None},'
+                    f'{None},'
+                )
+            blueprint_data += data
+
+        if n_donations > 0:
+            blueprint_data += self.get_download_link(participant)
+        else:
+            blueprint_data += f'{None}'
+        return blueprint_data
+
+    def get_download_link(self, participant):
+        url = reverse(
+            'ddm_datadonation:download_donation',
+            args=[self.project.url_id, participant.external_id]
+        )
+        return self.request.build_absolute_uri(url)
+
+    def generate_csv(self):
+        blueprints = self.get_blueprints()
+        header = self.get_csv_header(blueprints)
+        yield header
+
+        # Loop through participants
+        participants = self.get_participants()
+        n_rows = 0
+        data = ''
+        for participant in participants:
+            participant_data = self.get_participant_data(participant)
+            blueprint_data = self.get_blueprint_donation_data(blueprints, participant)
+            data += (participant_data + blueprint_data + '\n')
+            n_rows += 1
+            if n_rows % 10 == 0:
+                yield data
+                data = ''
+        yield data
+
+    def get(self, request, *args, **kwargs):
+        """
+        Handle GET request to stream JSON response.
+        """
+        if not user_has_project_access(request.user, self.project):
+            self.create_event_log(
+                descr='Forbidden Deletion Request',
+                msg='Request user is not permitted to delete the project data.'
+            )
+            msg = 'User does not have access.'
+            raise exceptions.PermissionDenied(msg)
+
+        response = StreamingHttpResponse(
+            self.generate_csv(),
+            content_type='text/json'
+        )
+        filename = f'project_{self.project.url_id}_details.csv'
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response

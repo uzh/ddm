@@ -23,7 +23,7 @@ class DDMAuthMixin:
     - users without owner-rights => 404.
     """
     def dispatch(self, request, *args, **kwargs):
-        if request.method == 'GET':
+        if request.method in ['GET', 'POST']:
             if not request.user.is_authenticated:
                 return redirect('ddm_login')
 

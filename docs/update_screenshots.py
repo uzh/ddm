@@ -74,6 +74,16 @@ def highlight_edit(driver, element):
     """, element)
     return element
 
+def highlight_participation_overview_download(driver, element):
+    driver.execute_script("""
+        var parent = arguments[0];
+        var child = parent.querySelector('#download-participation-overview');
+        if (child) {
+            child.style.background = 'yellow';
+        }
+    """, element)
+    return element
+
 def prepare_project_settings(driver):
     button = driver.find_element(By.ID, 'project-base-settings-accordion-btn')
     button.click()
@@ -292,6 +302,14 @@ def load_element_list():
         },
         {
             'module': 'researchers',
+            'sc_name': 'download_participation_overview.png',
+            'url': f'projects/{PROJECT_ID}/',
+            'element_id': 'data-download-section',
+            'function_pre': None,
+            'function_post': highlight_participation_overview_download,
+        },
+        {
+            'module': 'researchers',
             'sc_name': 'project_log_section.png',
             'url': f'projects/{PROJECT_ID}/',
             'element_id': 'project-log-section',
@@ -361,7 +379,7 @@ if __name__ == '__main__':
     Also note that:
      a. the screenshots will be taken for a project that already exists 
      in the development database. You have to refer to this project and its components 
-     by adjusting the the variables defined at the beginning of this document.
+     by adjusting the variables defined at the beginning of this document.
      
      b. there needs to be a file called 'takeout-demo.zip' in the docs folder 
      that contains a valid data donation for demonstration purposes.

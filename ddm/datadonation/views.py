@@ -1,13 +1,28 @@
+import io
+import json
+import zipfile
+
+from django import forms
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.http import HttpResponseRedirect, HttpResponse, Http404
+from django.shortcuts import get_object_or_404
+from django.urls import reverse, reverse_lazy
+from django.views.decorators.debug import sensitive_variables
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.views.generic.list import ListView
 
-from ddm.datadonation.forms import BlueprintEditForm, ProcessingRuleInlineFormset
-from ddm.datadonation.models import DonationBlueprint, DonationInstruction, FileUploader
+from ddm.apis.serializers import DataDonationSerializer
+from ddm.apis.views import DDMAPIMixin
+from ddm.datadonation.forms import (
+    BlueprintEditForm, ProcessingRuleInlineFormset, SecretInputForm
+)
+from ddm.datadonation.models import (
+    DonationBlueprint, DonationInstruction, FileUploader
+)
+from ddm.encryption.models import Decryption, Encryption
+from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject
 from ddm.projects.views import DDMAuthMixin
 
@@ -271,3 +286,129 @@ class InstructionDelete(SuccessMessageMixin, DDMAuthMixin, InstructionMixin, Del
 
     def get_success_message(self, cleaned_data):
         return self.success_message % self.object.name
+
+
+class DonationDownloadView(DDMAuthMixin, DDMAPIMixin, FormView):
+    """View to download all the donations of one specific participant."""
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            self.project = self.get_project()
+        except Http404 as e:
+            raise Http404(str(e))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_form_class(self):
+        return SecretInputForm if self.project.super_secret else forms.Form
+
+    def get_template_names(self):
+        regular_template = 'ddm_datadonation/download_regular.html'
+        secret_template = 'ddm_datadonation/download_with_secret.html'
+        return secret_template if self.project.super_secret else regular_template
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'project': self.project,
+            'participant_id': self.kwargs.get('participant_id'),
+        })
+        return context
+
+    def get_success_url(self):
+        url = reverse_lazy(
+            'ddm_datadonation:download_donation',
+            kwargs={
+                'project_url_id': self.kwargs.get('project_url_id'),
+                'participant_id': self.kwargs.get('participant_id')
+            })
+        return url
+
+    def get_participant(self):
+        """ Returns participant instance. """
+        participant_id = self.kwargs.get('participant_id')
+        return get_object_or_404(Participant, external_id=participant_id)
+
+    def get_donations(self, participant):
+        return participant.datadonation_set.all()
+
+    @sensitive_variables()
+    def form_valid(self, form):
+        try:
+            decryptor = self.get_decryptor(form.cleaned_data.get('secret'))
+        except ValueError as e:
+            form.add_error('secret', 'Incorrect secret.')
+            self.create_event_log(
+                descr='Donation download failed.',
+                msg=f'Download attempt with incorrect secret was registered.'
+            )
+            return HttpResponse('Incorrect secret', status=422)
+
+        return self.get_data_response(decryptor)
+
+    @sensitive_variables()
+    def get_decryptor(self, secret=None):
+        secret_key = secret if secret else self.project.secret_key
+        decryptor = Decryption(secret_key, self.project.get_salt())
+        try:
+            self.test_secret(secret_key, decryptor)
+        except ValueError:
+            raise ValueError
+        return decryptor
+
+    @sensitive_variables()
+    def test_secret(self, secret, decryptor):
+        test_string = 'Teststring'
+        encrypted_string = Encryption(public=self.project.public_key).encrypt(test_string)
+
+        try:
+            decrypted_string = decryptor.decrypt(encrypted_string)
+        except ValueError:
+            raise ValueError
+
+        if decrypted_string != test_string:
+            raise ValueError
+
+    @staticmethod
+    def create_zip(content, participant_id):
+        """ Creates a zip file in memory. """
+        buffer = io.BytesIO()
+        filename = f'ddm_donations_{participant_id}.json'
+        with zipfile.ZipFile(buffer, mode='w', compression=zipfile.ZIP_DEFLATED) as zf:
+            with zf.open(filename, 'w') as json_file:
+                json_content = json.dumps(
+                    content, ensure_ascii=False, separators=(',', ':'))
+                json_file.write(json_content.encode('utf-8'))
+                zf.testzip()
+        zip_in_memory = buffer.getvalue()
+        buffer.flush()
+        return zip_in_memory
+
+    @staticmethod
+    def create_zip_response(zip_file, participant_id):
+        """ Creates an HttpResponse object containing the provided zip file. """
+        filename = f'ddm_donations_{participant_id}.zip'
+        response = HttpResponse(zip_file, content_type='application/zip')
+        response['Content-Length'] = len(zip_file)
+        response['Content-Disposition'] = f'attachment; filename={filename}.zip'
+        return response
+
+    @sensitive_variables()
+    def get_data_response(self, decryptor, *args, **kwargs):
+        participant = self.get_participant()
+        donations = self.get_donations(participant)
+
+        result = []
+        for donation in donations:
+            result.append({
+                'blueprint': donation.blueprint.pk,
+                'donation': DataDonationSerializer(donation, decryptor=decryptor).data,
+            })
+
+        zip_in_mem = self.create_zip(result, participant.external_id)
+        response = self.create_zip_response(zip_in_mem, participant.external_id)
+
+        self.create_event_log(
+            descr='Donation download registered.',
+            msg=f'Donation for participant {participant} downloaded.'
+        )
+        return response

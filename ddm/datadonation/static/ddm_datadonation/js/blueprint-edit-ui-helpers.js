@@ -1,121 +1,174 @@
 /**
- * Updates rule description in the form of a proper sentence.
+ * Include rule description in the form of a proper sentence in the extraction rules table.
  */
-updateRuleDescription = function( id ) {
+function updateRuleDescription(id) {
   const id_prefix = "id_processingrule_set-" + id + "-";
-  const field = $("[id^=" + id_prefix + "field]").val();
-  const operator = $("[id^=" + id_prefix + "comparison_operator]").val();
-  const comp_value = $("[id^=" + id_prefix + "comparison_value]").val();
-  const repl_value = $("[id^=" + id_prefix + "replacement_value]").val();
+  const field = document.querySelector(`[id^="${id_prefix}field"]`)?.value;
+  const operator = document.querySelector(`[id^="${id_prefix}comparison_operator"]`)?.value;
+  const comp_value = document.querySelector(`[id^="${id_prefix}comparison_value"]`)?.value;
+  const repl_value = document.querySelector(`[id^="${id_prefix}replacement_value"]`)?.value;
 
   let msg = "";
-  if ( field !== "" ) {
-    if ( operator === "" && field !== "" ){
+  if (field !== "") {
+    if (operator === "" && field !== "") {
       msg = "Keep field '" + field + "' in uploaded data.";
-    } else if ( operator === "regex-delete-match" ) {
+    } else if (operator === "regex-delete-match") {
       msg = "Delete parts of '" + field + "' field that match the following regex expression: '" + comp_value + "'.";
-    } else if ( operator === "regex-replace-match" ) {
+    } else if (operator === "regex-replace-match") {
       msg = "Replace parts of '" + field + "' field that match the regex expression '" + comp_value + "' with '" + repl_value + "'.";
-    } else if ( operator === "regex-delete-row" ) {
+    } else if (operator === "regex-delete-row") {
       msg = "Delete entry if '" + field + "' field value matches the following regex expression: '" + comp_value + "'.";
     } else {
       msg = "Delete row if current value of field '" + field + "' " + operator + " '" + comp_value + "'.";
     }
-    $("[id=step-description-" + id + "]").html(msg);
-  }
-};
 
+    const descriptionElement = document.querySelector(`[id=step-description-${id}]`);
+    if (descriptionElement) {
+      descriptionElement.textContent = msg;
+    }
+  }
+
+}
 
 /**
- * Updates the field value placeholders in the filter settings overview.
+ * Updates the field value placeholders in the extraction rules table.
  */
-updateFieldValue = function( id ) {
-  $("#configuration-" + id).find("input").each(function() {
-    if (!$(this).is("button")) {
-      let fieldName = $(this).attr("id").split("-").pop();
-      let targetId = "#" + fieldName + "-" + id;
-      $( targetId ).html($(this).val());
+function updateRuleTable(id) {
+  let container = document.getElementById("configuration-" + id);
+  let inputs = container.querySelectorAll("input");
+
+  inputs.forEach(function(input) {
+    if (input.type !== "button") {
+      let fieldName = input.id.split("-").pop();
+      let targetId = fieldName + "-" + id;
+      let targetElement = document.getElementById(targetId);
+
+      if (targetElement) {
+        targetElement.textContent = input.value;
+      }
     }
   });
-};
 
-hideErrorMessages = function(id) {
+  updateRuleDescription(id);
+}
+
+function hideErrorMessages(id) {
   const independentFields = ["execution_order", "name", "field"];
   for (let i = 0; i < independentFields.length; i++) {
-    let curElement = $("#id_processingrule_set-" + id + "-" + independentFields[i]);
-    curElement.siblings( ".form-error" ).hide();
+    const curElement = document.getElementById(`id_processingrule_set-${id}-${independentFields[i]}`);
+    if (curElement) {
+      const errorElements = curElement.parentElement.querySelectorAll(".form-error");
+      errorElements.forEach(function(errorElement) {
+        errorElement.style.display = "none";
+      });
+    }
   }
 }
 
-checkNoFieldsMissing = function( id ) {
+function checkNoFieldsMissing(id) {
   const independentFields = ["execution_order", "name", "field"];
 
   for (let i = 0; i < independentFields.length; i++) {
-    let val = $("[id$=" + id + "-" + independentFields[i] + "]").val();
+    const fieldElement = document.querySelector(`[id$="${id}-${independentFields[i]}"]`);
+    const val = fieldElement ? fieldElement.value : "";
 
     if (val === "") {
-      let curElement = $("#id_processingrule_set-" + id + "-" + independentFields[i]);
-      curElement.siblings( ".form-error" ).show();
-      return(false);
+      const curElement = document.getElementById(`id_processingrule_set-${id}-${independentFields[i]}`);
+      if (curElement) {
+        const errorElements = curElement.parentElement.querySelectorAll(".form-error");
+        errorElements.forEach(function (errorElement) {
+          errorElement.style.display = "block";
+        });
+      }
+      return false;
     }
   }
 
-  let comparisonOperator = $("#id_processingrule_set-" + id + "-comparison_operator");
-  if (comparisonOperator.val() !== "") {
-    let comparisonValue = $("#id_processingrule_set-" + id + "-comparison_value").val();
-    if (comparisonValue === "") {
-      let curElement = $("#id_processingrule_set-" + id + "-comparison_value");
-      curElement.siblings( ".form-error" ).show();
-      return(false);
+  const comparisonOperator = document.getElementById(`id_processingrule_set-${id}-comparison_operator`);
+  if (comparisonOperator && comparisonOperator.value !== "") {
+    const comparisonValue = document.getElementById(`id_processingrule_set-${id}-comparison_value`);
+    if (comparisonValue && comparisonValue.value === "") {
+      const errorElements = comparisonValue.parentElement.querySelectorAll(".form-error");
+      errorElements.forEach(function (errorElement) {
+        errorElement.style.display = "block";
+      });
+      return false;
     }
   }
-  return(true);
+
+  return true;
 }
 
-closeModal = function(id) {
-  let modal = $("#configuration-" + id);
-  modal.hide();
-  $("body").removeClass("modal-open").removeAttr("style");
-  $(".modal-backdrop").remove();
+function closeModal(id) {
+  const modal = document.getElementById(`configuration-${id}`);
+  if (modal) {
+    modal.style.display = "none";
+  }
+
+  const body = document.body;
+  body.classList.remove("modal-open");
+  body.removeAttribute("style");
+
+  const modalBackdrop = document.querySelectorAll(".modal-backdrop");
+  modalBackdrop.forEach(function (backdrop) {
+    backdrop.remove();
+  });
 }
 
 /**
  * On OK-click in modal, update filter settings overview.
  */
-$( "body" ).on("click", "button[class*='ddm-modal-ok']", function() {
-  const current_id = $(this).attr("id").match(/\d+/)[0];
-  hideErrorMessages(current_id);
-  if (checkNoFieldsMissing(current_id)) {
-    updateRuleDescription(current_id);
-    updateFieldValue(current_id);
+document.body.addEventListener("click", function (event) {
+  if (event.target.tagName === "BUTTON" && event.target.className.includes("ddm-modal-ok")) {
+    const current_id = event.target.id.match(/\d+/)[0];
+    hideErrorMessages(current_id);
+    if (checkNoFieldsMissing(current_id)) {
+      updateRuleTable(current_id);
+      closeModal(current_id);
+    }
+  }
+});
+
+
+document.body.addEventListener("click", function (event) {
+  if (event.target.tagName === "BUTTON" && event.target.className.includes("ddm-modal-cancel")) {
+    const current_id = event.target.id.match(/\d+/)[0];
+    const e = document.getElementById(`execution_order-${current_id}`);
+
+    if (e && e.textContent.trim() === "None") {
+      const configurationElement = document.getElementById(`configuration-${current_id}`);
+      if (configurationElement) {
+        configurationElement.remove();
+      }
+
+      const lastRow = document.querySelector("#inlineform-table tr:last-child");
+      if (lastRow) {
+        lastRow.remove();
+      }
+
+      const totalFormElement = document.getElementById("id_processingrule_set-TOTAL_FORMS");
+      if (totalFormElement) {
+        const currentFormN = parseInt(totalFormElement.value, 10);
+        totalFormElement.value = currentFormN - 1;
+      }
+    }
     closeModal(current_id);
   }
 });
 
-$( "body" ).on("click", "button[class*='ddm-modal-cancel']", function() {
-  const current_id = $(this).attr("id").match(/\d+/)[0];
-  let e = $("#execution_order-" + current_id);
 
-  if ($.trim(e.text()) === 'None') {
-    $("#configuration-" + current_id).remove();
-    $('#inlineform-table tr:last').remove();
+document.addEventListener("DOMContentLoaded", function () {
+  const IDs = new Set();
+  const elements = document.querySelectorAll("[id^=id_processingrule_set-]");
 
-    let totalFormElement = $("#id_processingrule_set-TOTAL_FORMS");
-    let currentFormN = totalFormElement.val();
-    totalFormElement.val(parseInt(currentFormN) - 1);
-  }
-  closeModal(current_id);
-});
-
-
-$(document).ready(function() {
-  let IDs = new Set();
-  $("[id^=id_processingrule_set-]").each(function() {
-    if( /\d+/.test($( this ).attr("id")) ) {
-      IDs.add($( this ).attr("id").match(/\d+/)[0]);
+  elements.forEach(function (element) {
+    const idMatch = element.id.match(/\d+/);
+    if (idMatch) {
+      IDs.add(idMatch[0]);
     }
   });
-  for ( const id of IDs ) {
+
+  for (const id of IDs) {
     updateRuleDescription(id);
   }
 });

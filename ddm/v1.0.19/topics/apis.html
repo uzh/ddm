@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>DDM | Untitled</title>
+    <meta name="generator" content="Antora 3.1.10">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+    <link rel="icon" href="../../../_/img/ddl_favicon_black.svg" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div>
+        <a class="navbar-item" href="../../.."><img src="../../../_/img/DDM_Logo_Schwarz.svg" height="50px"></a>
+      </div>
+      <div class="navbar-slogan">
+        <a class="navbar-item" href="../../..">Data Donation Module Documentation</a>
+      </div>
+      <!--
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      -->
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="ddm" data-version="v1.0.19">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <!-- 
+    <h3 class="title"><a href="../index.html">DDM</a></h3>
+     -->
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-link-1" href="../for_researchers.html">For Researchers</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-link-1" href="../for_admins.html">For System Administrators</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-link-1" href="../for_developers.html">For Developers</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-link-1" href="../topic_references.html">Topic References</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-link-1" href="../issues.html">Reporting Issues and Getting Help</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">DDM</span>
+    <span class="version">v1.0.19</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../../main/index.html">DDM</a>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../main/index.html">main</a>
+        </li>
+        <li class="version">
+          <a href="../../develop/index.html">develop</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">v1.0.19</a>
+        </li>
+        <li class="version">
+          <a href="../../v1.0.0/index.html">v1.0.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<!--
+-->
+<!-- <nav class="breadcrumbs" aria-label="breadcrumbs">
+</nav>
+ -->
+<!-- <div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">v1.0.19</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/topics/apis.html">main</a>
+    <a class="version is-missing" href="../../develop/index.html">develop</a>
+    <a class="version is-current" href="apis.html">v1.0.19</a>
+    <a class="version is-missing" href="../../v1.0.0/index.html">v1.0.0</a>
+  </div>
+</div>
+ -->
+<!--
+-->
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+  <nav class="breadcrumbs-article" aria-label="breadcrumbs">
+</nav>
+  <div class="paragraph">
+<p>DDM offers several interfaces to retrieve different parts of the data collected for a
+given project. For example, it is possible to retrieve only the data donations,
+only the questionnaire responses, or the complete data including data donations,
+questionnaire responses and metadata.</p>
+</div>
+<div class="paragraph">
+<p>This can be useful to, for example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>access specific parts of the data collected for a project directly from within your R-
+or Python-analysis scripts.</p>
+</li>
+<li>
+<p>provide your participants with a personalized dashboard or report containing
+personalized insights based on the data they just donated to a project. This can
+serve as a great incentive for participation.</p>
+</li>
+<li>
+<p>build custom dashboards to track the progress of your data collection in more detail.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For this, DDM implements RESTful APIs. Currently, only GET requests are allowed
+through these endpoints.</p>
+</div>
+<div class="sect2">
+<h3 id="_authentication_schemes"><a class="anchor" href="#_authentication_schemes"></a>Authentication Schemes</h3>
+<div class="paragraph">
+<p>The APIs listed here can be accessed using Token authentication. A Token
+is always associated to a specific project and must be created through the
+web application (on the main project site, go to the <em>Project Hub</em> and in the
+<em>Data Center</em> click on <em>Manage Access Token</em>).</p>
+</div>
+<div class="paragraph">
+<p>Token expiration can be set to a maximum of 90 days after which they must be renewed.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_data_api"><a class="anchor" href="#_data_api"></a>Data API</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Description</dt>
+<dd>
+<p>Download all data collected for a given donation project.</p>
+</dd>
+<dt class="hdlist1">URL</dt>
+<dd>
+<p>/api/project/&lt;project ID&gt;/data</p>
+</dd>
+<dt class="hdlist1">Allowed Methods</dt>
+<dd>
+<p><code>GET</code></p>
+</dd>
+<dt class="hdlist1">Implemented Query Parameters</dt>
+<dd>
+<p>None</p>
+</dd>
+<dt class="hdlist1">Response</dt>
+<dd>
+<p>Returns a ZIP-Folder containing a json file with the following structure:</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "project": {
+        "pk": 1,
+        "name": "project name",
+        "date_created": "2022-12-19T08:49:18.363880+01:00"
+    },
+    "donations": {
+        "blueprint name 1": [
+            {
+                "participant": 1
+                "project": 1,
+                "time_submitted": "2022-12-19T08:49:18.363880+01:00",
+                "consent": true,
+                "status": "success",  # One of "success" (donation successful); "pending" (donation not attempted); "failed" (donation failed due to an error); "nothing extracted" (all data filtered out)
+                "data": [
+                    {
+                        "extracted_field_1":  "value1_entry1",
+                        "extracted_field_2":  "value2_entry1",
+                        # ...
+                    },
+                    {
+                        "extracted_field_1":  "value1_entry2",
+                        "extracted_field_2":  "value2_entry2",
+                        # ...
+                    },
+                    # etc.
+                ]
+            }
+        ],
+        "blueprint name 2": [
+            {
+                "participant": 1,
+                "project": 1,
+                "time_submitted": "...",
+                # etc.
+            }
+        ]
+    },
+    "questionnaire": [
+        {
+            "participant":  1,
+            "project":  1,
+            "time_submitted":  "2023-01-19T08:49:18.363880+01:00",
+            "responses": {
+                "variable_name": "answer to question",
+                "variable_name-item-value": "answer to item"
+            },
+            "meta_data":  {  # For data validation purposes: contains one entry per question consisting of meta information about how the question was presented to the participant:
+                "question-id": {
+                    "response": "1",  # Can be a dict of form {"item-id":  "item-response", ...} for question types with item responses
+                    "question": "question text in html format as displayed to participant",
+                    "items": [
+                        {
+                            "id": "33",
+                            "label": "label text in html format as displayed to participant",
+                            "label_alt": "alternative label text in html format as displayed to participant",  # only applies to semantic differential
+                            "index": "1",
+                            "value": "1",
+                            "randomize": false
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "participants": [
+        {
+            "pk":  1,
+            "project":  1,
+            "external_id":  "DMXdpfVyksagfqql2cTgp8kF",
+            "start_time":  "2023-01-18T08:49:18.363880+01:00",
+            "end_time":  "2023-01-20T08:49:18.363880+01:00",
+            "completed":  true,
+            "extra_data":  {
+                "url_param": {
+                    "some_url_parameter": "some value extracted from this parameter when the briefing page was called.",
+                    # ...
+                }
+            }
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Example</dt>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">GET /api/project/4/data HTTPS
+Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+Host: &lt;hostname&gt;
+
+zip-file</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_donations_api"><a class="anchor" href="#_donations_api"></a>Donations API</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Description</dt>
+<dd>
+<p>Download all data collected for a given donation project.</p>
+</dd>
+<dt class="hdlist1">URL</dt>
+<dd>
+<p>/api/project/&lt;project ID&gt;/donations</p>
+</dd>
+<dt class="hdlist1">Allowed Methods</dt>
+<dd>
+<p><code>GET</code></p>
+</dd>
+<dt class="hdlist1">Implemented Query Parameters</dt>
+<dd>
+<p><code>participants</code>, <code>blueprints</code>; both can be supplied
+as a comma-separated list of <em>external participant IDs</em> or <em>blueprint IDs</em>. If not
+specified, donations for all participants/blueprints associated with a project will be
+returned.</p>
+</dd>
+<dt class="hdlist1">Response</dt>
+<dd>
+<p>Returns a json object containing all donated data matching the query parameters.</p>
+</dd>
+<dt class="hdlist1">Example</dt>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">GET /api/project/4/donations HTTPS
+Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+Host: &lt;hostname&gt;
+
+{
+    'Blueprint 1': [
+        [&lt;donations participant 1&gt;], [&lt;donations participant 2&gt;], [&lt;donations participant 3&gt;]
+    ],
+    'Blueprint Zwei': [
+        [&lt;donations participant 1&gt;], [&lt;donations participant 2&gt;], [&lt;donations participant 3&gt;]
+    ]
+}
+
+
+GET /api/project/4/donations?participants=1,2&amp;blueprints=1 HTTPS
+Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+Host: &lt;hostname&gt;
+
+{
+    'Blueprint 1': [[&lt;donations participant 1&gt;], [&lt;donations participant 2&gt;]]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_responses_api"><a class="anchor" href="#_responses_api"></a>Responses API</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Description</dt>
+<dd>
+<p>Download all questionnaire responses collected for a given donation project.</p>
+</dd>
+<dt class="hdlist1">URL</dt>
+<dd>
+<p>/api/project/&lt;project ID&gt;/responses</p>
+</dd>
+<dt class="hdlist1">Allowed Methods</dt>
+<dd>
+<p><code>GET</code></p>
+</dd>
+<dt class="hdlist1">Implemented Query Parameters</dt>
+<dd>
+<p><code>participants</code>; can be supplied
+as a comma-separated list of <em>external participant IDs</em>. If not
+specified, donations for all participants associated with a project will be
+returned.</p>
+</dd>
+<dt class="hdlist1">Response</dt>
+<dd>
+<p>Returns a json object containing all questionnaire responses matching the query parameters.</p>
+</dd>
+<dt class="hdlist1">Example</dt>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">GET /api/project/4/responses HTTPS
+Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+Host: &lt;hostname&gt;
+
+[
+    {'variable_a': 'response', 'variable_b': 'response'},
+    {'variable_a': 'response', 'variable_b': 'response'},
+    {'variable_a': 'response', 'variable_b': 'response'}
+]
+
+
+GET /api/project/4/responses?participants=1,2 HTTPS
+Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+Host: &lt;hostname&gt;
+
+[
+    {'variable_a': 'response', 'variable_b': 'response'},
+    {'variable_a': 'response', 'variable_b': 'response'}
+]</code></pre>
+</div>
+</div>
+</div>
+  </article>
+  </div>
+</main>
+<div id="overlay"></div>
+</div>
+<footer class="footer">
+  <div class="footer-content-bite"><a href="https://datadonation.uzh.ch"><img src="../../../_/img/DataDonationLab_Logo_Schwarz.svg" height="50px"></a></div>
+  <div class="footer-content-bite">© Data Donation Lab, 2023-present</div>
+  <div class="footer-content-bite"><a href="https://github.com/uzh/ddm">DDM on GitHub</a></div>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

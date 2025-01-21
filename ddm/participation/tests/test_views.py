@@ -60,25 +60,38 @@ class ParticipationFlowBaseTestCase(TestCase):
 
         # URLs for project with questionnaire.
         slug_base = cls.project_base.slug
-        cls.briefing_url = reverse('ddm_participation:briefing', args=[slug_base])
-        cls.dd_url = reverse('ddm_participation:datadonation', args=[slug_base])
-        cls.quest_url = reverse('ddm_participation:questionnaire', args=[slug_base])
-        cls.debriefing_url = reverse('ddm_participation:debriefing', args=[slug_base])
+        cls.briefing_url = reverse(
+            'ddm_participation:briefing', args=[slug_base])
+        cls.dd_url = reverse(
+            'ddm_participation:datadonation', args=[slug_base])
+        cls.quest_url = reverse(
+            'ddm_participation:questionnaire', args=[slug_base])
+        cls.debriefing_url = reverse(
+            'ddm_participation:debriefing', args=[slug_base])
 
-        cls.inactive_info_page = reverse('ddm_participation:project_inactive', args=[slug_base])
+        cls.inactive_info_page = reverse(
+            'ddm_participation:project_inactive', args=[slug_base])
 
         # URLs for project without questionnaire.
         slug_alt = cls.project_alt.slug
-        cls.briefing_url_no_quest = reverse('ddm_participation:briefing', args=[slug_alt])
-        cls.dd_url_no_quest = reverse('ddm_participation:datadonation', args=[slug_alt])
-        cls.quest_url_no_quest = reverse('ddm_participation:questionnaire', args=[slug_alt])
-        cls.debriefing_url_no_quest = reverse('ddm_participation:debriefing', args=[slug_alt])
+        cls.briefing_url_no_quest = reverse(
+            'ddm_participation:briefing', args=[slug_alt])
+        cls.dd_url_no_quest = reverse(
+            'ddm_participation:datadonation', args=[slug_alt])
+        cls.quest_url_no_quest = reverse(
+            'ddm_participation:questionnaire', args=[slug_alt])
+        cls.debriefing_url_no_quest = reverse(
+            'ddm_participation:debriefing', args=[slug_alt])
 
         # URLs for non-existing project.
-        cls.briefing_url_invalid = reverse('ddm_participation:briefing', args=['nope'])
-        cls.dd_url_invalid = reverse('ddm_participation:datadonation', args=['nope'])
-        cls.quest_url_invalid = reverse('ddm_participation:questionnaire', args=['nope'])
-        cls.debriefing_url_invalid = reverse('ddm_participation:debriefing', args=['nope'])
+        cls.briefing_url_invalid = reverse(
+            'ddm_participation:briefing', args=['nope'])
+        cls.dd_url_invalid = reverse(
+            'ddm_participation:datadonation', args=['nope'])
+        cls.quest_url_invalid = reverse(
+            'ddm_participation:questionnaire', args=['nope'])
+        cls.debriefing_url_invalid = reverse(
+            'ddm_participation:debriefing', args=['nope'])
 
     def initialize_project_and_session(self):
         self.client = Client()
@@ -125,6 +138,18 @@ class TestBriefingView(ParticipationFlowBaseTestCase):
 
         project_session = self.client.session[f'project-{self.project_base.pk}']
         self.assertIsNotNone(project_session['participant_id'])
+
+    def test_project_briefing_view_extracts_parameter(self):
+        self.project_base.expected_url_parameters = 'testparam'
+        self.project_base.url_parameter_enabled = True
+        self.project_base.save()
+        self.client.get(self.briefing_url + '?testparam=okay&altparam=false')
+        project_session = self.client.session[f'project-{self.project_base.pk}']
+        participant_id = project_session['participant_id']
+        participant = Participant.objects.get(pk=participant_id)
+        self.assertIn('testparam', participant.extra_data['url_param'])
+        self.assertNotIn('altparam', participant.extra_data['url_param'])
+        self.assertEqual(participant.extra_data['url_param']['testparam'], 'okay')
 
     def test_project_briefing_view_GET_valid_url(self):
         response = self.client.get(self.briefing_url)
@@ -427,7 +452,10 @@ class TestRedirect(ParticipationFlowBaseTestCase):
 
     def test_redirect_multiple_parameters(self):
         self.project_base.expected_url_parameters = 'testparam;testparam2'
-        self.project_base.redirect_target = 'http://test.test/?para={{url_parameter.testparam}}&para2={{url_parameter.testparam2}}'
+        self.project_base.redirect_target = (
+            'http://test.test/?para={{url_parameter.testparam}}&'
+            'para2={{url_parameter.testparam2}}'
+        )
         self.project_base.save()
         self.client.get(self.briefing_url + '?testparam=test&testparam2=test2')
 
@@ -450,7 +478,10 @@ class TestContinuationView(ParticipationFlowBaseTestCase):
 
     def test_render_without_participant(self):
         new_client = Client()
-        url = reverse('ddm_participation:continuation', args=[self.project_base.slug])
+        url = reverse(
+            'ddm_participation:continuation',
+            args=[self.project_base.slug]
+        )
         response = new_client.get(url, data={'p': 'some-non-existing-id'}, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, ContinuationView.template_name)
@@ -460,7 +491,44 @@ class TestContinuationView(ParticipationFlowBaseTestCase):
         self.client.post(self.briefing_url)
         self.client.get(self.dd_url)
         participant = self.get_participant(self.project_base.pk)
-        url = reverse('ddm_participation:continuation', args=[self.project_base.slug])
+        url = reverse(
+            'ddm_participation:continuation',
+            args=[self.project_base.slug]
+        )
         new_client = Client()
         response = new_client.get(url, data={'p': participant.external_id}, follow=True)
         self.assertRedirects(response, self.dd_url)
+
+
+class TestParticipationRedirectView(ParticipationFlowBaseTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.initialize_project_and_session()
+
+    def test_url_without_step_redirects_to_briefing(self):
+        url_input = reverse(
+            'ddm_participation:redirect',
+            args=[self.project_base.slug]
+        )
+        url_expected = reverse(
+            'ddm_participation:briefing',
+            args=[self.project_base.slug]
+        )
+        new_client = Client()
+        response = new_client.get(url_input, follow=True)
+        self.assertRedirects(response, url_expected)
+
+    def test_url_without_step_redirects_to_briefing_with_query_string(self):
+        query_string = '?param1=A&param2=B'
+        url_input = reverse(
+            'ddm_participation:redirect',
+            args=[self.project_base.slug]
+        ) + query_string
+        url_expected = reverse(
+            'ddm_participation:briefing',
+            args=[self.project_base.slug]
+        ) + query_string
+        new_client = Client()
+        response = new_client.get(url_input, follow=True)
+        self.assertRedirects(response, url_expected)

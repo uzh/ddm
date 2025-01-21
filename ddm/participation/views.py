@@ -158,7 +158,9 @@ def participation_redirect_view(request, slug):
     """
     Redirect user to briefing page if url does not contain a step indicator.
     """
-    return redirect('ddm_participation:briefing', slug)
+    redirect_url = reverse('ddm_participation:briefing', args=[slug])
+    query_string = request.META.get('QUERY_STRING', '')
+    return redirect(f'{redirect_url}?{query_string}')
 
 
 class BriefingView(ParticipationFlowBaseView):
@@ -207,26 +209,22 @@ class BriefingView(ParticipationFlowBaseView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        if self.object.url_parameter_enabled:
+            self.extract_url_parameter()
         context['participant'] = self.participant
         participant_info = self.participant.get_context_data()
         context['briefing'] = render_user_content(self.object.briefing_text, participant_info)
         return context
 
-    def extract_url_parameter(self, request):
+    def extract_url_parameter(self):
         """
         Extract URL parameters on first call of the view and save to
         participant.extra_data.
         """
         if not self.participant.extra_data['url_param']:
             for param in self.object.get_expected_url_parameters():
-                self.participant.extra_data['url_param'][param] = request.GET.get(param, None)
+                self.participant.extra_data['url_param'][param] = self.request.GET.get(param, None)
             self.participant.save()
-        return
-
-    def extra_before_render(self, request):
-        """ Extract URL parameters if this option has been enabled. """
-        if self.object.url_parameter_enabled:
-            self.extract_url_parameter(request)
         return
 
 

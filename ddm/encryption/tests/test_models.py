@@ -148,7 +148,6 @@ class TestModelEncryption(TestCase):
                 self.assertEqual(raw_data, dd.get_decrypted_data(secret=dd.project.secret_key, salt=dd.project.get_salt()))
 
     def test_data_donation_decryption_with_provided_decryptor(self):
-        #encryptor = Encryption(secret=self.base_project.secret_key, salt=self.base_project.get_salt())
         decryptor = Decryption(secret=self.base_project.secret_key, salt=self.base_project.get_salt())
         for raw_data in [self.raw_data_short, self.raw_data_long]:
             with self.subTest(raw_data=raw_data):
@@ -160,6 +159,18 @@ class TestModelEncryption(TestCase):
                     status='some status',
                     data=raw_data
                 )
-                #dd.save(encryptor=encryptor)
                 self.assertNotEqual(raw_data, dd.data)
                 self.assertEqual(raw_data, dd.get_decrypted_data(secret=None, salt=None, decryptor=decryptor))
+
+    def test_model_with_encryption_double_save(self):
+        dd = DataDonation.objects.create(
+            project=self.base_project,
+            blueprint=self.base_blueprint,
+            participant=self.base_participant,
+            consent=True,
+            status='some status',
+            data=self.raw_data_long
+        )
+        dd.consent = False
+        dd.save()
+        self.assertFalse(dd.consent)

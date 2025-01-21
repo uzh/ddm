@@ -29,7 +29,7 @@ In all fields where the template features are available, the following variables
 - `participant_id`: The external ID of the participant.
 - `url_parameter`: A dictionary containing the URL parameters extracted from the initial URL. For example,
 this variable could look like `{'url_param_a': <value A>, 'url_param_b': <value B>}` and you would access a specific
-value by including `{{ url_paramerer.url_param_a }}` in your text field.
+value by including `{{ url_parameter.url_param_a }}` in your text field.
 - `briefing_consent`: If you
 xref:researchers:project_configuration/briefing.adoc#_configuration_options[enable the briefing consent on the Briefing page],
 this variable will be `1` if participant has

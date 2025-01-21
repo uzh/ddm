@@ -117,7 +117,7 @@
       </div>
 
       <div id="download-questionnaire-responses" class="me-5">
-        <p class="mb-0"><b>Questionnaire Responses:</b><br><a class="a-no-link ddm-btn ddm-btn-green" onclick=""><i class="bi bi-download pe-1"></i> Download CSV</a></p>
+        <p class="mb-0"><b>Questionnaire Responses:</b><br><a class="a-no-link ddm-btn ddm-btn-green" onclick="downloadResponses('{% url 'ddm_apis:responses' object.url_id %}')"><i class="bi bi-download pe-1"></i> Download CSV</a></p>
       </div>
 
       <div>
@@ -250,6 +250,15 @@
         </div>
       </div>
       <div id="download-progress" class="fs-2 ps-3 text-white w-100 text-center">0 %</div>
+    </div>
+  </div>
+</div>
+
+<div id="download-overlay-no-bar" class="ddm-overlay">
+  <div class="overlay-content d-flex justify-content-center align-items-center h-100 white">
+    <div class="load-spinner"></div>
+    <div class="fs-2 ps-3 text-white">
+      <div>Your data is being prepared. This may take a few moments.</div>
     </div>
   </div>
 </div>

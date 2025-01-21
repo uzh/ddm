@@ -1,5 +1,8 @@
+import csv
+import io
+
 from django.core.exceptions import BadRequest, ObjectDoesNotExist
-from django.http import Http404, StreamingHttpResponse
+from django.http import Http404, StreamingHttpResponse, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.decorators.debug import sensitive_variables
@@ -212,7 +215,7 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
     API View to retrieve the questionnaire responses for a project.
 
     Returns:
-    - A Response object with data and status code.
+    - A Response object with the data as JSON or CSV and status code.
 
     Available query filters:
     - participants (optional): A comma-separated list of external participant IDs
@@ -222,13 +225,18 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
         includes a snapshot of the questionnaire configuration at
         the time the questionnaire was completed for each participant.
         Otherwise, it is omitted.
+    - csv (optional): If csv is 'true', the response will be provided
+        as a csv file.
 
     Error Responses:
     - 400 Bad Request: If there's an issue with the input data.
-    - 401 Unauthorized: If authentication fails.
+    - 403 Unauthorized: If authentication fails.
     """
     project = None
-    authentication_classes = [ProjectTokenAuthenticator]
+    authentication_classes = [
+        authentication.SessionAuthentication,
+        ProjectTokenAuthenticator
+    ]
     permission_classes = [permissions.IsAuthenticated]
 
     def dispatch(self, request, *args, **kwargs):
@@ -252,8 +260,8 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
                 project=self.project, participant__in=participants)
 
     def get_serializer(self):
-        snapshot_parameter = self.request.query_params.get('include_snapshot')
-        if snapshot_parameter == 'true':
+        snapshot = self.request.query_params.get('include_snapshot')
+        if snapshot == 'true':
             return ResponseSerializerWithSnapshot
         else:
             return ResponseSerializer
@@ -264,12 +272,8 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
         }
         return metadata
 
-    def get(self, request, format=None, *args, **kwargs):
-        participants = self.get_participants()
-        responses = self.get_responses(participants)
-        decryptor = Decryption(self.project.secret_key, self.project.get_salt())
+    def create_json_response(self, responses, decryptor):
         serializer = self.get_serializer()
-
         response = {
             'responses': serializer(responses, many=True, decryptor=decryptor).data,
             'metadata': self.get_metadata(responses)
@@ -279,6 +283,42 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
             msg='The response data was accessed through the API.'
         )
         return Response(response)
+
+    def create_csv_response(self, responses, decryptor):
+        clean_responses = []
+        col_names = {'participant', 'time_submitted'}
+        responses = ResponseSerializer(responses, many=True, decryptor=decryptor).data
+        for response in responses:
+            data = dict()
+            data['participant'] = response['participant']
+            data['time_submitted'] = response['time_submitted']
+            for var, val in response['response_data'].items():
+                col_names.add(var)
+                data[var] = val
+            clean_responses.append(data)
+
+        csv_output = io.StringIO()
+        writer = csv.DictWriter(csv_output, fieldnames=col_names)
+        writer.writeheader()
+        writer.writerows(clean_responses)
+
+        csv_content = csv_output.getvalue()
+        csv_output.close()
+
+        filename = f'ddm_responses_{self.project.url_id}'
+        response = HttpResponse(csv_content, content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="{filename}.csv"'
+        return response
+
+    def get(self, request, format=None, *args, **kwargs):
+        participants = self.get_participants()
+        responses = self.get_responses(participants)
+        decryptor = Decryption(self.project.secret_key, self.project.get_salt())
+
+        if self.request.query_params.get('csv') == 'true':
+            return self.create_csv_response(responses, decryptor)
+        else:
+            return self.create_json_response(responses, decryptor)
 
 
 class DeleteParticipantAPI(APIView, DDMAPIMixin):

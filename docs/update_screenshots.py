@@ -84,6 +84,16 @@ def highlight_participation_overview_download(driver, element):
     """, element)
     return element
 
+def highlight_responses_download(driver, element):
+    driver.execute_script("""
+        var parent = arguments[0];
+        var child = parent.querySelector('#download-questionnaire-responses');
+        if (child) {
+            child.style.background = 'yellow';
+        }
+    """, element)
+    return element
+
 def prepare_project_settings(driver):
     button = driver.find_element(By.ID, 'project-base-settings-accordion-btn')
     button.click()
@@ -307,6 +317,14 @@ def load_element_list():
             'element_id': 'data-download-section',
             'function_pre': None,
             'function_post': highlight_participation_overview_download,
+        },
+        {
+            'module': 'researchers',
+            'sc_name': 'download_responses.png',
+            'url': f'projects/{PROJECT_ID}/',
+            'element_id': 'data-download-section',
+            'function_pre': None,
+            'function_post': highlight_responses_download,
         },
         {
             'module': 'researchers',

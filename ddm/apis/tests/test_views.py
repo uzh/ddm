@@ -341,6 +341,19 @@ class TestAPIs(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertDictEqual(response.data, expected_response)
 
+    def test_responses_api_get_csv_with_valid_api_credentials(self):
+        token = self.project_base.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        url = reverse(
+            'ddm_apis:responses',
+            args=[self.project_base.url_id]
+        )
+        query_string = f'?csv=true'
+        response = client.get(url + query_string)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'text/csv')
+
     def test_participant_deletion_with_regular_login(self):
         self.client.login(**self.base_creds)
 

@@ -1,5 +1,17 @@
-async function downloadData(endpointUrl, fileName, nParticipants) {
+/* Download Project Data */
+const dataDownloadBtn = document.getElementById('download-data-button');
+if (dataDownloadBtn) {
+    const downloadUrl = dataDownloadBtn.dataset.downloadUrl;
+    const filename = dataDownloadBtn.dataset.filename;
+    const nStarted = parseInt(dataDownloadBtn.dataset.nStarted);
 
+    dataDownloadBtn.addEventListener('click', () => {
+        downloadData(downloadUrl, filename, nStarted);
+    });
+}
+
+async function downloadData(endpointUrl, fileName, nParticipants) {
+    console.log(fileName)
     try {
         const downloadOverlay = document.getElementById('download-overlay');
         const downloadProgress = document.getElementById('download-progress');
@@ -67,6 +79,15 @@ async function downloadData(endpointUrl, fileName, nParticipants) {
         const errorModal = new bootstrap.Modal(document.getElementById('modal-download-error'));
         errorModal.show();
     }
+}
+
+/* Download Response Data */
+const responsesDownloadBtn = document.getElementById('download-responses-button');
+if (responsesDownloadBtn) {
+    const downloadUrl = responsesDownloadBtn.dataset.downloadUrl;
+    responsesDownloadBtn.addEventListener('click', () => {
+        downloadData(downloadUrl);
+    });
 }
 
 async function downloadResponses(endpointUrl) {

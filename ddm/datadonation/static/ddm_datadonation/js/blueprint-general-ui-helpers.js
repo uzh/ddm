@@ -1,40 +1,52 @@
+// Get variables from template.
 const file_uploader_meta = JSON.parse(document.getElementById("file_uploader_meta").textContent);
 
 function hideOrShowCsvDelimiter() {
-    if( $( "#id_exp_file_format" ).val() === "csv") {
-        $( "#id_csv_delimiter" ).parent().show();
-    } else {
-        $( "#id_csv_delimiter" ).parent().hide();
-    }
+  const expFileFormat = document.getElementById("id_exp_file_format").value;
+  const csvDelimiterParent = document.getElementById("id_csv_delimiter").parentNode;
+
+  if (expFileFormat === "csv") {
+    // Show the parent element
+    csvDelimiterParent.style.display = "";
+  } else {
+    // Hide the parent element
+    csvDelimiterParent.style.display = "none";
+  }
 }
 
 function hideOrShowRegexPath() {
-    if( file_uploader_meta[$( "#id_file_uploader" ).val()] === "zip file" ) {
-        $( "#id_regex_path" ).parent().show();
-    } else {
-        $( "#id_regex_path" ).parent().hide();
-    }
+  const fileUploaderVal = document.getElementById("id_file_uploader").value;
+  const regexPathParent = document.getElementById("id_regex_path").parentNode;
+
+  if (file_uploader_meta[fileUploaderVal] === "zip file") {
+    regexPathParent.style.display = "";
+  } else {
+    regexPathParent.style.display = "none";
+  }
 }
 
 function hideOrShowJsonRoot() {
-    if( $( "#id_exp_file_format" ).val() === "json") {
-        $( "#id_json_extraction_root" ).parent().show();
-    } else {
-        $( "#id_json_extraction_root" ).parent().hide();
-    }
+  const expFileFormat = document.getElementById("id_exp_file_format").value;
+  const jsonExtractionRootParent = document.getElementById("id_json_extraction_root").parentNode;
+
+  if (expFileFormat === "json") {
+    jsonExtractionRootParent.style.display = "";
+  } else {
+    jsonExtractionRootParent.style.display = "none";
+  }
 }
 
-$(function() {
+document.addEventListener("DOMContentLoaded", function() {
+  hideOrShowCsvDelimiter();
+  hideOrShowRegexPath();
+  hideOrShowJsonRoot();
+
+  document.getElementById("id_exp_file_format").addEventListener("change", function() {
     hideOrShowCsvDelimiter();
+    hideOrShowJsonRoot();
+  });
+
+  document.getElementById("id_file_uploader").addEventListener("change", function() {
     hideOrShowRegexPath();
-    hideOrShowJsonRoot();
-});
-
-$( "#id_exp_file_format" ).change(function() {
-    hideOrShowCsvDelimiter();
-    hideOrShowJsonRoot();
-});
-
-$( "#id_file_uploader" ).change(function() {
-    hideOrShowRegexPath()
+  });
 });

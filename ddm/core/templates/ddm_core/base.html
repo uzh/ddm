@@ -36,7 +36,7 @@
     {% for message in messages %}
     <div id="message-{{ forloop.counter }}" class="ddm-message d-flex justify-content-between space-between {% if message.tags %} {{ message.tags }}{% endif %}">
       <div>{{ message }}</div>
-      <div><a class="ddm-message-close" href="#" onclick="closeMessage('message-{{ forloop.counter }}');">&#128941;</a></div>
+      <div><a class="ddm-message-close" href="#">&#128941;</a></div>
     </div>
     {% endfor %}
     {% endif %}
@@ -58,6 +58,7 @@
 {% block scripts %}
 <script src="{% static 'ddm_core/js/jquery/jquery-3.6.2.min.js' %}"></script>
 <script src="{% static 'ddm_core/js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'ddm_core/js/messages.js' %}"></script>
 <script src="{% static 'ddm_projects/js/project-admin-base.js' %}"></script>
 {% endblock %}
 

@@ -16,7 +16,7 @@ from django.views.generic.list import ListView
 from ddm.apis.serializers import DataDonationSerializer
 from ddm.apis.views import DDMAPIMixin
 from ddm.datadonation.forms import (
-    BlueprintEditForm, ProcessingRuleInlineFormset, SecretInputForm
+    BlueprintEditForm, ProcessingRuleInlineFormset, SecretInputForm, InstructionsForm
 )
 from ddm.datadonation.models import (
     DonationBlueprint, DonationInstruction, FileUploader
@@ -250,8 +250,8 @@ class InstructionOverview(DDMAuthMixin, InstructionMixin, ListView):
 class InstructionCreate(SuccessMessageMixin, DDMAuthMixin, InstructionMixin, CreateView):
     """ View to create an instruction page. """
     model = DonationInstruction
+    form_class = InstructionsForm
     template_name = 'ddm_datadonation/instructions/create.html'
-    fields = ['text', 'index']
     success_message = 'Instruction page was successfully created.'
 
     def get_form_kwargs(self):
@@ -273,8 +273,8 @@ class InstructionCreate(SuccessMessageMixin, DDMAuthMixin, InstructionMixin, Cre
 class InstructionEdit(SuccessMessageMixin, DDMAuthMixin, InstructionMixin, UpdateView):
     """ View to edit an instruction page. """
     model = DonationInstruction
+    form_class = InstructionsForm
     template_name = 'ddm_datadonation/instructions/edit.html'
-    fields = ['text', 'index']
     success_message = 'Instruction page was successfully updated.'
 
 

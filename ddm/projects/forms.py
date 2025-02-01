@@ -35,6 +35,8 @@ class ProjectCreateForm(forms.ModelForm):
         ]
         widgets = {
             'owner': forms.HiddenInput(),
+            'data_protection_statement': CKEditor5Widget(config_name='ddm_ckeditor'),
+            'contact_information': CKEditor5Widget(config_name='ddm_ckeditor'),
         }
 
     field_order = [

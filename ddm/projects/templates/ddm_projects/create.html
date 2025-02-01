@@ -46,7 +46,7 @@
       {{ form.owner }}
     </p>
 
-    <div class="p-3 mt-2 w-50 rounded" style="background-color: #ffdfdf;">
+    <div class="p-3 mt-2 w-50 rounded bg-light-red">
       <p class="mt-0">
         <b>Is this a super secret project?</b>
       </p>
@@ -63,7 +63,7 @@
         {{ form.super_secret.label_tag }}
         {{ form.super_secret }}
       </p>
-      <div id="secret-definition" style="display: none;">
+      <div id="secret-definition" class="d-none">
         <p>
           {{ form.project_password.errors }}
           {{ form.project_password.label_tag }}

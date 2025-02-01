@@ -30,3 +30,7 @@
     width: 15%;
     min-width: 180px;
 }
+
+.bg-light-red {
+    background-color: #ffdfdf;
+}

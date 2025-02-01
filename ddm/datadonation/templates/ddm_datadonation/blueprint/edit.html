@@ -2,6 +2,10 @@
 
 {% load static %}
 
+{% block extrahead %}
+    <link rel="stylesheet" href="{% static 'ddm_datadonation/css/blueprint_edit.css' %}">
+{% endblock %}
+
 {% block page_title %}Edit File Blueprint{% endblock %}
 
 {% block main_heading %}Edit File Blueprint "{{ object.name }}"{% endblock %}
@@ -117,7 +121,7 @@
     {% include "ddm_datadonation/processing_rule_modal.html" with modal_id="configuration-template" form=formset.empty_form button_id="__prefix__" %}
   {% endfor %}
 
-  <table id="empty-form-placeholder" style="display:none">
+  <table id="empty-form-placeholder">
     <tr>
       {% for field in formset.empty_form %}
       {% if field.name in 'name,field,execution_order' %}
@@ -147,16 +151,16 @@
     </tr>
   </table>
 
-  <div id="empty-form" style="display:none">
+  <div id="empty-form">
     <div class="rule-configuration-form">
     {% for field in formset.empty_form %}
     {% if field.name in 'name,field,regex_field,execution_order,input_type,comparison_operator,comparison_value,replacement_value' %}
-    <p {% if field.name in 'replacement_value,comparison_value' %}style="display: none"{% endif %}>
+    <p {% if field.name in 'replacement_value,comparison_value' %}class="d-none"{% endif %}>
       {{ field.label_tag }}
       <span class="helptext">{{ field.help_text }}</span>
       {{ field }}
       {{ field.errors }}
-      <span class="form-error" style="display: none; color: red;">Please provide a value for this field.</span>
+      <span class="form-error d-none">Please provide a value for this field.</span>
     </p>
     {% endif %}
     {% endfor %}

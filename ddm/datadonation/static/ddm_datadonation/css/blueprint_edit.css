@@ -1,0 +1,13 @@
+#empty-form-placeholder,
+#empty-form {
+    display: none;
+}
+
+.form-error {
+    color: red;
+}
+
+.ddm-note {
+    font-size: 0.75rem;
+    color: grey;
+}

@@ -59,7 +59,8 @@ function hideErrorMessages(id) {
     if (curElement) {
       const errorElements = curElement.parentElement.querySelectorAll(".form-error");
       errorElements.forEach(function(errorElement) {
-        errorElement.style.display = "none";
+        errorElement.classList.add("d-none");
+        errorElement.classList.remove("d-block");
       });
     }
   }
@@ -77,7 +78,8 @@ function checkNoFieldsMissing(id) {
       if (curElement) {
         const errorElements = curElement.parentElement.querySelectorAll(".form-error");
         errorElements.forEach(function (errorElement) {
-          errorElement.style.display = "block";
+          errorElement.classList.add("d-block");
+          errorElement.classList.remove("d-none");
         });
       }
       return false;
@@ -90,7 +92,8 @@ function checkNoFieldsMissing(id) {
     if (comparisonValue && comparisonValue.value === "") {
       const errorElements = comparisonValue.parentElement.querySelectorAll(".form-error");
       errorElements.forEach(function (errorElement) {
-        errorElement.style.display = "block";
+        errorElement.classList.remove("d-none");
+        errorElement.classList.add("d-block");
       });
       return false;
     }

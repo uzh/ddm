@@ -24,13 +24,16 @@ Setting up DDM includes the following steps:
 
 == Requirements
 
-DDM has the following requirements:
+DDM has the following dependencies which will be installed when installing django-ddm through pip:
 
-[NOTE]
-====
-This section will be added in the future.
-// TODO: Extend section.
-====
+- https://pypi.org/project/asgiref/[asgiref]
+- https://www.djangoproject.com/[Django 4.2]
+- https://pypi.org/project/django-ckeditor-5/[django-ckeditor-5]
+- https://pypi.org/project/django-polymorphic/[django-polymorphic]
+- https://pypi.org/project/django-webpack-loader/[django-webpack-loader]
+- https://pypi.org/project/djangorestframework/[djangorestframework]
+- https://pypi.org/project/pycryptodome/[pycryptodome]
+- https://pypi.org/project/sqlparse/[sqlparse]
 
 
 == Create Django Application
@@ -53,22 +56,26 @@ ProjectPath> source /path/to/venv/bin/activate
 ----
 
 Next, install Django in your virtual environment:
+
 [source]
 ----
 (venv) ProjectPath> pip install Django==4.2.*
 ----
 
 Now that Django is installed, start a new project and access it:
+
 [source]
 ----
 (venv) ProjectPath> django-admin startproject yourproject
 (venv) ProjectPath> cd yourproject
 ----
+
 This will create a new folder `yourproject` that contains a file called `manage.py`
 and a folder that is also called `yourproject`. In this subfolder you will find, among others,
 the `settings.py` and the `urls.py` file.
 
 Next, create a superuser account with your Django project:
+
 [source]
 ----
 (venv) ProjectPath/yourproject> python manage.py createsuperuser
@@ -77,6 +84,7 @@ You will be asked to provide a username and a password.
 
 To see whether the installation of Django worked run the following command and
 see whether the base site loads:
+
 [source]
 ----
 (venv) ProjectPath/yourproject> python manage.py runserver
@@ -201,6 +209,8 @@ Include the DDM urls in your projects urls.py:
 [source,python]
 ----
 # urls.py
+from django.urls import path, include
+# ...
 
 urlpatterns = [
     # ...
@@ -213,9 +223,12 @@ Configure login and logout endpoints for DDM in urls.py:
 [source,python]
 ----
 # urls.py
+from django.contrib.auth import views as auth_views
+from django.urls import path, include
+# ...
 
 urlpatterns = [
-    ...
+    # ...
     path('ddm/', include('ddm.core.urls')),
     path('login/', auth_views.LoginView.as_view(template_name='ddm_auth/login.html'), name='ddm_login'),  # You can choose whatever path and template you like
     path('logout/', auth_views.LogoutView.as_view(), name='ddm_logout'),  # You can choose whatever path and template you like
@@ -232,6 +245,14 @@ have internationalization enabled for your wagtail urls, we recommend to use the
 [source, python]
 ----
 # urls.py
+from django.conf.urls.i18n import i18n_patterns
+from django.urls import path, include
+from wagtail import urls as wagtail_urls
+# ...
+
+urlpatterns = [
+    # ...
+]
 
 urlpatterns += i18n_patterns(
     path('', include(wagtail_urls)),

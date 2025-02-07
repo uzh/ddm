@@ -845,7 +845,16 @@ export default {
       let nSuccess = 0;
       let nFailed = 0;
       let nBlueprints = Object.keys(this.blueprintData).length;
+      console.log(this.generalErrors)
+      console.log(this.generalErrors.length)
       for (let bp in this.blueprintData){
+        if (this.generalErrors.length !== 0) {
+          this.blueprintData[bp].status = 'failed';
+          this.blueprintData[bp].consent = 'false';
+          nFailed += 1;
+          continue;
+        }
+
         if (this.blueprintData[bp].errors.length) {
           let errorSet = new Set(this.blueprintData[bp].errors);
 
@@ -880,6 +889,9 @@ export default {
           this.ulModalInfoTitle = this.$t('ul-nothing-extracted-modal-title');
           this.ulModalInfoMsg = this.$t('ul-nothing-extracted-modal-body');
 
+          this.$refs.ulInfoModal.style.display = 'block';
+          this.$refs.modalBackdrop.style.display = 'block';
+
         } else if ((nSuccess + nNothingExtracted) === nBlueprints) {
           this.uploadStatus = 'success';
           modalIcon.className = 'bi bi-file-check text-success';
@@ -895,10 +907,9 @@ export default {
           for (let bp in this.blueprintData){
             this.blueprintData[bp].status = 'failed';
           }
+          this.$refs.ulInfoModal.style.display = 'block';
+          this.$refs.modalBackdrop.style.display = 'block';
         }
-
-        //this.$refs.ulInfoModal.style.display = 'block';
-        //this.$refs.modalBackdrop.style.display = 'block';
       });
     },
 

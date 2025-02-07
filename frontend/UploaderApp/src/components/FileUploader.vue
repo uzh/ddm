@@ -3,15 +3,16 @@
 <template>
 
   <div class="mb-5">
-    <div class="float-left bg-dark text-white pt-2 ps-2 pb-1 rounded-top">
+    <div class="float-left pt-2 ps-2 rounded-top">
       <div class="col-sm">
-        <h4>{{ name }}</h4>
+        <h4 class="fw-bold">{{ name }}</h4>
       </div>
     </div>
 
+    <div class="uploader-container">
     <!-- INSTRUCTIONS -->
     <div v-if="instructions.length" class="accordion" :id="'ul-acc-'+componentId">
-      <div class="accordion-body border">
+      <div class="accordion-body border-bottom">
         <div class="row align-items-center">
           <div class="col-auto ul-status-icon"><i class="bi bi-signpost"></i></div>
           <div class="col-auto"><h5>{{ $t('instructions') }}</h5></div>
@@ -31,8 +32,8 @@
     </div>
 
     <!-- DATA UPLOAD -->
-    <div class="accordion-body border">
-      <div class="row align-items-center">
+    <div class="accordion-body border-bottom">
+      <div class="row align-items-center" style="height: 100px;">
 
         <!-- Upload pending -->
         <template v-if="uploadStatus === 'pending'">
@@ -71,11 +72,8 @@
           <div class="col-auto ul-status-icon"><i class="bi bi-file-check"></i></div>
 
           <div class="col ul-status-description">
-            <p class="text-success fw-bold">{{ $t('upload-success') }}</p>
-            <p><a @click="uploadStatus = 'pending'" class="upload-other">{{ $t('choose-different-file') }}</a></p>
+            <h5 class="text-success fw-bold">{{ $t('upload-success') }}</h5>
           </div>
-
-          <div class="col ul-status-message"></div>
         </template>
 
         <!-- Upload partial -->
@@ -112,24 +110,22 @@
       </div>
       <!-- UPLOAD FEEDBACK -->
 
-      <div class="accordion-body border border-bottom-0">
+      <div class="accordion-body">
         <div class="row align-items-center">
-          <div class="col-auto ul-status-icon"><i class="bi bi-clipboard-data"></i></div>
           <div class="col extraction-information-container">
-            <div class="col"><h5>{{ $t('data-extraction') }}</h5></div>
             <div class="col">
               <template v-if="uploadStatus === 'pending'">
-                {{ $t('data-extraction-intro') }}:
+                <h6>{{ $t('data-extraction-intro') }}</h6>
               </template>
               <template v-else>
-                {{ $t('extracted-data-intro') }}:
+                <h6 class="fw-bold">{{ $t('extracted-data-intro') }}</h6>
               </template>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="accordion-body border border-top-0">
+      <div class="accordion-body">
       <div class="container ul-feedback-container">
         <div class="row">
           <div class="col extraction-information-container">
@@ -147,7 +143,7 @@
 
               <!-- Success -->
               <template v-if="blueprintData[bp.id.toString()].status === 'success'">
-                <div class="row pb-2">
+                <div class="row">
                   <div class="col w-small bp-ul-icon"><i class="bi bi-file-earmark-check-fill text-success"></i></div>
                   <div class="col">
                     <div class="col bp-description pb-2">{{ bp.name }}</div>
@@ -155,7 +151,7 @@
                   </div>
                 </div>
 
-                <div class="row pt-2">
+                <div class="row">
                   <div class="col feedback-col">
                     <div>
                       {{ $t('extracted-data') }}
@@ -182,10 +178,10 @@
                         </div>
                         <div class="data-table-navigation">
                           <div class="pb-2">
-                            <a class="btn btn-secondary btn-sm me-2" v-if="blueprintData[bp.id.toString()].fb_pos_lower > 14" v-on:click="updateFbPos(bp.id.toString(), 'down')" >{{ $t('previous-page') }}</a>
-                            <span class="btn-secondary btn-sm me-2 btn-light text-muted user-select-none btn-muted" v-if="blueprintData[bp.id.toString()].fb_pos_lower <= 14">{{ $t('previous-page') }}</span>
-                            <a class="btn btn-secondary btn-sm" v-if="blueprintData[bp.id.toString()].fb_pos_upper < blueprintData[bp.id.toString()].extracted_data.length" v-on:click="updateFbPos(bp.id.toString(), 'up')" >{{ $t('next-page') }}</a>
-                            <span class="btn-secondary btn-sm btn-light text-muted user-select-none btn-muted" v-if="blueprintData[bp.id.toString()].fb_pos_upper >= blueprintData[bp.id.toString()].extracted_data.length">{{ $t('next-page') }}</span>
+                            <a class="btn btn-pagination btn-sm me-2 btn-active" v-if="blueprintData[bp.id.toString()].fb_pos_lower > 9" v-on:click="updateFbPos(bp.id.toString(), 'down')" >{{ $t('previous-page') }}</a>
+                            <span class="btn-pagination btn-sm me-2 btn-light text-muted user-select-none btn-muted" v-if="blueprintData[bp.id.toString()].fb_pos_lower <= 9">{{ $t('previous-page') }}</span>
+                            <a class="btn btn-pagination btn-sm btn-active" v-if="blueprintData[bp.id.toString()].fb_pos_upper < blueprintData[bp.id.toString()].extracted_data.length" v-on:click="updateFbPos(bp.id.toString(), 'up')" >{{ $t('next-page') }}</a>
+                            <span class="btn-pagination btn-sm btn-light text-muted user-select-none btn-muted" v-if="blueprintData[bp.id.toString()].fb_pos_upper >= blueprintData[bp.id.toString()].extracted_data.length">{{ $t('next-page') }}</span>
                           </div>
 
                           <div class="pb-3">
@@ -285,6 +281,7 @@
         </template>
     </div>
   </div>
+  </div>
 
   <div class="default-modal" id="ulInfoModal" ref="ulInfoModal" style="display: none">
     <div class="modal-body d-flex flex-row align-items-center pt-5">
@@ -365,7 +362,7 @@ export default {
         status: 'pending',
         errors: [],
         fb_pos_lower: 0,
-        fb_pos_upper: 15,
+        fb_pos_upper: 10,
         error_log: {},
       }
       this.blueprintData[id.toString()] = blueprintInfo
@@ -844,8 +841,9 @@ export default {
      * Status will be updated to either 'success', 'failed', or 'partial'.
      */
     updateStatus() {
-      let bpErrorCount = 0;
-      let bpNothingExtracted = 0;
+      let nNothingExtracted = 0;
+      let nSuccess = 0;
+      let nFailed = 0;
       let nBlueprints = Object.keys(this.blueprintData).length;
       for (let bp in this.blueprintData){
         if (this.blueprintData[bp].errors.length) {
@@ -854,14 +852,15 @@ export default {
           if (errorSet.size === 1 && (errorSet.has(this.$t('error-all-fields-filtered-out')) || errorSet.has(this.$t('error-no-data-in-file')))) {
             this.blueprintData[bp].status = 'nothing extracted';
             this.blueprintData[bp].consent = 'false';
-            bpNothingExtracted += 1;
+            nNothingExtracted += 1;
           } else {
             this.blueprintData[bp].status = 'failed';
             this.blueprintData[bp].consent = 'false';
-            bpErrorCount += 1;
+            nFailed += 1;
           }
         } else {
           this.blueprintData[bp].status = 'success';
+          nSuccess += 1;
           // this.blueprintData[bp].consent = 'true';
         }
       }
@@ -869,23 +868,23 @@ export default {
       this.$nextTick(function () {
         let modalIcon = document.getElementById('ul-modal-info-icon');
 
-        if (!this.generalErrors.length && bpErrorCount === 0 && bpNothingExtracted === 0) {
+        if (nSuccess === nBlueprints) {
           this.uploadStatus = 'success';
           modalIcon.className = 'bi bi-file-check text-success';
           this.ulModalInfoTitle = this.$t('ul-success-modal-title');
           this.ulModalInfoMsg = this.$t('ul-success-modal-body');
 
-        } else if (!this.generalErrors.length && bpNothingExtracted > 0 && bpErrorCount === 0) {
+        } else if (nNothingExtracted === nBlueprints) {
           this.uploadStatus = 'partial';
           modalIcon.className = 'bi bi-exclamation-diamond text-orange';
           this.ulModalInfoTitle = this.$t('ul-nothing-extracted-modal-title');
           this.ulModalInfoMsg = this.$t('ul-nothing-extracted-modal-body');
 
-        } else if (!this.generalErrors.length && (bpErrorCount < nBlueprints)) {
-          this.uploadStatus = 'partial';
-          modalIcon.className = 'bi bi-exclamation-diamond text-orange';
-          this.ulModalInfoTitle = this.$t('ul-partial-modal-title');
-          this.ulModalInfoMsg = this.$t('ul-partial-modal-body');
+        } else if ((nSuccess + nNothingExtracted) === nBlueprints) {
+          this.uploadStatus = 'success';
+          modalIcon.className = 'bi bi-file-check text-success';
+          this.ulModalInfoTitle = this.$t('ul-success-modal-title');
+          this.ulModalInfoMsg = this.$t('ul-success-modal-body');
 
         } else {
           this.uploadStatus = 'failed';
@@ -898,8 +897,8 @@ export default {
           }
         }
 
-        this.$refs.ulInfoModal.style.display = 'block';
-        this.$refs.modalBackdrop.style.display = 'block';
+        //this.$refs.ulInfoModal.style.display = 'block';
+        //this.$refs.modalBackdrop.style.display = 'block';
       });
     },
 
@@ -928,17 +927,18 @@ export default {
     },
 
     updateFbPos(bpId, dir) {
+      let stepSize = 10;
       let bp = this.blueprintData[bpId];
       if (dir === 'up') {
-        bp.fb_pos_lower += 15;
-        bp.fb_pos_upper += 15;
+        bp.fb_pos_lower += stepSize;
+        bp.fb_pos_upper += stepSize;
       } else {
-        if (bp.fb_pos_lower < 15) {
+        if (bp.fb_pos_lower < stepSize) {
           bp.fb_pos_lower = 0;
-          bp.fb_pos_upper = 15;
+          bp.fb_pos_upper = stepSize;
         } else {
-          bp.fb_pos_lower -= 15;
-          bp.fb_pos_upper -= 15;
+          bp.fb_pos_lower -= stepSize;
+          bp.fb_pos_upper -= stepSize;
         }
       }
     }
@@ -1001,8 +1001,6 @@ export default {
   overflow: hidden;
 }
 .ul-data-expanded {
-  /* max-height: 500px; */
-  /* overflow-y: scroll; */
   color: black;
 }
 .ul-data-container th {
@@ -1075,10 +1073,42 @@ export default {
   margin-bottom: 15px;
   display: block;
 }
-.btn-secondary:not(.btn-muted):hover {
-  color: white !important;
-}
 .data-donation-table tbody {
   border-top: none;
 }
+.uploader-container {
+  border-top: 2px solid #000;
+  border-bottom: 2px solid #000;
+}
+.btn-pagination {
+  background: #dbdbdb;
+  border: none;
+  color: black;
+}
+.btn-active:hover {
+  color: black !important;
+  background: #cacaca;
+}
+.btn-muted {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@media (min-width: 576px) {}
+
+@media (min-width: 768px) {
+  .uploader-container {
+    box-shadow: 6px 7px 20px #80808040;
+    border-radius: 8px;
+    border: none;
+  }
+}
+
+@media (min-width: 992px) {}
+
+@media (min-width: 1200px) {}
+
+/* XX-Large devices (larger desktops, 1400px and up) */
+@media (min-width: 1400px) {}
+
 </style>

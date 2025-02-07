@@ -233,7 +233,7 @@
                 <div class="col-4 bp-description">{{ bp.name }}</div>
                 <div class="col bp-ul-status">
                   <template v-if="blueprintData[bp.id.toString()].errors.length">
-                    <p v-for="e in blueprintData[bp.id.toString()].errors" :key="e">{{ e }}</p>
+                    <p v-for="e in new Set(blueprintData[bp.id.toString()].errors)" :key="e">{{ e }}</p>
                   </template>
                   <p v-else>{{ $t('extraction-failed') }}</p>
                 </div>
@@ -508,11 +508,18 @@ export default {
             fileContent = this.getNestedJsonEntry(fileContent, blueprint.json_extraction_root);
           }
 
+          // Check if fileContent is null.
+          if (fileContent === null) {
+            console.log('asdf')
+            uploader.recordError(uploader.$t('error-no-data-in-file'), uploader.blueprints[0].id.toString());
+            return;
+          }
+
+          // Check if fileContent must be converted to array.
           if (!(Symbol.iterator in Object(fileContent))) {
             fileContent = new Array(fileContent);
           }
         }
-
       }
 
       else if (blueprint.format === 'csv') {
@@ -838,7 +845,7 @@ export default {
         if (this.blueprintData[bp].errors.length) {
           let errorSet = new Set(this.blueprintData[bp].errors);
 
-          if (errorSet.size === 1 && errorSet.has(this.$t('error-all-fields-filtered-out'))) {
+          if (errorSet.size === 1 && (errorSet.has(this.$t('error-all-fields-filtered-out')) || errorSet.has(this.$t('error-no-data-in-file')))) {
             this.blueprintData[bp].status = 'nothing extracted';
             this.blueprintData[bp].consent = 'false';
             bpNothingExtracted += 1;
@@ -984,11 +991,8 @@ export default {
   display: block;
 }
 .ul-data-condensed {
-  max-height: 250px;
+  max-height: 180px;
   overflow: hidden;
-}
-.ul-data-condensed table {
-  color: gray;
 }
 .ul-data-expanded {
   /* max-height: 500px; */
@@ -1008,7 +1012,6 @@ export default {
   z-index: 10;
   position: relative;
   cursor: pointer;
-  border-bottom: 1px solid black;
 }
 .control-expanded {
   background: white;
@@ -1016,8 +1019,8 @@ export default {
   height:30px;
 }
 .control-condensed {
-  background: rgb(255,255,255);
-  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(250,250,250,1) 50%);
+  background: rgb(255, 255, 255);
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 50%);
   height: 75px;
   margin-top: -74px;
   padding-top: 45px;
@@ -1053,7 +1056,6 @@ export default {
   padding-left: 25px;
 }
 .ul-data-container table {
-  background: #e3e3e31c;
   table-layout: auto;
   min-width: 100%;
 }
@@ -1069,5 +1071,8 @@ export default {
 }
 .btn-secondary:not(.btn-muted):hover {
   color: white !important;
+}
+.data-donation-table tbody {
+  border-top: none;
 }
 </style>

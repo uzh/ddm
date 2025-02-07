@@ -233,7 +233,7 @@
                 <div class="col-4 bp-description">{{ bp.name }}</div>
                 <div class="col bp-ul-status">
                   <template v-if="blueprintData[bp.id.toString()].errors.length">
-                    <p v-for="e in new Set(blueprintData[bp.id.toString()].errors)" :key="e">{{ e }}</p>
+                    <p v-for="e in blueprintData[bp.id.toString()].errors" :key="e">{{ e }}</p>
                   </template>
                   <p v-else>{{ $t('extraction-failed') }}</p>
                 </div>
@@ -500,18 +500,24 @@ export default {
           fileContent = JSON.parse(content);
         } catch(e) {
           uploader.postError(4106, e.message, blueprint.id);
-          uploader.recordError(uploader.$t('error-json-syntax'), uploader.blueprints[0].id.toString());
+          uploader.recordError(uploader.$t('error-json-syntax'), blueprintID);
         }
 
         if(fileContent) {
           if (blueprint.json_extraction_root !== '') {
-            fileContent = this.getNestedJsonEntry(fileContent, blueprint.json_extraction_root);
+            try {
+              fileContent = this.getNestedJsonEntry(fileContent, blueprint.json_extraction_root);
+            } catch (e) {
+              uploader.postError(4207, uploader.$t('error-no-data-in-file'), blueprint.id);
+              uploader.recordError(uploader.$t('error-no-data-in-file'), blueprintID);
+              return
+            }
           }
 
           // Check if fileContent is null.
-          if (fileContent === null) {
-            console.log('asdf')
-            uploader.recordError(uploader.$t('error-no-data-in-file'), uploader.blueprints[0].id.toString());
+          if (fileContent === null || fileContent === undefined) {
+            uploader.postError(4207, uploader.$t('error-no-data-in-file'), blueprint.id);
+            uploader.recordError(uploader.$t('error-no-data-in-file'), blueprintID);
             return;
           }
 
@@ -528,7 +534,7 @@ export default {
           fileContent = parserResult.data;
         } catch(e) {
           uploader.postError(4106, e.message, blueprint.id);
-          uploader.recordError(uploader.$t('error-json-syntax'), uploader.blueprints[0].id.toString());
+          uploader.recordError(uploader.$t('error-json-syntax'), blueprintID);
         }
       }
 

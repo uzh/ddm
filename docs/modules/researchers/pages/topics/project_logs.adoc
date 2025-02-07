@@ -89,6 +89,11 @@ _Description:_ A filter rule applied and the entry was deleted. +
 _Exception Message:_ TODO
 
 
+*4207: Defined extraction root was null or undefined* +
+_Description:_ The defined extraction root was null or undefined in the uploaded file. +
+_Exception Message:_ TODO
+
+
 *4220: Regex error (delete match)* +
 _Description:_ An error occurred during the regex comparison (likely due to a regex misspecification in the extraction rule). +
 _Exception Message:_ TODO

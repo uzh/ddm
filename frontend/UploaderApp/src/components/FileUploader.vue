@@ -203,20 +203,39 @@
                 <div class="row">
                   <div class="col feedback-col pb-5 pt-1">
                     <p class="fw-bold">{{ $t('donation-question') }}</p>
-                    <div class="consent-question-container">
-                      <div class="question-choice-item pt-3 pt-lg-0">
-                        <label class="form-check-label rb-cb-label" :for="'donate-agree-'+bp.id.toString()">
-                          <input type="radio" :id="'donate-agree-'+bp.id.toString()" :name="'agreement-'+bp.id.toString()" value="true" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent" required>
-                           {{ $t('donation-agree') }}
-                        </label>
+                      <div class="consent-question-container">
+
+                        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                          <input type="radio"
+                                 class="btn-check"
+                                 :id="'donate-agree-'+bp.id.toString()"
+                                 :name="'agreement-'+bp.id.toString()"
+                                 value="true"
+                                 autocomplete="off"
+                                 v-model="blueprintData[bp.id.toString()].consent"
+                                 @change="emitToParent"
+                                 required>
+                          <label :class="{ 'selected-donate-agree': blueprintData[bp.id.toString()].consent === 'true' }"
+                                 :for="'donate-agree-'+bp.id.toString()"
+                                 class="form-check-label rb-cb-label btn btn-light donation-btn shadow-none">
+                            {{ $t('donation-agree') }}
+                          </label>
+
+                          <input type="radio"
+                                 class="btn-check"
+                                 :id="'donate-disagree-'+bp.id.toString()"
+                                 :name="'agreement-'+bp.id.toString()"
+                                 value="false"
+                                 autocomplete="off"
+                                 v-model="blueprintData[bp.id.toString()].consent"
+                                 @change="emitToParent">
+                          <label :class="{ 'selected-donate-disagree': blueprintData[bp.id.toString()].consent === 'false' }"
+                                 :for="'donate-disagree-'+bp.id.toString()"
+                                 class="form-check-label rb-cb-label btn btn-light donation-btn shadow-none">
+                            {{ $t('donation-disagree') }}
+                          </label>
+                        </div>
                       </div>
-                      <div class="question-choice-item pt-3 pt-lg-0">
-                        <label class="form-check-label rb-cb-label" :for="'donate-disagree-'+bp.id.toString()">
-                          <input type="radio" :id="'donate-disagree-'+bp.id.toString()" :name="'agreement-'+bp.id.toString()" value="false" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent">
-                           {{ $t('donation-disagree') }}
-                        </label>
-                      </div>
-                    </div>
                   </div>
                 </div>
                 </template>
@@ -263,18 +282,36 @@
             <div class="col feedback-col pb-5 pt-1">
               <p class="fw-bold">{{ $t('donation-question') }}</p>
               <div class="consent-question-container">
-                <div class="question-choice-item pt-3 pt-lg-0">
-                  <label class="form-check-label rb-cb-label" for="combined-donate-agree">
-                    <input type="radio" id="combined-donate-agree" value="true" v-model="combinedDonation" @change="emitToParent" required>
+
+                <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                  <input type="radio"
+                         class="btn-check"
+                         id="combined-donate-agree"
+                         value="true"
+                         autocomplete="off"
+                         v-model="combinedDonation"
+                         @change="emitToParent"
+                         required>
+                  <label :class="{ 'selected-donate-agree': combinedDonation === 'true' }"
+                         class="form-check-label rb-cb-label btn btn-light donation-btn shadow-none"
+                         for="combined-donate-agree">
                     {{ $t('donation-agree') }}
                   </label>
-                </div>
-                <div class="question-choice-item pt-3 pt-lg-0">
-                  <label class="form-check-label rb-cb-label" for="combined-donate-disagree">
-                    <input type="radio" id="combined-donate-disagree" value="false" v-model="combinedDonation" @change="emitToParent">
+
+                  <input type="radio"
+                         class="btn-check"
+                         id="combined-donate-disagree"
+                         value="false"
+                         autocomplete="off"
+                         v-model="combinedDonation"
+                         @change="emitToParent">
+                  <label :class="{ 'selected-donate-disagree': combinedDonation === 'false' }"
+                         class="form-check-label rb-cb-label btn btn-light donation-btn shadow-none"
+                         for="combined-donate-disagree">
                     {{ $t('donation-disagree') }}
                   </label>
                 </div>
+
               </div>
             </div>
           </div>
@@ -760,17 +797,20 @@ export default {
           else if (dataToEmit[key].consent === 'false') {
             dataToEmit[key].extracted_data = [];
             dataToEmit[key].consent = false;
-          } else {
+          } else if (dataToEmit[key].consent === 'true') {
             dataToEmit[key].consent = true;
           }
         })
       } else {
         let consent = this.combinedDonation;
         Object.keys(dataToEmit).forEach(key => {
-          if (consent === 'false') {
+          if (consent === null) {
+            dataToEmit[key].consent = null;
+            dataToEmit[key].extracted_data = [];
+          } else if (consent === 'false') {
             dataToEmit[key].consent = false;
             dataToEmit[key].extracted_data = [];
-          } else {
+          } else if (consent === 'true') {
             dataToEmit[key].consent = true;
           }
         })
@@ -1103,6 +1143,25 @@ export default {
 .btn-muted {
   display: inline-block;
   vertical-align: middle;
+}
+
+.selected-donate-agree {
+  background: #069143 !important;
+  color: white !important;
+  font-weight: bold;
+}
+
+.selected-donate-disagree {
+  background: #f38896 !important;
+  font-weight: bold;
+}
+
+.donation-btn {
+  width: 120px;
+  color: #000;
+  background-color: #dfdfdf;
+  border: none;
+  margin: 5px;
 }
 
 @media (min-width: 576px) {}

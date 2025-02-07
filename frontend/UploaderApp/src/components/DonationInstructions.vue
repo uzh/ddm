@@ -3,24 +3,19 @@
 <template>
   <div :id="'carousel-' + componentId" class="carousel carousel-dark slide" data-bs-interval="false" data-bs-ride="carousel" data-bs-wrap="false" >
 
-    <div v-if="instructions.length > 1" class="d-flex justify-content-between align-items-center slide-area">
-      <div class="slide-control-steps-heading">{{ $t('steps') }}</div>
-      <div v-for="(i, index) in instructions" :key="index" class="flex-grow-1 text-center">
-        <button
-            type="button"
-            :data-bs-target="'#carousel-' + componentId"
-            :aria-label="'Step ' + index"
-            :class="{ 'active active-item': index <= currentStep }"
-            :aria-current="index === currentStep"
-            class="step-indicator d-hide"
-            @click="currentStep = index"
-        >•</button>
-      </div>
-      <div class="slide-control-done-container">
-        <div class="slide-control-done" :class="{ 'opacity-0': currentStep < (instructions.length - 1) }">✓</div>
-      </div>
+    <div class="carousel-indicators" v-for="(i, index) in instructions" :key="index">
+      <template v-for="(i, index) in instructions" :key="index">
+        <button type="button"
+                :data-bs-slide-to="index"
+                :class="{ 'active step-arrow-active': index === currentStep }"
+                class="step-arrow"
+                :aria-current="{ 'true': index === 0 }"
+                :data-bs-target="'#carousel-' + componentId"
+                aria-label="Slide 1"
+                @click="setStep(index)">
+        </button>
+      </template>
     </div>
-
 
     <div class="carousel-inner">
       <div
@@ -75,6 +70,9 @@ export default {
       if (this.currentStep < (this.instructions.length - 1)) {
         this.currentStep += 1;
       }
+    },
+    setStep(step) {
+      this.currentStep = step;
     }
   }
 }
@@ -106,40 +104,10 @@ export default {
 .carousel-item {
   transition: transform .3s ease, opacity .3s ease-out
 }
-.step-indicator {
-  background: none;
-  border: none;
-  font-size: 1.65rem;
-  color: darkgray;
+.step-arrow {
+  opacity: 0.2;
 }
-.active-item {
-  color: #545454;
-}
-.slide-control-done {
-  color: #198754;
-  font-weight: bold;
-  width: 25px;
-  font-size: 1.2rem;
-  margin-bottom: -4px;
-}
-.slide-area {
-  background-color: #f5f5f599;
-  border-radius: 50px;
-  height: 25px;
-  margin: 10px 0% 40px;
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-bottom: 2px;
-}
-.slide-control-steps-heading {
-  color: #545454;
-  font-weight: bold;
-  padding-right: 5%;
-  padding-top: 3px;
-  padding-left: 1%;
-}
-.slide-control-done-container {
-  padding-left: 3%;
-  padding-right: 1%;
+.step-arrow-active {
+  opacity: 0.9;
 }
 </style>

@@ -11,7 +11,6 @@ if (dataDownloadBtn) {
 }
 
 async function downloadData(endpointUrl, fileName, nParticipants) {
-    console.log(fileName)
     try {
         const downloadOverlay = document.getElementById('download-overlay');
         const downloadProgress = document.getElementById('download-progress');
@@ -86,7 +85,7 @@ const responsesDownloadBtn = document.getElementById('download-responses-button'
 if (responsesDownloadBtn) {
     const downloadUrl = responsesDownloadBtn.dataset.downloadUrl;
     responsesDownloadBtn.addEventListener('click', () => {
-        downloadData(downloadUrl);
+        downloadResponses(downloadUrl);
     });
 }
 

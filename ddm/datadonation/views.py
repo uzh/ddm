@@ -400,7 +400,8 @@ class DonationDownloadView(DDMAuthMixin, DDMAPIMixin, FormView):
         result = []
         for donation in donations:
             result.append({
-                'blueprint': donation.blueprint.pk,
+                'blueprint_id': donation.blueprint.pk,
+                'blueprint_name': donation.blueprint.name,
                 'donation': DataDonationSerializer(donation, decryptor=decryptor).data,
             })
 

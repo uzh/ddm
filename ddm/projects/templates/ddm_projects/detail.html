@@ -119,7 +119,7 @@
           <a id="download-data-button"
              class="a-no-link ddm-btn ddm-btn-green"
              data-download-url='{% url 'ddm_apis:download_project_details' object.url_id %}'
-             data-filename='project_{{ object.url_id }}_data_{% now "Y-m-d-G-i-s" %}'
+             data-filename='ddm_{{ object.url_id }}_participation-overview_{% now "Y-m-d-H-i" %}'
              data-n-started={{ object.get_statistics.n_started }}>
             <i class="bi bi-download pe-1"></i>
             Download CSV

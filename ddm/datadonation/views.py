@@ -9,6 +9,7 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.views.decorators.debug import sensitive_variables
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.views.generic.list import ListView
@@ -368,11 +369,13 @@ class DonationDownloadView(DDMAuthMixin, DDMAPIMixin, FormView):
         if decrypted_string != test_string:
             raise ValueError
 
-    @staticmethod
-    def create_zip(content, participant_id):
+    def get_filename(self, participant_id, file_type):
+        return f'ddm_{self.project.url_id}_donations_{participant_id}.{file_type}'
+
+    def create_zip(self, content, participant_id):
         """ Creates a zip file in memory. """
         buffer = io.BytesIO()
-        filename = f'ddm_donations_{participant_id}.json'
+        filename = self.get_filename(participant_id, 'json')
         with zipfile.ZipFile(buffer, mode='w', compression=zipfile.ZIP_DEFLATED) as zf:
             with zf.open(filename, 'w') as json_file:
                 json_content = json.dumps(
@@ -383,10 +386,9 @@ class DonationDownloadView(DDMAuthMixin, DDMAPIMixin, FormView):
         buffer.flush()
         return zip_in_memory
 
-    @staticmethod
-    def create_zip_response(zip_file, participant_id):
+    def create_zip_response(self, zip_file, participant_id):
         """ Creates an HttpResponse object containing the provided zip file. """
-        filename = f'ddm_donations_{participant_id}.zip'
+        filename = self.get_filename(participant_id, 'zip')
         response = HttpResponse(zip_file, content_type='application/zip')
         response['Content-Length'] = len(zip_file)
         response['Content-Disposition'] = f'attachment; filename={filename}.zip'

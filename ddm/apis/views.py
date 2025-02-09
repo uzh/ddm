@@ -5,6 +5,7 @@ from django.core.exceptions import BadRequest, ObjectDoesNotExist
 from django.http import Http404, StreamingHttpResponse, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.debug import sensitive_variables
 from rest_framework import exceptions, permissions, authentication, status
 from rest_framework.generics import ListAPIView
@@ -272,6 +273,10 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
         }
         return metadata
 
+    def get_filename(self):
+        date = timezone.now().strftime("%Y-%m-%d-%H-%M")
+        return f'ddm_{self.project.url_id}_responses_{date}.csv'
+
     def create_json_response(self, responses, decryptor):
         serializer = self.get_serializer()
         response = {
@@ -305,9 +310,9 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
         csv_content = csv_output.getvalue()
         csv_output.close()
 
-        filename = f'ddm_responses_{self.project.url_id}'
+        filename = self.get_filename()
         response = HttpResponse(csv_content, content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename="{filename}.csv"'
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
         return response
 
     def get(self, request, format=None, *args, **kwargs):
@@ -482,6 +487,10 @@ class DownloadProjectDetailsView(APIView, DDMAPIMixin):
         blueprint_header = self.get_blueprint_header(blueprints)
         return participant_header + blueprint_header + 'donation_download_link\n'
 
+    def get_filename(self):
+        date = timezone.now().strftime("%Y-%m-%d-%H-%M")
+        return f'ddm_{self.project.url_id}_participation-overview_{date}.csv'
+
     @staticmethod
     def get_participant_header():
         participant_header = (
@@ -589,8 +598,8 @@ class DownloadProjectDetailsView(APIView, DDMAPIMixin):
 
         response = StreamingHttpResponse(
             self.generate_csv(),
-            content_type='text/json'
+            content_type='text/csv'
         )
-        filename = f'project_{self.project.url_id}_details.csv'
+        filename = self.get_filename()
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
         return response

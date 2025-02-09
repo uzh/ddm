@@ -1,6 +1,6 @@
 {
   "en": {
-    "instructions": "Instructions",
+    "instructions": "How it works",
     "no-instructions-defined": "No instructions defined",
     "upload-file": "File Upload",
     "upload-different-file": "Upload a different file",
@@ -49,7 +49,7 @@
     "next-page": "next page"
   },
   "de": {
-    "instructions": "Instruktionen",
+    "instructions": "So funktioniert es",
     "no-instructions-defined": "Es wurden keine Instruktionen definiert",
     "upload-file": "Datei hochladen",
     "upload-different-file": "Andere Datei hochladen",

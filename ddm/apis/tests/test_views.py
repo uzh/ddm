@@ -46,6 +46,11 @@ class TestAPIs(TestCase):
             slug='base',
             owner=base_profile
         )
+        cls.project_no_quest = DonationProject.objects.create(
+            name='Project no Questionnaire',
+            slug='no-quest',
+            owner=base_profile
+        )
         cls.project_alt = DonationProject.objects.create(
             name='Alt Project',
             slug='alternative',
@@ -353,6 +358,20 @@ class TestAPIs(TestCase):
         response = client.get(url + query_string)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'text/csv')
+
+    def test_responses_api_get_csv_with_no_questionnaire(self):
+        token = self.project_no_quest.create_token()  # TODO: Change to no
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        url = reverse(
+            'ddm_apis:responses',
+            args=[self.project_no_quest.url_id]
+        )
+        query_string = f'?csv=true'
+        response = client.get(url + query_string)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'text/csv')
+
 
     def test_participant_deletion_with_regular_login(self):
         self.client.login(**self.base_creds)

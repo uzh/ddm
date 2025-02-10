@@ -7,7 +7,7 @@
 :showtitle!:
 :page-pagination:
 
-This pages aims to describe what types of encryption should be used by the system hosting this module and what is implemented in this module.
+This page describes what types of encryption should be used by the system hosting this module and what is implemented in this module.
 
 == Encryption in transit and at rest
 
@@ -25,21 +25,22 @@ Each project has a unique `salt` that is generated when creating the project.
 In the Django site settings, we use the *SECRET_KEY* as the default passphrase for encryption.
 If a project is working with sensitive data, we recommend that a *project specific password* is set.
 This password is only known by the person setting it and should not be shared.
-A project specific password will limit the functionality of the module for a given project: it won't be possible to create followup questions based on the data donation.
+A project specific password will limit the functionality of the module for a given project: it won't be possible to
+create follow-up questions based on the data donation.
 
 == Encryption and decryption process
 
 === Steps
 
 We use a hybrid asymmetric/symmetric encryption approach, due to the size limitation of the pure asymmetric approach.
-The following steps occur in the encryption process
+The encryption process consists of the following steps:
 - generate a public key and store it in the project (if none exists)
 - generate a session key used for encrypting a single message
 - encrypt the data symmetrically using the session key
 - encrypt the session key using the public key asymmetrically
 - store the encrypted data with the encrypted key as header
 
-The following steps occur in the decryption process
+The decryption process consists of the following steps:
 - generate a private key
 - get the desired encrypted data from the project
 - decrypt the encrypted session key (header) asymmetrically using the private key

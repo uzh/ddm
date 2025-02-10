@@ -25,7 +25,7 @@ First, go to the Project Hub, scroll down to the section "Data Center" and downl
 .Participation Overview Download
 image::download_participation_overview.png["Participation Overview Download",80%]
 
-This will download a CSV file containing one row for every participant that has started participaiton in the project
+This will download a CSV file containing one row for every participant that has started participation in the project
 (i.e., this also contains participants that have not completed the donation). The file includes the following variables:
 
 [%header,cols=2*]
@@ -75,7 +75,7 @@ This will download a CSV file containing one row for every participant that has 
 you are logged in to DDM.
 |===
 
-Next, you can download the data donations for each participant through the included donation download links.
+Next, you can download the data donations for each participant through the donation download link.
 
 [NOTE]
 ====

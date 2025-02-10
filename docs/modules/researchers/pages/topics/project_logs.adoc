@@ -14,8 +14,8 @@ This page describes the implemented exceptions that are logged in a project's ex
 === Exceptions During Data Donation (4xxx)
 
 ==== File Messages (41xx)
-File errors relate to exceptions raised during uploading and reading a file,
-but before the read contents of a file are processed.
+These errors relate to exceptions that are raised on the client-side (i.e. in the participant's browser) when
+uploading an incorrect or corrupted file.
 
 *4101: Not Zip* +
 _Description:_ Zip-container was expected as upload but another file type was selected (zip specific). +

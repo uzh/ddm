@@ -84,10 +84,12 @@ class DonationProject(models.Model):
     slug = models.SlugField(
         unique=True,
         verbose_name='URL Identifier',
-        help_text='Identifier that is included in the URL through which '
-                  'participants can access the project '
-                  '(e.g, https://root.url/url-identifier). Can only contain '
-                  'letters, hyphens, numbers or underscores.'
+        help_text=mark_safe(
+            'Identifier that is included in the URL through which participants '
+            'can access the project '
+            '(e.g, https://root.url/<b>my-url-identifier</b>). '
+            'Can only contain letters, hyphens, numbers or underscores.'
+        )
     )
     briefing_text = models.TextField(
         blank=False,

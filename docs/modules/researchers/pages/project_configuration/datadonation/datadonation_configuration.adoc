@@ -98,11 +98,13 @@ If defined, the description will be visible for participants in the data donatio
 Associated Uploader:: The `Uploader` to which the Blueprint is associated.
 
 File path:: Here, the path where the file is expected to be located within a ZIP file is defined.
-Only necessary, if the Blueprint is associated to a Uploader that expects a ZIP file.
+Only necessary, if the Blueprint is associated to a Uploader that expects a ZIP file. This path
+can include https://developer.mozilla.org/en-US/docs/Glossary/Regular_expression[regex expressions]
+for flexible file matching (see below).
 +
 WARNING: If a regex expression matches two files, DDM extracts the first one that matches the expression.
-Afterward, it does not look any further, even if the matched file does not match the expected fields.
-Therefore, be careful to choose regex expressions that will only match the expected file.
+Afterward, it does not look any further, even if the matched file does not contain the expected fields (see below).
+Therefore, we recommend to be as specific as possible when setting the file path.
 +
 [TIP]
 ====
@@ -113,21 +115,21 @@ Therefore, be careful to choose regex expressions that will only match the expec
 |Regex
 |Description
 
-|`^MyActivities.json`
+|`^MyActivities\.json`
 |Matches a file named `MyActivities.json` that is located at the root of the ZIP file.
 
 |`^SpecificFolder/MyActivities\.json`
 |Matches a file named `MyActivities.json` that is located in a folder named `SpecificFolder` in the root of the ZIP file.
 
-|`.*MyActivities\.json`
-|Matches file if the filename ends with `MyActivities.json` that can be located anywhere in the ZIP file. Warning: This also matches e.g. `BogusMyAcitivties.json`.
+|`.*/MyActivities\.json`
+|Matches the first file with the name `MyActivities.json` that can be located anywhere in the ZIP file.
 
 |`(\^MyActivities\.json\|^MeineAktivitäten\.json\|^MieAttivita\.json)`
 |Matches a file that is located at the root of the ZIP file and either named `MyActivities.json`, `MeineAktivitäten.json`, or `MieAttivita.json`.
 Can be helpful to match the same file in different languages.
 |===
 
-You can find about more about regex https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions[here].
+You can find about more about regex https://developer.mozilla.org/en-US/docs/Glossary/Regular_expression[here].
 On this website, you will https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#tools[also find some Tools]
 that can help you test regex patterns.
 ====

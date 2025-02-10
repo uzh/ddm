@@ -66,29 +66,29 @@ class ResponseSerializer(SerializerDecryptionMixin, serializers.ModelSerializer)
         try:
             data = json.loads(data)
         except TypeError:
-            return data
+            data = data
 
         responses = dict()
-        for question_id in data:
+        for question_id in data.keys():
+            try:
+                question = QuestionBase.objects.all().get(id=question_id)
+                var_name = question.variable_name
+            except QuestionBase.DoesNotExist:
+                # Question has been deleted.
+                continue
+
             if isinstance(data[question_id]['response'], dict):
                 item_answers = data[question_id]['response']
-                for item_id in item_answers:
+                for item_id in item_answers.keys():
                     try:
-                        item = QuestionItem.objects.all().get(id=item_id)
+                        item = QuestionItem.objects.all().get(id=int(item_id))
                     except QuestionItem.DoesNotExist:
                         # Item has been deleted.
                         continue
-                    var_name = item.question.variable_name
                     value = item.value
                     responses[f'{var_name}-{value}'] = item_answers[item_id]
                 pass
             else:
-                try:
-                    question = QuestionBase.objects.all().get(id=question_id)
-                except QuestionBase.DoesNotExist:
-                    # Question has been deleted.
-                    continue
-                var_name = question.variable_name
                 responses[var_name] = data[question_id]['response']
         return responses
 

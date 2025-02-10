@@ -1,40 +1,50 @@
 hideOrShowReplacementAndComparisonValue = function (id) {
-  let replacementInput = $("#id_processingrule_set-" + id + "-replacement_value");
-  let comparisonValue = $("#id_processingrule_set-" + id + "-comparison_value");
+    const inputId = "id_processingrule_set-".concat(String(id)).concat("-replacement_value");
+    const comparisonId = "id_processingrule_set-".concat(String(id)).concat("-comparison_value");
+    const replacementInput = document.getElementById(inputId);
+    const comparisonValue = document.getElementById(comparisonId);
+    const comparisonOperator = document.querySelector(`[id$='${id}-comparison_operator']`).value;
 
-  let val = $("[id$=" + id + "-comparison_operator]").val();
+    if (comparisonOperator.indexOf("regex-replace-match") >= 0) {
+        replacementInput.parentElement.classList.remove("d-none");
+        comparisonValue.parentElement.classList.remove("d-none");
+        replacementInput.parentElement.style.display = "block";
+        comparisonValue.parentElement.style.display = "block";
+    } else if (comparisonOperator === "") {
+        replacementInput.parentElement.style.display = "none";
+        comparisonValue.parentElement.style.display = "none";
+    } else {
+        replacementInput.parentElement.style.display = "none";
+        comparisonValue.parentElement.classList.remove("d-none");
+        comparisonValue.parentElement.style.display = "block";
+    }
 
-  if (val.indexOf("regex-replace-match") >= 0) {
-    replacementInput.parent().show();
-    comparisonValue.parent().show();
-  } else if (val === "") {
-    replacementInput.parent().hide();
-    comparisonValue.parent().hide();
-  } else {
-    replacementInput.parent().hide();
-    comparisonValue.parent().show();
-  }
+    const comparisonLabel = document.querySelector('label[for="id_processingrule_set-' + id + '-comparison_value"]');
 
-  if (val.indexOf("regex") >= 0) {
-    $('label[for="id_processingrule_set-' + id + '-comparison_value"]').text("Regular expression (regex):");
-  } else {
-    $('label[for="id_processingrule_set-' + id + '-comparison_value"]').text("Comparison value:");
-  }
+    if (comparisonOperator.indexOf("regex") >= 0) {
+        comparisonLabel.textContent = "Regular expression (regex):";
+    } else {
+        comparisonLabel.textContent = "Comparison value:";
+    }
 }
 
-$("body").on("change", "select[id$='-comparison_operator']", function () {
-  const current_id = $(this).attr("id").match(/\d+/)[0];
-  hideOrShowReplacementAndComparisonValue(current_id);
+document.body.addEventListener("change", function (event) {
+    if (event.target.matches("select[id$='-comparison_operator']")) {
+        const currentId = event.target.id.match(/\d+/)[0];
+        hideOrShowReplacementAndComparisonValue(currentId);
+    }
 });
 
-$(document).ready(function () {
-  let IDs = new Set();
-  $("[id$=-comparison_operator]").each(function () {
-    if (/\d+/.test($(this).attr("id"))) {
-      IDs.add($(this).attr("id").match(/\d+/)[0]);
-    }
-  });
-  for (const id of IDs) {
-    hideOrShowReplacementAndComparisonValue(id);
-  }
+document.addEventListener("DOMContentLoaded", function () {
+    let IDs = new Set();
+    document.querySelectorAll("[id$='-comparison_operator']").forEach(function (element) {
+        const match = element.id.match(/\d+/);
+        if (match) {
+            IDs.add(match[0]);
+        }
+    });
+
+    IDs.forEach(function (id) {
+        hideOrShowReplacementAndComparisonValue(id);
+    });
 });

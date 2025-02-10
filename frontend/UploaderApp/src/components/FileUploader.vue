@@ -46,7 +46,26 @@
 
           <div class="col ul-status-message">
             <label class="select-file-btn">
-              <input :name="'ul-' + componentId" type="file" @change="processFile" class="d-none">
+
+              <input v-if="expectsZip"
+                     :name="'ul-' + componentId"
+                     accept=".zip,application/zip,application/x-zip-compressed,multipart/x-zip"
+                     type="file"
+                     @change="processFile"
+                     class="d-none">
+              <input v-else-if="blueprints[0].format === 'json'"
+                     :name="'ul-' + componentId"
+                     accept=".json,application/json"
+                     type="file"
+                     @change="processFile"
+                     class="d-none">
+              <input v-else-if="blueprints[0].format === 'csv'"
+                     :name="'ul-' + componentId"
+                     accept=".csv,text/csv"
+                     type="file"
+                     @change="processFile"
+                     class="d-none">
+
               {{ $t('choose-file') }}
             </label>
           </div>
@@ -130,7 +149,8 @@
         <div class="row">
           <div class="col extraction-information-container">
             <template v-for="bp in blueprints" :key="bp">
-            <div class="ul-status row align-items-start pt-2 pb-2" :class="{ 'ul-success': blueprintData[bp.id.toString()].status === 'success', 'ul-failed': blueprintData[bp.id.toString()].status === 'failed'}">
+            <div class="ul-status row align-items-start pt-2 pb-2"
+                 :class="{ 'ul-success': blueprintData[bp.id.toString()].status === 'success', 'ul-failed': blueprintData[bp.id.toString()].status === 'failed'}">
 
               <!-- Pending -->
               <template v-if="blueprintData[bp.id.toString()].status === 'pending'">
@@ -409,6 +429,23 @@ export default {
   },
   methods: {
     /**
+     * Validate that a file is a ZIP file.
+     * @param file
+     */
+    checkIsZip(file) {
+      const extensionIsValid = file.name.toLowerCase().endsWith('.zip');
+      const mimeIsValid = [
+          'application/zip',
+          'application/x-zip-compressed',
+          'multipart/x-zip'
+      ].includes(file.type);
+      if(extensionIsValid && mimeIsValid) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    /**
      * Processes the file uploaded by the participant.
      * @param event
      */
@@ -421,48 +458,57 @@ export default {
 
       // Procedure if supplied file is expected to be a zip-folder.
       if (uploader.expectsZip && files.length === 1) {
-        JSZip
-            .loadAsync(files[0])
-            .then(z => {
-              uploader.blueprints.forEach(blueprint => {
-                let re = new RegExp(blueprint.regex_path);
-                let reHasMatched = false;
-                z.file(re).forEach(f => {
-                  reHasMatched = true;
-                  f
-                      .async("string")
-                      .then(c => uploader.processContent(c, blueprint))
-                      .catch(e => {
-                        uploader.postError(4199, e.message);
-                        uploader.recordError(uploader.$t('error-generic') + e.message, blueprint.id.toString());
-                      })
+
+        // Check that file is a ZIP file.
+        const uploadedFile = files[0]
+        if (uploader.checkIsZip(uploadedFile) === false) {
+          uploader.postError(4101, uploader.$t('error-not-zip'));
+          uploader.recordError(uploader.$t('error-not-zip'), 'general');
+        } else {
+
+          JSZip
+              .loadAsync(uploadedFile)
+              .then(z => {
+                uploader.blueprints.forEach(blueprint => {
+                  let re = new RegExp(blueprint.regex_path);
+                  let reHasMatched = false;
+                  z.file(re).forEach(f => {
+                    reHasMatched = true;
+                    f
+                        .async("string")
+                        .then(c => uploader.processContent(c, blueprint))
+                        .catch(e => {
+                          uploader.postError(4199, e.message);
+                          uploader.recordError(uploader.$t('error-generic') + e.message, blueprint.id.toString());
+                        })
+                  })
+                  if (!reHasMatched) {
+                    uploader.postError(4180, uploader.$t('error-regex-not-matched'), blueprint.id);
+                    uploader.postError(4181, `Files in uploaded folder: ${Object.keys(z.files)}`, blueprint.id);
+                    uploader.recordError(uploader.$t('error-regex-not-matched'), blueprint.id.toString());
+                  }
                 })
-                if (!reHasMatched) {
-                  uploader.postError(4180, uploader.$t('error-regex-not-matched'), blueprint.id);
-                  uploader.postError(4181, `Files in uploaded folder: ${Object.keys(z.files)}`, blueprint.id);
-                  uploader.recordError(uploader.$t('error-regex-not-matched'), blueprint.id.toString());
-                }
               })
-            })
-            .catch(e => {
-              let myMess = '';
-              let statusCode = 0;
-              if (e.message.includes('zip') && e.message.includes('central')) {
-                myMess = uploader.$t('error-not-zip');
-                statusCode = 4101;
-              } else if (e.message.includes('Corrupted zip')) {
-                myMess = uploader.$t('error-zip-corrupted');
-                statusCode = 4102;
-              } else if (e.message.includes('Encrypted zip')) {
-                myMess = uploader.$t('error-zip-encrypted');
-                statusCode = 4103;
-              } else {
-                myMess = uploader.$t('error-generic') + e.message;
-                statusCode = 4198;
-              }
-              uploader.postError(statusCode, e.message);
-              uploader.recordError(myMess, 'general');
-        })
+              .catch(e => {
+                let myMess = '';
+                let statusCode = 0;
+                if (e.message.includes('zip') && e.message.includes('central')) {
+                  myMess = uploader.$t('error-not-zip');
+                  statusCode = 4101;
+                } else if (e.message.includes('Corrupted zip')) {
+                  myMess = uploader.$t('error-zip-corrupted');
+                  statusCode = 4102;
+                } else if (e.message.includes('Encrypted zip')) {
+                  myMess = uploader.$t('error-zip-encrypted');
+                  statusCode = 4103;
+                } else {
+                  myMess = uploader.$t('error-generic') + e.message;
+                  statusCode = 4198;
+                }
+                uploader.postError(statusCode, e.message);
+                uploader.recordError(myMess, 'general');
+              })
+        }
       }
 
       // Procedure if supplied file is expected to be a single file.

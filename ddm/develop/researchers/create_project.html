@@ -21,6 +21,11 @@
       <div class="navbar-slogan">
         <a class="navbar-item" href="../../..">Data Donation Module Documentation</a>
       </div>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <input id="search-input" type="text" placeholder="Search the docs">
+        </div>
+      </div>
       <!--
       <button class="navbar-burger" data-target="topbar-nav">
         <span></span>
@@ -315,7 +320,8 @@ also modify most of the settings once the project has been created):</p>
 </dd>
 <dt class="hdlist1">URL Identifier</dt>
 <dd>
-<p>Identifier that is included in the URL through which participants can access the project (e.g, <a href="https://root.url/project-slug" class="bare">https://root.url/project-slug</a>).</p>
+<p>Identifier that is included in the URL through which participants can access the project
+(e.g, <a href="https://root.url/" class="bare">https://root.url/</a><strong>my-url-identifier</strong>). Can only contain letters, hyphens, numbers or underscores.</p>
 </dd>
 <dt class="hdlist1">Contact Information</dt>
 <dd>
@@ -334,11 +340,35 @@ a project password, which will be used to encrypt all collected data donations a
 (for more information on how collected data is encrypted, see <a href="../developers/topics/encryption.html" class="xref page">here</a>).
 This password will not be saved by the application, and the data collected for
 this project can only be encrypted by entering the password that was used as a super secret
-when the project was created.
-Please note that there is no way to recover or reset this password if it is lost.
-Furthermore, also note that making a project "super secret" will limit the
-functionality of the module: it won’t be possible to create followup questions based on the data donation
-(i.e., data points from the data donation cannot be referenced in a question).</p>
+when the project was created.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Some words of caution:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>After a project has been created, it cannot be changed from super secret to regular and vice versa.</p>
+</li>
+<li>
+<p>There is no way to recover or reset the password used to initialize the super secret project in case it gets lost.</p>
+</li>
+<li>
+<p>Making a project "super secret" will limit the functionality of the module: it won’t be possible to create follow-up
+questions based on the data donation (i.e., data points from the data donation cannot be referenced in a question).</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </dd>
 </dl>
 </div>
@@ -364,5 +394,8 @@ Project Hub of your newly created project.</p>
 </footer>
 <script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
 <script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
   </body>
 </html>

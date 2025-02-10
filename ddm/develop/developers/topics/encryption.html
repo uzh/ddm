@@ -21,6 +21,11 @@
       <div class="navbar-slogan">
         <a class="navbar-item" href="../../../..">Data Donation Module Documentation</a>
       </div>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <input id="search-input" type="text" placeholder="Search the docs">
+        </div>
+      </div>
       <!--
       <button class="navbar-burger" data-target="topbar-nav">
         <span></span>
@@ -272,7 +277,7 @@
   <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This pages aims to describe what types of encryption should be used by the system hosting this module and what is implemented in this module.</p>
+<p>This page describes what types of encryption should be used by the system hosting this module and what is implemented in this module.</p>
 </div>
 </div>
 </div>
@@ -296,7 +301,8 @@ Each project has a unique <code>salt</code> that is generated when creating the 
 In the Django site settings, we use the <strong>SECRET_KEY</strong> as the default passphrase for encryption.
 If a project is working with sensitive data, we recommend that a <strong>project specific password</strong> is set.
 This password is only known by the person setting it and should not be shared.
-A project specific password will limit the functionality of the module for a given project: it won&#8217;t be possible to create followup questions based on the data donation.</p>
+A project specific password will limit the functionality of the module for a given project: it won&#8217;t be possible to
+create follow-up questions based on the data donation.</p>
 </div>
 </div>
 </div>
@@ -308,7 +314,7 @@ A project specific password will limit the functionality of the module for a giv
 <h3 id="_steps"><a class="anchor" href="#_steps"></a>Steps</h3>
 <div class="paragraph">
 <p>We use a hybrid asymmetric/symmetric encryption approach, due to the size limitation of the pure asymmetric approach.
-The following steps occur in the encryption process
+The encryption process consists of the following steps:
 - generate a public key and store it in the project (if none exists)
 - generate a session key used for encrypting a single message
 - encrypt the data symmetrically using the session key
@@ -316,7 +322,7 @@ The following steps occur in the encryption process
 - store the encrypted data with the encrypted key as header</p>
 </div>
 <div class="paragraph">
-<p>The following steps occur in the decryption process
+<p>The decryption process consists of the following steps:
 - generate a private key
 - get the desired encrypted data from the project
 - decrypt the encrypted session key (header) asymmetrically using the private key
@@ -364,5 +370,8 @@ In our case we use <a href="https://en.wikipedia.org/wiki/Advanced_Encryption_St
 </footer>
 <script id="site-script" src="../../../../_/js/site.js" data-ui-root-path="../../../../_"></script>
 <script async src="../../../../_/js/vendor/highlight.js"></script>
+<script src="../../../../_/js/vendor/lunr.js"></script>
+<script src="../../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../../.." data-snippet-length="100" data-stylesheet="../../../../_/css/search.css"></script>
+<script async src="../../../../search-index.js"></script>
   </body>
 </html>

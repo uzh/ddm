@@ -21,6 +21,11 @@
       <div class="navbar-slogan">
         <a class="navbar-item" href="../../../../..">Data Donation Module Documentation</a>
       </div>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <input id="search-input" type="text" placeholder="Search the docs">
+        </div>
+      </div>
       <!--
       <button class="navbar-burger" data-target="topbar-nav">
         <span></span>
@@ -444,7 +449,9 @@ If defined, the description will be visible for participants in the data donatio
 <dt class="hdlist1">File path</dt>
 <dd>
 <p>Here, the path where the file is expected to be located within a ZIP file is defined.
-Only necessary, if the Blueprint is associated to a Uploader that expects a ZIP file.</p>
+Only necessary, if the Blueprint is associated to a Uploader that expects a ZIP file. This path
+can include <a href="https://developer.mozilla.org/en-US/docs/Glossary/Regular_expression">regex expressions</a>
+for flexible file matching (see below).</p>
 <div class="admonitionblock warning">
 <table>
 <tr>
@@ -453,8 +460,8 @@ Only necessary, if the Blueprint is associated to a Uploader that expects a ZIP 
 </td>
 <td class="content">
 If a regex expression matches two files, DDM extracts the first one that matches the expression.
-Afterward, it does not look any further, even if the matched file does not match the expected fields.
-Therefore, be careful to choose regex expressions that will only match the expected file.
+Afterward, it does not look any further, even if the matched file does not contain the expected fields (see below).
+Therefore, we recommend to be as specific as possible when setting the file path.
 </td>
 </tr>
 </table>
@@ -482,7 +489,7 @@ Therefore, be careful to choose regex expressions that will only match the expec
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>^MyActivities.json</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>^MyActivities\.json</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Matches a file named <code>MyActivities.json</code> that is located at the root of the ZIP file.</p></td>
 </tr>
 <tr>
@@ -490,8 +497,8 @@ Therefore, be careful to choose regex expressions that will only match the expec
 <td class="tableblock halign-left valign-top"><p class="tableblock">Matches a file named <code>MyActivities.json</code> that is located in a folder named <code>SpecificFolder</code> in the root of the ZIP file.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>.*MyActivities\.json</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Matches file if the filename ends with <code>MyActivities.json</code> that can be located anywhere in the ZIP file. Warning: This also matches e.g. <code>BogusMyAcitivties.json</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>.*/MyActivities\.json</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Matches the first file with the name <code>MyActivities.json</code> that can be located anywhere in the ZIP file.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>(^MyActivities\.json|^MeineAktivitäten\.json|^MieAttivita\.json)</code></p></td>
@@ -501,7 +508,7 @@ Can be helpful to match the same file in different languages.</p></td>
 </tbody>
 </table>
 <div class="paragraph">
-<p>You can find about more about regex <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions">here</a>.
+<p>You can find about more about regex <a href="https://developer.mozilla.org/en-US/docs/Glossary/Regular_expression">here</a>.
 On this website, you will <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#tools">also find some Tools</a>
 that can help you test regex patterns.</p>
 </div>
@@ -707,5 +714,8 @@ that will be used as a replacement if the regex pattern matches.</p>
 </footer>
 <script id="site-script" src="../../../../../_/js/site.js" data-ui-root-path="../../../../../_"></script>
 <script async src="../../../../../_/js/vendor/highlight.js"></script>
+<script src="../../../../../_/js/vendor/lunr.js"></script>
+<script src="../../../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../../../.." data-snippet-length="100" data-stylesheet="../../../../../_/css/search.css"></script>
+<script async src="../../../../../search-index.js"></script>
   </body>
 </html>

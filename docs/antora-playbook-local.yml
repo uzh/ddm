@@ -1,10 +1,17 @@
 site:
   title: DDM Documentation
   start_page: index.adoc
+
 asciidoc:
   attributes:
     page-pagination: '@'
     favicon: ddl_favicon_black.svg
+
+antora:
+  extensions:
+    - require: '@antora/lunr-extension'
+      languages: [en]
+
 content:
   sources:
     - url: ../
@@ -12,6 +19,7 @@ content:
       tags: [v1.0.19, v1.0.0]
       version: true
       start_path: docs
+
 ui:
   bundle:
     url: ./ui/ui-bundle.zip

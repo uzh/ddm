@@ -1,4 +1,5 @@
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Max
 from django.forms import inlineformset_factory
 from django.urls import reverse
 from django.views.generic import ListView
@@ -181,12 +182,20 @@ class InlineFormsetMixin(ProjectMixin):
         })
         return context
 
+    def get_initial_extra_data(self):
+        """ Placeholder function to overwrite in views. """
+        return []
+
     def get_formset(self):
         formset = inlineformset_factory(
             QuestionBase, self.formset_model, exclude=self.get_excluded_fields(),
             extra=1
         )
-        return formset(self.request.POST or None, instance=self.object)
+        if self.request.method == "GET":
+            initial_data = self.get_initial_extra_data()
+        else:
+            initial_data = None
+        return formset(self.request.POST or None, instance=self.object, initial=initial_data)
 
     def get_excluded_fields(self):
         if not isinstance(self.object, SemanticDifferential):
@@ -203,6 +212,13 @@ class ItemEdit(SuccessMessageMixin, DDMAuthMixin, InlineFormsetMixin, UpdateView
     template_name = 'ddm_questionnaire/edit_set.html'
     context_title = 'Items'
     success_message = 'Question items updated.'
+
+    def get_initial_extra_data(self):
+        """ Placeholder function to overwrite in views. """
+        question = self.get_object()
+        index = question.questionitem_set.aggregate(max=Max('index'))['max']
+        index = (index or 0) + 1
+        return [{'index': index}]
 
     def get_success_url(self):
         question = self.get_object()
@@ -221,6 +237,13 @@ class ScaleEdit(SuccessMessageMixin, DDMAuthMixin, InlineFormsetMixin, UpdateVie
     template_name = 'ddm_questionnaire/edit_set.html'
     context_title = 'Scale Points'
     success_message = 'Question scale updated.'
+
+    def get_initial_extra_data(self):
+        """ Placeholder function to overwrite in views. """
+        question = self.get_object()
+        index = question.scalepoint_set.aggregate(max=Max('index'))['max']
+        index = (index or 0) + 1
+        return [{'index': index}]
 
     def get_success_url(self):
         question = self.get_object()

@@ -44,7 +44,7 @@
       {% if forloop.first %}
       <thead>
       <tr>
-        <th>Index</th>
+        <th style="width: 1%;" class="pe-4">Index</th>
         {% if object.question_type == "semantic_diff" %}
           <th>Label</th>
           <th>Label Right</th>
@@ -86,7 +86,7 @@
       {% if forloop.first %}
       <thead>
       <tr>
-        <th>Index</th>
+        <th style="width: 1%;" class="pe-4">Index</th>
         <th>Label</th>
         <th>Value</th>
       </tr>
@@ -94,7 +94,7 @@
       {% endif %}
       <tr>
         <td>{{ point.index }}</td>
-        <td>{{ point.label }}</td>
+        <td>{% if point.label is not None %}{{ point.label }}{% endif %}</td>
         <td>{{ point.value }}</td>
       </tr>
       {% empty %}

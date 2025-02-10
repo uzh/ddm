@@ -34,21 +34,25 @@
 
     <tr class="border-bottom-0">
       {% for field in form.visible_fields %}
-      <td class="border-bottom-0">
+      <td class="border-bottom-0 {% if forloop.parentloop.last %}bg-light{% endif %}">
         {% if forloop.first %}
         {% for hidden in form.hidden_fields %}
         {{ hidden }}
         {% endfor %}
         {% endif %}
         {{ field.errors.as_ul }}
+        {% if forloop.last and forloop.parentloop.last %}
+          new
+        {% else %}
         {{ field }}
+        {% endif %}
       </td>
       {% endfor %}
     </tr>
 
     {% endfor %}
   </table>
-  <input class="ddm-btn" type="submit" value="Update {{ context_title }}">
+  <input class="ddm-btn" type="submit" value="Update or add {{ context_title }}">
   <p class="mt-3">
     <a href="{% url 'ddm_questionnaire:edit' project_url_id question.question_type question.pk %}">&#129040; Back</a>
   </p>

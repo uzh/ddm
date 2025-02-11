@@ -1,7 +1,9 @@
 import time
 
 from selenium import webdriver
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from PIL import Image
@@ -13,7 +15,11 @@ FILE_UPLOADER_ID = 27
 
 
 def initialize_driver():
-    driver = webdriver.Firefox()
+    firefox_options = Options()
+    firefox_options.set_preference("intl.accept_languages", "en,en-US")  # Example: German
+    firefox_options.set_preference("general.useragent.locale", "en-US")  # Set UI locale too
+
+    driver = webdriver.Firefox(options=firefox_options)
     driver.set_window_size(3840, 2160)
     return driver
 
@@ -113,9 +119,7 @@ def upload_file(driver):
     file_input.send_keys(file_path)
 
     # Wait until file has been processed
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, 'closeUlInfoModal')))
-    modal_button = driver.find_element(By.ID, 'closeUlInfoModal')
-    modal_button.click()
+    WebDriverWait(driver, 10)
     return
 
 def enable_all_in_one_consent(driver):
@@ -142,10 +146,23 @@ def enable_all_in_one_consent(driver):
     return
 
 def agree_to_donate(driver, element=None):
+    url = f'studies/{PROJECT_SLUG}/data-donation/'
+    driver.get(BASE_URL + url)
     upload_file(driver)
-    label_selector = 'label[for="combined-donate-agree"]'
-    label = driver.find_element(By.CSS_SELECTOR, label_selector)
-    label.click()
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'label[for="combined-donate-agree"]')))
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    time.sleep(1)
+
+    # Get the checkbox itself
+    checkbox = driver.find_element(By.ID, 'combined-donate-agree')
+    checkbox_label = driver.find_element(By.CSS_SELECTOR, 'label[for="combined-donate-agree"]')
+
+    # Ensure the checkbox is visible
+    if not checkbox.is_selected():
+        actions = ActionChains(driver)
+        actions.move_to_element(checkbox_label).perform()
+        time.sleep(0.5)
+        checkbox_label.click()
 
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, 'flow-btn')))
     next_button = driver.find_element(By.CLASS_NAME, 'flow-btn')

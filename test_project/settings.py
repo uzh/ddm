@@ -138,3 +138,6 @@ DDM_DEFAULT_HEADER_IMG_RIGHT = ''
 CKEDITOR_5_FILE_UPLOAD_PERMISSION = 'authenticated'
 CKEDITOR_5_ALLOW_ALL_FILE_TYPES = True
 CKEDITOR_5_UPLOAD_FILE_TYPES = ['jpeg', 'pdf', 'png', 'mp4']
+
+# TODO: Delete again - only temporary
+# MIDDLEWARE += ['csp.middleware.CSPMiddleware']

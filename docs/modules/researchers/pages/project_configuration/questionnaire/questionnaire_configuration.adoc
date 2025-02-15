@@ -81,6 +81,29 @@ Randomize items:: Enable or disable randomization of *all* items.
 
 == Specific Settings
 
+=== Open Question
+
+Input type:: Define whether to apply restrictions for the input to
+this field. Can be 'text' to allow any kind of text, 'number' to
+only allow numerical characters, or 'email' to only allow valid
+email addresses. Default is 'text'.
+
+Maximum input length:: Restricts the input to a certain number of characters.
+If this option is left empty, no input length restriction is enforced.
+
+Display:: Define whether to show a 'small' one-line input field or
+a larger multi-line text-box. Defaults to "small" and only
+applies when the chosen input type is "Text".
+
+[NOTE]
+====
+The `input type` and `maximum input length` options are only "softly" enforced
+in the participant's browser by hinting at and highlighting non-compliant input.
+This means that these restrictions are not enforced on the server-side if
+participants choose to ignore the input hint.
+====
+
+
 === Question Items
 
 For Single Choice Questions, Multiple Choice Questions, Matrix Questions and Semantic Differentials,

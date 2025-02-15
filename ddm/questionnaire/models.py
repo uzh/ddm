@@ -316,14 +316,40 @@ class OpenQuestion(QuestionBase):
         max_length=20,
         blank=False,
         choices=DisplayOptions.choices,
-        default=DisplayOptions.LARGE,
+        default=DisplayOptions.SMALL,
         help_text='"Small" displays a one-line textfield, "Large" a multiline '
                   'textfield as input.'
+    )
+
+    class InputTypes(models.TextChoices):
+        TEXT = 'text', 'Any text'
+        NUMBER = 'numbers', 'Numbers only'
+        EMAIL = 'email', 'Email address'
+    input_type = models.CharField(
+        max_length=20,
+        blank=False,
+        choices=InputTypes.choices,
+        default=InputTypes.TEXT,
+        verbose_name='Input type',
+        help_text='Select the type of input allowed.'
+    )
+
+    max_input_length = models.IntegerField(
+        verbose_name='Maximum input length',
+        help_text=(
+            "Participants' input cannot exceed this length. If empty, "
+            "no input length restriction is enforced."
+        ),
+        blank=True,
+        null=True,
+        default=None
     )
 
     def create_config(self):
         config = super().create_config()
         config['options']['display'] = self.display
+        config['options']['input_type'] = self.input_type
+        config['options']['max_input_length'] = self.max_input_length
         return config
 
     def validate_response(self, response):

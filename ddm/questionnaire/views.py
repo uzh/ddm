@@ -12,8 +12,8 @@ from ddm.datadonation.models import DonationBlueprint
 from ddm.projects.models import DonationProject
 from ddm.questionnaire.models import (
     QuestionBase, QuestionType, SingleChoiceQuestion, MultiChoiceQuestion,
-    OpenQuestion, MatrixQuestion, SemanticDifferential, Transition, QuestionItem,
-    ScalePoint
+    OpenQuestion, MatrixQuestion, SemanticDifferential, Transition,
+    QuestionItem, ScalePoint
 )
 
 
@@ -49,7 +49,8 @@ class QuestionnaireOverview(ProjectMixin, DDMAuthMixin, ListView):
         return project.questionbase_set.all()
 
     def get_queryset(self):
-        return super().get_queryset().filter(project__url_id=self.kwargs['project_url_id'])
+        return super().get_queryset().filter(
+            project__url_id=self.kwargs['project_url_id'])
 
 
 class QuestionFormMixin(ProjectMixin):
@@ -65,13 +66,21 @@ class QuestionFormMixin(ProjectMixin):
         'transition': Transition
     }
 
-    SHARED_FIELDS = ['name', 'blueprint', 'page', 'index', 'variable_name', 'text', 'required']
+    SHARED_FIELDS = [
+        'name',
+        'blueprint',
+        'page',
+        'index',
+        'variable_name',
+        'text',
+        'required'
+    ]
     QUESTION_FIELDS = {
         'single_choice': SHARED_FIELDS + ['randomize_items'],
         'multi_choice': SHARED_FIELDS + ['randomize_items'],
         'matrix': SHARED_FIELDS + ['randomize_items'],
         'semantic_diff': SHARED_FIELDS + ['randomize_items'],
-        'open': SHARED_FIELDS + ['display'],
+        'open': SHARED_FIELDS + ['input_type', 'max_input_length', 'display'],
         'transition': SHARED_FIELDS
     }
 

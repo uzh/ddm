@@ -145,7 +145,7 @@
       </div>
 
       <div class="accordion-body">
-      <div class="container ul-feedback-container">
+      <div class="container ul-feedback-container ps-2 pe-2">
         <div class="row">
           <div class="col extraction-information-container">
             <template v-for="bp in blueprints" :key="bp">
@@ -171,8 +171,8 @@
                   </div>
                 </div>
 
-                <div class="row">
-                  <div class="col feedback-col">
+                <div class="row pe-0">
+                  <div class="col feedback-col pe-0">
                     <div>
                       {{ $t('extracted-data') }}
                     </div>
@@ -214,14 +214,20 @@
                       <div>
 
                       </div>
-                      <div :id="'expansion-control-'+bp.id.toString()" class="ul-data-expansion-control control-condensed"><a class="text-decoration-none fw-bold" :id="'collapse-toggle-'+bp.id.toString()" v-on:click="showHideData(bp.id.toString())"><span :id="'donation-container-'+ bp.id.toString() + '-toggle-label'">{{ $t('show-extracted-data') }}</span></a></div>
+                      <div :id="'expansion-control-'+bp.id.toString()" class="ul-data-expansion-control control-condensed">
+                        <a class="fw-bold"
+                           :id="'collapse-toggle-'+bp.id.toString()"
+                           v-on:click="showHideData(bp.id.toString())">
+                          <span :id="'donation-container-'+ bp.id.toString() + '-toggle-label'">{{ $t('show-extracted-data') }}</span>
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 <template v-if="this.combinedConsent === false">
-                <div class="row">
-                  <div class="col feedback-col pb-5 pt-1">
+                <div class="row pe-0">
+                  <div class="col feedback-col pb-5 pt-1 pe-0">
                     <p class="fw-bold">{{ $t('donation-question') }}</p>
                       <div class="consent-question-container">
 
@@ -298,8 +304,8 @@
       </div>
 
         <template v-if="this.combinedConsent === true && (uploadStatus === 'success' || uploadStatus === 'partial')">
-          <div class="row mt-5">
-            <div class="col feedback-col pb-5 pt-1">
+          <div class="row mt-5 pe-0">
+            <div class="col feedback-col pb-5 pt-1 pe-0">
               <p class="fw-bold">{{ $t('donation-question') }}</p>
               <div class="consent-question-container">
 
@@ -1121,22 +1127,24 @@ export default {
 }
 .control-condensed {
   background: rgb(255, 255, 255);
-  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 50%);
-  height: 75px;
-  margin-top: -74px;
-  padding-top: 45px;
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 70%);
+  height: 120px;
+  margin-top: -120px;
+  padding-top: 80px;
 }
 .fs-09 {
   font-size: 0.9rem;
 }
 .w-small {
-  max-width: 33px;
+  max-width: 20px;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
 }
 .consent-question-container {
   width: 100%;
 }
 .feedback-col {
-  padding-left: 46px;
+  padding-left: 33px;
 }
 .extraction-information-container {
   padding-top: 6px;
@@ -1178,7 +1186,7 @@ export default {
   border-bottom: 2px solid #000;
 }
 .btn-pagination {
-  background: #dbdbdb;
+  background: #f4f4f4;
   border: none;
   color: black;
 }

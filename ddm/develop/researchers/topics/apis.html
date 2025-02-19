@@ -372,7 +372,8 @@ and project configuration.</p>
             "start_time": &lt;string - datetime as iso string&gt;,
             "end_time": &lt;string - datetime as iso string&gt;,
             "completed": &lt;boolean&gt;,
-            "extra_data": &lt;dictionary - holding any extra data saved in relation to the participant&gt;
+            "extra_data": &lt;dictionary - holding any extra data saved in relation to the participant&gt;,
+            "current_step": &lt;integer - holding information on progress; 1=briefing, 2=data donation, 3=questionnaire, 4=debriefing&gt;
         },
         {
             &lt;...&gt;
@@ -473,7 +474,8 @@ Host: &lt;hostname&gt;</code></pre>
             "start_time": "2025-01-14T15:37:26.349500+01:00",
             "end_time": null,
             "completed": false,
-            "extra_data": {"url_param": {}}
+            "extra_data": {"url_param": {}},
+            "current_step": 1
         },
         {
             "external_id": "3sJhlxVDGaarD2BAiMjYGXxP",
@@ -771,7 +773,7 @@ Host: &lt;hostname&gt;</code></pre>
 </dd>
 <dt class="hdlist1">URL</dt>
 <dd>
-<p>/api/project/<code>project URL ID</code>/donations</p>
+<p>/api/project/<code>project URL ID</code>/responses</p>
 </dd>
 <dt class="hdlist1">Allowed Methods</dt>
 <dd>

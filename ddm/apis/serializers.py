@@ -122,5 +122,6 @@ class ParticipantSerializer(serializers.ModelSerializer):
             'start_time',
             'end_time',
             'completed',
-            'extra_data'
+            'extra_data',
+            'current_step'
         ]

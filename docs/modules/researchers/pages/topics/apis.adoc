@@ -65,7 +65,8 @@ Response::
             "start_time": <string - datetime as iso string>,
             "end_time": <string - datetime as iso string>,
             "completed": <boolean>,
-            "extra_data": <dictionary - holding any extra data saved in relation to the participant>
+            "extra_data": <dictionary - holding any extra data saved in relation to the participant>,
+            "current_step": <integer - holding information on progress; 1=briefing, 2=data donation, 3=questionnaire, 4=debriefing>
         },
         {
             <...>
@@ -151,7 +152,8 @@ Host: <hostname>
             "start_time": "2025-01-14T15:37:26.349500+01:00",
             "end_time": null,
             "completed": false,
-            "extra_data": {"url_param": {}}
+            "extra_data": {"url_param": {}},
+            "current_step": 1
         },
         {
             "external_id": "3sJhlxVDGaarD2BAiMjYGXxP",
@@ -397,7 +399,7 @@ Host: <hostname>
 
 Description:: Retrieve questionnaire responses collected in a given donation project.
 
-URL:: /api/project/`project URL ID`/donations
+URL:: /api/project/`project URL ID`/responses
 
 Allowed Methods:: `GET`
 

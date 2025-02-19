@@ -588,10 +588,11 @@ class DownloadProjectDetailsView(APIView, DDMAPIMixin):
         """
         Handle GET request to stream JSON response.
         """
-        if not user_has_project_access(request.user, self.project):
+        if (not user_has_project_access(request.user, self.project) and
+                not request.user.is_superuser):
             self.create_event_log(
-                descr='Forbidden Deletion Request',
-                msg='Request user is not permitted to delete the project data.'
+                descr='Forbidden Data Overview Request',
+                msg='Request user is not permitted to get the project data.'
             )
             msg = 'User does not have access.'
             raise exceptions.PermissionDenied(msg)

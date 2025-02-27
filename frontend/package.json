@@ -23,7 +23,7 @@
     "@vue/cli-service": "^5.0.8",
     "eslint": "^9.13.0",
     "eslint-plugin-vue": "^9.23.0",
-    "vitest": "^2.0.3"
+    "vitest": "^3.0.7"
   },
   "eslintConfig": {
     "root": true,

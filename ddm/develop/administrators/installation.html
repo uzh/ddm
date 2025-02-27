@@ -453,12 +453,30 @@ INSTALLED_APPS = [
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># settings.py
 
+# For production use:
+import os
 WEBPACK_LOADER = {
     'DEFAULT': {
         'CACHE': True,
         'BUNDLE_DIR_NAME': 'ddm_core/vue/',
         'STATS_FILE': os.path.join(STATIC_ROOT, 'ddm_core/vue/webpack-stats.json'),
         'POLL_INTERVAL': 0.1,
+        'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
+    }
+}
+
+# For development use:
+import os
+import ddm.core
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'CACHE': False,
+        'BUNDLE_DIR_NAME': 'core/vue/',
+        'STATS_FILE': os.path.join(
+            os.path.dirname(ddm.core.__file__),
+            'static/ddm_core/vue/webpack-stats.json'
+        ),
+        'POLL_INTERVAL': 0.1,  # Adjust as needed
         'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
     }
 }</code></pre>

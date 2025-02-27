@@ -1,0 +1,20 @@
+= Topics
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+
+This section contains further information on a range of specific topics. These topics include:
+
+- xref:topics/apis.adoc[APIs]: A detailed description of available API endpoints through which you can access your
+project's data.
+- xref:topics/continuation.adoc[Continuation]: A description on how you can implement a participation flow that allows
+your participants to continue their donation at a later point in time or on a different device.
+- xref:topics/project_logs.adoc[Project Logs]: A description of the events that are logged as part of the
+xref:researchers:data_center/project_logs.adoc[Project Logs].
+- xref:topics/templating_features.adoc[Template Rendering]: A complete description of all the options available in DDM
+to include participant-specific information in text blocks (e.g., questions, instructions and (de-)briefings).

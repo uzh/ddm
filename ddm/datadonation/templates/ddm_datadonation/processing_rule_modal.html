@@ -1,0 +1,25 @@
+<div class="modal" id="{{ modal_id }}" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h4>Rule Configuration</h4>
+        <div class="rule-configuration-form">
+          {% for field in form %}
+            {% if field.name in 'name,field,regex_field,execution_order,input_type,comparison_operator,comparison_value,replacement_value' %}
+              <p>
+                {{ field.label_tag }}
+                <span class="helptext">{{ field.help_text }}</span>
+                {{ field }}
+                {{ field.errors }}
+              </p>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="ddm-modal-cancel-{{ button_id }}" type="button" class="ddm-btn ddm-modal-cancel">Cancel</button>
+        <button id="ddm-modal-ok-{{ button_id }}" type="button" class="ddm-btn ddm-modal-ok">OK</button>
+      </div>
+    </div>
+  </div>
+</div>

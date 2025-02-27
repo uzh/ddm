@@ -1,0 +1,28 @@
+* xref:index.adoc[Researchers]
+** xref:create_project.adoc[Create a Project]
+** xref:project_hub.adoc[Project Hub]
+** xref:general_project_settings.adoc[General Project Settings]
+
+** xref:researchers:project_configuration/index.adoc[Project Configuration]
+*** xref:researchers:project_configuration/briefing.adoc[Briefing Page]
+*** Data Donation
+**** xref:project_configuration/datadonation/datadonation_overview.adoc[Overview]
+**** xref:project_configuration/datadonation/datadonation_configuration.adoc[Configuration]
+*** Questionnaire
+**** xref:project_configuration/questionnaire/questionnaire_overview.adoc[Overview]
+**** xref:project_configuration/questionnaire/questionnaire_configuration.adoc[Configuration]
+**** xref:project_configuration/questionnaire/questionnaire_data_integration.adoc[Data Integration]
+*** xref:researchers:project_configuration/debriefing.adoc[Debriefing Page]
+
+** xref:researchers:data_center.adoc[Data Center]
+*** xref:researchers:data_center/data_download.adoc[Download]
+*** xref:researchers:data_center/project_logs.adoc[Project Logs]
+*** xref:researchers:data_center/participation_statistics.adoc[Statistics]
+
+** xref:researchers:danger_zone.adoc[Danger Zone]
+
+** xref:researchers:topics/index.adoc[Topics]
+*** xref:topics/apis.adoc[APIs]
+*** xref:topics/continuation.adoc[Continuation]
+*** xref:topics/project_logs.adoc[Project Logs]
+*** xref:topics/templating_features.adoc[Template Rendering]

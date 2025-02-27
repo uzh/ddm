@@ -1,0 +1,256 @@
+= Data Donation Configuration
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+The data donation can be configured using so-called `Uploaders`, `Instructions`, and `Blueprints`.
+An Uploader essentially represents an upload form through which one file can be uploaded (either a ZIP container
+or a single file).
+For each Uploader, a set of `Instructions` for participants can be created that show how they can access and
+upload the requested file.
+A Blueprint is used to define what data will be extracted from the file
+that participants upload through the Uploader. Each Uploader has one or multiple associated Blueprints (although
+if an Uploader expects a single file, only one Blueprint can be associated with it).
+
+To configure the data donation step, go to the xref:researchers:project_hub.adoc[Project Hub] and click on
+_Data Donation_ in the Project Configuration section. You can then configure the Uploaders, Instructions, and
+Blueprints on the following page:
+
+[.text-center]
+.Data Donation Admin Page
+image::datadonation_admin_page.png["Data Donation Admin Page Screenshot", 95%]
+
+
+== Configure Uploader
+
+When creating an Uploader, you have the following configuration options:
+
+Name:: Name of the Uploader. Will be publicly visible to participants in the header of the Uploader on the
+data donation page.
+
+Upload Type:: Either "single file" or "zip file" depending on whether your participants are expected to upload
+a single file (e.g., CSV or JSON File) or a ZIP-container.
+
+Index:: The position of the Uploader on the data donation page. Uploaders with a
+lower index will be displayed closer to the top of the page. This setting only has an effect, if you use
+multiple Uploaders in the same project.
+
+All-in-one consent::
+By default, participants will be asked to consent to the donation of the data associated with each Blueprint.
+If all-in-one consent is enabled, participants will instead be asked to consent to submit
+all uploaded data at once. The all-in-one consent question will be displayed at the bottom of the
++
+[cols="a,a", frame=none, grid=none]
+|===
+| image::datadonation_after_upload_page.png["Data Donation Page Screenshot Default", 95%, title=Default Consent]
+| image::datadonation_after_upload_page_allinone.png["Data Donation Page Screenshot all-in-one consent", 95%, title=All-in-One Consent]
+|===
+
+Associated Blueprints:: The Blueprints associated to this Uploader. Only associated Blueprints will be
+applied to the files uploaded through a particular Uploader.
+
+
+== Configure Instructions
+
+Once an Uploader is created, you can add Instructions to it.
+Donation Instructions consist of one or multiple instruction pages.
+Instruction pages are displayed as a slide show at the top of the Uploader on the donation page
+(see the figures on the xref:researchers:project_configuration/datadonation/datadonation_overview.adoc[data donation overview page]).
+For each instruction page, the following can be configured:
+
+Text:: The instruction text displayed to the participants.
+Researchers can also upload and include images or gifs to guide
+participants through the data donation process in this field (currently, video upload is not supported).
++
+[TIP]
+====
+The participant's external ID is available as a template variable to be included
+in the instruction text as follows: `{{ participant_id }}` which will be displayed
+to the participant as something like `IPI2wHDWrHODDRKuo8zo101S`. This is
+helpful to enable participants to continue the data donation at a later point in time
+(e.g., because it can take some time between requesting data takeout and being
+able to download it); read xref:topics/continuation.adoc[this section of the documentation] to find out how
+this can be done.
+====
+
+Index:: The order of the page in the slideshow.
+
+[NOTE]
+====
+If no instructions are defined for an Uploader, the instruction section will
+be hidden in the participation view.
+====
+
+== Configure Blueprints
+
+When creating a Blueprint, you have the following configuration options:
+
+Name:: Name of the Blueprint. Will be publicly visible to participants.
+Therefore, it is important to define a meaningful name (e.g., "Watch History", "Liked Posts" or similar).
+
+Description:: Description of what information the Blueprint will extract from the uploaded file.
+If defined, the description will be visible for participants in the data donation step.
+
+Associated Uploader:: The `Uploader` to which the Blueprint is associated.
+
+File path:: Here, the path where the file is expected to be located within a ZIP file is defined.
+Only necessary, if the Blueprint is associated to a Uploader that expects a ZIP file. This path
+can include https://developer.mozilla.org/en-US/docs/Glossary/Regular_expression[regex expressions]
+for flexible file matching (see below).
++
+WARNING: If a regex expression matches two files, DDM extracts the first one that matches the expression.
+Afterward, it does not look any further, even if the matched file does not contain the expected fields (see below).
+Therefore, we recommend to be as specific as possible when setting the file path.
++
+[TIP]
+====
+*Examples for regex paths to match files*
+
+[%header,cols=2*]
+|===
+|Regex
+|Description
+
+|`^MyActivities\.json`
+|Matches a file named `MyActivities.json` that is located at the root of the ZIP file.
+
+|`^SpecificFolder/MyActivities\.json`
+|Matches a file named `MyActivities.json` that is located in a folder named `SpecificFolder` in the root of the ZIP file.
+
+|`.*/MyActivities\.json`
+|Matches the first file with the name `MyActivities.json` that can be located anywhere in the ZIP file.
+
+|`(\^MyActivities\.json\|^MeineAktivitäten\.json\|^MieAttivita\.json)`
+|Matches a file that is located at the root of the ZIP file and either named `MyActivities.json`, `MeineAktivitäten.json`, or `MieAttivita.json`.
+Can be helpful to match the same file in different languages.
+|===
+
+You can find about more about regex https://developer.mozilla.org/en-US/docs/Glossary/Regular_expression[here].
+On this website, you will https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#tools[also find some Tools]
+that can help you test regex patterns.
+====
+
+Expected fields:: The fields that must be contained in the file from which information should be extracted.
+If a file does not contain *all* fields defined here, No Information will be extracted. +
+Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").
+You can also use regular expressions (regex) to match expected fields - for this, you
+must enable the `expected field regex matching` option (see below).
+
+Expected field regex matching:: Select if you use a regex expression in the `Expected fields`
+setting.
+
+Expected File Format:: The file format of the file from which information should be extracted.
+Currently, only JSON and CSV is implemented.
+
+=== JSON specific settings
+
+Extraction Root::
+
+Indicates on which level of the files' data structure information
+should be extracted. If you want to extract information contained on the first
+level (e.g., `{'field to be extracted': value}`, you can leave this field empty.
+If you want to extract data located on a higher level, then you would provide
+the path to the parent field of the data you want to extract (e.g., if your json
+file is structured like this `{'friends': {'real_friends': [{'name to extract':
+name, 'date to extract': date}], 'fake friends': [{'name': name, 'date': date }]}}`
+and you want to extract the names and dates of real_friends, you would set the
+extraction root to `friends.real_friends`.
+
+=== CSV specific settings
+
+CSV Delimiter:: This field allows you to specify the character that separates values in the
+expected CSV file. (e.g., `,`, `;` or `\t`). If left empty, DDM will try to infer the delimiter from the file structure.
+
+
+=== Extraction Rules
+
+The settings above are used to identify and validate the correct file from which data should be extracted.
+When the file validation is successful, the Blueprint will start to extract information from the file.
+For this, it uses `Extraction Rules` which will be applied to the file one after another.
+
+The base assumption for the extraction of the data contained in a file is
+that you do not want any data. This means that when you configure your extraction rules,
+you first have to add a "Keep Field"-rule for each field that you want to keep in your data (see the setting
+`Extraction Operator` below).
+
+Execution Order:: The order in which the extraction rules are applied to a file.
+
+Name:: The name of an extraction rule. For internal organisation only.
+
+Field:: The field to which the rule will be applied. This can either be a "normal" string or a
+regular expression (regex). If the latter is the case, you must also select `regex field` (below).
+
+Regex field:: Select if you use a regex expression in the `Field` setting of this rule.
+
+Extraction Operator:: Defines the main logic of the extraction step. Below, you see the list of available extraction
+operators:
++
+[%header,cols=3*]
+|===
+|Extraction Operator
+|Description
+|Note
+
+|Keep Field
+|Keep this field in the uploaded data.
+|–
+
+|Equal (==)
+|Delete row/entry if the value contained in the given `field` equals the `comparison value`.
+|Works for strings, integers, and dates^1^.
+
+|Not Equal (!=)
+|Delete row/entry if the value contained in the given `field` does not equal the `comparison value`.
+|Works for strings, integers, and dates^1^.
+
+|Greater than (>)
+|Delete row/entry if the value contained in the given `field` is greater than the `comparison value`.
+|Works for integers and dates^1^. String values are skipped and the row will be kept in the data.
+
+|Smaller than (<)
+|Delete row/entry if the value contained in the given `field` is smaller than the `comparison value`.
+|Works for integers and dates^1^. String values are skipped and the row will be kept in the data.
+
+|Greater than or equal (>=)
+|Delete row/entry if the value contained in the given `field` is greater than or equal to the `comparison value`.
+|Works for integers and dates^1^. String values are skipped and the row will be kept in the data.
+
+|Smaller than or equal (<=)
+|Delete row/entry if the value contained in the given `field` is smaller than or equal to the `comparison value`.
+|Works for integers and dates^1^. String values are skipped and the row will be kept in the data.
+
+|Delete match (regex)
+|Delete parts of the value contained in the given `field` that match the given `regular expression (regex)`
+      (e.g., if the `regular expression (regex)` = "^Watched " and a field contains the value "Watched video XY" the following
+      value will be kept in the uploaded data: "video XY").
+|All field values are converted to strings before this operation is applied.
+
+|Replace match (regex)
+|Replace parts of the value contained in the given `field` that match the given `regular expression (regex)`
+      (e.g., if the `regular expression (regex)` = "[\w-\.]+@([\w-]+\.)+[\w-]{2,4}" and
+      the `replacement value` = "_anonymized_" and a field contains the value "some text email@address.com" the following
+      value will be kept in the uploaded data: "some text _anonymized_").
+|All field values are converted to strings before this operation is applied.
+
+|Delete row when match (regex)
+|Delete row/entry if the value contained in the given `field` matches the given `regular expression (regex)` (e.g., if
+      `regular expression (regex)` = "^Watched " and a field contains the value "Watched video XY"
+      the row/entry will be deleted from the uploaded data).
+|All field values are converted to strings before this operation is applied.
+
+|===
++
+[small]#^1^ Dates are inferred from string values if they are formatted according to ISO, RFC2822, or HTTP standards,
+and only if both the field value and the comparison value follow the same format.
+Otherwise, the entry will be treated as a regular string.#
+
+
+Comparison Value:: The value against which the data contained in the indicated field will be compared according
+to the selected Extraction Operator.
+
+Replacement Value:: Only required for operation "Replace match (regex)". The value
+that will be used as a replacement if the regex pattern matches.

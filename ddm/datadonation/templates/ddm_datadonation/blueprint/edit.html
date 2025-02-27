@@ -1,0 +1,193 @@
+{% extends 'ddm_core/page_with_form.html' %}
+
+{% load static %}
+
+{% block extrahead %}
+    <link rel="stylesheet" href="{% static 'ddm_datadonation/css/blueprint_edit.css' %}">
+{% endblock %}
+
+{% block page_title %}Edit File Blueprint{% endblock %}
+
+{% block main_heading %}Edit File Blueprint "{{ object.name }}"{% endblock %}
+
+{% block main_form %}
+<form method='post'>
+  {% csrf_token %}
+  {{ form.media }}
+  {{ form.non_field_errors }}
+
+  <div>
+    <p><b>Blueprint ID:</b> {{ object.pk }}</p>
+  </div>
+
+  <div class="mt-5">
+    <h5>General Settings</h5>
+
+    {% for field in form %}
+    {% if field.name not in "expected_fields,expected_fields_regex_matching,regex_path,exp_file_format,csv_delimiter,json_extraction_root" %}
+    <p>
+      {{ field.label_tag }}
+      {{ field.errors }}
+      <span class="helptext">{{ field.help_text }}</span><br>
+      {{ field }}
+    </p>
+    {% endif %}
+    {% endfor %}
+  </div>
+
+  <hr class="mt-5 mb-5">
+
+  <div>
+    <h5>File Validation Settings</h5>
+
+    {% include "ddm_core/components/info_collapsible.html" with element_id="filevalidation" title="How the file validation works" include_path="ddm_datadonation/blueprint/block_file_validation.html" body="" %}
+
+    {% for field in form %}
+    {% if field.name in "expected_fields,expected_fields_regex_matching,regex_path,exp_file_format,csv_delimiter,json_extraction_root" %}
+    <p>
+      {{ field.label_tag }}
+      {{ field.errors }}
+      <span class="helptext">{{ field.help_text }}</span>
+      {{ field }}
+    </p>
+    {% endif %}
+    {% endfor %}
+  </div>
+
+  <hr class="mt-5 mb-5">
+
+  <div>
+    <h5>Data Extraction Settings</h5>
+    {% include "ddm_core/components/info_collapsible.html" with element_id="dataextraction" title="How the data extraction works" include_path="ddm_datadonation/blueprint/block_data_extraction.html" body="" %}
+
+    {{ formset.management_form }}
+
+    <b>Extraction Rules</b>
+    <table id="inlineform-table" class="table table-borderless fs-08">
+      <tr class="border-bottom">
+        <th>Order</th>
+        <th>Rule name</th>
+        <th>Field</th>
+        <th>Description</th>
+        <th></th>
+        <th>Delete</th>
+      </tr>
+
+      {% for form in formset%}
+      <tr>
+        {{ form.non_field_errors }}
+        {% with loop_id=forloop.counter0 %}
+        {% for field in form.visible_fields %}
+        {% if field.name in 'name,field,execution_order' %}
+        <td id="{{ field.name }}-{{ loop_id }}">
+          {{ field.errors }}
+          {{ field.value }}
+        </td>
+        {% endif %}
+        {% endfor %}
+        {% endwith %}
+
+        <td><span id="step-description-{{ forloop.counter0 }}">–</span></td>
+
+        <td><a href="" type="button" data-bs-toggle="modal" data-bs-target="#configuration-{{ forloop.counter0 }}">configure rule</a></td>
+
+        {% for field in form.visible_fields %}
+        {% if field.name in 'DELETE' %}
+        <td>
+          {{ field.errors }}
+          {{ field }}
+        </td>
+        {% endif %}
+        {% endfor %}
+
+        {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+        {% endfor %}
+      </tr>
+      {% endfor %}
+
+    </table>
+  </div>
+
+  <div class="mb-3 fs-4 ps-2">
+    <a id="add-inline-form" class="ddm-btn ddm-btn-inverted" type="button"><i class="bi bi-plus"></i>&nbsp;&nbsp;Add Extraction Rule</a>
+  </div>
+
+  {% for form in formset%}
+    {% with modal_id_postfix=forloop.counter0|stringformat:"i" button_id_postfix=forloop.counter0|stringformat:"i" %}
+      {% include "ddm_datadonation/processing_rule_modal.html" with modal_id="configuration-"|add:modal_id_postfix form=form button_id=""|add:button_id_postfix %}
+    {% endwith %}
+  {% empty %}
+    {% include "ddm_datadonation/processing_rule_modal.html" with modal_id="configuration-template" form=formset.empty_form button_id="__prefix__" %}
+  {% endfor %}
+
+  <table id="empty-form-placeholder">
+    <tr>
+      {% for field in formset.empty_form %}
+      {% if field.name in 'name,field,execution_order' %}
+      <td id="{{ field.name }}-__prefix__">
+        {{ field.errors }}
+        {{ field.value }}
+      </td>
+      {% endif %}
+      {% endfor %}
+
+      <td><span id="step-description-__prefix__">–</span></td>
+
+      <td><a href="" type="button" data-bs-toggle="modal" data-bs-target="#configuration-__prefix__">configure rule</a></td>
+
+      {% for field in formset.empty_form.visible_fields %}
+      {% if field.name in 'DELETE' %}
+      <td>
+        {{ field.errors }}
+        {{ field }}
+      </td>
+      {% endif %}
+      {% endfor %}
+
+      {% for hidden in formset.empty_form.hidden_fields %}
+      {{ hidden }}
+      {% endfor %}
+    </tr>
+  </table>
+
+  <div id="empty-form">
+    <div class="rule-configuration-form">
+    {% for field in formset.empty_form %}
+    {% if field.name in 'name,field,regex_field,execution_order,input_type,comparison_operator,comparison_value,replacement_value' %}
+    <p {% if field.name in 'replacement_value,comparison_value' %}class="d-none"{% endif %}>
+      {{ field.label_tag }}
+      <span class="helptext">{{ field.help_text }}</span>
+      {{ field }}
+      {{ field.errors }}
+      <span class="form-error d-none">Please provide a value for this field.</span>
+    </p>
+    {% endif %}
+    {% endfor %}
+    </div>
+  </div>
+
+  <hr class="mt-5 mb-5">
+
+  <input class="ddm-btn mt-3" type="submit" value="Save Blueprint">
+  <p class="mt-3">
+    <a href="{% url 'ddm_datadonation:overview' project.url_id %}">&#129040; Back</a>
+  </p>
+</form>
+{{ file_uploader_meta|json_script:'file_uploader_meta' }}
+{% endblock %}
+
+
+{% block breadcrumbs %}
+<a href="{% url 'ddm_projects:list' %}">Projects</a> /
+<a href="{% url 'ddm_projects:detail' project.url_id %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'ddm_datadonation:overview' project.url_id %}">Data Donation</a> /
+Edit Blueprint
+{% endblock %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script src="{% static 'ddm_datadonation/js/blueprint-edit-ui-helpers.js' %}"></script>
+  <script src="{% static 'ddm_datadonation/js/processing-rule-modal.js' %}"></script>
+  <script src="{% static 'ddm_datadonation/js/blueprint-general-ui-helpers.js' %}"></script>
+{% endblock scripts %}

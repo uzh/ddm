@@ -1,0 +1,200 @@
+= Documentation for Developers
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: static/img/ddl_favicon_black.svg
+
+This section of the documentation is targeted at people who contribute to the development of DDM or who want to
+learn more about its development in general.
+
+== Development Guidelines
+
+=== Local Project for Development and Testing
+
+The repository includes a django test project that can be used for local development and testing.
+
+==== Setup
+
+===== Install required packages
+Once you have cloned or forked the GitHub repository, activate your local virtual environment and install the following requirements:
+
+[source]
+----
+(venv) <...>/ddm> pip install -r requirements.txt
+----
+
+===== Adjust Test Configuration
+A basic standard configuration for the test project is specified in
+`test_project/test_config.json`. Adjust the information in this file if you
+want to use a custom setup, or use another database. By default, the test project
+uses SQLite as a database backend.
+
+If you do make changes to this file, please do NOT commit these changes to the
+shared repository.
+
+
+==== Commands
+
+Through the setup described above, the regular django commands are now available:
+
+===== Run Development Server
+
+To start the development server use the following commands:
+
+[source]
+----
+(venv) <...>/ddm/test_project> python manage.py runserver
+----
+
+===== Create Database Migrations
+
+To create new migrations based on the changes made to the models, run:
+
+[source]
+----
+(venv) <...>/ddm/test_project> python manage.py makemigrations
+----
+
+===== Apply migrations
+
+To apply existing migrations to your local database, run: footnote:[If you are running a version of Python < 3.9, you might have to manually enable the JSON1 extension on SQLite for the migration to work properly. For an explanation on how to do this visit https://code.djangoproject.com/wiki/JSON1Extension.]
+
+[source]
+----
+(venv) <...>/ddm/test_project> python manage.py migrate
+----
+
+===== Run Unit Tests
+
+To run unit tests, use:
+
+[source]
+----
+(venv) <...>/ddm/test_project> python manage.py test ddm
+----
+
+=== Vue Integration
+
+==== Development
+
+First, install the appropriate node.js version according to the `.node-version` file. Then, install the
+node dependencies:
+
+[source]
+----
+(venv) <...>/ddm/frontend> npm install
+----
+
+To run the app in development mode, you will need to serve both Django’s dev server and the webpack development server:
+From the frontend directory, run:
+
+[source]
+----
+(venv) <...>/ddm/frontend> npm run serve
+----
+
+And, in a separate terminal in the Django root directory, run the Django development server:
+[source]
+----
+(venv) <...>/ddm/test_project> python manage.py runserver
+----
+
+Open your locally hosted Django app in a browser (e.g. http://localhost:8000). Changes to the vue code will trigger an
+automatic reload of the page in the browser.
+
+==== Production Deployment
+
+When it is time to deploy, or when you simply want to omit running the Vue dev server,
+you can build the Vue project in production mode.
+Cancel the `npm run serve` process if it is running and instead run `npm run build`.
+The optimized bundles will be built in and placed into the Django static file location,
+and webpack-stats.json will be updated to reflect this new configuration.
+The vue builds should end up in the static folder of the django module (ddm/static).
+
+
+=== CI/CD
+
+This project uses _GitHub actions_ for automated testing and CI tasks.
+
+
+==== GitHub Actions
+
+A **push to develop** triggers build tests for the following configurations:
+
+- Python: [3.8, 3.10.4]
+- Database: [sqlite, mysql]
+
+A **tag (vX.X.X) push to develop** triggers build tests (see above). If the tests are successful
+develop is automatically merged into main.
+
+[IMPORTANT]
+====
+Please make sure that pushed tags are in sync with package versions on PyPi.
+
+If the build-tests of a pushed tag fail, delete the tagfootnote:[To delete a tag, first run `git tag -d tagname` then
+`git push --delete origin tagname`.] and push the fixed version again with the same tag until the tests run through.
+====
+
+A **push to main** triggers build tests and if the tests are successful, automatically
+bumps the version number (patch number) and builds a new PyPi package.
+The tests have the same configurations as on develop.
+
+A **pull request to main created by dependabot** will automatically update the
+affected dependencies and merge into main.
+
+
+==== Pipeline
+
+A regular **push to develop** triggers the following pipeline:
+
+1. Run tests on develop.
+2. Create new documentation for GitHub pages.
+
+A **tag ("vX.X.X") push to develop** triggers the following pipeline:
+
+1. Run tests on develop.
+2. Create new documentation for GitHub pages.
+3. Merge develop into main.
+4. Run tests on main.
+5. Create PyPi package.
+
+A **pull request to main created by dependabot** triggers the following pipeline:
+
+1. Update dependencies.
+2. Merge into main.
+3. Run tests on main.
+4. Create PyPi package.
+
+
+==== Release
+
+A new **release** is created manually and includes:
+
+- Bumping the minor or major part of the version.
+- Updating setup.cfg.
+- Ideally, add a changelog.
+
+
+=== Documentation
+
+This documentation is written in
+https://docs.asciidoctor.org/asciidoc/latest/syntax-quick-reference/[AsciiDoc]
+and compiled using https://docs.antora.org/antora/latest/[Antora].
+
+The documentation UI uses the https://github.com/Nico-AP/antora-ddm-ui[Antora DDM UI]
+which is based on the https://gitlab.com/antora/antora-ui-default[default Antora UI].
+
+To compile the documentation locally, you first need to install Antora following
+https://docs.antora.org/antora/latest/install-and-run-quickstart/[these instructions].
+
+Next, you can compile the documentation locally using the `antora-playbook-local.yml` file:
+[source]
+----
+(venv) <...>/ddm/docs> npx antora antora-playbook-local.yml
+----
+Inspect the compiled documentation by opening `<...>/ddm/docs/build/index.html` in
+your preferred browser.
+
+
+include::ROOT:components/scripts.adoc[]

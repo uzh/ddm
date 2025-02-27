@@ -1,0 +1,62 @@
+= Data Integration
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+
+It is possible to dynamically include participant-related and/or donation-related information in a question text.
+
+== Available Data
+
+There are two types of data that can be integrated in a questionnaire: Metadata related to the participant and
+data contained in the donated data. This data can be integrated by using the follwing pattern in the text field of
+your question or item: `This is the variable I would like to render {{ VARIABLE_NAME }}`.
+
+=== Participant-Related Data
+
+Regarding the metadata related to the participant, you can integrate the following information in your questionnaire:
+
+- `participant_id`: The external ID of the participant.
+- `url_parameter`: A dictionary containing the URL parameters extracted from the initial URL. For example, this variable
+could look like `{'url_param_a': <value A>, 'url_param_b': <value B>}` and you would access a specific value by
+including `{{ url_paramerer.url_param_a }}` in your text field.
+- `briefing_consent`: If you
+xref:researchers:project_configuration/briefing.adoc#_configuration_options[enable the briefing consent on the Briefing page], this variable will be `1` if participant has
+consented to participation and `0` otherwise. If you have not enabled briefing consent, then
+this will be `None`.
+- `donation_info`: A dictionary containing information on the status of a participant's donation.
+Contains the following information which can be included in a text field as `{{ donation_info.n_success }}`:
++
+[source, json]
+----
+"donation_info": {
+    "n_success": 1,           # number of successfully uploaded blueprints by this participant (regardless of consent).
+    "n_pending": 1,           # number of pending (i.e., not attempted) blueprint uploads.
+    "n_failed": 0,            # number of blueprints where an upload was attempted but failed.
+    "n_consent": 1,           # number of successful uploads to which donation consent was given.
+    "n_no_consent": 0,        # number of successful uploads to which no donation consent was given.
+    "n_no_data_extracted": 0  # number of donations by this participant where all entries were filtered out
+}
+----
+
+
+=== Donation-Related Data
+
+Additionally, in questions related to a specific Blueprint, you can access the data that were extracted through
+this specific Blueprint in the question text and item texts by using the following variable:
+
+- `donated_data`: The data uploaded by the participant for a specific Blueprint. This will usually be a JSON-object,
+but how this object is structured is dependent on the donation that you collect and cannot be described universally.
+
+== How to Integrate Data
+
+To integrate data in your question or item text, DDM makes use of a restricted version of the
+https://docs.djangoproject.com/en/4.2/ref/templates/builtins/[Django templating system].
+
+This means that you can use so-called _filters_, _tags_, and _variables_ to render information dynamically and
+conditionally per participant. To get further information on how to do this and also find some examples,
+visit the xref:researchers:topics/templating_features.adoc[templating features page].

@@ -1,0 +1,90 @@
+{% extends 'ddm_core/base.html' %}
+
+{% block page_title %}Data Donation Overview{% endblock %}
+
+{% block main_heading %}Data Donation Overview{% endblock %}
+
+{% block main_body %}
+<div class="ddm-admin-section">
+  <div>
+    <p>Data donations from participants are collected through <i>Uploaders</i>. Each Uploader is associated with a set of <i>Donation Instructions</i> and one or multiple <i>File Blueprints</i>.</p>
+
+    {% include "ddm_core/components/info_collapsible.html" with element_id="ulbps" title="More about Uploaders and File Blueprints" include_path="ddm_datadonation/text_uploader_and_blueprints.html" body="" %}
+
+  </div>
+</div>
+
+<div class="ddm-admin-section">
+  <div class="ddm-admin-section-header">Uploader Configuration</div>
+  <div class="ddm-admin-section-body">
+    <table class="table">
+      <tr>
+        <th>Index</th>
+        <th>Uploader</th>
+        <th>Upload Type</th>
+        <th>Donation Instructions</th>
+        <th>Associated Blueprints</th>
+      </tr>
+      {% for uploader in file_uploaders %}
+      <tr>
+        <td>{{ uploader.index }}</td>
+        <td>{{ uploader.name }} (<a href="{% url 'ddm_datadonation:uploaders:edit' project.url_id uploader.pk %}">Edit</a> | <a href="{% url 'ddm_datadonation:uploaders:delete' project.url_id uploader.pk %}">Delete</a>)</td>
+        <td>{{ uploader.upload_type }}</td>
+        <td><a href="{% url 'ddm_datadonation:instructions:overview' project.url_id uploader.pk %}">Edit Instructions</a></td>
+        <td>
+          {% if uploader.donationblueprint_set.all %}
+          <ul>
+            {% for blueprint in uploader.donationblueprint_set.all %}
+            <li>{{ blueprint.name }} (<a href="{{ blueprint.get_absolute_url }}">Edit</a> | <a href="{% url 'ddm_datadonation:blueprints:delete' project.url_id blueprint.pk %}">Delete</a>)</li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          No associated Blueprints
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4">You have yet to create an Uploader for this project.</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <a class="ddm-btn" href="{% url 'ddm_datadonation:uploaders:create' project.url_id %}"><b>+</b>&nbsp;&nbsp;Create new Uploader</a>
+    <a class="ddm-btn" href="{% url 'ddm_datadonation:blueprints:create' project.url_id %}"><b>+</b>&nbsp;&nbsp;Create new File Blueprint</a>
+  </div>
+</div>
+
+<div class="ddm-admin-section">
+  <div><h5>Unassociated File Blueprints</h5></div>
+  <div class="ddm-admin-section-body">
+    <table class="table">
+      <tr>
+        <th>Name</th>
+        <th></th>
+      </tr>
+      {% for blueprint in lonely_blueprints %}
+      <tr>
+        <td>{{ blueprint.name }}</td>
+        <td><a href="{{ blueprint.get_absolute_url }}">Edit</a> | <a href="{% url 'ddm_datadonation:blueprints:delete' project.url_id blueprint.pk %}">Delete</a></td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="2">No unassociated File Blueprints.</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <a class="ddm-btn" href="{% url 'ddm_datadonation:blueprints:create' project.url_id %}"><b>+</b>&nbsp;&nbsp;Create new File Blueprint</a>
+  </div>
+</div>
+
+<div>
+  <a href="{% url 'ddm_projects:detail' project.url_id %}">&#129040; Back</a>
+</div>
+
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'ddm_projects:list' %}">Projects</a> /
+<a href="{% url 'ddm_projects:detail' project.url_id %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+Data Donation Overview
+{% endblock %}

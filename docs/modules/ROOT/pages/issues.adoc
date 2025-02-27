@@ -1,10 +1,11 @@
 = Reporting Issues and Getting Help
 :!toc:
-:stylesheet: ../static/css/custom.css
+:stylesheet:
 :icons: font
 :stem: latexmath
 :last-update-label!:
 :favicon: static/img/ddl_favicon_black.svg
+:page-pagination:
 
 If you encounter issues or detect a bug, please open a new issue in the
 https://github.com/uzh/ddm[GitHub repository].

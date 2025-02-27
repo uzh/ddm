@@ -1,0 +1,18 @@
+= Data Center
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+
+In the Data Center, you can find options to (_a_) xref:researchers:data_center/data_download.adoc[access the collected data],
+(_b_) xref:researchers:data_center/project_logs.adoc[access the project logs], and
+(_c_) find some xref:researchers:data_center/participation_statistics.adoc[general field statistics] about
+the progress of your project.
+
+[.text-center]
+.Data Center in the Project Hub
+image::data_center.png["Data Center Screenshot",95%]

@@ -1,0 +1,32 @@
+.btn-secondary {
+    background-color: #1a1a1a !important;
+    border: none !important;
+}
+
+.ddm-btn-green {
+    background: #009c94;
+}
+
+.ddm-btn-inverted {
+    color: black !important;
+    border: 1px solid black;
+    background: white;
+}
+
+.ddm-btn-large {
+    background: linear-gradient(142deg, rgb(0, 156, 148) 0%, rgba(0, 156, 148, 0.8) 100%);
+    border-radius: 20px;
+    padding: 10px;
+    color: white !important;
+    border: 0;
+}
+
+.ddm-btn-large:hover {
+    -webkit-filter: brightness(70%);
+}
+
+.ddm-btn-red {
+    background-color: #840600;
+    border: 0;
+    min-width: 160px;
+}

@@ -1,0 +1,111 @@
+= General Project Settings
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+
+To edit your project's general settings, click on `Edit` in the _Project Details_ section of the
+xref:researchers:project_hub.adoc[Project Hub]:
+
+[.text-center]
+.Project Details Edit
+image::project_hub_edit.png["Project Details Edit Screenshot", 90%]
+
+This will open the general settings page where you will see the following sections:
+
+[.text-center]
+.Project Settings Overview
+image::project_settings.png["Project Settings Screenshot", 90%]
+
+Each of these sections contains a set of settings that are described below.
+
+== Base Settings
+
+Project Name:: The name of the project. Visible to participants in the browser's title bar or a page's tab.
+
+URL Identifier:: The URL Identifier is a string that is added to the participation URL (e.g, www.some.url/*project-slug*).
+Your participants will take part in your project via this URL. The URL Identifier Can only contain letters,
+hyphens, numbers or underscores.
+
+Active:: Set a project to active or inactive. Participants can only take part in an active project. If participants open
+the link to an inactive project, they will be redirected to an information page telling them that participation in this
+project is currently not possible.
+
+== Public Project Information
+
+This information will be accessible to your participants during all participation steps.
+
+Contact Information:: Contact information of the researcher responsible for the project.
+The contact information is linked in the footer of the participation interface and can be viewed by participants at any
+stage of the data donation process.
+
+Data Protection Statement:: Data protection statement that describes how the data is processed.
+The data protection statement is linked in the footer of the participation interface and can be viewed by participants
+at any stage of the data donation process.
+
+
+== URL Parameter Extraction
+
+Information can be extracted from parameters passed with the URL when a project is accessed by a participant (e.g.,
+www.some.url/project-slug?parameter_A=someId&parameter_B=socialMedia).
+This setting is optional.
+
+[TIP]
+====
+There are several scenarios, where you will want to make use of URL parameter extraction. For example:
+
+- External questionnaire: If participants are asked to first fill out a questionnaire created in an external
+survey software such as, e.g. Unipark or Qualtrics, passing URL parameters can be used to link data donations
+with the survey data by passing a participant ID in the URL parameters.
+- External recruitment partner: When you work together with an external recruitment partner (e.g., an access panel), you
+will usually need to extract the participants' identifiers from the URL.
+- Tracking recruitment channels: When you recruit participants through different channels (e.g., social media, e-mail,
+or leaflets) you can use URL parameters to identify where your participants are coming from.
+====
+
+The URL Parameter extraction can be configured using the following settings:
+
+URL parameter extraction enabled:: Enable or disable whether URL parameters should be extracted when participants access
+the project's briefing page.
+
+Expected URL parameter:: Provide a string containing the parameters that should be extracted.
+Separate multiple parameters with a semicolon (e.g., "parameter_A;parameter_B"). The extracted values will
+be saved for each participant and is included in the data export. If a parameter is not present, it will be saved
+as `None`. Undefined parameters passed in the URL will be ignored.
+
+
+== Redirect Configuration
+
+Participants can be redirected to another website from the debriefing page (this is optional).
+This can be configured using the following settings:
+
+Redirect enabled:: Enable or disable the redirection of your participants when they have completed your project.
+If enabled, a redirect button will be displayed on the data donation end page that redirects to the URL defined in the `Redirect target` setting.
+
+Redirect address:: The URL to which participants will be redirected (only required if `redirect` is enabled).
+
+[TIP]
+====
+The redirect URL can include information on the participant and the project ID.
+For this, you can use variables that are populated with the respective values.
+Currently, the following variables are supported: The participant data is
+accessible with `+{{ participant }}` and the project ID can be inserted with
+`+{{ project_id +}}`.
+E.g., `https://redirect.url?param=+{{url_parameter.URLParameter+}}&participant=+{{participant_id+}}&project=+{{project_id+}}`
+
+See xref:researchers:topics/templating_features.adoc[this section] for more
+information on the variable inclusion.
+====
+
+
+== Project Appearance
+
+You can customize the general appearance of your donation project by providing up to two logos that will be displayed in
+the header of your project.
+
+Header Image Left/Header Image Right:: Upload an image that will be displayed in
+the header of your project (e.g., an institution or project logo).

@@ -1,0 +1,120 @@
+{% extends 'ddm_core/page_with_form.html' %}
+
+{% block page_title %}Edit {{ question_type }}{% endblock %}
+
+{% block main_heading %}Edit {{ question_type }} "{{ object.name }}"{% endblock %}
+
+{% block main_form_header %}Question Configuration{% endblock %}
+
+{% block main_form %}
+<form method='post'>
+  {% csrf_token %}
+  {{ form.media }}
+
+  <div>
+    {% for field in form %}
+    {% if field.name not in "expected_fields,extracted_fields" %}
+    <p>
+      {{ field.label_tag }}
+      {{ field.errors }}
+      <span class="helptext">{{ field.help_text }}</span>
+      {{ field }}
+    </p>
+    {% endif %}
+    {% endfor %}
+
+    <input class="ddm-btn" type="submit" value="Update Question">
+    {% block cancel %}
+    <p>
+      <a href="{% url 'ddm_questionnaire:overview' project_url_id %}">&#129040; Back</a>
+    </p>
+    {% endblock %}
+  </div>
+
+</form>
+{% endblock %}
+
+{% block main_bottom %}
+{% if object.question_type != "open" and object.question_type != "transition"  %}
+<div class="ddm-admin-section">
+  <div class="ddm-admin-section-header">Question Items</div>
+  <div class="ddm-admin-section-body">
+    <table class="table table-sm">
+    {% for item in object.questionitem_set.all %}
+      {% if forloop.first %}
+      <thead>
+      <tr>
+        <th style="width: 1%;" class="pe-4">Index</th>
+        {% if object.question_type == "semantic_diff" %}
+          <th>Label</th>
+          <th>Label Right</th>
+        {% else %}
+          <th>Label</th>
+        {% endif %}
+        <th>Value</th>
+        <th>Randomize</th>
+      </tr>
+      </thead>
+      {% endif %}
+      <tr>
+        <td>{{ item.index }}</td>
+        {% if object.question_type == "semantic_diff" %}
+          <td>{{ item.label }}</td>
+          <td>{{ item.label_alt }}</td>
+        {% else %}
+          <td>{{ item.label }}</td>
+        {% endif %}
+        <td>{{ item.value }}</td>
+        <td>{{ item.randomize }}</td>
+      </tr>
+      {% empty %}
+      <tr><td>No items defined.</td></tr>
+    {% endfor %}
+    </table>
+
+    <p><a class="ddm-btn" href="{% url 'ddm_questionnaire:items' project_url_id object.question_type object.pk %}">Edit Items</a></p>
+  </div>
+</div>
+{% endif %}
+
+{% if object.question_type == "semantic_diff" or object.question_type == "matrix"  %}
+<div class="ddm-admin-section">
+  <div class="ddm-admin-section-header">Scale Configuration</div>
+  <div class="ddm-admin-section-body">
+    <table class="table table-sm">
+    {% for point in object.scalepoint_set.all %}
+      {% if forloop.first %}
+      <thead>
+      <tr>
+        <th style="width: 1%;" class="pe-4">Index</th>
+        <th>Label</th>
+        <th>Value</th>
+      </tr>
+      </thead>
+      {% endif %}
+      <tr>
+        <td>{{ point.index }}</td>
+        <td>{% if point.label is not None %}{{ point.label }}{% endif %}</td>
+        <td>{{ point.value }}</td>
+      </tr>
+      {% empty %}
+      <tr><td>No scale points defined.</td></tr>
+    {% endfor %}
+    </table>
+    <p><a class="ddm-btn" href="{% url 'ddm_questionnaire:scale' project_url_id object.question_type object.pk %}">Edit Scale Points</a></p>
+  </div>
+</div>
+{% endif %}
+
+<div class="mt-3">
+  <a href="{% url 'ddm_questionnaire:overview' project_url_id %}">&#129040; Back</a>
+</div>
+{% endblock %}
+
+
+{% block breadcrumbs %}
+<a href="{% url 'ddm_projects:list' %}">Projects</a> /
+<a href="{% url 'ddm_projects:detail' project_url_id %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'ddm_questionnaire:overview' project_url_id %}">Questionnaire</a> /
+Edit Question
+{% endblock %}

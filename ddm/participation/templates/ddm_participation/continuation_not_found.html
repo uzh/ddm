@@ -1,0 +1,12 @@
+{% extends "ddm_participation/base.html" %}
+{% load static i18n %}
+
+{% block content %}
+
+  <h1>{% translate "Provided ID not found" %}</h1>
+  <p>
+    {% translate "Unfortunately, we could not find a study participation started for the given ID. However, you can access the study by clicking on the following link:" %}
+    <a href="{% url 'ddm_participation:briefing' object.slug %}">{% translate "Go to Study" %}</a>
+  </p>
+
+{% endblock %}

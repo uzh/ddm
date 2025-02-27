@@ -1,0 +1,65 @@
+= Data Donation Overview
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+
+The data donation page will be displayed to participants after the
+xref:project_configuration/briefing.adoc[briefing page].
+
+Before providing more information on the configuration options of the data donation page, it is helpful to get a
+first overview from both the participants' and the researchers' perspectives.
+
+== Participants' Perspective
+
+From the *participants' perspective*, this page includes:
+
+- The donation instructions.
+- An upload form through which participants can upload their data donation.
+- The option to review the uploaded data before giving explicit consent.
+- A consent form (or multiple consent forms).
+
+When first accessing the page, it looks as follows:
+
+[.text-center]
+.Data Donation Page
+image::datadonation_page.png["Data Donation Page Screenshot", 95%]
+
+In the top part of the data donation page the participants see the instructions on how to download the file you want
+them to download.
+
+Below in the middle is the upload form (the so-called `Uploader` – see <add where to see>) where the
+participants will upload their data file.
+
+At the bottom is a description of the data that will be extracted from the uploaded file
+(each line corresponds to one `Blueprint`).
+
+Once a participant uploads a file, the page will look as follows:
+
+[.text-center]
+.Data Donation Page After Upload
+image::datadonation_after_upload_page.png["Data Donation Page After Upload Screenshot", 95%]
+
+Now, the participant can see the extracted data (for each File Blueprint) and decide case by case
+whether to submit these data to the researcher.
+
+
+== Researchers' Perspective
+
+From *the researchers' perspective*, the purpose of the data donation page is to:
+
+1. Providing participants with instructions.
+2. Providing participants the possibility to upload their donation.
+3. Verify that the participant uploads the correct data.
+4. Clean and filter the data that participants upload according to pre-defined extraction rules.
+5. Provide the participant the possibility to review the cleansed and filtered data before data transmission.
+6. Obtain informed consent from participants.
+
+These steps take all place on the participants devices and no personal data leave the participants' devices before they
+provide their consent and click on "transmit data" (see xref: to learn more about how DDM's data processing).
+
+The next pages will guide you through how you can configure the data donation step.

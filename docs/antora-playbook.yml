@@ -1,11 +1,22 @@
 site:
   title: DDM Documentation
-  start_page: ddm::index.adoc
+  start_page: index.adoc
+
+asciidoc:
+  attributes:
+    page-pagination: '@'
+    favicon: ddl_favicon_black.svg
+
+antora:
+  extensions:
+    - require: '@antora/lunr-extension'
+      languages: [en]
+
 content:
   sources:
     - url: https://github.com/uzh/ddm.git
       branches: [main, develop]
-      tags: [v1.0.0]
+      tags: [v1.0.19, v1.0.0]
       version: true
       start_path: docs
 ui:

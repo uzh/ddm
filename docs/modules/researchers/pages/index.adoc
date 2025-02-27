@@ -1,0 +1,47 @@
+= Documentation for Researchers
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:showtitle!:
+:page-pagination:
+
+
+This part of the documentation is targeted at researchers who want to set up a data donation project using DDM.
+
+== Overview
+DDM consists of an _Admin Interface_ and a _Participation Interface_.
+
+=== Admin Interface
+Through the Admin Interface, researchers can create and manage data donation projects.
+It essentially provides a website to adjust the settings of the project in general
+as well as the settings affecting the Participation Interface. To give a first impression of how the Admin Interface
+looks, you see below a screenshot of the Project Hub, the main page through which you can configure a project:
+
+[.text-center]
+.Admin Interface (Project Hub)
+image::project_hub.png["Project Hub Screenshot", 75%]
+
+=== Participation Interface
+The Participation Interface is directed at participants. It includes the pages that participants of a data donation study
+will see when taking part in a data donation project. The participation interface usually consists of four steps:
+
+1. A briefing page,
+2. the data donation page,
+3. a questionnaire, and
+4. a debriefing page.
+
+Below, these steps are displayed as they will look to the participants.
+
+[cols="a,a", frame=none, grid=none]
+|===
+| image::briefing_page.png["Briefing Screenshot", 95%, title=Briefing]
+| image::datadonation_page.png["Data Donation Page Screenshot", 95%, title=Data Donation]
+
+| image::questionnaire_page.png["Questionnaire Screenshot", 95%, title=Questionnaire]
+| image::debriefing_page.png["Debriefing Screenshot", 95%, title=Debriefing]
+|===
+
+
+The following section will take you through creating and monitoring a data donation project as well as accessing
+the collected data.

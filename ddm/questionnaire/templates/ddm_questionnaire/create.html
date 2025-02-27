@@ -1,0 +1,16 @@
+{% extends 'ddm_core/page_with_form.html' %}
+
+{% block page_title %}Create {{ question_type }}{% endblock %}
+
+{% block main_heading %}Create New {{ question_type }}{% endblock %}
+
+{% block submit_label %}Create Question{% endblock %}
+
+{% block cancel_target %}{% url 'ddm_questionnaire:overview' project_url_id %}{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'ddm_projects:list' %}">Projects</a> /
+<a href="{% url 'ddm_projects:detail' project_url_id %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'ddm_questionnaire:overview' project_url_id %}">Questionnaire</a> /
+Create Question
+{% endblock %}

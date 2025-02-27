@@ -1,0 +1,16 @@
+{% extends 'ddm_core/page_with_form.html' %}
+
+{% block page_title %}Create New Uploader{% endblock %}
+
+{% block main_heading %}Create New Uploader{% endblock %}
+
+{% block submit_label %}Create Uploader{% endblock %}
+
+{% block cancel_target %}{% url 'ddm_datadonation:overview' project.url_id %}{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'ddm_projects:list' %}">Projects</a> /
+<a href="{% url 'ddm_projects:detail' project.url_id %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'ddm_datadonation:overview' project.url_id %}">Data Donation</a> /
+Create Uploader
+{% endblock %}

@@ -1,0 +1,185 @@
+@import url('research_interface/message.css');
+@import url('research_interface/forms.css');
+@import url('research_interface/info-collapsible.css');
+@import url('research_interface/ddm-accordion.css');
+@import url('research_interface/ddm-buttons.css');
+@import url('research_interface/load-spinner.css');
+@import url('research_interface/progress-bar.css');
+@import url('research_interface/utils.css');
+
+.research-interface {
+    font-family: 'Nunito Sans', sans-serif;
+}
+
+.research-interface a,
+.a-no-link {
+    color: #007b74;
+    text-decoration: none;
+    cursor: pointer;
+}
+.research-interface a:hover {
+    color: #005955;
+}
+
+.project-setup-card {
+    display: flex;
+    flex: 1 0 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-link:hover .ddm-if-icon {
+    background: #00817b;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.project-setup-filler {
+    display: flex;
+    flex: 0 0 auto;
+    width: 3%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.ddm-nav-icon {
+    color: #1a1a1a !important;
+    font-size: 1.5rem;
+}
+.ddm-nav-icon:hover {
+    color: #4b4b4b !important;
+}
+
+.ddm-header {
+    box-shadow: -10vw 2px #d36a45, 10vw 4px #fff, 0 3px #c6c6c678, 10vw 6px #009c94, 10vw 7px #c6c6c678;
+    /* position: fixed; */
+    top: 0;
+    width: 100%;
+    background: #ffffff;
+    z-index: 100;
+}
+
+.ddm-breadcrumbs {
+    font-size: 0.85rem !important;
+    color: gray;
+}
+.ddm-breadcrumbs a {
+    color: gray !important;
+}
+.ddm-breadcrumbs a:hover {
+    color: #4b4b4b !important;
+}
+
+.ddm-main {
+    margin-bottom: 60px;
+}
+
+.ddm-admin-section {
+    margin-bottom: 50px;
+}
+.ddm-admin-section-header {
+    margin-top: 20px;
+    font-size: 1.35rem;
+    border-bottom: 2px solid #1a1a1a;
+    font-weight: bold;
+}
+.ddm-admin-section-body {
+    padding: 20px;
+    border-radius: 0 0 5px 5px;
+ }
+.ddm-admin-section-body tbody {
+    border-top: none !important;
+}
+
+.errorlist {
+    color: #ab0000;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+    padding-left: 20px;
+}
+
+.error-disclaimer {
+    color: #ab0000;
+}
+
+.page-item.active .page-link {
+    background-color: #1a1a1a !important;
+    border: none !important;
+}
+
+.ddm-if-icon {
+    background: #009c94;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 2.5rem;
+}
+
+.bi-chevron-compact-right {
+    color: #1a1a1a3d !important;
+}
+
+.inline-edit {
+    font-size: 1rem;
+    font-weight: normal;
+    padding-left: 20px;
+}
+
+.ddm-overlay {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    background-color: rgba(128, 128, 128, 0.9);
+}
+
+.project-statistics-container {
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.data-center-row {
+    padding: 15px 5px;
+    border-color: #bdbdbd !important;
+}
+
+.data-center-row h5 {
+    margin: 0;
+}
+
+.version-info {
+    color: lightgray;
+}
+
+.item-set-table input[type="text"],
+.item-set-table input[type="number"] {
+    width: 100%;
+}
+
+.item-set-table .num-input-col {
+	width: 5%;
+	min-width: 80px;
+}
+
+.item-set-table .check-input-col {
+	width: 8%;
+	min-width: 80px;
+    text-align: center;
+}
+
+.item-set-table td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.item-set-table .checkmark {
+	display: inline-block;
+}

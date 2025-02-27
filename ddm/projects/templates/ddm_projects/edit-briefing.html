@@ -1,0 +1,22 @@
+{% extends 'ddm_core/page_with_form.html' %}
+
+{% load static %}
+
+{% block page_title %}Edit Project{% endblock %}
+
+{% block main_heading %}Edit Briefing Page of Project "{{ object.name }}"{% endblock %}
+
+{% block submit_label %}Update Briefing Page{% endblock %}
+
+{% block cancel_target %}{% url 'ddm_projects:detail' object.url_id %}{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'ddm_projects:list' %}">Projects</a> /
+<a href="{% url 'ddm_projects:detail' object.url_id %}">"{{ object.name|truncatechars:15 }}" Project</a> /
+Edit Briefing Page
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+  <script src="{% static 'ddm_projects/js/briefing-edit-utils.js' %}"></script>
+{% endblock %}

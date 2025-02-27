@@ -1,0 +1,20 @@
+= Participation Statistics
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+[.text-center]
+.Project Statistics Section
+image::participation_statistics_section.png["Project Statistics Section",95%]
+
+The Participation Statistics currently display the following information:
+
+- _Donated Files_: The number of successfully donated files.
+- _Started_: The number of participants that started the study.
+- _Completed_: The number of participants that reached the debriefing page of the study.
+- _Completion Rate_: The number of started divided by the number of completed participations.
+- _Avrg. to complete_: The average time it took a participant from starting the study to reaching the debriefing page.

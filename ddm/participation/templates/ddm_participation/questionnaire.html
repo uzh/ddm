@@ -1,0 +1,32 @@
+{% extends "ddm_participation/base.html" %}
+{% load i18n static %}
+{% get_current_language as LANGUAGE_CODE %}
+{% load render_bundle from webpack_loader %}
+
+{% block extrahead %}
+<link href="{% static 'ddm_questionnaire/css/questionnaire.css' %}" rel="stylesheet">
+{% endblock extrahead %}
+
+{% block content %}
+
+<div>
+  <form method="POST">
+    {% csrf_token %}
+    <div id="qapp"
+         data-questionnaire-config='{{ q_config }}'
+         data-action-url='{{ request.build_absolute_uri }}'
+         data-language='{{ LANGUAGE_CODE|slice:"0:2"}}'
+         class="text-black"
+    >
+      <qapp></qapp>
+    </div>
+  </form>
+  {% render_bundle 'vue_questionnaire' %}
+</div>
+{% endblock content %}
+
+{% block extrascripts %}
+  {% for script in extra_scripts %}
+  {{ script|safe }}
+  {% endfor %}
+{% endblock extrascripts %}

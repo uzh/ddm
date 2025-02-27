@@ -1,0 +1,19 @@
+<div class="ddm-info-collapsible">
+
+  <div class="ddm-info-collapsible-header" id="info-collapsible-heading-{{ element_id }}">
+    <button class="ddm-info-collapsible-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#info-collapsible-{{ element_id }}" aria-expanded="false" aria-controls="info-collapsible-{{ element_id }}">
+        <i class="bi bi-info-circle"></i>&nbsp;&nbsp;{{ title }}
+    </button>
+  </div>
+
+  <div id="info-collapsible-{{ element_id }}" class="accordion-collapse collapse" aria-labelledby="info-collapsible-heading-{{ element_id }}">
+    <div class="ddm-info-collapsible-body">
+      {% if include_path != "" %}
+        {% include include_path %}
+      {% else %}
+        {{ body|safe }}
+      {% endif %}
+    </div>
+  </div>
+
+</div>

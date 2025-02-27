@@ -1,0 +1,16 @@
+@import url('ddm-ckeditor-styles.css');
+@import url('fonts.css');
+
+.ddm-btn {
+    background-color: #1a1a1a;
+    color: white !important;
+    border-radius: 5px;
+    border: 0;
+    padding: 3px 10px !important;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+.ddm-btn:hover {
+    filter: brightness(85%);
+    color: white;
+}

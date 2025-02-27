@@ -1,0 +1,97 @@
+# Translations for DDM
+# Copyright (C) 2024
+# This file is distributed under the same license as the PACKAGE package.
+# Nico Pfiffner, n.pfiffner@ikmz.uzh.ch, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-12-04 18:01+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\apps.py:9
+msgid "DDM Participation"
+msgstr "DDM Participation"
+
+#: .\templates\ddm_participation\base.html:47
+msgid "Contact"
+msgstr "Kontakt"
+
+#: .\templates\ddm_participation\base.html:50
+msgid "What happens with my data?"
+msgstr "Was passiert mit meinen Daten?"
+
+#: .\templates\ddm_participation\base.html:65
+msgid "Contact Information"
+msgstr "Kontaktinformationen"
+
+#: .\templates\ddm_participation\base.html:79
+msgid "Data Protection Statement"
+msgstr "Datenschutzerklärung"
+
+#: .\templates\ddm_participation\briefing.html:9
+msgid "Please indicate whether you want to continue with this study."
+msgstr "Bitte geben Sie an, ob Sie mit dieser Studie fortfahren möchten."
+
+#: .\templates\ddm_participation\briefing.html:13
+msgid "Welcome to this study!"
+msgstr "Herzlich willkommen zu dieser Studie!"
+
+#: .\templates\ddm_participation\briefing.html:14
+msgid ""
+"Please define a description and welcome text for this project in the Project "
+"Hub."
+msgstr ""
+"Bitte definieren Sie eine Beschreibung und einen Begrüßungstext für dieses "
+"Projekt im Project Hub."
+
+#: .\templates\ddm_participation\briefing.html:33
+#: .\templates\ddm_participation\debriefing.html:17
+msgid "Continue&nbsp;&nbsp;&#8250;"
+msgstr "Weiter&nbsp;&nbsp;&#8250;"
+
+#: .\templates\ddm_participation\continuation_not_found.html:6
+msgid "Provided ID not found"
+msgstr "Angegebene ID konnte nicht gefunden werden"
+
+#: .\templates\ddm_participation\continuation_not_found.html:8
+msgid ""
+"Unfortunately, we could not find a study participation started for the given "
+"ID. However, you can access the study by clicking on the following link:"
+msgstr ""
+"Leider konnten wir für die angegebene ID keine begonnene Studienteilnahme "
+"finden.Wenn Sie die Studie trotzdem aufrufen möchten, klicken Sie auf den "
+"folgenden Link:"
+
+#: .\templates\ddm_participation\continuation_not_found.html:9
+msgid "Go to Study"
+msgstr "Zur Studie"
+
+#: .\templates\ddm_participation\debriefing.html:9
+msgid "Thank you very much!"
+msgstr "Herzlichen Dank!"
+
+#: .\templates\ddm_participation\debriefing.html:10
+msgid "You have reached the end of the study and can now close this window."
+msgstr "Sie haben das Ende der Studie erreicht und können dieses Fenster nun "
+
+#: .\templates\ddm_participation\project_inactive.html:6
+msgid "Participation not Possible"
+msgstr "Teilnahme nicht möglich"
+
+#: .\templates\ddm_participation\project_inactive.html:8
+msgid ""
+"Unfortunately, you cannot participate in this study at this time. This may "
+"be because the project has not started or the study has already concluded."
+msgstr ""
+"Leider ist es derzeit nicht möglich, an dieser Studie teilzunehmen. "
+"Dies könnte daran liegen, dass das Projekt noch nicht begonnen hat oder die Studie bereits abgeschlossen ist."

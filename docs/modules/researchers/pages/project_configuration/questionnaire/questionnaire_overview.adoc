@@ -1,0 +1,65 @@
+= Questionnaire Overview
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+Researchers can define a questionnaire that is displayed *after* the data donation step. It consists of one
+or more pages, each consisting of one or more questions.
+
+== Participants' Perspective
+
+From the participants' perspective, the questionnaire will look something like this:
+
+[.text-center]
+.Questionnaire
+image::questionnaire_page.png["Questionnaire Page Screenshot", 95%]
+
+
+== Question Types
+
+The following question types are available in the questionnaire:
+
+* Single Choice Question
+* Multi Choice Question
+* Matrix Question
+* Semantic Differential
+* Open Question
+* Transition Block (plain text, without any response options for the participant)
+
+You can find more details on the xref:researchers:project_configuration/questionnaire/questionnaire_configuration.adoc[
+Questionnaire Configuration] page.
+
+
+== Integrate Donated Data in Questionnaire
+
+The questionnaire also offers the option to integrate parts of the donated data in the question text
+or the question items. For example, if participants donate a watch history, you could
+include the last watched element as part of a question to obtain responses in relation to that element
+(e.g., "Why have you watched <TITLE OF LAST ELEMENT>"). The part _<TITLE OF LAST ELEMENT>_ will then be
+rendered for each participant individually, based on their donated data.
+
+You can xref:researchers:project_configuration/questionnaire/questionnaire_data_integration.adoc[find out more about the
+possibility to render data dynamically here].
+
+
+== Notes on the Questionnaire Flow
+
+[IMPORTANT]
+====
+Currently, DDM's built-in questionnaire does not offer the possibility to hide/display questions depending on
+the responses to previous questions in the questionnaire. Therefore, we recommend to use the built-in questionnaire
+in cases where either (A) you want to include information from the donated data in the question text or (B) your
+questionnaire is short and follows a simple structure. In other cases, we currently recommend to implement the
+questionnaire in a dedicated survey software to which you redirect your participants from the debriefing page.
+====
+
+[IMPORTANT]
+====
+The questionnaire responses are only submitted to the server after all questions have been answered.
+This means that if a participants aborts the questionnaire after filling out, e.g., 2 out of
+4 questions, no responses will be collected and saved on the server.
+====

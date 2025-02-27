@@ -1,0 +1,41 @@
+= CKEditor Configuration
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+
+DDM uses https://pypi.org/project/django-ckeditor-5/[django-ckeditor-5] as richt text editor used in some
+form fields.
+
+DDM includes two custom configurations of the CKEditor, `ddm_ckeditor` and `ddm_ckeditor_temp_func`.
+
+`ddm_ckeditor` is the configuration for the standard text editor used in DDM without any additional functionality.
+
+`ddm_ckeditor_temp_func` is used for text fields that allow the inclusion of Django template tags (see
+the section on xref:researchers:topics/templating_features.adoc[including data dynamically in a question])
+and implements a special html tag "<template-func>" that is used to include template functionality.
+
+Although we do not recommend it, you can overwrite the default configuration in your settings.py if needed:
+
+[source, python]
+----
+# settings.py
+
+CKEDITOR_5_CONFIGS = {
+    'ddm_ckeditor': {
+        'toolbar': 'Basic',
+        # etc.
+    },
+    'ddm_ckeditor_temp_func': {
+        # ...
+    }
+}
+----
+
+For an overview of configuration options consult the django-ckeditor-5 repository
+(https://github.com/hvlads/django-ckeditor-5) or the official documentation of
+CKEditor 5 (https://ckeditor.com/docs/ckeditor5/latest/index.html).

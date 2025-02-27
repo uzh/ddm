@@ -2,4 +2,6 @@ name: ddm
 title: DDM
 nav:
   - modules/ROOT/nav.adoc
-
+  - modules/researchers/nav.adoc
+  - modules/administrators/nav.adoc
+  - modules/developers/nav.adoc

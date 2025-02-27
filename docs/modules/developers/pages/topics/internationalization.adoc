@@ -1,0 +1,41 @@
+= Internationalization
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+The administration interface for researchers currently only supports English.
+The participation interface currently supports English and German.
+
+== Language Detection
+
+The language in which the interface for participants is displayed is determined
+by the default language of the participant's browser.
+If a language is not implemented for the participant interface, it is displayed
+in English.
+
+
+== Adding Support for new Languages
+
+To add support for a new language, new locales must be added at two locations:
+
+=== Django Components
+Translations for the Django part of DDM are located at `/ddm/locale/`.
+
+An extensive description of how translation is handled by Django can be found here:
+https://docs.djangoproject.com/en/3.2/topics/i18n/translation/
+
+To create the translation files, first run `django-admin makemessages -l de` in
+the respective `ddm` sub-app directory, where `de` is the locale name that you want to create.
+This command creates or updates a file located at `ddm/locale/de/LC_MESSAGES/django.po`.
+In this file, you can add your translations. Afterward, run `django-admin compilemessages`
+to create a `django.mo` file, which will be used by gettext for translation.
+
+=== Vue Components
+The translation files for the vue components are located at `/frontend/src/translations/`.
+
+Here, support for a new language can be added by appending the respective locale name
+as a first-level key to the json files and adding corresponding translations for all translation blocks.

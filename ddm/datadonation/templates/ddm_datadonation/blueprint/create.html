@@ -1,0 +1,75 @@
+{% extends 'ddm_core/page_with_form.html' %}
+
+{% load static %}
+
+{% block page_title %}Create New File Blueprint{% endblock %}
+
+{% block main_heading %}Create New File Blueprint{% endblock %}
+
+{% block submit_label %}Create File Blueprint{% endblock %}
+
+{% block cancel_target %}{% url 'ddm_datadonation:overview' project.url_id %}{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'ddm_projects:list' %}">Projects</a> /
+<a href="{% url 'ddm_projects:detail' project.url_id %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'ddm_datadonation:overview' project.url_id %}">Data Donation</a> /
+Create File Blueprint
+{% endblock %}
+
+{% block main_form %}
+  <form method='post'>
+    {% csrf_token %}
+    {{ form.media }}
+    {{ form.non_field_errors }}
+
+    <div>
+      <h5>General Settings</h5>
+
+      {% for field in form %}
+        {% if field.name not in "expected_fields,expected_fields_regex_matching,regex_path,exp_file_format,csv_delimiter,json_extraction_root" %}
+          <p>
+            {{ field.label_tag }}
+            {{ field.errors }}
+            <span class="helptext">{{ field.help_text }}</span><br>
+            {{ field }}
+          </p>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <hr class="mt-5 mb-5">
+
+    <div>
+      <h5>File Validation Settings</h5>
+
+      {% include "ddm_core/components/info_collapsible.html" with element_id="filevalidation" title="How the file validation works" include_path="ddm_datadonation/blueprint/block_file_validation.html" body="" %}
+
+      {% for field in form %}
+      {% if field.name in "expected_fields,expected_fields_regex_matching,regex_path,exp_file_format,csv_delimiter,json_extraction_root" %}
+      <p>
+        {{ field.label_tag }}
+        {{ field.errors }}
+        <span class="helptext">{{ field.help_text }}</span>
+        {{ field }}
+      </p>
+      {% endif %}
+      {% endfor %}
+    </div>
+
+    <hr class="mt-5 mb-5">
+
+    <div class="pb-3"><i>You will be able to define the data extraction settings once you have saved and created the File Blueprint.</i></div>
+
+    <input class="ddm-btn" type="submit" value="Create Blueprint">
+    <p class="mt-3">
+      <a href="{% url 'ddm_datadonation:overview' project.url_id %}">&#129040; Back</a>
+    </p>
+  </form>
+{% endblock %}
+
+{% block scripts %}
+  {{ block.super }}
+  {{ file_uploader_meta|json_script:'file_uploader_meta' }}
+  <script src="{% static 'ddm_datadonation/js/blueprint-general-ui-helpers.js' %}"></script>
+{% endblock scripts %}

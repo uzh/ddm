@@ -1,0 +1,147 @@
+{% extends 'ddm_core/page_with_form.html' %}
+
+{% load static %}
+
+{% block page_title %}Edit Project{% endblock %}
+
+{% block main_heading %}Edit "{{ object.name }}"{% endblock %}
+
+{% block main_form %}
+<form method='post' enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.media }}
+
+  <div>
+    {% if form.errors %}
+      <p class="error-disclaimer"><i class="bi bi-exclamation-square-fill"></i> The form could not be processed.
+        Please check the issues highlighted below.</p>
+    {% endif %}
+
+    {{ form.non_field_errors }}
+
+    <div class="ddm-accordion accordion-flush well">
+      <div id="project-base-settings" class="ddm-accordion-item">
+        <p class="ddm-accordion-header">
+          <button id="project-base-settings-accordion-btn" class="ddm-accordion-btn collapsed sign-accordion-open" type="button" data-bs-toggle="collapse" data-bs-target="#baseSettings" aria-expanded="true" aria-controls="flush-baseSettings">
+            Base Settings
+          </button>
+        </p>
+        <div id="baseSettings" class="accordion-collapse collapse show" aria-labelledby="flush-baseSettings">
+          <div class="ddm-accordion-content">
+          {% for field in form %}
+            {% if field.name in "name,slug,active" %}
+              {% include "ddm_core/components/form_field_basic.html" %}
+            {% endif %}
+          {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div id="project-public-info" class="ddm-accordion-item">
+        <p class="ddm-accordion-header">
+          <button id="project-public-info-accordion-btn" class="ddm-accordion-btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#publicInformation" aria-expanded="false" aria-controls="flush-collapseOne">
+            Public Project Information
+          </button>
+        </p>
+        <div id="publicInformation" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+          <div class="ddm-accordion-content">
+          <p class="fs-6">This information is linked in your project's footer. Participants can access this information at any time.</p>
+          {% for field in form %}
+            {% if field.name in "contact_information,data_protection_statement" %}
+              {% include "ddm_core/components/form_field_basic.html" %}
+            {% endif %}
+          {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div id="project-url-parameter" class="ddm-accordion-item">
+        <p class="ddm-accordion-header">
+          <button id="project-url-parameter-accordion-btn" class="ddm-accordion-btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#urlParameter" aria-expanded="false" aria-controls="flush-collapseOne">
+            URL Parameter Extraction
+          </button>
+        </p>
+        <div id="urlParameter" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+          <div class="ddm-accordion-content">
+            <p class="fs-6">
+              Extract information from parameters passed with the URL when a project is accessed by a participant.
+            </p>
+            {% for field in form %}
+              {% if field.name in "url_parameter_enabled,expected_url_parameters" %}
+                {% include "ddm_core/components/form_field_basic.html" %}
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div id="project-redirect" class="ddm-accordion-item">
+        <p class="ddm-accordion-header">
+          <button id="project-redirect-accordion-btn" class="ddm-accordion-btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#redirectConfiguration" aria-expanded="false" aria-controls="flush-collapseOne">
+            Redirect Configuration
+          </button>
+        </p>
+        <div id="redirectConfiguration" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+          <div class="ddm-accordion-content">
+            <p class="fs-6">
+              Configure your project to redirect your participants to another web-address after
+              reaching the end of your study (i.e., after reaching the debriefing page).
+            </p>
+            {% for field in form %}
+              {% if field.name in "redirect_enabled,redirect_target" %}
+                {% include "ddm_core/components/form_field_basic.html" %}
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div id="project-appearance" class="ddm-accordion-item">
+        <p class="ddm-accordion-header">
+          <button id="project-appearance-accordion-btn" class="ddm-accordion-btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#projectAppearance" aria-expanded="false" aria-controls="flush-collapseOne">
+            Project Appearance
+          </button>
+        </p>
+        <div id="projectAppearance" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+          <div class="ddm-accordion-content">
+            <p class="fs-6">
+              Configure the appearance of your project from the participants' perspective:
+            </p>
+            {% for field in form %}
+              {% if field.name in "img_header_left,img_header_right" %}
+                <hr>
+                <div class="ddm-form-file-field">
+                  {{ field.label_tag }}
+                  {{ field.errors }}
+                  {{ field }}
+                  <span class="helptext">{{ field.help_text }}</span>
+                </div>
+
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <input class="ddm-btn" type="submit" value="Update Project">
+    {% block cancel %}
+      <p>
+        <a href="{% url 'ddm_projects:detail' object.url_id %}">&#129040; Cancel</a>
+      </p>
+    {% endblock %}
+  </div>
+</form>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'ddm_projects:list' %}">Projects</a> /
+<a href="{% url 'ddm_projects:detail' object.url_id %}">"{{ object.name|truncatechars:15 }}" Project</a> /
+Edit Details
+{% endblock %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script src="{% static 'ddm_projects/js/project-edit-utils.js' %}"></script>
+{% endblock %}

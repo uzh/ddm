@@ -1,0 +1,67 @@
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DDM: {% block page_title %}Title{% endblock %}</title>
+
+  <link rel="stylesheet" href="{% static 'ddm_core/css/bootstrap/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'ddm_core/css/ddm-base.css' %}">
+  <link rel="stylesheet" href="{% static 'ddm_core/css/research-interface-base.css' %}">
+  <link rel="stylesheet" href="{% static 'ddm_core/css/bootstrap/bootstrap-icons.css' %}">
+  {% block extrahead %}{% endblock %}
+</head>
+
+<body class="research-interface">
+
+{% block header %}
+  <div class="ddm-header">
+    <div class="container fs-6 fw-light">
+    {% include "ddm_core/components/header.html" %}
+    </div>
+  </div>
+{% endblock %}
+
+<div class="ddm-breadcrumbs container mt-3 mb-3 fw-light d-flex flex-row justify-content-between">
+  <div>
+    {% block breadcrumbs %}
+    {% endblock %}
+  </div>
+  <div class="version-info">{{ ddm_version }}</div>
+</div>
+
+<div class="message-wrapper position-relative container d-flex align-items-end flex-column">
+  <div class="ddm-message-container container d-flex justify-content-end">
+    {% if messages %}
+    {% for message in messages %}
+    <div id="message-{{ forloop.counter }}" class="ddm-message d-flex justify-content-between space-between {% if message.tags %} {{ message.tags }}{% endif %}">
+      <div>{{ message }}</div>
+      <div><a class="ddm-message-close" href="#">&#128941;</a></div>
+    </div>
+    {% endfor %}
+    {% endif %}
+  </div>
+</div>
+
+<div id="ddm-main" class="ddm-main container mt-4">
+  <h1>{% block main_heading %}{% endblock %}</h1>
+
+  <div>
+    {% block main_body %}{% endblock %}
+  </div>
+</div>
+
+{% block footer %}
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'ddm_core/js/jquery/jquery-3.6.2.min.js' %}"></script>
+<script src="{% static 'ddm_core/js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'ddm_core/js/messages.js' %}"></script>
+<script src="{% static 'ddm_projects/js/project-admin-base.js' %}"></script>
+{% endblock %}
+
+</body>
+
+</html>

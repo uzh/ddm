@@ -1,0 +1,62 @@
+= Documentation
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+== Organization of the Documentation
+
+All documentation files reside in the `docs` folder.
+
+AsciiDocs and Antora are used as documentation frameworks. The online documentation is automatically compiled (see
+`.github/workflows/publish-docs.yml`) when pushed to GitHub, after the workflow `.github/workflows/test-develop.yml`
+has run successfully.
+
+The configuration for local testing compilation of the documentation is stored in `docs/antora-playbook-local.yml`.
+
+The configuration for the compilation of the online documentation is stored in `docs/antora-playbook.yml`.
+
+
+== Compiling the Documentation
+
+=== Setup Local Documentation Deployment
+
+Move to the documentation folder: `cd /docs/`.
+
+Install Node dependencies: `npm install`.
+
+To compile the documentation locally, run `npx antora antora-playbook-local.yml`
+
+Inspect the compiled documentation by opening `<...>/ddm/docs/build/index.html` in
+your preferred browser.
+
+
+=== Automatically Updating Screenshots
+
+The included screenshots can be automatically updated using https://pypi.org/project/selenium/[selenium].
+
+==== Set up Selenium
+
+For this to work, install the selenium Python package in your venv (`pip install selenium`).
+
+Next, install a required driver to interface with a browser (different browsers will need different drivers.).
+For Windows and Firefox, this process looks as follows:
+
+1. Download the required driver to your device (in the case of Firefox, this is https://github.com/mozilla/geckodriver/releases[_geckodriver_]).
+
+2. Move the downloaded driver to a location on your device, where you do not accidentally delete it
+(e.g., _C:\Users\username\.geckodriver\_).
+
+3. Add this location to your PATH (Win+S and search for "environment variables" for your account) and add
+"C:\Users\username\.geckodriver\" to the list of path variables.
+
+4. Restart your terminal/IDE and run `geckodriver --version` to see whether the driver installation was successful.
+
+==== Run Selenium Script
+
+1. Open a new terminal, go to ddm/test_project/ and run ddm locally: `python manage.py runserver`
+
+2. Run ddm/docs/update_screenshots.py

@@ -1,0 +1,15 @@
+{% extends 'ddm_core/page_with_form.html' %}
+
+{% block page_title %}Edit Project{% endblock %}
+
+{% block main_heading %}Edit Debriefing Page of Project "{{ object.name }}"{% endblock %}
+
+{% block submit_label %}Update Debriefing Page{% endblock %}
+
+{% block cancel_target %}{% url 'ddm_projects:detail' object.url_id %}{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'ddm_projects:list' %}">Projects</a> /
+<a href="{% url 'ddm_projects:detail' object.url_id %}">"{{ object.name|truncatechars:15 }}" Project</a> /
+Edit Debriefing Page
+{% endblock %}

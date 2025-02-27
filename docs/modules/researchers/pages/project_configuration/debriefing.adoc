@@ -1,0 +1,62 @@
+= Debriefing
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+The debriefing page is the last part of your project, that participants will see and interact with.
+The purpose of the debriefing page is to debrief participant and possibly reroute them to the
+next part of your study (e.g., by redirecting to an external questionnaire).
+
+== Participants' Perspective
+
+To the participants, the debriefing page will look something like this:
+
+[.text-center]
+.Debriefing Page
+image::debriefing_page.png["Debriefing Page Screenshot",95%]
+
+
+== Configuration Options
+
+You can access the configuration options for the briefing page in _Project Hub > Project Configuration > Debriefing_.
+To configure the debriefing page, you have the following option:
+
+Debriefing text:: Text displayed to participants on the debriefing page.
+
+[TIP]
+====
+Sometimes you might want to display different debriefing texts depending on the
+previous actions of your participant (e.g., if a participant did indicate that
+they do not want to take part in the study, or if a participant did not attempt
+to donate any data).
+
+For this, you can make use of the templating engine and, for example, define the
+following debriefing page that displays a different text to a participant that
+did not attempt to donate any that compared to a participant who donated at least
+some data (the example assumes that two donations were expected in this study):
+
+[source]
+--
+{% if donation_info.n_success > 0 %}
+Dear participant,
+
+Thank you very much for participating in our study. With your data donation, you
+made a great contribution towards advancing our understanding of algorithmic
+selection on the internet.
+{% endif %}
+
+{% if donation_info.n_pending == 2 %}
+Dear participant,
+
+Thank you for your time. Because you did not attempt to donate any data, you are
+unfortunately not eligible to receive the participation reward.
+{% endif %}
+--
+
+You can read more about how to use dynamic templates
+xref:researchers:topics/templating_features.adoc[here].
+====

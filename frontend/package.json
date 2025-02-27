@@ -5,32 +5,25 @@
     "lint": "vue-cli-service lint",
     "test": "vitest"
   },
-  "name": "vue_frontend",
+  "name": "ddm_vue_frontend",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@intlify/vue-i18n-loader": "^4.2.0",
     "axios": "^1.6.7",
-    "core-js": "^3.36.0",
-    "csv-parse": "^5.5.5",
     "jszip": "^3.10.1",
     "luxon": "^3.4.4",
     "papaparse": "^5.4.1",
     "vue": "^3.4.21",
-    "vue-i18n": "^9.10.1",
+    "vue-i18n": "^9.14.1",
     "webpack-bundle-tracker": "^3.0.1"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.23.10",
-    "@intlify/vue-i18n-loader": "^4.2.0",
     "@vue/cli-plugin-babel": "^5.0.8",
-    "@vue/cli-plugin-eslint": "^5.0.8",
     "@vue/cli-service": "^5.0.8",
-    "@vue/compiler-sfc": "^3.4.21",
-    "eslint": "^8.57.0",
+    "eslint": "^9.13.0",
     "eslint-plugin-vue": "^9.23.0",
-    "vitest": "^2.0.3",
-    "vue-cli-plugin-i18n": "^2.3.2",
-    "webpack-cli": "^5.1.4"
+    "vitest": "^2.0.3"
   },
   "eslintConfig": {
     "root": true,

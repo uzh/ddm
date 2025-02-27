@@ -1,0 +1,90 @@
+<p class="mt-0">
+  If a file has been successfully validated, the relevant information will be extracted according to <code>extraction rules</code> which can be configured below.
+  These rules are applied to the uploaded data consecutively in the defined order. If no rules are configured, no data are extracted.
+  All the data extraction steps are executed on the participant's device in the browser using JavaScript.
+</p>
+
+<p>To configure the data extraction, follow these steps:</p>
+
+<ol class="mb-2 mt-2">
+  <li>
+    For every field that you want to keep in the uploaded data, create an <code>extraction rule</code> with the "Keep field" operator.
+  </li>
+  <li>
+    Next, you can add rules to filter (i.e., delete) or alter entries in the uploaded data. For this, several comparison and regex operations are available (see below for an overview).
+  </li>
+</ol>
+
+<p>When a file is uploaded, the configured rules are applied row-wise/entry-wise. This means, for every data row/entry in the uploaded data, the rules are applied in the configured order.</p>
+
+<p><b>Available extraction operators</b></p>
+
+<table id="extraction-info-table" class="table table-borderless fs-08">
+  <tr class="border-bottom">
+    <th>Extraction Operator</th>
+    <th>Description</th>
+    <th>Note</th>
+  </tr>
+  <tr>
+    <td>Keep Field</td>
+    <td>Keep this field in the uploaded data.</td>
+    <td>–</td>
+  </tr>
+  <tr>
+    <td>Equal (==)</td>
+    <td>Delete row/entry if the value contained in the given <code>field</code> equals the <code>comparison value</code>.</td>
+    <td>Works for strings, integers, and dates<sup>1</sup>.</td>
+  </tr>
+  <tr>
+    <td>Not Equal !=</td>
+    <td>Delete row/entry if the value contained in the given <code>field</code> does not equal the <code>comparison value</code>.</td>
+    <td>Works for strings, integers, and dates<sup>1</sup>.</td>
+  </tr>
+  <tr>
+    <td>Greater than (>)</td>
+    <td>Delete row/entry if the value contained in the given <code>field</code> is greater than the <code>comparison value</code>.</td>
+    <td>Works for integers and dates<sup>1</sup>. String values are skipped and the row will be kept in the data.</td>
+  </tr>
+  <tr>
+    <td>Smaller than (<)</td>
+    <td>Delete row/entry if the value contained in the given <code>field</code> is smaller than the <code>comparison value</code>.</td>
+    <td>Works for integers and dates<sup>1</sup>. String values are skipped and the row will be kept in the data.</td>
+  </tr>
+  <tr>
+    <td>Greater than or equal (>=)</td>
+    <td>Delete row/entry if the value contained in the given <code>field</code> is greater than or equal to the <code>comparison value</code>.</td>
+    <td>Works for integers and dates<sup>1</sup>. String values are skipped and the row will be kept in the data.</td>
+  </tr>
+  <tr>
+    <td>Smaller than or equal (<=)</td>
+    <td>Delete row/entry if the value contained in the given <code>field</code> is smaller than or equal to the <code>comparison value</code>.</td>
+    <td>Works for integers and dates<sup>1</sup>. String values are skipped and the row will be kept in the data.</td>
+  </tr>
+  <tr>
+    <td>Delete match (regex)</td>
+    <td>Delete parts of the value contained in the given <code>field</code> that match the given <code>regular expression (regex)</code>
+      (e.g., if the <code>regular expression (regex)</code> = "^Watched " and a field contains the value "Watched video XY" the following
+      value will be kept in the uploaded data: "video XY").</td>
+    <td>All field values are converted to strings before this operation is applied.</td>
+  </tr>
+  <tr>
+    <td>Replace match (regex)</td>
+    <td>Replace parts of the value contained in the given <code>field</code> that match the given <code>regular expression (regex)</code>
+      (e.g., if the <code>regular expression (regex)</code> = "[\w-\.]+@([\w-]+\.)+[\w-]{2,4}" and
+      the <code>replacement value</code> = "_anonymized_" and a field contains the value "some text email@address.com" the following
+      value will be kept in the uploaded data: "some text _anonymized_").</td>
+    <td>All field values are converted to strings before this operation is applied.</td>
+  </tr>
+  <tr>
+    <td>Delete row when match (regex)</td>
+    <td>Delete row/entry if the value contained in the given <code>field</code> matches the given <code>regular expression (regex)</code> (e.g., if
+      <code>regular expression (regex)</code> = "^Watched " and a field contains the value "Watched video XY"
+      the row/entry will be deleted from the uploaded data).</td>
+    <td>All field values are converted to strings before this operation is applied.</td>
+  </tr>
+</table>
+
+<p class="ddm-note">
+  <sup>1</sup>Dates are inferred from string values if they are formatted according to ISO, RFC2822, or HTTP standards,
+  and only if both the field value and the comparison value follow the same format. Otherwise, the entry will be treated as a regular string.
+</p>

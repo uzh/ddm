@@ -2,6 +2,9 @@ import json
 import os
 import sys
 
+from dotenv import load_dotenv
+
+load_dotenv()
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DDM_DIR = os.path.join(PROJECT_DIR, 'ddm')
@@ -9,8 +12,6 @@ VUE_FRONTEND_DIR = os.path.join(PROJECT_DIR, 'frontend')
 
 sys.path.append(PROJECT_DIR)
 sys.path.append(DDM_DIR)
-
-test_config = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_config.json')))
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -21,11 +22,17 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.staticfiles',
     'ddm',
-    'ckeditor',
-    'ckeditor_uploader',
+    'ddm.auth',
+    'ddm.logging',
+    'ddm.questionnaire',
+    'ddm.datadonation',
+    'ddm.participation',
+    'ddm.projects',
+    'ddm.core',
     'webpack_loader',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_ckeditor_5',
     # 'debug_toolbar',  # Added for debugging purposes
 ]
 
@@ -55,7 +62,7 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
                 'django.template.context_processors.i18n',
-                'ddm.context_processors.add_ddm_version'
+                'ddm.core.context_processors.add_ddm_version'
             ],
         },
     },
@@ -63,19 +70,25 @@ TEMPLATES = [
 
 DB_CONFIG = {
     'default': {
-        'ENGINE': test_config['DB_ENGINE'],
-        'NAME': test_config['DB_NAME'],
+        'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.sqlite3'),
+        'NAME': os.environ.get('DB_NAME', 'ddmtestdb'),
+        'USER': os.environ.get('DB_USER', 'ddmtestuser'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
+        'PORT': os.environ.get('DB_PORT'),
     }
 }
+DATABASES = DB_CONFIG
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+SECRET_KEY = os.environ.get('SECRET_KEY')
 ROOT_URLCONF = 'urls'
-DATABASES = DB_CONFIG
 DEBUG = True
-SECRET_KEY = test_config['SECRET_KEY']
 SITE_ID = 1
+
 USE_TZ = True
 TIME_ZONE = 'Europe/Zurich'
+
 LANGUAGE_CODE = 'en'
 USE_I18N = True
 LANGUAGES = [
@@ -85,25 +98,21 @@ LANGUAGES = [
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-    os.path.join(DDM_DIR, 'static'),
+    os.path.join(PROJECT_DIR, 'test_project', 'static'),
 )
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
+MEDIA_ROOT = os.path.join(PROJECT_DIR, 'test_project', 'media')
 
 WEBPACK_LOADER = {
     'DEFAULT': {
         'CACHE': True,
-        'BUNDLE_DIR_NAME': 'ddm/vue/',
-        'STATS_FILE': os.path.join(DDM_DIR, 'static', 'ddm', 'vue', 'webpack-stats.json'),
+        'BUNDLE_DIR_NAME': 'core/vue/',
+        'STATS_FILE': os.path.join(DDM_DIR, 'core', 'static', 'ddm_core', 'vue', 'webpack-stats.json'),
         'POLL_INTERVAL': 0.1,
         'TIMEOUT': None,
         'IGNORE': [r'.+\.hot-update.js', r'.+\.map']
     }
-}
-
-DDM_SETTINGS = {
-    'EMAIL_PERMISSION_CHECK': r'.*(\.|@)uzh\.ch$',
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -113,13 +122,22 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
 ]
 
+DDM_SETTINGS = {
+    'EMAIL_PERMISSION_CHECK': r'.*(\.|@)uzh\.ch$',
+}
+
 LOGIN_REDIRECT_URL = '/projects/'
 LOGOUT_REDIRECT_URL = '/login/'
 
-CKEDITOR_RESTRICT_BY_USER = True
-CKEDITOR_UPLOAD_PATH = 'uploads/'
-
-DDM_DEFAULT_HEADER_IMG_LEFT = '/media/project_10/headers/DDLabLogo.png'
-DDM_DEFAULT_HEADER_IMG_RIGHT = '/media/project_10/headers/IKMZ_Logo.png'
+DDM_DEFAULT_HEADER_IMG_LEFT = ''
+DDM_DEFAULT_HEADER_IMG_RIGHT = ''
 
 # INTERNAL_IPS = ["127.0.0.1", ]  # Added for debugging purposes
+
+# ckeditor 5 configuration
+CKEDITOR_5_FILE_UPLOAD_PERMISSION = 'authenticated'
+CKEDITOR_5_ALLOW_ALL_FILE_TYPES = True
+CKEDITOR_5_UPLOAD_FILE_TYPES = ['jpeg', 'pdf', 'png', 'mp4']
+
+# TODO: Delete again - only temporary
+# MIDDLEWARE += ['csp.middleware.CSPMiddleware']

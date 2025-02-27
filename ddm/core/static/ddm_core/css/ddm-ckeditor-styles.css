@@ -1,0 +1,10 @@
+template-func {
+    color: grey;
+    background: #f3f3f3;
+    padding: 3px 5px;
+    border-radius: 5px;
+}
+
+.ck-content p {
+    margin-bottom: 1rem !important;
+}

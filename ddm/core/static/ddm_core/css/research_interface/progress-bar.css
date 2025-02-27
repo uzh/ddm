@@ -1,0 +1,22 @@
+.progress-bar-container {
+    height: 50px;
+    width: 100%;
+    border-radius: 50px;
+    background: #f8f9fa;
+    overflow: hidden;
+}
+
+.ddm-progress-bar {
+    background: linear-gradient(90deg, rgba(0,0,0,1) 19%, rgba(255,255,255,1) 100%);
+    width: 0;
+    height: 50px;
+    border-radius: 50px;
+}
+
+.progress-bar-dot {
+    height: 100%;
+    width: 50px;
+    float: right;
+    background: black;
+    border-radius: 50%;
+}

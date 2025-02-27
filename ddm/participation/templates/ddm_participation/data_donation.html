@@ -1,0 +1,22 @@
+{% extends "ddm_participation/base.html" %}
+{% load i18n %}
+{% load render_bundle from webpack_loader %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block content %}
+<div class="container">
+  <form id="uploader-form" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div id="uapp"
+         class="container text-black ps-0 pe-0"
+         data-upload-config='{{ uploader_configs }}'
+         data-action-url='{{ request.build_absolute_uri }}'
+         data-exception-url='{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url "ddm_logging:exceptions_api" project_url_id %}'
+         data-language='{{ LANGUAGE_CODE|slice:"0:2"}}'
+    >
+      <uapp></uapp>
+    </div>
+    {% render_bundle 'vue_uploader' %}
+  </form>
+</div>
+{% endblock content %}

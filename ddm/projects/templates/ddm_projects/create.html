@@ -1,0 +1,96 @@
+{% extends 'ddm_core/page_with_form.html' %}
+
+{% load static %}
+
+{% block page_title %}Create New Project{% endblock %}
+
+{% block main_heading %}Create Donation Project {{ object.name }}{% endblock %}
+
+{% block main_form %}
+<form method='post'>
+  {% csrf_token %}
+  {{ form.media }}
+
+  {{ form.non_field_errors }}
+
+  <div>
+    <p>
+      {{ form.name.errors }}
+      <label for="{{ form.name.id_for_label }}">Project Name:</label>
+      <span class="helptext">{{ form.name.help_text|safe }}</span>
+      {{ form.name }}
+    </p>
+
+    <p>
+      {{ form.slug.errors }}
+      {{ form.slug.label_tag }}
+      <span class="helptext">{{ form.slug.help_text|safe }}</span>
+      {{ form.slug }}
+    </p>
+
+    <p>
+      {{ form.contact_information.errors }}
+      {{ form.contact_information.label_tag }}
+      <span class="helptext">{{ form.contact_information.help_text|safe }}</span>
+      {{ form.contact_information }}
+    </p>
+
+    <p>
+      {{ form.data_protection_statement.errors }}
+      {{ form.data_protection_statement.label_tag }}
+      <span class="helptext">{{ form.data_protection_statement.help_text|safe }}</span>
+      {{ form.data_protection_statement }}
+    </p>
+
+    <p>
+      {{ form.owner }}
+    </p>
+
+    <div class="p-3 mt-2 w-50 rounded bg-light-red">
+      <p class="mt-0">
+        <b>Is this a super secret project?</b>
+      </p>
+      <p>
+        <b>Attention:</b> Data donated to a super secret project will be stored
+        with improved encryption and data decryption will only be possible if the project password is supplied.
+        For most projects this will not be necessary, but you might want to enable this option if you are working with
+        very sensitive data such as health records or similar information.
+        Also, be aware that this will limit the functionality of the module for this project: it won’t be possible to create followup questions based on the data donation (i.e., data points from the data donation cannot be referenced in a question).<br>
+      </p>
+      <p> After a project has been created, it cannot be changed from <i>super secret</i> to <i>regular</i> and vice versa.</p>
+      <p>
+        {{ form.super_secret.errors }}
+        {{ form.super_secret.label_tag }}
+        {{ form.super_secret }}
+      </p>
+      <div id="secret-definition" class="d-none">
+        <p>
+          {{ form.project_password.errors }}
+          {{ form.project_password.label_tag }}
+          {{ form.project_password }}
+        </p>
+        <p>
+          {{ form.project_password_confirm.errors }}
+          <label for="{{ form.project_password_confirm.id_for_label }}">Confirm Project Password:</label>
+          {{ form.project_password_confirm }}
+        </p>
+      </div>
+    </div>
+
+    <input class="ddm-btn" type="submit" value="Create Project">
+    <p class="mt-3">
+      <a href="{% url 'ddm_projects:list' %}">&#129040; Cancel</a>
+    </p>
+  </div>
+</form>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'ddm_projects:list' %}">Projects</a> /
+Create New Project
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+  <script src="{% static 'ddm_projects/js/project-create-utils.js' %}"></script>
+{% endblock %}

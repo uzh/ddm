@@ -1,0 +1,38 @@
+.ddm-accordion {
+    background: transparent;
+}
+.ddm-accordion-header {
+    font-size: 1.1rem;
+    padding: 0;
+    margin-top: 0px !important;
+}
+.ddm-accordion-item {
+    background: transparent;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid lightgrey;
+}
+.ddm-accordion-content {
+    padding-top: 1px;
+    padding-bottom: 10px;
+}
+.ddm-accordion-btn {
+    -webkit-appearance: none;
+    border: none;
+    background: transparent;
+}
+.ddm-accordion-btn:before {
+    content: "\F231";
+    margin-left: -20px;
+    font-family: "bootstrap-icons";
+    font-size: 0.7rem;
+    display: inline-block;
+}
+.sign-accordion-open:before {
+    content: "\F231";
+    margin-left: -20px;
+    font-family: "bootstrap-icons";
+    font-size: 0.7rem;
+    display: inline-block;
+    transform: rotate(90deg);
+}

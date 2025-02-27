@@ -1,0 +1,28 @@
+= Continuation
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+
+Oftentimes, it can take some time between requesting a data takeout from a
+platform and actually being able to download this takeout. Therefore, researchers
+might want to provide their study participants with the possibility to pause their
+participation and continue with the study as soon as they were able to download
+their personal data takeout.
+
+To enable this, DDM offers a continuation endpoint through which participants
+can resume their participation. This endpoint is a URL containing the project
+url identifier as well as the external participant ID passed as a URL parameter
+`p`. This URL looks as follows:
+`https://your-domain.com/project-slug/continue?p=ExternalParticipantID`
+
+[TIP]
+====
+You can display this continuation link in the instructions to your participants
+by utilizing the xref:researchers:topics/templating_features.adoc[templating functionality] as follows:
+`https.//your-domain.com/project-slug/continue?p={{ participant_id }}`
+====

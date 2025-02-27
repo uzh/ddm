@@ -1,5 +1,1 @@
-* xref:for_researchers.adoc[For Researchers]
-* xref:for_admins.adoc[For System Administrators]
-* xref:for_developers.adoc[For Developers]
-* xref:topic_references.adoc[Topic References]
-* xref:issues.adoc[Reporting Issues and Getting Help]
+* xref:ROOT:index.adoc[*DDM Documentation*]

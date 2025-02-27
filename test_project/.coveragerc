@@ -1,0 +1,5 @@
+[run]
+omit = */migrations/*.py
+
+[html]
+directory = coverage_html_report

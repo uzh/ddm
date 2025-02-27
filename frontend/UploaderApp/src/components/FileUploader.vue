@@ -3,15 +3,16 @@
 <template>
 
   <div class="mb-5">
-    <div class="float-left bg-dark text-white pt-2 ps-2 pb-1 rounded-top">
+    <div class="float-left pt-2 ps-2 rounded-top">
       <div class="col-sm">
-        <h4>{{ name }}</h4>
+        <h4 class="fw-bold">{{ name }}</h4>
       </div>
     </div>
 
+    <div class="uploader-container">
     <!-- INSTRUCTIONS -->
     <div v-if="instructions.length" class="accordion" :id="'ul-acc-'+componentId">
-      <div class="accordion-body border">
+      <div class="accordion-body border-bottom">
         <div class="row align-items-center">
           <div class="col-auto ul-status-icon"><i class="bi bi-signpost"></i></div>
           <div class="col-auto"><h5>{{ $t('instructions') }}</h5></div>
@@ -31,8 +32,8 @@
     </div>
 
     <!-- DATA UPLOAD -->
-    <div class="accordion-body border">
-      <div class="row align-items-center">
+    <div class="accordion-body border-bottom">
+      <div class="row align-items-center" style="height: 100px;">
 
         <!-- Upload pending -->
         <template v-if="uploadStatus === 'pending'">
@@ -45,7 +46,26 @@
 
           <div class="col ul-status-message">
             <label class="select-file-btn">
-              <input :name="'ul-' + componentId" type="file" @change="processFile" class="d-none">
+
+              <input v-if="expectsZip"
+                     :name="'ul-' + componentId"
+                     accept=".zip,application/zip,application/x-zip-compressed,multipart/x-zip"
+                     type="file"
+                     @change="processFile"
+                     class="d-none">
+              <input v-else-if="blueprints[0].format === 'json'"
+                     :name="'ul-' + componentId"
+                     accept=".json,application/json"
+                     type="file"
+                     @change="processFile"
+                     class="d-none">
+              <input v-else-if="blueprints[0].format === 'csv'"
+                     :name="'ul-' + componentId"
+                     accept=".csv,text/csv"
+                     type="file"
+                     @change="processFile"
+                     class="d-none">
+
               {{ $t('choose-file') }}
             </label>
           </div>
@@ -71,11 +91,8 @@
           <div class="col-auto ul-status-icon"><i class="bi bi-file-check"></i></div>
 
           <div class="col ul-status-description">
-            <p class="text-success fw-bold">{{ $t('upload-success') }}</p>
-            <p><a @click="uploadStatus = 'pending'" class="upload-other">{{ $t('choose-different-file') }}</a></p>
+            <h5 class="text-success fw-bold">{{ $t('upload-success') }}</h5>
           </div>
-
-          <div class="col ul-status-message"></div>
         </template>
 
         <!-- Upload partial -->
@@ -112,29 +129,28 @@
       </div>
       <!-- UPLOAD FEEDBACK -->
 
-      <div class="accordion-body border border-bottom-0">
+      <div class="accordion-body">
         <div class="row align-items-center">
-          <div class="col-auto ul-status-icon"><i class="bi bi-clipboard-data"></i></div>
           <div class="col extraction-information-container">
-            <div class="col"><h5>{{ $t('data-extraction') }}</h5></div>
             <div class="col">
               <template v-if="uploadStatus === 'pending'">
-                {{ $t('data-extraction-intro') }}:
+                <h6>{{ $t('data-extraction-intro') }}</h6>
               </template>
               <template v-else>
-                {{ $t('extracted-data-intro') }}:
+                <h6 class="fw-bold">{{ $t('extracted-data-intro') }}</h6>
               </template>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="accordion-body border border-top-0">
-      <div class="container ul-feedback-container">
+      <div class="accordion-body">
+      <div class="container ul-feedback-container ps-2 pe-2">
         <div class="row">
           <div class="col extraction-information-container">
             <template v-for="bp in blueprints" :key="bp">
-            <div class="ul-status row align-items-start pt-2 pb-2" :class="{ 'ul-success': blueprintData[bp.id.toString()].status === 'success', 'ul-failed': blueprintData[bp.id.toString()].status === 'failed'}">
+            <div class="ul-status row align-items-start pt-2 pb-2"
+                 :class="{ 'ul-success': blueprintData[bp.id.toString()].status === 'success', 'ul-failed': blueprintData[bp.id.toString()].status === 'failed'}">
 
               <!-- Pending -->
               <template v-if="blueprintData[bp.id.toString()].status === 'pending'">
@@ -147,7 +163,7 @@
 
               <!-- Success -->
               <template v-if="blueprintData[bp.id.toString()].status === 'success'">
-                <div class="row pb-2">
+                <div class="row">
                   <div class="col w-small bp-ul-icon"><i class="bi bi-file-earmark-check-fill text-success"></i></div>
                   <div class="col">
                     <div class="col bp-description pb-2">{{ bp.name }}</div>
@@ -155,8 +171,8 @@
                   </div>
                 </div>
 
-                <div class="row pt-2">
-                  <div class="col feedback-col">
+                <div class="row pe-0">
+                  <div class="col feedback-col pe-0">
                     <div>
                       {{ $t('extracted-data') }}
                     </div>
@@ -182,10 +198,10 @@
                         </div>
                         <div class="data-table-navigation">
                           <div class="pb-2">
-                            <a class="btn btn-secondary btn-sm me-2" v-if="blueprintData[bp.id.toString()].fb_pos_lower > 14" v-on:click="updateFbPos(bp.id.toString(), 'down')" >{{ $t('previous-page') }}</a>
-                            <span class="btn-secondary btn-sm me-2 btn-light text-muted user-select-none btn-muted" v-if="blueprintData[bp.id.toString()].fb_pos_lower <= 14">{{ $t('previous-page') }}</span>
-                            <a class="btn btn-secondary btn-sm" v-if="blueprintData[bp.id.toString()].fb_pos_upper < blueprintData[bp.id.toString()].extracted_data.length" v-on:click="updateFbPos(bp.id.toString(), 'up')" >{{ $t('next-page') }}</a>
-                            <span class="btn-secondary btn-sm btn-light text-muted user-select-none btn-muted" v-if="blueprintData[bp.id.toString()].fb_pos_upper >= blueprintData[bp.id.toString()].extracted_data.length">{{ $t('next-page') }}</span>
+                            <a class="btn btn-pagination btn-sm me-2 btn-active" v-if="blueprintData[bp.id.toString()].fb_pos_lower > 9" v-on:click="updateFbPos(bp.id.toString(), 'down')" >{{ $t('previous-page') }}</a>
+                            <span class="btn-pagination btn-sm me-2 btn-light text-muted user-select-none btn-muted" v-if="blueprintData[bp.id.toString()].fb_pos_lower <= 9">{{ $t('previous-page') }}</span>
+                            <a class="btn btn-pagination btn-sm btn-active" v-if="blueprintData[bp.id.toString()].fb_pos_upper < blueprintData[bp.id.toString()].extracted_data.length" v-on:click="updateFbPos(bp.id.toString(), 'up')" >{{ $t('next-page') }}</a>
+                            <span class="btn-pagination btn-sm btn-light text-muted user-select-none btn-muted" v-if="blueprintData[bp.id.toString()].fb_pos_upper >= blueprintData[bp.id.toString()].extracted_data.length">{{ $t('next-page') }}</span>
                           </div>
 
                           <div class="pb-3">
@@ -198,29 +214,54 @@
                       <div>
 
                       </div>
-                      <div :id="'expansion-control-'+bp.id.toString()" class="ul-data-expansion-control control-condensed"><a class="text-decoration-none fw-bold" :id="'collapse-toggle-'+bp.id.toString()" v-on:click="showHideData(bp.id.toString())"><span :id="'donation-container-'+ bp.id.toString() + '-toggle-label'">{{ $t('show-extracted-data') }}</span></a></div>
+                      <div :id="'expansion-control-'+bp.id.toString()" class="ul-data-expansion-control control-condensed">
+                        <a class="fw-bold"
+                           :id="'collapse-toggle-'+bp.id.toString()"
+                           v-on:click="showHideData(bp.id.toString())">
+                          <span :id="'donation-container-'+ bp.id.toString() + '-toggle-label'">{{ $t('show-extracted-data') }}</span>
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 <template v-if="this.combinedConsent === false">
-                <div class="row">
-                  <div class="col feedback-col pb-5 pt-1">
+                <div class="row pe-0">
+                  <div class="col feedback-col pb-5 pt-1 pe-0">
                     <p class="fw-bold">{{ $t('donation-question') }}</p>
-                    <div class="consent-question-container">
-                      <div class="question-choice-item pt-3 pt-lg-0">
-                        <label class="form-check-label rb-cb-label" :for="'donate-agree-'+bp.id.toString()">
-                          <input type="radio" :id="'donate-agree-'+bp.id.toString()" :name="'agreement-'+bp.id.toString()" value="true" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent" required>
-                           {{ $t('donation-agree') }}
-                        </label>
+                      <div class="consent-question-container">
+
+                        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                          <input type="radio"
+                                 class="btn-check"
+                                 :id="'donate-agree-'+bp.id.toString()"
+                                 :name="'agreement-'+bp.id.toString()"
+                                 value="true"
+                                 autocomplete="off"
+                                 v-model="blueprintData[bp.id.toString()].consent"
+                                 @change="emitToParent"
+                                 required>
+                          <label :class="{ 'selected-donate-agree': blueprintData[bp.id.toString()].consent === 'true' }"
+                                 :for="'donate-agree-'+bp.id.toString()"
+                                 class="form-check-label rb-cb-label btn btn-light donation-btn shadow-none">
+                            {{ $t('donation-agree') }}
+                          </label>
+
+                          <input type="radio"
+                                 class="btn-check"
+                                 :id="'donate-disagree-'+bp.id.toString()"
+                                 :name="'agreement-'+bp.id.toString()"
+                                 value="false"
+                                 autocomplete="off"
+                                 v-model="blueprintData[bp.id.toString()].consent"
+                                 @change="emitToParent">
+                          <label :class="{ 'selected-donate-disagree': blueprintData[bp.id.toString()].consent === 'false' }"
+                                 :for="'donate-disagree-'+bp.id.toString()"
+                                 class="form-check-label rb-cb-label btn btn-light donation-btn shadow-none">
+                            {{ $t('donation-disagree') }}
+                          </label>
+                        </div>
                       </div>
-                      <div class="question-choice-item pt-3 pt-lg-0">
-                        <label class="form-check-label rb-cb-label" :for="'donate-disagree-'+bp.id.toString()">
-                          <input type="radio" :id="'donate-disagree-'+bp.id.toString()" :name="'agreement-'+bp.id.toString()" value="false" v-model="blueprintData[bp.id.toString()].consent" @change="emitToParent">
-                           {{ $t('donation-disagree') }}
-                        </label>
-                      </div>
-                    </div>
                   </div>
                 </div>
                 </template>
@@ -263,27 +304,46 @@
       </div>
 
         <template v-if="this.combinedConsent === true && (uploadStatus === 'success' || uploadStatus === 'partial')">
-          <div class="row mt-5">
-            <div class="col feedback-col pb-5 pt-1">
+          <div class="row mt-5 pe-0">
+            <div class="col feedback-col pb-5 pt-1 pe-0">
               <p class="fw-bold">{{ $t('donation-question') }}</p>
               <div class="consent-question-container">
-                <div class="question-choice-item pt-3 pt-lg-0">
-                  <label class="form-check-label rb-cb-label" for="combined-donate-agree">
-                    <input type="radio" id="combined-donate-agree" value="true" v-model="combinedDonation" @change="emitToParent" required>
+
+                <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                  <input type="radio"
+                         class="btn-check"
+                         id="combined-donate-agree"
+                         value="true"
+                         autocomplete="off"
+                         v-model="combinedDonation"
+                         @change="emitToParent"
+                         required>
+                  <label :class="{ 'selected-donate-agree': combinedDonation === 'true' }"
+                         class="form-check-label rb-cb-label btn btn-light donation-btn shadow-none"
+                         for="combined-donate-agree">
                     {{ $t('donation-agree') }}
                   </label>
-                </div>
-                <div class="question-choice-item pt-3 pt-lg-0">
-                  <label class="form-check-label rb-cb-label" for="combined-donate-disagree">
-                    <input type="radio" id="combined-donate-disagree" value="false" v-model="combinedDonation" @change="emitToParent">
+
+                  <input type="radio"
+                         class="btn-check"
+                         id="combined-donate-disagree"
+                         value="false"
+                         autocomplete="off"
+                         v-model="combinedDonation"
+                         @change="emitToParent">
+                  <label :class="{ 'selected-donate-disagree': combinedDonation === 'false' }"
+                         class="form-check-label rb-cb-label btn btn-light donation-btn shadow-none"
+                         for="combined-donate-disagree">
                     {{ $t('donation-disagree') }}
                   </label>
                 </div>
+
               </div>
             </div>
           </div>
         </template>
     </div>
+  </div>
   </div>
 
   <div class="default-modal" id="ulInfoModal" ref="ulInfoModal" style="display: none">
@@ -365,7 +425,7 @@ export default {
         status: 'pending',
         errors: [],
         fb_pos_lower: 0,
-        fb_pos_upper: 15,
+        fb_pos_upper: 10,
         error_log: {},
       }
       this.blueprintData[id.toString()] = blueprintInfo
@@ -374,6 +434,23 @@ export default {
     this.emitToParent();
   },
   methods: {
+    /**
+     * Validate that a file is a ZIP file.
+     * @param file
+     */
+    checkIsZip(file) {
+      const extensionIsValid = file.name.toLowerCase().endsWith('.zip');
+      const mimeIsValid = [
+          'application/zip',
+          'application/x-zip-compressed',
+          'multipart/x-zip'
+      ].includes(file.type);
+      if(extensionIsValid && mimeIsValid) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     /**
      * Processes the file uploaded by the participant.
      * @param event
@@ -387,48 +464,57 @@ export default {
 
       // Procedure if supplied file is expected to be a zip-folder.
       if (uploader.expectsZip && files.length === 1) {
-        JSZip
-            .loadAsync(files[0])
-            .then(z => {
-              uploader.blueprints.forEach(blueprint => {
-                let re = new RegExp(blueprint.regex_path);
-                let reHasMatched = false;
-                z.file(re).forEach(f => {
-                  reHasMatched = true;
-                  f
-                      .async("string")
-                      .then(c => uploader.processContent(c, blueprint))
-                      .catch(e => {
-                        uploader.postError(4199, e.message);
-                        uploader.recordError(uploader.$t('error-generic') + e.message, blueprint.id.toString());
-                      })
+
+        // Check that file is a ZIP file.
+        const uploadedFile = files[0]
+        if (uploader.checkIsZip(uploadedFile) === false) {
+          uploader.postError(4101, uploader.$t('error-not-zip'));
+          uploader.recordError(uploader.$t('error-not-zip'), 'general');
+        } else {
+
+          JSZip
+              .loadAsync(uploadedFile)
+              .then(z => {
+                uploader.blueprints.forEach(blueprint => {
+                  let re = new RegExp(blueprint.regex_path);
+                  let reHasMatched = false;
+                  z.file(re).forEach(f => {
+                    reHasMatched = true;
+                    f
+                        .async("string")
+                        .then(c => uploader.processContent(c, blueprint))
+                        .catch(e => {
+                          uploader.postError(4199, e.message);
+                          uploader.recordError(uploader.$t('error-generic') + e.message, blueprint.id.toString());
+                        })
+                  })
+                  if (!reHasMatched) {
+                    uploader.postError(4180, uploader.$t('error-regex-not-matched'), blueprint.id);
+                    uploader.postError(4181, `Files in uploaded folder: ${Object.keys(z.files)}`, blueprint.id);
+                    uploader.recordError(uploader.$t('error-regex-not-matched'), blueprint.id.toString());
+                  }
                 })
-                if (!reHasMatched) {
-                  uploader.postError(4180, uploader.$t('error-regex-not-matched'), blueprint.id);
-                  uploader.postError(4181, `Files in uploaded folder: ${Object.keys(z.files)}`, blueprint.id);
-                  uploader.recordError(uploader.$t('error-regex-not-matched'), blueprint.id.toString());
-                }
               })
-            })
-            .catch(e => {
-              let myMess = '';
-              let statusCode = 0;
-              if (e.message.includes('zip') && e.message.includes('central')) {
-                myMess = uploader.$t('error-not-zip');
-                statusCode = 4101;
-              } else if (e.message.includes('Corrupted zip')) {
-                myMess = uploader.$t('error-zip-corrupted');
-                statusCode = 4102;
-              } else if (e.message.includes('Encrypted zip')) {
-                myMess = uploader.$t('error-zip-encrypted');
-                statusCode = 4103;
-              } else {
-                myMess = uploader.$t('error-generic') + e.message;
-                statusCode = 4198;
-              }
-              uploader.postError(statusCode, e.message);
-              uploader.recordError(myMess, 'general');
-        })
+              .catch(e => {
+                let myMess = '';
+                let statusCode = 0;
+                if (e.message.includes('zip') && e.message.includes('central')) {
+                  myMess = uploader.$t('error-not-zip');
+                  statusCode = 4101;
+                } else if (e.message.includes('Corrupted zip')) {
+                  myMess = uploader.$t('error-zip-corrupted');
+                  statusCode = 4102;
+                } else if (e.message.includes('Encrypted zip')) {
+                  myMess = uploader.$t('error-zip-encrypted');
+                  statusCode = 4103;
+                } else {
+                  myMess = uploader.$t('error-generic') + e.message;
+                  statusCode = 4198;
+                }
+                uploader.postError(statusCode, e.message);
+                uploader.recordError(myMess, 'general');
+              })
+        }
       }
 
       // Procedure if supplied file is expected to be a single file.
@@ -500,19 +586,32 @@ export default {
           fileContent = JSON.parse(content);
         } catch(e) {
           uploader.postError(4106, e.message, blueprint.id);
-          uploader.recordError(uploader.$t('error-json-syntax'), uploader.blueprints[0].id.toString());
+          uploader.recordError(uploader.$t('error-json-syntax'), blueprintID);
         }
 
         if(fileContent) {
           if (blueprint.json_extraction_root !== '') {
-            fileContent = this.getNestedJsonEntry(fileContent, blueprint.json_extraction_root);
+            try {
+              fileContent = this.getNestedJsonEntry(fileContent, blueprint.json_extraction_root);
+            } catch (e) {
+              uploader.postError(4207, uploader.$t('error-no-data-in-file'), blueprint.id);
+              uploader.recordError(uploader.$t('error-no-data-in-file'), blueprintID);
+              return
+            }
           }
 
+          // Check if fileContent is null.
+          if (fileContent === null || fileContent === undefined) {
+            uploader.postError(4207, uploader.$t('error-no-data-in-file'), blueprint.id);
+            uploader.recordError(uploader.$t('error-no-data-in-file'), blueprintID);
+            return;
+          }
+
+          // Check if fileContent must be converted to array.
           if (!(Symbol.iterator in Object(fileContent))) {
             fileContent = new Array(fileContent);
           }
         }
-
       }
 
       else if (blueprint.format === 'csv') {
@@ -521,7 +620,7 @@ export default {
           fileContent = parserResult.data;
         } catch(e) {
           uploader.postError(4106, e.message, blueprint.id);
-          uploader.recordError(uploader.$t('error-json-syntax'), uploader.blueprints[0].id.toString());
+          uploader.recordError(uploader.$t('error-json-syntax'), blueprintID);
         }
       }
 
@@ -750,17 +849,20 @@ export default {
           else if (dataToEmit[key].consent === 'false') {
             dataToEmit[key].extracted_data = [];
             dataToEmit[key].consent = false;
-          } else {
+          } else if (dataToEmit[key].consent === 'true') {
             dataToEmit[key].consent = true;
           }
         })
       } else {
         let consent = this.combinedDonation;
         Object.keys(dataToEmit).forEach(key => {
-          if (consent === 'false') {
+          if (consent === null) {
+            dataToEmit[key].consent = null;
+            dataToEmit[key].extracted_data = [];
+          } else if (consent === 'false') {
             dataToEmit[key].consent = false;
             dataToEmit[key].extracted_data = [];
-          } else {
+          } else if (consent === 'true') {
             dataToEmit[key].consent = true;
           }
         })
@@ -831,24 +933,35 @@ export default {
      * Status will be updated to either 'success', 'failed', or 'partial'.
      */
     updateStatus() {
-      let bpErrorCount = 0;
-      let bpNothingExtracted = 0;
+      let nNothingExtracted = 0;
+      let nSuccess = 0;
+      let nFailed = 0;
       let nBlueprints = Object.keys(this.blueprintData).length;
+      console.log(this.generalErrors)
+      console.log(this.generalErrors.length)
       for (let bp in this.blueprintData){
+        if (this.generalErrors.length !== 0) {
+          this.blueprintData[bp].status = 'failed';
+          this.blueprintData[bp].consent = 'false';
+          nFailed += 1;
+          continue;
+        }
+
         if (this.blueprintData[bp].errors.length) {
           let errorSet = new Set(this.blueprintData[bp].errors);
 
-          if (errorSet.size === 1 && errorSet.has(this.$t('error-all-fields-filtered-out'))) {
+          if (errorSet.size === 1 && (errorSet.has(this.$t('error-all-fields-filtered-out')) || errorSet.has(this.$t('error-no-data-in-file')))) {
             this.blueprintData[bp].status = 'nothing extracted';
             this.blueprintData[bp].consent = 'false';
-            bpNothingExtracted += 1;
+            nNothingExtracted += 1;
           } else {
             this.blueprintData[bp].status = 'failed';
             this.blueprintData[bp].consent = 'false';
-            bpErrorCount += 1;
+            nFailed += 1;
           }
         } else {
           this.blueprintData[bp].status = 'success';
+          nSuccess += 1;
           // this.blueprintData[bp].consent = 'true';
         }
       }
@@ -856,23 +969,26 @@ export default {
       this.$nextTick(function () {
         let modalIcon = document.getElementById('ul-modal-info-icon');
 
-        if (!this.generalErrors.length && bpErrorCount === 0 && bpNothingExtracted === 0) {
+        if (nSuccess === nBlueprints) {
           this.uploadStatus = 'success';
           modalIcon.className = 'bi bi-file-check text-success';
           this.ulModalInfoTitle = this.$t('ul-success-modal-title');
           this.ulModalInfoMsg = this.$t('ul-success-modal-body');
 
-        } else if (!this.generalErrors.length && bpNothingExtracted > 0 && bpErrorCount === 0) {
+        } else if (nNothingExtracted === nBlueprints) {
           this.uploadStatus = 'partial';
           modalIcon.className = 'bi bi-exclamation-diamond text-orange';
           this.ulModalInfoTitle = this.$t('ul-nothing-extracted-modal-title');
           this.ulModalInfoMsg = this.$t('ul-nothing-extracted-modal-body');
 
-        } else if (!this.generalErrors.length && (bpErrorCount < nBlueprints)) {
-          this.uploadStatus = 'partial';
-          modalIcon.className = 'bi bi-exclamation-diamond text-orange';
-          this.ulModalInfoTitle = this.$t('ul-partial-modal-title');
-          this.ulModalInfoMsg = this.$t('ul-partial-modal-body');
+          this.$refs.ulInfoModal.style.display = 'block';
+          this.$refs.modalBackdrop.style.display = 'block';
+
+        } else if ((nSuccess + nNothingExtracted) === nBlueprints) {
+          this.uploadStatus = 'success';
+          modalIcon.className = 'bi bi-file-check text-success';
+          this.ulModalInfoTitle = this.$t('ul-success-modal-title');
+          this.ulModalInfoMsg = this.$t('ul-success-modal-body');
 
         } else {
           this.uploadStatus = 'failed';
@@ -883,10 +999,9 @@ export default {
           for (let bp in this.blueprintData){
             this.blueprintData[bp].status = 'failed';
           }
+          this.$refs.ulInfoModal.style.display = 'block';
+          this.$refs.modalBackdrop.style.display = 'block';
         }
-
-        this.$refs.ulInfoModal.style.display = 'block';
-        this.$refs.modalBackdrop.style.display = 'block';
       });
     },
 
@@ -915,17 +1030,18 @@ export default {
     },
 
     updateFbPos(bpId, dir) {
+      let stepSize = 10;
       let bp = this.blueprintData[bpId];
       if (dir === 'up') {
-        bp.fb_pos_lower += 15;
-        bp.fb_pos_upper += 15;
+        bp.fb_pos_lower += stepSize;
+        bp.fb_pos_upper += stepSize;
       } else {
-        if (bp.fb_pos_lower < 15) {
+        if (bp.fb_pos_lower < stepSize) {
           bp.fb_pos_lower = 0;
-          bp.fb_pos_upper = 15;
+          bp.fb_pos_upper = stepSize;
         } else {
-          bp.fb_pos_lower -= 15;
-          bp.fb_pos_upper -= 15;
+          bp.fb_pos_lower -= stepSize;
+          bp.fb_pos_upper -= stepSize;
         }
       }
     }
@@ -984,15 +1100,10 @@ export default {
   display: block;
 }
 .ul-data-condensed {
-  max-height: 250px;
+  max-height: 180px;
   overflow: hidden;
 }
-.ul-data-condensed table {
-  color: gray;
-}
 .ul-data-expanded {
-  /* max-height: 500px; */
-  /* overflow-y: scroll; */
   color: black;
 }
 .ul-data-container th {
@@ -1008,7 +1119,6 @@ export default {
   z-index: 10;
   position: relative;
   cursor: pointer;
-  border-bottom: 1px solid black;
 }
 .control-expanded {
   background: white;
@@ -1016,23 +1126,25 @@ export default {
   height:30px;
 }
 .control-condensed {
-  background: rgb(255,255,255);
-  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(250,250,250,1) 50%);
-  height: 75px;
-  margin-top: -74px;
-  padding-top: 45px;
+  background: rgb(255, 255, 255);
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 70%);
+  height: 120px;
+  margin-top: -120px;
+  padding-top: 80px;
 }
 .fs-09 {
   font-size: 0.9rem;
 }
 .w-small {
-  max-width: 33px;
+  max-width: 20px;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
 }
 .consent-question-container {
   width: 100%;
 }
 .feedback-col {
-  padding-left: 46px;
+  padding-left: 33px;
 }
 .extraction-information-container {
   padding-top: 6px;
@@ -1053,7 +1165,6 @@ export default {
   padding-left: 25px;
 }
 .ul-data-container table {
-  background: #e3e3e31c;
   table-layout: auto;
   min-width: 100%;
 }
@@ -1067,7 +1178,61 @@ export default {
   margin-bottom: 15px;
   display: block;
 }
-.btn-secondary:not(.btn-muted):hover {
-  color: white !important;
+.data-donation-table tbody {
+  border-top: none;
 }
+.uploader-container {
+  border-top: 2px solid #000;
+  border-bottom: 2px solid #000;
+}
+.btn-pagination {
+  background: #f4f4f4;
+  border: none;
+  color: black;
+}
+.btn-active:hover {
+  color: black !important;
+  background: #cacaca;
+}
+.btn-muted {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.selected-donate-agree {
+  background: #069143 !important;
+  color: white !important;
+  font-weight: bold;
+}
+
+.selected-donate-disagree {
+  background: #f38896 !important;
+  font-weight: bold;
+}
+
+.donation-btn {
+  width: 120px;
+  color: #000;
+  background-color: #dfdfdf;
+  border: none;
+  margin: 5px;
+}
+
+@media (min-width: 576px) {}
+
+@media (min-width: 768px) {
+  .uploader-container {
+    box-shadow: 6px 7px 20px #80808040;
+    border-radius: 8px;
+    border: none;
+  }
+}
+
+@media (min-width: 992px) {}
+
+@media (min-width: 1200px) {}
+
+/* XX-Large devices (larger desktops, 1400px and up) */
+@media (min-width: 1400px) {}
+
 </style>

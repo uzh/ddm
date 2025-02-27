@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>DDM | APIs</title>
+    <link rel="prev" href="index.html">
+    <link rel="next" href="continuation.html">
+    <meta name="generator" content="Antora 3.1.10">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+    <script>var uiRootPath = '../../../../_'</script>
+    <link rel="icon" href="../../../../_/img/ddl_favicon_black.svg" type="image/x-icon">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div>
+        <a class="navbar-item" href="../../../.."><img src="../../../../_/img/DDM_Logo_Schwarz.svg" height="50px"></a>
+      </div>
+      <div class="navbar-slogan">
+        <a class="navbar-item" href="../../../..">Data Donation Module Documentation</a>
+      </div>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <input id="search-input" type="text" placeholder="Search the docs">
+        </div>
+      </div>
+      <!--
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      -->
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="ddm" data-version="main">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <!-- 
+    <h3 class="title"><a href="../../index.html">DDM</a></h3>
+     -->
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-link-1" href="../../index.html"><strong>DDM Documentation</strong></a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle nav-item-toggle-level-1"></button>
+    <a class="nav-link nav-link-1" href="../index.html">Researchers</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-link-2" href="../create_project.html">Create a Project</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-link-2" href="../project_hub.html">Project Hub</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-link-2" href="../general_project_settings.html">General Project Settings</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle nav-item-toggle-level-2"></button>
+    <a class="nav-link nav-link-2" href="../project_configuration/index.html">Project Configuration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../project_configuration/briefing.html">Briefing Page</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle nav-item-toggle-level-3"></button>
+    <span class="nav-text nav-text-3">Data Donation</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link nav-link-4" href="../project_configuration/datadonation/datadonation_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link nav-link-4" href="../project_configuration/datadonation/datadonation_configuration.html">Configuration</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle nav-item-toggle-level-3"></button>
+    <span class="nav-text nav-text-3">Questionnaire</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link nav-link-4" href="../project_configuration/questionnaire/questionnaire_overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link nav-link-4" href="../project_configuration/questionnaire/questionnaire_configuration.html">Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link nav-link-4" href="../project_configuration/questionnaire/questionnaire_data_integration.html">Data Integration</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../project_configuration/debriefing.html">Debriefing Page</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle nav-item-toggle-level-2"></button>
+    <a class="nav-link nav-link-2" href="../data_center.html">Data Center</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../data_center/data_download.html">Download</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../data_center/project_logs.html">Project Logs</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../data_center/participation_statistics.html">Statistics</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-link-2" href="../danger_zone.html">Danger Zone</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle nav-item-toggle-level-2"></button>
+    <a class="nav-link nav-link-2" href="index.html">Topics</a>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link nav-link-3" href="apis.html">APIs</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="continuation.html">Continuation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="project_logs.html">Project Logs</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="templating_features.html">Template Rendering</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle nav-item-toggle-level-1"></button>
+    <a class="nav-link nav-link-1" href="../../administrators/index.html">Administrators</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-link-2" href="../../administrators/installation.html">Installation Guide</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle nav-item-toggle-level-2"></button>
+    <a class="nav-link nav-link-2" href="../../administrators/topics/index.html">Topic References</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../administrators/topics/customize_ckeditor_configs.html">CKEditor Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../administrators/topics/customize_admin_templates.html">Template Customization</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../administrators/topics/user_authentication.html">User Authentication</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle nav-item-toggle-level-1"></button>
+    <a class="nav-link nav-link-1" href="../../developers/index.html">Developers</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle nav-item-toggle-level-2"></button>
+    <span class="nav-text nav-text-2">Topics</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../developers/topics/documentation.html">Documentation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../developers/topics/encryption.html">Encryption</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link nav-link-3" href="../../developers/topics/internationalization.html">Internationalization</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">DDM</span>
+    <span class="version">main</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../../index.html">DDM</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../index.html">main</a>
+        </li>
+        <li class="version">
+          <a href="../../../develop/index.html">develop</a>
+        </li>
+        <li class="version">
+          <a href="../../../v1.0.19/index.html">v1.0.19</a>
+        </li>
+        <li class="version">
+          <a href="../../../v1.0.0/index.html">v1.0.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<!--
+-->
+<!-- <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../index.html">DDM</a></li>
+    <li><a href="../index.html">Researchers</a></li>
+    <li><a href="index.html">Topics</a></li>
+    <li><a href="apis.html">APIs</a></li>
+  </ul>
+</nav>
+ -->
+<!-- <div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">main</button>
+  <div class="version-menu">
+    <a class="version is-current" href="apis.html">main</a>
+    <a class="version" href="../../../develop/researchers/topics/apis.html">develop</a>
+    <a class="version is-missing" href="../../../v1.0.19/index.html">v1.0.19</a>
+    <a class="version is-missing" href="../../../v1.0.0/index.html">v1.0.0</a>
+  </div>
+</div>
+ -->
+<!--
+-->
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+  <nav class="breadcrumbs-article" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../index.html">DDM</a></li>
+    <li>        <a href="../index.html">Researchers</a>
+</li>
+    <li>        <a href="index.html">Topics</a>
+</li>
+    <li>        <span class="is-current">APIs</span>
+</li>
+  </ul>
+</nav>
+  <h1 class="page">APIs</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>DDM provides RESTful APIs to access specific components of data collected for a project. You can retrieve
+general information on a project configuration and its blueprints and participants, data donations, or
+questionnaire responses.</p>
+</div>
+<div class="paragraph">
+<p>Examples of use cases include:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Accessing specific data directly from your R or Python analysis scripts.</p>
+</li>
+<li>
+<p>Providing participants with personalized dashboards or reports containing insights based on the donated data. This can
+serve as an incentive for participation.</p>
+</li>
+<li>
+<p>Building custom dashboards to monitor the data collection in more detail.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_authentication"><a class="anchor" href="#_authentication"></a>Authentication</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The APIs use Token-based authentication, with each token linked to a specific project.
+Tokens must be generated via the web application (navigate to the <em>Project Hub &gt; Data Center &gt; Manage Access Token</em>).
+Tokens expire after a maximum of 90 days and must be renewed as needed.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_available_endpoints"><a class="anchor" href="#_available_endpoints"></a>Available Endpoints</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Currently, three API-endpoints are available for researchers: the Project Overview API, the Donations API,
+the Responses API, and the Delete Participant API.</p>
+</div>
+<div class="sect2">
+<h3 id="_project_overview_api"><a class="anchor" href="#_project_overview_api"></a>Project Overview API</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Description</dt>
+<dd>
+<p>Endpoint to fetch project-related metadata, including information participants, blueprint configuration,
+and project configuration.</p>
+</dd>
+<dt class="hdlist1">URL</dt>
+<dd>
+<p>/api/project/<code>project URL ID</code>/overview</p>
+</dd>
+<dt class="hdlist1">Allowed Methods</dt>
+<dd>
+<p><code>GET</code></p>
+</dd>
+<dt class="hdlist1">Request</dt>
+<dd>
+<p><strong>Headers:</strong></p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Header</th>
+<th class="tableblock halign-left valign-top">Required</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bearer token for authentication (supplied as <code>Token &lt;project API token&gt;</code>.</p></td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt class="hdlist1">Response</dt>
+<dd>
+<p><strong>Success Response (200)</strong>:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-JSON hljs" data-lang="JSON">{
+    "participants": [
+        {
+            "external_id": &lt;string - participant id&gt;,
+            "start_time": &lt;string - datetime as iso string&gt;,
+            "end_time": &lt;string - datetime as iso string&gt;,
+            "completed": &lt;boolean&gt;,
+            "extra_data": &lt;dictionary - holding any extra data saved in relation to the participant&gt;,
+            "current_step": &lt;integer - holding information on progress; 0=started, 1=briefing completed, 2=data donation completed, 3=questionnaire completed&gt;
+        },
+        {
+            &lt;...&gt;
+        }
+    ],
+    "blueprints": [
+        {
+            "id": &lt;integer - blueprint id&gt;,
+            "name": &lt;string - blueprint name&gt;,
+            "description": &lt;string - blueprint description&gt;,
+            "format": &lt;string - format&gt;,
+            "json_extraction_root": &lt;string - designation of the extraction root&gt;,
+            "expected_fields": &lt;list - of expected fields&gt;,
+            "exp_fields_regex_matching": &lt;boolean&gt;,
+            "fields_to_extract": &lt;list - of strings indicating the fields that are extracted by the blueprint&gt;,
+            "regex_path": &lt;string - indicating the path to the file in an uploaded zip container&gt;,
+            "filter_rules": &lt;list - of the filter rules applied to the uploaded donations&gt;,
+            "csv_delimiter": &lt;string - indicating the csv delimiter&gt;
+        },
+        {
+            &lt;...&gt;
+        }
+    ],
+    "project": {
+        "url_id": &lt;string - id of the project&gt;,
+        "name": &lt;string - project name&gt;,
+        "date_created": &lt;string - datetime as iso string&gt;,
+        "contact_information": &lt;string&gt;,
+        "data_protection_statement": &lt;string&gt;,
+        "slug": &lt;string - project slug&gt;,
+        "url_parameter_enabled": &lt;boolean&gt;&gt;,
+        "expected_url_parameters": &lt;string&gt;,
+        "active": &lt;boolean&gt;
+    },
+    "metadata": {
+        "n_blueprints": &lt;integer&gt;,
+        "n_participants": &lt;integer&gt;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Error Responses:</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Status Code</th>
+<th class="tableblock halign-left valign-top">Error Message</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">401</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Authentication failed.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The authentication token is missing or invalid.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">403</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Permission Denied.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The authentication failed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">404</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project not found.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No project could be found for the provided project URL ID.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">405</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Endpoint disabled for super secret projects.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This endpoint is currently not available for super secret projects.</p></td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt class="hdlist1">Example</dt>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">GET /api/project/KPHn7aw7/overview HTTPS
+Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+Host: &lt;hostname&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "participants": [
+        {
+            "external_id": "XWKAo60jQ1yqH4R1Pp7MRl5b",
+            "start_time": "2025-01-14T15:37:26.349500+01:00",
+            "end_time": null,
+            "completed": false,
+            "extra_data": {"url_param": {}},
+            "current_step": 1
+        },
+        {
+            "external_id": "3sJhlxVDGaarD2BAiMjYGXxP",
+            # &lt;...&gt;
+            "extra_data": {"url_param": {}}
+        }
+    ],
+    "blueprints": [
+        {
+            "id": 1,
+            "name": "donation blueprint",
+            "description": null,
+            "format": "json",
+            "json_extraction_root": "",
+            "expected_fields": ["a", "b"],
+            "exp_fields_regex_matching": false,
+            "fields_to_extract": [],
+            "regex_path": null,
+            "filter_rules": [],
+            "csv_delimiter": ""
+        },
+        {
+            "id": 2,
+            # &lt;...&gt;
+            "csv_delimiter": ""
+        }
+    ],
+    "project": {
+        "url_id": "96kJT3b2",
+        "name": "Base Project",
+        "date_created": "2025-01-14T15:52:33.369407+01:00",
+        "contact_information": "Contact Infos",
+        "data_protection_statement": "Some Statement",
+        "slug": "base",
+        "url_parameter_enabled": false,
+        "expected_url_parameters": "",
+        "active": true
+    },
+    "metadata": {
+        "n_blueprints": 2,
+        "n_participants": 2
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_donations_api"><a class="anchor" href="#_donations_api"></a>Donations API</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Description</dt>
+<dd>
+<p>Retrieve data donations for a given donation project.</p>
+</dd>
+<dt class="hdlist1">URL</dt>
+<dd>
+<p>/api/project/<code>project URL ID</code>/donations</p>
+</dd>
+<dt class="hdlist1">Allowed Methods</dt>
+<dd>
+<p><code>GET</code></p>
+</dd>
+<dt class="hdlist1">Request</dt>
+<dd>
+<p><strong>URL Parameters:</strong></p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Required</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>participants</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A comma-separated list of <em>external participant IDs</em> for which the donations should be returned (e.g., "id1,id2,id3").</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>blueprints</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A comma-separated list of <em>Blueprint IDs</em> for which the donations should be returned. If not specified, donations
+for all blueprints associated with the project are returned.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Headers:</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Header</th>
+<th class="tableblock halign-left valign-top">Required</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bearer token for authentication (supplied as <code>Token &lt;project API token&gt;</code>.</p></td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt class="hdlist1">Response</dt>
+<dd>
+<p><strong>Success Response (200)</strong>:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-JSON hljs" data-lang="JSON">{
+   "blueprints": {
+      "&lt;str - first blueprint id&gt;": {
+         "blueprint_name": &lt;string - blueprint name&gt;,
+         "donations": [
+            {
+               "participant": &lt;string - participant id&gt;,
+               "data": &lt;list - holding extracted datapoints&gt;,
+               "time_submitted": &lt;string - datetime as iso string&gt;,
+               "status": &lt;string - information on donation status&gt;,
+               "consent": &lt;boolean - whether participant has consented to the donation&gt;
+            },
+            {
+               &lt;...&gt;
+            }
+         ]
+      },
+      "&lt;str - second blueprint id&gt;":{
+        &lt;...&gt;
+      }
+   },
+   "metadata": {}
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Error Responses:</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Status Code</th>
+<th class="tableblock halign-left valign-top">Error Message</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">401</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Authentication failed.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The authentication token is missing or invalid.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">403</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Permission Denied.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The authentication failed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">404</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project not found.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No project could be found for the provided project URL ID.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">405</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Endpoint disabled for super secret projects.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This endpoint is currently not available for super secret projects.</p></td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt class="hdlist1">Example</dt>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">GET /api/project/KPHn7aw7/donations HTTPS
+Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+Host: &lt;hostname&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "blueprints": {
+        "1": {
+            "blueprint_name": "donation blueprint",
+            "donations": [
+                {
+                    "participant": "riZVabtDI5jCpO6tvQQOTG6A",
+                    "data": ["data1_pA_bpA", "data2_pA_bpA"],
+                    "time_submitted": "2025-01-15T09:16:36.453322+01:00",
+                    "status": "{}",
+                    "consent": true
+                },
+                {
+                    "participant": "wm2tpQIFFIWaqYbgizwTif8S",
+                    "data": ["data1_pB_bpA", "data2_pB_bpA"],
+                    "time_submitted": "2025-01-15T09:16:36.456329+01:00",
+                    "status": "{}",
+                    "consent": true}]
+                }
+        },
+        "2": {
+            "blueprint_name": "donation blueprint",
+            "donations": [
+                {
+                    "participant": "4CovG8u7QWZyQGJ5UX5zfzUV",
+                    "data": ["data1_pA_bpB", "data2_pA_bpB"],
+                    "time_submitted": "2025-01-15T09:19:55.397809+01:00",
+                    "status": "{}",
+                    "consent": true
+                },
+                {
+                    "participant": "wm2tpQIFFIWaqYbgizwTif8S",
+                    "data": ["data1_pB_bpB", "data2_pB_bpB"],
+                    "time_submitted": "2025-01-15T09:16:36.456329+01:00",
+                    "status": "{}",
+                    "consent": true}]
+                }
+            ]
+        }
+    },
+    "metadata": {
+        "n_blueprints": 2
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">GET /api/project/KPHn7aw7/donations?participants=1,2&amp;blueprints=1 HTTPS
+Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+Host: &lt;hostname&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "blueprints": {
+        "1": {
+            "blueprint_name": "donation blueprint",
+            "donations": [
+                {
+                    "participant": "riZVabtDI5jCpO6tvQQOTG6A",
+                    "data": ["data1_pA_bpA", "data2_pA_bpA"],
+                    "time_submitted": "2025-01-15T09:16:36.453322+01:00",
+                    "status": "{}",
+                    "consent": true
+                },
+                {
+                    "participant": "wm2tpQIFFIWaqYbgizwTif8S",
+                    "data": ["data1_pB_bpA", "data2_pB_bpA"],
+                    "time_submitted": "2025-01-15T09:16:36.456329+01:00",
+                    "status": "{}",
+                    "consent": true
+                }
+            ]
+        }
+    },
+    "metadata": {
+        "n_blueprints": 1
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_responses_api"><a class="anchor" href="#_responses_api"></a>Responses API</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Description</dt>
+<dd>
+<p>Retrieve questionnaire responses collected in a given donation project.</p>
+</dd>
+<dt class="hdlist1">URL</dt>
+<dd>
+<p>/api/project/<code>project URL ID</code>/responses</p>
+</dd>
+<dt class="hdlist1">Allowed Methods</dt>
+<dd>
+<p><code>GET</code></p>
+</dd>
+<dt class="hdlist1">Request</dt>
+<dd>
+<p><strong>URL Parameters:</strong></p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Required</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>participants</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A comma-separated list of <em>external participant IDs</em> for which the donations should be returned. If not
+specified, donations for all participants associated with a project will be
+returned.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>include_snapshot</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If include_snapshot is 'true', the API response will include a snapshot of the questionnaire configuration at the time
+the questionnaire was completed for each participant. Otherwise, the snapshot will be omitted.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Headers:</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Header</th>
+<th class="tableblock halign-left valign-top">Required</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bearer token for authentication (supplied as <code>Token &lt;project API token&gt;</code>.</p></td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt class="hdlist1">Response</dt>
+<dd>
+<p><strong>Success Response (200)</strong>:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-JSON hljs" data-lang="JSON">{
+  "responses": [
+    {
+      "participant": &lt;string - id of participant&gt;,
+      "response_data": &lt;dictionary - consisting of variable_name:answer_value pairs&gt;,
+      "time_submitted": &lt;string - datetime as iso string&gt;,
+      "questionnaire_snapshot": &lt;dictionary - holding information on the questionnaire configuration at time_submitted&gt;,
+    }
+  ],
+  "metadata": {
+    "n_responses": &lt;int - number of responses&gt;
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Error Responses:</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Status Code</th>
+<th class="tableblock halign-left valign-top">Error Message</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">401</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Authentication failed.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The authentication token is missing or invalid.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">403</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Permission Denied.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The authentication failed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">404</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project not found.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No project could be found for the provided project URL ID.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">405</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Endpoint disabled for super secret projects.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This endpoint is currently not available for super secret projects.</p></td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt class="hdlist1">Example</dt>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">GET /api/project/KPHn7aw7/responses HTTPS
+Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+Host: &lt;hostname&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "responses": [
+        {
+            "participant": "T1qPRp6oOuyYkptNODlegD3h",
+            "response_data": {"varname_question_a": "response_data"}
+            "time_submitted": "2025-01-14T13:19:21.998413+01:00"
+        },
+        {
+            "participant": "cSCslglsu2Mv0j0ryz8lGrcA",
+            "responses": {"varname_question_a": "response_data2"}}
+            "time_submitted": "2025-01-14T13:19:21.998413+01:00",
+    ],
+    "metadata": {"n_responses": 2}
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">GET /api/project/KPHn7aw7/responses?participants=cSCslglsu2Mv0j0ryz8lGrcA&amp;include_snapshot=true HTTPS
+Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+Host: &lt;hostname&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "responses": [
+        {
+            "participant": "cSCslglsu2Mv0j0ryz8lGrcA",
+            "responses": {"varname_question_a": "response_data2"}}
+            "time_submitted": "2025-01-14T13:19:21.998413+01:00",
+            "questionnaire_snapshot": {"1": {"response": "response_data2", "question": "question text", "items": []}},
+    ],
+    "metadata": {"n_responses": 1}
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_delete_participant_api"><a class="anchor" href="#_delete_participant_api"></a>Delete Participant API</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Description</dt>
+<dd>
+<p>Delete a specific participant including the related responses and donations from the database.</p>
+</dd>
+<dt class="hdlist1">URL</dt>
+<dd>
+<p>/api/project/<code>project URL ID</code>/participant/<code>participant_id</code>/delete</p>
+</dd>
+<dt class="hdlist1">Allowed Methods</dt>
+<dd>
+<p><code>DELETE</code></p>
+</dd>
+<dt class="hdlist1">Request</dt>
+<dd>
+<p><strong>URL Parameters:</strong> No parameters supported for this endpoint.</p>
+<div class="paragraph">
+<p><strong>Headers:</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Header</th>
+<th class="tableblock halign-left valign-top">Required</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bearer token for authentication (supplied as <code>Token &lt;project API token&gt;</code>.</p></td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt class="hdlist1">Response</dt>
+<dd>
+<p><strong>Success Response (200)</strong>:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-JSON hljs" data-lang="JSON">{
+  "message": "Participant with external id '&lt;participant ID&gt;' successfully deleted."
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Error Responses:</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Status Code</th>
+<th class="tableblock halign-left valign-top">Error Message</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">401</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Authentication failed.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The authentication token is missing or invalid.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">403</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Permission Denied.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The authentication failed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">404</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project not found.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No participant could be found for the provided ID.</p></td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt class="hdlist1">Example</dt>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">DELETE /api/project/KPHn7aw7/participant/I8RohmYJrcaCLxHP1bnEuuHn/delete HTTPS
+Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+Host: &lt;hostname&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "message": "Participant with external id 'I8RohmYJrcaCLxHP1bnEuuHn' successfully deleted."
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_python_example"><a class="anchor" href="#_python_example"></a>Python Example</h2>
+<div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Example will be added shortly.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_r_example"><a class="anchor" href="#_r_example"></a>R Example</h2>
+<div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Example will be added shortly.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+  <nav class="pagination">
+  <span class="prev"><a href="index.html">Topics</a></span>
+  <span class="next"><a href="continuation.html">Continuation</a></span>
+</nav>
+</article>
+  </div>
+</main>
+<div id="overlay"></div>
+</div>
+<footer class="footer">
+  <div class="footer-content-bite"><a href="https://datadonation.uzh.ch"><img src="../../../../_/img/DataDonationLab_Logo_Schwarz.svg" height="50px"></a></div>
+  <div class="footer-content-bite">© Data Donation Lab, 2023-present</div>
+  <div class="footer-content-bite"><a href="https://github.com/uzh/ddm">DDM on GitHub</a></div>
+</footer>
+<script id="site-script" src="../../../../_/js/site.js" data-ui-root-path="../../../../_"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+<script src="../../../../_/js/vendor/lunr.js"></script>
+<script src="../../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../../.." data-snippet-length="100" data-stylesheet="../../../../_/css/search.css"></script>
+<script async src="../../../../search-index.js"></script>
+  </body>
+</html>

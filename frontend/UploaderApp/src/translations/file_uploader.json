@@ -28,7 +28,7 @@
     "error-regex-not-matched": "The provided zip container does not contain the matching file.",
     "error-json-syntax": "The provided file contains a syntax error.",
     "error-wrong-file-type": "The provided file is of type '{actualType}' but '{expectedType}' is expected.",
-    "error-all-fields-filtered-out": "All entries were filtered out and deleted.",
+    "error-all-fields-filtered-out": "All entries were filtered out.",
     "error-no-data-in-file": "There was no information about this in the file.",
     "extraction-failed": "Information could not be extracted from uploaded file",
     "partial-upload-status": "Only partially uploaded",

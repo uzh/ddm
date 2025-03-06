@@ -258,10 +258,9 @@ export default {
 }
 .question-container {
   font-size: 1rem;
-  margin: 0px 20%;
-  border-bottom: 1px solid lightgray;
-  padding-bottom: 50px;
-  padding-top: 50px;
+  border-bottom: 2px solid #b8b8b8;
+  padding-bottom: 100px;
+  padding-top: 100px;
 }
 @media (max-width: 992px) {
   .question-container {
@@ -270,8 +269,7 @@ export default {
 }
 
 .question-body {
-  padding-left: 30px;
-  padding-right: 30px;
+  text-align: center;
 }
 .flow-navigation {
   padding-top: 50px;
@@ -289,5 +287,15 @@ export default {
 }
 .show {
   display: block !important;
+}
+@media (min-width: 769px) {
+  .question-container {
+    margin: 0 8%;
+  }
+  .question-body {
+    text-align: left;
+    padding-left: 25px;
+    padding-right: 25px;
+  }
 }
 </style>

@@ -1,9 +1,10 @@
 <template>
   <div>
     <div v-html="text"></div>
-    <div :id="'answer-' + qid" class="question-response-body">
+    <div :id="'answer-' + qid">
       <template v-if="options.input_type === 'text'">
         <input v-if="options.display === 'small'"
+               class="oq-input"
                type="text"
                :name="qid"
                :maxlength="getMaxLength"
@@ -18,6 +19,7 @@
 
       <template v-else-if="options.input_type === 'numbers'">
         <input type="text"
+               class="oq-input"
                v-only-digits
                :name="qid"
                :maxlength="getMaxLength"
@@ -27,6 +29,7 @@
 
       <template v-else-if="options.input_type === 'email'">
         <input type="email"
+               class="oq-input"
                v-valid-email
                :name="qid"
                :maxlength="getMaxLength"
@@ -110,12 +113,30 @@ export default {
   font-size: 0.8rem;
   color: grey;
 }
+.oq-input {
+  width: 80%;
+}
 .invalid-email {
-  border: 2px solid red !important;
+  border: 2px solid #c51c00 !important;
   border-radius: 3px;
 }
 .hint-invalid-input {
-  color: red;
+  color: #c51c00;
   display: none;
+}
+.open-question-textarea {
+	resize: none;
+	width: 100%;
+	min-height: 150px;
+	border-radius: 3px;
+	border: 1px solid gray;
+	padding: 10px;
+	font-size: 0.9rem;
+}
+
+@media (min-width: 769px) {
+  .oq-input {
+    width: 50%;
+  }
 }
 </style>

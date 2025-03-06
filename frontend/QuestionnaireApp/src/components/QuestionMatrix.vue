@@ -10,7 +10,7 @@
         <div class="scale-container">
           <div v-for="(point, id) in scale"
                :key="id"
-               :class="['scale-label-container', { 'main-scale': !point.add_border, 'secondary-scale': point.add_border }]">
+               :class="['scale-label-container', { 'main-scale': !point.secondary_point, 'secondary-scale': point.secondary_point }]">
             <input type="radio"
                    :id="this.qid + '-' + item.id + '-' + point.value"
                    :name="item.id"
@@ -18,7 +18,7 @@
                    @change="responseChanged($event)">
             <label :for="this.qid + '-' + item.id + '-' + point.value"
                    class="scale-label"
-                   :class="{ 'main-label': !point.add_border }">
+                   :class="{ 'main-label': !point.secondary_point }">
               <span class="scale-label-span" v-html="point.label"></span>
             </label>
           </div>

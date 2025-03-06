@@ -474,7 +474,7 @@ class ScalePoint(models.Model):
         blank=True
     )
     value = models.IntegerField()
-    add_border = models.BooleanField(default=False)
+    secondary_point = models.BooleanField(default=False)
 
     def serialize_to_config(self):
         scale_config = model_to_dict(self, exclude=['question'])

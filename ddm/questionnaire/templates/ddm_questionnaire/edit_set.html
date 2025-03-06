@@ -19,7 +19,7 @@
         <th
             {% if field.label in "Index,Value" %}
               class="num-input-col"
-            {% elif field.label in "Randomize,Löschen,Add border,Delete" or field.label == "Löschen" %}
+            {% elif field.label in "Randomize,Löschen,Delete,delete,Secondary point" or field.label == "Löschen" or field.label == "Delete" %}
               class="check-input-col"
             {% endif %}
         >{{ field.label }}</th>
@@ -66,4 +66,3 @@
 <a href="{% url 'ddm_questionnaire:edit' project_url_id question.question_type question.pk %}">Question</a> /
 Items
 {% endblock %}
-

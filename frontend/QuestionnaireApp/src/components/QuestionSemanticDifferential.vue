@@ -11,7 +11,7 @@
 
         <div class="scale-container">
           <template v-for="(point, id) in scale">
-            <div v-if="!point.add_border"
+            <div v-if="!point.secondary_point"
                  :key="id"
                  class="scale-label-container main-scale">
               <input type="radio"
@@ -21,7 +21,7 @@
                      @change="responseChanged($event)">
               <label :for="this.qid + '-' + item.id + '-' + point.value"
                      class="scale-label"
-                     :class="{ 'main-label': !point.add_border }">
+                     :class="{ 'main-label': !point.secondary_point }">
                 <span class="scale-label-span" v-html="point.label"></span>
               </label>
             </div>
@@ -32,7 +32,7 @@
 
         <div class="scale-container scale-container-secondary">
           <template v-for="(point, id) in scale">
-            <div v-if="point.add_border"
+            <div v-if="point.secondary_point"
                  :key="id"
                  class="scale-label-container secondary-scale">
               <input type="radio"
@@ -42,7 +42,7 @@
                      @change="responseChanged($event)">
               <label :for="this.qid + '-' + item.id + '-' + point.value"
                      class="scale-label"
-                     :class="{ 'main-label': !point.add_border }">
+                     :class="{ 'main-label': !point.secondary_point }">
                 <span class="scale-label-span" v-html="point.label"></span>
               </label>
             </div>

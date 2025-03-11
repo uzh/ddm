@@ -1,4 +1,5 @@
 {% extends "ddm_core/page_with_form.html" %}
+{% load static %}
 
 {% block page_title %}Edit {{ context_title }}{% endblock %}
 
@@ -8,7 +9,7 @@
 <form method="post">
   {% csrf_token %}
   {{ formset.management_form }}
-  <table class="table mt-4 item-set-table border-bottom">
+  <table class="table mt-4 item-set-table border-bottom" id="formset-table">
 
     {% for form in formset.forms %}
 
@@ -34,25 +35,22 @@
 
     <tr class="border-bottom-0">
       {% for field in form.visible_fields %}
-      <td class="border-bottom-0 {% if forloop.parentloop.last %}bg-light{% endif %}">
+      <td class="border-bottom-0">
         {% if forloop.first %}
         {% for hidden in form.hidden_fields %}
         {{ hidden }}
         {% endfor %}
         {% endif %}
         {{ field.errors.as_ul }}
-        {% if forloop.last and forloop.parentloop.last %}
-          new
-        {% else %}
         {{ field }}
-        {% endif %}
       </td>
       {% endfor %}
     </tr>
 
     {% endfor %}
   </table>
-  <input class="ddm-btn" type="submit" value="Update or add {{ context_title }}">
+  <button class="ddm-btn" type="button" id="add-form">Add {{ context_title }}</button>
+  <input class="ddm-btn" type="submit" value="Save">
   <p class="mt-3">
     <a href="{% url 'ddm_questionnaire:edit' project_url_id question.question_type question.pk %}">&#129040; Back</a>
   </p>
@@ -67,3 +65,7 @@
 Items
 {% endblock %}
 
+{% block scripts %}
+{{ block.super }}
+<script src="{% static 'ddm_questionnaire/js/add_formset.js' %}"></script>
+{% endblock %}

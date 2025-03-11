@@ -937,8 +937,7 @@ export default {
       let nSuccess = 0;
       let nFailed = 0;
       let nBlueprints = Object.keys(this.blueprintData).length;
-      console.log(this.generalErrors)
-      console.log(this.generalErrors.length)
+
       for (let bp in this.blueprintData){
         if (this.generalErrors.length !== 0) {
           this.blueprintData[bp].status = 'failed';
@@ -969,7 +968,19 @@ export default {
       this.$nextTick(function () {
         let modalIcon = document.getElementById('ul-modal-info-icon');
 
-        if (nSuccess === nBlueprints) {
+        if (nFailed === nBlueprints) {
+          this.uploadStatus = 'failed';
+          modalIcon.className = 'bi bi-x-octagon text-danger';
+          this.ulModalInfoTitle = this.$t('ul-failed-modal-title');
+          this.ulModalInfoMsg = this.$t('ul-failed-modal-body');
+
+          for (let bp in this.blueprintData){
+            this.blueprintData[bp].status = 'failed';
+          }
+          this.$refs.ulInfoModal.style.display = 'block';
+          this.$refs.modalBackdrop.style.display = 'block';
+        }
+        else if (nSuccess === nBlueprints) {
           this.uploadStatus = 'success';
           modalIcon.className = 'bi bi-file-check text-success';
           this.ulModalInfoTitle = this.$t('ul-success-modal-title');
@@ -984,23 +995,11 @@ export default {
           this.$refs.ulInfoModal.style.display = 'block';
           this.$refs.modalBackdrop.style.display = 'block';
 
-        } else if ((nSuccess + nNothingExtracted) === nBlueprints) {
+        } else {
           this.uploadStatus = 'success';
           modalIcon.className = 'bi bi-file-check text-success';
           this.ulModalInfoTitle = this.$t('ul-success-modal-title');
           this.ulModalInfoMsg = this.$t('ul-success-modal-body');
-
-        } else {
-          this.uploadStatus = 'failed';
-          modalIcon.className = 'bi bi-x-octagon text-danger';
-          this.ulModalInfoTitle = this.$t('ul-failed-modal-title');
-          this.ulModalInfoMsg = this.$t('ul-failed-modal-body');
-
-          for (let bp in this.blueprintData){
-            this.blueprintData[bp].status = 'failed';
-          }
-          this.$refs.ulInfoModal.style.display = 'block';
-          this.$refs.modalBackdrop.style.display = 'block';
         }
       });
     },

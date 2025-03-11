@@ -1,6 +1,14 @@
 # Changelog
 
-## 2.0 - 2025-02-27
+## 2.0.1 - 2025-03-11
+
+### Fixed
+- Resolve incorrect status updates causing data display issues when an upload contains failed, all-filtered-out, and successful blueprint extractions at the same time (participation data donation view). ([`6e539b7`](https://github.com/uzh/ddm/commit/6e539b7)
+- Instead of adding extra forms to QuestionItem and ScalePoint edit formsets, add button to add extra forms with JavaScript if needed. This prevents validation errors on unneeded extra forms with prefilled values. ([`5ff8503`](https://github.com/uzh/ddm/commit/5ff8503).
+- Fix typos in description of responses API. ([`5f51ba1`](https://github.com/uzh/ddm/commit/5f51ba1)
+
+
+## 2.0.0 - 2025-02-27
 
 This release marks a significant update, restructuring the codebase to enhance the maintainability and scalability of DDM. 
 The application has been modularized into smaller sub-apps, each focused on a specific aspect of the application logic. 

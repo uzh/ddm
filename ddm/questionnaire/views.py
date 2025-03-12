@@ -198,7 +198,7 @@ class InlineFormsetMixin(ProjectMixin):
     def get_formset(self):
         formset = inlineformset_factory(
             QuestionBase, self.formset_model, exclude=self.get_excluded_fields(),
-            extra=1
+            extra=0
         )
         if self.request.method == "GET":
             initial_data = self.get_initial_extra_data()
@@ -222,13 +222,6 @@ class ItemEdit(SuccessMessageMixin, DDMAuthMixin, InlineFormsetMixin, UpdateView
     context_title = 'Items'
     success_message = 'Question items updated.'
 
-    def get_initial_extra_data(self):
-        """ Placeholder function to overwrite in views. """
-        question = self.get_object()
-        index = question.questionitem_set.aggregate(max=Max('index'))['max']
-        index = (index or 0) + 1
-        return [{'index': index}]
-
     def get_success_url(self):
         question = self.get_object()
         success_kwargs = {
@@ -246,13 +239,6 @@ class ScaleEdit(SuccessMessageMixin, DDMAuthMixin, InlineFormsetMixin, UpdateVie
     template_name = 'ddm_questionnaire/edit_set.html'
     context_title = 'Scale Points'
     success_message = 'Question scale updated.'
-
-    def get_initial_extra_data(self):
-        """ Placeholder function to overwrite in views. """
-        question = self.get_object()
-        index = question.scalepoint_set.aggregate(max=Max('index'))['max']
-        index = (index or 0) + 1
-        return [{'index': index}]
 
     def get_success_url(self):
         question = self.get_object()

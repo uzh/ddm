@@ -1,6 +1,18 @@
 # Changelog
 
-## 2.0 - 2025-02-27
+## 2.0.1 - 2025-03-11
+
+### Fixed
+- Resolve incorrect status updates causing data display issues when an upload contains failed, all-filtered-out, and successful blueprint extractions at the same time (participation data donation view). ([`6e539b7`](https://github.com/uzh/ddm/commit/6e539b7, [`013e69c`](https://github.com/uzh/ddm/commit/013e69c)
+- Instead of adding extra forms to QuestionItem and ScalePoint edit formsets, add button to add extra forms with JavaScript if needed. This prevents validation errors on unneeded extra forms with prefilled values. ([`5ff8503`](https://github.com/uzh/ddm/commit/5ff8503).
+- Fix typos in description of responses API. ([`5f51ba1`](https://github.com/uzh/ddm/commit/5f51ba1)
+
+### Update Guide
+
+Run `python manage.py collectstatic` after upgrading to DDM v2.0.1 from a previous version.
+
+
+## 2.0.0 - 2025-02-27
 
 This release marks a significant update, restructuring the codebase to enhance the maintainability and scalability of DDM. 
 The application has been modularized into smaller sub-apps, each focused on a specific aspect of the application logic. 
@@ -68,7 +80,6 @@ Since the structure of the models in the questionnaire app remains unchanged, re
 - **Deprecated Function:** 
 The `ddm.auth.user_is_allowed` function has been removed in v2.0. Replace it with `ddm_auth.utils.user_has_project_access`.
 
-
 ### Migration Guide
 
 To migrate from 1.x to 2.0, follow the installation steps outlined in the updated administrator documentation, 
@@ -80,6 +91,10 @@ If you have integrated DDM functionality into your own code, ensure the followin
 - **Update URL References:** URL patterns have been renamed, and URL namespaces have been introduced for each sub-app.
 - **Update Template and Static File Paths:** Templates and static files have been reorganized, with resources now 
 housed in their respective sub-app directories instead of the top-level.
+
+### Update Guide
+
+Run `python manage.py migrate` and `python manage.py collectstatic` after upgrading to DDM v2.0.0 from a previous version.
 
 
 ## 1.0.19 - 2024-09-21

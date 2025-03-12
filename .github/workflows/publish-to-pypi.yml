@@ -83,6 +83,9 @@ jobs:
       - name: Generate Site
         run: npx antora docs/antora-playbook.yml
 
+      - name: Install Antora Extensions
+        run: npm i @antora/lunr-extension
+
       - name: Publish to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -116,11 +119,3 @@ jobs:
         with:
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
-
-      - name: Dispatch signal to DDL
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.PERSONAL_WORKFLOW_TOKEN }}
-          repository: uzh/ddl
-          event-type: new-ddm-version
-          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'

@@ -104,6 +104,11 @@ participants choose to ignore the input hint.
 ====
 
 
+=== Matrix Question
+
+Show scale headings:: Option to show/hide scale headings.
+
+
 === Question Items
 
 For Single Choice Questions, Multiple Choice Questions, Matrix Questions and Semantic Differentials,
@@ -138,7 +143,10 @@ the question items) with the configured question scale.
 
 Index:: Defines the order in which the items are displayed.
 
-Label:: The label/text that is displayed to participants associated to the scale point.
+Input label:: The text that is displayed within the scale-points/input-buttons.
+
+Heading label:: The text that is displayed above the scale-points/input-buttons (currently, only possible for
+Matrix Questions).
 
 Value:: Used to indicate which scale point has been selected in the data export.
 
@@ -147,3 +155,11 @@ This is useful to, e.g., offer a "Don't know" option to participants that is vis
 
 Delete:: Tick this box if the scale point should be deleted. The scale point
 will be deleted as soon as you click on _Update Scale Points_.
+
+[TIP]
+====
+When you have long labels on Question Items or Scale Points, or you have many scale points, it is a good practice to
+define optional word-breaks in your labels. To do so, you can use the html code `\&shy;`, which will break the word
+in this position with a hyphen if there is not enough space to render the complete word. E.g., "un\&shy;decided" will
+be rendered as "un- decided" if the whole word does not fit on one line.
+====

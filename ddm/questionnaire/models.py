@@ -364,6 +364,13 @@ class OpenQuestion(QuestionBase):
 class MatrixQuestion(ScaleMixin, ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.MATRIX
 
+    show_scale_headings = models.BooleanField(default=False)
+
+    def create_config(self):
+        config = super().create_config()
+        config['options']['show_scale_headings'] = self.show_scale_headings
+        return config
+
     def validate_response(self, response):
         """
         Expects the response to be a dictionary of the form:
@@ -468,11 +475,19 @@ class ScalePoint(models.Model):
         on_delete=models.CASCADE
     )
     index = models.IntegerField()
-    label = models.CharField(
+
+    input_label = models.CharField(
         max_length=100,
         null=True,
         blank=True
     )
+
+    heading_label = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True
+    )
+
     value = models.IntegerField()
     secondary_point = models.BooleanField(default=False)
 

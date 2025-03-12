@@ -52,6 +52,7 @@
               :text="question.text"
               :items="question.items"
               :scale="question.scale"
+              :options="question.options"
               @responseChanged="updateResponses"
               class="question-body"
           ></MatrixQuestion>

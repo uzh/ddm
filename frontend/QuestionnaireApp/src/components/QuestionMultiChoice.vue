@@ -102,7 +102,7 @@ input[type="checkbox"]:checked + label .span-check-icon {
   -moz-appearance: none;
   appearance: none;
   -webkit-print-color-adjust: exact;
-  color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 .span-check-icon {

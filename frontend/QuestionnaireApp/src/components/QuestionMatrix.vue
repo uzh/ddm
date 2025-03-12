@@ -5,22 +5,47 @@
     <div>
       <template v-for="(item, id) in items" :key="id">
 
-      <div :id="'answer-item-' + item.id" class="item-container">
-        <div class="item-label-container" v-html="item.label"></div>
-        <div class="scale-container">
-          <div v-for="(point, id) in scale"
-               :key="id"
-               :class="['scale-label-container', { 'main-scale': !point.secondary_point, 'secondary-scale': point.secondary_point }]">
-            <input type="radio"
-                   :id="this.qid + '-' + item.id + '-' + point.value"
-                   :name="item.id"
-                   :value="point.value"
-                   @change="responseChanged($event)">
-            <label :for="this.qid + '-' + item.id + '-' + point.value"
-                   class="scale-label"
-                   :class="{ 'main-label': !point.secondary_point }">
-              <span class="scale-label-span" v-html="point.label"></span>
-            </label>
+      <div class="item-separate-line"
+           :class="{ 'show': scale.length > 9}"
+           v-html="item.label"></div>
+
+      <div :id="'answer-item-' + item.id" class="mq-item-container">
+        <div v-if="options.show_scale_headings" class="heading-container">
+          <div class="item-label-container item-label-placeholder"
+               :class="{ 'hidden': scale.length > 9}"
+               v-html="item.label">
+          </div>
+          <div class="scale-container scale-heading-container">
+            <div v-for="(point, id) in scale"
+                   :key="id"
+                   :class="['scale-label-container', { 'main-scale': !point.secondary_point, 'secondary-scale': point.secondary_point }]">
+              <div class="scale-label scale-label-mockup">
+                <span class="scale-label-span" v-html="point.heading_label"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="response-container">
+          <div class="item-label-container"
+               :class="{ 'hidden': scale.length > 9}"
+               v-html="item.label">
+          </div>
+          <div class="scale-container scale-input-container">
+            <div v-for="(point, id) in scale"
+                 :key="id"
+                 :class="['scale-label-container', { 'main-scale': !point.secondary_point, 'secondary-scale': point.secondary_point }]">
+              <input type="radio"
+                     :id="this.qid + '-' + item.id + '-' + point.value"
+                     :name="item.id"
+                     :value="point.value"
+                     @change="responseChanged($event)">
+              <label :for="this.qid + '-' + item.id + '-' + point.value"
+                     class="scale-label"
+                     :class="{ 'main-label': !point.secondary_point }">
+                <span class="scale-label-span" v-html="point.input_label"></span>
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -33,7 +58,7 @@
 <script>
 export default {
   name: 'MatrixQuestion',
-  props: ['qid', 'text', 'items', 'scale'],
+  props: ['qid', 'text', 'items', 'scale', 'options'],
   emits: ['responseChanged'],
   data: function() {
     return {
@@ -62,8 +87,8 @@ export default {
       this.response[event.target.name] = event.target.value;
       this.$emit('responseChanged', {id: this.qid, response: this.response, question: this.text, items: this.items});
 
-      // Scroll to next <tr> if it exists. TODO
-      const currentRow = event.target.closest('div.item-container');
+      // Scroll to next item if it exists.
+      const currentRow = event.target.closest('div.mq-item-container');
       if (currentRow) {
         const nextRow = currentRow.nextElementSibling;
         if (this.shouldScroll && nextRow) {
@@ -72,8 +97,7 @@ export default {
       }
     },
     addClasses() {
-      const containers = document.querySelectorAll('.item-container');
-
+      const containers = document.querySelectorAll('.scale-container');
       containers.forEach(container => {
         const mainScales = container.querySelectorAll('.main-scale');
 
@@ -98,6 +122,51 @@ export default {
 </script>
 
 <style scoped>
+
+.hidden {
+  display: none !important;
+}
+
+.show {
+  display: block !important;
+}
+
+.heading-container {
+  width: auto;
+  min-width: 10%;
+  max-width: 30%;
+}
+
+.heading-container .scale-label-container {
+  width: auto !important;
+}
+
+.response-container {
+  width: auto;
+  min-width: 40%;
+  max-width: 70%;
+}
+
+.mq-item-container {
+  display: flex;
+  padding-bottom: 50px;
+  justify-content: center;
+}
+
+.item-separate-line {
+  margin-bottom: 15px;
+  padding-top: 25px;
+  border-bottom: 1px solid lightgray;
+}
+
+.scale-heading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  padding-right: 10px;
+  width: auto;
+}
+
 .item-container {
   display: flex;
   flex-direction: column;
@@ -109,8 +178,21 @@ export default {
   margin: auto;
 }
 
+.item-label-placeholder {
+  opacity: 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 .item-label-container {
+  display: none;
   padding-bottom: 15px;
+}
+
+.scale-container {
+  font-size: 0.9rem;
 }
 
 .scale-label-container {
@@ -128,18 +210,34 @@ export default {
   text-align: center;
   background: #eaeaea;
   text-wrap: auto;
-  word-wrap: break-word;
+  word-break: break-word;
   overflow-wrap: break-word;
   white-space: normal;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 25px;
+  min-height: 40px;
   font-size: 0.9rem;
 }
 
 .scale-label:hover {
   background: #cfcfcf;
+}
+
+.scale-label-mockup {
+  background: none !important;
+  cursor: auto;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  width: auto !important;
+  text-align: right;
+  padding: 0;
+}
+
+.scale-label-mockup:hover {
+  background: none !important;
 }
 
 .main-scale {}
@@ -170,9 +268,38 @@ input[type="radio"]:checked + label {
 }
 
 @media (min-width: 769px) {
-  .item-container {
+  .mq-item-container {
+    display: block;
+    padding-bottom: 0;
+  }
+
+  .item-separate-line {
+    display: none;
+  }
+
+  .item-label-container {
+    display: block;
+    padding-bottom: 15px;
+  }
+
+  .heading-container {
     display: flex;
     flex-direction: row;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .response-container {
+    display: flex;
+    flex-direction: row;
+    padding-bottom: 25px;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .item-container {
+    display: flex;
+    flex-direction: column;
     align-items: center;
     padding-bottom: 20px;
     padding-top: 20px;
@@ -183,10 +310,19 @@ input[type="radio"]:checked + label {
   .scale-container {
     display: flex;
     flex-direction: row;
-    align-items: stretch;
-    min-height: 25px;
+    min-height: 40px;
     width: 100%;
     height: 100%;
+  }
+
+  .scale-heading-container {
+    align-items: flex-end;
+    text-align: center;
+    padding-right: 0;
+  }
+
+  .scale-input-container {
+    align-items: stretch;
   }
 
   .scale-label-container {
@@ -195,19 +331,30 @@ input[type="radio"]:checked + label {
     padding-left: 2px;
     padding-right: 2px;
     text-wrap: auto;
-    word-wrap: break-word;
+    word-break: break-word;
     overflow-wrap: break-word;
     white-space: normal;
   }
 
   .scale-label {}
 
+  .scale-label-mockup {
+    text-align: center;
+    padding: 5px;
+  }
+
+  .item-label-placeholder {
+    display: none;
+    height: 1px;
+  }
+
   .item-label-container {
     width: 30%;
+    min-width: 30%;
     text-align: left;
     padding-bottom: 0;
     display: flex;
-    align-items: center;
+    align-items: flex-start;;
     overflow-wrap: anywhere;
     hyphens: auto;
     padding-right: 10px;

@@ -22,7 +22,7 @@
               <label :for="this.qid + '-' + item.id + '-' + point.value"
                      class="scale-label"
                      :class="{ 'main-label': !point.secondary_point }">
-                <span class="scale-label-span" v-html="point.label"></span>
+                <span class="scale-label-span" v-html="point.input_label"></span>
               </label>
             </div>
           </template>
@@ -43,7 +43,7 @@
               <label :for="this.qid + '-' + item.id + '-' + point.value"
                      class="scale-label"
                      :class="{ 'main-label': !point.secondary_point }">
-                <span class="scale-label-span" v-html="point.label"></span>
+                <span class="scale-label-span" v-html="point.input_label"></span>
               </label>
             </div>
           </template>
@@ -139,6 +139,10 @@ export default {
   padding-bottom: 15px;
 }
 
+.item-label-start {
+  padding-bottom: 15px;
+}
+
 .scale-label-container {
   flex: 1;
   width: 100%;
@@ -160,7 +164,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 25px;
+  min-height: 40px;
   font-size: 0.9rem;
 }
 
@@ -178,7 +182,11 @@ export default {
   border-radius: 0 0 5px 5px;
 }
 .main-scale-last {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+}
+
+.scale-container-secondary {
+  padding-top: 30px;
 }
 
 .secondary-scale > label {
@@ -216,13 +224,14 @@ input[type="radio"]:checked + label {
     display: flex;
     flex-direction: row;
     align-items: stretch;
-    min-height: 25px;
+    min-height: 40px;
     width: 100%;
     height: 100%;
   }
 
   .scale-container-secondary {
     max-width: 10%;
+    padding-top: 0;
   }
 
   .scale-label-container {

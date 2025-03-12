@@ -87,14 +87,16 @@
       <thead>
       <tr>
         <th style="width: 1%;" class="pe-4">Index</th>
-        <th>Label</th>
+        <th>Input Label</th>
+        <th>Heading Label</th>
         <th>Value</th>
       </tr>
       </thead>
       {% endif %}
       <tr>
         <td>{{ point.index }}</td>
-        <td>{% if point.label is not None %}{{ point.label }}{% endif %}</td>
+        <td>{% if point.input_label is not None %}{{ point.input_label }}{% endif %}</td>
+        <td>{% if point.heading_label is not None %}{{ point.heading_label }}{% endif %}</td>
         <td>{{ point.value }}</td>
       </tr>
       {% empty %}

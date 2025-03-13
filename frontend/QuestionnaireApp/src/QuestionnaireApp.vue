@@ -3,7 +3,7 @@
 <template>
 
   <template v-for="question in parsedQuestConfig" :key="question.question">
-    <div :data-page-index="question.page" v-show="currentPage === question.page">
+    <div :data-page-index="question.page" v-show="currentPage === question.page" class="question-app-container">
 
       <template v-if="question.type === 'single_choice'">
         <div class="question-container">
@@ -286,6 +286,10 @@ export default {
 
 .question-body {
   text-align: center;
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .flow-navigation {
   padding-top: 50px;

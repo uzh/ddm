@@ -89,26 +89,35 @@ export default {
       this.response[event.target.name] = event.target.value;
       this.$emit('responseChanged', {id: this.qid, response: this.response, question: this.text, items: this.items});
     },
-    getLastQuestionTextBefore(element) {
+    getHeightOfLastQuestionTextBefore(element) {
       let questionBody = element.closest('.question-body');
 
       if (!questionBody) {
           return null;
       }
-      return questionBody.querySelector('.question-text');
+      const questionText = questionBody.querySelector('.question-text');
+      return questionText ? questionText.offsetHeight : 0;
     },
     scrollToNext(element) {
       // Scroll to next item if it exists.
       const currentRow = event.target.closest('div.response-row');
       if (currentRow) {
         const nextRow = currentRow.nextElementSibling;
-        if (this.shouldScroll && nextRow) {
-          let lastQuestionText = this.getLastQuestionTextBefore(currentRow);
-          const stickyHeight = lastQuestionText ? lastQuestionText.offsetHeight : 0;
+        if (nextRow) {
+          const stickyHeight = this.getHeightOfLastQuestionTextBefore(currentRow);
           const nextRowTop = nextRow.getBoundingClientRect().top + window.scrollY;
           const adjustedPosition = nextRowTop - stickyHeight;
-
           window.scrollTo({ top: adjustedPosition, behavior: 'smooth' });
+
+        } else if (nextRow === null) {
+          // Scroll to next question if there is no next row.
+          let questionBody = currentRow.closest('.question-app-container');
+          let nextQuestionBody = questionBody.nextElementSibling;
+
+          if (nextQuestionBody) {
+            const nextQuestionTop = nextQuestionBody.getBoundingClientRect().top + window.scrollY;
+            window.scrollTo({ top: nextQuestionTop, behavior: 'smooth' });
+          }
         }
       }
     },

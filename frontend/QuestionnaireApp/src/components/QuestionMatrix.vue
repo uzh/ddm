@@ -143,12 +143,21 @@ export default {
       const currentRow = event.target.closest('div.response-row');
       if (currentRow) {
         const nextRow = currentRow.nextElementSibling;
-        if (this.shouldScroll && nextRow) {
+        if (nextRow) {
           const stickyHeight = this.getHeightOfLastQuestionTextBefore(currentRow);
           const nextRowTop = nextRow.getBoundingClientRect().top + window.scrollY;
           const adjustedPosition = nextRowTop - stickyHeight;
-
           window.scrollTo({ top: adjustedPosition, behavior: 'smooth' });
+
+        } else if (nextRow === null) {
+          // Scroll to next question if there is no next row.
+          let questionBody = currentRow.closest('.question-app-container');
+          let nextQuestionBody = questionBody.nextElementSibling;
+
+          if (nextQuestionBody) {
+            const nextQuestionTop = nextQuestionBody.getBoundingClientRect().top + window.scrollY;
+            window.scrollTo({ top: nextQuestionTop, behavior: 'smooth' });
+          }
         }
       }
     },
@@ -202,6 +211,9 @@ export default {
   padding-right: 10px;
   min-height: 40vh;
   border-bottom: 1px solid #cdcdcd;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .response-body > .response-row:last-of-type {

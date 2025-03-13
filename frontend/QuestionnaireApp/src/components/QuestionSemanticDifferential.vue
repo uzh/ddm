@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div v-html="text"></div>
+    <div class="question-text" v-html="text"></div>
 
-    <div>
+    <div class="response-body">
       <template v-for="(item, id) in items" :key="id">
 
-      <div :id="'answer-item-' + item.id" class="item-container">
+      <div :id="'answer-item-' + item.id" class="item-container response-row">
 
         <div class="item-label-container item-label-start" v-html="item.label"></div>
 
@@ -18,7 +18,8 @@
                      :id="this.qid + '-' + item.id + '-' + point.value"
                      :name="item.id"
                      :value="point.value"
-                     @change="responseChanged($event)">
+                     @change="responseChanged($event)"
+                     @click="scrollToNext($event)">
               <label :for="this.qid + '-' + item.id + '-' + point.value"
                      class="scale-label"
                      :class="{ 'main-label': !point.secondary_point }">
@@ -87,13 +88,27 @@ export default {
     responseChanged(event) {
       this.response[event.target.name] = event.target.value;
       this.$emit('responseChanged', {id: this.qid, response: this.response, question: this.text, items: this.items});
+    },
+    getLastQuestionTextBefore(element) {
+      let questionBody = element.closest('.question-body');
 
-      // Scroll to next <tr> if it exists.
-      const currentRow = event.target.closest('div.item-container');
+      if (!questionBody) {
+          return null;
+      }
+      return questionBody.querySelector('.question-text');
+    },
+    scrollToNext(element) {
+      // Scroll to next item if it exists.
+      const currentRow = event.target.closest('div.response-row');
       if (currentRow) {
         const nextRow = currentRow.nextElementSibling;
         if (this.shouldScroll && nextRow) {
-          nextRow.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          let lastQuestionText = this.getLastQuestionTextBefore(currentRow);
+          const stickyHeight = lastQuestionText ? lastQuestionText.offsetHeight : 0;
+          const nextRowTop = nextRow.getBoundingClientRect().top + window.scrollY;
+          const adjustedPosition = nextRowTop - stickyHeight;
+
+          window.scrollTo({ top: adjustedPosition, behavior: 'smooth' });
         }
       }
     },
@@ -129,7 +144,7 @@ export default {
   flex-direction: column;
   padding-bottom: 20px;
   padding-top: 70px;
-  border-bottom: 1px solid lightgrey;
+  border-bottom: 1px solid #ededed;
   width: 70%;
   text-align: center;
   margin: auto;
@@ -210,7 +225,7 @@ input[type="radio"]:checked + label {
     align-items: center;
     padding-bottom: 20px;
     padding-top: 20px;
-    border-bottom: 1px solid lightgrey;
+    border-bottom: 1px solid #ededed;
     width: 100%;
   }
 

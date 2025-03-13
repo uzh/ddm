@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="question-text">
     <div v-html="text"></div>
   </div>
 </template>

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div v-html="text"></div>
+    <div class="question-text" v-html="text"></div>
 
-    <div class="question-response-body item-container">
+    <div class="response-body question-response-body item-container">
 
       <div v-for="(item, id) in items"
            :key="id" class="question-item">

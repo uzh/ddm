@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div v-html="text"></div>
-    <div :id="'answer-' + qid">
+    <div class="question-text" v-html="text"></div>
+    <div :id="'answer-' + qid" class="response-body">
       <template v-if="options.input_type === 'text'">
         <input v-if="options.display === 'small'"
                class="oq-input"

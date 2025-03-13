@@ -257,11 +257,26 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
 }
+
+.question-text {
+  padding: 60px 10px 15px;
+  position: sticky;
+  top: 0;
+  background: white;
+  border-bottom: 3px solid #fbfbfb;
+  z-index: 999;
+}
+
+.response-body {
+  padding-top: 15px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
 .question-container {
   font-size: 1rem;
   border-bottom: 2px solid #b8b8b8;
   padding-bottom: 100px;
-  padding-top: 100px;
 }
 @media (max-width: 992px) {
   .question-container {
@@ -290,9 +305,6 @@ export default {
   display: block !important;
 }
 @media (min-width: 769px) {
-  .question-container {
-    margin: 0 8%;
-  }
   .question-body {
     text-align: left;
     padding-left: 25px;

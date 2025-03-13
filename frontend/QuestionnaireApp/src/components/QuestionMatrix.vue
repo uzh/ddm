@@ -5,12 +5,12 @@
     <div class="response-body ps-0 pe-0">
       <template v-for="(item, id) in items" :key="id">
 
-      <div class="response-row">
+      <div class="response-row" :id="'answer-item-' + item.id">
         <div class="item-separate-line"
              :class="{ 'show': scale.length > 7}"
              v-html="item.label"></div>
 
-        <div :id="'answer-item-' + item.id" class="mq-item-container">
+        <div class="mq-item-container">
           <div v-if="options.show_scale_headings" class="heading-container">
             <div class="item-label-container item-label-placeholder"
                  :class="{ 'hidden': scale.length > 7}"

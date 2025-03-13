@@ -80,7 +80,7 @@ class QuestionFormMixin(ProjectMixin):
         'multi_choice': SHARED_FIELDS + ['randomize_items'],
         'matrix': SHARED_FIELDS + ['randomize_items', 'show_scale_headings'],
         'semantic_diff': SHARED_FIELDS + ['randomize_items'],
-        'open': SHARED_FIELDS + ['input_type', 'max_input_length', 'display'],
+        'open': SHARED_FIELDS + ['input_type', 'max_input_length', 'display', 'multi_item_response', 'randomize_items'],
         'transition': SHARED_FIELDS
     }
 

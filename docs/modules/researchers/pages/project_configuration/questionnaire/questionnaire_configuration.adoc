@@ -95,6 +95,11 @@ Display:: Define whether to show a 'small' one-line input field or
 a larger multi-line text-box. Defaults to "small" and only
 applies when the chosen input type is "Text".
 
+Multi item response:: If this is selected, you can define items for each of which the participants
+will be asked to provide a text input. If not selected, the question will be rendered with just one
+input field below the question text.
+
+
 [NOTE]
 ====
 The `input type` and `maximum input length` options are only "softly" enforced

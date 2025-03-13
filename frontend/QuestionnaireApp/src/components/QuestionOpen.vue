@@ -1,7 +1,8 @@
 <template>
   <div>
     <div class="question-text" v-html="text"></div>
-    <div :id="'answer-' + qid" class="response-body">
+
+    <div v-if="!this.options.multi_item_response" :id="'answer-' + qid" class="response-body">
       <template v-if="options.input_type === 'text'">
         <input v-if="options.display === 'small'"
                class="oq-input"
@@ -37,19 +38,63 @@
         <p class="input-hint hint-invalid-input pb-0 mb-0">{{ $t('hint-invalid-email') }}</p>
         <p class="input-hint">{{ $t('hint-email-input') }}</p>
       </template>
-
     </div>
+
+    <div v-if="this.options.multi_item_response" :id="'answer-' + qid" class="response-body">
+      <div v-for="(item, id) in items" :id="'answer-item-' + item.id" class="input-row">
+        <div v-html="item.label"></div>
+        <div>
+          <template v-if="options.input_type === 'text'">
+            <input v-if="options.display === 'small'"
+                   class="oq-input"
+                   type="text"
+                   :name="item.id"
+                   :maxlength="getMaxLength"
+                   @change="responseChanged($event)">
+            <textarea v-if="options.display === 'large'"
+                      class="open-question-textarea"
+                      type="text"
+                      :name="item.id"
+                      :maxlength="getMaxLength"
+                      @change="responseChanged($event)"></textarea>
+          </template>
+
+          <template v-else-if="options.input_type === 'numbers'">
+            <input type="text"
+                   class="oq-input"
+                   v-only-digits
+                   :name="item.id"
+                   :maxlength="getMaxLength"
+                   @change="responseChanged($event)">
+            <p class="input-hint">{{ $t('hint-number-input') }}</p>
+          </template>
+
+          <template v-else-if="options.input_type === 'email'">
+            <input type="email"
+                   class="oq-input"
+                   v-valid-email
+                   :name="item.id"
+                   :maxlength="getMaxLength"
+                   @change="responseChanged($event)">
+            <p class="input-hint hint-invalid-input pb-0 mb-0">{{ $t('hint-invalid-email') }}</p>
+            <p class="input-hint">{{ $t('hint-email-input') }}</p>
+          </template>
+
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script>
 export default {
   name: 'OpenQuestion',
-  props: ['qid', 'text', 'options'],
+  props: ['qid', 'text', 'options', 'items'],
   emits: ['responseChanged'],
   data: function() {
     return {
-      response: '-99'
+      response: this.options.max_input_length ? {} : '-99'
     }
   },
   computed: {
@@ -58,14 +103,26 @@ export default {
     }
   },
   created() {
+    if (this.options.multi_item_response) {
+      this.items.forEach(i => {
+        this.response[i.id] = '-99';
+      })
+    }
     this.$emit('responseChanged', {id: this.qid, response: this.response, question: this.text, items: null});
   },
   methods: {
-    responseChanged(event) {
+    getValue(event) {
       if (event.target.value === '' || event.target.value === null) {
-        this.response = '-99'
+        return '-99'
       } else {
-        this.response = event.target.value;
+        return event.target.value;
+      }
+    },
+    responseChanged(event) {
+      if (this.options.multi_item_response) {
+        this.response[event.target.name] = this.getValue(event);
+      } else {
+        this.response = this.getValue(event)
       }
       this.$emit('responseChanged', {id: this.qid, response: this.response, question: this.text, items: null});
     }
@@ -132,6 +189,14 @@ export default {
 	border: 1px solid gray;
 	padding: 10px;
 	font-size: 0.9rem;
+}
+
+.input-row {
+  padding: 15px 10px;
+  border-bottom: 1px solid #cdcdcd;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 @media (min-width: 769px) {

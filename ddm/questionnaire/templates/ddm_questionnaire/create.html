@@ -6,7 +6,81 @@
 
 {% block submit_label %}Create Question{% endblock %}
 
-{% block cancel_target %}{% url 'ddm_questionnaire:overview' project_url_id %}{% endblock %}
+{% block main_form %}
+<form method='post'>
+  {% csrf_token %}
+  {{ form.media }}
+
+  <div class="question-section-container">
+    <p class="question-section-heading">Internal Organisation</p>
+    {% for field in form %}
+    {% if field.name in "name,variable_name,blueprint" %}
+      <p>
+        {{ field.label_tag }}
+        {{ field.errors }}
+        {{ field }}
+        <span class="helptext">{{ field.help_text }}</span>
+      </p>
+    {% endif %}
+    {% endfor %}
+  </div>
+
+  <div class="question-section-container">
+    <p class="question-section-heading">Display Options</p>
+    {% for field in form %}
+    {% if field.name in "page,index,text" %}
+      <p>
+        {{ field.label_tag }}
+        {{ field.errors }}
+        {{ field }}
+        <span class="helptext">{{ field.help_text }}</span>
+      </p>
+    {% endif %}
+    {% endfor %}
+  </div>
+
+  {% if question_type != "Text Block"  %}
+  <div class="question-section-container">
+    <p class="question-section-heading">Validation</p>
+    {% for field in form %}
+    {% if field.name in "required,input_type,max_input_length,display" %}
+      <p>
+        {{ field.label_tag }}
+        {{ field.errors }}
+        {{ field }}
+        <span class="helptext">{{ field.help_text }}</span>
+      </p>
+    {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if question_type != "Text Block" and question_type != "single_choice"  %}
+      <div class="question-section-container">
+      <p class="question-section-heading">Item Configuration</p>
+      {% for field in form %}
+      {% if field.name in "randomize_items,show_scale_headings,multi_item_response" %}
+        <p>
+          {{ field.label_tag }}
+          {{ field.errors }}
+          {{ field }}
+          <span class="helptext">{{ field.help_text }}</span>
+        </p>
+      {% endif %}
+      {% endfor %}
+      </div>
+  {% endif %}
+
+  <input class="ddm-btn" type="submit" value="Save changes">
+
+  {% block cancel %}
+    <p>
+      <a href="{% url 'ddm_questionnaire:overview' project_url_id %}"><i class="bi bi-arrow-left-short"></i> Back</a>
+    </p>
+  {% endblock %}
+
+</form>
+{% endblock %}
 
 {% block breadcrumbs %}
 <a href="{% url 'ddm_projects:list' %}">Projects</a> /

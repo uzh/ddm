@@ -306,7 +306,7 @@ class MultiChoiceQuestion(ItemMixin, QuestionBase):
         return True
 
 
-class OpenQuestion(QuestionBase):
+class OpenQuestion(ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.OPEN
 
     class DisplayOptions(models.TextChoices):
@@ -345,11 +345,14 @@ class OpenQuestion(QuestionBase):
         default=None
     )
 
+    multi_item_response = models.BooleanField(default=False)
+
     def create_config(self):
         config = super().create_config()
         config['options']['display'] = self.display
         config['options']['input_type'] = self.input_type
         config['options']['max_input_length'] = self.max_input_length
+        config['options']['multi_item_response'] = self.multi_item_response
         return config
 
     def validate_response(self, response):

@@ -38,6 +38,7 @@
               :qid="question.question"
               :text="question.text"
               :options="question.options"
+              :items="question.items"
               @responseChanged="updateResponses"
               class="question-body"
           ></OpenQuestion>
@@ -297,7 +298,6 @@ export default {
 }
 .required-but-missing {
   background: #ff480012 !important;
-  border-radius: 5px;
 }
 .required-hint {
   font-size: 0.9rem;

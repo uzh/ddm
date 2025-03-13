@@ -298,8 +298,7 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
         questions = self.project.questionbase_set.all().order_by('page', 'index')
 
         question_types_wo_items = [
-            QuestionType.SINGLE_CHOICE,
-            QuestionType.OPEN]
+            QuestionType.SINGLE_CHOICE]
         question_types_with_items = [
             QuestionType.MULTI_CHOICE,
             QuestionType.MATRIX,
@@ -313,6 +312,16 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
                 items = question.questionitem_set.all().order_by('index')
                 for item in items:
                     col_order.append(f'{var_name}-{item.value}')
+            elif question.question_type == QuestionType.OPEN:
+                var_name = question.variable_name
+                if not question.multi_item_response:
+                    col_order.append(var_name)
+                    continue
+                else:
+                    items = question.questionitem_set.all().order_by('index')
+                    for item in items:
+                        col_order.append(f'{var_name}-{item.value}')
+
         return col_order
 
     def sort_headers(self, columns, order=None):

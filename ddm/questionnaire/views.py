@@ -195,10 +195,15 @@ class InlineFormsetMixin(ProjectMixin):
         """ Placeholder function to overwrite in views. """
         return []
 
+    def get_n_extra_forms(self):
+        """ Placeholder function to overwrite in views. """
+        return 0
+
     def get_formset(self):
+        n_extra = self.get_n_extra_forms()
         formset = inlineformset_factory(
             QuestionBase, self.formset_model, exclude=self.get_excluded_fields(),
-            extra=0
+            extra=n_extra
         )
         if self.request.method == "GET":
             initial_data = self.get_initial_extra_data()
@@ -222,6 +227,19 @@ class ItemEdit(SuccessMessageMixin, DDMAuthMixin, InlineFormsetMixin, UpdateView
     context_title = 'Items'
     success_message = 'Question items updated.'
 
+    def get_initial_extra_data(self):
+        if self.object.questionitem_set.all().count() == 0:
+            return [{'index': 1}]
+        else:
+            return []
+
+    def get_n_extra_forms(self):
+        """ Placeholder function to overwrite in views. """
+        if self.object.questionitem_set.all().count() == 0:
+            return 1
+        else:
+            return 0
+
     def get_success_url(self):
         question = self.get_object()
         success_kwargs = {
@@ -239,6 +257,19 @@ class ScaleEdit(SuccessMessageMixin, DDMAuthMixin, InlineFormsetMixin, UpdateVie
     template_name = 'ddm_questionnaire/edit_set.html'
     context_title = 'Scale Points'
     success_message = 'Question scale updated.'
+
+    def get_initial_extra_data(self):
+        if self.object.scalepoint_set.all().count() == 0:
+            return [{'index': 1}]
+        else:
+            return []
+
+    def get_n_extra_forms(self):
+        """ Placeholder function to overwrite in views. """
+        if self.object.scalepoint_set.all().count() == 0:
+            return 1
+        else:
+            return 0
 
     def get_success_url(self):
         question = self.get_object()

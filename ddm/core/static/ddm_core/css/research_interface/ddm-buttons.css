@@ -5,6 +5,7 @@
 
 .ddm-btn-green {
     background: #009c94;
+    text-wrap: nowrap;
 }
 
 .ddm-btn-inverted {

@@ -36,7 +36,7 @@
     {% for message in messages %}
     <div id="message-{{ forloop.counter }}" class="ddm-message d-flex justify-content-between space-between {% if message.tags %} {{ message.tags }}{% endif %}">
       <div>{{ message }}</div>
-      <div><a class="ddm-message-close" href="#">&#128941;</a></div>
+      <div><a class="ddm-message-close" href="#"><i class="bi bi-x-circle"></i></a></div>
     </div>
     {% endfor %}
     {% endif %}

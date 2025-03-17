@@ -1,5 +1,4 @@
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import Max
 from django.forms import inlineformset_factory
 from django.urls import reverse
 from django.views.generic import ListView

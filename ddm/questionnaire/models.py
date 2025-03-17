@@ -1,5 +1,6 @@
 import random
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.forms import model_to_dict
 from django.utils import timezone
@@ -82,6 +83,16 @@ class QuestionBase(PolymorphicModel):
 
     def __str__(self):
         return self.name
+
+    def clean(self):
+        """ Validate uniqueness before saving to avoid database IntegrityError. """
+        if QuestionBase.objects.filter(variable_name=self.variable_name, project=self.project).exclude(pk=self.pk).exists():
+            raise ValidationError({'variable_name': 'A variable with this name already exists in the project.'})
+
+    def save(self, *args, **kwargs):
+        """ Call clean() before saving to avoid possible database IntegrityError. """
+        self.clean()
+        super().save(*args, **kwargs)
 
     def is_general(self):
         return True if self.blueprint is None else False

@@ -164,10 +164,11 @@ class TestSemanticDifferentialQuestion(TestQuestionModelsBaseCase):
         for scale_point in [self.scale_a, self.scale_b]:
             expected_scale_config.append({
                 'id': scale_point.pk,
-                'label': scale_point.label,
+                'input_label': scale_point.input_label,
+                'heading_label': scale_point.heading_label,
                 'index': scale_point.index,
                 'value': scale_point.value,
-                'add_border': scale_point.add_border,
+                'secondary_point': scale_point.secondary_point,
             })
         expected_config = {
             'question': self.question.pk,

@@ -1,7 +1,7 @@
 <i18n src="../translations/donation_instructions.json"></i18n>
 
 <template>
-  <div :id="'carousel-' + componentId" class="carousel carousel-dark slide" data-bs-interval="false" data-bs-ride="carousel" data-bs-wrap="false" >
+  <div :id="'carousel-' + componentId" class="carousel carousel-dark slide pb-5" data-bs-interval="false" data-bs-ride="carousel" data-bs-wrap="false" >
 
     <div class="carousel-indicators" v-for="(i, index) in instructions" :key="index">
       <template v-for="(i, index) in instructions" :key="index">
@@ -105,7 +105,7 @@ export default {
   transition: transform .3s ease, opacity .3s ease-out
 }
 .step-arrow {
-  opacity: 0.2;
+  opacity: 0.05;
 }
 .step-arrow-active {
   opacity: 0.9;

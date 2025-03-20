@@ -2,7 +2,9 @@
   <div>
     <div class="question-text" v-html="text"></div>
 
-    <div v-if="!this.options.multi_item_response" :id="'answer-' + qid" class="response-body">
+    <div v-if="!this.options.multi_item_response"
+         :id="'answer-' + qid"
+         class="response-body">
       <template v-if="options.input_type === 'text'">
         <input v-if="options.display === 'small'"
                class="oq-input"
@@ -40,8 +42,13 @@
       </template>
     </div>
 
-    <div v-if="this.options.multi_item_response" :id="'answer-' + qid" class="response-body">
-      <div v-for="(item, id) in items" :id="'answer-item-' + item.id" class="input-row">
+    <div v-if="this.options.multi_item_response"
+         :id="'answer-' + qid"
+         class="response-body">
+      <div v-for="(item, id) in items"
+           :id="'answer-item-' + item.id"
+           v-show="!hideObjectDict['item-' + item.id]"
+           class="input-row">
         <div v-html="item.label"></div>
         <div>
           <template v-if="options.input_type === 'text'">
@@ -90,7 +97,7 @@
 <script>
 export default {
   name: 'OpenQuestion',
-  props: ['qid', 'text', 'options', 'items'],
+  props: ['qid', 'text', 'options', 'items', 'hideObjectDict'],
   emits: ['responseChanged'],
   data: function() {
     return {
@@ -107,6 +114,8 @@ export default {
       this.items.forEach(i => {
         this.response[i.id] = '-99';
       })
+    } else {
+      this.response = '-99'
     }
     this.$emit('responseChanged', {id: this.qid, response: this.response, question: this.text, items: null});
   },

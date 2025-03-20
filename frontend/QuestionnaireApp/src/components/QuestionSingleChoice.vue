@@ -6,7 +6,8 @@
 
       <div v-for="(item, id) in items"
            :key="id"
-           class="question-item">
+           class="question-item"
+           v-show="!hideObjectDict['item-' + item.id]">
         <input class="form-check-input"
                type="radio"
                :id="'q-' + this.qid + '-' + item.id"
@@ -38,7 +39,7 @@
 <script>
 export default {
   name: 'SingleChoiceQuestion',
-  props: ['qid', 'text', 'items'],
+  props: ['qid', 'text', 'items', 'hideObjectDict'],
   emits: ['responseChanged'],
   data: function() {
     return {

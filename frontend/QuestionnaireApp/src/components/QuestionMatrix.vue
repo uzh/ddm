@@ -5,7 +5,9 @@
     <div class="response-body ps-0 pe-0">
       <template v-for="(item, id) in items" :key="id">
 
-      <div class="response-row" :id="'answer-item-' + item.id">
+      <div class="response-row"
+           :id="'answer-item-' + item.id"
+           v-show="!hideObjectDict['item-' + item.id]">
         <div class="item-separate-line"
              :class="{ 'show': scale.length > 7}"
              v-html="item.label"></div>
@@ -62,7 +64,7 @@
 <script>
 export default {
   name: 'MatrixQuestion',
-  props: ['qid', 'text', 'items', 'scale', 'options'],
+  props: ['qid', 'text', 'items', 'scale', 'options', 'hideObjectDict'],
   emits: ['responseChanged'],
   data: function() {
     return {

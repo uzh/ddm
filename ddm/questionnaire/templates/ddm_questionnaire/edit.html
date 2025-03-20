@@ -104,6 +104,7 @@
             {% endif %}
             <th>Value</th>
             <th>Randomize</th>
+            <th>Filter Conditions</th>
           </tr>
           </thead>
           {% endif %}
@@ -117,6 +118,7 @@
             {% endif %}
             <td>{{ item.value }}</td>
             <td>{{ item.randomize }}</td>
+            <th><a href="{% url 'ddm_questionnaire:item_filters' project_url_id object.question_type object.pk item.pk %}">Edit Filter Conditions</a></th>
           </tr>
           {% empty %}
           <tr><td>No items defined.</td></tr>
@@ -160,6 +162,40 @@
       </div>
     </div>
   {% endif %}
+
+  <div class="ddm-admin-section-body">
+    <div class="question-extra-section">
+      <div class="question-section-heading mb-3">Filter Configuration</div>
+      <p>Hide question if:</p>
+      <table class="table table-sm">
+        {% for filter in object.filter_conditions.all %}
+          {% if forloop.first %}
+          <thead>
+          <tr>
+            <th style="width: 1%;" class="pe-4">Index</th>
+            <th>Combinator</th>
+            <th>Source</th>
+            <th>Operator</th>
+            <th>Condition Value</th>
+          </tr>
+          </thead>
+          {% endif %}
+          <tr>
+            <td>{{ filter.index }}</td>
+            <td>{{ filter.combinator }}</td>
+            <td>{{ filter.source_object.get_varname }}</td>
+            <td>{{ filter.condition_operator }}</td>
+            <td>{% if filter.condition_value is not None %}{{ filter.condition_value }}{% endif %}</td>
+          </tr>
+          {% empty %}
+          <tr><td>No filter conditions defined.</td></tr>
+        {% endfor %}
+        </table>
+
+      <p><a class="ddm-btn" href="{% url 'ddm_questionnaire:question_filters' project_url_id object.question_type object.pk %}">Edit Filter Conditions</a></p>
+      <p class="helptext">Make sure to <b>save any changes of the question configuration</b> before editing the filters.</p>
+    </div>
+  </div>
 
   {% if object.question_type == "open" and not object.multi_item_response %}
   {% else %}

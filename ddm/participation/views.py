@@ -18,7 +18,7 @@ from ddm.datadonation.models import DonationBlueprint, FileUploader
 from ddm.logging.utils import log_server_exception
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject
-from ddm.questionnaire.services import save_questionnaire_to_db
+from ddm.questionnaire.services import save_questionnaire_to_db, create_questionnaire_config, create_filter_config
 
 
 def get_participation_session_id(project):
@@ -335,8 +335,10 @@ class QuestionnaireView(ParticipationFlowBaseView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        question_config = self.object.get_questionnaire_config(self.participant, self)
+        question_config = create_questionnaire_config(self.object, self.participant, self)
         context['q_config'] = json.dumps(question_config)
+        filter_config = create_filter_config(self.object)
+        context['filter_config'] = json.dumps(filter_config)
         context['extra_scripts'] = set(self.extra_scripts)
         return context
 

@@ -1,5 +1,8 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 
+from ddm.datadonation.models import DataDonation
+from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers
 from ddm.logging.utils import log_server_exception
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject
@@ -65,3 +68,57 @@ def save_questionnaire_to_db(
         data=data
     )
     return
+
+
+def create_questionnaire_config(project, participant, view):
+    """
+    Returns a dictionary containing all information to render the
+    questionnaire for a given participant that
+    can be passed to the vue questionnaire application.
+    """
+    q_config = []
+    questions = project.questionbase_set.all().order_by('page', 'index')
+    for question in questions:
+        # If question is not associated to a donation blueprint.
+        if question.is_general():
+            q_config.append(question.get_config(participant, view))
+        else:
+            try:
+                donation = DataDonation.objects.get(
+                    blueprint=question.blueprint,
+                    participant=participant
+                )
+            except ObjectDoesNotExist:
+                msg = ('Questionnaire Rendering Exception: No donation '
+                       f'found for participant {participant.pk} and '
+                       f'blueprint {question.blueprint.pk}.')
+                ExceptionLogEntry.objects.create(
+                    project=project,
+                    raised_by=ExceptionRaisers.SERVER,
+                    message=msg
+                )
+                continue
+
+            if donation.consent and donation.status == 'success':
+                q_config.append(question.get_config(participant, view))
+    return q_config
+
+
+def create_filter_config(project):
+    """
+    Returns a dictionary containing the filter condition configurations that
+    can be passed to the vue questionnaire application.
+    """
+    f_config = {}
+    questions = project.questionbase_set.all()
+
+    for question in questions:
+        question_key = question.get_filter_config_id(question)
+        f_config[question_key] = question.get_filter_config()
+
+        items = question.questionitem_set.all()
+        for item in items:
+            item_key = item.get_filter_config_id(item)
+            f_config[item_key] = item.get_filter_config()
+
+    return f_config

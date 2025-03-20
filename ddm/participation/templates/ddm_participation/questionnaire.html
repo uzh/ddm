@@ -14,6 +14,7 @@
     {% csrf_token %}
     <div id="qapp"
          data-questionnaire-config='{{ q_config }}'
+         data-filter-config='{{ filter_config }}'
          data-action-url='{{ request.build_absolute_uri }}'
          data-language='{{ LANGUAGE_CODE|slice:"0:2"}}'
          class="text-black"

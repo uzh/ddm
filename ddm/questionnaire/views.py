@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import inlineformset_factory
 from django.urls import reverse
@@ -9,10 +10,11 @@ from django_ckeditor_5.widgets import CKEditor5Widget
 from ddm.auth.views import DDMAuthMixin
 from ddm.datadonation.models import DonationBlueprint
 from ddm.projects.models import DonationProject
+from ddm.questionnaire.forms import FilterConditionForm
 from ddm.questionnaire.models import (
     QuestionBase, QuestionType, SingleChoiceQuestion, MultiChoiceQuestion,
     OpenQuestion, MatrixQuestion, SemanticDifferential, Transition,
-    QuestionItem, ScalePoint
+    QuestionItem, ScalePoint, FilterCondition
 )
 
 
@@ -278,3 +280,79 @@ class ScaleEdit(SuccessMessageMixin, DDMAuthMixin, InlineFormsetMixin, UpdateVie
             'pk': question.pk
         }
         return reverse('ddm_questionnaire:scale', kwargs=success_kwargs)
+
+
+class FilterEditBase(SuccessMessageMixin, DDMAuthMixin, InlineFormsetMixin, UpdateView):
+    formset_model = FilterCondition
+    context_title = 'Filter Conditions'
+    success_message = 'Filter conditions updated.'
+
+    def get_filters(self):
+        return self.object.filter_conditions.all()
+
+    def get_project(self):
+        """Placeholder function."""
+        return None
+
+    def get_formset(self):
+        filters = self.get_filters()
+        if filters.count() == 0:
+            n_extra = 1
+        else:
+            n_extra = 0
+
+        FilterConditionFormSet = generic_inlineformset_factory(
+            FilterCondition,
+            form=FilterConditionForm,
+            exclude=[],
+            extra=n_extra,
+            can_delete=True,
+            ct_field='target_content_type',
+            fk_field='target_object_id',
+        )
+
+        if self.request.method == "GET":
+            initial_data = self.get_initial_extra_data()
+        else:
+            initial_data = None
+        return FilterConditionFormSet(
+            self.request.POST or None,
+            instance=self.object,
+            initial=initial_data,
+            form_kwargs={'project': self.get_project(), 'target_object': self.object}
+        )
+
+
+class FilterEditQuestion(FilterEditBase):
+    model = QuestionBase
+    template_name = 'ddm_questionnaire/edit_set.html'
+
+    def get_project(self):
+        return self.object.project
+
+    def get_success_url(self):
+        question = self.get_object()
+        success_kwargs = {
+            'project_url_id': self.kwargs['project_url_id'],
+            'question_type': question.question_type,
+            'pk': question.pk
+        }
+        return reverse('ddm_questionnaire:question_filters', kwargs=success_kwargs)
+
+
+class FilterEditItems(FilterEditBase):
+    model = QuestionItem
+    template_name = 'ddm_questionnaire/edit_item_set.html'
+
+    def get_project(self):
+        return self.object.question.project
+
+    def get_success_url(self):
+        item = self.get_object()
+        success_kwargs = {
+            'project_url_id': self.kwargs['project_url_id'],
+            'question_type': item.question.question_type,
+            'question_pk': item.question.pk,
+            'pk': item.pk
+        }
+        return reverse('ddm_questionnaire:item_filters', kwargs=success_kwargs)

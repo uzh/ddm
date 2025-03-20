@@ -1,5 +1,7 @@
 import random
 
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.forms import model_to_dict
@@ -13,6 +15,41 @@ from ddm.datadonation.models import DataDonation
 from ddm.questionnaire.exceptions import QuestionValidationError
 
 
+class FilterConditionMixin:
+    """
+    Mixin adding utility functions to models with a generic relationship to
+    FilterConditions.
+    """
+    @staticmethod
+    def get_filter_config_id(obj):
+        if isinstance(obj, QuestionItem):
+            return f'item-{obj.pk}'
+        else:
+            return f'question-{obj.pk}'
+
+    def get_filter_config(self):
+        """
+        Creates the filter conditions that can be passed to the vue questionnaire.
+        """
+        filter_conditions = self.filter_conditions.all().order_by('index')
+        filter_configs = []
+        for i, condition in enumerate(filter_conditions):
+            filter_config = {
+                'index': condition.index,
+                'combinator': condition.combinator,
+                'condition_operator': condition.condition_operator,
+                'condition_value': condition.condition_value,
+                'target': self.get_filter_config_id(condition.target),
+                'source': self.get_filter_config_id(condition.source_object)
+            }
+
+            # Reset combinator value to None for item with the lowest index.
+            if i == 0:
+                filter_config['combinator'] = None
+            filter_configs.append(filter_config)
+        return filter_configs
+
+
 class QuestionType(models.TextChoices):
     GENERIC = 'generic', 'Generic Question'
     SINGLE_CHOICE = 'single_choice', 'Single Choice Question'
@@ -23,7 +60,7 @@ class QuestionType(models.TextChoices):
     TRANSITION = 'transition', 'Text Block'
 
 
-class QuestionBase(PolymorphicModel):
+class QuestionBase(FilterConditionMixin, PolymorphicModel):
     project = models.ForeignKey(
         'ddm_projects.DonationProject',
         on_delete=models.CASCADE
@@ -66,6 +103,12 @@ class QuestionBase(PolymorphicModel):
         )
     )
     required = models.BooleanField(default=False)
+
+    filter_conditions = GenericRelation(
+        'FilterCondition',
+        content_type_field='target_content_type',
+        object_id_field='target_object_id'
+    )
 
     class Meta:
         ordering = ['page', 'index']
@@ -140,6 +183,9 @@ class QuestionBase(PolymorphicModel):
             item['label'] = render_user_content(item['label'], context)
             item['label_alt'] = render_user_content(item['label_alt'], context)
         return config
+
+    def get_varname(self):
+        return self.variable_name
 
 
 class ItemMixin(models.Model):
@@ -436,7 +482,7 @@ class Transition(QuestionBase):
         return True
 
 
-class QuestionItem(models.Model):
+class QuestionItem(FilterConditionMixin, models.Model):
     class Meta:
         ordering = ['index']
         constraints = [
@@ -468,6 +514,15 @@ class QuestionItem(models.Model):
     )
     value = models.IntegerField()
     randomize = models.BooleanField(default=False)
+
+    filter_conditions = GenericRelation(
+        'FilterCondition',
+        content_type_field='target_content_type',
+        object_id_field='target_object_id'
+    )
+
+    def get_varname(self):
+        return f'{self.question.variable_name}-{self.value}'
 
     def serialize_to_config(self):
         item_config = model_to_dict(self, exclude=['question'])
@@ -516,3 +571,92 @@ class QuestionnaireResponse(ModelWithEncryptedData):
     participant = models.ForeignKey('ddm_participation.Participant', on_delete=models.CASCADE)
     time_submitted = models.DateTimeField(default=timezone.now)
     data = models.BinaryField()
+
+
+class FilterCondition(models.Model):
+    """
+    A model to define filter conditions.
+    """
+    target_content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        related_name='filter_target',
+        help_text='The target question/question item to which this filter applies.'
+    )
+    target_object_id = models.PositiveIntegerField()
+    target = GenericForeignKey(
+        'target_content_type',
+        'target_object_id'
+    )
+
+    source_content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        related_name='filter_source',
+        help_text='The question/question item whose answer is evaluated against the filter condition.'
+    )
+    source_object_id = models.PositiveIntegerField()
+    source_object = GenericForeignKey(
+        'source_content_type',
+        'source_object_id'
+    )
+
+    # TODO: Ensure index is unique per target.
+    index = models.IntegerField(default=1)
+
+    class ConditionCombinators(models.TextChoices):
+        AND = 'AND', 'AND'
+        OR = 'OR', 'OR'
+
+    combinator = models.CharField(
+        max_length=3,
+        choices=ConditionCombinators.choices,
+        default=ConditionCombinators.AND,
+        help_text=(
+            'Defines whether all conditions (AND) or any (OR) must be met.'
+            'In the filter condition with the lowest index, this will be '
+            'ignored. The conditions following will be evaluated as a chain, '
+            'where AND has higher precedence than OR. E.g., Condition1 OR '
+            'Condition2 AND Condition3 OR Condition4 will be evaluated as '
+            '"Condition1 OR (Condition2 AND Condition3) OR Condition4".'
+        )
+    )
+
+    # TODO: Which operators are available depends on the source; if the source is of type OpenQuestion, greater/smaller operations should be disallowed.
+    class ConditionOperators(models.TextChoices):
+        EQUALS = '==', 'Equal (==)'
+        EQUALS_NOT = '!=', 'Not Equal (!=)'
+        GREATER_THAN = '>', 'Greater than (>)'
+        SMALLER_THAN = '<', 'Smaller than (<)'
+        GREATER_OR_EQUAL_THAN = '>=', 'Greater than or equal (>=)'
+        SMALLER_OR_EQUAL_THAN = '<=', 'Smaller than or equal (<=)'
+        CONTAINS = 'contains', 'Contains'
+        CONTAINS_NOT = 'contains_not', 'Does not Contain'
+
+    condition_operator = models.CharField(
+        max_length=20,
+        choices=ConditionOperators.choices,
+        default=ConditionOperators.EQUALS,
+        help_text='The condition operator for filtering.'
+    )
+
+    condition_value = models.JSONField(
+        blank=True,
+        null=True,
+        help_text='The value to compare the source question\'s answer against.'
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['target_content_type', 'target_object_id', 'index'],
+                name='unique_index_per_target'
+            )
+        ]
+
+    def save(self, *args, **kwargs):
+        # Restrict comparison operators for text-based questions
+        if isinstance(self.source_object, OpenQuestion) and self.condition_operator in ['>', '<', '>=', '<=']:
+            raise ValueError(f'Operator {self.condition_operator} is not valid for OpenQuestion.')
+
+        super().save(*args, **kwargs)

@@ -5,7 +5,8 @@
     <div class="response-body question-response-body item-container">
 
       <div v-for="(item, id) in items"
-           :key="id" class="question-item">
+           :key="id" class="question-item"
+           v-show="!hideObjectDict['item-' + item.id]">
           <input class="item-check"
                  type="checkbox"
                  :id="'q-' + this.qid + '-' + item.id"
@@ -26,7 +27,7 @@
 <script>
 export default {
   name: 'MultiChoiceQuestion',
-  props: ['qid', 'text', 'items'],
+  props: ['qid', 'text', 'items', 'hideObjectDict'],
   emits: ['responseChanged'],
   data: function() {
     return {

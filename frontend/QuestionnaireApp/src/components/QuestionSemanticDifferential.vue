@@ -5,7 +5,9 @@
     <div class="response-body">
       <template v-for="(item, id) in items" :key="id">
 
-      <div :id="'answer-item-' + item.id" class="item-container response-row">
+      <div :id="'answer-item-' + item.id"
+           v-show="!hideObjectDict['item-' + item.id]"
+           class="item-container response-row">
 
         <div class="item-label-container item-label-start" v-html="item.label"></div>
 
@@ -60,7 +62,7 @@
 <script>
 export default {
   name: 'SemanticDifferential',
-  props: ['qid', 'text', 'items', 'scale'],
+  props: ['qid', 'text', 'items', 'scale', 'hideObjectDict'],
   emits: ['responseChanged'],
   data: function() {
     return {

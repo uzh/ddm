@@ -62,6 +62,11 @@
 </template>
 
 <script>
+import {
+  updateMainScaleClasses,
+  scrollToNext,
+  updateMostVisibleRow} from '../utils/scrollFunctions'
+
 export default {
   name: 'MatrixQuestion',
   props: ['qid', 'text', 'items', 'scale', 'options', 'hideObjectDict'],
@@ -69,7 +74,6 @@ export default {
   data: function() {
     return {
       response: {},
-      shouldScroll: window.innerWidth <= 768,
     }
   },
   created() {
@@ -79,111 +83,26 @@ export default {
     this.$emit('responseChanged', {id: this.qid, response: this.response, question: this.text, items: this.items});
   },
   mounted() {
-    window.addEventListener('resize', this.updateScrollSetting);
-    window.addEventListener('scroll', this.updateMostVisibleRow);
-    window.addEventListener('load', this.updateMostVisibleRow);
-    window.addEventListener('resize', this.updateMostVisibleRow);
-    this.addClasses();
-  },
-  beforeDestroy() {
-    window.removeEventListener('resize', this.updateScrollSetting);
-    window.removeEventListener('scroll', this.updateMostVisibleRow);
-    window.removeEventListener('load', this.updateMostVisibleRow);
-    window.removeEventListener('resize', this.updateMostVisibleRow);
+    updateMainScaleClasses('.scale-container');
   },
   methods: {
-    updateScrollSetting() {
-      this.shouldScroll = window.innerWidth <= 768;
-    },
-    updateMostVisibleRow() {
-      let responseRows = Array.from(document.querySelectorAll('.response-row'));
-      let mostVisibleRow = null;
-      let minDistance = Infinity;
+    scrollToNext,
 
-      if (!this.shouldScroll) {
-        responseRows.forEach(row => row.style.opacity = "1");
-        return
-      }
-
-      responseRows.forEach(row => {
-        let rect = row.getBoundingClientRect();
-        let questionHeight = this.getHeightOfLastQuestionTextBefore(row)
-        let distance = Math.abs(rect.top);
-
-        // Check if row is visible in viewport
-        if (rect.bottom > 0 && rect.top < window.innerHeight && rect.top >= (questionHeight * 0.25)) {
-          if (distance < minDistance) {
-            minDistance = distance;
-            mostVisibleRow = row;
-          }
-        }
-      });
-
-      // Reset opacity for all rows
-      responseRows.forEach(row => row.style.opacity = "0.3");
-
-      // Set the most visible row to full opacity
-      if (mostVisibleRow) {
-        mostVisibleRow.style.opacity = "1";
-      }
-    },
-    getHeightOfLastQuestionTextBefore(element) {
-      let questionBody = element.closest('.question-body');
-
-      if (!questionBody) {
-          return null;
-      }
-      const questionText = questionBody.querySelector('.question-text');
-      return questionText ? questionText.offsetHeight : 0;
-    },
+    /**
+     * Handles input changes by updating the local `response` object
+     * and emitting a `responseChanged` event to the parent component.
+     *
+     * @param {Event} event - The input event triggered by user interaction.
+     * The target element must have a `name` and `value` attribute.
+     *
+     * @emits responseChanged - Emits an object containing the updated response and related question metadata.
+     *
+     * @returns {void}
+     */
     responseChanged(event) {
       this.response[event.target.name] = event.target.value;
       this.$emit('responseChanged', {id: this.qid, response: this.response, question: this.text, items: this.items});
     },
-    scrollToNext(event) {
-      // Scroll to next item if it exists.
-      const currentRow = event.target.closest('div.response-row');
-      if (currentRow) {
-        const nextRow = currentRow.nextElementSibling;
-        if (nextRow) {
-          const stickyHeight = this.getHeightOfLastQuestionTextBefore(currentRow);
-          const nextRowTop = nextRow.getBoundingClientRect().top + window.scrollY;
-          const adjustedPosition = nextRowTop - stickyHeight;
-          window.scrollTo({ top: adjustedPosition, behavior: 'smooth' });
-
-        } else if (nextRow === null) {
-          // Scroll to next question if there is no next row.
-          let questionBody = currentRow.closest('.question-app-container');
-          let nextQuestionBody = questionBody.nextElementSibling;
-
-          if (nextQuestionBody) {
-            const nextQuestionTop = nextQuestionBody.getBoundingClientRect().top + window.scrollY;
-            window.scrollTo({ top: nextQuestionTop, behavior: 'smooth' });
-          }
-        }
-      }
-    },
-    addClasses() {
-      const containers = document.querySelectorAll('.scale-container');
-      containers.forEach(container => {
-        const mainScales = container.querySelectorAll('.main-scale');
-
-        if (mainScales.length > 0) {
-          // Remove old classes in case of re-renders
-          mainScales.forEach(el => {
-            el.classList.remove("main-scale-first", "main-scale-last");
-          });
-
-          // Add class to first .main-scale
-          mainScales[0].classList.add("main-scale-first");
-
-          // Add class to last .main-scale (if different from first)
-          if (mainScales.length > 1) {
-            mainScales[mainScales.length - 1].classList.add("main-scale-last");
-          }
-        }
-      });
-    }
   }
 }
 </script>

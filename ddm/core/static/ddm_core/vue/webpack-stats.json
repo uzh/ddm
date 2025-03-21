@@ -1,16 +1,6 @@
 {
   "status": "done",
   "assets": {
-    "css/vue_questionnaire.css": {
-      "name": "css/vue_questionnaire.css",
-      "path": "css\\vue_questionnaire.css",
-      "publicPath": "/static/ddm_core/vue/css/vue_questionnaire.css"
-    },
-    "css/vue_uploader.css": {
-      "name": "css/vue_uploader.css",
-      "path": "css\\vue_uploader.css",
-      "publicPath": "/static/ddm_core/vue/css/vue_uploader.css"
-    },
     "favicon.ico": {
       "name": "favicon.ico",
       "path": "favicon.ico",
@@ -28,43 +18,28 @@
       "path": "js\\chunk-vendors.js",
       "publicPath": "/static/ddm_core/vue/js/chunk-vendors.js"
     },
-    "js/chunk-vendors.js.map": {
-      "name": "js/chunk-vendors.js.map",
-      "path": "js\\chunk-vendors.js.map",
-      "publicPath": "/static/ddm_core/vue/js/chunk-vendors.js.map"
-    },
     "js/vue_questionnaire.js": {
       "name": "js/vue_questionnaire.js",
       "path": "js\\vue_questionnaire.js",
       "publicPath": "/static/ddm_core/vue/js/vue_questionnaire.js"
     },
-    "js/vue_questionnaire.js.map": {
-      "name": "js/vue_questionnaire.js.map",
-      "path": "js\\vue_questionnaire.js.map",
-      "publicPath": "/static/ddm_core/vue/js/vue_questionnaire.js.map"
-    },
     "js/vue_uploader.js": {
       "name": "js/vue_uploader.js",
       "path": "js\\vue_uploader.js",
       "publicPath": "/static/ddm_core/vue/js/vue_uploader.js"
-    },
-    "js/vue_uploader.js.map": {
-      "name": "js/vue_uploader.js.map",
-      "path": "js\\vue_uploader.js.map",
-      "publicPath": "/static/ddm_core/vue/js/vue_uploader.js.map"
     }
   },
   "chunks": {
     "vue_questionnaire": [
       "js/chunk-vendors.js",
-      "css/vue_questionnaire.css",
       "js/vue_questionnaire.js"
     ],
     "vue_uploader": [
       "js/chunk-vendors.js",
-      "css/vue_uploader.css",
       "js/vue_uploader.js"
     ]
   },
-  "publicPath": "/static/ddm_core/vue/"
+  "publicPath": "/static/ddm_core/vue/",
+  "error": "ModuleError",
+  "message": "Module Error (from ./node_modules/vue-loader/dist/index.js):\n[vue/compiler-sfc] Unexpected token (386:0)\n\nC:\\Users\\nipfif\\PyCharmProjects\\DDM\\frontend\\QuestionnaireApp\\src\\QuestionnaireApp.vue\n498|            });\n499|      }\n500|    }\n   |       ^\n501|  }\n   |  ^\n502|  </script>"
 }

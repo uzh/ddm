@@ -51,6 +51,17 @@ export default {
     this.$emit('responseChanged', {id: this.qid, response: this.response, question: this.text, items: this.items});
   },
   methods: {
+    /**
+     * Handles input changes by updating the local `response` object
+     * and emitting a `responseChanged` event to the parent component.
+     *
+     * @param {Event} event - The input event triggered by user interaction.
+     * The target element must have a `name` and `value` attribute.
+     *
+     * @emits responseChanged - Emits an object containing the updated response and related question metadata.
+     *
+     * @returns {void}
+     */
     responseChanged(event) {
       this.response = event.target.value;
       this.$emit('responseChanged', {id: this.qid, response: this.response, question: this.text, items: this.items});

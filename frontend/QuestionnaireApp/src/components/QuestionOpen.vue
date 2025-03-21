@@ -127,6 +127,19 @@ export default {
         return event.target.value;
       }
     },
+
+    /**
+     * Handles input changes by updating the local `response` object
+     * and emitting a `responseChanged` event to the parent component.
+     * If the value of the input is "" or null, uses "-99" as response value.
+     *
+     * @param {Event} event - The input event triggered by user interaction.
+     * The target element must have a `name` and `value` attribute.
+     *
+     * @emits responseChanged - Emits an object containing the updated response and related question metadata.
+     *
+     * @returns {void}
+     */
     responseChanged(event) {
       if (this.options.multi_item_response) {
         this.response[event.target.name] = this.getValue(event);

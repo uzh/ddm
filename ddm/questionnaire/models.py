@@ -1,4 +1,5 @@
 import random
+from typing import Union
 
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
@@ -12,7 +13,6 @@ from polymorphic.models import PolymorphicModel
 from ddm.core.utils.user_content.template import render_user_content
 from ddm.encryption.models import ModelWithEncryptedData
 from ddm.datadonation.models import DataDonation
-from ddm.questionnaire.exceptions import QuestionValidationError
 
 
 class FilterConditionMixin:
@@ -20,13 +20,6 @@ class FilterConditionMixin:
     Mixin adding utility functions to models with a generic relationship to
     FilterConditions.
     """
-    @staticmethod
-    def get_filter_config_id(obj):
-        if isinstance(obj, QuestionItem):
-            return f'item-{obj.pk}'
-        else:
-            return f'question-{obj.pk}'
-
     def get_filter_config(self):
         """
         Creates the filter conditions that can be passed to the vue questionnaire.
@@ -39,8 +32,8 @@ class FilterConditionMixin:
                 'combinator': condition.combinator,
                 'condition_operator': condition.condition_operator,
                 'condition_value': condition.condition_value,
-                'target': self.get_filter_config_id(condition.target),
-                'source': self.get_filter_config_id(condition.source_object)
+                'target': get_filter_config_id(condition.target),
+                'source': get_filter_config_id(condition.source_object)
             }
 
             # Reset combinator value to None for item with the lowest index.
@@ -140,14 +133,17 @@ class QuestionBase(FilterConditionMixin, PolymorphicModel):
     def is_general(self):
         return True if self.blueprint is None else False
 
-    def get_config(self, participant_id, view):
+    def get_config(self, participant_id):
         config = self.create_config()
-        config = self.render_config_content(config, participant_id, view)
+        config = self.render_config_content(config, participant_id)
         return config
+
+    def get_response_keys(self):
+        return []
 
     def create_config(self):
         config = {
-            'question': self.pk,
+            'question': f'question-{self.pk}',
             'type': self.question_type,
             'page': self.page,
             'index': self.index,
@@ -159,7 +155,7 @@ class QuestionBase(FilterConditionMixin, PolymorphicModel):
         }
         return config
 
-    def render_config_content(self, config, participant, view):
+    def render_config_content(self, config, participant):
         """
         Renders references to donated data or participant data in question or
         item text configurations as html.
@@ -187,6 +183,15 @@ class QuestionBase(FilterConditionMixin, PolymorphicModel):
     def get_varname(self):
         return self.variable_name
 
+    def get_valid_responses(self):
+        """Returns a list of valid responses for this question."""
+        default_missing = -99
+        return [default_missing]
+
+    def validate_response(self, response_key, response):
+        """Placeholder method - must be defined in derivative models."""
+        return True
+
 
 class ItemMixin(models.Model):
     randomize_items = models.BooleanField(default=False)
@@ -208,32 +213,9 @@ class ItemMixin(models.Model):
             random.shuffle(config['items'])
         return config
 
-    def validate_item_response(self, response):
-        """
-        Checks if all expected item ids are present in response.
-        Expects the response to be a dictionary of the form:
-        {'item id as string': <item response>, ...}
-
-        Raises a KeyError if validation fails.
-        """
-        question_items = self.questionitem_set.all().values_list('id', flat=True)
-        item_ids = [str(i) for i in list(question_items)]
-        response_keys = [str(k) for k in response.keys()]
-        if sorted(item_ids) == sorted(response_keys):
-            return True
-
-        if len(item_ids) > len(response_keys):
-            missing_items = [i for i in item_ids if i not in response_keys]
-            raise KeyError(f'Missing expected items: {missing_items}.')
-        elif len(item_ids) < len(response_keys):
-            unexpected_items = [k for k in response_keys if k not in item_ids]
-            raise KeyError(
-                f'Unexpected item ids for {self.DEFAULT_QUESTION_TYPE} '
-                f'with ID {self.id}: {unexpected_items}.')
-        else:
-            raise KeyError(
-                f'Received response items ({sorted(response_keys)}) do '
-                f'not match the expected items ({sorted(item_ids)}).')
+    def get_response_keys(self):
+        item_pks = self.questionitem_set.all().values_list('pk', flat=True)
+        return [f'item-{pk}' for pk in list(item_pks)]
 
 
 class ScaleMixin:
@@ -248,119 +230,41 @@ class ScaleMixin:
             config['scale'].append(point.serialize_to_config())
         return config
 
-    def validate_scale_response(self, response):
-        """
-        Checks if all responses are possible values according to the scale
-        definition.
-        {'item id as string': <item response>, ...}
-
-        Raises a KeyError if validation fails.
-        """
-        scale_points = self.scalepoint_set.all()
-        valid_values = list(scale_points.values_list('value', flat=True))
-        valid_values.append(-99)
-
-        errors = []
-        for item, value in response.items():
-            if isinstance(value, float):
-                raise QuestionValidationError(
-                    question=self,
-                    message=f'Response {value} is of type float.')
-
-            try:
-                value = int(value)
-            except (ValueError, TypeError):
-                errors.append(f'Response {value} for item {item} '
-                              f'cannot be converted to int.')
-                continue
-
-            if int(value) not in valid_values:
-                errors.append(f'Got invalid response "{item}: {value}"')
-
-        return errors
+    def get_valid_responses(self):
+        valid_responses = super().get_valid_responses()
+        valid_responses += list(self.scalepoint_set.all().values_list('value', flat=True))
+        return valid_responses
 
 
 class SingleChoiceQuestion(ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.SINGLE_CHOICE
 
-    def get_valid_values(self):
+    def get_response_keys(self):
+        return [f'question-{self.pk}']
+
+    def get_valid_responses(self):
         """
         Valid response values include all related item values
         (QuestionItem.value) plus -99 which indicates that a question was not
         answered/skipped.
         """
-        question_items = self.questionitem_set.all()
-        valid_values = list(question_items.values_list('value', flat=True))
-        valid_values.append(-99)
-        return valid_values
-
-    def validate_response(self, response):
-        """
-        Expects the response to be a single value as either an integer or a
-        string that can be converted to an integer.
-        """
-        valid_values = self.get_valid_values()
-
-        if isinstance(response, float):
-            raise QuestionValidationError(
-                question=self,
-                message=f'{response} is of type float.')
-
-        try:
-            response = int(response)
-        except (ValueError, TypeError):
-            raise QuestionValidationError(
-                question=self,
-                message=f'{response} cannot be converted to int.')
-
-        if response not in valid_values:
-            raise QuestionValidationError(
-                question=self,
-                message=f'{response} invalid; valid values: {valid_values}.')
-        return True
+        valid_responses = super().get_valid_responses()
+        item_values = self.questionitem_set.all().values_list('value', flat=True)
+        valid_responses += list(item_values)
+        return valid_responses
 
 
 class MultiChoiceQuestion(ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.MULTI_CHOICE
 
-    def get_valid_values(self):
+    def get_valid_responses(self):
         """
         Valid response values include 0 (item not selected), 1 (item selected),
         and -99 which indicates that a question was not answered/skipped.
         """
-        valid_values = [0, 1, -99]
-        return valid_values
-
-    def validate_response(self, response):
-        """
-        Expects the response to be a dictionary of the form:
-        {'item id as string': <1/0/-99>, ...}
-        """
-        errors = []
-        try:
-            self.validate_item_response(response)
-        except KeyError as e:
-            errors.append(e)
-
-        valid_values = self.get_valid_values()
-        for item, value in response.items():
-            if isinstance(value, float):
-                errors.append(f'Got invalid response {value} for item {item}.')
-                continue
-
-            try:
-                value = int(value)
-            except (ValueError, TypeError):
-                errors.append(f'Response {response} for item {item} '
-                              f'cannot be converted to int.')
-                continue
-
-            if value not in valid_values:
-                errors.append(f'Got invalid response {value} for item {item}.')
-
-        if errors:
-            raise QuestionValidationError(question=self, item_errors=errors)
-        return True
+        valid_responses = super().get_valid_responses()
+        valid_responses += [0, 1]
+        return valid_responses
 
 
 class OpenQuestion(ItemMixin, QuestionBase):
@@ -404,21 +308,29 @@ class OpenQuestion(ItemMixin, QuestionBase):
 
     multi_item_response = models.BooleanField(default=False)
 
+    def get_response_keys(self):
+        if self.multi_item_response:
+            item_pks = self.questionitem_set.all().values_list('pk', flat=True)
+            return [f'item-{pk}' for pk in list(item_pks)]
+        else:
+            return [f'question-{self.pk}']
+
     def create_config(self):
         config = super().create_config()
         config['options']['display'] = self.display
         config['options']['input_type'] = self.input_type
         config['options']['max_input_length'] = self.max_input_length
         config['options']['multi_item_response'] = self.multi_item_response
+
+        # Ensure that "left-over" items are not included in config.
+        if not self.multi_item_response:
+            config['items'] = []
         return config
 
-    def validate_response(self, response):
-        """ Any value representable as a String is a valid response. """
-        try:
-            str(response)
-        except TypeError:
-            raise QuestionValidationError(question=self)
-        return True
+    def get_valid_responses(self):
+        valid_responses = super().get_valid_responses()
+        valid_responses += ['__any_string__']
+        return valid_responses
 
 
 class MatrixQuestion(ScaleMixin, ItemMixin, QuestionBase):
@@ -431,55 +343,21 @@ class MatrixQuestion(ScaleMixin, ItemMixin, QuestionBase):
         config['options']['show_scale_headings'] = self.show_scale_headings
         return config
 
-    def validate_response(self, response):
-        """
-        Expects the response to be a dictionary of the form:
-        {'item id as string': <1/0/-99>, ...}
-        """
-        item_errors = []
-        try:
-            self.validate_item_response(response)
-        except KeyError as e:
-            item_errors.append(e)
-
-        scale_errors = self.validate_scale_response(response)
-
-        if scale_errors or item_errors:
-            raise QuestionValidationError(
-                question=self, scale_errors=scale_errors, item_errors=item_errors)
-        return True
+    def get_valid_responses(self):
+        valid_responses = super().get_valid_responses()
+        return valid_responses
 
 
 class SemanticDifferential(ScaleMixin, ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.SEMANTIC_DIFF
 
-    def validate_response(self, response):
-        """
-        Expects the response to be a dictionary of the form:
-        {'item id as string': <1/0/-99>, ...}
-        """
-        item_errors = []
-        try:
-            self.validate_item_response(response)
-        except KeyError as e:
-            item_errors.append(e)
-
-        scale_errors = self.validate_scale_response(response)
-
-        if scale_errors or item_errors:
-            raise QuestionValidationError(
-                question=self, scale_errors=scale_errors, item_errors=item_errors)
-        return True
+    def get_valid_responses(self):
+        valid_responses = super().get_valid_responses()
+        return valid_responses
 
 
 class Transition(QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.TRANSITION
-
-    def validate_response(self, response):
-        """
-        No validation necessary, as this is just a placeholder question type.
-        """
-        return True
 
 
 class QuestionItem(FilterConditionMixin, models.Model):
@@ -526,6 +404,7 @@ class QuestionItem(FilterConditionMixin, models.Model):
 
     def serialize_to_config(self):
         item_config = model_to_dict(self, exclude=['question'])
+        item_config['id'] = f'item-{item_config["id"]}'
         return item_config
 
 
@@ -570,7 +449,8 @@ class QuestionnaireResponse(ModelWithEncryptedData):
     project = models.ForeignKey('ddm_projects.DonationProject', on_delete=models.CASCADE)
     participant = models.ForeignKey('ddm_participation.Participant', on_delete=models.CASCADE)
     time_submitted = models.DateTimeField(default=timezone.now)
-    data = models.BinaryField()
+    data = models.BinaryField()  # Holds the actual response data (encrypted)
+    questionnaire_config = models.JSONField(default=list, null=True)  # Holds the questionnaire configuration at the time of participation.
 
 
 class FilterCondition(models.Model):
@@ -660,3 +540,21 @@ class FilterCondition(models.Model):
             raise ValueError(f'Operator {self.condition_operator} is not valid for OpenQuestion.')
 
         super().save(*args, **kwargs)
+
+
+def get_filter_config_id(obj: Union[QuestionBase, QuestionItem]) -> str:
+    """
+    Returns the passed objects ID used for the filter configuration.
+
+    Args:
+        obj (QuestionBase | QuestionItem): Either a QuestionBase or a
+            QuestionItem instance.
+
+    Returns:
+        str: 'question-<question.pk> for a QuestionBase or
+            'item-<item.pk>' for a QuestionItem.
+    """
+    if isinstance(obj, QuestionItem):
+        return f'item-{obj.pk}'
+    else:
+        return f'question-{obj.pk}'

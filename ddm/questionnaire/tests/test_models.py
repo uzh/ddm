@@ -2,10 +2,10 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 from ddm.projects.models import DonationProject, ResearchProfile
-from ddm.questionnaire.exceptions import QuestionValidationError
 from ddm.questionnaire.models import (
     SingleChoiceQuestion, QuestionItem, MultiChoiceQuestion, MatrixQuestion,
-    ScalePoint, SemanticDifferential, FilterConditionMixin, QuestionBase, FilterCondition, OpenQuestion
+    ScalePoint, SemanticDifferential, QuestionBase, FilterCondition,
+    OpenQuestion, get_filter_config_id
 )
 
 User = get_user_model()
@@ -40,16 +40,9 @@ class TestSingleChoiceQuestion(TestQuestionModelsBaseCase):
         QuestionItem.objects.create(question=cls.question, index=1, value=1)
         QuestionItem.objects.create(question=cls.question, index=2, value=8)
 
-    def test_validate_response_valid_case(self):
-        valid_values = [1, 8, -99, '1', '8', '-99']
-        for value in valid_values:
-            self.assertTrue(self.question.validate_response(value))
-
-    def test_validate_response_invalid_case(self):
-        invalid_values = [0, 1.4, '4', '1.7', 'abc']
-        for value in invalid_values:
-            with self.assertRaises(QuestionValidationError):
-                self.question.validate_response(value)
+    def test_get_valid_responses(self):
+        valid_values = [1, 8, -99]
+        self.assertCountEqual(valid_values, self.question.get_valid_responses())
 
 
 class TestMultiChoiceQuestion(TestQuestionModelsBaseCase):
@@ -62,24 +55,9 @@ class TestMultiChoiceQuestion(TestQuestionModelsBaseCase):
         cls.item_b = QuestionItem.objects.create(
             question=cls.question, index=2, value=8)
 
-    def test_validate_response_valid_case(self):
-        valid_values = [
-            {str(self.item_a.pk): 1, str(self.item_b.pk): 0},
-            {self.item_a.pk: False, str(self.item_b.pk): '-99'},
-            {self.item_a.pk: True, self.item_b.pk: -99},
-        ]
-        for value in valid_values:
-            self.assertTrue(self.question.validate_response(value))
-
-    def test_validate_response_invalid_case(self):
-        invalid_values = [
-            {str(self.item_a.pk): 1},
-            {self.item_a.pk: 'False', str(self.item_b.pk): 0},
-            {self.item_a.pk: 1, self.item_b.pk: 1, '3': 1},
-        ]
-        for value in invalid_values:
-            with self.assertRaises(QuestionValidationError):
-                self.question.validate_response(value)
+    def test_get_valid_responses(self):
+        valid_values = [1, 0, -99]
+        self.assertCountEqual(valid_values, self.question.get_valid_responses())
 
 
 class TestMatrixQuestion(TestQuestionModelsBaseCase):
@@ -96,24 +74,9 @@ class TestMatrixQuestion(TestQuestionModelsBaseCase):
         cls.scale_b = ScalePoint.objects.create(
             question=cls.question, index=2, value=6)
 
-    def test_validate_response_valid_case(self):
-        valid_values = [
-            {str(self.item_a.pk): 1, str(self.item_b.pk): 6},
-            {self.item_a.pk: '1', str(self.item_b.pk): '-99'},
-            {self.item_a.pk: '6', self.item_b.pk: -99},
-        ]
-        for value in valid_values:
-            self.assertTrue(self.question.validate_response(value))
-
-    def test_validate_response_invalid_case(self):
-        invalid_values = [
-            {str(self.item_a.pk): 1},
-            {self.item_a.pk: 1, str(self.item_b.pk): 0},
-            {self.item_a.pk: 1, self.item_b.pk: 1, '3': 1},
-        ]
-        for value in invalid_values:
-            with self.assertRaises(QuestionValidationError):
-                self.question.validate_response(value)
+    def test_get_valid_responses(self):
+        valid_values = [1, 6, -99]
+        self.assertCountEqual(valid_values, self.question.get_valid_responses())
 
 
 class TestSemanticDifferentialQuestion(TestQuestionModelsBaseCase):
@@ -130,30 +93,15 @@ class TestSemanticDifferentialQuestion(TestQuestionModelsBaseCase):
         cls.scale_b = ScalePoint.objects.create(
             question=cls.question, index=2, value=6)
 
-    def test_validate_response_valid_case(self):
-        valid_values = [
-            {str(self.item_a.pk): 1, str(self.item_b.pk): 6},
-            {self.item_a.pk: '1', str(self.item_b.pk): '-99'},
-            {self.item_a.pk: '6', self.item_b.pk: -99},
-        ]
-        for value in valid_values:
-            self.assertTrue(self.question.validate_response(value))
-
-    def test_validate_response_invalid_case(self):
-        invalid_values = [
-            {str(self.item_a.pk): 1},
-            {self.item_a.pk: 1, str(self.item_b.pk): 0},
-            {self.item_a.pk: 1, self.item_b.pk: 1, '3': 1},
-        ]
-        for value in invalid_values:
-            with self.assertRaises(QuestionValidationError):
-                self.question.validate_response(value)
+    def test_get_valid_responses(self):
+        valid_values = [1, 6, -99]
+        self.assertCountEqual(valid_values, self.question.get_valid_responses())
 
     def test_create_config(self):
         expected_item_config = []
         for item in [self.item_a, self.item_b]:
             expected_item_config.append({
-                'id': item.pk,
+                'id': f'item-{item.pk}',
                 'label': item.label,
                 'label_alt': item.label_alt,
                 'index': item.index,
@@ -171,7 +119,7 @@ class TestSemanticDifferentialQuestion(TestQuestionModelsBaseCase):
                 'secondary_point': scale_point.secondary_point,
             })
         expected_config = {
-            'question': self.question.pk,
+            'question': f'question-{self.question.pk}',
             'type': self.question.question_type,
             'page': self.question.page,
             'index': self.question.index,
@@ -184,17 +132,17 @@ class TestSemanticDifferentialQuestion(TestQuestionModelsBaseCase):
         self.assertDictEqual(expected_config, self.question.create_config())
 
 
-class FilterConditionMixinTest(TestCase):
+class FilterConditionUtilsTest(TestCase):
     def test_get_filter_config_id_questionitem(self):
         """Test if QuestionItem returns 'item-{id}'."""
         obj = QuestionItem(pk=5)
-        result = FilterConditionMixin.get_filter_config_id(obj)
+        result = get_filter_config_id(obj)
         self.assertEqual(result, 'item-5')
 
     def test_get_filter_config_id_questionbase(self):
         """Test if QuestionBase returns 'question-{id}'."""
         obj = QuestionBase(pk=10)
-        result = FilterConditionMixin.get_filter_config_id(obj)
+        result = get_filter_config_id(obj)
         self.assertEqual(result, 'question-10')
 
 

@@ -112,6 +112,14 @@ WEBPACK_LOADER = {
         'POLL_INTERVAL': 0.1,
         'TIMEOUT': None,
         'IGNORE': [r'.+\.hot-update.js', r'.+\.map']
+    },
+    'DDM_QUESTIONNAIRE': {
+        'CACHE': True,
+        'BUNDLE_DIR_NAME': 'core/frontend/questionnaire/',
+        'STATS_FILE': os.path.join(DDM_DIR, 'core', 'static', 'ddm_core', 'frontend', 'questionnaire', 'webpack-stats.json'),
+        'POLL_INTERVAL': 0.1,
+        'TIMEOUT': None,
+        'IGNORE': [r'.+\.hot-update.js', r'.+\.map']
     }
 }
 

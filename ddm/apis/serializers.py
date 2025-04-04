@@ -124,7 +124,6 @@ class ResponseSerializer(SerializerDecryptionMixin, serializers.ModelSerializer)
                     except QuestionItem.DoesNotExist:
                         # Item has been deleted.
                         continue
-                    value = item.value
                     var_name = item.get_varname()
                     responses[var_name] = item_answers[item_id]
                 pass

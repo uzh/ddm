@@ -137,8 +137,7 @@ on the question level, this setting allows randomizing only certain items while
 those for which this option is not ticked stay in their place (i.e., according to
 their index).
 
-Delete:: Tick this box if the item should be deleted. The item will be deleted
-as soon as you click on _Update Items_.
+Delete:: Check this box to delete the item. It will be deleted when you click _Save_.
 
 
 === Scale Configuration
@@ -158,8 +157,7 @@ Value:: Used to indicate which scale point has been selected in the data export.
 Secondary point:: If a scale point is marked as 'secondary point' it will be rendered differently than the 'regular' scale points.
 This is useful to, e.g., offer a "Don't know" option to participants that is visually seperated from the main scale.
 
-Delete:: Tick this box if the scale point should be deleted. The scale point
-will be deleted as soon as you click on _Update Scale Points_.
+Delete:: Check this box to delete the scale point. It will be deleted when you click _Save_.
 
 [TIP]
 ====
@@ -168,3 +166,30 @@ define optional word-breaks in your labels. To do so, you can use the html code 
 in this position with a hyphen if there is not enough space to render the complete word. E.g., "un\&shy;decided" will
 be rendered as "un- decided" if the whole word does not fit on one line.
 ====
+
+
+=== Filter Configuration
+
+You can conditionally hide questions or items based on answers to previous questions using filter conditions.
+
+Index:: Sets the order in which filter conditions are applied.
+
+Combinator:: Defines how multiple filter conditions are combined: `AND` = all conditions must be met,
+`OR` = any condition must be met for the filter to be applied (ignored for the first (lowest index) condition).
++
+*Note:* Conditions are evaluated as a chain, with AND having higher priority than OR. For example:
+`ConditionIndex1 OR ConditionIndex2 AND ConditionIndex3 OR ConditionIndex4` will be evaluated as
+`ConditionIndex1 OR (ConditionIndex2 AND ConditionIndex3) OR ConditionIndex4`).
++
+Options: `AND`, `OR`.
+
+Comparison Question/Item:: The question or item whose answer is used in the comparison (the _left side_ of the condition).
+
+Comparison Operator:: Specifies how the answer should be compared to the value.
++
+Options: `Equal (==)`, `Not Equal (!=)`, `Greater than (>)`, `Smaller than (<)`,
+`Greater than or equal (>=)`, `Smaller than or equal (<=)`, `Contains`, `Does not Contain`.
+
+Comparison Value:: The value to compare against (the _right side_ of the condition).
+
+Delete:: Check this box to remove the condition. It will be deleted when you click _Save_.

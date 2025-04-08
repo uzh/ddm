@@ -97,7 +97,7 @@ class ResponseSerializer(SerializerDecryptionMixin, serializers.ModelSerializer)
                 except QuestionItem.DoesNotExist:
                     # Item has been deleted.
                     continue
-                var_name = item.get_varname()
+                var_name = item.variable_name
                 responses[var_name] = data[response_id]
 
         return responses
@@ -124,7 +124,7 @@ class ResponseSerializer(SerializerDecryptionMixin, serializers.ModelSerializer)
                     except QuestionItem.DoesNotExist:
                         # Item has been deleted.
                         continue
-                    var_name = item.get_varname()
+                    var_name = item.variable_name
                     responses[var_name] = item_answers[item_id]
                 pass
             else:

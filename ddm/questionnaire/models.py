@@ -180,9 +180,6 @@ class QuestionBase(FilterConditionMixin, PolymorphicModel):
             item['label_alt'] = render_user_content(item['label_alt'], context)
         return config
 
-    def get_varname(self):
-        return self.variable_name
-
     def get_valid_responses(self):
         """Returns a list of valid responses for this question."""
         default_missing = -99
@@ -399,7 +396,8 @@ class QuestionItem(FilterConditionMixin, models.Model):
         object_id_field='target_object_id'
     )
 
-    def get_varname(self):
+    @property
+    def variable_name(self):
         return f'{self.question.variable_name}-{self.value}'
 
     def serialize_to_config(self):

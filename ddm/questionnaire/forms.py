@@ -140,7 +140,7 @@ class FilterConditionForm(forms.ModelForm):
         item_labels = []
         for item in item_set:
             item_labels.append(
-                (f'item-{item.id}', f'Item {item.get_varname()} ({item.label})')
+                (f'item-{item.id}', f'Item {item.variable_name} ({item.label})')
             )
 
         question_labels = []

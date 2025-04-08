@@ -115,7 +115,7 @@ def validate_responses(responses: dict, project: DonationProject) -> None:
             question = QuestionBase.objects.get(project=project, pk=question_id)
         elif key.startswith('item-'):
             item_id = key.lstrip('item-')
-            item = QuestionItem.objects.get(question_project=project, pk=item_id)
+            item = QuestionItem.objects.get(question__project=project, pk=item_id)
             question = item.question
         else:
             continue

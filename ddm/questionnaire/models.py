@@ -479,7 +479,6 @@ class FilterCondition(models.Model):
         'source_object_id'
     )
 
-    # TODO: Ensure index is unique per target.
     index = models.IntegerField(default=1)
 
     class ConditionCombinators(models.TextChoices):
@@ -500,7 +499,6 @@ class FilterCondition(models.Model):
         )
     )
 
-    # TODO: Which operators are available depends on the source; if the source is of type OpenQuestion, greater/smaller operations should be disallowed.
     class ConditionOperators(models.TextChoices):
         EQUALS = '==', 'Equal (==)'
         EQUALS_NOT = '!=', 'Not Equal (!=)'
@@ -533,7 +531,7 @@ class FilterCondition(models.Model):
         ]
 
     def save(self, *args, **kwargs):
-        # Restrict comparison operators for text-based questions
+        # Restrict comparison operators for text-based questions.
         if isinstance(self.source_object, OpenQuestion) and self.condition_operator in ['>', '<', '>=', '<=']:
             raise ValueError(f'Operator {self.condition_operator} is not valid for OpenQuestion.')
 

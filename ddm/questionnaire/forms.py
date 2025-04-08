@@ -1,19 +1,21 @@
+from itertools import chain
+
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 
-from ddm.questionnaire.models import FilterCondition, QuestionBase, QuestionItem, QuestionType
+from ddm.questionnaire.models import FilterCondition, QuestionBase, QuestionItem, QuestionType, OpenQuestion
 
 
 class FilterConditionForm(forms.ModelForm):
     source = forms.ChoiceField(
         choices=[],
-        label='Source Question',
+        label='Comparison Question/Item',
         required=True,
         widget=forms.Select(attrs={'class': 'w-100'})
     )
     condition_operator = forms.ChoiceField(
         choices=[],
-        label='Condition Operator',
+        label='Comparison Operator',
         required=True,
         widget=forms.Select(attrs={'class': 'w-100'})
     )
@@ -24,7 +26,7 @@ class FilterConditionForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'w-100'})
     )
     condition_value = forms.CharField(
-        label='Condition Value',
+        label='Comparison Value',
         required=True
     )
 
@@ -63,9 +65,6 @@ class FilterConditionForm(forms.ModelForm):
 
         else:
             self.get_empty_form_defaults()
-
-        # TODO: Use different widgets depending on source selection (probably a JS problem).
-        # TODO: Show different comparison operators depending on source selection (probably a JS problem).
 
     def get_question_id(self, target_object):
         if isinstance(target_object, QuestionItem):
@@ -109,19 +108,57 @@ class FilterConditionForm(forms.ModelForm):
             .exclude(id=question_id)
             .exclude(question_type__in=types_to_exclude)
         )
-        # TODO: Also exclude OpenQuestion with items.
+
+        open_questions_with_items = (
+            OpenQuestion.objects
+            .filter(multi_item_response=True)
+            .exclude(id=question_id)
+        )
+        for question in open_questions_with_items:
+            question_set = question_set.exclude(id=question.id)
         return question_set
 
+    def get_combined_labels(self, question_set, item_set):
+        sorted_objects = sorted(
+            chain(
+                [(q, 'question') for q in question_set],
+                [(i, 'item') for i in item_set]
+            ),
+            key=lambda pair: (
+                pair[0].page if hasattr(pair[0], 'page') else pair[0].question.page,
+                pair[0].index
+            )
+        )
+
+        labels = []
+        for obj in sorted_objects:
+            if obj[1] == 'question':
+                internal_id = f'question-{obj[0].id}'
+                prefix = f'[quest, p{obj[0].page}]'
+                var_name = obj[0].variable_name
+                labels.append(
+                    (f'{internal_id}', f'{prefix} {var_name}')
+                )
+
+            if obj[1] == 'item':
+                internal_id = f'item-{obj[0].id}'
+                prefix = f'[item, p{obj[0].question.page}]'
+                label = f'{obj[0].variable_name} ({obj[0].label})'
+                labels.append(
+                    (f'{internal_id}', f'{prefix} {label}')
+                )
+        return labels
+
     def get_empty_form_defaults(self):
-        self.fields['source'].choices.insert(0, (None, 'select source'))
-        self.fields['condition_operator'].choices.insert(0, (None, 'select operator'))
+        self.fields['source'].choices.insert(0, (None, 'select comparison object'))
+        self.fields['condition_operator'].choices.insert(0, (None, 'select condition operator'))
         self.fields['combinator'].choices.insert(0, (None, 'select combinator'))
         self.initial['condition_value'] = ''
 
     def get_source_choices(self, question_set, item_set):
         # Exclude nonsensical choices.
         item_ct = ContentType.objects.get_for_model(QuestionItem)
-        print(self.initial)
+
         if self.instance and self.instance.target_object_id:
             if self.instance.target_content_type == item_ct:
                 # Exclude the item itself.
@@ -137,19 +174,8 @@ class FilterConditionForm(forms.ModelForm):
                 question_set.exclude(id=self.instance.target_object_id)
 
         # Add labels
-        item_labels = []
-        for item in item_set:
-            item_labels.append(
-                (f'item-{item.id}', f'Item {item.variable_name} ({item.label})')
-            )
-
-        question_labels = []
-        for question in question_set:
-            question_labels.append(
-                (f'question-{question.id}', f'Question {question.variable_name}')
-            )
-
-        return item_labels + question_labels
+        labels = self.get_combined_labels(question_set, item_set)
+        return labels
 
     def clean(self):
         """

@@ -1,5 +1,15 @@
 # Changelog
 
+## Frontend Refactor
+
+### Migration Notes
+
+- Need to update settings -> webpack config (!).
+- Split chunky vue component including both the questionnaire and uploader interface into two separate vue apps.
+- Refactored the questionnaire and uploader frontend completely (functionality was largely kept the same; some improvements added).
+- Extraction error implementation was refactored to be more meaningful and easier to maintain.
+
+
 ## 2.0.1 - 2025-03-11
 
 ### Fixed

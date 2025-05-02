@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@uploader/*": ["src/*"]
+    },
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "lib": ["ES2021", "DOM"],
+    "target": "ES2021"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "src/tests"]
+}

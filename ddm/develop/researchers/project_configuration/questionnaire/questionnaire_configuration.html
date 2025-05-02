@@ -428,6 +428,12 @@ If this option is left empty, no input length restriction is enforced.</p>
 a larger multi-line text-box. Defaults to "small" and only
 applies when the chosen input type is "Text".</p>
 </dd>
+<dt class="hdlist1">Multi item response</dt>
+<dd>
+<p>If this is selected, you can define items for each of which the participants
+will be asked to provide a text input. If not selected, the question will be rendered with just one
+input field below the question text.</p>
+</dd>
 </dl>
 </div>
 <div class="admonitionblock note">
@@ -446,6 +452,17 @@ participants choose to ignore the input hint.</p>
 </td>
 </tr>
 </table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_matrix_question"><a class="anchor" href="#_matrix_question"></a>Matrix Question</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Show scale headings</dt>
+<dd>
+<p>Option to show/hide scale headings.</p>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect2">
@@ -486,8 +503,7 @@ their index).</p>
 </dd>
 <dt class="hdlist1">Delete</dt>
 <dd>
-<p>Tick this box if the item should be deleted. The item will be deleted
-as soon as you click on <em>Update Items</em>.</p>
+<p>Check this box to delete the item. It will be deleted when you click <em>Save</em>.</p>
 </dd>
 </dl>
 </div>
@@ -504,22 +520,91 @@ the question items) with the configured question scale.</p>
 <dd>
 <p>Defines the order in which the items are displayed.</p>
 </dd>
-<dt class="hdlist1">Label</dt>
+<dt class="hdlist1">Input label</dt>
 <dd>
-<p>The label/text that is displayed to participants associated to the scale point.</p>
+<p>The text that is displayed within the scale-points/input-buttons.</p>
+</dd>
+<dt class="hdlist1">Heading label</dt>
+<dd>
+<p>The text that is displayed above the scale-points/input-buttons (currently, only possible for
+Matrix Questions).</p>
 </dd>
 <dt class="hdlist1">Value</dt>
 <dd>
 <p>Used to indicate which scale point has been selected in the data export.</p>
 </dd>
-<dt class="hdlist1">Add border</dt>
+<dt class="hdlist1">Secondary point</dt>
 <dd>
-<p>Setting currently has no effect - Still need to be implemented.</p>
+<p>If a scale point is marked as 'secondary point' it will be rendered differently than the 'regular' scale points.
+This is useful to, e.g., offer a "Don&#8217;t know" option to participants that is visually seperated from the main scale.</p>
 </dd>
 <dt class="hdlist1">Delete</dt>
 <dd>
-<p>Tick this box if the scale point should be deleted. The scale point
-will be deleted as soon as you click on <em>Update Scale Points</em>.</p>
+<p>Check this box to delete the scale point. It will be deleted when you click <em>Save</em>.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>When you have long labels on Question Items or Scale Points, or you have many scale points, it is a good practice to
+define optional word-breaks in your labels. To do so, you can use the html code <code>&amp;shy;</code>, which will break the word
+in this position with a hyphen if there is not enough space to render the complete word. E.g., "un&amp;shy;decided" will
+be rendered as "un- decided" if the whole word does not fit on one line.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_filter_configuration"><a class="anchor" href="#_filter_configuration"></a>Filter Configuration</h3>
+<div class="paragraph">
+<p>You can conditionally hide questions or items based on answers to previous questions using filter conditions.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Index</dt>
+<dd>
+<p>Sets the order in which filter conditions are applied.</p>
+</dd>
+<dt class="hdlist1">Combinator</dt>
+<dd>
+<p>Defines how multiple filter conditions are combined: <code>AND</code> = all conditions must be met,
+<code>OR</code> = any condition must be met for the filter to be applied (ignored for the first (lowest index) condition).</p>
+<div class="paragraph">
+<p><strong>Note:</strong> Conditions are evaluated as a chain, with AND having higher priority than OR. For example:
+<code>ConditionIndex1 OR ConditionIndex2 AND ConditionIndex3 OR ConditionIndex4</code> will be evaluated as
+<code>ConditionIndex1 OR (ConditionIndex2 AND ConditionIndex3) OR ConditionIndex4</code>).</p>
+</div>
+<div class="paragraph">
+<p>Options: <code>AND</code>, <code>OR</code>.</p>
+</div>
+</dd>
+<dt class="hdlist1">Comparison Question/Item</dt>
+<dd>
+<p>The question or item whose answer is used in the comparison (the <em>left side</em> of the condition).</p>
+</dd>
+<dt class="hdlist1">Comparison Operator</dt>
+<dd>
+<p>Specifies how the answer should be compared to the value.</p>
+<div class="paragraph">
+<p>Options: <code>Equal (==)</code>, <code>Not Equal (!=)</code>, <code>Greater than (&gt;)</code>, <code>Smaller than (&lt;)</code>,
+<code>Greater than or equal (&gt;=)</code>, <code>Smaller than or equal (&#8656;)</code>, <code>Contains</code>, <code>Does not Contain</code>.</p>
+</div>
+</dd>
+<dt class="hdlist1">Comparison Value</dt>
+<dd>
+<p>The value to compare against (the <em>right side</em> of the condition).</p>
+</dd>
+<dt class="hdlist1">Delete</dt>
+<dd>
+<p>Check this box to remove the condition. It will be deleted when you click <em>Save</em>.</p>
 </dd>
 </dl>
 </div>

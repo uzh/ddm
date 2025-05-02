@@ -283,118 +283,81 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="_exceptions_caught_on_client_side"><a class="anchor" href="#_exceptions_caught_on_client_side"></a>Exceptions Caught on Client Side</h2>
+<h2 id="_client_side_logs"><a class="anchor" href="#_client_side_logs"></a>Client Side Logs</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>Exceptions caught on the client side are exceptions and events that occurred in the participants' browser when
+donating data or filling out the questionnaire.</p>
+</div>
 <div class="sect2">
-<h3 id="_exceptions_during_data_donation_4xxx"><a class="anchor" href="#_exceptions_during_data_donation_4xxx"></a>Exceptions During Data Donation (4xxx)</h3>
-<div class="sect3">
-<h4 id="_file_messages_41xx"><a class="anchor" href="#_file_messages_41xx"></a>File Messages (41xx)</h4>
+<h3 id="_data_donation_logs"><a class="anchor" href="#_data_donation_logs"></a>Data Donation Logs</h3>
 <div class="paragraph">
-<p>These errors relate to exceptions that are raised on the client-side (i.e. in the participant&#8217;s browser) when
-uploading an incorrect or corrupted file.</p>
+<p><strong>INVALID_ZIP</strong><br>
+<em>Description:</em> Indicates that an uploader expects a ZIP-file but a different file-type was uploaded.<br></p>
 </div>
 <div class="paragraph">
-<p><strong>4101: Not Zip</strong><br>
-<em>Description:</em> Zip-container was expected as upload but another file type was selected (zip specific).<br>
-<em>Exception Message:</em> TODO</p>
+<p><strong>ZIP_READ_FAIL</strong><br>
+<em>Description:</em> Indicates that an error occurred trying to read a ZIP-file. <br></p>
 </div>
 <div class="paragraph">
-<p><strong>4102: Corrupt Zip</strong><br>
-<em>_Description:</em> The provided zip-container is corrupted (zip specific).<br>
-<em>Exception Message:</em> TODO</p>
+<p><strong>INVALID_REGEX</strong><br>
+<em>Description:</em> Indicates that an invalid RegEx was provided as blueprint path.<br></p>
 </div>
 <div class="paragraph">
-<p><strong>4103: Encrypted Zip</strong><br>
-<em>Description:</em> The provided zip-container is encrypted (zip specific).<br>
-<em>Exception Message:</em> TODO</p>
+<p><strong>INVALID_RULE_REGEX</strong><br>
+<em>Description:</em> Indicates that an invalid RegEx was provided as file rule field name.<br></p>
 </div>
 <div class="paragraph">
-<p><strong>4104: Multiple Files</strong><br>
-<em>Description:</em> Multiple files were selected.<br>
-<em>Exception Message:</em> TODO</p>
+<p><strong>NO_FILE_MATCH</strong><br>
+<em>Description:</em> Indicates that a ZIP-container did not contain the file as defined on the blueprint.<br></p>
 </div>
 <div class="paragraph">
-<p><strong>4105: Wrong File Type</strong><br>
-<em>Description:</em> The provided file does not match the expected file type.<br>
-<em>Exception Message:</em> TODO</p>
+<p><strong>FILE_PROCESSING_FAIL_GENERAL</strong><br>
+<em>Description:</em> Indicates that an unexpected error occurred during processing of a file&#8217;s content.<br></p>
 </div>
 <div class="paragraph">
-<p><strong>4106: JSON Syntax Error</strong><br>
-<em>Description:</em> The provided json file contains a syntax error.<br>
-<em>Exception Message:</em> TODO</p>
+<p><strong>STRING_CONVERSION_ERROR</strong><br>
+<em>Description:</em> Indicates that a file&#8217;s content could not be converted to a string.<br></p>
 </div>
 <div class="paragraph">
-<p><strong>4198: Generic Zip Error</strong><br>
-<em>Description:</em> An unexpected exception occurred while processing the zip file (zip specific).<br>
-<em>Exception Message:</em> TODO</p>
+<p><strong>NO_EXTRACTION_RULES</strong><br>
+<em>Description:</em> Indicates that a blueprint has no extraction rules defined (meaning that nothing will be extracted).<br></p>
 </div>
 <div class="paragraph">
-<p><strong>4199: Generic File Error</strong><br>
-<em>Description:</em> An unexpected exception occurred while processing a single file.<br>
-<em>Exception Message:</em> TODO</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_processing_messages_42xx"><a class="anchor" href="#_processing_messages_42xx"></a>Processing Messages (42xx)</h4>
-<div class="paragraph">
-<p><strong>4201: All Expected Fields Missing</strong><br>
-<em>Description:</em> None of the entries in the supplied file did contain the expected fields as defined in the blueprint.<br>
-<em>Exception Message:</em> TODO</p>
+<p><strong>PARSING_ERROR</strong><br>
+<em>Description:</em> Indicates that an error occurred when trying to parse a file&#8217;s content.<br></p>
 </div>
 <div class="paragraph">
-<p><strong>4202: Regex Not Matched</strong><br>
-<em>Description:</em> The expected file did not exist.<br>
-<em>Exception Message:</em> TODO</p>
+<p><strong>UNSUPPORTED_BP_FORMAT</strong><br>
+<em>Description:</em> Indicates that the file type that a blueprint wants to extract is not supported
+(currently, unlikely to ever occur - implemented for potential future use cases).<br></p>
 </div>
 <div class="paragraph">
-<p><strong>4203: Entry Not Containing Expected Fields</strong><br>
-<em>Description:</em> An entry did not contain one or more of the expected fields.<br>
-<em>Exception Message:</em> TODO</p>
+<p><strong>MORE_THAN_ONE_KEY_MATCH</strong><br>
+<em>Description:</em> Indicates that more than one key (or field/variable) contained in a file matched the field name
+defined in an extraction rule.<br></p>
 </div>
 <div class="paragraph">
-<p><strong>4204: All Entries Filtered Out</strong><br>
-<em>Description:</em> All entries of an uploaded file were filtered out and therefore no data was extracted.<br>
-<em>Exception Message:</em> TODO</p>
+<p><strong>EXTRACTION_STATS</strong><br>
+<em>Description:</em> Contains a summary of the data extraction procedure.
+Includes the <em>number of rows with a missing field</em> (nRowsMissingField),
+the <em>number of rows that were filtered out</em> (nRowsFilteredOut),
+the <em>total number of extracted rows</em> (nRowsTotal), and
+<em>information on how often and which rule fields could not be found in the file</em> (noKeyMatches).<br></p>
 </div>
 <div class="paragraph">
-<p><strong>4205: All Entries Either Missing Expected Field or Filtered</strong><br>
-<em>Description:</em> All entries of an uploaded file were either missing one or more expected fields or filtered out and therefore no data was extracted.<br>
-<em>Exception Message:</em> TODO</p>
+<p><strong>EXTRACTION_LOG</strong><br>
+<em>Description:</em> Contains a summary of how many times an extraction rule led to the exclusion of a data row
+during the data extraction procedure (is a dictionary where the keys represent the extraction rule IDs and the values the counts).<br></p>
 </div>
 <div class="paragraph">
-<p><strong>4206: Entry was filtered out</strong><br>
-<em>Description:</em> A filter rule applied and the entry was deleted.<br>
-<em>Exception Message:</em> TODO</p>
-</div>
-<div class="paragraph">
-<p><strong>4207: Defined extraction root was null or undefined</strong><br>
-<em>Description:</em> The defined extraction root was null or undefined in the uploaded file.<br>
-<em>Exception Message:</em> TODO</p>
-</div>
-<div class="paragraph">
-<p><strong>4220: Regex error (delete match)</strong><br>
-<em>Description:</em> An error occurred during the regex comparison (likely due to a regex misspecification in the extraction rule).<br>
-<em>Exception Message:</em> TODO</p>
-</div>
-<div class="paragraph">
-<p><strong>4221: Regex error (replace match)</strong><br>
-<em>Description:</em> An error occurred during the regex comparison (likely due to a regex misspecification in the extraction rule).<br>
-<em>Exception Message:</em> TODO</p>
-</div>
-<div class="paragraph">
-<p><strong>4222: Regex error (delete row)</strong><br>
-<em>Description:</em> An error occurred during the regex comparison (likely due to a regex misspecification in the extraction rule).<br>
-<em>Exception Message:</em> TODO</p>
-</div>
-<div class="paragraph">
-<p><strong>4299: Entry Not Containing Expected Fields</strong><br>
-<em>Description:</em> An entry did not contain one or more of the expected fields.<br>
-<em>Exception Message:</em> TODO</p>
-</div>
+<p><strong>EXTRACTED_FIELDS_MAP</strong><br>
+<em>Description:</em> Contains a summary of which field names in the extracted files where matched with which
+extraction rule field name during the data extraction procedure.<br></p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_exceptions_during_questionnaire_5xxx"><a class="anchor" href="#_exceptions_during_questionnaire_5xxx"></a>Exceptions During Questionnaire (5xxx)</h3>
+<h3 id="_questionnaire_logs"><a class="anchor" href="#_questionnaire_logs"></a>Questionnaire Logs</h3>
 <div class="admonitionblock note">
 <table>
 <tr>

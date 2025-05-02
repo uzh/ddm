@@ -9,111 +9,64 @@
 
 This page describes the implemented exceptions that are logged in a project's exception log.
 
-== Exceptions Caught on Client Side
+== Client Side Logs
 
-=== Exceptions During Data Donation (4xxx)
+Exceptions caught on the client side are exceptions and events that occurred in the participants' browser when
+donating data or filling out the questionnaire.
 
-==== File Messages (41xx)
-These errors relate to exceptions that are raised on the client-side (i.e. in the participant's browser) when
-uploading an incorrect or corrupted file.
+=== Data Donation Logs
 
-*4101: Not Zip* +
-_Description:_ Zip-container was expected as upload but another file type was selected (zip specific). +
-_Exception Message:_ TODO
+*INVALID_ZIP* +
+_Description:_ Indicates that an uploader expects a ZIP-file but a different file-type was uploaded. +
 
+*ZIP_READ_FAIL* +
+_Description:_ Indicates that an error occurred trying to read a ZIP-file.  +
 
-*4102: Corrupt Zip* +
-__Description:_ The provided zip-container is corrupted (zip specific). +
-_Exception Message:_ TODO
+*INVALID_REGEX* +
+_Description:_ Indicates that an invalid RegEx was provided as blueprint path. +
 
+*INVALID_RULE_REGEX* +
+_Description:_ Indicates that an invalid RegEx was provided as file rule field name. +
 
-*4103: Encrypted Zip* +
-_Description:_ The provided zip-container is encrypted (zip specific). +
-_Exception Message:_ TODO
+*NO_FILE_MATCH* +
+_Description:_ Indicates that a ZIP-container did not contain the file as defined on the blueprint. +
 
+*FILE_PROCESSING_FAIL_GENERAL* +
+_Description:_ Indicates that an unexpected error occurred during processing of a file's content. +
 
-*4104: Multiple Files* +
-_Description:_ Multiple files were selected. +
-_Exception Message:_ TODO
+*STRING_CONVERSION_ERROR* +
+_Description:_ Indicates that a file's content could not be converted to a string. +
 
+*NO_EXTRACTION_RULES* +
+_Description:_ Indicates that a blueprint has no extraction rules defined (meaning that nothing will be extracted). +
 
-*4105: Wrong File Type* +
-_Description:_ The provided file does not match the expected file type. +
-_Exception Message:_ TODO
+*PARSING_ERROR* +
+_Description:_ Indicates that an error occurred when trying to parse a file's content. +
 
+*UNSUPPORTED_BP_FORMAT* +
+_Description:_ Indicates that the file type that a blueprint wants to extract is not supported
+(currently, unlikely to ever occur - implemented for potential future use cases). +
 
-*4106: JSON Syntax Error* +
-_Description:_ The provided json file contains a syntax error. +
-_Exception Message:_ TODO
+*MORE_THAN_ONE_KEY_MATCH* +
+_Description:_ Indicates that more than one key (or field/variable) contained in a file matched the field name
+defined in an extraction rule. +
 
+*EXTRACTION_STATS* +
+_Description:_ Contains a summary of the data extraction procedure.
+Includes the _number of rows with a missing field_ (nRowsMissingField),
+the _number of rows that were filtered out_ (nRowsFilteredOut),
+the _total number of extracted rows_ (nRowsTotal), and
+_information on how often and which rule fields could not be found in the file_ (noKeyMatches). +
 
-*4198: Generic Zip Error* +
-_Description:_ An unexpected exception occurred while processing the zip file (zip specific). +
-_Exception Message:_ TODO
+*EXTRACTION_LOG* +
+_Description:_ Contains a summary of how many times an extraction rule led to the exclusion of a data row
+during the data extraction procedure (is a dictionary where the keys represent the extraction rule IDs and the values the counts). +
 
-
-*4199: Generic File Error* +
-_Description:_ An unexpected exception occurred while processing a single file. +
-_Exception Message:_ TODO
-
-
-==== Processing Messages (42xx)
-
-*4201: All Expected Fields Missing* +
-_Description:_ None of the entries in the supplied file did contain the expected fields as defined in the blueprint. +
-_Exception Message:_ TODO
-
-
-*4202: Regex Not Matched* +
-_Description:_ The expected file did not exist. +
-_Exception Message:_ TODO
+*EXTRACTED_FIELDS_MAP* +
+_Description:_ Contains a summary of which field names in the extracted files where matched with which
+extraction rule field name during the data extraction procedure. +
 
 
-*4203: Entry Not Containing Expected Fields* +
-_Description:_ An entry did not contain one or more of the expected fields. +
-_Exception Message:_ TODO
-
-
-*4204: All Entries Filtered Out* +
-_Description:_ All entries of an uploaded file were filtered out and therefore no data was extracted. +
-_Exception Message:_ TODO
-
-
-*4205: All Entries Either Missing Expected Field or Filtered* +
-_Description:_ All entries of an uploaded file were either missing one or more expected fields or filtered out and therefore no data was extracted. +
-_Exception Message:_ TODO
-
-
-*4206: Entry was filtered out* +
-_Description:_ A filter rule applied and the entry was deleted. +
-_Exception Message:_ TODO
-
-
-*4207: Defined extraction root was null or undefined* +
-_Description:_ The defined extraction root was null or undefined in the uploaded file. +
-_Exception Message:_ TODO
-
-
-*4220: Regex error (delete match)* +
-_Description:_ An error occurred during the regex comparison (likely due to a regex misspecification in the extraction rule). +
-_Exception Message:_ TODO
-
-
-*4221: Regex error (replace match)* +
-_Description:_ An error occurred during the regex comparison (likely due to a regex misspecification in the extraction rule). +
-_Exception Message:_ TODO
-
-
-*4222: Regex error (delete row)* +
-_Description:_ An error occurred during the regex comparison (likely due to a regex misspecification in the extraction rule). +
-_Exception Message:_ TODO
-
-
-*4299: Entry Not Containing Expected Fields* +
-_Description:_ An entry did not contain one or more of the expected fields. +
-_Exception Message:_ TODO
-
-
-=== Exceptions During Questionnaire (5xxx)
+=== Questionnaire Logs
 
 NOTE: Currently, not implemented. May be implemented in the future.

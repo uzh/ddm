@@ -23,7 +23,7 @@ import {ExtractionRule} from "@uploader/types/ExtractionRule";
  *  - extractedData: Array of rows or objects extracted from input.
  *  - extractedFieldsMap: Maps field names to the extraction rule field they came from.
  *  - extractionStats: Summary of rows with missing fields, (filtered) row counts and unmatched keys.
- *  - extractionLog: Records how many times each extraction rule was triggered.
+ *  - extractionRuleLog: Records how many times each extraction rule was triggered.
  *  - processingErrors: Collected error metadata for review and logging.
  */
 export class BlueprintExtractionOutcome {

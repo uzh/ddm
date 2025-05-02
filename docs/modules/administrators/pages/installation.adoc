@@ -137,10 +137,10 @@ Add the following configuration for webpack-loader to your settings.py:
 # For production use:
 import os
 WEBPACK_LOADER = {
-    'DEFAULT': {
+    'DDM_UPLOADER': {
         'CACHE': True,
-        'BUNDLE_DIR_NAME': 'ddm_core/vue/',
-        'STATS_FILE': os.path.join(STATIC_ROOT, 'ddm_core/vue/webpack-stats.json'),
+        'BUNDLE_DIR_NAME': 'ddm_core/frontent/uploader/',
+        'STATS_FILE': os.path.join(STATIC_ROOT, 'ddm_core/frontend/uploader/webpack-stats.json'),
         'POLL_INTERVAL': 0.1,
         'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
     },
@@ -158,12 +158,12 @@ WEBPACK_LOADER = {
 import os
 import ddm.core
 WEBPACK_LOADER = {
-    'DEFAULT': {
+    'DDM_UPLOADER': {
         'CACHE': False,
-        'BUNDLE_DIR_NAME': 'core/vue/',
+        'BUNDLE_DIR_NAME': 'core/frontend/uploader/',
         'STATS_FILE': os.path.join(
             os.path.dirname(ddm.core.__file__),
-            'static/ddm_core/vue/webpack-stats.json'
+            'static/ddm_core/frontend/uploader/webpack-stats.json'
         ),
         'POLL_INTERVAL': 0.1,  # Adjust as needed
         'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],

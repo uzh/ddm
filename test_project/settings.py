@@ -105,10 +105,10 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(PROJECT_DIR, 'test_project', 'media')
 
 WEBPACK_LOADER = {
-    'DEFAULT': {
+    'DDM_UPLOADER': {
         'CACHE': True,
-        'BUNDLE_DIR_NAME': 'core/vue/',
-        'STATS_FILE': os.path.join(DDM_DIR, 'core', 'static', 'ddm_core', 'vue', 'webpack-stats.json'),
+        'BUNDLE_DIR_NAME': 'core/frontend/uploader/',
+        'STATS_FILE': os.path.join(DDM_DIR, 'core', 'static', 'ddm_core', 'frontend', 'uploader', 'webpack-stats.json'),
         'POLL_INTERVAL': 0.1,
         'TIMEOUT': None,
         'IGNORE': [r'.+\.hot-update.js', r'.+\.map']

@@ -8,7 +8,6 @@ from django.shortcuts import redirect, reverse
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.decorators import method_decorator
-from django.utils.safestring import SafeString
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.decorators.cache import cache_page
@@ -235,7 +234,7 @@ class DataDonationView(ParticipationFlowBaseView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['uploader_configs'] = SafeString(self.get_uploader_configs())
+        context['uploader_configs'] = self.get_uploader_configs()
         context['project_url_id'] = self.object.url_id
         return context
 
@@ -267,17 +266,17 @@ class DataDonationView(ParticipationFlowBaseView):
 
         # Check if zip file contains expected file.
         unzipped_file = zipfile.ZipFile(file, 'r')
-        if 'ul_data.json' not in unzipped_file.namelist():
-            msg = 'Data Donation Processing Exception: "ul_data.json" is not in namelist.'
+        if 'data_donation.json' not in unzipped_file.namelist():
+            msg = 'Data Donation Processing Exception: "data_donation.json" is not in namelist.'
             log_server_exception(self.object, msg)
             return
 
         # Process donation data.
         try:
-            file_data = json.loads(unzipped_file.read('ul_data.json').decode('utf-8'))
+            file_data = json.loads(unzipped_file.read('data_donation.json').decode('utf-8'))
         except UnicodeDecodeError:
             try:
-                file_data = json.loads(unzipped_file.read('ul_data.json').decode('latin-1'))
+                file_data = json.loads(unzipped_file.read('data_donation.json').decode('latin-1'))
             except ValueError:
                 msg = 'Donated data could not be decoded - tried both utf-8 and latin-1 decoding.'
                 log_server_exception(self.object, msg)

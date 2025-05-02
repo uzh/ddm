@@ -56,6 +56,7 @@ class FileUploader(models.Model):
         blueprints = self.donationblueprint_set.all()
         instructions = self.donationinstruction_set.all()
         configs = {
+            'uploader_id': self.pk,
             'upload_type': self.upload_type,
             'name': self.name,
             'combined_consent': self.combined_consent,
@@ -194,7 +195,7 @@ class DonationBlueprint(models.Model):
             'exp_fields_regex_matching': self.expected_fields_regex_matching,
             'fields_to_extract': self.get_fields_to_extract(),
             'regex_path': self.regex_path,
-            'filter_rules': self.get_filter_rules(),
+            'extraction_rules': self.get_filter_rules(),
             'csv_delimiter': self.csv_delimiter
         }
         return config
@@ -228,7 +229,7 @@ class DonationBlueprint(models.Model):
 
     def validate_donation(self, data):
         # Check if all expected fields are in response.
-        response_fields = ['consent', 'extracted_data', 'status']
+        response_fields = ['consent', 'extractedData', 'status']
         if not all(k in data for k in response_fields):
             msg = ('Data Donation Processing Exception: Donation data for '
                    f'Donation Blueprint {self.pk} does not contain the '
@@ -251,7 +252,7 @@ class DonationBlueprint(models.Model):
             participant=participant,
             consent=data['consent'],
             status=data['status'],
-            data=data['extracted_data']
+            data=data['extractedData']
         )
         return
 
@@ -326,6 +327,7 @@ class ProcessingRule(models.Model):
         """
         Return a configuration dict for the processing rule:
         {
+            'id': primary key
             'field': 'field_name',
             'comparison_operator': '==' | '!=' | '>' | '<' | '>=' | '<=' |
                                    'regex-delete-match' | ' regex-replace-match'
@@ -335,6 +337,7 @@ class ProcessingRule(models.Model):
         }
         """
         return {
+            'id': self.pk,
             'field': self.field,
             'regex_field': self.regex_field,
             'comparison_operator': self.comparison_operator,
@@ -358,7 +361,7 @@ class DataDonation(ModelWithEncryptedData):
         on_delete=models.CASCADE
     )
     time_submitted = models.DateTimeField(default=timezone.now)
-    consent = models.BooleanField(default=False)
+    consent = models.BooleanField(default=False, null=True)
     status = models.JSONField()
     data = models.BinaryField()
 

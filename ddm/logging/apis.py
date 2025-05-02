@@ -1,8 +1,9 @@
+from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions
 
-from ddm.datadonation.models import DonationBlueprint
+from ddm.datadonation.models import DonationBlueprint, FileUploader
 from ddm.logging.models import ExceptionLogEntry
 from ddm.projects.models import DonationProject
 from ddm.participation.models import Participant
@@ -25,19 +26,26 @@ class ExceptionAPI(APIView):
         except KeyError:
             participant = None
 
+        uploader_id = request.data.get('uploader')
+        uploader = FileUploader.objects.filter(pk=uploader_id).first()
+
         blueprint_id = request.data.get('blueprint')
-        if blueprint_id:
-            blueprint = DonationBlueprint.objects.get(pk=blueprint_id)
+        blueprint = DonationBlueprint.objects.filter(pk=blueprint_id).first()
+
+        if request.data.get('date') is not None:
+            post_date = request.data.get('date')
         else:
-            blueprint = None
+            post_date = timezone.now()
 
         ExceptionLogEntry.objects.create(
+            date=post_date,
             project=project,
             participant=participant,
             exception_type=request.data.get('status_code'),
-            message=request.data['message'],
+            message=request.data.get('message'),
             raised_by=request.data.get('raised_by'),
-            blueprint=blueprint
+            blueprint=blueprint,
+            uploader=uploader
         )
 
         return Response(None, status=201)

@@ -152,7 +152,7 @@ class TestDonationBlueprintModel(TestCase):
     def test_validate_donation_case_valid(self):
         data = {
             'consent': True,
-            'extracted_data': ['some data'],
+            'extractedData': ['some data'],
             'status': 'success'
         }
         self.assertTrue(self.blueprint.validate_donation(data))
@@ -160,14 +160,14 @@ class TestDonationBlueprintModel(TestCase):
     def test_validate_donation_case_invalid(self):
         data = {
             'consent': True,
-            'extracted_data': ['some data'],
+            'extractedData': ['some data'],
         }
         self.assertFalse(self.blueprint.validate_donation(data))
 
     def test_process_donation_case_valid(self):
         data = {
             'consent': True,
-            'extracted_data': ['some data'],
+            'extractedData': ['some data'],
             'status': 'success'
         }
         n_donations_pre = DataDonation.objects.count()
@@ -178,7 +178,7 @@ class TestDonationBlueprintModel(TestCase):
     def test_process_donation_case_invalid(self):
         data = {
             'consent': True,
-            'extracted_data': ['some data'],
+            'extractedData': ['some data'],
         }
         n_donations_pre = DataDonation.objects.count()
         n_exceptions_pre = ExceptionLogEntry.objects.count()
@@ -237,6 +237,7 @@ class TestProcessingRuleModel(TestCase):
             comparison_operator=ProcessingRule.ComparisonOperators.EMPTY,
         )
         expected_config = {
+            'id': rule.pk,
             'field': 'some field',
             'regex_field': False,
             'comparison_operator': ProcessingRule.ComparisonOperators.EMPTY,

@@ -45,6 +45,7 @@ class BlueprintEditTestCase(TestCase):
         valid_data = {
             'name': 'some name',
             'description': 'some description',
+            'display_position': 1,
             'regex_path': '/file.path',
             'exp_file_format': DonationBlueprint.FileFormats.JSON_FORMAT,
             'csv_delimiter': '',

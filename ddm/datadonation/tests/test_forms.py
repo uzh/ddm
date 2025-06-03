@@ -37,6 +37,7 @@ class TestBlueprintEditForm(TestCase):
         data = {
             'name': bp.name,
             'description': bp.description,
+            'display_position': bp.display_position,
             'regex_path': bp.regex_path,
             'exp_file_format': 'json',
             'csv_delimiter': bp.csv_delimiter,

@@ -147,6 +147,8 @@ const toggleShowHideData = (): void => {
 
 <template>
 
+  {{ lowerPosition }} {{ upperPosition }}
+
   <div class="pb-2">{{ t('extraction-table.donation-info') }}</div>
 
   <!-- Table of extracted entries. -->
@@ -207,7 +209,7 @@ const toggleShowHideData = (): void => {
       <button
           @click="nextTablePage"
           class="btn btn-pagination btn-sm me-2"
-          :disabled="currentPage < maxPage"
+          :disabled="currentPage >= maxPage"
           aria-label="Next page"
       >
         {{ t('extraction-table.next-page') }}

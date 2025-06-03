@@ -97,6 +97,8 @@ class DonationBlueprint(models.Model):
         )
     )
 
+    display_position = models.PositiveIntegerField(default=1)
+
     class FileFormats(models.TextChoices):
         JSON_FORMAT = 'json', 'JSON file'
         CSV_FORMAT = 'csv', 'CSV file'
@@ -174,6 +176,9 @@ class DonationBlueprint(models.Model):
             'for some examples.'
         )
     )
+
+    class Meta:
+        ordering = ['display_position', 'pk']
 
     def __str__(self):
         return self.name

@@ -1,6 +1,20 @@
 # Changelog
 
-## Frontend Refactor
+## 2.1.0
+
+### Changed
+
+- Refactored the DDMQuestionnaire vue app completely.
+- Refactored the DDMUploader vue app completely.
+
+- Upload field now also allows drag and drop of files.
+- Minimalized the participation interface.
+
+### Added
+
+- Option to control Blueprint display order in participation interface.
+- Questionnaire: Option to define question filters.
+- Uploader: Option to search extracted information for participants.
 
 ### Migration Notes
 

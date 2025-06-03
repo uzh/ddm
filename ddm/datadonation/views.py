@@ -9,7 +9,6 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.utils import timezone
 from django.views.decorators.debug import sensitive_variables
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.views.generic.list import ListView
@@ -149,6 +148,20 @@ class BlueprintCreate(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, CreateV
     template_name = 'ddm_datadonation/blueprint/create.html'
     form_class = BlueprintEditForm
     success_message = 'Blueprint was created successfully.'
+
+    def get_initial(self):
+        """Set initial display_position value to current maximum plus one."""
+        initial = super().get_initial()
+        project_id = self.kwargs['project_url_id']
+        project_blueprints = DonationBlueprint.objects.filter(project__url_id=project_id)
+
+        if project_blueprints:
+            max_position = project_blueprints.order_by('-display_position').values_list('display_position', flat=True).first()
+            initial['display_position'] = max_position + 1
+        else:
+            initial['display_position'] = 1
+
+        return initial
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

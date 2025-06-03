@@ -1,10 +1,17 @@
+import json
+import os
+
 from django.contrib.messages.views import SuccessMessageMixin
-from django.urls import reverse_lazy
+from django.contrib.staticfiles import finders
+from django.urls import reverse_lazy, reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
-from ddm.projects.forms import ProjectCreateForm, ProjectEditForm, BriefingEditForm, DebriefingEditForm
+from ddm.projects.forms import (
+    ProjectCreateForm, ProjectEditForm, BriefingEditForm, DebriefingEditForm,
+    ProjectEditCustomUploaderTranslationsForm
+)
 from ddm.projects.models import DonationProject, ResearchProfile
 from ddm.auth.views import DDMAuthMixin
 
@@ -51,6 +58,53 @@ class ProjectEdit(SuccessMessageMixin, DDMAuthMixin, UpdateView):
     template_name = 'ddm_projects/edit.html'
     form_class = ProjectEditForm
     success_message = 'Project details successfully updated.'
+
+
+class ProjectEditCustomUploaderTranslations(
+    SuccessMessageMixin,
+    DDMAuthMixin,
+    UpdateView
+):
+    """ View to add/edit custom uploader translations.  """
+    model = DonationProject
+    slug_url_kwarg = 'project_url_id'
+    slug_field = 'url_id'
+    template_name = 'ddm_projects/edit_custom_uploader_translations.html'
+    form_class = ProjectEditCustomUploaderTranslationsForm
+
+    def get_context_data(self, **kwargs):
+        """
+        Add locale files used by DDMUploader as reference to template
+        context.
+        """
+        context = super().get_context_data(**kwargs)
+        locales = {}
+        locales_folder = finders.find('ddm_core/frontend/uploader/locale')
+
+        if locales_folder and os.path.isdir(locales_folder):
+            for filename in os.listdir(locales_folder):
+                if filename.endswith('.json'):
+                    locale_name = filename.split('.')[0]
+                    file_path = os.path.join(locales_folder, filename)
+                    try:
+                        with open(file_path, 'r', encoding='utf-8') as f:
+                            locale_data = json.load(f)
+                            locales[locale_name] = locale_data
+                    except (json.JSONDecodeError, IOError):
+                        pass
+
+        context['locales'] = json.dumps(locales, indent=4, ensure_ascii=False)
+        return context
+
+    def get_success_message(self, cleaned_data):
+        return (f'Custom translations for project "{self.object.name}" '
+                f'successfully updated.')
+
+    def get_success_url(self):
+        return reverse(
+            'ddm_datadonation:overview',
+            kwargs={'project_url_id': self.object.url_id}
+        )
 
 
 class ProjectDelete(SuccessMessageMixin, DDMAuthMixin, DeleteView):

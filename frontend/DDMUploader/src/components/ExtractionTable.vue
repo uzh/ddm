@@ -147,8 +147,6 @@ const toggleShowHideData = (): void => {
 
 <template>
 
-  {{ lowerPosition }} {{ upperPosition }}
-
   <div class="pb-2">{{ t('extraction-table.donation-info') }}</div>
 
   <!-- Table of extracted entries. -->

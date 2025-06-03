@@ -114,6 +114,14 @@ class ProjectEditForm(forms.ModelForm):
         return cleaned_data
 
 
+class ProjectEditCustomUploaderTranslationsForm(forms.ModelForm):
+    class Meta:
+        model = DonationProject
+        fields = [
+            'custom_uploader_translations',
+        ]
+
+
 class BriefingEditForm(forms.ModelForm):
     class Meta:
         model = DonationProject

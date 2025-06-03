@@ -258,3 +258,10 @@ to the selected Extraction Operator.
 
 Replacement Value:: Only required for operation "Replace match (regex)". The value
 that will be used as a replacement if the regex pattern matches.
+
+
+== Advanced Options
+
+Under advanced options, the Uploader translations can be edited. This gives you control over the text labels
+of the Uploaders displayed in the participant interface. If there are multiple Uploaders configured for one project,
+this will affect all Uploaders.

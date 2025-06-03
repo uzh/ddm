@@ -25,6 +25,18 @@
       "name": "js/ddm_uploader_frontend.js.map",
       "path": "js\\ddm_uploader_frontend.js.map",
       "publicPath": "/static/ddm_core/frontend/uploader/js/ddm_uploader_frontend.js.map"
+    },
+    "locale/de.json": {
+      "name": "locale/de.json",
+      "path": "locale\\de.json",
+      "publicPath": "/static/ddm_core/frontend/uploader/locale/de.json",
+      "sourceFilename": "src/locales/de.json"
+    },
+    "locale/en.json": {
+      "name": "locale/en.json",
+      "path": "locale\\en.json",
+      "publicPath": "/static/ddm_core/frontend/uploader/locale/en.json",
+      "sourceFilename": "src/locales/en.json"
     }
   },
   "chunks": {

@@ -2,7 +2,7 @@ import datetime
 import os
 
 from django.conf import settings
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Avg, F, ImageField
 from django.urls import reverse
@@ -14,7 +14,7 @@ from ddm.auth.models import ProjectAccessToken
 from ddm.core.utils.misc import create_asciidigits_id
 from ddm.datadonation.models import DataDonation
 from ddm.encryption.models import Encryption
-from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers, EventLogEntry
+from ddm.logging.models import ExceptionLogEntry, EventLogEntry
 from ddm.participation.models import Participant
 
 
@@ -161,6 +161,17 @@ class DonationProject(models.Model):
         default=True,
         verbose_name='Active',
         help_text='Participants can only take part in a project if it is active.'
+    )
+
+    custom_uploader_translations = models.JSONField(
+        blank=True,
+        null=True,
+        help_text=(
+            'Advanced option to overwrite default phrases and translations used '
+            'in the data donation interface. Must be a dictionary with the '
+            'locale shortcuts as keys (e.g., "de" or "en") associated to a '
+            'dictionary holding the translations.'
+        )
     )
 
     @sensitive_variables()

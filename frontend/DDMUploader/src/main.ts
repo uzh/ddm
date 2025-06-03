@@ -6,6 +6,20 @@ import en from './locales/en.json';
 import de from './locales/de.json';
 import {UploaderConfig} from "@uploader/types/UploaderConfig";
 
+function deepMerge(target, source) {
+  const result = { ...target };
+
+  for (const key in source) {
+    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+      result[key] = deepMerge(result[key] || {}, source[key]);
+    } else {
+      result[key] = source[key];
+    }
+  }
+
+  return result;
+}
+
 /**
  * Entry point for the DDM uploader Vue application.
  *
@@ -21,6 +35,7 @@ import {UploaderConfig} from "@uploader/types/UploaderConfig";
  * - data-exception-url
  * - data-language
  * - data-csrf-token
+ * - data-custom-translations
  *
  * @throws {Error} If the mount element is not found or required data attributes are missing
  */
@@ -30,16 +45,6 @@ function initializeUploaderApp(): void {
     defaultLocale: 'en',
     fallbackLocale: 'en',
   }
-
-  const i18n = createI18n({
-    legacy: false,
-    locale: APP_CONFIG.defaultLocale,
-    fallbackLocale: APP_CONFIG.fallbackLocale,
-    messages: {
-      en,
-      de
-    }
-  })
 
   const mountEl = document.querySelector(APP_CONFIG.selector) as HTMLElement;
 
@@ -73,6 +78,20 @@ function initializeUploaderApp(): void {
     uploaderConfigs: uploaderConfigs,
     csrfToken: mountEl.dataset.csrfToken,
   });
+
+  // Load and add custom translations, if provided.
+  const customTranslations = JSON.parse(mountEl.dataset.customTranslations || '{}');
+  const messages = {
+    en: deepMerge(en, customTranslations.en || {}),
+    de: deepMerge(de, customTranslations.de || {}),
+  };
+
+  const i18n = createI18n({
+    legacy: false,
+    locale: APP_CONFIG.defaultLocale,
+    fallbackLocale: APP_CONFIG.fallbackLocale,
+    messages: messages
+  })
 
   // Set i18n locale based on the data attribute.
   const userLanguage = mountEl.dataset.language || APP_CONFIG.defaultLocale;

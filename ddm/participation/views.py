@@ -236,6 +236,7 @@ class DataDonationView(ParticipationFlowBaseView):
         context = super().get_context_data(**kwargs)
         context['uploader_configs'] = self.get_uploader_configs()
         context['project_url_id'] = self.object.url_id
+        context['custom_translations'] = json.dumps(self.object.custom_uploader_translations)
         return context
 
     def get_uploader_configs(self):

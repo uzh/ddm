@@ -13,6 +13,7 @@
 ### Added
 
 - Option to control Blueprint display order in participation interface.
+- Option to overwrite default uploader translations on a project basis.
 - Questionnaire: Option to define question filters.
 - Uploader: Option to search extracted information for participants.
 

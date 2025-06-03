@@ -144,6 +144,7 @@ class TestAdminViewAuthentication(TestCase):
             'ddm_projects:delete',
             'ddm_projects:briefing_edit',
             'ddm_projects:debriefing_edit',
+            'ddm_projects:edit_translations',
             'ddm_datadonation:overview',
             'ddm_datadonation:blueprints:create',
             'ddm_questionnaire:overview',

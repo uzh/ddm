@@ -35,6 +35,7 @@ import type {QuestionnaireConfig, FilterConfig, Responses} from '@questionnaire/
 const props = defineProps<{
   questionnaireConfigAsString: string,
   filterConfigAsString: string,
+  staticVariables: string,
   actionUrl: string,
   language: string
 }>();
@@ -45,13 +46,14 @@ const missingValue: string = '-99';
 const missingFilteredValue: string = '-77';
 const questionItemMap: Record<string, string[]> = initializeQuestionItemMap(questionnaireConfig.value);
 const responses = ref<Responses>(initializeResponses(questionnaireConfig.value));
+const staticVariables: Record<string, string | number> = JSON.parse(props.staticVariables);
 
 // Initialize filtering functionality.
 const filterConfig = ref<FilterConfig>(JSON.parse(props.filterConfigAsString));
 const hideObjectDict = ref<Record<string, boolean>>({});
 const {
   evaluateFilters,
-  checkIfAllItemsHidden } = useFilterEngine(filterConfig, responses, hideObjectDict, questionItemMap);
+  checkIfAllItemsHidden } = useFilterEngine(filterConfig, responses, staticVariables, hideObjectDict, questionItemMap);
 
 // Page navigation.
 const questionnaireRoot = ref<HTMLElement | null>(null);
@@ -270,7 +272,7 @@ if (process.env.NODE_ENV === 'test') {
     </div>
   </div>
 </template>
-
+6
 <style>
 .question-app-container {
   font-family: Avenir, Helvetica, Arial, sans-serif;

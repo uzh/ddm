@@ -8,12 +8,14 @@ import {FilterConfig, Responses} from "@questionnaire/types/questionnaire";
  *
  * @param filterConfig
  * @param responses - Ref to object storing filterable responses.
+ * @param staticVariables - Object that holds static variables that may be used in filter conditions.
  * @param hideObjectDict - Ref to object tracking hidden questions/items.
  * @param questionItemMap - Ref to question-item-map
  */
 export function useFilterEngine(
   filterConfig: Ref<FilterConfig>,
   responses: Ref<Responses>,
+  staticVariables: Record<string, string | number>,
   hideObjectDict: Ref<Record<string, boolean>>,
   questionItemMap: Record<string, string[]>
 ) {
@@ -35,8 +37,16 @@ export function useFilterEngine(
       let isFirst = true;
 
       filters.forEach(filter => {
-        const response = responses.value[filter.source];
-        const evaluation = evaluateFilter(response, filter.condition_value, filter.condition_operator);
+        let comparisonValue = responses.value[filter.source];
+
+        if (!comparisonValue || comparisonValue.property === undefined) {
+          comparisonValue = staticVariables[filter.source];
+          if (!comparisonValue || comparisonValue.property === undefined) {
+            return;
+          }
+        }
+
+        const evaluation = evaluateFilter(comparisonValue, filter.condition_value, filter.condition_operator);
 
         if (!isFirst) {
           filterChain.push(filter.combinator);

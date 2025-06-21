@@ -80,11 +80,19 @@ function initializeUploaderApp(): void {
   });
 
   // Load and add custom translations, if provided.
-  const customTranslations = JSON.parse(mountEl.dataset.customTranslations || '{}');
-  const messages = {
-    en: deepMerge(en, customTranslations.en || {}),
-    de: deepMerge(de, customTranslations.de || {}),
+  let messages = {
+    en: en,
+    de: de,
   };
+  if (mountEl.dataset.customTranslations) {
+    const customTranslations = JSON.parse(mountEl.dataset.customTranslations || '{}');
+    if (!(customTranslations == null) && !(customTranslations == '')) {
+      messages = {
+        en: deepMerge(en, customTranslations.en || {}),
+        de: deepMerge(de, customTranslations.de || {}),
+      };
+    }
+  }
 
   const i18n = createI18n({
     legacy: false,

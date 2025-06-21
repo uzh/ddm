@@ -133,23 +133,32 @@ class CustomJSONWidget(forms.Textarea):
 
         return str(value)
 
-    def value_from_datadict(self, data, files, name):
-        """ Handle user input to remove formatting. """
-        value = super().value_from_datadict(data, files, name)
-
-        if not value or value.strip() == '':
-            return {}
-
-        try:
-            # Parse and re-serialize without indentation
-            parsed = json.loads(value)
-            return parsed  # Django's JSONField will handle the final serialization
-        except json.JSONDecodeError:
-            # Return as-is, let Django's validation handle the error
-            return value
-
 
 class ProjectEditCustomUploaderTranslationsForm(forms.ModelForm):
+
+    def clean_custom_uploader_translations(self):
+        value = self.cleaned_data.get('custom_uploader_translations')
+
+        # Handle various "empty" cases
+        if value is None or value == '' or value == '{}':
+            return {}
+
+        # If it's already a dict/list, return as-is
+        if isinstance(value, (dict, list)):
+            return value
+
+        # If it's a string, try to parse it
+        if isinstance(value, str):
+            value = value.strip()
+            if not value:
+                return {}
+            try:
+                return json.loads(value)
+            except json.JSONDecodeError:
+                raise forms.ValidationError('Invalid JSON format')
+
+        return value
+
     class Meta:
         model = DonationProject
         fields = [

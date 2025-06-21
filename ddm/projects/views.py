@@ -102,7 +102,7 @@ class ProjectEditCustomUploaderTranslations(
 
     def get_success_url(self):
         return reverse(
-            'ddm_datadonation:overview',
+            'ddm_projects:edit_translations',
             kwargs={'project_url_id': self.object.url_id}
         )
 

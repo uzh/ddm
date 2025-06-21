@@ -1,3 +1,5 @@
+import json
+
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -114,12 +116,48 @@ class ProjectEditForm(forms.ModelForm):
         return cleaned_data
 
 
+class CustomJSONWidget(forms.Textarea):
+    """
+    Custom widget that formats JSON with indents.
+    """
+    def format_value(self, value):
+        if isinstance(value, (dict, list)):
+            return json.dumps(value, indent=4, ensure_ascii=False)
+
+        if isinstance(value, str):
+            try:
+                parsed = json.loads(value)
+                return json.dumps(parsed, indent=4, ensure_ascii=False)
+            except json.JSONDecodeError:
+                return value
+
+        return str(value)
+
+    def value_from_datadict(self, data, files, name):
+        """ Handle user input to remove formatting. """
+        value = super().value_from_datadict(data, files, name)
+
+        if not value or value.strip() == '':
+            return {}
+
+        try:
+            # Parse and re-serialize without indentation
+            parsed = json.loads(value)
+            return parsed  # Django's JSONField will handle the final serialization
+        except json.JSONDecodeError:
+            # Return as-is, let Django's validation handle the error
+            return value
+
+
 class ProjectEditCustomUploaderTranslationsForm(forms.ModelForm):
     class Meta:
         model = DonationProject
         fields = [
             'custom_uploader_translations',
         ]
+        widgets = {
+            'custom_uploader_translations': CustomJSONWidget(),
+        }
 
 
 class BriefingEditForm(forms.ModelForm):

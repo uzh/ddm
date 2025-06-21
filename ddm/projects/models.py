@@ -165,7 +165,8 @@ class DonationProject(models.Model):
 
     custom_uploader_translations = models.JSONField(
         blank=True,
-        null=True,
+        null=False,
+        default=dict,
         help_text=(
             'Advanced option to overwrite default phrases and translations used '
             'in the data donation interface. Must be a dictionary with the '

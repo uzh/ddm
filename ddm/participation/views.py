@@ -17,7 +17,13 @@ from ddm.datadonation.models import DonationBlueprint, FileUploader
 from ddm.logging.utils import log_server_exception
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject
-from ddm.questionnaire.services import save_questionnaire_response_to_db, create_questionnaire_config, create_filter_config
+from ddm.projects.service import (
+    get_url_parameters, get_participant_variables, get_donation_variables
+)
+from ddm.questionnaire.services import (
+    save_questionnaire_response_to_db, create_questionnaire_config,
+    create_filter_config
+)
 
 
 def get_participation_session_id(project):
@@ -333,6 +339,18 @@ class QuestionnaireView(ParticipationFlowBaseView):
         else:
             return self.render_to_response(context)
 
+    def get_extra_variables(self):
+        """
+        Returns a dictionary holding variable_name: participant_value pairs to
+        be sent to the questionnaire app. This is needed to evaluate filter
+        conditions.
+        """
+        variables = {}
+        variables.update(get_url_parameters(self.object, self.participant))
+        variables.update(get_participant_variables(self.participant))
+        variables.update(get_donation_variables(self.participant))
+        return variables
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         question_config = create_questionnaire_config(self.object, self.participant)
@@ -340,6 +358,7 @@ class QuestionnaireView(ParticipationFlowBaseView):
         filter_config = create_filter_config(self.object)
         context['filter_config'] = json.dumps(filter_config)
         context['extra_scripts'] = set(self.extra_scripts)
+        context['extra_variables'] = json.dumps(self.get_extra_variables())
         return context
 
     def post(self, request, *args, **kwargs):

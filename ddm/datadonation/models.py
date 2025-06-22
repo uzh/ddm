@@ -367,7 +367,7 @@ class DataDonation(ModelWithEncryptedData):
     )
     time_submitted = models.DateTimeField(default=timezone.now)
     consent = models.BooleanField(default=False, null=True)
-    status = models.JSONField()
+    status = models.JSONField()  # TODO: Change this to a CHOICE filed or similar (attention: also affects other parts of the code)
     data = models.BinaryField()
 
 

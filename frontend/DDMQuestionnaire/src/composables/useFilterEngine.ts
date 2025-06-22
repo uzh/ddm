@@ -37,11 +37,13 @@ export function useFilterEngine(
       let isFirst = true;
 
       filters.forEach(filter => {
+        // Check if comparison value in questionnaire responses
         let comparisonValue = responses.value[filter.source];
 
-        if (!comparisonValue || comparisonValue.property === undefined) {
+        if (comparisonValue == null) {
+          // Check if comparison value in static variables
           comparisonValue = staticVariables[filter.source];
-          if (!comparisonValue || comparisonValue.property === undefined) {
+          if (comparisonValue == null) {
             return;
           }
         }

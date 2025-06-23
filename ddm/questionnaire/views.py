@@ -1,4 +1,3 @@
-from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import inlineformset_factory
 from django.urls import reverse
@@ -282,45 +281,84 @@ class ScaleEdit(SuccessMessageMixin, DDMAuthMixin, InlineFormsetMixin, UpdateVie
         return reverse('ddm_questionnaire:scale', kwargs=success_kwargs)
 
 
-class FilterEditBase(SuccessMessageMixin, DDMAuthMixin, InlineFormsetMixin, UpdateView):
+class FilterEditBase(SuccessMessageMixin, ProjectMixin, DDMAuthMixin, UpdateView):
     formset_model = FilterCondition
+    fields = []
     context_title = 'Filter Conditions'
     success_message = 'Filter conditions updated.'
 
     def get_filters(self):
-        return self.object.filter_conditions.all()
+        return self.object.filtercondition_set.all()
 
     def get_project(self):
         """Placeholder function."""
         return None
 
     def get_formset(self):
-        filters = self.get_filters()
-        if filters.count() == 0:
-            n_extra = 1
+        """
+        Creates a FilterConditionFormset and adds the target depending on the
+        information passed to the view.
+        """
+        if isinstance(self.object, QuestionBase):
+            fk_name = 'target_question'
+            fk_class = QuestionBase
+        elif isinstance(self.object, QuestionItem):
+            fk_name = 'target_item'
+            fk_class = QuestionItem
+        else:
+            raise ValueError('Provided object must be QuestionBase or QuestionItem.')
+
+        if self.request.method == 'GET':
+            # Check if an extra form must be rendered.
+            filters = [f for f in self.get_filters() if f.check_source_exists()]
+            if len(filters) == 0:
+                n_extra = 1
+            else:
+                n_extra = 0
+
+            initial_data = self.get_initial_extra_data()
         else:
             n_extra = 0
+            initial_data = self.get_initial_extra_data()
 
-        FilterConditionFormSet = generic_inlineformset_factory(
+        formset_factory = inlineformset_factory(
+            fk_class,
             FilterCondition,
             form=FilterConditionForm,
             exclude=[],
             extra=n_extra,
             can_delete=True,
-            ct_field='target_content_type',
-            fk_field='target_object_id',
+            fk_name=fk_name
         )
 
-        if self.request.method == "GET":
-            initial_data = self.get_initial_extra_data()
-        else:
-            initial_data = None
-        return FilterConditionFormSet(
+        formset = formset_factory(
             self.request.POST or None,
             instance=self.object,
             initial=initial_data,
             form_kwargs={'project': self.get_project(), 'target_object': self.object}
         )
+
+        return formset
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        formset = self.get_formset()
+        if formset.is_valid():
+            return self.form_valid(formset)
+        else:
+            return super().form_invalid(formset)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context.update({
+            'formset': self.get_formset(),
+            'context_title': self.context_title,
+            'question': self.object
+        })
+        return context
+
+    def get_initial_extra_data(self):
+        return []
 
 
 class FilterEditQuestion(FilterEditBase):

@@ -62,7 +62,7 @@
 <a href="{% url 'ddm_projects:detail' project_url_id %}">"{{ project.name|truncatechars:15 }}" Project</a> /
 <a href="{% url 'ddm_questionnaire:overview' project_url_id %}">Questionnaire</a> /
 <a href="{% url 'ddm_questionnaire:edit' project_url_id question.question_type question.pk %}">Question</a> /
-Items
+{{ context_title }}
 {% endblock %}
 
 {% block scripts %}

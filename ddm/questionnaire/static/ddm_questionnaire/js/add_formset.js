@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Clear input values but retain hidden fields like `question`
         newRow.querySelectorAll("input").forEach(input => {
-            if (!input.name.endsWith("question")) {
+            if (!input.name.endsWith("target_question") && !input.name.endsWith("target_item")) {
                 if (input.type === "checkbox") {
                     input.checked = false;
                 } else if (input.name.endsWith("-index")) {
@@ -44,6 +44,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 } else {
                     input.value = "";
                 }
+            }
+        });
+
+        // Clear select values
+        newRow.querySelectorAll("select").forEach(input => {
+            if (input.name.endsWith("condition_operator")) {
+                input.value = "";
+            } else if (input.name.endsWith("source")) {
+                input.value = "";
+            } else if (input.name.endsWith("combinator")) {
+                input.value = "";
             }
         });
 

@@ -8,7 +8,7 @@ from ddm.projects.models import DonationProject, ResearchProfile
 from ddm.questionnaire.models import (
     SingleChoiceQuestion, QuestionItem,
     QuestionnaireResponse, FilterCondition, OpenQuestion,
-    get_filter_config_id
+    get_filter_config_id, FilterSourceTypes
 )
 from ddm.questionnaire.services import save_questionnaire_response_to_db, create_filter_config
 
@@ -120,8 +120,9 @@ class TestCreateFilterConfig(TestCase):
             combinator='AND',
             condition_operator='==',
             condition_value='some_value',
-            target=cls.question,
-            source_object=cls.item
+            target_question=cls.question,
+            source_type=FilterSourceTypes.QUESTION_ITEM,
+            source_item=cls.item
         )
 
         cls.filter_condition_2 = FilterCondition.objects.create(
@@ -129,8 +130,9 @@ class TestCreateFilterConfig(TestCase):
             combinator='OR',
             condition_operator='!=',
             condition_value='another_value',
-            target=cls.question,
-            source_object=cls.item
+            target_question=cls.question,
+            source_type=FilterSourceTypes.QUESTION_ITEM,
+            source_item=cls.item
         )
 
         cls.filter_condition_alt = FilterCondition.objects.create(
@@ -138,8 +140,9 @@ class TestCreateFilterConfig(TestCase):
             combinator='OR',
             condition_operator='!=',
             condition_value='another_value',
-            target=cls.item,
-            source_object=cls.question
+            target_item=cls.item,
+            source_type=FilterSourceTypes.QUESTION,
+            source_question=cls.question
         )
 
     def test_create_filter_config_structure(self):

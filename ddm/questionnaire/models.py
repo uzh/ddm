@@ -1,7 +1,7 @@
 import random
+from datetime import datetime
 from typing import Union
 
-from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -13,6 +13,7 @@ from polymorphic.models import PolymorphicModel
 from ddm.core.utils.user_content.template import render_user_content
 from ddm.encryption.models import ModelWithEncryptedData
 from ddm.datadonation.models import DataDonation
+from ddm.projects.service import get_participant_variables, get_url_parameters
 
 
 class FilterConditionMixin:
@@ -24,16 +25,17 @@ class FilterConditionMixin:
         """
         Creates the filter conditions that can be passed to the vue questionnaire.
         """
-        filter_conditions = self.filter_conditions.all().order_by('index')
+        filter_conditions = self.get_active_filters()
+        active_filters = [f for f in filter_conditions if f.check_source_exists()]
         filter_configs = []
-        for i, condition in enumerate(filter_conditions):
+        for i, condition in enumerate(active_filters):
             filter_config = {
                 'index': condition.index,
                 'combinator': condition.combinator,
                 'condition_operator': condition.condition_operator,
                 'condition_value': condition.condition_value,
-                'target': get_filter_config_id(condition.target),
-                'source': get_filter_config_id(condition.source_object)
+                'target': condition.get_target_config_id(),
+                'source': condition.get_source_config_id()
             }
 
             # Reset combinator value to None for item with the lowest index.
@@ -41,6 +43,12 @@ class FilterConditionMixin:
                 filter_config['combinator'] = None
             filter_configs.append(filter_config)
         return filter_configs
+
+    def get_active_filters(self):
+        """
+        Returns the set of associated filters that are still active.
+        """
+        return self.filtercondition_set.filter(source_exists=True).order_by('index')
 
 
 class QuestionType(models.TextChoices):
@@ -96,12 +104,6 @@ class QuestionBase(FilterConditionMixin, PolymorphicModel):
         )
     )
     required = models.BooleanField(default=False)
-
-    filter_conditions = GenericRelation(
-        'FilterCondition',
-        content_type_field='target_content_type',
-        object_id_field='target_object_id'
-    )
 
     class Meta:
         ordering = ['page', 'index']
@@ -390,12 +392,6 @@ class QuestionItem(FilterConditionMixin, models.Model):
     value = models.IntegerField()
     randomize = models.BooleanField(default=False)
 
-    filter_conditions = GenericRelation(
-        'FilterCondition',
-        content_type_field='target_content_type',
-        object_id_field='target_object_id'
-    )
-
     @property
     def variable_name(self):
         return f'{self.question.variable_name}-{self.value}'
@@ -451,33 +447,80 @@ class QuestionnaireResponse(ModelWithEncryptedData):
     questionnaire_config = models.JSONField(default=list, null=True)  # Holds the questionnaire configuration at the time of participation.
 
 
+class FilterSourceTypes(models.TextChoices):
+    QUESTION = 'question', 'Question'
+    QUESTION_ITEM = 'item', 'Question Item'
+    URL_PARAMETER = 'url_parameter', 'URL Parameter'
+    SYSTEM = 'system', 'System Variable'
+    PARTICIPANT = 'participant', 'Participant Variable'
+    DONATION = 'donation', 'Donation Information'
+
+
 class FilterCondition(models.Model):
     """
-    A model to define filter conditions.
+    A model to define filter conditions that control the visibility of questions
+    or question items.
+
+    The filter target (i.e., the entity that should be hidden/displayed) can
+    either be a Question or a QuestionItem. This relationship is modelled with
+    a foreign key field ensuring for type safety and referential integrity.
+
+    The filter source (i.e., the variable whose value is evaluated in the
+    filter condition) can be:
+    - A Question or QuestionItem (identifier = primary key)
+    - Variables like URL parameters or participation data
+      (identifier = variable name, e.g., '_start_time')
+
+    The filter source relationship is modelled using a hybrid approach.
+    The source_type field specifies to which type of source the filter condition
+    is related (see FilterSourceTypes for implemented source types).
+    For Question and QuestionItem sources, the class implements foreign key
+    relations (source_question, source_item).
+    For variables that are not linked to a database entity, the
+    source_identifier attribute holds the information which variable the
+    filter condition is linked to. For others, it holds the linked question's
+    or item's primary key.
+
+    Note:
+        Implicitly linked sources (i.e., variables) are not deleted when the
+        source is deleted (e.g., when an url parameter is changed). Instead,
+        in these instances source_exists is set to False and index is set to
+        -1 * unix timestamp.
     """
-    target_content_type = models.ForeignKey(
-        ContentType,
+    target_question = models.ForeignKey(
+        'QuestionBase',
         on_delete=models.CASCADE,
-        related_name='filter_target',
-        help_text='The target question/question item to which this filter applies.'
+        null=True,
+        blank=True
     )
-    target_object_id = models.PositiveIntegerField()
-    target = GenericForeignKey(
-        'target_content_type',
-        'target_object_id'
+    target_item = models.ForeignKey(
+        'QuestionItem',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
     )
 
-    source_content_type = models.ForeignKey(
-        ContentType,
+    # Source configuration
+    source_question = models.ForeignKey(
+        'QuestionBase',
         on_delete=models.CASCADE,
-        related_name='filter_source',
-        help_text='The question/question item whose answer is evaluated against the filter condition.'
+        null=True,
+        blank=True,
+        related_name='dependent_filters'
     )
-    source_object_id = models.PositiveIntegerField()
-    source_object = GenericForeignKey(
-        'source_content_type',
-        'source_object_id'
+    source_item = models.ForeignKey(
+        'QuestionItem',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='dependent_filters'
     )
+
+    source_type = models.CharField(
+        max_length=60,
+        choices=FilterSourceTypes.choices,
+    )
+    source_identifier = models.CharField(max_length=255, null=True, blank=True)
 
     index = models.IntegerField(default=1)
 
@@ -519,23 +562,150 @@ class FilterCondition(models.Model):
     condition_value = models.JSONField(
         blank=True,
         null=True,
-        help_text='The value to compare the source question\'s answer against.'
+        help_text='The value to compare the source\'s value against.'
     )
+
+    source_exists = models.BooleanField(default=True)  # Is set to false if non-fk source does not exist anymore.
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['target_content_type', 'target_object_id', 'index'],
+                fields=['target_item', 'target_question', 'index'],
                 name='unique_index_per_target'
             )
         ]
 
     def save(self, *args, **kwargs):
         # Restrict comparison operators for text-based questions.
-        if isinstance(self.source_object, OpenQuestion) and self.condition_operator in ['>', '<', '>=', '<=']:
+        source = self.get_source()
+        if isinstance(source, OpenQuestion) and self.condition_operator in ['>', '<', '>=', '<=']:
             raise ValueError(f'Operator {self.condition_operator} is not valid for OpenQuestion.')
 
         super().save(*args, **kwargs)
+
+    def get_target(self):
+        if self.target_question:
+            return self.target_question
+
+        elif self.target_item:
+            return self.target_item
+
+        else:
+            raise ValidationError('No target question or target item specified.')
+
+    def get_related_project(self):
+        target = self.get_target()
+        if isinstance(target, QuestionBase):
+            return target.project
+
+        elif isinstance(target, QuestionItem):
+            return target.question.project
+
+        else:
+            return None
+
+    def get_source(self):
+        """
+        Returns the filter source.
+
+        Returns:
+        - the related model instance if the filter source is a Question or
+            a QuestionItem.
+        - the source_identifier (usually a variable name) for other source types.
+        - None, if the source does not exist anymore.
+        """
+        if self.source_type == FilterSourceTypes.QUESTION:
+            source = self.source_question
+            return source
+
+        elif self.source_type == FilterSourceTypes.QUESTION_ITEM:
+            source = self.source_item
+            return source
+
+        elif self.source_type == FilterSourceTypes.URL_PARAMETER:
+            system_variables = get_url_parameters(self.get_related_project())
+            if self.source_identifier in system_variables.keys():
+                return self.source_identifier
+            else:
+                return None
+
+        elif self.source_type == FilterSourceTypes.SYSTEM:
+            return self.source_identifier
+
+        elif self.source_type == FilterSourceTypes.PARTICIPANT:
+            participant_variables = get_participant_variables(self.get_related_project())
+            if self.source_identifier in participant_variables.keys():
+                return self.source_identifier
+            else:
+                return None
+
+        elif self.source_type == FilterSourceTypes.DONATION:
+            return self.source_identifier
+
+        else:
+            raise ValidationError('No valid source specified.')
+
+    def get_source_name(self):
+        """
+        Helper function to display source name in UI.
+        """
+        source = self.get_source()
+        if isinstance(source, QuestionBase) or isinstance(source, QuestionItem):
+            return source.variable_name
+        else:
+            return source
+
+    def check_source_exists(self):
+        source = self.get_source()
+        if source is not None:
+            return True
+        else:
+            self.source_exists = False
+            self.index = -1 * int(datetime.now().timestamp())
+            self.save()
+            return False
+
+    def clean(self):
+        # Clean targets
+        fk_targets = [self.target_question, self.target_item]
+        non_null_fks = [s for s in fk_targets if s is not None]
+
+        if len(non_null_fks) > 1:
+            raise ValidationError('Only one target type can be specified')
+
+        if len(non_null_fks) == 0 and not self.source_identifier:
+            raise ValidationError('A target must be specified')
+
+        # Get source question or item (if applicable).
+        if self.source_type in [FilterSourceTypes.QUESTION, FilterSourceTypes.QUESTION_ITEM]:
+
+            if self.source_type == FilterSourceTypes.QUESTION:
+                self.source_question = QuestionBase.objects.get(pk=self.source_identifier)
+                self.source_item = None
+
+            elif self.source_type == FilterSourceTypes.QUESTION_ITEM:
+                self.source_question = None
+                self.source_item = QuestionItem.objects.get(pk=self.source_identifier)
+
+    def get_source_config_id(self):
+        """
+        Get the ID of the filter's source as used in config dictionaries.
+        """
+        if self.source_type == FilterSourceTypes.QUESTION:
+            return get_filter_config_id(self.source_question)
+        elif self.source_type == FilterSourceTypes.QUESTION_ITEM:
+            return get_filter_config_id(self.source_item)
+        else:
+            return self.source_identifier
+
+    def get_target_config_id(self):
+        """
+        Get the ID of the filter's target as used in config dictionaries.
+        """
+        if self.target_question:
+            return get_filter_config_id(self.target_question)
+        elif self.target_item:
+            return get_filter_config_id(self.target_item)
 
 
 def get_filter_config_id(obj: Union[QuestionBase, QuestionItem]) -> str:
@@ -551,6 +721,6 @@ def get_filter_config_id(obj: Union[QuestionBase, QuestionItem]) -> str:
             'item-<item.pk>' for a QuestionItem.
     """
     if isinstance(obj, QuestionItem):
-        return f'item-{obj.pk}'
+        return f'{FilterSourceTypes.QUESTION_ITEM}-{obj.pk}'
     else:
-        return f'question-{obj.pk}'
+        return f'{FilterSourceTypes.QUESTION}-{obj.pk}'

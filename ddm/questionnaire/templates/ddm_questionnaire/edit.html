@@ -120,9 +120,9 @@
             <td>{{ item.randomize }}</td>
             <th>
               <p class="small-font fw-normal mb-0">Hide if:
-              {% for c in item.filter_conditions.all %}
+              {% for c in item.get_active_filters %}
                 {% if not forloop.first %}{{ c.combinator }}{% endif %}
-                {{ c.source_object.variable_name }} {{ c.condition_operator }} {{ c.condition_value }}
+                {{ c.get_source_name }} {{ c.condition_operator }} {{ c.condition_value }}
               {% endfor %}
               </p>
               <a href="{% url 'ddm_questionnaire:item_filters' project_url_id object.question_type object.pk item.pk %}" class="small-font fw-normal">Edit Filter Conditions</a>
@@ -176,9 +176,9 @@
     <div class="question-extra-section">
       <div class="question-section-heading mb-3">Filter Configuration</div>
       <p class="fw-normal">Hide question if:
-        {% for c in object.filter_conditions.all %}
+        {% for c in object.get_active_filters %}
           {% if not forloop.first %}{{ c.combinator }}{% endif %}
-          {{ c.source_object.variable_name }} {{ c.condition_operator }} {{ c.condition_value }}
+          {{ c.get_source_name }} {{ c.condition_operator }} {{ c.condition_value }}
         {% endfor %}
       </p>
       <p><a class="ddm-btn" href="{% url 'ddm_questionnaire:question_filters' project_url_id object.question_type object.pk %}">Edit Filter Conditions</a></p>

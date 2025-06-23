@@ -1,9 +1,15 @@
 from itertools import chain
 
 from django import forms
-from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 
-from ddm.questionnaire.models import FilterCondition, QuestionBase, QuestionItem, QuestionType, OpenQuestion
+from ddm.projects.service import (
+    get_url_parameters, get_participant_variables, get_donation_variables
+)
+from ddm.questionnaire.models import (
+    FilterCondition, QuestionBase, QuestionItem, QuestionType, OpenQuestion,
+    FilterSourceTypes
+)
 
 
 class FilterConditionForm(forms.ModelForm):
@@ -29,6 +35,8 @@ class FilterConditionForm(forms.ModelForm):
         label='Comparison Value',
         required=True
     )
+    source_type = forms.CharField(widget=forms.HiddenInput(), required=False)
+    source_identifier = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
         model = FilterCondition
@@ -37,14 +45,18 @@ class FilterConditionForm(forms.ModelForm):
             'combinator',
             'source',
             'condition_operator',
-            'condition_value'
+            'condition_value',
+            'source_type',
+            'source_identifier'
         ]
         widgets = {
             'condition_value': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, *args, project=None, target_object=None, **kwargs):
-        """ Dynamically filter the object ID dropdowns based on ContentType selection. """
+        """
+        Dynamically filter the object ID dropdowns based on ContentType selection.
+        """
         super().__init__(*args, **kwargs)
 
         question_id = self.get_question_id(target_object)
@@ -52,16 +64,27 @@ class FilterConditionForm(forms.ModelForm):
         question_set = self.get_question_source_set(project, question_id)
 
         # Get choices for source field.
-        self.fields['source'].choices = self.get_source_choices(question_set, item_set)
+        self.fields['source'].choices = self.get_source_choices(question_set, item_set, project)
 
         # Get choices for other fields.
         self.fields['condition_operator'].choices = list(FilterCondition.ConditionOperators.choices)
         self.fields['combinator'].choices = list(FilterCondition.ConditionCombinators.choices)
 
+        # Add default choices for empty formsets.
+        self.fields['source'].choices.insert(0, (None, 'select comparison object'))
+        self.fields['condition_operator'].choices.insert(0, (None, 'select condition operator'))
+        self.fields['combinator'].choices.insert(0, (None, 'select combinator'))
+
         # Set initial values.
-        if self.instance.pk and self.instance.source_object_id:
-            prefix = 'item' if self.instance.source_content_type.model == 'questionitem' else 'question'
-            self.initial['source'] = f'{prefix}-{self.instance.source_object_id}'
+        if self.instance.pk:
+            if self.instance.source_question:
+                source_id = self.instance.source_question.pk
+            elif self.instance.source_item:
+                source_id = self.instance.source_item.pk
+            else:
+                source_id = self.instance.source_identifier
+
+            self.initial['source'] = f'{self.instance.source_type}-{source_id}'
 
         else:
             self.get_empty_form_defaults()
@@ -118,109 +141,161 @@ class FilterConditionForm(forms.ModelForm):
             question_set = question_set.exclude(id=question.id)
         return question_set
 
-    def get_combined_labels(self, question_set, item_set):
+    def sort_questions_and_items(self, question_and_item_set):
         sorted_objects = sorted(
-            chain(
-                [(q, 'question') for q in question_set],
-                [(i, 'item') for i in item_set]
-            ),
+            question_and_item_set,
             key=lambda pair: (
-                pair[0].page if hasattr(pair[0], 'page') else pair[0].question.page,
-                pair[0].index
+                pair[1].page if hasattr(pair[1], 'page') else pair[1].question.page,
+                pair[1].index
             )
         )
+        return sorted_objects
 
-        labels = []
-        for obj in sorted_objects:
-            if obj[1] == 'question':
-                internal_id = f'question-{obj[0].id}'
-                prefix = f'[quest, p{obj[0].page}]'
-                var_name = obj[0].variable_name
-                labels.append(
-                    (f'{internal_id}', f'{prefix} {var_name}')
-                )
+    def create_source_label(self, source_type, details):
+        """
+        Create the labels displayed in the form's source select dropdown.
+        """
+        if source_type == FilterSourceTypes.QUESTION:
+            internal_id = f'{source_type}-{details.id}'
+            prefix = f'[quest, p{details.page}]'
+            descr = details.variable_name
 
-            if obj[1] == 'item':
-                internal_id = f'item-{obj[0].id}'
-                prefix = f'[item, p{obj[0].question.page}]'
-                label = f'{obj[0].variable_name} ({obj[0].label})'
-                labels.append(
-                    (f'{internal_id}', f'{prefix} {label}')
-                )
-        return labels
+        elif source_type == FilterSourceTypes.QUESTION_ITEM:
+            internal_id = f'{source_type}-{details.id}'
+            prefix = f'[item, p{details.question.page}]'
+            descr = details.variable_name
+
+        elif source_type == FilterSourceTypes.URL_PARAMETER:
+            internal_id = f'{source_type}-{details}'
+            prefix = '[url]'
+            descr = details
+
+        elif source_type == FilterSourceTypes.SYSTEM:
+            internal_id = f'{source_type}-{details}'
+            prefix = '[system]'
+            descr = details
+
+        elif source_type == FilterSourceTypes.PARTICIPANT:
+            internal_id = f'{source_type}-{details}'
+            prefix = '[participant]'
+            descr = details
+
+        elif source_type == FilterSourceTypes.DONATION:
+            internal_id = f'{source_type}-{details}'
+            prefix = '[donation]'
+            descr = details
+
+        else:
+            raise ValueError(f'Unknown source type: {source_type}')
+
+        return (internal_id, f'{prefix} {descr}')
 
     def get_empty_form_defaults(self):
-        self.fields['source'].choices.insert(0, (None, 'select comparison object'))
-        self.fields['condition_operator'].choices.insert(0, (None, 'select condition operator'))
-        self.fields['combinator'].choices.insert(0, (None, 'select combinator'))
         self.initial['condition_value'] = ''
 
-    def get_source_choices(self, question_set, item_set):
-        # Exclude nonsensical choices.
-        item_ct = ContentType.objects.get_for_model(QuestionItem)
+    def get_source_choices(self, question_set, item_set, project):
+        """
+        Get the source choices.
+        """
+        # Add questionnaire variables.
+        if self.instance.target_question:
+            question_set.exclude(pk=self.instance.target_question.pk)
 
-        if self.instance and self.instance.target_object_id:
-            if self.instance.target_content_type == item_ct:
-                # Exclude the item itself.
-                item_set.exclude(id=self.instance.target_object_id)
+        elif self.instance.target_item:
+            question = self.instance.target_item.question
+            question_set.exclude(pk=question.pk)
+            item_set.exclude(question=question)
 
-                # Exclude the items belonging to the same question.
-                item_set.exclude(question=self.instance.target.question)
+        combined_set = chain(
+            [(FilterSourceTypes.QUESTION, q) for q in question_set],
+            [(FilterSourceTypes.QUESTION_ITEM, i) for i in item_set]
+        )
+        sorted_choices = self.sort_questions_and_items(combined_set)
 
-                # Exclude the question to which the item belongs.
-                question_set.exclude(id=self.instance.target.question.id)
-            else:
-                # Exclude the question.
-                question_set.exclude(id=self.instance.target_object_id)
+        # Add url_parameter variables.
+        for var in get_url_parameters(project):
+            sorted_choices.append((FilterSourceTypes.URL_PARAMETER, var))
+
+        # Add participant variables.
+        for var in get_participant_variables():
+            sorted_choices.append((FilterSourceTypes.PARTICIPANT, var))
+
+        # Add donation variables.
+        for var in get_donation_variables():
+            sorted_choices.append((FilterSourceTypes.DONATION, var))
 
         # Add labels
-        labels = self.get_combined_labels(question_set, item_set)
+        labels = []
+        for choice in sorted_choices:
+            labels.append(self.create_source_label(choice[0], choice[1]))
+
         return labels
 
     def clean(self):
         """
-        Custom validation for condition operators based on source question type.
+        Custom validation for condition operators based on source type.
         """
         cleaned_data = super().clean()
-        source_id = cleaned_data.get('source').split('-')
-        if source_id[0] == 'item':
-            source_object = QuestionItem.objects.get(id=source_id[1])
+
+        # Check that source is set.
+        source = self.cleaned_data.get('source')
+        if source is None or source == '':
+            raise ValidationError('A source must be selected.')
+
+        # Check that source has the correct format.
+        source_parts = source.split('-')
+        if len(source_parts) != 2:
+            raise ValidationError('Invalid source format')
+
+        source_type = source_parts[0]
+        source_id = source_parts[1]
+
+        if source_type == FilterSourceTypes.QUESTION:
+            try:
+                QuestionBase.objects.get(pk=source_id)
+                cleaned_data['source_type'] = source_type
+                cleaned_data['source_identifier'] = source_id
+            except QuestionBase.DoesNotExist:
+                raise ValidationError('Invalid question ID')
+
+        elif source_type == FilterSourceTypes.QUESTION_ITEM:
+            try:
+                QuestionItem.objects.get(pk=source_id)
+                cleaned_data['source_type'] = source_type
+                cleaned_data['source_identifier'] = source_id
+            except QuestionItem.DoesNotExist:
+                raise ValidationError('Invalid ID for source item')
+
         else:
-            source_object = QuestionBase.objects.get(id=source_id[1])
-        cleaned_data['source_content_type'] = ContentType.objects.get_for_model(source_object)
-        cleaned_data['source_object_id'] = source_object.pk
-
-        # Ensure Index is unique per filter target.
-        target_content_type = cleaned_data.get('target_content_type')
-        target_object_id = cleaned_data.get('target_object_id')
-        index = cleaned_data.get('index')
-        if FilterCondition.objects.filter(
-            target_content_type=target_content_type,
-            target_object_id=target_object_id,
-            index=index
-        ).exists():
-            raise forms.ValidationError('This index is already used for the selected target.')
-
+            cleaned_data['source_type'] = source_type
+            cleaned_data['source_identifier'] = source_id
         return cleaned_data
 
-
     def save(self, commit=True):
-        """
-        Ensure GenericForeignKey fields are properly saved.
-        """
         instance = super().save(commit=False)
 
-        if self.cleaned_data.get('source'):
-            source_id = self.cleaned_data.get('source').split('-')
+        # Get source type and source ID.
+        source = self.cleaned_data.get('source')
+        source = source.split('-')
+        source_type = source[0]
+        source_id = source[1]
 
-            if source_id[0] == 'item':
-                source_object = QuestionItem.objects.get(id=source_id[1])
-            else:
-                source_object = QuestionBase.objects.get(id=source_id[1])
+        if source_type == FilterSourceTypes.QUESTION:
+            instance.source_question = QuestionBase.objects.get(pk=source_id)
+            instance.source_item = None
+            instance.source_identifier = None
 
-            if source_object:
-                instance.source_content_type = ContentType.objects.get_for_model(source_object)
-                instance.source_object_id = source_object.pk
+        elif source_type == FilterSourceTypes.QUESTION_ITEM:
+            instance.source_item = QuestionItem.objects.get(pk=source_id)
+            instance.source_question = None
+            instance.source_identifier = None
+
+        else:
+            instance.source_identifier = source_id
+            instance.source_question = None
+            instance.source_item = None
+
+        instance.source_type = source_type
 
         if commit:
             instance.save()

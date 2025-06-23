@@ -5,7 +5,7 @@ from ddm.projects.models import DonationProject, ResearchProfile
 from ddm.questionnaire.models import (
     SingleChoiceQuestion, QuestionItem, MultiChoiceQuestion, MatrixQuestion,
     ScalePoint, SemanticDifferential, QuestionBase, FilterCondition,
-    OpenQuestion, get_filter_config_id
+    OpenQuestion, get_filter_config_id, FilterSourceTypes
 )
 
 User = get_user_model()
@@ -178,8 +178,9 @@ class GetFilterConfigTest(TestCase):
             combinator='AND',
             condition_operator='==',
             condition_value='some_value',
-            target=cls.question,
-            source_object=cls.item
+            target_question=cls.question,
+            source_type=FilterSourceTypes.QUESTION_ITEM,
+            source_item=cls.item
         )
 
         cls.filter_condition_2 = FilterCondition.objects.create(
@@ -187,8 +188,9 @@ class GetFilterConfigTest(TestCase):
             combinator='OR',
             condition_operator='!=',
             condition_value='another_value',
-            target=cls.question,
-            source_object=cls.item
+            target_question=cls.question,
+            source_type=FilterSourceTypes.QUESTION_ITEM,
+            source_item=cls.item
         )
 
         cls.filter_condition_alt = FilterCondition.objects.create(
@@ -196,8 +198,9 @@ class GetFilterConfigTest(TestCase):
             combinator='OR',
             condition_operator='!=',
             condition_value='another_value',
-            target=cls.item,
-            source_object=cls.question
+            target_item=cls.item,
+            source_type=FilterSourceTypes.QUESTION,
+            source_question=cls.question
         )
 
     def test_filter_config_list_length(self):

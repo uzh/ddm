@@ -119,13 +119,24 @@
             <td>{{ item.value }}</td>
             <td>{{ item.randomize }}</td>
             <th>
-              <p class="small-font fw-normal mb-0">Hide if:
-              {% for c in item.get_active_filters %}
-                {% if not forloop.first %}{{ c.combinator }}{% endif %}
-                {{ c.get_source_name }} {{ c.condition_operator }} {{ c.condition_value }}
-              {% endfor %}
+
+             {% if item.get_active_filters %}
+              <p class="small-font fw-normal">
+                Hide item if:
+                {% for c in item.get_active_filters %}
+                  {% if not forloop.first %}{{ c.combinator }}{% endif %}
+                  {{ c.get_source_name }} {{ c.condition_operator }} {{ c.condition_value }}
+                {% endfor %}
+                <br>
+                <a href="{% url 'ddm_questionnaire:item_filters' project_url_id object.question_type object.pk item.pk %}" class="small-font fw-normal">Edit</a>
               </p>
-              <a href="{% url 'ddm_questionnaire:item_filters' project_url_id object.question_type object.pk item.pk %}" class="small-font fw-normal">Edit Filter Conditions</a>
+
+            {% else %}
+              <p class="small-font fw-normal">
+                –
+                <a href="{% url 'ddm_questionnaire:item_filters' project_url_id object.question_type object.pk item.pk %}" class="ps-2 small-font fw-normal">Add</a>
+              </p>
+            {% endif %}
             </th>
           </tr>
           {% empty %}
@@ -175,13 +186,25 @@
   <div class="ddm-admin-section-body">
     <div class="question-extra-section">
       <div class="question-section-heading mb-3">Filter Configuration</div>
-      <p class="fw-normal">Hide question if:
-        {% for c in object.get_active_filters %}
-          {% if not forloop.first %}{{ c.combinator }}{% endif %}
-          {{ c.get_source_name }} {{ c.condition_operator }} {{ c.condition_value }}
-        {% endfor %}
-      </p>
-      <p><a class="ddm-btn" href="{% url 'ddm_questionnaire:question_filters' project_url_id object.question_type object.pk %}">Edit Filter Conditions</a></p>
+
+      {% if object.get_active_filters %}
+        <p class="fw-normal">
+          Hide question if:
+          {% for c in object.get_active_filters %}
+            {% if not forloop.first %}{{ c.combinator }}{% endif %}
+            {{ c.get_source_name }} {{ c.condition_operator }} {{ c.condition_value }}
+          {% endfor %}
+        </p>
+        <p><a class="ddm-btn" href="{% url 'ddm_questionnaire:question_filters' project_url_id object.question_type object.pk %}">Edit Filter Conditions</a></p>
+
+      {% else %}
+        <p class="fw-normal">
+        No filter conditions defined.
+        </p>
+        <p><a class="ddm-btn" href="{% url 'ddm_questionnaire:question_filters' project_url_id object.question_type object.pk %}">Add Filter Conditions</a></p>
+
+      {% endif %}
+
       <p class="helptext">Make sure to <b>save any changes of the question configuration</b> before editing the filters.</p>
     </div>
   </div>

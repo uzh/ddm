@@ -596,14 +596,6 @@ class FilterCondition(models.Model):
             )
         ]
 
-    def save(self, *args, **kwargs):
-        # Restrict comparison operators for text-based questions.
-        source = self.get_source()
-        if isinstance(source, OpenQuestion) and self.condition_operator in ['>', '<', '>=', '<=']:
-            raise ValueError(f'Operator {self.condition_operator} is not valid for OpenQuestion.')
-
-        super().save(*args, **kwargs)
-
     def get_target(self):
         if self.target_question:
             return self.target_question
@@ -707,6 +699,15 @@ class FilterCondition(models.Model):
             elif self.source_type == FilterSourceTypes.QUESTION_ITEM:
                 self.source_question = None
                 self.source_item = QuestionItem.objects.get(pk=self.source_identifier)
+
+        # Restrict comparison operators for non-numeric open questions.
+        if isinstance(self.source_question, OpenQuestion):
+            if self.source_question.input_type != OpenQuestion.InputTypes.NUMBER:
+                if self.condition_operator in ['>', '<', '>=', '<=']:
+                    raise ValidationError(
+                        f'Operator "{self.condition_operator}" is not valid for '
+                        f'open questions with non-numeric inputs.'
+                    )
 
     def get_source_config_id(self):
         """

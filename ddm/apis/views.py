@@ -23,7 +23,7 @@ from ddm.encryption.models import Decryption
 from ddm.logging.models import EventLogEntry
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject
-from ddm.questionnaire.models import QuestionnaireResponse
+from ddm.questionnaire.models import QuestionnaireResponse, QuestionType
 
 
 class DDMAPIMixin:
@@ -289,6 +289,50 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
         )
         return Response(response)
 
+    def get_column_order(self):
+        """
+        Get the ordered list of variable names according to the current order
+        of the questionnaire.
+        """
+        col_order = ['participant', 'time_submitted']
+        questions = self.project.questionbase_set.all().order_by('page', 'index')
+
+        question_types_wo_items = [
+            QuestionType.SINGLE_CHOICE]
+        question_types_with_items = [
+            QuestionType.MULTI_CHOICE,
+            QuestionType.MATRIX,
+            QuestionType.SEMANTIC_DIFF]
+
+        for question in questions:
+            if question.question_type in question_types_wo_items:
+                col_order.append(question.variable_name)
+            elif question.question_type in question_types_with_items:
+                var_name = question.variable_name
+                items = question.questionitem_set.all().order_by('index')
+                for item in items:
+                    col_order.append(f'{var_name}-{item.value}')
+            elif question.question_type == QuestionType.OPEN:
+                var_name = question.variable_name
+                if not question.multi_item_response:
+                    col_order.append(var_name)
+                    continue
+                else:
+                    items = question.questionitem_set.all().order_by('index')
+                    for item in items:
+                        col_order.append(f'{var_name}-{item.value}')
+
+        return col_order
+
+    def sort_headers(self, columns, order=None):
+        """
+        Return the ordered list of column names according to the current order
+        of the questionnaire.
+        """
+        if order is None:
+            order = self.get_column_order()
+        return sorted(columns, key=lambda x: (order.index(x) if x in order else float('inf'), x))
+
     def create_csv_response(self, responses, decryptor):
         clean_responses = []
         col_names = {'participant', 'time_submitted'}
@@ -302,8 +346,10 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
                 data[var] = val
             clean_responses.append(data)
 
+        sorted_header = self.sort_headers(col_names)
+
         csv_output = io.StringIO()
-        writer = csv.DictWriter(csv_output, fieldnames=col_names)
+        writer = csv.DictWriter(csv_output, fieldnames=sorted_header)
         writer.writeheader()
         writer.writerows(clean_responses)
 

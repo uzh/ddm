@@ -1,3 +1,5 @@
+import json
+
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -112,6 +114,59 @@ class ProjectEditForm(forms.ModelForm):
                            'Redirect is enabled but no redirect target is defined.')
 
         return cleaned_data
+
+
+class CustomJSONWidget(forms.Textarea):
+    """
+    Custom widget that formats JSON with indents.
+    """
+    def format_value(self, value):
+        if isinstance(value, (dict, list)):
+            return json.dumps(value, indent=4, ensure_ascii=False)
+
+        if isinstance(value, str):
+            try:
+                parsed = json.loads(value)
+                return json.dumps(parsed, indent=4, ensure_ascii=False)
+            except json.JSONDecodeError:
+                return value
+
+        return str(value)
+
+
+class ProjectEditCustomUploaderTranslationsForm(forms.ModelForm):
+
+    def clean_custom_uploader_translations(self):
+        value = self.cleaned_data.get('custom_uploader_translations')
+
+        # Handle various "empty" cases
+        if value is None or value == '' or value == '{}':
+            return {}
+
+        # If it's already a dict/list, return as-is
+        if isinstance(value, (dict, list)):
+            return value
+
+        # If it's a string, try to parse it
+        if isinstance(value, str):
+            value = value.strip()
+            if not value:
+                return {}
+            try:
+                return json.loads(value)
+            except json.JSONDecodeError:
+                raise forms.ValidationError('Invalid JSON format')
+
+        return value
+
+    class Meta:
+        model = DonationProject
+        fields = [
+            'custom_uploader_translations',
+        ]
+        widgets = {
+            'custom_uploader_translations': CustomJSONWidget(),
+        }
 
 
 class BriefingEditForm(forms.ModelForm):

@@ -115,7 +115,7 @@ def access_donation_stage(driver):
 
 def upload_file(driver):
     file_path = r'C:\Users\nipfif\PyCharmProjects\DDM\docs\takeout-demo.zip'
-    file_input = driver.find_element(By.NAME, 'ul-0')
+    file_input = driver.find_element(By.CSS_SELECTOR, "input[class='d-none'][type='file']")
     file_input.send_keys(file_path)
 
     # Wait until file has been processed
@@ -149,13 +149,13 @@ def agree_to_donate(driver, element=None):
     url = f'studies/{PROJECT_SLUG}/data-donation/'
     driver.get(BASE_URL + url)
     upload_file(driver)
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'label[for="combined-donate-agree"]')))
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'label[for="donate-agree-null"]')))
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
     time.sleep(1)
 
     # Get the checkbox itself
-    checkbox = driver.find_element(By.ID, 'combined-donate-agree')
-    checkbox_label = driver.find_element(By.CSS_SELECTOR, 'label[for="combined-donate-agree"]')
+    checkbox = driver.find_element(By.ID, 'donate-agree-null')
+    checkbox_label = driver.find_element(By.CSS_SELECTOR, 'label[for="donate-agree-null"]')
 
     # Ensure the checkbox is visible
     if not checkbox.is_selected():

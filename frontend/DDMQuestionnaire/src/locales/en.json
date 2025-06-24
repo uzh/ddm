@@ -1,0 +1,7 @@
+{
+  "next-btn-label": "Next",
+  "required-but-missing-hint": "Please answer this question.",
+  "hint-number-input": "Only numbers are allowed.",
+  "hint-email-input": "Enter email address in the format name{'@'}domain.com.",
+  "hint-invalid-email": "This is not a valid email pattern."
+}

@@ -10,7 +10,7 @@ from ddm.projects.models import DonationProject, ResearchProfile
 from ddm.participation.models import Participant
 from ddm.questionnaire.models import (
     MatrixQuestion, SingleChoiceQuestion, OpenQuestion, MultiChoiceQuestion,
-    SemanticDifferential, Transition
+    SemanticDifferential, Transition, QuestionItem
 )
 
 
@@ -123,6 +123,13 @@ class TestAdminViewAuthentication(TestCase):
             variable_name='trans_question'
         )
 
+        cls.item = QuestionItem.objects.create(
+            question=cls.sc_quest,
+            index=1,
+            label='label',
+            value=1
+        )
+
         # Participant
         cls.participant_base = Participant.objects.create(
             project=cls.project_owned,
@@ -144,6 +151,7 @@ class TestAdminViewAuthentication(TestCase):
             'ddm_projects:delete',
             'ddm_projects:briefing_edit',
             'ddm_projects:debriefing_edit',
+            'ddm_projects:edit_translations',
             'ddm_datadonation:overview',
             'ddm_datadonation:blueprints:create',
             'ddm_questionnaire:overview',
@@ -187,7 +195,11 @@ class TestAdminViewAuthentication(TestCase):
         ]
         for question in questions:
             urls.append(
-                reverse('ddm_questionnaire:create', args=[project_url_id, question[0]]))
+                reverse('ddm_questionnaire:create', args=[project_url_id, question[0]])
+            )
+            urls.append(
+                reverse('ddm_questionnaire:question_filters', args=[project_url_id, question[0], question[1]])
+            )
 
         for view in ['ddm_questionnaire:edit', 'ddm_questionnaire:delete']:
             for question in questions:
@@ -203,6 +215,8 @@ class TestAdminViewAuthentication(TestCase):
                     args=[project_url_id, 'matrix', cls.matrix_quest.pk]),
             reverse('ddm_questionnaire:items',
                     args=[project_url_id, 'semantic_diff', cls.diff_quest.pk]),
+            reverse('ddm_questionnaire:item_filters',
+                    args=[project_url_id, 'single_choice', cls.sc_quest.pk, cls.item.pk]),
         ]
         urls += item_views
 

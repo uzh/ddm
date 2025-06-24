@@ -46,16 +46,18 @@ You can xref:researchers:project_configuration/questionnaire/questionnaire_data_
 possibility to render data dynamically here].
 
 
-== Notes on the Questionnaire Flow
+== Export of Collected Responses
 
-[IMPORTANT]
-====
-Currently, DDM's built-in questionnaire does not offer the possibility to hide/display questions depending on
-the responses to previous questions in the questionnaire. Therefore, we recommend to use the built-in questionnaire
-in cases where either (A) you want to include information from the donated data in the question text or (B) your
-questionnaire is short and follows a simple structure. In other cases, we currently recommend to implement the
-questionnaire in a dedicated survey software to which you redirect your participants from the debriefing page.
-====
+The collected responses can be exported in the xref:researchers:data_center.adoc[data center].
+
+=== Default values
+The responses may include the following default values:
+
+- `-77`: Indicates that a question or item was filtered out.
+- `-99`: Indicates that a respondent saw a question or item but did not provide an answer/skipped the question.
+
+
+== Notes on the Questionnaire Flow
 
 [IMPORTANT]
 ====

@@ -18,6 +18,11 @@ class ExceptionLogEntry(models.Model):
         null=True,
         on_delete=models.SET_NULL
     )
+    uploader = models.ForeignKey(
+        'ddm_datadonation.FileUploader',
+        null=True,
+        on_delete=models.CASCADE
+    )
     blueprint = models.ForeignKey(
         'ddm_datadonation.DonationBlueprint',
         null=True,
@@ -28,7 +33,8 @@ class ExceptionLogEntry(models.Model):
         choices=ExceptionRaisers.choices,
         blank=True
     )
-    exception_type = models.IntegerField(
+    exception_type = models.CharField(
+        max_length=255,
         null=True
     )
     message = models.TextField()

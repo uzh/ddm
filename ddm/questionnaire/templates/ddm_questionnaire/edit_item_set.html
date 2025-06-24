@@ -1,0 +1,75 @@
+{% extends "ddm_core/page_with_form.html" %}
+{% load static %}
+
+{% block page_title %}Edit {{ context_title }}{% endblock %}
+
+{% block main_heading %}Edit {{ context_title }} for Item "{{ object.label|truncatechars:24 }}"{% endblock %}
+
+{% block main_form %}
+  {% if context_title == 'Filter Conditions' %}
+    <p><i>Item is hidden, if:</i></p>
+  {% endif %}
+
+<form method="post">
+  {% csrf_token %}
+  {{ formset.management_form }}
+  <table class="table mt-4 item-set-table border-bottom" id="formset-table">
+
+    {% for form in formset.forms %}
+
+    {% if forloop.first %}
+    <thead>
+    <tr>
+      {% for field in form.visible_fields %}
+        <th
+            {% if field.label in "Index,Value" %}
+              class="num-input-col"
+            {% elif field.label in "Randomize,Löschen,Delete,delete,Secondary point" or field.label == "Löschen" or field.label == "Delete" %}
+              class="check-input-col"
+            {% endif %}
+        >{{ field.label }}</th>
+      {% endfor %}
+    </tr>
+    </thead>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+      <tr><td colspan="6" class="border-bottom-0 text-start">{{ form.non_field_errors }}</td></tr>
+    {% endif %}
+
+    <tr class="border-bottom-0">
+      {% for field in form.visible_fields %}
+      <td class="border-bottom-0">
+        {% if forloop.first %}
+        {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+        {% endfor %}
+        {% endif %}
+        {{ field.errors.as_ul }}
+        {{ field }}
+      </td>
+      {% endfor %}
+    </tr>
+
+    {% endfor %}
+  </table>
+  <button class="ddm-btn" type="button" id="add-form">Add {{ context_title }}</button>
+  <input class="ddm-btn" type="submit" value="Save">
+  <p class="mt-3">
+    <a href="{% url 'ddm_questionnaire:edit' project_url_id object.question.question_type object.question.pk %}"><i class="bi bi-arrow-left-short"></i> Back</a>
+  </p>
+</form>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'ddm_projects:list' %}">Projects</a> /
+<a href="{% url 'ddm_projects:detail' project_url_id %}">"{{ project.name|truncatechars:15 }}" Project</a> /
+<a href="{% url 'ddm_questionnaire:overview' project_url_id %}">Questionnaire</a> /
+<a href="{% url 'ddm_questionnaire:edit' project_url_id object.question.question_type object.question.pk %}">Question</a> /
+Edit {{ context_title }}
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script src="{% static 'ddm_questionnaire/js/add_formset.js' %}"></script>
+{% endblock %}

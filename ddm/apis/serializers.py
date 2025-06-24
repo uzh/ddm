@@ -44,6 +44,11 @@ class DataDonationSerializer(SerializerDecryptionMixin, serializers.ModelSeriali
         ]
 
 
+def is_flat_dict(d: dict) -> bool:
+    """Checks that none of the dictionary values are a dict or a list."""
+    return all(not isinstance(v, (dict, list)) for v in d.values())
+
+
 class ResponseSerializer(SerializerDecryptionMixin, serializers.ModelSerializer):
     participant = serializers.CharField(source='participant.external_id')
     response_data = serializers.SerializerMethodField()
@@ -68,6 +73,40 @@ class ResponseSerializer(SerializerDecryptionMixin, serializers.ModelSerializer)
         except TypeError:
             data = data
 
+        # For backward compatibility: Check if responses have been saved in old
+        # or new structure; if so, use legacy function.
+        if not is_flat_dict(data):
+            return self.legacy_get_response_data(data)
+
+        responses = dict()
+        for response_id in data.keys():
+            if response_id.startswith('question-'):
+                question_id = response_id.lstrip('question-')
+                try:
+                    question = QuestionBase.objects.all().get(id=question_id)
+                except QuestionBase.DoesNotExist:
+                    # Question has been deleted.
+                    continue
+                var_name = question.variable_name
+                responses[var_name] = data[response_id]
+
+            if response_id.startswith('item-'):
+                item_id = response_id.lstrip('item-')
+                try:
+                    item = QuestionItem.objects.all().get(id=item_id)
+                except QuestionItem.DoesNotExist:
+                    # Item has been deleted.
+                    continue
+                var_name = item.variable_name
+                responses[var_name] = data[response_id]
+
+        return responses
+
+    def legacy_get_response_data(self, data):
+        """
+        Used to support extracting response data that has been saved in the old
+        response structure (DDM <= v2.0.2).
+        """
         responses = dict()
         for question_id in data.keys():
             try:
@@ -85,8 +124,8 @@ class ResponseSerializer(SerializerDecryptionMixin, serializers.ModelSerializer)
                     except QuestionItem.DoesNotExist:
                         # Item has been deleted.
                         continue
-                    value = item.value
-                    responses[f'{var_name}-{value}'] = item_answers[item_id]
+                    var_name = item.variable_name
+                    responses[var_name] = item_answers[item_id]
                 pass
             else:
                 responses[var_name] = data[question_id]['response']
@@ -102,7 +141,8 @@ class ResponseSerializerWithSnapshot(ResponseSerializer):
             'participant',
             'time_submitted',
             'questionnaire_snapshot',
-            'response_data'
+            'response_data',
+            'questionnaire_config'
         ]
 
     @sensitive_variables()

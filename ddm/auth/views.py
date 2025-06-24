@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.checks import messages
 from django.http import Http404
 from django.shortcuts import reverse, redirect
 from django.views.generic import FormView
@@ -91,12 +92,15 @@ class ProjectTokenView(SuccessMessageMixin, DDMAuthMixin, FormView):
     def form_valid(self, form):
         """ If form is valid, either create new token or delete existing one. """
         project = self.get_project()
-        if form.cleaned_data['action'] == 'create':
+        action = form.cleaned_data['action']
+
+        if action == 'create':
             project.create_token(expiration_days=form.cleaned_data['expiration_days'])
 
-        if form.cleaned_data['action'] == 'delete':
+        if action == 'delete':
             token = project.get_token()
-            token.delete()
+            if token:
+                token.delete()
 
         return super().form_valid(form)
 

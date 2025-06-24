@@ -11,104 +11,210 @@
   {% csrf_token %}
   {{ form.media }}
 
-  <div>
+  <div class="question-section-container">
+    <p class="question-section-heading">Internal Organisation</p>
     {% for field in form %}
-    {% if field.name not in "expected_fields,extracted_fields" %}
-    <p>
-      {{ field.label_tag }}
-      {{ field.errors }}
-      <span class="helptext">{{ field.help_text }}</span>
-      {{ field }}
-    </p>
+    {% if field.name in "name,variable_name,blueprint" %}
+      <p>
+        {{ field.label_tag }}
+        {{ field.errors }}
+        {{ field }}
+        <span class="helptext">{{ field.help_text }}</span>
+      </p>
     {% endif %}
     {% endfor %}
-
-    <input class="ddm-btn" type="submit" value="Update Question">
-    {% block cancel %}
-    <p>
-      <a href="{% url 'ddm_questionnaire:overview' project_url_id %}">&#129040; Back</a>
-    </p>
-    {% endblock %}
   </div>
+
+  <div class="question-section-container">
+    <p class="question-section-heading">Display Options</p>
+    {% for field in form %}
+    {% if field.name in "page,index,text" %}
+      <p>
+        {{ field.label_tag }}
+        {{ field.errors }}
+        {{ field }}
+        <span class="helptext">{{ field.help_text }}</span>
+      </p>
+    {% endif %}
+    {% endfor %}
+  </div>
+
+  {% if object.question_type != "transition"  %}
+  <div class="question-section-container">
+    <p class="question-section-heading">Validation</p>
+    {% for field in form %}
+    {% if field.name in "required,input_type,max_input_length,display" %}
+      <p>
+        {{ field.label_tag }}
+        {{ field.errors }}
+        {{ field }}
+        <span class="helptext">{{ field.help_text }}</span>
+      </p>
+    {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if object.question_type != "transition"  %}
+      <div class="question-section-container">
+      <p class="question-section-heading">Item Configuration</p>
+      {% for field in form %}
+      {% if field.name in "randomize_items,show_scale_headings,multi_item_response" %}
+        <p>
+          {{ field.label_tag }}
+          {{ field.errors }}
+          {{ field }}
+          <span class="helptext">{{ field.help_text }}</span>
+        </p>
+      {% endif %}
+      {% endfor %}
+      </div>
+  {% endif %}
+
+  <input class="ddm-btn" type="submit" value="Save changes">
+
+  {% block cancel %}
+    <p>
+      <a href="{% url 'ddm_questionnaire:overview' project_url_id %}"><i class="bi bi-arrow-left-short"></i> Back</a>
+    </p>
+  {% endblock %}
 
 </form>
 {% endblock %}
 
+
 {% block main_bottom %}
-{% if object.question_type != "open" and object.question_type != "transition"  %}
-<div class="ddm-admin-section">
-  <div class="ddm-admin-section-header">Question Items</div>
-  <div class="ddm-admin-section-body">
-    <table class="table table-sm">
-    {% for item in object.questionitem_set.all %}
-      {% if forloop.first %}
-      <thead>
-      <tr>
-        <th style="width: 1%;" class="pe-4">Index</th>
-        {% if object.question_type == "semantic_diff" %}
-          <th>Label</th>
-          <th>Label Right</th>
-        {% else %}
-          <th>Label</th>
-        {% endif %}
-        <th>Value</th>
-        <th>Randomize</th>
-      </tr>
-      </thead>
-      {% endif %}
-      <tr>
-        <td>{{ item.index }}</td>
-        {% if object.question_type == "semantic_diff" %}
-          <td>{{ item.label }}</td>
-          <td>{{ item.label_alt }}</td>
-        {% else %}
-          <td>{{ item.label }}</td>
-        {% endif %}
-        <td>{{ item.value }}</td>
-        <td>{{ item.randomize }}</td>
-      </tr>
-      {% empty %}
-      <tr><td>No items defined.</td></tr>
-    {% endfor %}
-    </table>
+{% if object.question_type != "transition"  %}
+  {% if object.question_type == "open" and not object.multi_item_response %}
+  {% else %}
+    <div class="ddm-admin-section-body">
+      <div class="question-extra-section">
+        <div class="question-section-heading mb-3">Question Items</div>
+        <table class="table table-sm">
+        {% for item in object.questionitem_set.all %}
+          {% if forloop.first %}
+          <thead>
+          <tr>
+            <th style="width: 1%;" class="pe-4">Index</th>
+            {% if object.question_type == "semantic_diff" %}
+              <th>Label</th>
+              <th>Label Right</th>
+            {% else %}
+              <th>Label</th>
+            {% endif %}
+            <th>Value</th>
+            <th>Randomize</th>
+            <th>Filter Conditions</th>
+          </tr>
+          </thead>
+          {% endif %}
+          <tr>
+            <td>{{ item.index }}</td>
+            {% if object.question_type == "semantic_diff" %}
+              <td>{{ item.label }}</td>
+              <td>{{ item.label_alt }}</td>
+            {% else %}
+              <td>{{ item.label }}</td>
+            {% endif %}
+            <td>{{ item.value }}</td>
+            <td>{{ item.randomize }}</td>
+            <th>
 
-    <p><a class="ddm-btn" href="{% url 'ddm_questionnaire:items' project_url_id object.question_type object.pk %}">Edit Items</a></p>
-  </div>
-</div>
+             {% if item.get_active_filters %}
+              <p class="small-font fw-normal">
+                Hide item if:
+                {% for c in item.get_active_filters %}
+                  {% if not forloop.first %}{{ c.combinator }}{% endif %}
+                  {{ c.get_source_name }} {{ c.condition_operator }} {{ c.condition_value }}
+                {% endfor %}
+                <br>
+                <a href="{% url 'ddm_questionnaire:item_filters' project_url_id object.question_type object.pk item.pk %}" class="small-font fw-normal">Edit</a>
+              </p>
+
+            {% else %}
+              <p class="small-font fw-normal">
+                –
+                <a href="{% url 'ddm_questionnaire:item_filters' project_url_id object.question_type object.pk item.pk %}" class="ps-2 small-font fw-normal">Add</a>
+              </p>
+            {% endif %}
+            </th>
+          </tr>
+          {% empty %}
+          <tr><td>No items defined.</td></tr>
+        {% endfor %}
+        </table>
+
+        <p><a class="ddm-btn" href="{% url 'ddm_questionnaire:items' project_url_id object.question_type object.pk %}">Edit Items</a></p>
+        <p class="helptext">Make sure to <b>save any changes of the question configuration</b> before editing the items.</p>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if object.question_type == "semantic_diff" or object.question_type == "matrix" %}
+    <div class="ddm-admin-section-body">
+      <div class="question-extra-section">
+        <div class="question-section-heading mb-3">Scale Configuration</div>
+        <table class="table table-sm">
+        {% for point in object.scalepoint_set.all %}
+          {% if forloop.first %}
+          <thead>
+          <tr>
+            <th style="width: 1%;" class="pe-4">Index</th>
+            <th>Input Label</th>
+            <th>Heading Label</th>
+            <th>Value</th>
+          </tr>
+          </thead>
+          {% endif %}
+          <tr>
+            <td>{{ point.index }}</td>
+            <td>{% if point.input_label is not None %}{{ point.input_label }}{% endif %}</td>
+            <td>{% if point.heading_label is not None %}{{ point.heading_label }}{% endif %}</td>
+            <td>{{ point.value }}</td>
+          </tr>
+          {% empty %}
+          <tr><td>No scale points defined.</td></tr>
+        {% endfor %}
+        </table>
+        <p><a class="ddm-btn" href="{% url 'ddm_questionnaire:scale' project_url_id object.question_type object.pk %}">Edit Scale Points</a></p>
+        <p class="helptext">Make sure to <b>save any changes of the question configuration</b> before editing the scale.</p>
+      </div>
+    </div>
+  {% endif %}
 {% endif %}
 
-{% if object.question_type == "semantic_diff" or object.question_type == "matrix"  %}
-<div class="ddm-admin-section">
-  <div class="ddm-admin-section-header">Scale Configuration</div>
   <div class="ddm-admin-section-body">
-    <table class="table table-sm">
-    {% for point in object.scalepoint_set.all %}
-      {% if forloop.first %}
-      <thead>
-      <tr>
-        <th style="width: 1%;" class="pe-4">Index</th>
-        <th>Label</th>
-        <th>Value</th>
-      </tr>
-      </thead>
-      {% endif %}
-      <tr>
-        <td>{{ point.index }}</td>
-        <td>{% if point.label is not None %}{{ point.label }}{% endif %}</td>
-        <td>{{ point.value }}</td>
-      </tr>
-      {% empty %}
-      <tr><td>No scale points defined.</td></tr>
-    {% endfor %}
-    </table>
-    <p><a class="ddm-btn" href="{% url 'ddm_questionnaire:scale' project_url_id object.question_type object.pk %}">Edit Scale Points</a></p>
-  </div>
-</div>
-{% endif %}
+    <div class="question-extra-section">
+      <div class="question-section-heading mb-3">Filter Configuration</div>
 
-<div class="mt-3">
-  <a href="{% url 'ddm_questionnaire:overview' project_url_id %}">&#129040; Back</a>
-</div>
+      {% if object.get_active_filters %}
+        <p class="fw-normal">
+          Hide question if:
+          {% for c in object.get_active_filters %}
+            {% if not forloop.first %}{{ c.combinator }}{% endif %}
+            {{ c.get_source_name }} {{ c.condition_operator }} {{ c.condition_value }}
+          {% endfor %}
+        </p>
+        <p><a class="ddm-btn" href="{% url 'ddm_questionnaire:question_filters' project_url_id object.question_type object.pk %}">Edit Filter Conditions</a></p>
+
+      {% else %}
+        <p class="fw-normal">
+        No filter conditions defined.
+        </p>
+        <p><a class="ddm-btn" href="{% url 'ddm_questionnaire:question_filters' project_url_id object.question_type object.pk %}">Add Filter Conditions</a></p>
+
+      {% endif %}
+
+      <p class="helptext">Make sure to <b>save any changes of the question configuration</b> before editing the filters.</p>
+    </div>
+  </div>
+
+  {% if object.question_type == "open" and not object.multi_item_response %}
+  {% else %}
+    <div class="mt-3">
+      <a href="{% url 'ddm_questionnaire:overview' project_url_id %}"><i class="bi bi-arrow-left-short"></i> Back</a>
+    </div>
+  {% endif %}
 {% endblock %}
 
 

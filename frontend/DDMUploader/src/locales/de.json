@@ -1,0 +1,79 @@
+{
+  "instructions": {
+    "heading": "So funktioniert es"
+  },
+  "errors": {
+    "invalid-zip": "Eine ZIP-Datei wurde erwartet, aber eine {fileType}-Datei wurde hochgeladen.",
+    "zip-read-fail": "ZIP-Archiv konnte nicht gelesen werden",
+    "invalid-regex": "Ungültiger regulärer Ausdruck (regex)",
+    "invalid-rule-regex": "Der Feldname '{ruleRegex}' der Extraction Rule {ruleId} konnte nicht korrekt in eine RegEx umgewandelt werden.",
+    "no-file-match": "Diese Datei konnte im ausgewählten ZIP-Container nicht gefunden werden.",
+    "no-file-match-detail": "Keine Datei konnte mit dem folgenden Muster identifiziert werden: '{regexPath}'. \nVerfügbare Dateien im ZIP-Container: {availableFiles}",
+    "file-processing-fail-general": "Beim Verarbeiten des Datei-Inhalts ist ein Fehler aufgetreten",
+    "file-processing-fail-general-detail": "Der folgende Fehler trat auf: {error}",
+    "string-conversion-error": "Dateiinhalt kann nicht in einen Text (String) umgewandelt werden",
+    "no-extraction-rules": "Es wurden keine Extraktionsregeln definiert",
+    "parsing-error": "Es trat ein Fehler beim Parsen von {contentType}-Inhalt für diese Datei auf",
+    "unsupported-bp-format": "Nicht unterstütztes Dateiformat: {format}",
+    "more-than-one-key-match": "Mehr als eine Übereinstimmung für Feld '{field}': {keys}. Es wurde standardmäßig '{defaultKey}' verwendet",
+    "no-key-match": "Keine Übereinstimmung für Feld '{field}': {keys}",
+    "undefined-key": "Undefinierter Name für Feld '{field}'"
+  },
+  "file-drop": {
+    "heading": "Datei auswählen",
+    "selection-prompt": "Hier klicken um eine Datei auszuwählen",
+    "release-to-select": "Loslassen, um Datei auszuwählen",
+    "file-is-being-processed": "Datei wird verarbeitet…",
+    "processing-complete": "Verarbeitung abgeschlossen",
+    "processing-success": "Datei erfolgreich verarbeitet",
+    "processing-failed": "Datei konnte nicht verarbeitet werden",
+    "choose-different-file": "eine andere Datei auswählen",
+    "retry-hint": "Die ausgewählte Datei enthält möglicherweise nicht die benötigten Informationen (siehe unten für weitere Details). Eine andere Datei auswählen, um es erneut zu versuchen:"
+  },
+  "extraction-state": {
+    "file" : {
+      "success": "Unten werden die ausgelesenen Daten angezeigt.",
+      "no-data-extracted": "Es konnten keine Informationen aus der Datei ausgelesen werden."
+    },
+    "blueprint" : {
+      "success": "Daten erfolgreich ausgelesen.",
+      "no-data-extracted": "Keine relevanten Daten in der Datei gefunden.",
+      "all-missing-fields": "Alle Einträge in der Datei sind unvollständig und können nicht ausgelesen werden.",
+      "all-filtered-out": "Alle Einträge wurden aufgrund der gewählten Filter-Kriterien ausgeschlossen.",
+      "failed": "Es konnten keine Daten ausgelesen werden, aufgrund von folgenden Fehlern:"
+    }
+  },
+  "feedback": {
+    "intro-extraction-pending": "Die folgenden Daten werden ausgelesen",
+    "intro-extraction-complete": "Ausgelesene Daten",
+    "show-error-details": "Details anzeigen",
+    "donation-question": "Sind Sie damit einverstanden, diese Daten zu spenden und zu übermitteln?",
+    "donation-agree": "Ja",
+    "donation-disagree": "Nein"
+  },
+  "extraction-table": {
+    "previous-page": "vorherige Seite",
+    "next-page": "nächste Seite",
+    "page-info": "Seite {currentPage} von {maxPage}",
+    "entry-info": "Einträge {lower} bis {upper} von insgesamt {total} werden angezeigt.",
+    "donation-info": "Wenn Sie der Datenspende zustimmen, werden die folgenden Daten übermittelt:",
+    "search-entries": "Einträge durchsuchen...",
+    "all-filtered": "Keine Einträge gefunden",
+    "show-data": "alle Daten anzeigen",
+    "hide-data": "weniger anzeigen"
+  },
+  "uploader-app": {
+    "next-btn": "Weiter"
+  },
+  "issue-modal": {
+    "title": "Datenspende wurde nicht abgeschlossen",
+    "none-attempted": "Es wurden keine Dateien hochgeladen. Ohne Datenspende fortfahren?",
+    "not-all-attempted": "Einige Uploads wurden übersprungen{skipped-uploads}. Mit den bisher verarbeiteten Dateien fortfahren?",
+    "not-all-consented": "Für einige Daten wurde nicht angegeben, ob diese übermittelt werden dürfen{ blueprints-wo-consent }. Bitte überprüfen.",
+    "continue-anyway": "Trotzdem fortfahren",
+    "back": "Zurück"
+  },
+  "submitting-modal": {
+    "submit-wait": "Die Datenspende wird verarbeitet..."
+  }
+}

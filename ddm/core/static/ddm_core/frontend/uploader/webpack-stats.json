@@ -1,0 +1,50 @@
+{
+  "status": "done",
+  "assets": {
+    "css/ddm_uploader_frontend.css": {
+      "name": "css/ddm_uploader_frontend.css",
+      "path": "css\\ddm_uploader_frontend.css",
+      "publicPath": "/static/ddm_core/frontend/uploader/css/ddm_uploader_frontend.css"
+    },
+    "js/chunk-vendors.js": {
+      "name": "js/chunk-vendors.js",
+      "path": "js\\chunk-vendors.js",
+      "publicPath": "/static/ddm_core/frontend/uploader/js/chunk-vendors.js"
+    },
+    "js/chunk-vendors.js.map": {
+      "name": "js/chunk-vendors.js.map",
+      "path": "js\\chunk-vendors.js.map",
+      "publicPath": "/static/ddm_core/frontend/uploader/js/chunk-vendors.js.map"
+    },
+    "js/ddm_uploader_frontend.js": {
+      "name": "js/ddm_uploader_frontend.js",
+      "path": "js\\ddm_uploader_frontend.js",
+      "publicPath": "/static/ddm_core/frontend/uploader/js/ddm_uploader_frontend.js"
+    },
+    "js/ddm_uploader_frontend.js.map": {
+      "name": "js/ddm_uploader_frontend.js.map",
+      "path": "js\\ddm_uploader_frontend.js.map",
+      "publicPath": "/static/ddm_core/frontend/uploader/js/ddm_uploader_frontend.js.map"
+    },
+    "locale/de.json": {
+      "name": "locale/de.json",
+      "path": "locale\\de.json",
+      "publicPath": "/static/ddm_core/frontend/uploader/locale/de.json",
+      "sourceFilename": "src/locales/de.json"
+    },
+    "locale/en.json": {
+      "name": "locale/en.json",
+      "path": "locale\\en.json",
+      "publicPath": "/static/ddm_core/frontend/uploader/locale/en.json",
+      "sourceFilename": "src/locales/en.json"
+    }
+  },
+  "chunks": {
+    "ddm_uploader_frontend": [
+      "js/chunk-vendors.js",
+      "css/ddm_uploader_frontend.css",
+      "js/ddm_uploader_frontend.js"
+    ]
+  },
+  "publicPath": "/static/ddm_core/frontend/uploader/"
+}

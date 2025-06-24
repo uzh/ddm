@@ -29,6 +29,9 @@ class Participant(models.Model):
 
     extra_data = models.JSONField(default=get_extra_data_default)
 
+    def __str__(self):
+        return self.external_id
+
     def get_context_data(self):
         """
         Returns data that can be accessed when participant is passed to a

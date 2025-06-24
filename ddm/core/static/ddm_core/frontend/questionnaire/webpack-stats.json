@@ -1,0 +1,38 @@
+{
+  "status": "done",
+  "assets": {
+    "css/ddm_questionnaire_frontend.css": {
+      "name": "css/ddm_questionnaire_frontend.css",
+      "path": "css\\ddm_questionnaire_frontend.css",
+      "publicPath": "/static/ddm_core/frontend/questionnaire/css/ddm_questionnaire_frontend.css"
+    },
+    "js/chunk-vendors.js": {
+      "name": "js/chunk-vendors.js",
+      "path": "js\\chunk-vendors.js",
+      "publicPath": "/static/ddm_core/frontend/questionnaire/js/chunk-vendors.js"
+    },
+    "js/chunk-vendors.js.map": {
+      "name": "js/chunk-vendors.js.map",
+      "path": "js\\chunk-vendors.js.map",
+      "publicPath": "/static/ddm_core/frontend/questionnaire/js/chunk-vendors.js.map"
+    },
+    "js/ddm_questionnaire_frontend.js": {
+      "name": "js/ddm_questionnaire_frontend.js",
+      "path": "js\\ddm_questionnaire_frontend.js",
+      "publicPath": "/static/ddm_core/frontend/questionnaire/js/ddm_questionnaire_frontend.js"
+    },
+    "js/ddm_questionnaire_frontend.js.map": {
+      "name": "js/ddm_questionnaire_frontend.js.map",
+      "path": "js\\ddm_questionnaire_frontend.js.map",
+      "publicPath": "/static/ddm_core/frontend/questionnaire/js/ddm_questionnaire_frontend.js.map"
+    }
+  },
+  "chunks": {
+    "ddm_questionnaire_frontend": [
+      "js/chunk-vendors.js",
+      "css/ddm_questionnaire_frontend.css",
+      "js/ddm_questionnaire_frontend.js"
+    ]
+  },
+  "publicPath": "/static/ddm_core/frontend/questionnaire/"
+}

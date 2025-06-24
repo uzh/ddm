@@ -10,6 +10,8 @@
            data-filter-control="true"
            data-show-export="true"
            data-export-types="['csv', 'json']"
+           data-export-data-type="all"
+           data-export-options='{"fileName": "DDM_ExceptionLogs_{{ project.url_id }}"}'
            data-pagination="true"
            data-page-size="10"
            data-buttons-class="transparent">
@@ -26,8 +28,8 @@
 
       {% for e in exceptions %}
       <tr>
-        <td>{{ e.date|date:"Y-m-d, H:i" }}</td>
-        <td>{{ e.participant.pk }}</td>
+        <td>{{ e.date|date:"Y-m-d, H:i:s" }}</td>
+        <td>{{ e.participant }}</td>
         <td>{{ e.exception_type }}</td>
         <td>{{ e.raised_by }}</td>
         <td>{{ e.blueprint.pk }}</td>

@@ -9,7 +9,6 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.utils import timezone
 from django.views.decorators.debug import sensitive_variables
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.views.generic.list import ListView
@@ -67,7 +66,7 @@ class FileUploaderCreate(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, Crea
     model = FileUploader
     template_name = 'ddm_datadonation/uploader/create.html'
     fields = ['name', 'upload_type', 'combined_consent']
-    success_message = 'File Uploader was created successfully.'
+    success_message = 'Uploader created successfully.'
 
     def form_valid(self, form):
         project_url_id = self.kwargs['project_url_id']
@@ -88,7 +87,7 @@ class FileUploaderEdit(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, Update
     model = FileUploader
     template_name = 'ddm_datadonation/uploader/edit.html'
     fields = ['name', 'upload_type', 'combined_consent', 'index']
-    success_message = 'Blueprint Uploader "%(name)s" was successfully updated.'
+    success_message = 'Uploader "%(name)s" successfully updated.'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -137,7 +136,7 @@ class FileUploaderDelete(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, Dele
     """ View to delete an existing blueprint uploader. """
     model = FileUploader
     template_name = 'ddm_datadonation/uploader/delete.html'
-    success_message = 'File Uploader "%s" was deleted.'
+    success_message = 'Uploader "%s" was deleted.'
 
     def get_success_message(self, cleaned_data):
         return self.success_message % self.object.name
@@ -148,7 +147,21 @@ class BlueprintCreate(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, CreateV
     model = DonationBlueprint
     template_name = 'ddm_datadonation/blueprint/create.html'
     form_class = BlueprintEditForm
-    success_message = 'Blueprint was created successfully.'
+    success_message = 'Blueprint created successfully.'
+
+    def get_initial(self):
+        """Set initial display_position value to current maximum plus one."""
+        initial = super().get_initial()
+        project_id = self.kwargs['project_url_id']
+        project_blueprints = DonationBlueprint.objects.filter(project__url_id=project_id)
+
+        if project_blueprints:
+            max_position = project_blueprints.order_by('-display_position').values_list('display_position', flat=True).first()
+            initial['display_position'] = max_position + 1
+        else:
+            initial['display_position'] = 1
+
+        return initial
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -172,7 +185,7 @@ class BlueprintEdit(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, UpdateVie
     model = DonationBlueprint
     template_name = 'ddm_datadonation/blueprint/edit.html'
     form_class = BlueprintEditForm
-    success_message = 'Blueprint "%(name)s" was successfully updated.'
+    success_message = 'Blueprint "%(name)s" successfully updated.'
 
     def get_success_url(self):
         return reverse(
@@ -217,7 +230,7 @@ class BlueprintDelete(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, DeleteV
     """ View to delete an existing donation blueprint. """
     model = DonationBlueprint
     template_name = 'ddm_datadonation/blueprint/delete.html'
-    success_message = 'Blueprint "%s" was deleted.'
+    success_message = 'Blueprint "%s" deleted.'
 
     def get_success_message(self, cleaned_data):
         return self.success_message % self.object.name
@@ -253,7 +266,7 @@ class InstructionCreate(SuccessMessageMixin, DDMAuthMixin, InstructionMixin, Cre
     model = DonationInstruction
     form_class = InstructionsForm
     template_name = 'ddm_datadonation/instructions/create.html'
-    success_message = 'Instruction page was successfully created.'
+    success_message = 'Instruction page successfully created.'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -276,14 +289,14 @@ class InstructionEdit(SuccessMessageMixin, DDMAuthMixin, InstructionMixin, Updat
     model = DonationInstruction
     form_class = InstructionsForm
     template_name = 'ddm_datadonation/instructions/edit.html'
-    success_message = 'Instruction page was successfully updated.'
+    success_message = 'Instruction page successfully updated.'
 
 
 class InstructionDelete(SuccessMessageMixin, DDMAuthMixin, InstructionMixin, DeleteView):
     """ View to delete an instruction page. """
     model = DonationInstruction
     template_name = 'ddm_datadonation/instructions/delete.html'
-    success_message = 'Instruction page was deleted.'
+    success_message = 'Instruction page deleted.'
 
     def get_success_message(self, cleaned_data):
         return self.success_message % self.object.name

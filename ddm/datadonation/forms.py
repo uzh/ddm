@@ -14,6 +14,7 @@ class BlueprintEditForm(forms.ModelForm):
         fields = [
             'name',
             'description',
+            'display_position',
             'regex_path',
             'exp_file_format',
             'csv_delimiter',

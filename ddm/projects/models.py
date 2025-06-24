@@ -2,7 +2,7 @@ import datetime
 import os
 
 from django.conf import settings
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Avg, F, ImageField
 from django.urls import reverse
@@ -14,7 +14,7 @@ from ddm.auth.models import ProjectAccessToken
 from ddm.core.utils.misc import create_asciidigits_id
 from ddm.datadonation.models import DataDonation
 from ddm.encryption.models import Encryption
-from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers, EventLogEntry
+from ddm.logging.models import ExceptionLogEntry, EventLogEntry
 from ddm.participation.models import Participant
 
 
@@ -163,6 +163,18 @@ class DonationProject(models.Model):
         help_text='Participants can only take part in a project if it is active.'
     )
 
+    custom_uploader_translations = models.JSONField(
+        blank=True,
+        null=False,
+        default=dict,
+        help_text=(
+            'Advanced option to overwrite default phrases and translations used '
+            'in the data donation interface. Must be a dictionary with the '
+            'locale shortcuts as keys (e.g., "de" or "en") associated to a '
+            'dictionary holding the translations.'
+        )
+    )
+
     @sensitive_variables()
     def __init__(self, *args, **kwargs):
         self.secret_key = settings.SECRET_KEY
@@ -257,37 +269,6 @@ class DonationProject(models.Model):
             participants = Participant.objects.filter(project=self)
         return str(participants.filter(completed=True).aggregate(
             v=Avg(F('end_time') - F('start_time')))['v']).split(".")[0]
-
-    def get_questionnaire_config(self, participant, view):
-        """
-        Returns a dictionary containing all information to render the
-        questionnaire for a given participant.
-        """
-        q_config = []
-        questions = self.questionbase_set.all().order_by('page', 'index')
-        for question in questions:
-            if question.is_general():
-                q_config.append(question.get_config(participant, view))
-            else:
-                try:
-                    donation = DataDonation.objects.get(
-                        blueprint=question.blueprint,
-                        participant=participant
-                    )
-                except ObjectDoesNotExist:
-                    msg = ('Questionnaire Rendering Exception: No donation '
-                           f'found for participant {participant.pk} and '
-                           f'blueprint {question.blueprint.pk}.')
-                    ExceptionLogEntry.objects.create(
-                        project=self,
-                        raised_by=ExceptionRaisers.SERVER,
-                        message=msg
-                    )
-                    continue
-
-                if donation.consent and donation.status == 'success':
-                    q_config.append(question.get_config(participant, view))
-        return q_config
 
     def get_expected_url_parameters(self):
         return self.expected_url_parameters.split(';')

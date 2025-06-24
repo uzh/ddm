@@ -159,6 +159,22 @@
     color: lightgray;
 }
 
+.question-section-heading {
+    font-size: 1.1rem;
+    border-bottom: 1px solid #1a1a1a;
+    font-weight: bold;
+}
+
+.question-section-container {
+    padding-bottom: 40px;
+}
+
+.question-extra-section {
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 10px;
+}
+
 .item-set-table input[type="text"],
 .item-set-table input[type="number"] {
     width: 100%;

@@ -31,16 +31,64 @@
       {% if token %}
       <div>
         <div class="row">
-          <div class="col"><label>Token</label>{{ token.key }}</div>
-          <div class="col"><label>Created on</label>{{ token.created|date:"M d, Y, H:i" }}</div>
-          <div class="col"><label>Expires on</label>{{ token.expiration_date|date:"M d, Y, H:i" }}</div>
-          <div class="col"><label>Satus</label>{% if token.has_expired %}<span class="badge bg-danger">Invalid</span>{% else %}<span class="badge bg-success">valid</span>{% endif %}</div>
+          <div class="col">
+            <div><label>Token</label></div>
+            <div>{{ token.key }}</div>
+          </div>
+          <div class="col">
+            <div><label>Created on</label></div>
+            <div>{{ token.created|date:"M d, Y, H:i" }}</div>
+          </div>
+          <div class="col">
+            <div><label>Expires on</label></div>
+            <div>{{ token.expiration_date|date:"M d, Y, H:i" }}</div>
+          </div>
+          <div class="col">
+            <div><label>Satus</label></div>
+            <div>{% if token.has_expired %}<span class="badge bg-danger">Invalid</span>{% else %}<span class="badge bg-success">valid</span>{% endif %}</div>
+          </div>
         </div>
         <form method='post'>
           {% csrf_token %}
           {{ form.media }}
           <input type="hidden" id="delete-token" name="action" value="delete">
-          <input class="ddm-btn ddm-btn-red" type="submit" value="Delete Token">
+          <button
+              class="ddm-btn ddm-btn-red"
+              data-bs-toggle="modal"
+              data-bs-target="#delete-token-modal"
+              type="button"
+          >
+            Delete Token
+          </button>
+
+          {# Modal for participant deletion #}
+          <div class="modal" id="delete-token-modal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-body">
+                  <h4>Delete Token</h4>
+                  <p>Are you sure you want to delete the current API token?</p>
+
+                </div>
+                <div class="modal-footer">
+                  <button
+                      type="button"
+                      class="ddm-btn"
+                      data-bs-dismiss="modal">
+                    Cancel
+                  </button>
+                  <input
+                      id="delete-token-button"
+                      class="ddm-btn ddm-btn-red"
+                      data-bs-dismiss="modal"
+                      type="submit"
+                      value="Delete Token"
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
         </form>
       </div>
       {% else %}
@@ -55,34 +103,38 @@
 {% block main_form_header %}Create new Token{% endblock %}
 
 {% block main_form %}
-<form method='post'>
-  {% csrf_token %}
-  {{ form.media }}
+  {% if token %}
+    <p>Delete current token to create a new one.</p>
+  {% else %}
+  <form method='post'>
+    {% csrf_token %}
+    {{ form.media }}
 
-  <div>
-    {% if form.errors %}
-    <p class="error-disclaimer"><i class="bi bi-exclamation-square-fill"></i> The form could not be processed. Please
-      check the issues highlighted below.</p>
-    {% endif %}
+    <div>
+      {% if form.errors %}
+      <p class="error-disclaimer"><i class="bi bi-exclamation-square-fill"></i> The form could not be processed. Please
+        check the issues highlighted below.</p>
+      {% endif %}
 
-    {{ form.non_field_errors }}
+      {{ form.non_field_errors }}
 
-    {% for field in form %}
-    {% if field.name in 'expiration_days' %}
-    <p>The new token expires in {{ field }} days.</p>
-    <p>The new token will overwrite the existing one and the current token will no longer work.</p>
-    {% else %}
-    {{ field }}
-    {% endif %}
-    {% endfor %}
-    <input class="ddm-btn" type="submit" value="Create Token">
-    {% block cancel %}
-    <p>
-      <a href="{% url 'ddm_projects:detail' project.url_id %}">&#129040; Back</a>
-    </p>
-    {% endblock %}
-  </div>
-</form>
+      {% for field in form %}
+      {% if field.name in 'expiration_days' %}
+      <p>The new token expires in {{ field }} days.</p>
+      <p>The new token will overwrite the existing one and the current token will no longer work.</p>
+      {% else %}
+      {{ field }}
+      {% endif %}
+      {% endfor %}
+      <input class="ddm-btn" type="submit" value="Create Token">
+      {% block cancel %}
+      <p>
+        <a href="{% url 'ddm_projects:detail' project.url_id %}"><i class="bi bi-arrow-left-short"></i> Back</a>
+      </p>
+      {% endblock %}
+    </div>
+  </form>
+  {% endif %}
 {% endblock %}
 
 {% block breadcrumbs %}

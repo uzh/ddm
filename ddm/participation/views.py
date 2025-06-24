@@ -8,7 +8,6 @@ from django.shortcuts import redirect, reverse
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.decorators import method_decorator
-from django.utils.safestring import SafeString
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.decorators.cache import cache_page
@@ -18,7 +17,13 @@ from ddm.datadonation.models import DonationBlueprint, FileUploader
 from ddm.logging.utils import log_server_exception
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject
-from ddm.questionnaire.services import save_questionnaire_to_db
+from ddm.projects.service import (
+    get_url_parameters, get_participant_variables, get_donation_variables
+)
+from ddm.questionnaire.services import (
+    save_questionnaire_response_to_db, create_questionnaire_config,
+    create_filter_config
+)
 
 
 def get_participation_session_id(project):
@@ -235,8 +240,9 @@ class DataDonationView(ParticipationFlowBaseView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['uploader_configs'] = SafeString(self.get_uploader_configs())
+        context['uploader_configs'] = self.get_uploader_configs()
         context['project_url_id'] = self.object.url_id
+        context['custom_translations'] = json.dumps(self.object.custom_uploader_translations)
         return context
 
     def get_uploader_configs(self):
@@ -267,17 +273,17 @@ class DataDonationView(ParticipationFlowBaseView):
 
         # Check if zip file contains expected file.
         unzipped_file = zipfile.ZipFile(file, 'r')
-        if 'ul_data.json' not in unzipped_file.namelist():
-            msg = 'Data Donation Processing Exception: "ul_data.json" is not in namelist.'
+        if 'data_donation.json' not in unzipped_file.namelist():
+            msg = 'Data Donation Processing Exception: "data_donation.json" is not in namelist.'
             log_server_exception(self.object, msg)
             return
 
         # Process donation data.
         try:
-            file_data = json.loads(unzipped_file.read('ul_data.json').decode('utf-8'))
+            file_data = json.loads(unzipped_file.read('data_donation.json').decode('utf-8'))
         except UnicodeDecodeError:
             try:
-                file_data = json.loads(unzipped_file.read('ul_data.json').decode('latin-1'))
+                file_data = json.loads(unzipped_file.read('data_donation.json').decode('latin-1'))
             except ValueError:
                 msg = 'Donated data could not be decoded - tried both utf-8 and latin-1 decoding.'
                 log_server_exception(self.object, msg)
@@ -333,11 +339,26 @@ class QuestionnaireView(ParticipationFlowBaseView):
         else:
             return self.render_to_response(context)
 
+    def get_extra_variables(self):
+        """
+        Returns a dictionary holding variable_name: participant_value pairs to
+        be sent to the questionnaire app. This is needed to evaluate filter
+        conditions.
+        """
+        variables = {}
+        variables.update(get_url_parameters(self.object, self.participant))
+        variables.update(get_participant_variables(self.participant))
+        variables.update(get_donation_variables(self.participant))
+        return variables
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        question_config = self.object.get_questionnaire_config(self.participant, self)
+        question_config = create_questionnaire_config(self.object, self.participant)
         context['q_config'] = json.dumps(question_config)
+        filter_config = create_filter_config(self.object)
+        context['filter_config'] = json.dumps(filter_config)
         context['extra_scripts'] = set(self.extra_scripts)
+        context['extra_variables'] = json.dumps(self.get_extra_variables())
         return context
 
     def post(self, request, *args, **kwargs):
@@ -353,8 +374,9 @@ class QuestionnaireView(ParticipationFlowBaseView):
                    'expected key "post_data".')
             log_server_exception(self.object, msg)
             return
-
-        save_questionnaire_to_db(post_data, self.object, self.participant)
+        responses = post_data.get('responses', None)
+        questionnaire_config = post_data.get('questionnaire_config', None)
+        save_questionnaire_response_to_db(responses, self.object, self.participant, questionnaire_config)
         return
 
 

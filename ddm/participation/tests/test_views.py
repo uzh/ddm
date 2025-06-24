@@ -284,13 +284,13 @@ class TestDonationView(ParticipationFlowBaseTestCase):
         exceptions_count_after = ExceptionLogEntry.objects.count()
         last_exception = ExceptionLogEntry.objects.order_by('date').last()
         self.assertEqual(exceptions_count_before, (exceptions_count_after - 1))
-        self.assertIn('"ul_data.json" is not in namelist',
+        self.assertIn('"data_donation.json" is not in namelist',
                       last_exception.message)
 
     def test_process_uploads_invalid_encoding(self):
         view = self.initialize_view()
         invalid_string = 'Hello, 你好, مرحبا, \ud83d'
-        zip_buffer = self.get_zip_file('ul_data.json', invalid_string)
+        zip_buffer = self.get_zip_file('data_donation.json', invalid_string)
         files = {'post_data': zip_buffer}
         exceptions_count_before = ExceptionLogEntry.objects.count()
         view.process_uploads(files)
@@ -302,7 +302,7 @@ class TestDonationView(ParticipationFlowBaseTestCase):
 
     def test_process_uploads_json_error(self):
         view = self.initialize_view()
-        zip_buffer = self.get_zip_file('ul_data.json', '{12: "some data"}')
+        zip_buffer = self.get_zip_file('data_donation.json', '{12: "some data"}')
         files = {'post_data': zip_buffer}
         exceptions_count_before = ExceptionLogEntry.objects.count()
         view.process_uploads(files)
@@ -314,7 +314,7 @@ class TestDonationView(ParticipationFlowBaseTestCase):
 
     def test_process_uploads_blueprint_does_not_exist(self):
         view = self.initialize_view()
-        zip_buffer = self.get_zip_file('ul_data.json', '{"12": "some data"}')
+        zip_buffer = self.get_zip_file('data_donation.json', '{"12": "some data"}')
         files = {'post_data': zip_buffer}
         exceptions_count_before = ExceptionLogEntry.objects.count()
         view.process_uploads(files)
@@ -328,11 +328,11 @@ class TestDonationView(ParticipationFlowBaseTestCase):
         valid_data = {
             f'{self.blueprint.pk}' : {
                 'consent': True,
-                'extracted_data': [],
+                'extractedData': [],
                 'status': 'complete'
             }
         }
-        zip_buffer = self.get_zip_file('ul_data.json', json.dumps(valid_data))
+        zip_buffer = self.get_zip_file('data_donation.json', json.dumps(valid_data))
         files = {'post_data': zip_buffer}
         exceptions_count_before = ExceptionLogEntry.objects.count()
         donation_count_before = DataDonation.objects.count()

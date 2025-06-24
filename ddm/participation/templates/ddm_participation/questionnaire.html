@@ -13,7 +13,9 @@
   <form method="POST">
     {% csrf_token %}
     <div id="qapp"
-         data-questionnaire-config='{{ q_config }}'
+         data-questionnaire-config-as-string='{{ q_config }}'
+         data-filter-config-as-string='{{ filter_config }}'
+         data-static-variables='{{ extra_variables }}'
          data-action-url='{{ request.build_absolute_uri }}'
          data-language='{{ LANGUAGE_CODE|slice:"0:2"}}'
          class="text-black"
@@ -21,7 +23,7 @@
       <qapp></qapp>
     </div>
   </form>
-  {% render_bundle 'vue_questionnaire' %}
+  {% render_bundle 'ddm_questionnaire_frontend' config='DDM_QUESTIONNAIRE' %}
 </div>
 {% endblock content %}
 

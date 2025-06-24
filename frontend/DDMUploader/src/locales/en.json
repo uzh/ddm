@@ -1,0 +1,79 @@
+{
+  "instructions": {
+    "heading": "How it works"
+  },
+  "errors": {
+    "invalid-zip": "A ZIP-file was expected but a {fileType}-file was uploaded.",
+    "zip-read-fail": "Failed to read ZIP archive",
+    "invalid-regex": "Invalid regex",
+    "invalid-rule-regex": "The field name '{ruleRegex}' of extraction rule {ruleId} could not be parsed as regex.",
+    "no-file-match": "The selected ZIP-container did not contain the correct file. Files in container: {availableFiles}",
+    "no-file-match-detail": "We tried to identify the file using the following pattern: '{regexPath}'. \nAvailable files in the container: {availableFiles}",
+    "file-processing-fail-general": "An error occurred during processing the file content.",
+    "file-processing-fail-general-detail": "The following error occurred: {error}",
+    "string-conversion-error": "File content cannot be converted to string",
+    "no-extraction-rules": "No extraction rules defined.",
+    "parsing-error": "Failed to parse {contentType} content for this file.",
+    "unsupported-bp-format": "Unsupported content format: {format}",
+    "more-than-one-key-match": "More than one key match for field '{field}': {keys}. Defaulted to {defaultKey}",
+    "no-key-match": "No key match for field '{field}': {keys}",
+    "undefined-key": "Undefined key for field '{field}'"
+  },
+  "file-drop": {
+    "heading": "Select file",
+    "selection-prompt": "Click to select a file from your device",
+    "release-to-select": "Drop the file to continue",
+    "file-is-being-processed": "Processing your file...",
+    "processing-complete": "Processing complete",
+    "processing-success": "File successfully processed",
+    "processing-failed": "The file could not be successfully processed",
+    "choose-different-file": "select a different file",
+    "retry-hint": "The file may not contain the right information. See below for more details or try again by selecting a different file:"
+  },
+  "extraction-state": {
+    "file" : {
+      "success": "Below you can see which data were extracted.",
+      "no-data-extracted": "No information could be extracted from the file."
+    },
+    "blueprint" : {
+      "success": "Your data has been successfully extracted",
+      "no-data-extracted": "No relevant data found in the file.",
+      "all-missing-fields": "Required information was missing from all entries in the file.",
+      "all-filtered-out": "All entries in the file were excluded based on the filtering criteria.",
+      "failed": "Data could not be extracted due to the following issue(s):"
+    }
+  },
+  "feedback": {
+    "intro-extraction-pending": "Data to be extracted",
+    "intro-extraction-complete": "Extracted data",
+    "show-error-details": "Show details",
+    "donation-question": "Do you agree to donate and submit the data listed above?",
+    "donation-agree": "Yes",
+    "donation-disagree": "No"
+  },
+  "extraction-table": {
+    "previous-page": "previous page",
+    "next-page": "next page",
+    "page-info": "Page {currentPage} of {maxPage}",
+    "entry-info": "Displaying entries {lower}-{upper} of {total}.",
+    "donation-info": "If you consent to the donation, the following data will be submitted:",
+    "search-entries": "Search entries...",
+    "all-filtered": "No entries found",
+    "show-data": "Show all data",
+    "hide-data": "Show less"
+  },
+  "uploader-app": {
+    "next-btn": "Next"
+  },
+  "issue-modal": {
+    "title": "Data donation not complete",
+    "none-attempted": "You have not uploaded any files. Continue without a donation?",
+    "not-all-attempted": "Some uploads were skipped{skipped-uploads}. Continue with the files processed so far?",
+    "not-all-consented": "For some data, it was not indicated whether these may be transmitted{ blueprints-wo-consent }. Please go back to review.",
+    "continue-anyway": "Yes, continue anyway",
+    "back": "Go back"
+  },
+  "submitting-modal": {
+    "submit-wait": "Processing your data donation..."
+  }
+}

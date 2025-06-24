@@ -15,7 +15,7 @@ from ddm.questionnaire.models import (
 class FilterConditionForm(forms.ModelForm):
     source = forms.ChoiceField(
         choices=[],
-        label='Comparison Question/Item',
+        label='Comparison Variable',
         required=True,
         widget=forms.Select(attrs={'class': 'w-100'})
     )
@@ -157,13 +157,17 @@ class FilterConditionForm(forms.ModelForm):
         """
         if source_type == FilterSourceTypes.QUESTION:
             internal_id = f'{source_type}-{details.id}'
-            prefix = f'[quest, p{details.page}]'
+            prefix = f'[question, p{details.page}]'
             descr = details.variable_name
 
         elif source_type == FilterSourceTypes.QUESTION_ITEM:
             internal_id = f'{source_type}-{details.id}'
             prefix = f'[item, p{details.question.page}]'
-            descr = details.variable_name
+            if details.label and len(details.label) > 30:
+                descr_detail = details.label[:30] + '...'
+            else:
+                descr_detail = details.label[:30]
+            descr = f'{details.variable_name} ({descr_detail})'
 
         elif source_type == FilterSourceTypes.URL_PARAMETER:
             internal_id = f'{source_type}-{details}'

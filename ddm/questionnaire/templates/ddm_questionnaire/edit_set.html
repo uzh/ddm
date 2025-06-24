@@ -3,9 +3,13 @@
 
 {% block page_title %}Edit {{ context_title }}{% endblock %}
 
-{% block main_heading %}Edit {{ context_title }} for "{{ question.name }}"{% endblock %}
+{% block main_heading %}Edit {{ context_title }} for Question "{{ question.name|truncatechars:24 }}"{% endblock %}
 
 {% block main_form %}
+  {% if context_title == 'Filter Conditions' %}
+    <p><i>Question is hidden, if:</i></p>
+  {% endif %}
+
 <form method="post">
   {% csrf_token %}
   {{ formset.management_form }}
@@ -62,7 +66,7 @@
 <a href="{% url 'ddm_projects:detail' project_url_id %}">"{{ project.name|truncatechars:15 }}" Project</a> /
 <a href="{% url 'ddm_questionnaire:overview' project_url_id %}">Questionnaire</a> /
 <a href="{% url 'ddm_questionnaire:edit' project_url_id question.question_type question.pk %}">Question</a> /
-{{ context_title }}
+Edit {{ context_title }}
 {% endblock %}
 
 {% block scripts %}

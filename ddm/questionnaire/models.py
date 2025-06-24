@@ -23,7 +23,25 @@ class FilterConditionMixin:
     """
     def get_filter_config(self):
         """
-        Creates the filter conditions that can be passed to the vue questionnaire.
+        Creates the filter configuration that can be passed to the vue
+        questionnaire.
+
+        The filter configuration consists of a list of dictionaries, where each
+        dictionary represents the configuration of one filter rule.
+        A filter rule configuration has the following keys:
+
+        - 'index': The index (or order) of the condition.
+        - 'combinator': The filter combinator (is set to None for the first
+            filter condition).
+        - 'condition_operator': The operator set for the filter condition.
+        - 'condition_value': The value against which the condition is evaluated.
+        - 'target': The config ID of the filter target (i.e., the element that
+            will be shown/hidden; e.g., 'item-1').
+        - 'source': The config ID of the filter source (i.e., the element of
+            which the value is compared against the filter condition; e.g., 'item-2').
+
+        Returns:
+            list: A list of dictionaries, each holding a filter configuration.
         """
         filter_conditions = self.get_active_filters()
         active_filters = [f for f in filter_conditions if f.check_source_exists()]
@@ -47,6 +65,9 @@ class FilterConditionMixin:
     def get_active_filters(self):
         """
         Returns the set of associated filters that are still active.
+
+        Returns:
+            queryset
         """
         return self.filtercondition_set.filter(source_exists=True).order_by('index')
 
@@ -690,6 +711,9 @@ class FilterCondition(models.Model):
     def get_source_config_id(self):
         """
         Get the ID of the filter's source as used in config dictionaries.
+
+        Returns:
+            str: The config ID of the filter's source.
         """
         if self.source_type == FilterSourceTypes.QUESTION:
             return get_filter_config_id(self.source_question)
@@ -701,6 +725,9 @@ class FilterCondition(models.Model):
     def get_target_config_id(self):
         """
         Get the ID of the filter's target as used in config dictionaries.
+
+        Returns:
+            str: The config ID of the filter's target.
         """
         if self.target_question:
             return get_filter_config_id(self.target_question)

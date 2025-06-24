@@ -228,5 +228,5 @@ class GetFilterConfigTest(TestCase):
     def test_filter_config_correct_target_and_source_item(self):
         """Ensure target and source are correctly formatted."""
         result = self.item.get_filter_config()
-        self.assertEqual(result[0]['target'], f'item-{self.filter_condition_1.pk}')
+        self.assertEqual(result[0]['target'], f'item-{self.item.pk}')
         self.assertEqual(result[0]['source'], f'question-{self.question.pk}')

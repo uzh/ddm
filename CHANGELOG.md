@@ -1,28 +1,84 @@
 # Changelog
 
-## 2.1.0
-
-### Changed
-
-- Refactored the DDMQuestionnaire vue app completely.
-- Refactored the DDMUploader vue app completely.
-
-- Upload field now also allows drag and drop of files.
-- Minimalized the participation interface.
+## 2.1.0 - 2025-06-24
 
 ### Added
 
-- Option to control Blueprint display order in participation interface.
-- Option to overwrite default uploader translations on a project basis.
-- Questionnaire: Option to define question filters.
-- Uploader: Option to search extracted information for participants.
+- **Questionnaire Filtering System**: Introduced comprehensive filtering functionality to show/hide questions and question items based on questionnaire responses, participation variables, and system variables. ([`c0fabd3`](https://github.com/uzh/ddm/commit/c0fabd3), [`d697df6`](https://github.com/uzh/ddm/commit/d697df6), [`7859df2`](https://github.com/uzh/ddm/commit/7859df2), [`2afba85`](https://github.com/uzh/ddm/commit/2afba85), [`4d6d455`](https://github.com/uzh/ddm/commit/4d6d455), [`dc3bfbc`](https://github.com/uzh/ddm/commit/dc3bfbc), [`5ad1da0`](https://github.com/uzh/ddm/commit/5ad1da0), [`1ce6cda`](https://github.com/uzh/ddm/commit/1ce6cda), [`6e4ee77`](https://github.com/uzh/ddm/commit/6e4ee77), [`e45d783`](https://github.com/uzh/ddm/commit/e45d783))
+- **Custom Uploader Translations**: Added option to overwrite default uploader translations on a project basis. ([`97f8930`](https://github.com/uzh/ddm/commit/97f8930), [`d961806`](https://github.com/uzh/ddm/commit/d961806), [`da928f0`](https://github.com/uzh/ddm/commit/da928f0))
+- **Blueprint Display Control**: Added option to control Blueprint display order in the participation interface. ([`7a16502`](https://github.com/uzh/ddm/commit/7a16502))
+- **Enhanced Open Questions**: Added functionality for Open Questions to have multiple items with individual text inputs for each item. ([`0d6b47a`](https://github.com/uzh/ddm/commit/0d6b47a))
+- **Matrix Question Improvements**: Added optional heading labels to matrix questions with improved design and responsiveness. ([`e40e817`](https://github.com/uzh/ddm/commit/e40e817))
+- **Search Uploaded Data**: Added option for participants to search the data they have uploaded in DDMUploader.
 
-### Migration Notes
+### Changed
 
-- Need to update settings -> webpack config (!).
-- Split chunky vue component including both the questionnaire and uploader interface into two separate vue apps.
-- Refactored the questionnaire and uploader frontend completely (functionality was largely kept the same; some improvements added).
-- Extraction error implementation was refactored to be more meaningful and easier to maintain.
+- **Uploader Frontend Refactor**: Completely refactored DDM Uploader frontend to improve documentation, reusability, maintainability, and adherence to modern Vue standards. ([`896086a`](https://github.com/uzh/ddm/commit/896086a), [`429a321`](https://github.com/uzh/ddm/commit/429a321), [`a2ea763`](https://github.com/uzh/ddm/commit/a2ea763), [`dd93b6f`](https://github.com/uzh/ddm/commit/dd93b6f))
+- **Questionnaire Frontend Refactor**: Moved questionnaire frontend to separate application, updated dependencies, split large files into submodules, and refactored to TypeScript. ([`ba91828`](https://github.com/uzh/ddm/commit/ba91828), [`fea71d7`](https://github.com/uzh/ddm/commit/fea71d7), [`b395bcf`](https://github.com/uzh/ddm/commit/b395bcf), [`38d8c16`](https://github.com/uzh/ddm/commit/38d8c16))
+- **Modern Questionnaire Design**: Restyled questionnaire interface with a more modern look and improved responsiveness. ([`19f7dfc`](https://github.com/uzh/ddm/commit/19f7dfc), [`2ce4d4a`](https://github.com/uzh/ddm/commit/2ce4d4a))
+- **Enhanced Response Handling**: Updated response serializer to handle both new and old response structures for backward compatibility. ([`26f31ce`](https://github.com/uzh/ddm/commit/26f31ce))
+- **Refactored Exception Logs**: Introduced new exception log specifications that contain more information and are more accessible/verbose than the previous exception logs ([`169aa80`](https://github.com/uzh/ddm/commit/169aa80)). 
+
+### Fixed
+
+- **API Token Management**: Fixed API token form to prevent accidentally overwriting existing tokens and resolved errors when deleting active tokens. ([`aca8cc6`](https://github.com/uzh/ddm/commit/aca8cc6))
+- **Project Log Export Enhancement**: Fixed table export of project exception and event logs to include all entries and use meaningful filenames. ([`46eb4f2`](https://github.com/uzh/ddm/commit/46eb4f2))
+- **Variable Name Validation**: Raise validation error for duplicated variable names to prevent database integrity errors. ([`ebfc2a7`](https://github.com/uzh/ddm/commit/ebfc2a7))
+- **Adding First Formset Items**: Show extra form for ScalePoints or QuestionItems when none are displayed to enable adding the first item. ([`100f5c0`](https://github.com/uzh/ddm/commit/100f5c0))
+
+### Improved
+
+- **DDM Exception Logs**: Updated admin view with filter options and additional information. ([`84c0ccb`](https://github.com/uzh/ddm/commit/84c0ccb))
+- **Response Export**: Sort columns in questionnaire response export according to current questionnaire order. ([`9d74b60`](https://github.com/uzh/ddm/commit/9d74b60))
+- **Documentation**: Updated function docstrings and documentation screenshots. ([`9d2c0af`](https://github.com/uzh/ddm/commit/9d2c0af), [`4c261e6`](https://github.com/uzh/ddm/commit/4c261e6), [`077431b`](https://github.com/uzh/ddm/commit/077431b))
+- **Improved Cross-Platform Compatibility**: Replaced Unicode characters with Bootstrap icons for better cross-browser and cross-OS compatibility. ([`b4f2fed`](https://github.com/uzh/ddm/commit/b4f2fed))
+
+### Technical
+
+- **Refactored Scale Points**: Renamed `ScalePoint.add_border` to `ScalePoint.secondary_point` for clarity. ([`eab82e0`](https://github.com/uzh/ddm/commit/eab82e0))
+- **Updated Django Settings**: Django settings must be updated to integrate refactored frontend components ([`45105e6`](https://github.com/uzh/ddm/commit/45105e6))
+
+### Migration Guide
+
+To migrate to v2.1.0 from a previous version, the WEBPACK_LOADER configuration must be changed in the Django settings:
+
+Previous:
+```
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'CACHE': True,
+        'BUNDLE_DIR_NAME': 'ddm_core/vue/',
+        'STATS_FILE': os.path.join(STATIC_ROOT, 'ddm_core/vue/webpack-stats.json'),
+        'POLL_INTERVAL': 0.1,
+        'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
+    }
+}
+```
+
+New:
+```
+WEBPACK_LOADER = {
+    'DDM_UPLOADER': {
+        'CACHE': True,
+        'BUNDLE_DIR_NAME': 'ddm_core/frontend/uploader/',
+        'STATS_FILE': os.path.join(STATIC_ROOT, 'ddm_core/frontend/uploader/webpack-stats.json'),
+        'POLL_INTERVAL': 0.1,
+        'TIMEOUT': None,
+        'IGNORE': [r'.+\.hot-update.js', r'.+\.map']
+    },
+    'DDM_QUESTIONNAIRE': {
+        'CACHE': True,
+        'BUNDLE_DIR_NAME': 'ddm_core/frontend/questionnaire/',
+        'STATS_FILE': os.path.join(STATIC_ROOT, 'ddm_core/frontend/questionnaire/webpack-stats.json'),
+        'POLL_INTERVAL': 0.1,
+        'TIMEOUT': None,
+        'IGNORE': [r'.+\.hot-update.js', r'.+\.map']
+    }
+}
+```
+
+Additionally, you will need to run `python manage.py migrate` to apply changes in the database models as well as 
+`python manage.py collectstatic` to load newly added static files.
 
 
 ## 2.0.1 - 2025-03-11

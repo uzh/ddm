@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.1
+
+### Fixed
+
+- **Filter Condition Edit Form Showing Unnecessary fields**: Explicitly exclude the filter target question and target item from the form to prevent occasional rendering of these fields.
+
 ## 2.1.0 - 2025-06-24
 
 ### Added

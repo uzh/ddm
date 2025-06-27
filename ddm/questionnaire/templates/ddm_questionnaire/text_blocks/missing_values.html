@@ -1,0 +1,24 @@
+<p>
+  The questionnaire system uses specific codes to represent different types of missing responses:
+</p>
+
+<p>
+  <b>-99 (Skipped):</b> When a participant encounters a question but chooses not to answer it
+  (e.g., leaves it blank), the system records "-99".
+</p>
+
+<p>
+  <b>-77 (Filtered Out):</b> When a question is not displayed to a participant due to filter conditions,
+  the system records "-77".
+</p>
+
+<p><b>Setting Up Filter Conditions:</b></p>
+
+<ul>
+  <li>To hide a question when participants skip another question: <code>hide if [question] == -99</code></li>
+  <li>To hide a question when another question was filtered out: <code>hide if [question] == -77</code></li>
+  <li>
+    To hide a question for any type of missing response: <code>hide if [question] == -99 OR [question] == -77</code>.
+    If you only use positive integers as response values, you may also be able to simplify the condition as <code>hide if [question] < 0</code>
+  </li>
+</ul>

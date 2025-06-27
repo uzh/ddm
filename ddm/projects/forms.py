@@ -165,7 +165,7 @@ class ProjectEditCustomUploaderTranslationsForm(forms.ModelForm):
             'custom_uploader_translations',
         ]
         widgets = {
-            'custom_uploader_translations': CustomJSONWidget(),
+            'custom_uploader_translations': CustomJSONWidget(attrs={'class': 'w-100', 'rows': 25})
         }
 
 

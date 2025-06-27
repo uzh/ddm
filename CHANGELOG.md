@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.1.1 - 2025-06-27
+
+### Fixed
+
+- **Filter Condition Edit Form Showing Unnecessary fields**: Explicitly exclude the filter target question and target item from the form to prevent occasional rendering of these fields.
+
+### Improved
+
+- **Larger Input Field for Custom Translation**: Made input field for custom translations larger to minimize line-wrapping.
+- **Filter Condition Edit Form**: Add explanations to research interface on how to treat missing values when configuring filter conditions.
+
+
 ## 2.1.0 - 2025-06-24
 
 ### Added
@@ -81,7 +93,7 @@ Additionally, you will need to run `python manage.py migrate` to apply changes i
 `python manage.py collectstatic` to load newly added static files.
 
 
-## 2.0.1 - 2025-03-11
+## 2.0.2 - 2025-03-11
 
 ### Fixed
 - Resolve incorrect status updates causing data display issues when an upload contains failed, all-filtered-out, and successful blueprint extractions at the same time (participation data donation view). ([`6e539b7`](https://github.com/uzh/ddm/commit/6e539b7, [`013e69c`](https://github.com/uzh/ddm/commit/013e69c)
@@ -91,6 +103,9 @@ Additionally, you will need to run `python manage.py migrate` to apply changes i
 ### Update Guide
 
 Run `python manage.py collectstatic` after upgrading to DDM v2.0.1 from a previous version.
+
+
+> Version number 2.0.1 was accidentally skipped.
 
 
 ## 2.0.0 - 2025-02-27

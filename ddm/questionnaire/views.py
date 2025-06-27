@@ -325,7 +325,7 @@ class FilterEditBase(SuccessMessageMixin, ProjectMixin, DDMAuthMixin, UpdateView
             fk_class,
             FilterCondition,
             form=FilterConditionForm,
-            exclude=[],
+            exclude=['target_question', 'target_item'],
             extra=n_extra,
             can_delete=True,
             fk_name=fk_name

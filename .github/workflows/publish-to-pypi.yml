@@ -80,11 +80,11 @@ jobs:
       - name: Install Antora
         run: npm i antora
 
-      - name: Generate Site
-        run: npx antora docs/antora-playbook.yml
-
       - name: Install Antora Extensions
         run: npm i @antora/lunr-extension
+
+      - name: Generate Site
+        run: npx antora docs/antora-playbook.yml
 
       - name: Publish to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3

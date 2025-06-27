@@ -9,7 +9,7 @@
 ### Improved
 
 - **Larger Input Field for Custom Translation**: Made input field for custom translations larger to minimize line-wrapping.
-
+- **Filter Condition Edit Form**: Add explanations to research interface on how to treat missing values when configuring filter conditions.
 
 ## 2.1.0 - 2025-06-24
 

@@ -7,7 +7,11 @@
 
 {% block main_form %}
   {% if context_title == 'Filter Conditions' %}
-    <p><i>Item is hidden, if:</i></p>
+    <p>
+      Configure conditions to hide the item based on answers to previous questions/items or other variable states.
+    </p>
+
+    <p><b>Item is hidden, if:</b></p>
   {% endif %}
 
 <form method="post">
@@ -53,6 +57,13 @@
 
     {% endfor %}
   </table>
+
+  {% if context_title == 'Filter Conditions' %}
+
+    {% include "ddm_core/components/info_collapsible.html" with element_id="missing-values-info" title="Note on Missing Values" include_path="ddm_questionnaire/text_blocks/missing_values.html" body="" %}
+
+  {% endif %}
+
   <button class="ddm-btn" type="button" id="add-form">Add {{ context_title }}</button>
   <input class="ddm-btn" type="submit" value="Save">
   <p class="mt-3">

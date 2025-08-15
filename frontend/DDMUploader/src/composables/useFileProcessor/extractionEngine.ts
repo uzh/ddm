@@ -124,7 +124,7 @@ export function extractData(
     const key = keyMap.get(rule.field);
 
     if (key === undefined) {
-      break;
+      continue;
     }
 
     switch (rule.comparison_operator) {

@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.2 - 2025-08-15
+
+### Fixed
+
+- Fixed logic error where missing keys would skip to next row instead of applying remaining extraction rules during data donation extraction ([`d5bce18`](https://github.com/uzh/ddm/commit/d5bce18)).
+
+
 ## 2.1.1 - 2025-06-27
 
 ### Fixed

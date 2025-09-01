@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.1.3 - 2025-09-01
+
+### Fixed
+
+- **Filter evaluation**: Fixed filter evaluation when navigating to next page without answering any questions ([`d019810`](https://github.com/uzh/ddm/commit/d019810)). 
+- **Project link in Django admin**: Fix broken link to donation project in Django admin interface ([`d272bb2`](https://github.com/uzh/ddm/commit/d272bb2)).
+
+### Update Guide
+
+Run `python manage.py migrate` and `python manage.py collectstatic` after upgrading to DDM v2.1.3 from a previous version.
+
+
 ## 2.1.2 - 2025-08-15
 
 ### Fixed
@@ -111,9 +123,11 @@ Additionally, you will need to run `python manage.py migrate` to apply changes i
 
 Run `python manage.py collectstatic` after upgrading to DDM v2.0.1 from a previous version.
 
+---
 
 > Version number 2.0.1 was accidentally skipped.
 
+---
 
 ## 2.0.0 - 2025-02-27
 

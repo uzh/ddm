@@ -1,6 +1,6 @@
 # pip install django-ddm
 # prev=$(pip show django-ddm | grep Version: | cut -d' ' -f2 )
-minor=2
+minor=3
 major=2.1
 # let "minor++"
 sed -i "s/__version__/$major.$minor/g" setup.cfg

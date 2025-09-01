@@ -221,6 +221,13 @@ function submitData() {
     .catch(err => console.error("Submit error:", err));
 }
 
+function clickOnNextPage() {
+  evaluateFilters();
+  checkIfAllItemsHidden();   // To make sure filters are evaluated and questions hidden, even when all items are skipped.
+  next();
+  scrollToTop();
+}
+
 // Expose elements for testing.
 if (process.env.NODE_ENV === 'test') {
   // @ts-ignore
@@ -264,7 +271,7 @@ if (process.env.NODE_ENV === 'test') {
 
     <div class="row flow-navigation">
       <div class="col">
-        <button id="next-page-btn" class="flow-btn" type="button" @click="() => { next(); scrollToTop(); }">
+        <button id="next-page-btn" class="flow-btn" type="button" @click="() => { clickOnNextPage(); }">
           {{ t('next-btn-label') }}
           &nbsp;&nbsp;&#8250;
         </button>

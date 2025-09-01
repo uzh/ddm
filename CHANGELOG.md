@@ -9,7 +9,7 @@
 
 ### Update Guide
 
-Run `python manage.py migrate` and `python manage.py collectstatic` after upgrading to DDM v2.1.3 from a previous version.
+Run `python manage.py collectstatic` after upgrading to DDM v2.1.3 from the previous version.
 
 
 ## 2.1.2 - 2025-08-15

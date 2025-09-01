@@ -175,11 +175,12 @@ You can conditionally hide questions or items based on answers to previous quest
 Index:: Sets the order in which filter conditions are applied.
 
 Combinator:: Defines how multiple filter conditions are combined: `AND` = all conditions must be met,
-`OR` = any condition must be met for the filter to be applied (ignored for the first (lowest index) condition).
+`OR` = any condition must be met for the filter to be applied (ignored for the first (lowest index) condition, so can
+be set to any value for the first condition).
 +
 *Note:* Conditions are evaluated as a chain, with AND having higher priority than OR. For example:
-`ConditionIndex1 OR ConditionIndex2 AND ConditionIndex3 OR ConditionIndex4` will be evaluated as
-`ConditionIndex1 OR (ConditionIndex2 AND ConditionIndex3) OR ConditionIndex4`).
+`Condition1 OR Condition2 AND Condition3 OR Condition4` will be evaluated as
+`Condition1 OR (Condition2 AND Condition3) OR Condition4`).
 +
 Options: `AND`, `OR`.
 
@@ -193,3 +194,11 @@ Options: `Equal (==)`, `Not Equal (!=)`, `Greater than (>)`, `Smaller than (<)`,
 Comparison Value:: The value to compare against (the _right side_ of the condition).
 
 Delete:: Check this box to remove the condition. It will be deleted when you click _Save_.
+
+
+[NOTE]
+====
+**Behavior when all items of a question are filtered out:** When all items of a question are filtered out, the entire
+question will not be displayed. If the filtered question is the only question on a page, the entire page will be skipped
+and the user will proceed to the next available page.
+====

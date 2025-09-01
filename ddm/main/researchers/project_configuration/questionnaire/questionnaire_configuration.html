@@ -576,11 +576,12 @@ be rendered as "un- decided" if the whole word does not fit on one line.</p>
 <dt class="hdlist1">Combinator</dt>
 <dd>
 <p>Defines how multiple filter conditions are combined: <code>AND</code> = all conditions must be met,
-<code>OR</code> = any condition must be met for the filter to be applied (ignored for the first (lowest index) condition).</p>
+<code>OR</code> = any condition must be met for the filter to be applied (ignored for the first (lowest index) condition, so can
+be set to any value for the first condition).</p>
 <div class="paragraph">
 <p><strong>Note:</strong> Conditions are evaluated as a chain, with AND having higher priority than OR. For example:
-<code>ConditionIndex1 OR ConditionIndex2 AND ConditionIndex3 OR ConditionIndex4</code> will be evaluated as
-<code>ConditionIndex1 OR (ConditionIndex2 AND ConditionIndex3) OR ConditionIndex4</code>).</p>
+<code>Condition1 OR Condition2 AND Condition3 OR Condition4</code> will be evaluated as
+<code>Condition1 OR (Condition2 AND Condition3) OR Condition4</code>).</p>
 </div>
 <div class="paragraph">
 <p>Options: <code>AND</code>, <code>OR</code>.</p>
@@ -607,6 +608,22 @@ be rendered as "un- decided" if the whole word does not fit on one line.</p>
 <p>Check this box to remove the condition. It will be deleted when you click <em>Save</em>.</p>
 </dd>
 </dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><strong>Behavior when all items of a question are filtered out:</strong> When all items of a question are filtered out, the entire
+question will not be displayed. If the filtered question is the only question on a page, the entire page will be skipped
+and the user will proceed to the next available page.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>

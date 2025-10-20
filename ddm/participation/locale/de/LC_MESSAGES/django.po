@@ -66,11 +66,11 @@ msgstr "Angegebene ID konnte nicht gefunden werden"
 #: .\templates\ddm_participation\continuation_not_found.html:8
 msgid ""
 "Unfortunately, we could not find a study participation started for the given "
-"ID. However, you can access the study by clicking on the following link:"
+"ID. However, you can access the study by clicking on the following link: "
 msgstr ""
 "Leider konnten wir für die angegebene ID keine begonnene Studienteilnahme "
 "finden.Wenn Sie die Studie trotzdem aufrufen möchten, klicken Sie auf den "
-"folgenden Link:"
+"folgenden Link: "
 
 #: .\templates\ddm_participation\continuation_not_found.html:9
 msgid "Go to Study"
@@ -82,7 +82,7 @@ msgstr "Herzlichen Dank!"
 
 #: .\templates\ddm_participation\debriefing.html:10
 msgid "You have reached the end of the study and can now close this window."
-msgstr "Sie haben das Ende der Studie erreicht und können dieses Fenster nun "
+msgstr "Sie haben das Ende der Studie erreicht und können dieses Fenster nun schliessen."
 
 #: .\templates\ddm_participation\project_inactive.html:6
 msgid "Participation not Possible"

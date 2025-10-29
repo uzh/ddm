@@ -1,4 +1,4 @@
-# German translations for DDM
+# Italian translations for DDM
 #
 #, fuzzy
 msgid ""
@@ -21,77 +21,74 @@ msgstr "DDM Participation"
 
 #: .\templates\ddm_participation\base.html:47
 msgid "Contact"
-msgstr "Kontakt"
+msgstr "Contatto"
 
 #: .\templates\ddm_participation\base.html:50
 msgid "What happens with my data?"
-msgstr "Was passiert mit meinen Daten?"
+msgstr "Cosa succede ai miei dati?"
 
 #: .\templates\ddm_participation\base.html:65
 msgid "Contact Information"
-msgstr "Kontaktinformationen"
+msgstr "Informazioni di contatto"
 
 #: .\templates\ddm_participation\base.html:79
 msgid "Data Protection Statement"
-msgstr "Datenschutzerklärung"
+msgstr "Dichiarazione sulla protezione dei dati"
 
 #: .\templates\ddm_participation\briefing.html:9
 msgid "Please indicate whether you want to continue with this study."
-msgstr "Bitte geben Sie an, ob Sie mit dieser Studie fortfahren möchten."
+msgstr "La preghiamo di indicare se desidera proseguire con questo studio."
 
 #: .\templates\ddm_participation\briefing.html:13
 msgid "Welcome to this study!"
-msgstr "Herzlich willkommen zu dieser Studie!"
+msgstr "Benvenuto/a a questo studio!"
 
 #: .\templates\ddm_participation\briefing.html:14
 msgid ""
 "Please define a description and welcome text for this project in the Project "
 "Hub."
 msgstr ""
-"Bitte definieren Sie eine Beschreibung und einen Begrüßungstext für dieses "
-"Projekt im Project Hub."
+"La preghiamo di definire una descrizione e un testo di benvenuto per questo "
+"progetto nel Project Hub."
 
 #: .\templates\ddm_participation\briefing.html:33
 #: .\templates\ddm_participation\debriefing.html:17
 msgid "Continue"
-msgstr "Weiter"
+msgstr "Continua"
 
 #: .\templates\ddm_participation\continuation_not_found.html:6
 msgid "Provided ID not found"
-msgstr "Angegebene ID konnte nicht gefunden werden"
+msgstr "ID fornito non trovato"
 
 #: .\templates\ddm_participation\continuation_not_found.html:8
 msgid ""
 "Unfortunately, we could not find a study participation started for the given "
 "ID. However, you can access the study by clicking on the following link:"
 msgstr ""
-"Leider konnten wir für die angegebene ID keine begonnene Studienteilnahme "
-"finden.Wenn Sie die Studie trotzdem aufrufen möchten, klicken Sie auf den "
-"folgenden Link: "
+"Purtroppo non abbiamo trovato alcuna partecipazione allo studio associata "
+"all'ID inserito. Se desidera comunque accedere allo studio, clicchi sul link seguente:"
 
 #: .\templates\ddm_participation\continuation_not_found.html:9
 msgid "Go to Study"
-msgstr "Zur Studie"
+msgstr "Vai allo studio"
 
 #: .\templates\ddm_participation\debriefing.html:9
 msgid "Thank you very much!"
-msgstr "Herzlichen Dank!"
+msgstr "Grazie mille!"
 
 #: .\templates\ddm_participation\debriefing.html:10
 msgid "You have reached the end of the study and can now close this window."
-msgstr ""
-"Sie haben das Ende der Studie erreicht und können dieses Fenster nun "
-"schliessen."
+msgstr "Ha raggiunto la fine dello studio e può ora chiudere questa finestra."
 
 #: .\templates\ddm_participation\project_inactive.html:6
 msgid "Participation not Possible"
-msgstr "Teilnahme nicht möglich"
+msgstr "Partecipazione non possibile"
 
 #: .\templates\ddm_participation\project_inactive.html:8
 msgid ""
 "Unfortunately, you cannot participate in this study at this time. This may "
 "be because the project has not started or the study has already concluded."
 msgstr ""
-"Leider ist es derzeit nicht möglich, an dieser Studie teilzunehmen. Dies "
-"könnte daran liegen, dass das Projekt noch nicht begonnen hat oder die "
-"Studie bereits abgeschlossen ist."
+"Siamo spiacenti, ma al momento non è possibile partecipare a questo studio. "
+"Ciò potrebbe essere dovuto al fatto che il progetto non è ancora iniziato o "
+"che lo studio è già terminato."

@@ -144,7 +144,7 @@ onUnmounted(() => {
       <div class="modal-footer">
         <button
             type="button"
-            class="btn btn-primary"
+            class="btn btn-black"
             @click="hideModal"
         >
           {{ t("issue-modal.back") }}
@@ -193,6 +193,16 @@ onUnmounted(() => {
 
 .btn-light:hover {
   background: #dddddd;
+}
+
+.btn-black {
+  background: #000000;
+  border-color: #000000;
+  color: #ffffff;
+}
+
+.btn-black:hover {
+  background: #3b3b3b;
 }
 
 @media (min-width: 769px) {

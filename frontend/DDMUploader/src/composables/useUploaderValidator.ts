@@ -100,6 +100,7 @@ export function useUploaderValidator(
         if (uploader.consentMap[blueprint] === null &&
             uploader.blueprintStates[blueprint].state === EXTRACTION_STATES.SUCCESS) {
           blueprintsWithoutConsentNames.value.push(uploader.blueprintNames[blueprint]);
+          blueprintsWithoutConsentCount.value += 1;
         }
       }
     }

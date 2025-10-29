@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.1.5 - 2025-10-29
+
+### Fixed
+
+- **Translation in Questionnaire**: Fixed initialization of translations in Questionnaire component ([`18bd9dd`](https://github.com/uzh/ddm/commit/18bd9dd)).
+
+### Update Guide
+
+Run `python manage.py collectstatic` after upgrading to DDM v2.1.5 from the previous version.
+
+
 ## 2.1.4 - 2025-10-29
 
 ### Added

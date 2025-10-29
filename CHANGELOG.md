@@ -1,5 +1,24 @@
 # Changelog
 
+## 2.1.4 - 2025-10-29
+
+### Added
+
+- **Translations for Italian and French**: Added Italian and French translations for the participation frontend ([`66c767f`](https://github.com/uzh/ddm/commit/66c767f)).
+
+### Fixed
+
+- **Missing Issue Messages**: Added missing blueprint count calculation to correctly display issue messages to participants ([`bc7bd0b`](https://github.com/uzh/ddm/commit/bc7bd0b)).
+
+### Changed
+
+- **Issue Modal Button Color**: Changed color of the main button of the issue-modal from blue to black to align with the overall color-scheme ([`b74fe1c`](https://github.com/uzh/ddm/commit/b74fe1c)).
+
+### Update Guide
+
+Run `python manage.py collectstatic` after upgrading to DDM v2.1.4 from the previous version.
+
+
 ## 2.1.3 - 2025-09-01
 
 ### Fixed

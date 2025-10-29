@@ -4,6 +4,8 @@ import { createI18n } from 'vue-i18n'
 
 import en from './locales/en.json';
 import de from './locales/de.json';
+import it from './locales/it.json';
+import fr from './locales/fr.json';
 import {UploaderConfig} from "@uploader/types/UploaderConfig";
 
 function deepMerge(target, source) {
@@ -83,6 +85,8 @@ function initializeUploaderApp(): void {
   let messages = {
     en: en,
     de: de,
+    it: it,
+    fr: fr,
   };
   if (mountEl.dataset.customTranslations) {
     const customTranslations = JSON.parse(mountEl.dataset.customTranslations || '{}');
@@ -90,6 +94,8 @@ function initializeUploaderApp(): void {
       messages = {
         en: deepMerge(en, customTranslations.en || {}),
         de: deepMerge(de, customTranslations.de || {}),
+        it: deepMerge(it, customTranslations.it || {}),
+        fr: deepMerge(fr, customTranslations.fr || {}),
       };
     }
   }
@@ -106,9 +112,9 @@ function initializeUploaderApp(): void {
   const availableLocales = i18n.global.availableLocales as string[];
 
   if (availableLocales.includes(userLanguage)) {
-    i18n.global.locale.value = userLanguage as 'en' | 'de';
+    i18n.global.locale.value = userLanguage as 'en' | 'de' | 'it' | 'fr';
   } else {
-    i18n.global.locale.value = APP_CONFIG.fallbackLocale as 'en' | 'de';
+    i18n.global.locale.value = APP_CONFIG.fallbackLocale as 'en' | 'de' | 'it' | 'fr';
   }
 
   app.use(i18n);

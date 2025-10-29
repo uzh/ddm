@@ -93,7 +93,9 @@ LANGUAGE_CODE = 'en'
 USE_I18N = True
 LANGUAGES = [
     ('en', 'English'),
-    ('de', 'Deutsch')
+    ('de', 'German'),
+    ('it', 'Italian'),
+    ('fr', 'French'),
 ]
 
 STATIC_URL = '/static/'

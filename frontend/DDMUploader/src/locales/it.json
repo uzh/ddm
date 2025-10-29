@@ -1,0 +1,79 @@
+{
+  "instructions": {
+    "heading": "Come funziona"
+  },
+  "errors": {
+    "invalid-zip": "Era atteso un file ZIP, ma è stato caricato un file {fileType}.",
+    "zip-read-fail": "Impossibile leggere l'archivio ZIP",
+    "invalid-regex": "Espressione regolare (regex) non valida",
+    "invalid-rule-regex": "Il nome del campo '{ruleRegex}' della regola di estrazione {ruleId} non ha potuto essere convertito correttamente in regex.",
+    "no-file-match": "Questo file non è stato trovato nel contenitore ZIP selezionato.",
+    "no-file-match-detail": "Nessun file è stato identificato con il seguente modello: '{regexPath}'. \nFile disponibili nel contenitore ZIP: {availableFiles}",
+    "file-processing-fail-general": "Si è verificato un errore durante l'elaborazione del contenuto del file",
+    "file-processing-fail-general-detail": "Si è verificato il seguente errore: {error}",
+    "string-conversion-error": "Il contenuto del file non può essere convertito in testo (string)",
+    "no-extraction-rules": "Non sono state definite regole di estrazione",
+    "parsing-error": "Si è verificato un errore durante l'analisi del contenuto {contentType} per questo file",
+    "unsupported-bp-format": "Formato file non supportato: {format}",
+    "more-than-one-key-match": "Più di una corrispondenza per il campo '{field}': {keys}. È stato utilizzato '{defaultKey}' per impostazione predefinita",
+    "no-key-match": "Nessuna corrispondenza per il campo '{field}': {keys}",
+    "undefined-key": "Nome non definito per il campo '{field}'"
+  },
+  "file-drop": {
+    "heading": "Seleziona file",
+    "selection-prompt": "Clicca qui per selezionare un file",
+    "release-to-select": "Rilascia per selezionare il file",
+    "file-is-being-processed": "Elaborazione del file in corso…",
+    "processing-complete": "Elaborazione completata",
+    "processing-success": "File elaborato con successo",
+    "processing-failed": "Il file non ha potuto essere elaborato",
+    "choose-different-file": "seleziona un file diverso",
+    "retry-hint": "Il file selezionato potrebbe non contenere le informazioni necessarie (vedi sotto per ulteriori dettagli). Seleziona un file diverso per riprovare:"
+  },
+  "extraction-state": {
+    "file" : {
+      "success": "Di seguito vengono visualizzati i dati estratti.",
+      "no-data-extracted": "Non è stato possibile estrarre informazioni dal file."
+    },
+    "blueprint" : {
+      "success": "Dati estratti con successo.",
+      "no-data-extracted": "Nessun dato rilevante trovato nel file.",
+      "all-missing-fields": "Tutte le voci nel file sono incomplete e non possono essere estratte.",
+      "all-filtered-out": "Tutte le voci sono state escluse in base ai criteri di filtro selezionati.",
+      "failed": "Non è stato possibile estrarre i dati a causa dei seguenti errori:"
+    }
+  },
+  "feedback": {
+    "intro-extraction-pending": "I seguenti dati verranno estratti",
+    "intro-extraction-complete": "Dati estratti",
+    "show-error-details": "Mostra dettagli",
+    "donation-question": "Acconsente a donare e trasmettere questi dati?",
+    "donation-agree": "Sì",
+    "donation-disagree": "No"
+  },
+  "extraction-table": {
+    "previous-page": "pagina precedente",
+    "next-page": "pagina successiva",
+    "page-info": "Pagina {currentPage} di {maxPage}",
+    "entry-info": "Visualizzazione delle voci da {lower} a {upper} su un totale di {total}.",
+    "donation-info": "Se acconsente alla donazione dei dati, verranno trasmessi i seguenti dati:",
+    "search-entries": "Cerca voci...",
+    "all-filtered": "Nessuna voce trovata",
+    "show-data": "mostra tutti i dati",
+    "hide-data": "mostra meno"
+  },
+  "uploader-app": {
+    "next-btn": "Continua"
+  },
+  "issue-modal": {
+    "title": "Donazione dei dati non completata",
+    "none-attempted": "Non è stato caricato alcun file. Continuare senza donazione dei dati?",
+    "not-all-attempted": "Alcuni caricamenti sono stati saltati {skipped-uploads}. Continuare con i file elaborati finora?",
+    "not-all-consented": "Per alcuni dati non è stato indicato se possono essere trasmessi {blueprints-wo-consent}. La preghiamo di verificare.",
+    "continue-anyway": "Continua comunque",
+    "back": "Indietro"
+  },
+  "submitting-modal": {
+    "submit-wait": "Elaborazione della donazione dei dati in corso..."
+  }
+}

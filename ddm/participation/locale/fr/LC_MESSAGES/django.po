@@ -1,4 +1,4 @@
-# German translations for DDM
+# French translations for DDM
 #
 #, fuzzy
 msgid ""
@@ -13,7 +13,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: .\apps.py:9
 msgid "DDM Participation"
@@ -21,77 +21,77 @@ msgstr "DDM Participation"
 
 #: .\templates\ddm_participation\base.html:47
 msgid "Contact"
-msgstr "Kontakt"
+msgstr "Contact"
 
 #: .\templates\ddm_participation\base.html:50
 msgid "What happens with my data?"
-msgstr "Was passiert mit meinen Daten?"
+msgstr "Que se passe-t-il avec mes données ?"
 
 #: .\templates\ddm_participation\base.html:65
 msgid "Contact Information"
-msgstr "Kontaktinformationen"
+msgstr "Coordonnées"
 
 #: .\templates\ddm_participation\base.html:79
 msgid "Data Protection Statement"
-msgstr "Datenschutzerklärung"
+msgstr "Déclaration de protection des données"
 
 #: .\templates\ddm_participation\briefing.html:9
 msgid "Please indicate whether you want to continue with this study."
-msgstr "Bitte geben Sie an, ob Sie mit dieser Studie fortfahren möchten."
+msgstr "Veuillez indiquer si vous souhaitez poursuivre cette étude."
 
 #: .\templates\ddm_participation\briefing.html:13
 msgid "Welcome to this study!"
-msgstr "Herzlich willkommen zu dieser Studie!"
+msgstr "Bienvenue dans cette étude !"
 
 #: .\templates\ddm_participation\briefing.html:14
 msgid ""
 "Please define a description and welcome text for this project in the Project "
 "Hub."
 msgstr ""
-"Bitte definieren Sie eine Beschreibung und einen Begrüßungstext für dieses "
-"Projekt im Project Hub."
+"Veuillez définir une description et un texte de bienvenue pour ce projet "
+"dans le Project Hub."
 
 #: .\templates\ddm_participation\briefing.html:33
 #: .\templates\ddm_participation\debriefing.html:17
 msgid "Continue"
-msgstr "Weiter"
+msgstr "Continuer"
 
 #: .\templates\ddm_participation\continuation_not_found.html:6
 msgid "Provided ID not found"
-msgstr "Angegebene ID konnte nicht gefunden werden"
+msgstr "ID fourni introuvable"
 
 #: .\templates\ddm_participation\continuation_not_found.html:8
 msgid ""
 "Unfortunately, we could not find a study participation started for the given "
 "ID. However, you can access the study by clicking on the following link:"
 msgstr ""
-"Leider konnten wir für die angegebene ID keine begonnene Studienteilnahme "
-"finden.Wenn Sie die Studie trotzdem aufrufen möchten, klicken Sie auf den "
-"folgenden Link: "
+"Malheureusement, aucune participation à l’étude n’a été trouvée pour l'ID "
+"indiqué. Vous pouvez toutefois accéder à l'étude en cliquant sur le lien "
+"suivant :"
 
 #: .\templates\ddm_participation\continuation_not_found.html:9
 msgid "Go to Study"
-msgstr "Zur Studie"
+msgstr "Accéder à l'étude"
 
 #: .\templates\ddm_participation\debriefing.html:9
 msgid "Thank you very much!"
-msgstr "Herzlichen Dank!"
+msgstr "Merci beaucoup !"
 
 #: .\templates\ddm_participation\debriefing.html:10
 msgid "You have reached the end of the study and can now close this window."
 msgstr ""
-"Sie haben das Ende der Studie erreicht und können dieses Fenster nun "
-"schliessen."
+"Vous êtes arrivé(e) à la fin de l'étude et pouvez maintenant fermer cette "
+"fenêtre."
 
 #: .\templates\ddm_participation\project_inactive.html:6
 msgid "Participation not Possible"
-msgstr "Teilnahme nicht möglich"
+msgstr "Participation impossible"
 
 #: .\templates\ddm_participation\project_inactive.html:8
 msgid ""
 "Unfortunately, you cannot participate in this study at this time. This may "
 "be because the project has not started or the study has already concluded."
 msgstr ""
-"Leider ist es derzeit nicht möglich, an dieser Studie teilzunehmen. Dies "
-"könnte daran liegen, dass das Projekt noch nicht begonnen hat oder die "
-"Studie bereits abgeschlossen ist."
+"Malheureusement, il n’est actuellement pas possible de participer à cette "
+"étude. Cela peut être dû au fait que le projet n'a pas encore commencé ou "
+"que l'étude est déjà terminée."

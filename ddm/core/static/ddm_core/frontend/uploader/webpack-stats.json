@@ -37,6 +37,18 @@
       "path": "locale\\en.json",
       "publicPath": "/static/ddm_core/frontend/uploader/locale/en.json",
       "sourceFilename": "src/locales/en.json"
+    },
+    "locale/fr.json": {
+      "name": "locale/fr.json",
+      "path": "locale\\fr.json",
+      "publicPath": "/static/ddm_core/frontend/uploader/locale/fr.json",
+      "sourceFilename": "src/locales/fr.json"
+    },
+    "locale/it.json": {
+      "name": "locale/it.json",
+      "path": "locale\\it.json",
+      "publicPath": "/static/ddm_core/frontend/uploader/locale/it.json",
+      "sourceFilename": "src/locales/it.json"
     }
   },
   "chunks": {

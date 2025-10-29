@@ -68,8 +68,8 @@
   "issue-modal": {
     "title": "Datenspende wurde nicht abgeschlossen",
     "none-attempted": "Es wurden keine Dateien hochgeladen. Ohne Datenspende fortfahren?",
-    "not-all-attempted": "Einige Uploads wurden übersprungen{skipped-uploads}. Mit den bisher verarbeiteten Dateien fortfahren?",
-    "not-all-consented": "Für einige Daten wurde nicht angegeben, ob diese übermittelt werden dürfen{ blueprints-wo-consent }. Bitte überprüfen.",
+    "not-all-attempted": "Einige Uploads wurden übersprungen {skipped-uploads}. Mit den bisher verarbeiteten Dateien fortfahren?",
+    "not-all-consented": "Für einige Daten wurde nicht angegeben, ob diese übermittelt werden dürfen {blueprints-wo-consent}. Bitte überprüfen.",
     "continue-anyway": "Trotzdem fortfahren",
     "back": "Zurück"
   },

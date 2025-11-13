@@ -170,7 +170,7 @@ const toggleShowHideData = (): void => {
     </table>
 
     <!-- Filter search field -->
-    <div class="fs-875 mb-2">
+    <div class="fs-875 mb-2 ps-2">
       <label for="data-search" class="visually-hidden">
         {{ t('extraction-table.search-entries') }}
       </label>
@@ -192,7 +192,7 @@ const toggleShowHideData = (): void => {
     </div>
 
     <!-- Page control buttons -->
-    <div>
+    <div class="ps-2">
       <!-- Prev button -->
       <button
           @click="prevTablePage"

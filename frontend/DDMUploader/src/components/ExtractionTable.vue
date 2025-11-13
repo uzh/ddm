@@ -49,7 +49,6 @@ const props = defineProps<{
 
 const pageSize: number = 20;
 const currentPage: Ref<number> = ref(1);
-const showData: Ref<boolean> = ref(false);
 
 const searchTerm: Ref<string> = ref('');
 const debouncedSearch: Ref<string> = ref('');
@@ -133,6 +132,8 @@ const prevTablePage = (): void => {
   }
 }
 
+const showData: Ref<boolean> = ref(maxPage.value === 1 && upperPosition.value <= 5);
+
 /**
  * Toggles between expanded and condensed table views.
  *
@@ -152,25 +153,27 @@ const toggleShowHideData = (): void => {
   <!-- Table of extracted entries. -->
   <div class="table-wrapper fs-875 pb-3"
        :class="{ 'table-condensed': !showData, 'table-expanded': showData }">
-    <table class="table table-sm">
-      <thead>
-      <tr>
-        <th v-for="value in blueprintOutcome.extractedFieldsMap.values()" :key="value">{{ value }}</th>
-      </tr>
-      </thead>
+    <div class="table-container">
+      <table class="table table-sm">
+        <thead>
+        <tr>
+          <th v-for="value in blueprintOutcome.extractedFieldsMap.values()" :key="value">{{ value }}</th>
+        </tr>
+        </thead>
 
-      <tbody>
-      <tr v-for="row in filteredItems.slice(lowerPosition, upperPosition)" :key="row">
-        <template v-for="key in blueprintOutcome.extractedFieldsMap.keys()" :key="key">
-          <td v-if="key in row" :key="row">{{ row[key] }}</td>
-          <td v-else>–</td>
-        </template>
-      </tr>
-      </tbody>
-    </table>
+        <tbody>
+        <tr v-for="row in filteredItems.slice(lowerPosition, upperPosition)" :key="row">
+          <template v-for="key in blueprintOutcome.extractedFieldsMap.keys()" :key="key">
+            <td v-if="key in row" :key="row">{{ row[key] }}</td>
+            <td v-else>–</td>
+          </template>
+        </tr>
+        </tbody>
+      </table>
+    </div>
 
     <!-- Filter search field -->
-    <div class="fs-875 mb-2 ps-2">
+    <div v-if="maxPage > 1" class="fs-875 mb-2 ps-2">
       <label for="data-search" class="visually-hidden">
         {{ t('extraction-table.search-entries') }}
       </label>
@@ -192,7 +195,7 @@ const toggleShowHideData = (): void => {
     </div>
 
     <!-- Page control buttons -->
-    <div class="ps-2">
+    <div v-if="maxPage > 1" class="ps-2">
       <!-- Prev button -->
       <button
           @click="prevTablePage"
@@ -217,7 +220,8 @@ const toggleShowHideData = (): void => {
   </div>
 
   <!-- Expand-table control -->
-  <div class="show-data-control text-center fs-875 mb-3"
+  <div v-if="maxPage > 1 || (maxPage == 1 && upperPosition > 5)"
+       class="show-data-control text-center fs-875 mb-3"
        :class="{ 'control-expanded': showData, 'control-condensed': !showData }">
     <a class="expansion-control-btn"
        :class="{ 'expansion-control-btn-expanded': showData, 'expansion-control-btn-condensed': !showData }"
@@ -272,6 +276,10 @@ a:hover {
   background-color: white !important;
   box-shadow: 0 1px black;
   min-width: 200px;
+}
+
+.table-container {
+  overflow-y: scroll;
 }
 
 .fs-875 {

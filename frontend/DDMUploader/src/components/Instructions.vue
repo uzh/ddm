@@ -54,7 +54,8 @@ const currentInstruction = computed(() => props.instructions[currentStep.value].
   </div>
 
   <div class="d-flex flex-row align-items-center carousel">
-    <div class="control-container">
+    <div v-if="props.instructions.length > 1"
+         class="control-container">
       <a v-if="canStepDown"
          @click="stepDown"
          class="control-btn control-prev"
@@ -70,7 +71,8 @@ const currentInstruction = computed(() => props.instructions[currentStep.value].
       </transition>
     </div>
 
-    <div class="control-container">
+    <div v-if="props.instructions.length > 1"
+         class="control-container">
       <a v-if="canStepUp"
          @click="stepUp"
          class="control-btn control-next"
@@ -82,7 +84,8 @@ const currentInstruction = computed(() => props.instructions[currentStep.value].
 
   </div>
 
-  <div class="text-center">
+  <div v-if="props.instructions.length > 1"
+       class="text-center">
 
     <template v-for="(i, index) in props.instructions" :key="index">
       <button

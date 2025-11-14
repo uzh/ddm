@@ -112,7 +112,7 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
     <div class="d-flex flex-row align-items-start w-100 overflow-hidden">
       <div class="status-icon opacity-0"><i :class="iconClass"></i></div>
 
-      <div class="d-flex flex-column w-100">
+      <div class="d-flex flex-column w-100 extraction-item-content">
 
         <!-- Pending -->
         <template v-if="extractionPending">
@@ -128,7 +128,8 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
             />
           </div>
 
-          <div v-if="combinedConsent === false" class="pt-3 pb-1">
+          <div v-if="combinedConsent === false"
+               class="pt-4 pb-1">
             <ConsentQuestion
                 :combined-consent="combinedConsent"
                 :blueprint-id="blueprint.id"
@@ -174,6 +175,11 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
 .text-grey {
   color: #d0d0d0;
 }
+
+.extraction-item-content {
+  min-width: 0;
+}
+
 .status-icon {
   padding-right: 10px;
 }

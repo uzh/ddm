@@ -173,7 +173,7 @@ const showCombinedConsent = computed(() =>
 
 .uploader-container .uploader-section:not(:first-child),
 .uploader-container .uploader-section:not(:last-child) {
-  padding: 40px 20px;
+  padding: 40px 0 20px 0;
 }
 
 .uploader-container .uploader-section:first-child {
@@ -181,7 +181,7 @@ const showCombinedConsent = computed(() =>
 }
 
 .uploader-container .uploader-section:last-child {
-  padding: 40px 20px 30px 20px;
+  padding: 40px 0 30px 0;
 }
 
 
@@ -200,6 +200,15 @@ const showCombinedConsent = computed(() =>
     box-shadow: 6px 7px 20px #80808040;
     border-radius: 8px;
     border: none;
+  }
+
+  .uploader-container .uploader-section:not(:first-child),
+  .uploader-container .uploader-section:not(:last-child) {
+    padding: 40px 20px;
+  }
+
+  .uploader-container .uploader-section:last-child {
+    padding: 40px 20px 30px 20px;
   }
 
   .uploader-container .uploader-section:first-child {

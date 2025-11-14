@@ -52,15 +52,13 @@
     "donation-disagree": "No"
   },
   "extraction-table": {
-    "previous-page": "previous page",
-    "next-page": "next page",
-    "page-info": "Page {currentPage} of {maxPage}",
-    "entry-info": "Displaying entries {lower}-{upper} of {total}.",
+    "entry-info": "Entries {lower}-{upper} of {total}",
     "donation-info": "If you consent to the donation, the following data will be submitted:",
     "search-entries": "Search entries...",
     "all-filtered": "No entries found",
     "show-data": "Show all data",
-    "hide-data": "Show less"
+    "hide-data": "Show less",
+    "page": "Page"
   },
   "uploader-app": {
     "next-btn": "Next"

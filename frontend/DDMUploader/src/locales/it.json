@@ -52,15 +52,13 @@
     "donation-disagree": "No"
   },
   "extraction-table": {
-    "previous-page": "pagina precedente",
-    "next-page": "pagina successiva",
-    "page-info": "Pagina {currentPage} di {maxPage}",
-    "entry-info": "Visualizzazione delle voci da {lower} a {upper} su un totale di {total}.",
+    "entry-info": "Visualizzazione delle voci {lower}-{upper} su {total}",
     "donation-info": "Se acconsente alla donazione dei dati, verranno trasmessi i seguenti dati:",
     "search-entries": "Cerca voci...",
     "all-filtered": "Nessuna voce trovata",
     "show-data": "mostra tutti i dati",
-    "hide-data": "mostra meno"
+    "hide-data": "mostra meno",
+    "page": "Pagina"
   },
   "uploader-app": {
     "next-btn": "Continua"

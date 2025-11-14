@@ -52,15 +52,13 @@
     "donation-disagree": "Non"
   },
   "extraction-table": {
-    "previous-page": "page précédente",
-    "next-page": "page suivante",
-    "page-info": "Page {currentPage} sur {maxPage}",
-    "entry-info": "Affichage des entrées {lower} à {upper} sur un total de {total}.",
+    "entry-info": "Affichage des entrées {lower}-{upper} sur {total}",
     "donation-info": "Si vous consentez au don de données, les données suivantes seront transmises :",
     "search-entries": "Rechercher des entrées...",
     "all-filtered": "Aucune entrée trouvée",
     "show-data": "afficher toutes les données",
-    "hide-data": "afficher moins"
+    "hide-data": "afficher moins",
+    "page": "Page"
   },
   "uploader-app": {
     "next-btn": "Continuer"

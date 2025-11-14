@@ -182,7 +182,7 @@ const introText = computed(() =>
 <template>
   <!-- Intro -->
   <div class="pb-3 d-flex align-items-center">
-    <span class="section-icon"><i class="bi bi-file-earmark-text"></i></span>
+    <span class="section-icon pe-3 pe-sm-0"><i class="bi bi-file-earmark-text"></i></span>
     <span class="section-heading">{{ introText }}</span>
   </div>
 

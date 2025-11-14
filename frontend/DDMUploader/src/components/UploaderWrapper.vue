@@ -177,7 +177,7 @@ const showCombinedConsent = computed(() =>
 }
 
 .uploader-container .uploader-section:first-child {
-  padding: 30px 20px 40px 20px;
+  padding: 10px 0 40px 0;
 }
 
 .uploader-container .uploader-section:last-child {
@@ -201,5 +201,10 @@ const showCombinedConsent = computed(() =>
     border-radius: 8px;
     border: none;
   }
+
+  .uploader-container .uploader-section:first-child {
+    padding: 30px 20px 40px 20px;
+  }
+
 }
 </style>

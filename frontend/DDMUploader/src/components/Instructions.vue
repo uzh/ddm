@@ -55,7 +55,7 @@ const currentInstruction = computed(() => props.instructions[currentStep.value].
 
   <div class="d-flex flex-row align-items-center carousel">
     <div v-if="props.instructions.length > 1"
-         class="control-container">
+         class="control-container hidden-small">
       <a v-if="canStepDown"
          @click="stepDown"
          class="control-btn control-prev"
@@ -72,7 +72,7 @@ const currentInstruction = computed(() => props.instructions[currentStep.value].
     </div>
 
     <div v-if="props.instructions.length > 1"
-         class="control-container">
+         class="control-container hidden-small">
       <a v-if="canStepUp"
          @click="stepUp"
          class="control-btn control-next"
@@ -85,7 +85,18 @@ const currentInstruction = computed(() => props.instructions[currentStep.value].
   </div>
 
   <div v-if="props.instructions.length > 1"
-       class="text-center">
+       class="text-center d-flex flex-row align-items-center justify-content-center pt-md-3">
+
+    <div v-if="props.instructions.length > 1"
+         class="control-container small-only">
+      <a v-if="canStepDown"
+         @click="stepDown"
+         class="control-btn control-prev"
+         :class="{ 'btn-disabled': currentStep === 0 }">
+        <i class="bi bi-caret-left-fill"></i>
+        <span class="visually-hidden">Previous</span>
+      </a>
+    </div>
 
     <template v-for="(i, index) in props.instructions" :key="index">
       <button
@@ -96,6 +107,17 @@ const currentInstruction = computed(() => props.instructions[currentStep.value].
         @click="setStep(index)"
       />
     </template>
+
+    <div v-if="props.instructions.length > 1"
+         class="control-container small-only d-flex justify-content-end">
+      <a v-if="canStepUp"
+         @click="stepUp"
+         class="control-btn control-next"
+         :class="{ 'btn-disabled': currentStep === props.instructions.length - 1 }">
+        <i class="bi bi-caret-right-fill"></i>
+        <span class="visually-hidden">Next</span>
+      </a>
+    </div>
 
   </div>
 </template>
@@ -132,7 +154,22 @@ const currentInstruction = computed(() => props.instructions[currentStep.value].
   padding-left: 42px;
   padding-right: 42px;
 }
-@media (max-width: 768px) {
+
+@media (min-width: 768px) {
+  .small-only {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .hidden-small {
+    display: none;
+  }
+
+  .control-btn {
+    background: none;
+  }
+
   .carousel-inner {
     padding-left: 10px;
     padding-right: 10px;
@@ -140,7 +177,6 @@ const currentInstruction = computed(() => props.instructions[currentStep.value].
   .control-next,
   .control-prev {
     width: 30px;
-    opacity: 0.1;
   }
 }
 .carousel-item {

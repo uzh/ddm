@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.6
+
+### Fixed
+
+- **Bug when deleting instructions**: Removeed custom get_success_message method from InstructionDelete view because accessed non-existing model attribute 'name' ([`e12d104`](https://github.com/uzh/ddm/commit/e12d104)).
+
+
 ## 2.1.5 - 2025-10-29
 
 ### Fixed

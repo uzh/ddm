@@ -169,7 +169,7 @@ const extractionNoData = computed(() =>
 <template>
   <div class="d-lg-flex flex-row align-items-center justify-content-between">
 
-    <div class="pe-5 pb-0 d-flex align-items-center">
+    <div class="pe-5 pb-3 pb-lg-0 d-flex align-items-center ">
       <span class="section-icon">
         <i v-if="['success', 'partial'].includes(props.extractionState)" class="bi bi-check-square fs-2 pe-3 text-success"></i>
         <i v-else class="bi bi-upload fs-2 pe-3"></i>

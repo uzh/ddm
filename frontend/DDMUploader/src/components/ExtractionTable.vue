@@ -137,6 +137,14 @@ const prevTablePage = (): void => {
 
 const showData: Ref<boolean> = ref(maxPage.value === 1 && upperPosition.value <= 5);
 
+watch(
+  () => [props.blueprintOutcome.extractedData.length],
+  () => {
+    showData.value = (maxPage.value === 1 && upperPosition.value <= 5);
+  },
+  { immediate: true, deep: true }
+);
+
 /**
  * Toggles between expanded and condensed table views.
  *

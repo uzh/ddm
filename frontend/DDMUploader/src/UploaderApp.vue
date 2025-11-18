@@ -185,6 +185,10 @@ function initializeUploaderOutcomes(): Record<number, UploaderOutcome> {
 </template>
 
 <style>
+.modal-open {
+  overflow: hidden;
+}
+
 .section-heading {
   font-size: 1.35rem;
 }

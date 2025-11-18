@@ -45,3 +45,12 @@
     color: white;
     background-color: #6d6d6d;
 }
+
+.black-button {
+    background: #000000;
+    color: white;
+}
+
+.black-button:hover {
+    background: #3b3b3b;
+}

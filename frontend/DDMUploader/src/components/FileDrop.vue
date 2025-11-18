@@ -228,7 +228,7 @@ const extractionNoData = computed(() =>
               </p>
             </div>
 
-            <p class="pt-2">{{ t('file-drop.retry-hint') }} <a class="btn re-try-btn fs-6" @click="resetUploader">{{ t('file-drop.choose-different-file') }}</a></p>
+            <p class="pt-2">{{ t('file-drop.retry-hint') }} <button class="button grey-button border border-secondary mt-2" @click="resetUploader">{{ t('file-drop.choose-different-file') }}</button></p>
           </div>
 
           <div v-else-if="extractionNoData">
@@ -240,7 +240,7 @@ const extractionNoData = computed(() =>
 
       <!-- Retry button -->
       <div v-if="showRetryButton" class="pt-2 w-100 text-center">
-        <a class="btn re-try-btn fs-6" @click="resetUploader">{{ t('file-drop.choose-different-file') }}</a>
+        <button class="button grey-button button-small muted-button font-size-small" @click="resetUploader">{{ t('file-drop.choose-different-file') }}</button>
       </div>
 
     </div>
@@ -249,6 +249,8 @@ const extractionNoData = computed(() =>
 </template>
 
 <style scoped>
+@import "@uploader/assets/styles/buttons.css";
+
 * {
   --color-success: #198754;
   --color-failed: #d90015;
@@ -263,17 +265,6 @@ const extractionNoData = computed(() =>
 }
 .dropzone-hover {
   background-color: var(--color-hover-bg) !important;
-}
-.re-try-btn {
-  background-color: #ededed;
-  color: var(--color-dark-grey);
-  font-size: 0.9rem !important;
-  padding: 2px 8px 2px 8px !important;
-}
-.re-try-btn:hover {
-  background-color: #dddddd;
-  cursor: pointer;
-  color: var(--color-dark-grey) !important;
 }
 .border-success {
   border-color: var(--color-success) !important;

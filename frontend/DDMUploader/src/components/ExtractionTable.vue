@@ -186,7 +186,7 @@ const toggleShowHideData = (): void => {
   </div>
 
   <!-- Table of extracted entries. -->
-  <div class="table-wrapper fs-875 pb-4"
+  <div class="table-wrapper fs-875 pb-5"
        :class="{ 'table-condensed': !showData, 'table-expanded': showData}">
     <div ref="table-container"
          class="table-container"
@@ -218,7 +218,7 @@ const toggleShowHideData = (): void => {
       <!-- Prev button -->
       <button
           @click="prevTablePage"
-          class="btn btn-pagination btn-sm me-2"
+          class="button grey-button button-small me-2"
           :disabled="currentPage <= 1"
           aria-label="Previous page"
       >
@@ -230,7 +230,7 @@ const toggleShowHideData = (): void => {
       <!-- Next button -->
       <button
           @click="nextTablePage"
-          class="btn btn-pagination btn-sm ms-2"
+          class="button grey-button button-small ms-2"
           :disabled="currentPage >= maxPage"
           aria-label="Next page"
       >
@@ -244,7 +244,7 @@ const toggleShowHideData = (): void => {
   <div v-if="maxPage > 1 || (maxPage == 1 && upperPosition > 5)"
        class="show-data-control text-center fs-875 mb-3"
        :class="{ 'control-expanded': showData, 'control-condensed': !showData }">
-    <a class="expansion-control-btn"
+    <button class="button grey-button button-small font-size-small expansion-control-button"
        :class="{ 'expansion-control-btn-expanded': showData, 'expansion-control-btn-condensed': !showData }"
        @click="toggleShowHideData">
       <template v-if="!showData">
@@ -255,28 +255,17 @@ const toggleShowHideData = (): void => {
         <span>{{ t('extraction-table.hide-data') }}</span>
         <span class="extraction-table-hide-arrow"><i class="bi bi-chevron-compact-up"></i></span>
       </template>
-    </a>
+    </button>
   </div>
 
 </template>
 
 <style scoped>
+@import "@uploader/assets/styles/buttons.css";
+@import "@uploader/assets/styles/fonts.css";
+
 a:hover {
   color: black !important;
-}
-
-.btn-pagination {
-  background: #f4f4f4;
-  border: none;
-  color: black;
-}
-.btn-active:hover {
-  color: black !important;
-  background: #cacaca;
-}
-.btn-muted {
-  display: inline-block;
-  vertical-align: middle;
 }
 
 .table-wrapper {
@@ -347,20 +336,12 @@ a:hover {
   margin-top: 0;
 }
 
-.expansion-control-btn {
-  background: white;
-  border: 1px solid lightgrey;
-  border-radius: 5px;
-  color: #000000;
-  text-decoration: none;
+.expansion-control-button {
   transform: translateY(24px) translateX(-100px);
   position: absolute;
   z-index: 50;
   width: 200px;
   height: 30px;
-  cursor: pointer;
-  font-weight: normal;
-  padding: 3px 5px 25px 5px;
 }
 
 .expansion-control-btn-condensed {

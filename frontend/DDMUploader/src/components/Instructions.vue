@@ -56,13 +56,6 @@ const currentInstruction = computed(() => props.instructions[currentStep.value].
   <div class="d-flex flex-row align-items-center carousel">
     <div v-if="props.instructions.length > 1"
          class="control-container hidden-small">
-      <a v-if="canStepDown"
-         @click="stepDown"
-         class="control-btn control-prev"
-         :class="{ 'btn-disabled': currentStep === 0 }">
-        <i class="bi bi-caret-left-fill"></i>
-        <span class="visually-hidden">Previous</span>
-      </a>
     </div>
 
     <div class="carousel-inner">
@@ -73,56 +66,56 @@ const currentInstruction = computed(() => props.instructions[currentStep.value].
 
     <div v-if="props.instructions.length > 1"
          class="control-container hidden-small">
-      <a v-if="canStepUp"
-         @click="stepUp"
-         class="control-btn control-next"
-         :class="{ 'btn-disabled': currentStep === props.instructions.length - 1 }">
-        <i class="bi bi-caret-right-fill"></i>
-        <span class="visually-hidden">Next</span>
-      </a>
     </div>
 
   </div>
 
   <div v-if="props.instructions.length > 1"
-       class="text-center d-flex flex-row align-items-center justify-content-center pt-md-3">
+       class="text-center d-flex flex-row align-items-center justify-content-center pt-3">
 
     <div v-if="props.instructions.length > 1"
-         class="control-container small-only">
-      <a v-if="canStepDown"
+         class="control-container d-flex justify-content-start">
+      <button v-if="canStepDown"
          @click="stepDown"
-         class="control-btn control-prev"
+         class="button grey-button button-small"
          :class="{ 'btn-disabled': currentStep === 0 }">
-        <i class="bi bi-caret-left-fill"></i>
+        <i class="bi bi-chevron-left"></i>
         <span class="visually-hidden">Previous</span>
-      </a>
+      </button>
     </div>
 
-    <template v-for="(i, index) in props.instructions" :key="index">
-      <button
-        type="button"
-        class="step-indicator"
-        :class="{ 'active step-indicator-active': index === currentStep }"
-        :aria-label="`Slide ${index + 1}`"
-        @click="setStep(index)"
-      />
-    </template>
+    <div class="d-flex flex-wrap flex-row align-items-center justify-content-center">
+      <template v-for="(i, index) in props.instructions" :key="index">
+        <button
+          type="button"
+          class="button grey-button button-small m-1"
+          :class="{ 'active selected-button': index === currentStep }"
+          :aria-label="`Slide ${index + 1}`"
+          @click="setStep(index)"
+        >
+          <span>{{ index + 1 }}</span>
+        </button>
+      </template>
+    </div>
 
     <div v-if="props.instructions.length > 1"
-         class="control-container small-only d-flex justify-content-end">
-      <a v-if="canStepUp"
+         class="control-container d-flex justify-content-end">
+      <button v-if="canStepUp"
          @click="stepUp"
-         class="control-btn control-next"
+         class="button grey-button button-small"
          :class="{ 'btn-disabled': currentStep === props.instructions.length - 1 }">
-        <i class="bi bi-caret-right-fill"></i>
+        <i class="bi bi-chevron-right"></i>
         <span class="visually-hidden">Next</span>
-      </a>
+      </button>
     </div>
 
   </div>
 </template>
 
 <style scoped>
+@import "@uploader/assets/styles/buttons.css";
+@import "@uploader/assets/styles/fonts.css";
+
 .carousel {
   min-height: 250px;
   padding-top: 20px;
@@ -130,24 +123,6 @@ const currentInstruction = computed(() => props.instructions[currentStep.value].
 
 .control-container {
   width: 3rem;
-}
-
-.control-btn {
-  background: #f8f9fa;
-  color: #4c4c4c;
-  border-radius: 50%;
-  cursor: pointer;
-  display: block;
-  width: 3rem;
-  height: 3rem;
-  outline: 0;
-  align-content: center;
-  font-size: 1.5rem;
-  text-align: center;
-}
-
-.control-btn:hover {
-  color: black !important;
 }
 
 .carousel-inner {
@@ -166,34 +141,15 @@ const currentInstruction = computed(() => props.instructions[currentStep.value].
     display: none;
   }
 
-  .control-btn {
-    background: none;
-  }
-
   .carousel-inner {
     padding-left: 10px;
     padding-right: 10px;
-  }
-  .control-next,
-  .control-prev {
-    width: 30px;
   }
 }
 .carousel-item {
   transition: transform 0.3s ease, opacity 0.3s ease-out;
 }
-.step-indicator {
-  height: 0.7rem;
-  width: 0.7rem;
-  background: #d6d6d6;
-  border-radius: 50%;
-  border: none;
-  margin-left: 5px;
-  margin-right: 5px;
-}
-.step-indicator-active {
-  background: #4c4c4c;
-}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.15s;

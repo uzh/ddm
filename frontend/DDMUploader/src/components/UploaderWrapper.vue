@@ -173,7 +173,7 @@ const showCombinedConsent = computed(() =>
 
 .uploader-container .uploader-section:not(:first-child),
 .uploader-container .uploader-section:not(:last-child) {
-  padding: 40px 0 20px 0;
+  padding: 40px 0 40px 0;
 }
 
 .uploader-container .uploader-section:first-child {

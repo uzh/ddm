@@ -102,7 +102,7 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
 </script>
 
 <template>
-  <div class="d-flex flex-column align-items-start pt-3 pb-3 blueprint-row">
+  <div class="d-flex flex-column align-items-start pt-4 pb-4 blueprint-row">
 
     <div class="d-flex flex-row align-items-start pb-1">
       <div class="status-icon"><i :class="iconClass"></i></div>

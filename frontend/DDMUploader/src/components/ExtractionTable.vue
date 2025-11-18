@@ -153,13 +153,13 @@ const toggleShowHideData = (): void => {
 
 <template>
 
-  <div class="pb-2">{{ t('extraction-table.donation-info') }}</div>
+  <div class="pb-3">{{ t('extraction-table.donation-info') }}</div>
 
   <!-- Filter search field -->
   <div v-if="props.blueprintOutcome.extractedData.length > 1">
     <Transition name="slide-down">
       <div v-if="showData"
-           class="fs-875 mb-2 pt-3">
+           class="font-size-875 mb-2 text-end text-md-start pe-2">
         <div>
           <label for="data-search"
                class="visually-hidden">
@@ -174,7 +174,7 @@ const toggleShowHideData = (): void => {
           >
         </div>
 
-        <div class="pt-2">
+        <div class="ps-1 pt-1 pe-2">
           <span v-if="filteredItems.length > 0">{{ t('extraction-table.entry-info', {'lower': lowerPosition + 1, 'upper': upperPosition, 'total': filteredItems.length}) }}</span>
           <span v-else>{{ t('extraction-table.all-filtered') }}</span>
 
@@ -185,77 +185,89 @@ const toggleShowHideData = (): void => {
     </Transition>
   </div>
 
-  <!-- Table of extracted entries. -->
-  <div class="table-wrapper fs-875 pb-5"
-       :class="{ 'table-condensed': !showData, 'table-expanded': showData}">
-    <div ref="table-container"
-         class="table-container"
-         :class="{'no-scroll': !showData }">
-      <table class="table table-sm mb-0">
-        <thead>
-        <tr>
-          <th v-for="value in blueprintOutcome.extractedFieldsMap.values()" :key="value">{{ value }}</th>
-        </tr>
-        </thead>
+  <div>
 
-        <tbody>
-        <tr v-for="row in filteredItems.slice(lowerPosition, upperPosition)" :key="row">
-          <template v-for="key in blueprintOutcome.extractedFieldsMap.keys()" :key="key">
-            <td v-if="key in row" :key="row">{{ row[key] }}</td>
-            <td v-else>–</td>
-          </template>
-        </tr>
-        <tr v-if="filteredItems.length === 0">
-          <td class="pb-3 pt-3">{{ t('extraction-table.all-filtered') }}</td>
-        </tr>
-        </tbody>
-      </table>
+    <!-- Table of extracted entries. -->
+    <div class="table-wrapper font-size-875"
+         :class="{ 'table-condensed': !showData, 'table-expanded': showData}">
+      <div ref="table-container"
+           class="table-container"
+           :class="{'no-scroll': !showData }">
+        <table class="table table-sm mb-0">
+          <thead>
+          <tr>
+            <th v-for="value in blueprintOutcome.extractedFieldsMap.values()" :key="value">{{ value }}</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr v-for="row in filteredItems.slice(lowerPosition, upperPosition)" :key="row">
+            <template v-for="key in blueprintOutcome.extractedFieldsMap.keys()" :key="key">
+              <td v-if="key in row" :key="row">{{ row[key] }}</td>
+              <td v-else>–</td>
+            </template>
+          </tr>
+          <tr v-if="filteredItems.length === 0">
+            <td class="pb-3 pt-3">{{ t('extraction-table.all-filtered') }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <!-- Page control buttons -->
-    <div v-if="props.blueprintOutcome.extractedData.length > pageSize"
-         class="ps-2 pt-2">
-      <!-- Prev button -->
-      <button
-          @click="prevTablePage"
-          class="button grey-button button-small me-2"
-          :disabled="currentPage <= 1"
-          aria-label="Previous page"
-      >
-        <i class="bi bi-chevron-left"></i>
+    <!-- Expand-table control -->
+    <div v-if="maxPage > 1 || (maxPage == 1 && upperPosition > 5)"
+         class="show-data-control text-center font-size-875 mb-3"
+         :class="{ 'control-expanded': showData, 'control-condensed': !showData }">
+
+      <button class="button grey-button button-small font-size-small expansion-control-button"
+         :class="{ 'expansion-control-btn-expanded': showData, 'expansion-control-btn-condensed': !showData }"
+         @click="toggleShowHideData">
+
+        <template v-if="!showData">
+          <span>{{ t('extraction-table.show-data') }}</span>
+          <span class="extraction-table-show-arrow"><i class="bi bi-chevron-compact-down"></i></span>
+        </template>
+
+        <template v-else-if="showData">
+          <span>{{ t('extraction-table.hide-data') }}</span>
+          <span class="extraction-table-hide-arrow"><i class="bi bi-chevron-compact-up"></i></span>
+        </template>
+
       </button>
-
-      <span>{{ t('extraction-table.page') }} {{currentPage}}/{{Math.max(maxPage, 1)}}</span>
-
-      <!-- Next button -->
-      <button
-          @click="nextTablePage"
-          class="button grey-button button-small ms-2"
-          :disabled="currentPage >= maxPage"
-          aria-label="Next page"
-      >
-        <i class="bi bi-chevron-right"></i>
-      </button>
-
     </div>
-  </div>
 
-  <!-- Expand-table control -->
-  <div v-if="maxPage > 1 || (maxPage == 1 && upperPosition > 5)"
-       class="show-data-control text-center fs-875 mb-3"
-       :class="{ 'control-expanded': showData, 'control-condensed': !showData }">
-    <button class="button grey-button button-small font-size-small expansion-control-button"
-       :class="{ 'expansion-control-btn-expanded': showData, 'expansion-control-btn-condensed': !showData }"
-       @click="toggleShowHideData">
-      <template v-if="!showData">
-        <span>{{ t('extraction-table.show-data') }}</span>
-        <span class="extraction-table-show-arrow"><i class="bi bi-chevron-compact-down"></i></span>
-      </template>
-      <template v-else-if="showData">
-        <span>{{ t('extraction-table.hide-data') }}</span>
-        <span class="extraction-table-hide-arrow"><i class="bi bi-chevron-compact-up"></i></span>
-      </template>
-    </button>
+    <Transition name="slide-down">
+      <div v-if="showData" class="font-size-875 page-controls">
+        <!-- Page control buttons -->
+        <div v-if="props.blueprintOutcome.extractedData.length > pageSize"
+             class="ps-2 pt-2 text-end text-md-start">
+          <!-- Prev button -->
+          <button
+              @click="prevTablePage"
+              class="button grey-button button-small me-2"
+              :disabled="currentPage <= 1"
+              aria-label="Previous page"
+          >
+            <i class="bi bi-chevron-left"></i>
+          </button>
+
+          <span>{{ t('extraction-table.page') }} {{currentPage}}/{{Math.max(maxPage, 1)}}</span>
+
+          <!-- Next button -->
+          <button
+              @click="nextTablePage"
+              class="button grey-button button-small ms-2"
+              :disabled="currentPage >= maxPage"
+              aria-label="Next page"
+          >
+            <i class="bi bi-chevron-right"></i>
+          </button>
+
+        </div>
+      </div>
+    </Transition>
+
   </div>
 
 </template>
@@ -271,7 +283,6 @@ a:hover {
 .table-wrapper {
   width: 100%;
   overflow-x: scroll;
-  margin-bottom: 15px;
   display: block;
 }
 .table-wrapper table {
@@ -297,11 +308,6 @@ a:hover {
 .table-container {
   max-height: 400px;
   overflow: auto;
-  border-bottom: 2px solid lightgray;
-}
-
-.fs-875 {
-  font-size: .875rem;
 }
 
 .table-condensed {
@@ -319,7 +325,7 @@ a:hover {
 .control-condensed,
 .control-expanded {
   z-index: 10;
-  border-bottom: 1px solid lightgrey;
+  box-shadow: 0 1px black;
 }
 
 .control-condensed {
@@ -334,36 +340,42 @@ a:hover {
 .control-expanded {
   background: white;
   margin-top: 0;
+  min-height: 11px;
 }
 
 .expansion-control-button {
-  transform: translateY(24px) translateX(-100px);
+  transform: translateY(28px) translateX(-50%);
   position: absolute;
   z-index: 50;
-  width: 200px;
-  height: 30px;
+  min-width: 200px;
+  background: white;
+  border: 1px solid black;
 }
 
 .expansion-control-btn-condensed {
-  transform: translateY(24px) translateX(-100px);
+  transform: translateY(28px) translateX(-50%);
 }
 
 .expansion-control-btn-expanded {
-  transform: translateY(-15px) translateX(-100px);
+  transform: translateY(1px) translateX(-50%);
 }
 
 .extraction-table-show-arrow {
   position: absolute;
   bottom: -18px;
-  left: 93px;
   color: grey;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
 }
 
 .extraction-table-hide-arrow {
   position: absolute;
-  bottom: 28px;
-  left: 93px;
+  bottom: 20px;
   color: grey;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
 }
 
 .no-scroll {

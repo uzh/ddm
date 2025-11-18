@@ -13,7 +13,7 @@
  * - Fully reactive, supports transitions between steps.
  * - Displays step indicator buttons for navigation.
  */
-import {computed, ref} from 'vue';
+import {computed, ref, useTemplateRef} from 'vue';
 import { useI18n } from 'vue-i18n';
 import {Instruction} from "@uploader/types/Instruction";
 
@@ -24,22 +24,32 @@ const props = defineProps<{
   componentId: number;
 }>();
 
+const tableContainer = useTemplateRef('instruction-heading');
 const currentStep = ref(0);
 
 function stepDown(): void {
   if (currentStep.value > 0) {
     currentStep.value--;
+    if (tableContainer.value.getBoundingClientRect().top < 0) {
+      tableContainer.value.scrollIntoView();
+    }
   }
 }
 
 function stepUp(): void {
   if (currentStep.value < props.instructions.length - 1) {
     currentStep.value++;
+    if (tableContainer.value.getBoundingClientRect().top < 0) {
+      tableContainer.value.scrollIntoView();
+    }
   }
 }
 
 function setStep(step: number): void {
   currentStep.value = step;
+  if (tableContainer.value.getBoundingClientRect().top < 0) {
+    tableContainer.value.scrollIntoView();
+  }
 }
 
 const canStepDown = computed(() => currentStep.value > 0);
@@ -48,7 +58,7 @@ const currentInstruction = computed(() => props.instructions[currentStep.value].
 </script>
 
 <template>
-  <div class="d-flex align-items-center">
+  <div class="d-flex align-items-center" ref="instruction-heading">
     <span class="section-icon"><i class="bi bi-list-ol"></i></span>
     <span class="section-heading">{{ t("instructions.heading") }}</span>
   </div>

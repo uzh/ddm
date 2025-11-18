@@ -84,7 +84,7 @@ const combineStrings = (strings: string[]): string => {
     return '';
   }
 
-  let combinedString: string = ' (';
+  let combinedString: string = '';
   for (let i = 0; i < nStrings; i++) {
     combinedString += ('"' + strings[i] + '"');
     if (i < nStrings - 2) {
@@ -93,7 +93,6 @@ const combineStrings = (strings: string[]): string => {
       combinedString += ', ';
     }
   }
-  combinedString += ')';
   return combinedString;
 }
 
@@ -224,6 +223,7 @@ onUnmounted(() => {
   overflow-y: auto;
   text-align: center;
   align-self: stretch;
+  white-space: pre-line;
 }
 
 .modal-footer {

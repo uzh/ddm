@@ -141,7 +141,6 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
 
         <!-- Nothing extracted -->
         <template v-else-if="nothingExtracted">
-          <div class="pb-2">{{ blueprint.description }}</div>
           <div>{{ t(`${extractionMessage}`) }}</div>
         </template>
 
@@ -159,7 +158,7 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
               </summary>
               <div role="region" aria-labelledby="error-details-summary">
                 <template v-for="(error, i) in errors" :key="i">
-                  <p v-if="te(`${error.i18nDetail}-detail`)">{{ t(`${error.i18nDetail}-detail`, error.context) }}</p>
+                  <p v-if="te(`${error.i18nDetail}-detail`)" class="error-details">{{ t(`${error.i18nDetail}-detail`, error.context) }}</p>
                 </template>
               </div>
             </details>
@@ -183,11 +182,13 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
 .status-icon {
   padding-right: 10px;
 }
+
 .blueprint-row {
   padding-top: .5rem;
   padding-bottom: .5rem;
   border-top: 1px solid #dee2e6;
 }
+
 details {
   background-color: #fbfbfc;
   border-radius: 5px;
@@ -197,6 +198,11 @@ details {
   width: 100%;
   color: #3d3d3d;
 }
+
+.error-details {
+   white-space: pre-line;
+}
+
 summary {
   font-weight: bold;
   padding-bottom: 5px;

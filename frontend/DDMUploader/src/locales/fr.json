@@ -8,7 +8,7 @@
     "invalid-regex": "Expression régulière (regex) non valide",
     "invalid-rule-regex": "Le nom de champ '{ruleRegex}' de la règle d'extraction {ruleId} n'a pas pu être correctement converti en regex.",
     "no-file-match": "Ce fichier n'a pas pu être trouvé dans le conteneur ZIP sélectionné.",
-    "no-file-match-detail": "Aucun fichier n'a pu être identifié avec le modèle suivant : '{regexPath}'. \nFichiers disponibles dans le conteneur ZIP : {availableFiles}",
+    "no-file-match-detail": "Aucun fichier n'a pu être identifié avec le modèle suivant : \n '{regexPath}' \n \n Fichiers disponibles dans le conteneur ZIP : \n {availableFiles}",
     "file-processing-fail-general": "Une erreur s'est produite lors du traitement du contenu du fichier",
     "file-processing-fail-general-detail": "L'erreur suivante s'est produite : {error}",
     "string-conversion-error": "Le contenu du fichier ne peut pas être converti en texte (string)",
@@ -65,9 +65,9 @@
   },
   "issue-modal": {
     "title": "Don de données non terminé",
-    "none-attempted": "Aucun fichier n'a été téléchargé. Continuer sans don de données ?",
-    "not-all-attempted": "Certains téléchargements ont été ignorés {skipped-uploads}. Continuer avec les fichiers traités jusqu'à présent ?",
-    "not-all-consented": "Pour certaines données, il n'a pas été indiqué si elles peuvent être transmises {blueprints-wo-consent}. Veuillez vérifier.",
+    "none-attempted": "Aucun fichier n'a été téléchargé. \n \n Continuer sans don de données ?",
+    "not-all-attempted": "Certains téléchargements ont été ignorés : {skipped-uploads}. \n \n Continuer avec les fichiers traités jusqu'à présent ?",
+    "not-all-consented": "Pour certaines données, il n'a pas été indiqué si elles peuvent être transmises : {blueprints-wo-consent}. \n \n Veuillez vérifier.",
     "continue-anyway": "Continuer quand même",
     "back": "Retour"
   },

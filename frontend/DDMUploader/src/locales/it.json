@@ -8,7 +8,7 @@
     "invalid-regex": "Espressione regolare (regex) non valida",
     "invalid-rule-regex": "Il nome del campo '{ruleRegex}' della regola di estrazione {ruleId} non ha potuto essere convertito correttamente in regex.",
     "no-file-match": "Questo file non è stato trovato nel contenitore ZIP selezionato.",
-    "no-file-match-detail": "Nessun file è stato identificato con il seguente modello: '{regexPath}'. \nFile disponibili nel contenitore ZIP: {availableFiles}",
+    "no-file-match-detail": "Nessun file è stato identificato con il seguente modello: \n '{regexPath}' \n \n File disponibili nel contenitore ZIP: \n {availableFiles}",
     "file-processing-fail-general": "Si è verificato un errore durante l'elaborazione del contenuto del file",
     "file-processing-fail-general-detail": "Si è verificato il seguente errore: {error}",
     "string-conversion-error": "Il contenuto del file non può essere convertito in testo (string)",
@@ -65,9 +65,9 @@
   },
   "issue-modal": {
     "title": "Donazione dei dati non completata",
-    "none-attempted": "Non è stato caricato alcun file. Continuare senza donazione dei dati?",
-    "not-all-attempted": "Alcuni caricamenti sono stati saltati {skipped-uploads}. Continuare con i file elaborati finora?",
-    "not-all-consented": "Per alcuni dati non è stato indicato se possono essere trasmessi {blueprints-wo-consent}. La preghiamo di verificare.",
+    "none-attempted": "Non è stato caricato alcun file. \n \n Continuare senza donazione dei dati?",
+    "not-all-attempted": "Alcuni caricamenti sono stati saltati: {skipped-uploads}. \n \n Continuare con i file elaborati finora?",
+    "not-all-consented": "Per alcuni dati non è stato indicato se possono essere trasmessi: {blueprints-wo-consent}. \n \n La preghiamo di verificare.",
     "continue-anyway": "Continua comunque",
     "back": "Indietro"
   },

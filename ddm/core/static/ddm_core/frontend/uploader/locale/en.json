@@ -7,8 +7,8 @@
     "zip-read-fail": "Failed to read ZIP archive",
     "invalid-regex": "Invalid regex",
     "invalid-rule-regex": "The field name '{ruleRegex}' of extraction rule {ruleId} could not be parsed as regex.",
-    "no-file-match": "The selected ZIP-container did not contain the correct file. Files in container: {availableFiles}",
-    "no-file-match-detail": "We tried to identify the file using the following pattern: '{regexPath}'. \nAvailable files in the container: {availableFiles}",
+    "no-file-match": "The selected ZIP-container did not contain the correct file.",
+    "no-file-match-detail": "We tried to identify the file using the following pattern: \n '{regexPath}' \n \n Available files in the container: \n {availableFiles}",
     "file-processing-fail-general": "An error occurred during processing the file content.",
     "file-processing-fail-general-detail": "The following error occurred: {error}",
     "string-conversion-error": "File content cannot be converted to string",
@@ -52,24 +52,23 @@
     "donation-disagree": "No"
   },
   "extraction-table": {
-    "previous-page": "previous page",
-    "next-page": "next page",
-    "page-info": "Page {currentPage} of {maxPage}",
-    "entry-info": "Displaying entries {lower}-{upper} of {total}.",
+    "entry-info": "Entries {lower}-{upper} of {total}",
     "donation-info": "If you consent to the donation, the following data will be submitted:",
     "search-entries": "Search entries...",
     "all-filtered": "No entries found",
     "show-data": "Show all data",
-    "hide-data": "Show less"
+    "hide-data": "Show less",
+    "page": "Page"
   },
   "uploader-app": {
     "next-btn": "Next"
   },
   "issue-modal": {
     "title": "Data donation not complete",
-    "none-attempted": "You have not uploaded any files. Continue without a donation?",
-    "not-all-attempted": "Some uploads were skipped{skipped-uploads}. Continue with the files processed so far?",
-    "not-all-consented": "For some data, it was not indicated whether these may be transmitted{ blueprints-wo-consent }. Please go back to review.",
+    "none-attempted": "You have not uploaded any files. \n \n Continue without a donation?",
+    "not-all-attempted": "Some uploads were skipped: {skipped-uploads}. Continue with the files processed so far?",
+    "not-all-consented": "For some extracted data, it was not indicated whether these may be transmitted: {blueprints-wo-consent}. \n \n Please go back to review.",
+    "failed-uploaders": "The following uploads appear to have failed: {uploads}. \n \n Continue anyway?",
     "continue-anyway": "Yes, continue anyway",
     "back": "Go back"
   },

@@ -67,7 +67,8 @@
     "title": "Datenspende wurde nicht abgeschlossen",
     "none-attempted": "Es wurden keine Dateien hochgeladen. \n \n Ohne Datenspende fortfahren?",
     "not-all-attempted": "Einige Uploads wurden übersprungen: {skipped-uploads}.  \n \n Mit den bisher verarbeiteten Dateien fortfahren?",
-    "not-all-consented": "Es muss für alle Daten angegeben werden, ob diese übermittelt werden dürfen. \n \n Für die folgenden Daten fehlt diese Information noch: {blueprints-wo-consent}.",
+    "not-all-consented": "Es muss für alle ausgelesenen Daten angegeben werden, ob diese übermittelt werden dürfen. \n \n Für die folgenden Daten fehlt diese Information noch: {blueprints-wo-consent}.",
+    "failed-uploaders": "Die folgenden Uploads scheinen nicht funktioniert zu haben: {uploads}. \n \n Trotzdem fortfahren?",
     "continue-anyway": "Trotzdem fortfahren",
     "back": "Zurück"
   },

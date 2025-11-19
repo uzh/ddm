@@ -67,7 +67,8 @@
     "title": "Data donation not complete",
     "none-attempted": "You have not uploaded any files. \n \n Continue without a donation?",
     "not-all-attempted": "Some uploads were skipped: {skipped-uploads}. Continue with the files processed so far?",
-    "not-all-consented": "For some data, it was not indicated whether these may be transmitted: {blueprints-wo-consent}. \n \n Please go back to review.",
+    "not-all-consented": "For some extracted data, it was not indicated whether these may be transmitted: {blueprints-wo-consent}. \n \n Please go back to review.",
+    "failed-uploaders": "The following uploads appear to have failed: {uploads}. \n \n Continue anyway?",
     "continue-anyway": "Yes, continue anyway",
     "back": "Go back"
   },

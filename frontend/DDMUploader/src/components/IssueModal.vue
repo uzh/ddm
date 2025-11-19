@@ -15,6 +15,7 @@
  * - Internationalized content through vue-i18n
  *
  * Props:
+ * - failedUploaderNames: Names of the uploaders that have status "failed"
  * - unattendedUploaderShare: Percentage (0-1) of uploaders the user hasn't attempted
  * - unattendedUploaderNames: Names of the uploaders that haven't been attempted
  * - blueprintsWithoutConsentCount: Number of blueprints without explicit consent
@@ -37,6 +38,7 @@ import {computed, onMounted, onUnmounted, ref, Ref, watch} from "vue";
 const { t, locale } = useI18n();
 
 const props = defineProps<{
+  failedUploaderNames: string[],
   unattendedUploaderShare: number,
   unattendedUploaderNames: string[],
   blueprintsWithoutConsentCount: number,
@@ -134,16 +136,20 @@ onUnmounted(() => {
           </div>
 
           <div class="modal-text">
-            <template v-if="unattendedUploaderShare === 1">
-              {{ t("issue-modal.none-attempted") }}
-            </template>
-            <template v-else-if="unattendedUploaderShare > 0">
-              {{ t("issue-modal.not-all-attempted", {"skipped-uploads": combineStrings(props.unattendedUploaderNames)}) }}
-            </template>
 
-            <template v-if="blueprintsWithoutConsentCount > 0 && unattendedUploaderShare < 1">
+            <p v-if="unattendedUploaderShare === 1" class="m-0">
+              {{ t("issue-modal.none-attempted") }}
+            </p>
+            <p v-else-if="blueprintsWithoutConsentCount > 0 && unattendedUploaderShare < 1" class="m-0">
               {{ t("issue-modal.not-all-consented", {"blueprints-wo-consent": combineStrings(props.blueprintsWithoutConsentNames)})  }}
-            </template>
+            </p>
+            <p v-else-if="unattendedUploaderShare > 0" class="m-0">
+              {{ t("issue-modal.not-all-attempted", {"skipped-uploads": combineStrings(props.unattendedUploaderNames)}) }}
+            </p>
+            <p v-else-if="failedUploaderNames.length > 0" class="m-0">
+              {{ t("issue-modal.failed-uploaders", {"uploads": combineStrings(props.failedUploaderNames)}) }}
+            </p>
+
           </div>
 
         </div>

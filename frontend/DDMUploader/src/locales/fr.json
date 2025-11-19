@@ -68,6 +68,7 @@
     "none-attempted": "Aucun fichier n'a été téléchargé. \n \n Continuer sans don de données ?",
     "not-all-attempted": "Certains téléchargements ont été ignorés : {skipped-uploads}. \n \n Continuer avec les fichiers traités jusqu'à présent ?",
     "not-all-consented": "Pour certaines données, il n'a pas été indiqué si elles peuvent être transmises : {blueprints-wo-consent}. \n \n Veuillez vérifier.",
+    "failed-uploaders": "Les téléchargements suivants semblent avoir échoué : {uploads}. \n \n Continuer quand même ?",
     "continue-anyway": "Continuer quand même",
     "back": "Retour"
   },

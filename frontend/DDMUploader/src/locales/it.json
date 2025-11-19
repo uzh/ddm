@@ -68,6 +68,7 @@
     "none-attempted": "Non è stato caricato alcun file. \n \n Continuare senza donazione dei dati?",
     "not-all-attempted": "Alcuni caricamenti sono stati saltati: {skipped-uploads}. \n \n Continuare con i file elaborati finora?",
     "not-all-consented": "Per alcuni dati non è stato indicato se possono essere trasmessi: {blueprints-wo-consent}. \n \n La preghiamo di verificare.",
+    "failed-uploaders": "I seguenti caricamenti sembrano non aver funzionato: {uploads}. \n \n Continuare comunque?",
     "continue-anyway": "Continua comunque",
     "back": "Indietro"
   },

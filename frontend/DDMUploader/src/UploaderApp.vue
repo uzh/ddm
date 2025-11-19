@@ -142,7 +142,7 @@ function initializeUploaderOutcomes(): Record<number, UploaderOutcome> {
 
 <template>
   <template v-for="config in uploaderConfigs">
-    <div class="ddm-uploader">
+    <div class="ddm-uploader mb-5">
       <UploaderWrapper
           :blueprint-configs="config.blueprints"
           :combined-consent="config.combined_consent"

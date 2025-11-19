@@ -6,14 +6,14 @@
     "invalid-zip": "Era atteso un file ZIP, ma è stato caricato un file {fileType}.",
     "zip-read-fail": "Impossibile leggere l'archivio ZIP",
     "invalid-regex": "Espressione regolare (regex) non valida",
-    "invalid-rule-regex": "Il nome del campo '{ruleRegex}' della regola di estrazione {ruleId} non ha potuto essere convertito correttamente in regex.",
+    "invalid-rule-regex": "Il nome del campo '{ruleRegex}' della regola di estrazione {ruleId} non è stato convertito correttamente in regex.",
     "no-file-match": "Questo file non è stato trovato nel contenitore ZIP selezionato.",
     "no-file-match-detail": "Nessun file è stato identificato con il seguente modello: \n '{regexPath}' \n \n File disponibili nel contenitore ZIP: \n {availableFiles}",
     "file-processing-fail-general": "Si è verificato un errore durante l'elaborazione del contenuto del file",
     "file-processing-fail-general-detail": "Si è verificato il seguente errore: {error}",
     "string-conversion-error": "Il contenuto del file non può essere convertito in testo (string)",
     "no-extraction-rules": "Non sono state definite regole di estrazione",
-    "parsing-error": "Si è verificato un errore durante l'analisi del contenuto {contentType} per questo file",
+    "parsing-error": "Si è verificato un errore durante il parsing del contenuto {contentType} di questo file",
     "unsupported-bp-format": "Formato file non supportato: {format}",
     "more-than-one-key-match": "Più di una corrispondenza per il campo '{field}': {keys}. È stato utilizzato '{defaultKey}' per impostazione predefinita",
     "no-key-match": "Nessuna corrispondenza per il campo '{field}': {keys}",
@@ -27,7 +27,7 @@
     "processing-complete": "Elaborazione completata",
     "processing-success": "File elaborato con successo",
     "processing-failed": "Il file non ha potuto essere elaborato",
-    "choose-different-file": "seleziona un file diverso",
+    "choose-different-file": "Seleziona un file diverso",
     "retry-hint": "Il file selezionato potrebbe non contenere le informazioni necessarie (vedi sotto per ulteriori dettagli). Seleziona un file diverso per riprovare:"
   },
   "extraction-state": {
@@ -38,8 +38,8 @@
     "blueprint" : {
       "success": "Dati estratti con successo.",
       "no-data-extracted": "Nessun dato rilevante trovato nel file.",
-      "all-missing-fields": "Tutte le voci nel file sono incomplete e non possono essere estratte.",
-      "all-filtered-out": "Tutte le voci sono state escluse in base ai criteri di filtro selezionati.",
+      "all-missing-fields": "Tutti i record nel file sono incompleti e non possono essere estratti.",
+      "all-filtered-out": "Tutti i record sono stati esclusi in base ai criteri di filtro selezionati.",
       "failed": "Non è stato possibile estrarre i dati a causa dei seguenti errori:"
     }
   },
@@ -52,16 +52,16 @@
     "donation-disagree": "No"
   },
   "extraction-table": {
-    "entry-info": "Visualizzazione delle voci {lower}-{upper} su {total}",
+    "entry-info": "Visualizzazione dei record {lower}-{upper} su {total}",
     "donation-info": "Se acconsente alla donazione dei dati, verranno trasmessi i seguenti dati:",
-    "search-entries": "Cerca voci...",
-    "all-filtered": "Nessuna voce trovata",
+    "search-entries": "Cerca record...",
+    "all-filtered": "Nessun record trovato",
     "show-data": "mostra tutti i dati",
     "hide-data": "mostra meno",
     "page": "Pagina"
   },
   "uploader-app": {
-    "next-btn": "Continua"
+    "next-btn": "Avanti"
   },
   "issue-modal": {
     "title": "Donazione dei dati non completata",

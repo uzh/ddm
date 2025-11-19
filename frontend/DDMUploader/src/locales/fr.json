@@ -7,13 +7,13 @@
     "zip-read-fail": "Impossible de lire l'archive ZIP",
     "invalid-regex": "Expression régulière (regex) non valide",
     "invalid-rule-regex": "Le nom de champ '{ruleRegex}' de la règle d'extraction {ruleId} n'a pas pu être correctement converti en regex.",
-    "no-file-match": "Ce fichier n'a pas pu être trouvé dans le conteneur ZIP sélectionné.",
-    "no-file-match-detail": "Aucun fichier n'a pu être identifié avec le modèle suivant : \n '{regexPath}' \n \n Fichiers disponibles dans le conteneur ZIP : \n {availableFiles}",
+    "no-file-match": "Ce fichier n'a pas pu être trouvé dans le fichier ZIP sélectionné.",
+    "no-file-match-detail": "Aucun fichier ne correspond au modèle suivant : \n « {regexPath} » \n \n Fichiers disponibles dans le ZIP : \n {availableFiles}",
     "file-processing-fail-general": "Une erreur s'est produite lors du traitement du contenu du fichier",
     "file-processing-fail-general-detail": "L'erreur suivante s'est produite : {error}",
     "string-conversion-error": "Le contenu du fichier ne peut pas être converti en texte (string)",
     "no-extraction-rules": "Aucune règle d'extraction n'a été définie",
-    "parsing-error": "Une erreur s'est produite lors de l'analyse du contenu {contentType} pour ce fichier",
+    "parsing-error": "Une erreur s'est produite lors de l’analyse du contenu {contentType} de ce fichier",
     "unsupported-bp-format": "Format de fichier non pris en charge : {format}",
     "more-than-one-key-match": "Plus d'une correspondance pour le champ '{field}' : {keys}. '{defaultKey}' a été utilisé par défaut",
     "no-key-match": "Aucune correspondance pour le champ '{field}' : {keys}",
@@ -61,10 +61,10 @@
     "page": "Page"
   },
   "uploader-app": {
-    "next-btn": "Continuer"
+    "next-btn": "Suivant"
   },
   "issue-modal": {
-    "title": "Don de données non terminé",
+    "title": "Le don de données n’a pas été finalisé",
     "none-attempted": "Aucun fichier n'a été téléchargé. \n \n Continuer sans don de données ?",
     "not-all-attempted": "Certains téléchargements ont été ignorés : {skipped-uploads}. \n \n Continuer avec les fichiers traités jusqu'à présent ?",
     "not-all-consented": "Pour certaines données, il n'a pas été indiqué si elles peuvent être transmises : {blueprints-wo-consent}. \n \n Veuillez vérifier.",

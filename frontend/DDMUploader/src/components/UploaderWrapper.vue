@@ -119,7 +119,8 @@ const showCombinedConsent = computed(() =>
 
   <div class="uploader-name">{{ name }}</div>
   <div class="uploader-container">
-    <div class="uploader-section">
+    <div v-if="instructionConfig.length > 0"
+         class="uploader-section">
       <Instructions
         :instructions="instructionConfig"
         :component-id="componentId"

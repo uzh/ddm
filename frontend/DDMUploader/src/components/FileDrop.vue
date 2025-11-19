@@ -36,12 +36,12 @@
  */
 
 
-import {onMounted, toRef, ref, watch, computed} from 'vue';
+import {computed, nextTick, onMounted, ref, toRef, useTemplateRef, watch} from 'vue';
 import { useI18n } from 'vue-i18n';
-import {ExtractionStates} from "@uploader/types/extractionStates";
-import {EXTRACTION_STATES} from "@uploader/utils/stateCatalog";
-import {UPLOADER_STATES, UploaderStates} from "@uploader/types/UploaderState";
-import {ProcessingError} from "@uploader/types/ProcessingError";
+import {ExtractionStates} from '@uploader/types/extractionStates';
+import {EXTRACTION_STATES} from '@uploader/utils/stateCatalog';
+import {UPLOADER_STATES, UploaderStates} from '@uploader/types/UploaderState';
+import {ProcessingError} from '@uploader/types/ProcessingError';
 
 const { t, locale } = useI18n();
 
@@ -55,6 +55,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'fileDropped', file: File): void;
 }>();
+
+const fileInput = useTemplateRef('fileInput');
 
 const isDragging = ref<boolean>(false);
 const retryRequested = ref<boolean>(false);
@@ -123,15 +125,20 @@ function handleFileInput(event: Event) {
 }
 
 /**
- * Resets the uploader to allow selecting a new file.
+ * Resets the uploader and opens dialog to select a new file.
  *
  * This function:
  * 1. Sets the retryRequested flag to show the file selection UI
  * 2. Resets the background styling to the default state
+ * 3. Opens the file chooser
  */
-function resetUploader(): void {
+function chooseDifferentFile(): void {
   retryRequested.value = true;
   fileSelectorBorderClass.value = 'bg-lightgrey';
+
+  nextTick(() => {
+    fileInput.value?.click();
+  });
 }
 
 const showFileSelector = computed(() =>
@@ -228,7 +235,7 @@ const extractionNoData = computed(() =>
               </p>
             </div>
 
-            <p class="pt-2">{{ t('file-drop.retry-hint') }} <button class="button grey-button border border-secondary mt-2" @click="resetUploader">{{ t('file-drop.choose-different-file') }}</button></p>
+            <p class="pt-2">{{ t('file-drop.retry-hint') }} <button class="button grey-button border border-secondary mt-2" @click="chooseDifferentFile">{{ t('file-drop.choose-different-file') }}</button></p>
           </div>
 
           <div v-else-if="extractionNoData">
@@ -240,7 +247,7 @@ const extractionNoData = computed(() =>
 
       <!-- Retry button -->
       <div v-if="showRetryButton" class="pt-2 w-100 text-center">
-        <button class="button grey-button button-small muted-button font-size-small" @click="resetUploader">{{ t('file-drop.choose-different-file') }}</button>
+        <button class="button grey-button button-small muted-button font-size-small" @click="chooseDifferentFile">{{ t('file-drop.choose-different-file') }}</button>
       </div>
 
     </div>

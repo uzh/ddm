@@ -337,7 +337,6 @@ if (process.env.NODE_ENV === 'test') {
 
 .flow-navigation {
   padding-top: 50px;
-  padding-right: 20%;
 }
 
 .required-but-missing {

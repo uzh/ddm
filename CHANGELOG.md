@@ -1,5 +1,41 @@
 # Changelog
 
+## 2.1.6 - 2025-11-19
+
+### Fixed
+
+- **Instruction deletion error**: Fixed crash when deleting instructions by removing reference to non-existent 'name' attribute ([`e12d104`](https://github.com/uzh/ddm/commit/e12d104)).
+- **Upload failure modal**: Issue modal now displays correctly when all file uploads fail ([`d6577bd`](https://github.com/uzh/ddm/commit/d6577bd)).
+- **Empty instructions error**: Instruction section now hides when no instructions are defined instead of throwing an error ([`4b72395`](https://github.com/uzh/ddm/commit/4b72395)).
+
+### Changed
+
+#### *General*
+
+- **Translations**: Minor corrections to French and Italian translations ([`7ae9cb9`](https://github.com/uzh/ddm/commit/7ae9cb9)).
+
+#### *Uploader (data donation interface)* 
+
+- **File re-upload**: Clicking re-upload now opens file dialog directly (reduced from 2 clicks) ([`9ad0c39`](https://github.com/uzh/ddm/commit/9ad0c39)).
+- **Instructions**: Auto-scroll to top when navigating pages, hide controls for single-page instructions, and improved small-screen layout ([`fc6824a`](https://github.com/uzh/ddm/commit/fc6824a), [`030d02a`](https://github.com/uzh/ddm/commit/030d02a), [`d268885`](https://github.com/uzh/ddm/commit/d268885), [`d056368`](https://github.com/uzh/ddm/commit/d056368)).
+- **Extracted data table**: Improved responsiveness and simplified design ([`2c3efe9`](https://github.com/uzh/ddm/commit/2c3efe9), [`c9f33a2`](https://github.com/uzh/ddm/commit/c9f33a2), [`ec09bf7`](https://github.com/uzh/ddm/commit/ec09bf7), [`23cb562`](https://github.com/uzh/ddm/commit/23cb562)).
+- **UI refinements**:
+    - Optimized file drop spacing for small/medium screens ([`2edd5c9`](https://github.com/uzh/ddm/commit/2edd5c9), [`072c782`](https://github.com/uzh/ddm/commit/072c782)).
+    - Unified button styling across interface ([`2fedd1e`](https://github.com/uzh/ddm/commit/2fedd1e)).
+    - Improved issue modal responsiveness ([`3b9da6e`](https://github.com/uzh/ddm/commit/3b9da6e)).
+    - Enhanced error message display ([`138cf3d`](https://github.com/uzh/ddm/commit/138cf3d)).
+    - Increased spacing between multiple uploaders ([`f162a56`](https://github.com/uzh/ddm/commit/f162a56)).
+    - Fixed overflow in contact/data protection modals ([`7586aaa`](https://github.com/uzh/ddm/commit/7586aaa)).
+
+#### *Questionnaire*
+
+- **Continue button alignment**: Continue button now right-aligned ([`89d3bb7`](https://github.com/uzh/ddm/commit/89d3bb7)).
+
+### Update Guide
+
+Run `python manage.py collectstatic` after upgrading to DDM v2.1.6 from the previous version.
+
+
 ## 2.1.5 - 2025-10-29
 
 ### Fixed

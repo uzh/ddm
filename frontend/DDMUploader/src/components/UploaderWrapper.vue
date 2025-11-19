@@ -119,7 +119,8 @@ const showCombinedConsent = computed(() =>
 
   <div class="uploader-name">{{ name }}</div>
   <div class="uploader-container">
-    <div class="uploader-section">
+    <div v-if="instructionConfig.length > 0"
+         class="uploader-section">
       <Instructions
         :instructions="instructionConfig"
         :component-id="componentId"
@@ -173,15 +174,15 @@ const showCombinedConsent = computed(() =>
 
 .uploader-container .uploader-section:not(:first-child),
 .uploader-container .uploader-section:not(:last-child) {
-  padding: 40px 20px;
+  padding: 40px 0 40px 0;
 }
 
 .uploader-container .uploader-section:first-child {
-  padding: 30px 20px 40px 20px;
+  padding: 10px 0 40px 0;
 }
 
 .uploader-container .uploader-section:last-child {
-  padding: 40px 20px 30px 20px;
+  padding: 40px 0 30px 0;
 }
 
 
@@ -201,5 +202,19 @@ const showCombinedConsent = computed(() =>
     border-radius: 8px;
     border: none;
   }
+
+  .uploader-container .uploader-section:not(:first-child),
+  .uploader-container .uploader-section:not(:last-child) {
+    padding: 40px 20px;
+  }
+
+  .uploader-container .uploader-section:last-child {
+    padding: 40px 20px 30px 20px;
+  }
+
+  .uploader-container .uploader-section:first-child {
+    padding: 30px 20px 40px 20px;
+  }
+
 }
 </style>

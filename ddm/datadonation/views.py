@@ -298,9 +298,6 @@ class InstructionDelete(SuccessMessageMixin, DDMAuthMixin, InstructionMixin, Del
     template_name = 'ddm_datadonation/instructions/delete.html'
     success_message = 'Instruction page deleted.'
 
-    def get_success_message(self, cleaned_data):
-        return self.success_message % self.object.name
-
 
 class DonationDownloadView(DDMAuthMixin, DDMAPIMixin, FormView):
     """View to download all the donations of one specific participant."""

@@ -46,6 +46,7 @@ const uploaderOutcomes: Ref<Record<number, UploaderOutcome>> = ref(initializeUpl
 
 const {
   validateUploaders,
+  failedUploaderNames,
   unattendedUploaderShare,
   unattendedUploaderNames,
   blueprintsWithoutConsentCount,
@@ -140,22 +141,23 @@ function initializeUploaderOutcomes(): Record<number, UploaderOutcome> {
 </script>
 
 <template>
-
-  <div class="ddm-uploader">
-    <UploaderWrapper
-        v-for="config in uploaderConfigs"
-        :blueprint-configs="config.blueprints"
-        :combined-consent="config.combined_consent"
-        :componentId="config.uploader_id"
-        :exception-url="props.exceptionUrl"
-        :expects-zip="config.upload_type === 'zip file'"
-        :instruction-config="config.instructions"
-        :name="config.name"
-        @statusChanged="updateUploaderOutcome"
-    />
-  </div>
+  <template v-for="config in uploaderConfigs">
+    <div class="ddm-uploader mb-5">
+      <UploaderWrapper
+          :blueprint-configs="config.blueprints"
+          :combined-consent="config.combined_consent"
+          :componentId="config.uploader_id"
+          :exception-url="props.exceptionUrl"
+          :expects-zip="config.upload_type === 'zip file'"
+          :instruction-config="config.instructions"
+          :name="config.name"
+          @statusChanged="updateUploaderOutcome"
+      />
+    </div>
+  </template>
 
   <IssueModal
+      :failed-uploader-names="failedUploaderNames"
       :unattended-uploader-share="unattendedUploaderShare"
       :unattended-uploader-names="unattendedUploaderNames"
       :blueprints-without-consent-count="blueprintsWithoutConsentCount"
@@ -185,6 +187,10 @@ function initializeUploaderOutcomes(): Record<number, UploaderOutcome> {
 </template>
 
 <style>
+.modal-open {
+  overflow: hidden;
+}
+
 .section-heading {
   font-size: 1.35rem;
 }

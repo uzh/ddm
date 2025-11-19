@@ -1,5 +1,5 @@
 {
-  "next-btn-label": "Continua",
+  "next-btn-label": "Avanti",
   "required-but-missing-hint": "La preghiamo di rispondere a questa domanda.",
   "hint-number-input": "Sono consentiti solo numeri.",
   "hint-email-input": "Inserire l'indirizzo e-mail nel formato nome{'@'}dominio.com.",

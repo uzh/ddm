@@ -13,6 +13,7 @@ import {UploaderOutcome} from "@uploader/types/UploaderOutcome";
  *
  * @returns An object containing:
  *   - validateUploaders: Function to perform validation
+ *   - failedUploaderNames: Names of uploaders with state "failed"
  *   - unattendedUploaderShare: Percentage of uploaders not attempted
  *   - unattendedUploaderNames: Names of uploaders not attempted
  *   - blueprintsWithoutConsentCount: Number of blueprints missing consent
@@ -22,6 +23,7 @@ import {UploaderOutcome} from "@uploader/types/UploaderOutcome";
 export function useUploaderValidator(
   uploaderOutcomes: Ref<Record<number, UploaderOutcome>>
 ) {
+  const failedUploaderNames: Ref<string[]> = ref([]);
   const unattendedUploaderNames: Ref<string[]> = ref([]);
   const blueprintsWithoutConsentNames: Ref<string[]> = ref([]);
   const blueprintsWithoutConsentCount: Ref<number> = ref(0);
@@ -47,7 +49,10 @@ export function useUploaderValidator(
    * @returns True if all uploaders are valid, false otherwise
    */
   function validateUploaders(): boolean {
-    if (allDonationsAttempted() && consentObtainedForAll()) {
+    const allAttempted: boolean = allDonationsAttempted();
+    const noneFailed: boolean = noFailedUploads();
+    const consentForAll: boolean = consentObtainedForAll();
+    if (allAttempted && noneFailed && consentForAll) {
       allUploadersValid.value = true;
       return true;
     } else {
@@ -107,8 +112,30 @@ export function useUploaderValidator(
     return (blueprintsWithoutConsentNames.value.length === 0);
   }
 
+  /**
+   * Checks if none of the uploaders has a "failed" uploaderState.
+   * Adds names of failed uploaders to failedUploaderNames.
+   *
+   * @returns True if no uploader has uploaderState "failed", false otherwise
+   */
+  const noFailedUploads = (): boolean => {
+
+    failedUploaderNames.value = [];
+
+    for (const uploader of Object.values(uploaderOutcomes.value)) {
+      console.log(`Uploader ${uploader.uploaderName}.`)
+      console.log(`State ${uploader.uploaderState}.`)
+      console.log(`State ${uploader.uploaderName}.`)
+      if (uploader.uploaderState === EXTRACTION_STATES.FAILED) {
+        failedUploaderNames.value.push(uploader.uploaderName);
+      }
+    }
+    return (failedUploaderNames.value.length === 0);
+  }
+
   return {
     validateUploaders,
+    failedUploaderNames,
     unattendedUploaderShare,
     unattendedUploaderNames,
     blueprintsWithoutConsentCount,

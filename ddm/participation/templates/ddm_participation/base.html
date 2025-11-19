@@ -58,33 +58,7 @@
 
 </div>
 
-<div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactInformation" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header fw-bold pb-2 pt-2">
-        {% translate "Contact Information" %}
-        <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body pb-2 pt-2">
-        {% autoescape on %}{{ project.contact_information|safe }}{% endautoescape %}
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="dataProtectionModal" tabindex="-1" aria-labelledby="dataProtection" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header fw-bold pb-2 pt-2">
-        {% translate "Data Protection Statement" %}
-        <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body pb-2 pt-2">
-        {% autoescape on %}{{ project.data_protection_statement|safe }}{% endautoescape %}
-      </div>
-    </div>
-  </div>
-</div>
+{% include "ddm_participation/footer_modals.html" %}
 
 <script src="{% static 'ddm_core/js/jquery/jquery-3.6.2.min.js' %}"></script>
 <script src="{% static 'ddm_core/js/bootstrap/bootstrap.bundle.min.js' %}"></script>

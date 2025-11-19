@@ -15,6 +15,7 @@
  * - Internationalized content through vue-i18n
  *
  * Props:
+ * - failedUploaderNames: Names of the uploaders that have status "failed"
  * - unattendedUploaderShare: Percentage (0-1) of uploaders the user hasn't attempted
  * - unattendedUploaderNames: Names of the uploaders that haven't been attempted
  * - blueprintsWithoutConsentCount: Number of blueprints without explicit consent
@@ -37,6 +38,7 @@ import {computed, onMounted, onUnmounted, ref, Ref, watch} from "vue";
 const { t, locale } = useI18n();
 
 const props = defineProps<{
+  failedUploaderNames: string[],
   unattendedUploaderShare: number,
   unattendedUploaderNames: string[],
   blueprintsWithoutConsentCount: number,
@@ -55,6 +57,9 @@ const canContinueAnyway = computed(() => props.blueprintsWithoutConsentCount ===
 
 watch(() => props.showModal, () => {
   modalVisible.value = props.showModal;
+  if (modalVisible.value === true) {
+    document.body.classList.add('modal-open');
+  }
 }, { immediate: true });
 
 /**
@@ -64,6 +69,7 @@ watch(() => props.showModal, () => {
 const hideModal = (): void => {
   modalVisible.value = false;
   emit('modalClosed');
+  document.body.classList.remove('modal-open');
 }
 
 /**
@@ -80,7 +86,7 @@ const combineStrings = (strings: string[]): string => {
     return '';
   }
 
-  let combinedString: string = ' (';
+  let combinedString: string = '';
   for (let i = 0; i < nStrings; i++) {
     combinedString += ('"' + strings[i] + '"');
     if (i < nStrings - 2) {
@@ -89,7 +95,6 @@ const combineStrings = (strings: string[]): string => {
       combinedString += ', ';
     }
   }
-  combinedString += ')';
   return combinedString;
 }
 
@@ -114,50 +119,60 @@ onUnmounted(() => {
 
     <div class="modal-backdrop" @click="hideModal"></div>
 
-    <div
-        class="issue-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modal-title"
-        tabindex="-1"
-    >
-      <div class="modal-body d-flex flex-row align-items-center pt-5">
-        <h2 id="modal-title" class="visually-hidden">{{ t("issue-modal.title") }}</h2>
+    <div class="modal-container">
 
-        <div class="ps-2 pe-3 color-blue"><i class="bi bi-info-circle-fill fs-1"></i></div>
+      <div
+          class="issue-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-title"
+          tabindex="-1"
+      >
+        <div class="modal-body pt-4 pt-md-5">
+          <h2 id="modal-title" class="visually-hidden">{{ t("issue-modal.title") }}</h2>
 
-        <div>
-          <div v-if="unattendedUploaderShare === 1">
-            {{ t("issue-modal.none-attempted") }}
-          </div>
-          <div v-else-if="unattendedUploaderShare > 0">
-            {{ t("issue-modal.not-all-attempted", {"skipped-uploads": combineStrings(props.unattendedUploaderNames)}) }}
+          <div class="pb-2 pb-md-0 ps-md-2 pe-md-3 text-center">
+            <i class="bi bi-info-circle-fill fs-1"></i>
           </div>
 
-          <div v-if="blueprintsWithoutConsentCount > 0 && unattendedUploaderShare < 1">
-            {{ t("issue-modal.not-all-consented", {"blueprints-wo-consent": combineStrings(props.blueprintsWithoutConsentNames)})  }}
+          <div class="modal-text">
+
+            <p v-if="unattendedUploaderShare === 1" class="m-0">
+              {{ t("issue-modal.none-attempted") }}
+            </p>
+            <p v-else-if="blueprintsWithoutConsentCount > 0 && unattendedUploaderShare < 1" class="m-0">
+              {{ t("issue-modal.not-all-consented", {"blueprints-wo-consent": combineStrings(props.blueprintsWithoutConsentNames)})  }}
+            </p>
+            <p v-else-if="unattendedUploaderShare > 0" class="m-0">
+              {{ t("issue-modal.not-all-attempted", {"skipped-uploads": combineStrings(props.unattendedUploaderNames)}) }}
+            </p>
+            <p v-else-if="failedUploaderNames.length > 0" class="m-0">
+              {{ t("issue-modal.failed-uploaders", {"uploads": combineStrings(props.failedUploaderNames)}) }}
+            </p>
+
           </div>
+
         </div>
 
-      </div>
+        <div class="modal-footer">
+          <button
+              type="button"
+              class="button black-button"
+              @click="hideModal"
+          >
+            {{ t("issue-modal.back") }}
+          </button>
 
-      <div class="modal-footer">
-        <button
-            type="button"
-            class="btn btn-black"
-            @click="hideModal"
-        >
-          {{ t("issue-modal.back") }}
-        </button>
+          <button
+              v-if="canContinueAnyway"
+              type="button"
+              class="button grey-button"
+              @click="hideModal(); emit('continueAnyway')"
+          >
+            {{ t("issue-modal.continue-anyway") }}
+          </button>
+        </div>
 
-        <button
-            v-if="canContinueAnyway"
-            type="button"
-            class="btn btn-light"
-            @click="hideModal(); emit('continueAnyway')"
-        >
-          {{ t("issue-modal.continue-anyway") }}
-        </button>
       </div>
 
     </div>
@@ -165,17 +180,28 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+@import "@uploader/assets/styles/buttons.css";
+
+.modal-container {
+  position: fixed;
+  height: 100vh;
+  width: 100%;
+  top: 0;
+  left: 0;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
 .issue-modal {
+  display: flex;
+  flex-direction: column;
   background: white;
   z-index: 2000;
-  position: fixed;
-  top: 35%;
-  margin-left: auto;
-  margin-right: auto;
-  left: 0;
-  right: 0;
-  width: 85%;
-  border-radius: 5px;
+  max-height: 90%;
+  border-radius: .25rem;
 }
 
 .modal-backdrop {
@@ -187,27 +213,47 @@ onUnmounted(() => {
   z-index: 1000;
 }
 
-.btn-light {
-  background: #e3e3e3;
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+  padding: 1rem;
 }
 
-.btn-light:hover {
-  background: #dddddd;
+.modal-text {
+  min-height: 0;
+  min-width: 0;
+  flex: 1;
+  overflow-y: auto;
+  text-align: center;
+  align-self: stretch;
+  white-space: pre-line;
 }
 
-.btn-black {
-  background: #000000;
-  border-color: #000000;
-  color: #ffffff;
+.modal-footer {
+  justify-content: center;
 }
 
-.btn-black:hover {
-  background: #3b3b3b;
-}
-
-@media (min-width: 769px) {
+@media (min-width: 768px) {
   .issue-modal {
-    width: 50%;
+    width: 70%;
+    max-width: 1000px;
+  }
+
+  .modal-body {
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 1.5rem 2rem;
+  }
+
+  .modal-text {
+    text-align: left;
+  }
+
+  .modal-footer {
+    justify-content: flex-end;
   }
 }
 </style>

@@ -102,7 +102,7 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
 </script>
 
 <template>
-  <div class="d-flex flex-column align-items-start pt-3 pb-3 blueprint-row">
+  <div class="d-flex flex-column align-items-start pt-4 pb-4 blueprint-row">
 
     <div class="d-flex flex-row align-items-start pb-1">
       <div class="status-icon"><i :class="iconClass"></i></div>
@@ -112,7 +112,7 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
     <div class="d-flex flex-row align-items-start w-100 overflow-hidden">
       <div class="status-icon opacity-0"><i :class="iconClass"></i></div>
 
-      <div class="d-flex flex-column w-100">
+      <div class="d-flex flex-column w-100 extraction-item-content">
 
         <!-- Pending -->
         <template v-if="extractionPending">
@@ -128,7 +128,8 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
             />
           </div>
 
-          <div v-if="combinedConsent === false" class="pt-3 pb-1">
+          <div v-if="combinedConsent === false"
+               class="pt-4 pb-1">
             <ConsentQuestion
                 :combined-consent="combinedConsent"
                 :blueprint-id="blueprint.id"
@@ -140,7 +141,6 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
 
         <!-- Nothing extracted -->
         <template v-else-if="nothingExtracted">
-          <div class="pb-2">{{ blueprint.description }}</div>
           <div>{{ t(`${extractionMessage}`) }}</div>
         </template>
 
@@ -158,7 +158,7 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
               </summary>
               <div role="region" aria-labelledby="error-details-summary">
                 <template v-for="(error, i) in errors" :key="i">
-                  <p v-if="te(`${error.i18nDetail}-detail`)">{{ t(`${error.i18nDetail}-detail`, error.context) }}</p>
+                  <p v-if="te(`${error.i18nDetail}-detail`)" class="error-details">{{ t(`${error.i18nDetail}-detail`, error.context) }}</p>
                 </template>
               </div>
             </details>
@@ -174,14 +174,21 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
 .text-grey {
   color: #d0d0d0;
 }
+
+.extraction-item-content {
+  min-width: 0;
+}
+
 .status-icon {
   padding-right: 10px;
 }
+
 .blueprint-row {
   padding-top: .5rem;
   padding-bottom: .5rem;
   border-top: 1px solid #dee2e6;
 }
+
 details {
   background-color: #fbfbfc;
   border-radius: 5px;
@@ -191,6 +198,11 @@ details {
   width: 100%;
   color: #3d3d3d;
 }
+
+.error-details {
+   white-space: pre-line;
+}
+
 summary {
   font-weight: bold;
   padding-bottom: 5px;

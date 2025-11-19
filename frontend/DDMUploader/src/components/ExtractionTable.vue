@@ -38,7 +38,7 @@
 
 import { useI18n } from 'vue-i18n';
 import {BlueprintExtractionOutcome} from "@uploader/classes/blueprintExtractionOutcome";
-import {computed, Ref, ref, watch} from "vue";
+import {computed, Ref, ref, useTemplateRef, watch} from "vue";
 import {debounce} from "@uploader/utils/debounce";
 
 const { t, te, locale } = useI18n();
@@ -49,7 +49,7 @@ const props = defineProps<{
 
 const pageSize: number = 20;
 const currentPage: Ref<number> = ref(1);
-const showData: Ref<boolean> = ref(false);
+const tableContainer = useTemplateRef('table-container');
 
 const searchTerm: Ref<string> = ref('');
 const debouncedSearch: Ref<string> = ref('');
@@ -124,14 +124,26 @@ watch(
 const nextTablePage = (): void => {
   if (currentPage.value < maxPage.value) {
     currentPage.value += 1;
+    tableContainer.value.scrollTop = 0;
   }
 }
 
 const prevTablePage = (): void => {
   if (currentPage.value > 1) {
     currentPage.value -= 1;
+    tableContainer.value.scrollTop = 0;
   }
 }
+
+const showData: Ref<boolean> = ref(maxPage.value === 1 && upperPosition.value <= 5);
+
+watch(
+  () => [props.blueprintOutcome.extractedData.length],
+  () => {
+    showData.value = (maxPage.value === 1 && upperPosition.value <= 5);
+  },
+  { immediate: true, deep: true }
+);
 
 /**
  * Toggles between expanded and condensed table views.
@@ -141,117 +153,144 @@ const prevTablePage = (): void => {
  */
 const toggleShowHideData = (): void => {
   showData.value = !showData.value;
+  tableContainer.value.scrollTop = 0;
+  tableContainer.value.scrollLeft = 0;
 }
 
 </script>
 
 <template>
 
-  <div class="pb-2">{{ t('extraction-table.donation-info') }}</div>
+  <div class="pb-3">{{ t('extraction-table.donation-info') }}</div>
 
-  <!-- Table of extracted entries. -->
-  <div class="table-wrapper fs-875 pb-3"
-       :class="{ 'table-condensed': !showData, 'table-expanded': showData }">
-    <table class="table table-sm">
-      <thead>
-      <tr>
-        <th v-for="value in blueprintOutcome.extractedFieldsMap.values()" :key="value">{{ value }}</th>
-      </tr>
-      </thead>
+  <!-- Filter search field -->
+  <div v-if="props.blueprintOutcome.extractedData.length > 1">
+    <Transition name="slide-down">
+      <div v-if="showData"
+           class="font-size-875 mb-2 text-end text-md-start pe-2">
+        <div>
+          <label for="data-search"
+               class="visually-hidden">
+            {{ t('extraction-table.search-entries') }}
+          </label>
+          <input
+              id="data-search"
+              type="text"
+              v-model="searchTerm"
+              :placeholder="t('extraction-table.search-entries')"
+              aria-label="Search data entries"
+          >
+        </div>
 
-      <tbody>
-      <tr v-for="row in filteredItems.slice(lowerPosition, upperPosition)" :key="row">
-        <template v-for="key in blueprintOutcome.extractedFieldsMap.keys()" :key="key">
-          <td v-if="key in row" :key="row">{{ row[key] }}</td>
-          <td v-else>–</td>
-        </template>
-      </tr>
-      </tbody>
-    </table>
+        <div class="ps-1 pt-1 pe-2">
+          <span v-if="filteredItems.length > 0">{{ t('extraction-table.entry-info', {'lower': lowerPosition + 1, 'upper': upperPosition, 'total': filteredItems.length}) }}</span>
+          <span v-else>{{ t('extraction-table.all-filtered') }}</span>
 
-    <!-- Filter search field -->
-    <div class="fs-875 mb-2">
-      <label for="data-search" class="visually-hidden">
-        {{ t('extraction-table.search-entries') }}
-      </label>
-      <input
-          id="data-search"
-          type="text"
-          v-model="searchTerm"
-          :placeholder="t('extraction-table.search-entries')"
-          aria-label="Search data entries"
-      >
-    </div>
+          <span v-if="filteredItems.length < props.blueprintOutcome.extractedData.length"> ({{ props.blueprintOutcome.extractedData.length }} total)</span>
+        </div>
+      </div>
 
-    <!-- Verbose page indicator -->
-    <div v-if="filteredItems.length > 0" class="fs-875 pb-2">
-      {{ t('extraction-table.page-info', {currentPage: currentPage, maxPage: maxPage} ) }} | {{ t('extraction-table.entry-info', {lower: lowerPosition + 1, upper: Math.min(upperPosition + 1, filteredItems.length), total: filteredItems.length } ) }}
-    </div>
-    <div v-else>
-      {{ t('extraction-table.all-filtered') }}
-    </div>
-
-    <!-- Page control buttons -->
-    <div>
-      <!-- Prev button -->
-      <button
-          @click="prevTablePage"
-          class="btn btn-pagination btn-sm me-2"
-          :disabled="currentPage <= 1"
-          aria-label="Previous page"
-      >
-        {{ t('extraction-table.previous-page') }}
-      </button>
-
-      <!-- Next button -->
-      <button
-          @click="nextTablePage"
-          class="btn btn-pagination btn-sm me-2"
-          :disabled="currentPage >= maxPage"
-          aria-label="Next page"
-      >
-        {{ t('extraction-table.next-page') }}
-      </button>
-
-    </div>
+    </Transition>
   </div>
 
-  <!-- Expand-table control -->
-  <div class="show-data-control text-center fs-875 mb-3"
-       :class="{ 'control-expanded': showData, 'control-condensed': !showData }">
-    <a class="expansion-control-btn"
-       :class="{ 'expansion-control-btn-expanded': showData, 'expansion-control-btn-condensed': !showData }"
-       @click="toggleShowHideData">
-      <span v-if="!showData">{{ t('extraction-table.show-data') }}</span>
-      <span v-else-if="showData">{{ t('extraction-table.hide-data') }}</span>
-    </a>
+  <div>
+
+    <!-- Table of extracted entries. -->
+    <div class="table-wrapper font-size-875"
+         :class="{ 'table-condensed': !showData, 'table-expanded': showData}">
+      <div ref="table-container"
+           class="table-container"
+           :class="{'no-scroll': !showData }">
+        <table class="table table-sm mb-0">
+          <thead>
+          <tr>
+            <th v-for="value in blueprintOutcome.extractedFieldsMap.values()" :key="value">{{ value }}</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr v-for="row in filteredItems.slice(lowerPosition, upperPosition)" :key="row">
+            <template v-for="key in blueprintOutcome.extractedFieldsMap.keys()" :key="key">
+              <td v-if="key in row" :key="row">{{ row[key] }}</td>
+              <td v-else>–</td>
+            </template>
+          </tr>
+          <tr v-if="filteredItems.length === 0">
+            <td class="pb-3 pt-3">{{ t('extraction-table.all-filtered') }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Expand-table control -->
+    <div v-if="maxPage > 1 || (maxPage == 1 && upperPosition > 5)"
+         class="show-data-control text-center font-size-875 mb-3"
+         :class="{ 'control-expanded': showData, 'control-condensed': !showData }">
+
+      <button class="button grey-button button-small font-size-small expansion-control-button"
+         :class="{ 'expansion-control-btn-expanded': showData, 'expansion-control-btn-condensed': !showData }"
+         @click="toggleShowHideData">
+
+        <template v-if="!showData">
+          <span>{{ t('extraction-table.show-data') }}</span>
+          <span class="extraction-table-show-arrow"><i class="bi bi-chevron-compact-down"></i></span>
+        </template>
+
+        <template v-else-if="showData">
+          <span>{{ t('extraction-table.hide-data') }}</span>
+          <span class="extraction-table-hide-arrow"><i class="bi bi-chevron-compact-up"></i></span>
+        </template>
+
+      </button>
+    </div>
+
+    <Transition name="slide-down">
+      <div v-if="showData" class="font-size-875 page-controls">
+        <!-- Page control buttons -->
+        <div v-if="props.blueprintOutcome.extractedData.length > pageSize"
+             class="ps-2 pt-2 text-end text-md-start">
+          <!-- Prev button -->
+          <button
+              @click="prevTablePage"
+              class="button grey-button button-small me-2"
+              :disabled="currentPage <= 1"
+              aria-label="Previous page"
+          >
+            <i class="bi bi-chevron-left"></i>
+          </button>
+
+          <span>{{ t('extraction-table.page') }} {{currentPage}}/{{Math.max(maxPage, 1)}}</span>
+
+          <!-- Next button -->
+          <button
+              @click="nextTablePage"
+              class="button grey-button button-small ms-2"
+              :disabled="currentPage >= maxPage"
+              aria-label="Next page"
+          >
+            <i class="bi bi-chevron-right"></i>
+          </button>
+
+        </div>
+      </div>
+    </Transition>
+
   </div>
 
 </template>
 
 <style scoped>
+@import "@uploader/assets/styles/buttons.css";
+@import "@uploader/assets/styles/fonts.css";
+
 a:hover {
   color: black !important;
-}
-
-.btn-pagination {
-  background: #f4f4f4;
-  border: none;
-  color: black;
-}
-.btn-active:hover {
-  color: black !important;
-  background: #cacaca;
-}
-.btn-muted {
-  display: inline-block;
-  vertical-align: middle;
 }
 
 .table-wrapper {
   width: 100%;
   overflow-x: scroll;
-  margin-bottom: 15px;
   display: block;
 }
 .table-wrapper table {
@@ -274,8 +313,9 @@ a:hover {
   min-width: 200px;
 }
 
-.fs-875 {
-  font-size: .875rem;
+.table-container {
+  max-height: 400px;
+  overflow: auto;
 }
 
 .table-condensed {
@@ -293,7 +333,7 @@ a:hover {
 .control-condensed,
 .control-expanded {
   z-index: 10;
-  border-bottom: 1px solid black;
+  box-shadow: 0 1px black;
 }
 
 .control-condensed {
@@ -308,29 +348,70 @@ a:hover {
 .control-expanded {
   background: white;
   margin-top: 0;
+  min-height: 11px;
 }
 
-.expansion-control-btn {
-  background: #ededed;
-  padding: 5px;
-  border-radius: 5px;
-  color: #000000;
-  text-decoration: none;
-  transform: translateY(24px) translateX(-100px);
+.expansion-control-button {
+  transform: translateY(28px) translateX(-50%);
   position: absolute;
   z-index: 50;
-  width: 200px;
-  height: 30px;
-  cursor: pointer;
-  font-weight: 600;
+  min-width: 200px;
+  background: white;
+  border: 1px solid black;
 }
 
 .expansion-control-btn-condensed {
-  transform: translateY(24px) translateX(-100px);
+  transform: translateY(28px) translateX(-50%);
 }
 
 .expansion-control-btn-expanded {
-  transform: translateY(-15px) translateX(-100px);
+  transform: translateY(1px) translateX(-50%);
 }
 
+.extraction-table-show-arrow {
+  position: absolute;
+  bottom: -18px;
+  color: grey;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+}
+
+.extraction-table-hide-arrow {
+  position: absolute;
+  bottom: 20px;
+  color: grey;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+}
+
+.no-scroll {
+  overflow: hidden !important;
+}
+
+/* Slide down effect */
+.slide-down-enter-active {
+  transition: all 0.3s ease-out;
+  overflow: hidden;
+}
+
+.slide-down-leave-active {
+  transition: all 0.3s ease-in;
+  overflow: hidden;
+}
+
+.slide-down-enter-from,
+.slide-down-leave-to {
+  transform: translateY(-10px);
+  opacity: 0;
+  max-height: 0;
+}
+
+.slide-down-enter-to,
+.slide-down-leave-from{
+  transform: translateY(0);
+  opacity: 1;
+  max-height: 100px;
+}
 </style>

@@ -54,8 +54,8 @@ function updateConsent(consent: boolean): void {
 
 <template>
 
-  <div v-if="combinedConsent" class="fs-5 fw-bold pb-3">{{ t('feedback.donation-question') }}</div>
-  <div v-else class="fw-bold pb-3">{{ t('feedback.donation-question') }}</div>
+  <div v-if="combinedConsent" class="fs-5 fw-bold pb-2">{{ t('feedback.donation-question') }}</div>
+  <div v-else class="fw-bold pb-2">{{ t('feedback.donation-question') }}</div>
 
   <div class="btn-group" role="group" aria-label="Consent options">
     <input type="radio"
@@ -69,7 +69,7 @@ function updateConsent(consent: boolean): void {
            required>
     <label :class="{ 'selected-donate-agree': consented === true }"
            :for="'donate-agree-' + blueprintId"
-           class="btn btn-light donation-btn shadow-none">
+           class="btn button grey-button donation-btn shadow-none">
       {{ t('feedback.donation-agree') }}
     </label>
 
@@ -83,7 +83,7 @@ function updateConsent(consent: boolean): void {
            @change="updateConsent(false)">
     <label :class="{ 'selected-donate-disagree': consented === false }"
            :for="'donate-disagree-' + blueprintId"
-           class="btn btn-light donation-btn shadow-none">
+           class="btn button grey-button donation-btn shadow-none">
       {{ t('feedback.donation-disagree') }}
     </label>
   </div>
@@ -94,16 +94,14 @@ function updateConsent(consent: boolean): void {
 .selected-donate-agree {
   background: #069143 !important;
   color: white !important;
-  font-weight: bold;
+  font-weight: 600;
 }
 .selected-donate-disagree {
   background: #f38896 !important;
-  font-weight: bold;
+  font-weight: 600;
 }
 .donation-btn {
   width: 120px;
-  color: #000;
-  background-color: #dfdfdf;
   border: none;
   margin: 5px;
 }

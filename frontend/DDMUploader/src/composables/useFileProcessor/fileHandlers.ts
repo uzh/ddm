@@ -6,6 +6,58 @@ import {BlueprintExtractionOutcome} from "@uploader/classes/BlueprintExtractionO
 import {ProcessingError} from "@uploader/types/ProcessingError";
 import {processContent} from "@uploader/composables/useFileProcessor/contentParsers";
 
+const MAX_NESTED_ZIP_DEPTH = 3;
+
+type ExtractedZipFile = {
+  fullPath: string;
+  relativePath: string;
+  entry: JSZip.JSZipObject;
+};
+
+function normalizePath(path: string): string {
+  return path.replace(/^\.\/+/, '').replace(/\\/g, '/');
+}
+
+async function collectZipEntries(
+  zip: JSZip,
+  generalErrors: ProcessingError[],
+  depth = 0,
+  parentPath = ''
+): Promise<ExtractedZipFile[]> {
+  const entries: ExtractedZipFile[] = [];
+
+  for (const entry of Object.values(zip.files)) {
+    if (entry.dir) {
+      continue;
+    }
+
+    const normalizedName = normalizePath(entry.name);
+    const parentBase = parentPath.split('/').filter(Boolean).pop();
+    const entryPath = parentPath && parentBase && normalizedName.startsWith(`${parentBase}/`)
+      ? `${parentPath}/${normalizedName.slice(parentBase.length + 1)}`
+      : parentPath
+        ? `${parentPath}/${normalizedName}`
+        : normalizedName;
+
+    if (entry.name.toLowerCase().endsWith('.zip') && depth < MAX_NESTED_ZIP_DEPTH) {
+      try {
+        const nestedBuffer = await entry.async('arraybuffer');
+        const nestedZip = await JSZip.loadAsync(nestedBuffer);
+        const nestedParent = entryPath.replace(/\.zip$/i, '');
+        const nestedEntries = await collectZipEntries(nestedZip, generalErrors, depth + 1, nestedParent);
+        entries.push(...nestedEntries);
+        continue;
+      } catch (error) {
+        registerGeneralError(generalErrors, ERROR_CATALOG.ZIP_READ_FAIL, { error });
+      }
+    }
+
+    entries.push({ fullPath: entryPath, relativePath: normalizedName, entry });
+  }
+
+  return entries;
+}
+
 /**
  * Processes a ZIP archive by extracting and processing matching files.
  *
@@ -49,6 +101,13 @@ export async function handleZipFile(
     return;
   }
 
+  const extractedFiles = await collectZipEntries(zip, generalErrors);
+  const availableFiles = Array.from(
+    new Set(
+      extractedFiles.flatMap(entry => [entry.fullPath, entry.relativePath, `./${entry.relativePath}`])
+    )
+  );
+
   for (const blueprint of blueprints) {
     let re: RegExp;
     try {
@@ -58,9 +117,11 @@ export async function handleZipFile(
       continue;
     }
 
-    const matchingFiles = zip.file(re);
+    const matchingFiles = extractedFiles.filter(entry => {
+      const candidatePaths = [entry.fullPath, entry.relativePath, `./${entry.relativePath}`];
+      return candidatePaths.some(path => re.test(path));
+    });
     if (matchingFiles.length === 0) {
-      const availableFiles = Object.keys(zip.files);
       const errorContext = { regexPath: blueprint.regex_path, availableFiles: availableFiles }
       blueprintOutcomeMap[blueprint.id].registerError(ERROR_CATALOG.NO_FILE_MATCH, errorContext);
       continue;
@@ -68,7 +129,7 @@ export async function handleZipFile(
 
     for (const zipEntry of matchingFiles) {
       try {
-        const content = await zipEntry.async("string");
+        const content = await zipEntry.entry.async("string");
         processContent(content, blueprint, blueprintOutcomeMap);
       } catch (error) {
         blueprintOutcomeMap[blueprint.id].registerError(ERROR_CATALOG.FILE_PROCESSING_FAIL_GENERAL, {error: error});

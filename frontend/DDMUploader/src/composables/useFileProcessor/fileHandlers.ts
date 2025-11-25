@@ -6,11 +6,35 @@ import {BlueprintExtractionOutcome} from "@uploader/classes/BlueprintExtractionO
 import {ProcessingError} from "@uploader/types/ProcessingError";
 import {processContent} from "@uploader/composables/useFileProcessor/contentParsers";
 
+
+/* Currently, the file extraction logic will match file names using regex patterns.
+   If there are multiple files matching a pattern, all will be processed and the extracted
+   fields will be aggregated in the blueprint outcome. For example, for the following file
+   strucutre:
+    - archive.zip
+      - data1.json
+      - folder1/
+        - data1.json
+
+    if the given file path is "data1.json", both files will be processed and their extracted
+    fields combined in the blueprint outcome.
+
+    This behavior is perserved for the nested zip files as well. For example:
+    - archive.zip
+      - data1.json
+      - folder1/
+        - data1.json
+      - nested.zip
+        - data1.json
+
+    In this case, all three data1.json files will be processed.
+   */
+
+/* max depth of nested ZIP files we will process. */
 const MAX_NESTED_ZIP_DEPTH = 3;
 
 type ExtractedZipFile = {
   fullPath: string;
-  relativePath: string;
   entry: JSZip.JSZipObject;
 };
 
@@ -52,7 +76,7 @@ async function collectZipEntries(
       }
     }
 
-    entries.push({ fullPath: entryPath, relativePath: normalizedName, entry });
+    entries.push({ fullPath: entryPath, entry });
   }
 
   return entries;
@@ -102,11 +126,7 @@ export async function handleZipFile(
   }
 
   const extractedFiles = await collectZipEntries(zip, generalErrors);
-  const availableFiles = Array.from(
-    new Set(
-      extractedFiles.flatMap(entry => [entry.fullPath, entry.relativePath, `./${entry.relativePath}`])
-    )
-  );
+  const availableFiles = Array.from(new Set(extractedFiles.map(entry => entry.fullPath)));
 
   for (const blueprint of blueprints) {
     let re: RegExp;
@@ -117,10 +137,7 @@ export async function handleZipFile(
       continue;
     }
 
-    const matchingFiles = extractedFiles.filter(entry => {
-      const candidatePaths = [entry.fullPath, entry.relativePath, `./${entry.relativePath}`];
-      return candidatePaths.some(path => re.test(path));
-    });
+    const matchingFiles = extractedFiles.filter(entry => re.test(entry.fullPath));
     if (matchingFiles.length === 0) {
       const errorContext = { regexPath: blueprint.regex_path, availableFiles: availableFiles }
       blueprintOutcomeMap[blueprint.id].registerError(ERROR_CATALOG.NO_FILE_MATCH, errorContext);

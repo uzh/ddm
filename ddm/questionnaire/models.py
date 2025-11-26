@@ -653,6 +653,7 @@ class FilterCondition(models.Model):
                 return None
 
         elif self.source_type == FilterSourceTypes.DONATION:
+            # TODO: Add variable check similar to PARTICIPANT and URL_PARAMETER variables.
             return self.source_identifier
 
         else:

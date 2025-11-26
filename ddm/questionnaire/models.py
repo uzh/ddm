@@ -646,7 +646,7 @@ class FilterCondition(models.Model):
             return self.source_identifier
 
         elif self.source_type == FilterSourceTypes.PARTICIPANT:
-            participant_variables = get_participant_variables(self.get_related_project())
+            participant_variables = get_participant_variables()
             if self.source_identifier in participant_variables.keys():
                 return self.source_identifier
             else:

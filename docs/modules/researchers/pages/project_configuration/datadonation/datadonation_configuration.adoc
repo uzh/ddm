@@ -106,8 +106,7 @@ Only necessary, if the Blueprint is associated to a Uploader that expects a ZIP 
 can include https://developer.mozilla.org/en-US/docs/Glossary/Regular_expression[regex expressions]
 for flexible file matching (see below).
 +
-WARNING: If a regex expression matches two files, DDM extracts the first one that matches the expression.
-Afterward, it does not look any further, even if the matched file does not contain the expected fields (see below).
+If a regex expression matches more than one file, DDM processes and extracts the data of all matched files consecutively.
 Therefore, we recommend to be as specific as possible when setting the file path.
 +
 [TIP]

@@ -1,22 +1,6 @@
 {
-  "status": "done",
-  "assets": {
-    "js/chunk-vendors.js": {
-      "name": "js/chunk-vendors.js",
-      "path": "js/chunk-vendors.js",
-      "publicPath": "/static/ddm_core/frontend/questionnaire/js/chunk-vendors.js"
-    },
-    "js/ddm_questionnaire_frontend.js": {
-      "name": "js/ddm_questionnaire_frontend.js",
-      "path": "js/ddm_questionnaire_frontend.js",
-      "publicPath": "/static/ddm_core/frontend/questionnaire/js/ddm_questionnaire_frontend.js"
-    }
-  },
-  "chunks": {
-    "ddm_questionnaire_frontend": [
-      "js/chunk-vendors.js",
-      "js/ddm_questionnaire_frontend.js"
-    ]
-  },
+  "status": "compile",
+  "assets": {},
+  "chunks": {},
   "publicPath": "/static/ddm_core/frontend/questionnaire/"
 }

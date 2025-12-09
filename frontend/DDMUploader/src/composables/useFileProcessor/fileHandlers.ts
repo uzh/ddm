@@ -57,24 +57,33 @@ async function collectZipEntries(
 
     const normalizedName = normalizePath(entry.name);
     const parentBase = parentPath.split('/').filter(Boolean).pop();
-    const entryPath = parentPath && parentBase && normalizedName.startsWith(`${parentBase}/`)
-      ? `${parentPath}/${normalizedName.slice(parentBase.length + 1)}`
-      : parentPath
-        ? `${parentPath}/${normalizedName}`
-        : normalizedName;
+    const entryPath = parentPath
+      ? `${parentPath}/${normalizedName}`
+      : normalizedName;
 
-    if (entry.name.toLowerCase().endsWith('.zip') && depth < MAX_NESTED_ZIP_DEPTH) {
-      try {
-        const nestedBuffer = await entry.async('arraybuffer');
-        const nestedZip = await JSZip.loadAsync(nestedBuffer);
-        const nestedParent = entryPath.replace(/\.zip$/i, '');
-        const nestedEntries = await collectZipEntries(nestedZip, generalErrors, depth + 1, nestedParent);
-        entries.push(...nestedEntries);
-        continue;
-      } catch (error) {
-        registerGeneralError(generalErrors, ERROR_CATALOG.ZIP_READ_FAIL, { error });
+      if (entry.name.toLowerCase().endsWith('.zip') && depth < MAX_NESTED_ZIP_DEPTH) {
+        try {
+          const nestedBuffer = await entry.async('arraybuffer');
+          const nestedZip = await JSZip.loadAsync(nestedBuffer);
+
+          // Use the ZIP's actual filename as the prefix
+          const nestedParent = parentPath
+            ? `${parentPath}/${normalizedName}`
+            : normalizedName;
+
+          const nestedEntries = await collectZipEntries(
+            nestedZip,
+            generalErrors,
+            depth + 1,
+            nestedParent.replace(/\.zip$/i, '.zip')
+          );
+
+          entries.push(...nestedEntries);
+          continue;
+        } catch (error) {
+          registerGeneralError(generalErrors, ERROR_CATALOG.ZIP_READ_FAIL, { error });
+        }
       }
-    }
 
     entries.push({ fullPath: entryPath, entry });
   }

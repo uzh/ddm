@@ -8,6 +8,7 @@ from django.utils import timezone
 
 from ddm.auth.models import ProjectAccessToken
 from ddm.core.utils.user_content.template import render_user_content
+from ddm.core.utils.validators import validate_regex_pattern, validate_safe_regex
 from ddm.encryption.models import ModelWithEncryptedData
 from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers, EventLogEntry
 
@@ -168,6 +169,7 @@ class DonationBlueprint(models.Model):
     regex_path = models.TextField(
         null=True,
         blank=True,
+        validators=[validate_regex_pattern],
         verbose_name='File path',
         help_text=(
             'The path where the file is expected to be located in the uploaded '
@@ -185,6 +187,35 @@ class DonationBlueprint(models.Model):
 
     def get_absolute_url(self):
         return reverse('ddm_datadonation:blueprints:edit', args=[str(self.project.url_id), str(self.id)])
+
+    def clean(self):
+
+        errors = {}
+
+        if self.regex_path:
+            try:
+                validate_safe_regex(self.regex_path)
+            except ValidationError as e:
+                errors['regex_path'] = e.message
+
+        # Validate expected_fields when regex matching is enabled
+        if self.expected_fields_regex_matching and self.expected_fields:
+            # Parse the comma-separated quoted strings: "pattern1", "pattern2"
+            try:
+                patterns = json.loads('[' + self.expected_fields + ']')
+                for i, pattern in enumerate(patterns):
+                    try:
+                        validate_safe_regex(pattern)
+                    except ValidationError as e:
+                        errors['expected_fields'] = f'Invalid regex in pattern "{pattern}": {e.message}'
+                        break
+            except json.JSONDecodeError:
+                pass  # Let the existing COMMA_SEPARATED_STRINGS_VALIDATOR handle format errors
+
+        if errors:
+            raise ValidationError(errors)
+
+        super().clean()
 
     def get_slug(self):
         return 'blueprint'
@@ -327,6 +358,33 @@ class ProcessingRule(models.Model):
         blank=True,
         help_text='Only required for operation "Replace match (regex)".'
     )
+
+    def clean(self):
+        regex_operators = [
+            self.ComparisonOperators.REGEX_DELETE_MATCH,
+            self.ComparisonOperators.REGEX_REPLACE_MATCH,
+            self.ComparisonOperators.REGEX_DELETE_ROW,
+        ]
+
+        errors = {}
+
+        # Validate expected_fields when regex matching is enabled
+        if self.regex_field and self.field:
+            try:
+                validate_safe_regex(self.field)
+            except ValidationError as e:
+                errors['field'] = f'Invalid regex: {e.message}'
+
+        if self.comparison_operator in regex_operators and self.comparison_value:
+            try:
+                validate_safe_regex(self.comparison_value)
+            except ValidationError as e:
+                errors['comparison_value'] = f'Invalid regex: {e.message}'
+
+        if errors:
+            raise ValidationError(errors)
+
+        super().clean()
 
     def get_rule_config(self):
         """

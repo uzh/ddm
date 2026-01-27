@@ -245,3 +245,239 @@ class TestProcessingRuleModel(TestCase):
             'replacement_value': ''
         }
         self.assertEqual(rule.get_rule_config(), expected_config)
+
+
+class TestDonationBlueprintRegexValidation(TestCase):
+    """Tests for regex validation in DonationBlueprint.clean()."""
+
+    @classmethod
+    def setUpTestData(cls):
+        user = User.objects.create_user(**{
+            'username': 'owner', 'password': '123', 'email': 'owner@mail.com'
+        })
+        profile = ResearchProfile.objects.create(user=user)
+        cls.project = DonationProject.objects.create(
+            name='Base Project', slug='base-regex', owner=profile)
+        cls.file_uploader = FileUploader.objects.create(
+            project=cls.project,
+            name='basic file uploader',
+            upload_type=FileUploader.UploadTypes.SINGLE_FILE
+        )
+
+    def test_valid_regex_path_passes(self):
+        blueprint = DonationBlueprint(
+            project=self.project,
+            name='test blueprint',
+            expected_fields='"field1"',
+            file_uploader=self.file_uploader,
+            regex_path=r'.*\.json$'
+        )
+        blueprint.clean()  # Should not raise
+
+    def test_invalid_regex_path_syntax_raises_error(self):
+        blueprint = DonationBlueprint(
+            project=self.project,
+            name='test blueprint',
+            expected_fields='"field1"',
+            file_uploader=self.file_uploader,
+            regex_path=r'[unclosed'
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            blueprint.clean()
+        self.assertIn('regex_path', ctx.exception.message_dict)
+
+    def test_dangerous_regex_path_raises_error(self):
+        blueprint = DonationBlueprint(
+            project=self.project,
+            name='test blueprint',
+            expected_fields='"field1"',
+            file_uploader=self.file_uploader,
+            regex_path=r'(a+)+'
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            blueprint.clean()
+        self.assertIn('regex_path', ctx.exception.message_dict)
+
+    def test_valid_expected_fields_regex_passes(self):
+        blueprint = DonationBlueprint(
+            project=self.project,
+            name='test blueprint',
+            expected_fields=r'"field_\d+", "other_[a-z]+"',
+            expected_fields_regex_matching=True,
+            file_uploader=self.file_uploader,
+        )
+        blueprint.clean()  # Should not raise
+
+    def test_invalid_expected_fields_regex_raises_error(self):
+        blueprint = DonationBlueprint(
+            project=self.project,
+            name='test blueprint',
+            expected_fields=r'"[unclosed"',
+            expected_fields_regex_matching=True,
+            file_uploader=self.file_uploader,
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            blueprint.clean()
+        self.assertIn('expected_fields', ctx.exception.message_dict)
+
+    def test_dangerous_expected_fields_regex_raises_error(self):
+        blueprint = DonationBlueprint(
+            project=self.project,
+            name='test blueprint',
+            expected_fields=r'"(a+)+"',
+            expected_fields_regex_matching=True,
+            file_uploader=self.file_uploader,
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            blueprint.clean()
+        self.assertIn('expected_fields', ctx.exception.message_dict)
+
+    def test_expected_fields_not_validated_when_regex_disabled(self):
+        """When regex matching is disabled, patterns aren't validated as regex."""
+        blueprint = DonationBlueprint(
+            project=self.project,
+            name='test blueprint',
+            expected_fields=r'"[not a valid regex"',
+            expected_fields_regex_matching=False,
+            file_uploader=self.file_uploader,
+        )
+        blueprint.clean()  # Should not raise - not treated as regex
+
+
+class TestProcessingRuleRegexValidation(TestCase):
+    """Tests for regex validation in ProcessingRule.clean()."""
+
+    @classmethod
+    def setUpTestData(cls):
+        user = User.objects.create_user(**{
+            'username': 'owner2', 'password': '123', 'email': 'owner2@mail.com'
+        })
+        profile = ResearchProfile.objects.create(user=user)
+        project = DonationProject.objects.create(
+            name='Base Project 2', slug='base-regex-2', owner=profile)
+        file_uploader = FileUploader.objects.create(
+            project=project,
+            name='basic file uploader',
+            upload_type=FileUploader.UploadTypes.SINGLE_FILE
+        )
+        cls.blueprint = DonationBlueprint.objects.create(
+            project=project,
+            name='valid blueprint',
+            expected_fields='"field"',
+            file_uploader=file_uploader,
+        )
+
+    def test_valid_regex_field_passes(self):
+        rule = ProcessingRule(
+            blueprint=self.blueprint,
+            name='test rule',
+            field=r'field_\d+',
+            regex_field=True,
+            execution_order=1,
+        )
+        rule.clean()  # Should not raise
+
+    def test_invalid_regex_field_syntax_raises_error(self):
+        rule = ProcessingRule(
+            blueprint=self.blueprint,
+            name='test rule',
+            field=r'[unclosed',
+            regex_field=True,
+            execution_order=1,
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            rule.clean()
+        self.assertIn('field', ctx.exception.message_dict)
+
+    def test_dangerous_regex_field_raises_error(self):
+        rule = ProcessingRule(
+            blueprint=self.blueprint,
+            name='test rule',
+            field=r'(a+)+',
+            regex_field=True,
+            execution_order=1,
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            rule.clean()
+        self.assertIn('field', ctx.exception.message_dict)
+
+    def test_field_not_validated_when_regex_disabled(self):
+        """When regex_field is False, field isn't validated as regex."""
+        rule = ProcessingRule(
+            blueprint=self.blueprint,
+            name='test rule',
+            field=r'[not valid regex',
+            regex_field=False,
+            execution_order=1,
+        )
+        rule.clean()  # Should not raise
+
+    def test_valid_regex_comparison_value_passes(self):
+        rule = ProcessingRule(
+            blueprint=self.blueprint,
+            name='test rule',
+            field='some_field',
+            execution_order=1,
+            comparison_operator=ProcessingRule.ComparisonOperators.REGEX_DELETE_MATCH,
+            comparison_value=r'\d{4}-\d{2}-\d{2}',
+        )
+        rule.clean()  # Should not raise
+
+    def test_invalid_regex_comparison_value_raises_error(self):
+        rule = ProcessingRule(
+            blueprint=self.blueprint,
+            name='test rule',
+            field='some_field',
+            execution_order=1,
+            comparison_operator=ProcessingRule.ComparisonOperators.REGEX_DELETE_MATCH,
+            comparison_value=r'[unclosed',
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            rule.clean()
+        self.assertIn('comparison_value', ctx.exception.message_dict)
+
+    def test_dangerous_regex_comparison_value_raises_error(self):
+        rule = ProcessingRule(
+            blueprint=self.blueprint,
+            name='test rule',
+            field='some_field',
+            execution_order=1,
+            comparison_operator=ProcessingRule.ComparisonOperators.REGEX_REPLACE_MATCH,
+            comparison_value=r'(a+)+',
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            rule.clean()
+        self.assertIn('comparison_value', ctx.exception.message_dict)
+
+    def test_comparison_value_not_validated_for_non_regex_operators(self):
+        """Non-regex operators don't validate comparison_value as regex."""
+        rule = ProcessingRule(
+            blueprint=self.blueprint,
+            name='test rule',
+            field='some_field',
+            execution_order=1,
+            comparison_operator=ProcessingRule.ComparisonOperators.EQUAL,
+            comparison_value=r'[not valid regex',
+        )
+        rule.clean()  # Should not raise
+
+    def test_all_regex_operators_trigger_validation(self):
+        """All three regex operators should trigger comparison_value validation."""
+        regex_operators = [
+            ProcessingRule.ComparisonOperators.REGEX_DELETE_MATCH,
+            ProcessingRule.ComparisonOperators.REGEX_REPLACE_MATCH,
+            ProcessingRule.ComparisonOperators.REGEX_DELETE_ROW,
+        ]
+        for operator in regex_operators:
+            with self.subTest(operator=operator):
+                rule = ProcessingRule(
+                    blueprint=self.blueprint,
+                    name='test rule',
+                    field='some_field',
+                    execution_order=1,
+                    comparison_operator=operator,
+                    comparison_value=r'[unclosed',
+                )
+                with self.assertRaises(ValidationError) as ctx:
+                    rule.clean()
+                self.assertIn('comparison_value', ctx.exception.message_dict)

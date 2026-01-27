@@ -48,6 +48,24 @@ def create_participation_session(request, project):
     return
 
 
+def has_valid_zip_paths(zip_file: zipfile.ZipFile) -> bool:
+    """Check that ZIP file doesn't contain path traversal attempts.
+
+    Rejects ZIP files containing entries with:
+    - Empty filenames
+    - Absolute paths (starting with /)
+    - Parent directory references (..)
+
+    Note: This is a defensive measure - the current code only reads specific
+    files by name and doesn't extract to disk, but this validation
+    protects against future code changes and aids security audits.
+    """
+    for name in zip_file.namelist():
+        if not name or name.startswith('/') or '..' in name:
+            return False
+    return True
+
+
 class ParticipationFlowBaseView(DetailView):
     """
     Base class for participation flow views that implements base get and post
@@ -251,7 +269,7 @@ class DataDonationView(ParticipationFlowBaseView):
         return json.dumps(uploader_configs)
 
     def post(self, request, *args, **kwargs):
-        super().post(request, **kwargs)  # TODO: Check if this is obsolete
+        super().post(request, **kwargs)
         self.process_uploads(request.FILES)
         redirect_url = reverse(self.steps[self.current_step + 1], kwargs={'slug': self.object.slug})
         return HttpResponseRedirect(redirect_url)
@@ -273,6 +291,12 @@ class DataDonationView(ParticipationFlowBaseView):
 
         # Check if zip file contains expected file.
         unzipped_file = zipfile.ZipFile(file, 'r')
+
+        if not has_valid_zip_paths(unzipped_file):
+            msg = 'Data Donation Processing Exception: ZIP file contains invalid file paths.'
+            log_server_exception(self.object, msg)
+            return
+
         if 'data_donation.json' not in unzipped_file.namelist():
             msg = 'Data Donation Processing Exception: "data_donation.json" is not in namelist.'
             log_server_exception(self.object, msg)

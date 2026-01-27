@@ -217,6 +217,12 @@ CKEDITOR_5_ALLOW_ALL_FILE_TYPES = True
 CKEDITOR_5_UPLOAD_FILE_TYPES = ['jpeg', 'pdf', 'png', 'mp4']
 ----
 
+[CAUTION]
+====
+This configuration may introduce a security risk if you don't restrict account creation to trusted users (e.g.,
+university members) - see xref:administrators:topics/security.adoc[the respective section in the security notices].
+====
+
 Add time zone support to your settings.py:
 
 [source, python]

@@ -1,0 +1,53 @@
+= Security Notices
+:!toc:
+:icons: font
+:stem: latexmath
+:last-update-label!:
+:favicon: ddl_favicon_black.svg
+:showtitle!:
+:page-pagination:
+
+== CKEditor File Upload Security
+
+DDM uses https://github.com/hvlads/django-ckeditor-5[django-ckeditor-5] for rich text editing.
+File uploads are controlled by these Django settings:
+
+* `CKEDITOR_5_FILE_UPLOAD_PERMISSION`
+* `CKEDITOR_5_ALLOW_ALL_FILE_TYPES`
+* `CKEDITOR_5_UPLOAD_FILE_TYPES`
+
+=== Default Behavior
+
+With `CKEDITOR_5_ALLOW_ALL_FILE_TYPES = False`, only images are allowed and file contents are validated.
+
+=== Risk: Allowing All File Types
+
+Setting `CKEDITOR_5_ALLOW_ALL_FILE_TYPES = True` validates *only file extensions*, not content. This creates vulnerabilities:
+
+* Malicious files can use trusted extensions (e.g., `malware.pdf`)
+* Polyglot files can bypass extension checks
+* PDFs may contain JavaScript or exploits
+
+=== Mitigations
+
+If your DDM instance allows registration by untrusted users, consider these protections:
+
+[cols="1,3"]
+|===
+|Mitigation |Implementation
+
+|Restrict file types
+|Limit the upload to images with `CKEDITOR_5_ALLOW_ALL_FILE_TYPES = False` if PDFs aren't required
+
+|Validate content
+|Check magic bytes to verify file content matches the claimed type
+
+|Set secure headers
+|Serve uploads with `Content-Disposition: attachment` and `X-Content-Type-Options: nosniff`
+
+|Isolate domains
+|Serve uploads from a separate domain to protect session cookies
+
+|Sanitize PDFs
+|If PDFs are necessary, strip JavaScript and embedded content using a sanitization library
+|===

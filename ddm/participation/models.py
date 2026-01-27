@@ -1,5 +1,5 @@
 from django.core.validators import MinLengthValidator
-from django.db import models
+from django.db import models, IntegrityError
 
 from ddm.auth.models import ProjectAccessToken
 from ddm.core.utils.misc import create_asciidigits_id
@@ -11,14 +11,15 @@ def get_extra_data_default():
     """ Return default value for Participant.extra_data. """
     return dict(url_param=dict())
 
+EXTERNAL_ID_LENGTH = 24  # Length of participant external ID
 
 class Participant(models.Model):
     project = models.ForeignKey('ddm_projects.DonationProject', on_delete=models.CASCADE)
 
     external_id = models.CharField(
         unique=True, null=False,
-        max_length=24,
-        validators=[MinLengthValidator(24)]
+        max_length=EXTERNAL_ID_LENGTH,
+        validators=[MinLengthValidator(EXTERNAL_ID_LENGTH)]
     )
 
     # Participation statistics.
@@ -60,8 +61,15 @@ class Participant(models.Model):
 
     def save(self, *args, **kwargs):
         if self.pk is None:
-            new_external_id = create_asciidigits_id(24)
-            while len(Participant.objects.filter(external_id=new_external_id)) != 0:
-                new_external_id = create_asciidigits_id(24)
-            self.external_id = new_external_id
+
+            max_attempts = 5
+            for attempt in range(max_attempts):
+                self.external_id = create_asciidigits_id(EXTERNAL_ID_LENGTH)
+                try:
+                    return super().save(*args, **kwargs)
+                except IntegrityError:
+                    if attempt == max_attempts - 1:
+                        raise
+                    continue
+
         super().save(*args, **kwargs)

@@ -158,15 +158,29 @@
         </div>
       </div>
 
-      {% with stats=object.get_statistics %}
       <div id="project-log-section" class="row gy-3 pb-4 pt-4 border-bottom">
-        <div class="col-12"><h5 class="fw-bold mb-0">Project Log</h5></div>
+        <div class="col-12"><h5 class="fw-bold mb-0">Project Logs</h5></div>
         <div class="col-12">
-          <p class="m-0"><a href="{% url 'ddm_logging:project_logs' object.url_id %}">Show Project Log</a></p>
-          <p class="mb-0">(Registered Exceptions: {{ stats.n_errors }})</p>
+          <div class="pb-1 fw-bold">Exception Logs</div>
+          <div>
+            <p class="m-0 pb-2">Track errors and extraction outcomes during data donation processing</p>
+          </div>
+          <div>
+            <p class="m-0"><a href="{% url 'ddm_logging:project_exception_logs' object.url_id %}">See all Exception Logs</a></p>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="pb-1 fw-bold">Event Logs</div>
+          <div>
+            <p class="m-0 pb-2">Track access token changes, API authentication failures, and data operations</p>
+          </div>
+          <div>
+            <p class="m-0"><a href="{% url 'ddm_logging:project_event_logs' object.url_id %}">See all Event Logs</a></p>
+          </div>
         </div>
       </div>
 
+      {% with stats=object.get_statistics %}
       <div id="participation-statistics-section" class="row gy-3 pb-4 pt-4 border-bottom">
         <div class="col-12"><h5 class="fw-bold mb-0">Participation Statistics</h5></div>
 

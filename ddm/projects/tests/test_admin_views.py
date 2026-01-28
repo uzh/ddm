@@ -155,7 +155,8 @@ class TestAdminViewAuthentication(TestCase):
             'ddm_datadonation:overview',
             'ddm_datadonation:blueprints:create',
             'ddm_questionnaire:overview',
-            'ddm_logging:project_logs',
+            'ddm_logging:project_exception_logs',
+            'ddm_logging:project_event_logs',
             'ddm_auth:project_token'
         ]
         for view in project_related_views:

@@ -2,14 +2,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>DDM: {% block page_title %}Title{% endblock %}</title>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <link rel="stylesheet" href="{% static 'ddm_core/css/bootstrap/bootstrap.min.css' %}">
-  <link rel="stylesheet" href="{% static 'ddm_core/css/ddm-base.css' %}">
-  <link rel="stylesheet" href="{% static 'ddm_core/css/research-interface-base.css' %}">
-  <link rel="stylesheet" href="{% static 'ddm_core/css/bootstrap/bootstrap-icons.css' %}">
-  {% block extrahead %}{% endblock %}
+  <title>DDM: {% block page_title %}Title{% endblock page_title %}</title>
+
+  <link rel="stylesheet" href="{% static 'ddm_core/css/bootstrap/bootstrap.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'ddm_core/css/ddm-base.css' %}" />
+  <link rel="stylesheet" href="{% static 'ddm_core/css/research-interface-base.css' %}" />
+  <link rel="stylesheet" href="{% static 'ddm_core/css/bootstrap/bootstrap-icons.css' %}" />
+  {% block extrahead %}{% endblock extrahead %}
 </head>
 
 <body class="research-interface">
@@ -20,12 +23,12 @@
     {% include "ddm_core/components/header.html" %}
     </div>
   </div>
-{% endblock %}
+{% endblock header %}
 
 <div class="ddm-breadcrumbs container mt-3 mb-3 fw-light d-flex flex-row justify-content-between">
   <div>
     {% block breadcrumbs %}
-    {% endblock %}
+    {% endblock breadcrumbs %}
   </div>
   <div class="version-info">{{ ddm_version }}</div>
 </div>
@@ -44,15 +47,15 @@
 </div>
 
 <div id="ddm-main" class="ddm-main container mt-4">
-  <h1>{% block main_heading %}{% endblock %}</h1>
+  {% block main_heading_wrapper %}<h1>{% block main_heading %}{% endblock main_heading %}</h1>{% endblock main_heading_wrapper %}
 
   <div>
-    {% block main_body %}{% endblock %}
+    {% block main_body %}{% endblock main_body %}
   </div>
 </div>
 
 {% block footer %}
-{% endblock %}
+{% endblock footer %}
 
 
 {% block scripts %}
@@ -60,7 +63,7 @@
 <script src="{% static 'ddm_core/js/bootstrap/bootstrap.bundle.min.js' %}"></script>
 <script src="{% static 'ddm_core/js/messages.js' %}"></script>
 <script src="{% static 'ddm_projects/js/project-admin-base.js' %}"></script>
-{% endblock %}
+{% endblock scripts %}
 
 </body>
 

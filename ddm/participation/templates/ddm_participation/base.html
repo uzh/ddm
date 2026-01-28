@@ -24,11 +24,11 @@
     {% block public-header %}
     <div class="row align-items-center">
       <div class="col text-center">
-        <img class="float-md-start" src="{% if project.img_header_left %}{{ project.img_header_left.url }}{% elif default_header_left %}{{ default_header_left }}{% endif %}" height="80px">
+        <img class="float-md-start" src="{% if project.img_header_left %}{{ project.img_header_left.url }}{% elif default_header_left %}{{ default_header_left }}{% endif %}" height="80px" alt="Project Logo Left" />
       </div>
 
       <div class="col text-center">
-        <img class="float-md-end" src="{% if project.img_header_right %}{{ project.img_header_right.url }}{% elif default_header_right %}{{ default_header_right }}{% endif %}" height="80px">
+        <img class="float-md-end" src="{% if project.img_header_right %}{{ project.img_header_right.url }}{% elif default_header_right %}{{ default_header_right }}{% endif %}" height="80px" alt="Project Logo Right" />
       </div>
     </div>
     {% endblock public-header %}
@@ -52,9 +52,6 @@
     </div>
     {% endblock public-footer %}
   </div>
-
-</div>
-
 
 </div>
 

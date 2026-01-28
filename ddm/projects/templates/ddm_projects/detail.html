@@ -1,9 +1,9 @@
 {% extends 'ddm_core/base.html' %}
 {% load static %}
 
-{% block page_title %}Project Overview{% endblock %}
+{% block page_title %}Project Overview{% endblock page_title %}
 
-{% block main_heading %}{{ object.name }}: Project Hub{% endblock %}
+{% block main_heading_wrapper %}<h1 class="fw-bold">{{ object.name }}: Project Hub</h1>{% endblock main_heading_wrapper %}
 
 {% block main_body %}
 
@@ -12,175 +12,191 @@
   <div class="ddm-admin-section-header">
     Project Details <span class="inline-edit"><a href="{% url 'ddm_projects:edit' object.url_id %}"><i class="bi bi-pencil-square"></i> Edit</a></span>
   </div>
-  <div class="ddm-admin-section-body">
-    <table class="table table-borderless table-sm">
-      <tr>
-        <td>Name:</td>
-        <td>{{ object.name }}</td>
-      </tr>
-      <tr>
-        <td>Slug:</td>
-        <td>{{ object.slug }}</td>
-      </tr>
-      <tr>
-        <td>Project ID:</td>
-        <td>{{ object.url_id }}</td>
-      </tr>
-      <tr>
-        <td>Public Access:</td>
-        <td>
-          <a href="{% url 'ddm_participation:briefing' object.slug %}" target="_blank">{{ request.scheme }}://{{ request.get_host }}{% url 'ddm_participation:briefing' object.slug %}</a><br>
-          <span class="helptext">To test the project yourself from the participants' perspective, open this link in a new private window.</span>
-        </td>
-      </tr>
-      <tr>
-        <td>Status:</td>
-        <td>{% if object.active %}Project is <b>active</b> and participation is possible{% else %}Project is <b>inactive</b> and participation is not possible{% endif %}</td>
-      </tr>
-      <tr>
-        <td>Project Type:</td>
-        <td>{% if object.super_secret %}Super Secret Project{% else %}Regular Project{% endif %}</td>
-      </tr>
-    </table>
-  </div>
-</div>
 
+  <div class="container pt-3">
+    <div class="row pb-2">
+      <div class="col-12 col-sm-3 col-lg-2 fw-bolder">Name:</div>
+      <div class="col-12 col-sm-auto">{{ object.name }}</div>
+    </div>
+
+    <div class="row pb-2">
+      <div class="col-12 col-sm-3 col-lg-2 fw-bolder">Project ID:</div>
+      <div class="col-12 col-sm-auto">{{ object.url_id }}</div>
+    </div>
+
+    <div class="row pb-2">
+      <div class="col-12 col-sm-3 col-lg-2 fw-bolder">Participant Link:</div>
+      <div class="col-12 col-sm-9">
+        <p class="m-0">
+          <a href="{% url 'ddm_participation:briefing' object.slug %}" target="_blank">
+            {{ request.scheme }}://{{ request.get_host }}{% url 'ddm_participation:briefing' object.slug %}
+          </a>
+        </p>
+        <p class="m-0 helptext">Tip: Test it yourself by opening this link in a private browser window.</p>
+      </div>
+    </div>
+
+    <div class="row pb-2">
+      <div class="col-12 col-sm-3 col-lg-2 fw-bolder">Status:</div>
+      <div class="col-12 col-sm-auto">{% if object.active %}Project is <b>active</b> and participation is possible{% else %}Project is <b>inactive</b> and participation is not possible{% endif %}</div>
+    </div>
+
+    <div class="row pb-2">
+      <div class="col-12 col-sm-3 col-lg-2 fw-bolder">Project Type:</div>
+      <div class="col-12 col-sm-auto">{% if object.super_secret %}Super Secret Project{% else %}Regular Project{% endif %}</div>
+    </div>
+  </div>
+
+</div>
 
 {# PROJECT CONFIGURATION #}
 <div id="project-configuration" class="ddm-admin-section">
   <div class="ddm-admin-section-header">Project Configuration</div>
-  <div class="ddm-admin-section-body">
-    <div class="container">
-      <div class="row d-flex align-items-stretch">
 
-        <div class="project-setup-card text-center">
+  <div class="container pt-4 pb-4">
+    <div class="row">
+
+      <div class="col-12 col-lg-2 project-setup-card text-center d-flex flex-column align-items-center">
+        <div>
           <a class="card-link" href="{% url 'ddm_projects:briefing_edit' object.url_id %}">
             <div><i class="bi bi-chat-right-text-fill ddm-if-icon"></i></div>
             <div><h5>Briefing</h5></div>
           </a>
-          <div><p>Define how you will greet and brief your participants.</p></div>
         </div>
+        <div><p>Define how you will greet and brief your participants.</p></div>
+      </div>
 
-        <div class="project-setup-filler">
-          <i class="bi bi-chevron-compact-right fs-2"></i>
-        </div>
+      <div class="col-12 col-lg-1 project-setup-filler">
+        <i class="bi bi-chevron-compact-right fs-2 d-none d-lg-inline m-auto"></i>
+        <i class="bi bi-chevron-compact-down fs-2 d-inline d-lg-none"></i>
+      </div>
 
-        <div class="project-setup-card text-center">
+      <div class="col-12 col-lg-3 project-setup-card text-center d-flex flex-column align-items-center">
+        <div>
           <a class="card-link" href="{% url 'ddm_datadonation:overview' object.url_id %}">
             <div><i class="bi bi-box-fill ddm-if-icon"></i></div>
             <div><h5>Data Donation</h5></div>
           </a>
-          <div><p>Configure the data donation and the donation instructions.</p></div>
         </div>
+        <div><p>Configure the data donation and the donation instructions.</p></div>
+      </div>
 
-        <div class="project-setup-filler">
-          <i class="bi bi-chevron-compact-right fs-2"></i>
-        </div>
+      <div class="col-12 col-lg-1 project-setup-filler">
+        <i class="bi bi-chevron-compact-right fs-2 d-none d-lg-inline m-auto"></i>
+        <i class="bi bi-chevron-compact-down fs-2 d-inline d-lg-none"></i>
+      </div>
 
-
-        <div class="project-setup-card text-center">
+      <div class="col-12 col-lg-2 project-setup-card text-center d-flex flex-column align-items-center">
+        <div>
           <a  class="card-link" href="{% url 'ddm_questionnaire:overview' object.url_id %}">
             <div><i class="bi bi-pencil-fill ddm-if-icon"></i></div>
             <div><h5>Questionnaire</h5></div>
           </a>
-          <div><p>Configure a questionnaire that is displayed after the data donation.</p></div>
         </div>
+        <div><p>Configure a questionnaire that is displayed after the data donation.</p></div>
+      </div>
 
-        <div class="project-setup-filler">
-          <i class="bi bi-chevron-compact-right fs-2"></i>
-        </div>
+      <div class="col-12 col-lg-1 project-setup-filler">
+        <i class="bi bi-chevron-compact-right fs-2 d-none d-lg-inline m-auto"></i>
+        <i class="bi bi-chevron-compact-down fs-2 d-inline d-lg-none"></i>
+      </div>
 
-        <div class="project-setup-card text-center">
+      <div class="col-12 col-lg-2 project-setup-card text-center d-flex flex-column align-items-center">
+        <div>
           <a class="card-link" href="{% url 'ddm_projects:debriefing_edit' object.url_id %}">
             <div><i class="bi bi-chat-left-text-fill ddm-if-icon"></i></div>
             <div><h5>Debriefing</h5></div>
           </a>
-          <div><p>Define how you will debrief your participants.</p></div>
         </div>
-
+        <div><p>Define how you will debrief your participants.</p></div>
       </div>
+
     </div>
   </div>
+
 </div>
 
 
 {# DATA CENTER #}
 <div id="data-center" class="ddm-admin-section">
   <div class="ddm-admin-section-header">Data Center</div>
-  <div class="ddm-admin-section-body">
 
-    <div id="data-download-section" class="d-flex flex-row align-items-center data-center-row border-bottom">
-      <div class="w-15"><h5>Data Download</h5></div>
+    <div id="data-download-section" class="container pt-4 pb-4">
+      <div class="row gy-3 border-bottom pb-4">
+        <div class="col-12"><h5 class="fw-bold mb-0">Data Download</h5></div>
 
-      <div id="download-participation-overview" class="me-5">
-        <p class="mb-0">
-          <b>Participation Overview:</b>
-          <br>
-          <a id="download-data-button"
-             class="a-no-link ddm-btn ddm-btn-green"
-             data-download-url='{% url 'ddm_apis:download_project_details' object.url_id %}'
-             data-filename='ddm_{{ object.url_id }}_participation-overview_{% now "Y-m-d-H-i" %}'
-             data-n-started={{ object.get_statistics.n_started }}>
-            <i class="bi bi-download pe-1"></i>
-            Download CSV
-          </a>
-        </p>
+        <div id="download-participation-overview" class="col-12 col-md-6 col-lg-4">
+          <div class="pb-1">Download Participation Overview:</div>
+          <div>
+            <a id="download-data-button"
+               class="a-no-link ddm-btn ddm-btn-green"
+               data-download-url='{% url 'ddm_apis:download_project_details' object.url_id %}'
+               data-filename='ddm_{{ object.url_id }}_participation-overview_{% now "Y-m-d-H-i" %}'
+               data-n-started={{ object.get_statistics.n_started }}>
+              <i class="bi bi-download pe-1"></i>
+              Download CSV
+            </a>
+          </div>
+        </div>
+
+        <div id="download-questionnaire-responses" class="col-12 col-md-6 col-lg-4">
+          <div class="pb-1">Download Questionnaire Responses:</div>
+          <div>
+            <a id="download-responses-button"
+               class="a-no-link ddm-btn ddm-btn-green"
+               data-download-url="{% url 'ddm_apis:responses' object.url_id %}">
+              <i class="bi bi-download pe-1"></i> Download CSV
+            </a>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="pb-1">Remote Download:</div>
+          <div>
+            <a href="{% url 'ddm_auth:project_token' object.url_id %}">Manage Access Token</a>
+          </div>
+        </div>
       </div>
 
-      <div id="download-questionnaire-responses" class="me-5">
-        <p class="mb-0">
-          <b>Questionnaire Responses:</b>
-          <br>
-          <a id="download-responses-button"
-             class="a-no-link ddm-btn ddm-btn-green"
-             data-download-url="{% url 'ddm_apis:responses' object.url_id %}">
-            <i class="bi bi-download pe-1"></i> Download CSV
-          </a>
-        </p>
+      {% with stats=object.get_statistics %}
+      <div id="project-log-section" class="row gy-3 pb-4 pt-4 border-bottom">
+        <div class="col-12"><h5 class="fw-bold mb-0">Project Log</h5></div>
+        <div class="col-12">
+          <p class="m-0"><a href="{% url 'ddm_logging:project_logs' object.url_id %}">Show Project Log</a></p>
+          <p class="mb-0">(Registered Exceptions: {{ stats.n_errors }})</p>
+        </div>
       </div>
 
-      <div>
-        <p class="mb-0"><b>Remote Download:</b><br><a href="{% url 'ddm_auth:project_token' object.url_id %}">Manage Access Token</a></p>
+      <div id="participation-statistics-section" class="row gy-3 pb-4 pt-4 border-bottom">
+        <div class="col-12"><h5 class="fw-bold mb-0">Participation Statistics</h5></div>
+
+            <div class="col-12 col-sm-6 col-md-4 col-lg-auto pe-lg-5">
+              <p class="mb-0">Donated Files</p>
+              <p class="fs-3 mb-0">{{ stats.n_donations }}</p>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-auto pe-lg-5">
+              <p class="mb-0">Started</p>
+              <p class="fs-3 mb-0">{{ stats.n_started }}</p>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-auto pe-lg-5">
+              <p class="mb-0">Completed</p>
+              <p class="fs-3 mb-0">{{ stats.n_completed }}</p>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-auto pe-lg-5">
+              <p class="mb-0">Completion Rate</p>
+              <p class="fs-3 mb-0">{{ stats.completion_rate|floatformat:2 }}</p>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-auto pe-lg-5">
+              <p class="mb-0">Avrg. Time to Complete</p>
+              <p class="fs-3 mb-0">{{ stats.average_time }}<span class="fs-6 mb-0 pb-1 ps-2 text-muted">(H:m:s)</span></p>
+            </div>
+
       </div>
+      {% endwith %}
     </div>
 
-    {% with stats=object.get_statistics %}
-    <div id="project-log-section" class="d-flex flex-row align-items-center data-center-row border-bottom">
-      <div class="w-15"><h5>Project Log</h5></div>
-      <div><a href="{% url 'ddm_logging:project_logs' object.url_id %}">Show Project Log</a></div>
-      <div class="col ps-4">
-        <p class="mb-0">(Registered Exceptions: {{ stats.n_errors }})</p>
-      </div>
-    </div>
-
-    <div id="participation-statistics-section" class="d-flex flex-row align-items-center data-center-row">
-      <div class="w-15"><h5>Participation Statistics</h5></div>
-      <div class="row col fw-bold text-center project-statistics-container">
-          <div class="col">
-            <p class="mb-0">Donated Files</p>
-            <p class="fs-3 mb-0">{{ stats.n_donations }}</p>
-          </div>
-          <div class="col">
-            <p class="mb-0">Started</p>
-            <p class="fs-3 mb-0">{{ stats.n_started }}</p>
-          </div>
-          <div class="col">
-            <p class="mb-0">Completed</p>
-            <p class="fs-3 mb-0">{{ stats.n_completed }}</p>
-          </div>
-          <div class="col">
-            <p class="mb-0">Completion Rate</p>
-            <p class="fs-3 mb-0">{{ stats.completion_rate|floatformat:2 }}</p>
-          </div>
-          <div class="col">
-            <p class="mb-0">Avrg. to complete</p>
-            <p class="fs-3 mb-0">{{ stats.average_time }}<span class="fs-6 mb-0 pb-1">(H:m:s)</span></p>
-          </div>
-      </div>
-    </div>
-    {% endwith %}
-  </div>
 </div>
+
 
 {# Modal for download error #}
 {% include "ddm_core/components/info_modal.html" with modal_id="modal-download-error" body="<p><i class='bi bi-x-octagon-fill text-danger pe-2'></i><b>Download Failed</b></p>The download failed due to the following issue: <span id='download-error-message'></span>" %}
@@ -326,16 +342,16 @@
     </div>
   </div>
 </div>
-{% endblock %}
+{% endblock main_body %}
 
 
 {% block breadcrumbs %}
 <a href="{% url 'ddm_projects:list' %}">Projects</a> /
 "{{ object.name|truncatechars:15 }}" Project
-{% endblock %}
+{% endblock breadcrumbs %}
 
 {% block scripts %}
 {{ block.super }}
 <script src="{% static 'ddm_projects/js/download-data.js' %}"></script>
 <script src="{% static 'ddm_projects/js/delete-data.js' %}"></script>
-{% endblock %}
+{% endblock scripts %}

@@ -1,16 +1,23 @@
 {% extends 'ddm_core/page_with_form.html' %}
 
-{% block page_title %}Create New Uploader{% endblock %}
+{% load static %}
 
-{% block main_heading %}Create New Uploader{% endblock %}
+{% block page_title %}Create New Uploader{% endblock page_title %}
 
-{% block submit_label %}Create Uploader{% endblock %}
+{% block main_heading %}Create New Uploader{% endblock main_heading %}
 
-{% block cancel_target %}{% url 'ddm_datadonation:overview' project.url_id %}{% endblock %}
+{% block submit_label %}Create Uploader{% endblock submit_label %}
+
+{% block cancel_target %}{% url 'ddm_datadonation:overview' project.url_id %}{% endblock cancel_target %}
 
 {% block breadcrumbs %}
 <a href="{% url 'ddm_projects:list' %}">Projects</a> /
 <a href="{% url 'ddm_projects:detail' project.url_id %}">"{{ project.name|truncatechars:15 }}" Project</a> /
 <a href="{% url 'ddm_datadonation:overview' project.url_id %}">Data Donation</a> /
 Create Uploader
-{% endblock %}
+{% endblock breadcrumbs %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script src="{% static 'ddm_datadonation/js/file-uploader-ui-helpers.js' %}"></script>
+{% endblock scripts %}

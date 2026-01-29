@@ -7,46 +7,51 @@ import {ProcessingError} from "@uploader/types/ProcessingError";
 import {processContent} from "@uploader/composables/useFileProcessor/contentParsers";
 
 
-/* Currently, the file extraction logic will match file names using regex patterns.
-   If there are multiple files matching a pattern, all will be processed and the extracted
-   fields will be aggregated in the blueprint outcome. For example, for the following file
-   strucutre:
-    - archive.zip
-      - data1.json
-      - folder1/
-        - data1.json
-
-    if the given file path is "data1.json", both files will be processed and their extracted
-    fields combined in the blueprint outcome.
-
-    This behavior is perserved for the nested zip files as well. For example:
-    - archive.zip
-      - data1.json
-      - folder1/
-        - data1.json
-      - nested.zip
-        - data1.json
-
-    In this case, all three data1.json files will be processed.
-   */
-
-/* max depth of nested ZIP files we will process. */
-const MAX_NESTED_ZIP_DEPTH = 3;
-
 type ExtractedZipFile = {
   fullPath: string;
   entry: JSZip.JSZipObject;
 };
 
+/**
+ * Normalizes a file path by removing leading './' and converting
+ * backslashes to forward slashes for cross-platform consistency.
+ */
 function normalizePath(path: string): string {
   return path.replace(/^\.\/+/, '').replace(/\\/g, '/');
 }
 
-async function collectZipEntries(
+/**
+ * Recursively collects all file entries from a ZIP archive, including nested ZIPs.
+ *
+ * This function traverses a ZIP archive and extracts metadata for all files,
+ * building full paths that reflect the archive structure. When nested ZIP files
+ * are encountered, they are recursively processed up to MAX_NESTED_ZIP_DEPTH (3),
+ * with their contents included in the returned entries.
+ *
+ * @param zip - The JSZip instance to collect entries from
+ * @param generalErrors - Array to record any errors encountered during processing
+ * @param maxDepth - How many levels deep to extract zip files within zip files (0 = no nested extraction)
+ * @param depth - Current nesting depth (used internally for recursion limiting)
+ * @param parentPath - Path prefix from parent archives (used internally for nested ZIPs)
+ * @returns Promise resolving to an array of ExtractedZipFile objects, each containing
+ *          the full path (including nested archive paths) and the JSZip entry object
+ *
+ * @example
+ * // For a ZIP with structure:
+ * // - data.json
+ * // - nested.zip
+ * //   - inner.json
+ * //
+ * // Returns entries with fullPath values:
+ * // - "data.json"
+ * // - "nested.zip/inner.json"
+ */
+export async function collectZipEntries(
   zip: JSZip,
   generalErrors: ProcessingError[],
-  depth = 0,
-  parentPath = ''
+  maxDepth: number,
+  depth: number = 0,
+  parentPath: string = ''
 ): Promise<ExtractedZipFile[]> {
   const entries: ExtractedZipFile[] = [];
 
@@ -55,35 +60,37 @@ async function collectZipEntries(
       continue;
     }
 
-    const normalizedName = normalizePath(entry.name);
-    const parentBase = parentPath.split('/').filter(Boolean).pop();
+    const normalizedPath = normalizePath(entry.name);
+    const normalizedName = normalizedPath.split('/').filter(Boolean).pop();
+
     const entryPath = parentPath
       ? `${parentPath}/${normalizedName}`
       : normalizedName;
 
-      if (entry.name.toLowerCase().endsWith('.zip') && depth < MAX_NESTED_ZIP_DEPTH) {
-        try {
-          const nestedBuffer = await entry.async('arraybuffer');
-          const nestedZip = await JSZip.loadAsync(nestedBuffer);
+    if (entry.name.toLowerCase().endsWith('.zip') && depth < maxDepth) {
+      try {
+        const nestedBuffer = await entry.async('arraybuffer');
+        const nestedZip = await JSZip.loadAsync(nestedBuffer);
 
-          // Use the ZIP's actual filename as the prefix
-          const nestedParent = parentPath
-            ? `${parentPath}/${normalizedName}`
-            : normalizedName;
+        // Use the ZIP's actual filename as the prefix
+        const nestedParent = parentPath
+          ? `${parentPath}/${normalizedName}`
+          : normalizedName;
 
-          const nestedEntries = await collectZipEntries(
-            nestedZip,
-            generalErrors,
-            depth + 1,
-            nestedParent.replace(/\.zip$/i, '.zip')
-          );
+        const nestedEntries = await collectZipEntries(
+          nestedZip,
+          generalErrors,
+          maxDepth,
+          depth + 1,
+          nestedParent.replace(/\.zip$/i, '.zip')
+        );
 
-          entries.push(...nestedEntries);
-          continue;
-        } catch (error) {
-          registerGeneralError(generalErrors, ERROR_CATALOG.ZIP_READ_FAIL, { error });
-        }
+        entries.push(...nestedEntries);
+        continue;
+      } catch (error) {
+        registerGeneralError(generalErrors, ERROR_CATALOG.ZIP_READ_FAIL, { error });
       }
+    }
 
     entries.push({ fullPath: entryPath, entry });
   }
@@ -110,13 +117,15 @@ async function collectZipEntries(
  * @param blueprints - Blueprint configurations defining extraction rules
  * @param blueprintOutcomeMap - Map to store extraction results by blueprint ID
  * @param generalErrors - Collection for recording general processing errors
+ * @param nestedZipExtractionDepth - How many levels deep to extract zip files within zip files (0 = no nested extraction)
  * @returns A Promise that resolves when processing is complete
  */
 export async function handleZipFile(
   file: File,
   blueprints: Blueprint[],
   blueprintOutcomeMap: Record<number, BlueprintExtractionOutcome>,
-  generalErrors: ProcessingError[]
+  generalErrors: ProcessingError[],
+  nestedZipExtractionDepth: number,
 ): Promise<void> {
   // Validate file.
   if (!fileIsZip(file)) {
@@ -134,7 +143,7 @@ export async function handleZipFile(
     return;
   }
 
-  const extractedFiles = await collectZipEntries(zip, generalErrors);
+  const extractedFiles = await collectZipEntries(zip, generalErrors, nestedZipExtractionDepth);
   const availableFiles = Array.from(new Set(extractedFiles.map(entry => entry.fullPath)));
 
   for (const blueprint of blueprints) {

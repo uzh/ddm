@@ -20,6 +20,7 @@ import {handleSingleFile, handleZipFile} from "@uploader/composables/useFileProc
  *   4. Result aggregation and error tracking
  *
  * @param expectsZip - Whether to process input as a ZIP archive (true) or single file (false)
+ * @param nestedZipExtractionDepth - How many levels deep to extract zip files within zip files (0 = no nested extraction)
  * @param blueprints - Array of blueprint configurations defining extraction rules and formats
  *
  * @returns An object containing:
@@ -42,7 +43,8 @@ import {handleSingleFile, handleZipFile} from "@uploader/composables/useFileProc
  */
 export function useFileProcessor(
   expectsZip: boolean,
-  blueprints: any[]
+  blueprints: any[],
+  nestedZipExtractionDepth: number = 0,
 ) {
 
   const generalErrors = reactive<ProcessingError[]>([]);  // Used to track general errors.
@@ -87,7 +89,7 @@ export function useFileProcessor(
       await new Promise<void>(resolve => setTimeout(resolve, 1000));
 
       if (expectsZip) {
-        await handleZipFile(file, blueprints, blueprintOutcomeMap, generalErrors);
+        await handleZipFile(file, blueprints, blueprintOutcomeMap, generalErrors, nestedZipExtractionDepth);
       } else {
         await handleSingleFile(file, blueprints, blueprintOutcomeMap, generalErrors);
       }

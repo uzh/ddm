@@ -29,6 +29,7 @@ const props = defineProps<{
   componentId: number,
   exceptionUrl: string,
   expectsZip: boolean,
+  nestedZipExtractionDepth: number,
   instructionConfig: Instruction[],
   name: string,
 }>();
@@ -47,7 +48,7 @@ let uploaderState: Ref<UploaderStates> = ref(UPLOADER_STATES.IDLE);
 const {
   generalErrors,
   blueprintOutcomeMap,
-  handleSelectedFile } = useFileProcessor(props.expectsZip, props.blueprintConfigs);
+  handleSelectedFile } = useFileProcessor(props.expectsZip, props.blueprintConfigs, props.nestedZipExtractionDepth);
 
 const { postLogs } = useLogPoster(props.componentId, props.exceptionUrl);
 

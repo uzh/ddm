@@ -38,6 +38,9 @@ class FileUploader(models.Model):
         verbose_name='Upload type',
     )
 
+    extract_nested_zips = models.BooleanField(default=False)
+    extraction_depth = models.PositiveIntegerField(default=0)
+
     combined_consent = models.BooleanField(
         default=False,
         verbose_name='All-in-one consent',
@@ -56,9 +59,12 @@ class FileUploader(models.Model):
     def get_configs(self, participant_data=None):
         blueprints = self.donationblueprint_set.all()
         instructions = self.donationinstruction_set.all()
+
+        extraction_depth = 0 if not self.extract_nested_zips else self.extraction_depth
         configs = {
             'uploader_id': self.pk,
             'upload_type': self.upload_type,
+            'nested_zip_extraction_depth': extraction_depth,
             'name': self.name,
             'combined_consent': self.combined_consent,
             'blueprints': [bp.get_config() for bp in blueprints],

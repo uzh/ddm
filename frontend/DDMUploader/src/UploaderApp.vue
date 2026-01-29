@@ -149,6 +149,7 @@ function initializeUploaderOutcomes(): Record<number, UploaderOutcome> {
           :componentId="config.uploader_id"
           :exception-url="props.exceptionUrl"
           :expects-zip="config.upload_type === 'zip file'"
+          :nested-zip-extraction-depth="config.nested_zip_extraction_depth"
           :instruction-config="config.instructions"
           :name="config.name"
           @statusChanged="updateUploaderOutcome"

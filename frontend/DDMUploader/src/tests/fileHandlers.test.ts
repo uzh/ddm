@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { handleZipFile, handleSingleFile, fileIsZip } from '@uploader/composables/useFileProcessor/fileHandlers';
+import { handleZipFile, handleSingleFile, fileIsZip, collectZipEntries } from '@uploader/composables/useFileProcessor/fileHandlers';
 import { BlueprintExtractionOutcome } from '@uploader/classes/BlueprintExtractionOutcome';
 import JSZip from 'jszip';
 
@@ -57,6 +57,42 @@ async function createZipFile(): Promise<File> {
   zip.file('data_a.json', jsonDataA);
   zip.file('data_b.json', jsonDataB);
   const blob = await zip.generateAsync({ type: 'blob' });
+  return new File([blob], 'test.zip', { type: 'application/zip' });
+}
+
+// Helper: Create nested ZIP file
+async function createNestedZipFile(): Promise<File> {
+  const innerZip = new JSZip();
+  innerZip.file('inner_data.json', jsonDataB);
+  const innerBlob = await innerZip.generateAsync({ type: 'arraybuffer' });
+
+  const outerZip = new JSZip();
+  outerZip.file('data_a.json', jsonDataA);
+  outerZip.file('nested.zip', innerBlob);
+
+  const blob = await outerZip.generateAsync({ type: 'blob' });
+  return new File([blob], 'test.zip', { type: 'application/zip' });
+}
+
+// Helper: Create deeply nested ZIP (3 levels)
+async function createDeeplyNestedZipFile(): Promise<File> {
+  // Level 3 (innermost)
+  const level3Zip = new JSZip();
+  level3Zip.file('level3_data.json', JSON.stringify([{ name: 'Level3' }]));
+  const level3Blob = await level3Zip.generateAsync({ type: 'arraybuffer' });
+
+  // Level 2
+  const level2Zip = new JSZip();
+  level2Zip.file('level2_data.json', JSON.stringify([{ name: 'Level2' }]));
+  level2Zip.file('level3.zip', level3Blob);
+  const level2Blob = await level2Zip.generateAsync({ type: 'arraybuffer' });
+
+  // Level 1 (outermost)
+  const level1Zip = new JSZip();
+  level1Zip.file('level1_data.json', JSON.stringify([{ name: 'Level1' }]));
+  level1Zip.file('level2.zip', level2Blob);
+
+  const blob = await level1Zip.generateAsync({ type: 'blob' });
   return new File([blob], 'test.zip', { type: 'application/zip' });
 }
 
@@ -195,6 +231,207 @@ describe('handleZipFile', () => {
     expect(blueprintOutcomeMap[3].extractedData.length).toBe(2);
     expect(generalErrors.length).toBe(0);
   });
+});
+
+describe('collectZipEntries (via handleZipFile)', () => {
+  // Blueprint that matches any JSON file
+  const anyJsonBlueprint = {
+    ...jsonBlueprintA,
+    id: 10,
+    regex_path: '.*\\.json$',
+  };
+
+  it('extracts files from nested ZIP archives', async () => {
+    const zipFile = await createNestedZipFile();
+    const blueprintOutcomeMap = {
+      10: new BlueprintExtractionOutcome(anyJsonBlueprint)
+    };
+    const generalErrors = [];
+    const maxDepth = 3;
+
+    await handleZipFile(zipFile, [anyJsonBlueprint], blueprintOutcomeMap, generalErrors, maxDepth);
+
+    // Should find data_a.json from outer and inner_data.json from nested.zip
+    expect(blueprintOutcomeMap[10].extractedData.length).toBe(4); // 2 from outer + 2 from inner
+    expect(blueprintOutcomeMap[10].extractedData).toContainEqual({ name: 'Alice' });
+    expect(blueprintOutcomeMap[10].extractedData).toContainEqual({ name: 'Chester' });
+    expect(generalErrors.length).toBe(0);
+  });
+
+  it('builds correct paths for files in nested ZIPs', async () => {
+    const zipFile = await createNestedZipFile();
+    // Blueprint specifically matching nested path pattern
+    const nestedPathBlueprint = {
+      ...jsonBlueprintA,
+      id: 11,
+      regex_path: 'nested\\.zip/inner_data\\.json',
+    };
+    const blueprintOutcomeMap = {
+      11: new BlueprintExtractionOutcome(nestedPathBlueprint)
+    };
+    const generalErrors = [];
+    const maxDepth = 3;
+
+    await handleZipFile(zipFile, [nestedPathBlueprint], blueprintOutcomeMap, generalErrors, maxDepth);
+
+    expect(blueprintOutcomeMap[11].extractedData.length).toBe(2);
+    expect(blueprintOutcomeMap[11].extractedData).toContainEqual({ name: 'Chester' });
+    expect(generalErrors.length).toBe(0);
+  });
+
+  it('processes deeply nested ZIPs up to max depth (3 levels)', async () => {
+    const zipFile = await createDeeplyNestedZipFile();
+    const blueprintOutcomeMap = {
+      10: new BlueprintExtractionOutcome(anyJsonBlueprint)
+    };
+    const generalErrors = [];
+    const maxDepth = 3;
+
+    await handleZipFile(zipFile, [anyJsonBlueprint], blueprintOutcomeMap, generalErrors, maxDepth);
+
+    // Should extract from all 3 levels
+    const names = blueprintOutcomeMap[10].extractedData.map(d => d.name);
+
+    expect(names).toContain('Level1');
+    expect(names).toContain('Level2');
+    expect(names).toContain('Level3');
+    expect(generalErrors.length).toBe(0);
+  });
+
+  it('does not process ZIPs nested beyond max depth', async () => {
+    const zipFile = await createDeeplyNestedZipFile();
+    const blueprintOutcomeMap = {
+      10: new BlueprintExtractionOutcome(anyJsonBlueprint)
+    };
+    const generalErrors = [];
+    const maxDepth = 1;
+
+    await handleZipFile(zipFile, [anyJsonBlueprint], blueprintOutcomeMap, generalErrors, maxDepth);
+
+    const names = blueprintOutcomeMap[10].extractedData.map(d => d.name);
+    expect(names).toContain('Level1');
+    expect(names).toContain('Level2');
+    expect(names).not.toContain('Level3');
+  });
+
+  it('handles corrupted nested ZIP gracefully', async () => {
+    const outerZip = new JSZip();
+    outerZip.file('data.json', jsonDataA);
+    outerZip.file('corrupted.zip', 'not valid zip content');
+
+    const blob = await outerZip.generateAsync({ type: 'blob' });
+    const zipFile = new File([blob], 'test.zip', { type: 'application/zip' });
+
+    const blueprintOutcomeMap = {
+      10: new BlueprintExtractionOutcome(anyJsonBlueprint)
+    };
+    const generalErrors = [];
+    const maxDepth = 3;
+
+    await handleZipFile(zipFile, [anyJsonBlueprint], blueprintOutcomeMap, generalErrors, maxDepth);
+
+    // Should still process valid files and register error for corrupted nested ZIP
+    expect(blueprintOutcomeMap[10].extractedData.length).toBe(2);
+    expect(generalErrors.length).toBeGreaterThan(0);
+  });
+
+  it('handles nested ZIPs in subdirectories', async () => {
+    const innerZip = new JSZip();
+    innerZip.file('deep_data.json', JSON.stringify([{ name: 'DeepFile' }]));
+    const innerBlob = await innerZip.generateAsync({ type: 'arraybuffer' });
+
+    const outerZip = new JSZip();
+    outerZip.file('root.json', jsonDataA);
+    outerZip.file('subdir/nested.zip', innerBlob);
+
+    const blob = await outerZip.generateAsync({ type: 'blob' });
+    const zipFile = new File([blob], 'test.zip', { type: 'application/zip' });
+
+    const blueprintOutcomeMap = {
+      10: new BlueprintExtractionOutcome(anyJsonBlueprint)
+    };
+    const generalErrors = [];
+    const maxDepth = 3;
+
+    await handleZipFile(zipFile, [anyJsonBlueprint], blueprintOutcomeMap, generalErrors, maxDepth);
+
+    const names = blueprintOutcomeMap[10].extractedData.map(d => d.name);
+    expect(names).toContain('Alice');
+    expect(names).toContain('DeepFile');
+  });
+
+  it('skips directory entries in ZIP', async () => {
+    const zip = new JSZip();
+    zip.file('folder/', null, { dir: true });
+    zip.file('folder/data.json', jsonDataA);
+    zip.file('empty_folder/', null, { dir: true });
+
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const zipFile = new File([blob], 'test.zip', { type: 'application/zip' });
+
+    const blueprintOutcomeMap = {
+      10: new BlueprintExtractionOutcome(anyJsonBlueprint)
+    };
+    const generalErrors = [];
+    const maxDepth = 3;
+
+    await handleZipFile(zipFile, [anyJsonBlueprint], blueprintOutcomeMap, generalErrors, maxDepth);
+
+    // Should only process the actual file, not directories
+    expect(blueprintOutcomeMap[10].extractedData.length).toBe(2);
+    expect(generalErrors.length).toBe(0);
+  });
+});
+
+describe('collectZipEntries (test in isolation)', () => {
+
+  it('creates correct entries from ZIP archives without extracting nested', async () => {
+    const zip = await createNestedZipFile();
+    const zipFile = await JSZip.loadAsync(zip);
+    const generalErrors = [];
+    const maxDepth = 0;
+
+    const entries = await collectZipEntries(zipFile, generalErrors, maxDepth);
+    const fullPaths = entries.map(entry => entry.fullPath);
+
+    expect(entries.length).toBe(2);
+    expect(fullPaths).toContainEqual('nested.zip');
+    expect(fullPaths).toContainEqual('data_a.json');
+    expect(generalErrors.length).toBe(0);
+  });
+
+  it('creates correct entries from deeply nested ZIP archives', async () => {
+    const zip = await createDeeplyNestedZipFile();
+    const zipFile = await JSZip.loadAsync(zip);
+    const generalErrors = [];
+    const maxDepth = 4;
+
+    const entries = await collectZipEntries(zipFile, generalErrors, maxDepth);
+    const fullPaths = entries.map(entry => entry.fullPath);
+
+    expect(entries.length).toBe(3);
+    expect(fullPaths).toContainEqual('level1_data.json');
+    expect(fullPaths).toContainEqual('level2.zip/level2_data.json');
+    expect(fullPaths).toContainEqual('level2.zip/level3.zip/level3_data.json');
+    expect(generalErrors.length).toBe(0);
+  });
+
+  it('creates correct entries from overly nested ZIP archives', async () => {
+    const zip = await createDeeplyNestedZipFile();
+    const zipFile = await JSZip.loadAsync(zip);
+    const generalErrors = [];
+    const maxDepth = 1;
+
+    const entries = await collectZipEntries(zipFile, generalErrors, maxDepth);
+    const fullPaths = entries.map(entry => entry.fullPath);
+
+    expect(entries.length).toBe(3);
+    expect(fullPaths).toContainEqual('level1_data.json');
+    expect(fullPaths).toContainEqual('level2.zip/level2_data.json');
+    expect(fullPaths).toContainEqual('level2.zip/level3.zip');
+    expect(generalErrors.length).toBe(0);
+  });
+
 });
 
 describe('handleSingleFile', () => {

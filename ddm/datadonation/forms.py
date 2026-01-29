@@ -84,3 +84,42 @@ class SecretInputForm(forms.Form):
     secret = forms.CharField(
         widget=forms.PasswordInput()
     )
+
+
+class FileUploaderForm(forms.ModelForm):
+
+    class Meta:
+        model = FileUploader
+        fields = [
+            'name',
+            'upload_type',
+            'extract_nested_zips',
+            'extraction_depth',
+            'combined_consent',
+            'index',
+        ]
+        labels = {
+            'extract_nested_zips': 'Extract nested zip files',
+            'extraction_depth': 'Extraction depth',
+        }
+        widgets = {
+            'extraction_depth': forms.NumberInput(),
+        }
+        help_texts = {
+            'combined_consent': (
+                'If enabled, participants provide consent once for all data. '
+                'Otherwise, they provide consent separately for each blueprint.'
+            ),
+            'index': (
+                'Determines the position of this uploader in the donation interface '
+                '(only relevant, if multiple uploaders are configured).'
+            ),
+            'extract_nested_zips': (
+                'Whether to extract zip files found inside the uploaded zip and '
+                'make their contents available to be handled by donation blueprints.'
+            ),
+            'extraction_depth': (
+                'Maximum levels of nested zip files to extract '
+                '(0 = only extract the top-level zip).'
+            ),
+        }

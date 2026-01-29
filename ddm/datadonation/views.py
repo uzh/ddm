@@ -16,10 +16,16 @@ from django.views.generic.list import ListView
 from ddm.apis.serializers import DataDonationSerializer
 from ddm.apis.views import DDMAPIMixin
 from ddm.datadonation.forms import (
-    BlueprintEditForm, ProcessingRuleInlineFormset, SecretInputForm, InstructionsForm
+    BlueprintEditForm,
+    FileUploaderForm,
+    InstructionsForm,
+    ProcessingRuleInlineFormset,
+    SecretInputForm,
 )
 from ddm.datadonation.models import (
-    DonationBlueprint, DonationInstruction, FileUploader
+    DonationBlueprint,
+    DonationInstruction,
+    FileUploader
 )
 from ddm.encryption.models import Decryption, Encryption
 from ddm.participation.models import Participant
@@ -65,7 +71,7 @@ class FileUploaderCreate(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, Crea
     """ View to create a new file uploader. """
     model = FileUploader
     template_name = 'ddm_datadonation/uploader/create.html'
-    fields = ['name', 'upload_type', 'combined_consent']
+    form_class = FileUploaderForm
     success_message = 'Uploader created successfully.'
 
     def form_valid(self, form):
@@ -86,7 +92,7 @@ class FileUploaderEdit(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, Update
     """ View to edit the details of an existing file uploader. """
     model = FileUploader
     template_name = 'ddm_datadonation/uploader/edit.html'
-    fields = ['name', 'upload_type', 'combined_consent', 'index']
+    form_class = FileUploaderForm
     success_message = 'Uploader "%(name)s" successfully updated.'
 
     def get_context_data(self, **kwargs):

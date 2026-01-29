@@ -35,6 +35,24 @@ data donation page.
 Upload Type:: Either "single file" or "zip file" depending on whether your participants are expected to upload
 a single file (e.g., CSV or JSON File) or a ZIP-container.
 
+Extract nested zip files:: Whether to extract zip files found inside the uploaded zip and make their contents available
+to be handled by donation blueprints.
+
+Extraction depth:: Maximum levels of nested zip files to extract (0 = only extract the top-level zip).
+
+[NOTE]
+====
+If `Extract nested zip file` is selected, the File Uploader will look inside any zip files
+contained within the main file that participants upload and make those contents available
+for extraction through a Donation Blueprint too.
+
+You can control how many levels deep this works—for example, a depth of 1 means it will open any zip inside the main zip, but stop there.
+
+The paths of the extracted files will reflect the archive structure. For a file inside the main zip,
+the path is simply the filename (e.g., data.json).
+For a file inside a nested zip, the path includes the nested zip's name (e.g., nested.zip/inner.json).
+====
+
 Index:: The position of the Uploader on the data donation page. Uploaders with a
 lower index will be displayed closer to the top of the page. This setting only has an effect, if you use
 multiple Uploaders in the same project.
@@ -102,7 +120,7 @@ If multiple Blueprints have the same position value, they will be ordered by cre
 Associated Uploader:: The `Uploader` to which the Blueprint is associated.
 
 File path:: Here, the path where the file is expected to be located within a ZIP file is defined.
-Only necessary, if the Blueprint is associated to a Uploader that expects a ZIP file. This path
+Only necessary, if the Blueprint is associated to an Uploader that expects a ZIP file. This path
 can include https://developer.mozilla.org/en-US/docs/Glossary/Regular_expression[regex expressions]
 for flexible file matching (see below).
 +
@@ -135,6 +153,8 @@ Can be helpful to match the same file in different languages.
 You can find about more about regex https://developer.mozilla.org/en-US/docs/Glossary/Regular_expression[here].
 On this website, you will https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#tools[also find some Tools]
 that can help you test regex patterns.
+
+If you have the extraction of nested files enabled, see the File Uploader settings above for how to define paths to nested files.
 ====
 
 Expected fields:: The fields that must be contained in the file from which information should be extracted.

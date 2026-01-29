@@ -123,9 +123,6 @@ export function useUploaderValidator(
     failedUploaderNames.value = [];
 
     for (const uploader of Object.values(uploaderOutcomes.value)) {
-      console.log(`Uploader ${uploader.uploaderName}.`)
-      console.log(`State ${uploader.uploaderState}.`)
-      console.log(`State ${uploader.uploaderName}.`)
       if (uploader.uploaderState === EXTRACTION_STATES.FAILED) {
         failedUploaderNames.value.push(uploader.uploaderName);
       }

@@ -140,6 +140,8 @@ class FileUploaderEditTestCase(TestCase):
             'name': 'some name',
             'index': 1,
             'upload_type': FileUploader.UploadTypes.ZIP_FILE,
+            'extract_nested_zips': True,
+            'extraction_depth': 0,
             'combined_consent': False,
             f'bp-{self.blueprint_b.pk}': True
         }

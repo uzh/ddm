@@ -475,9 +475,9 @@ class DeleteProjectData(APIView, DDMAPIMixin):
                             data={'message': msg})
 
         # Delete all related objects.
-        Participant.objects.filter(project=project).delete()
         n_deleted_donations = DataDonation.objects.filter(project=project).delete()[0]
         n_deleted_responses = QuestionnaireResponse.objects.filter(project=project).delete()[0]
+        Participant.objects.filter(project=project).delete()
 
         self.create_event_log(
             descr='Data Deletion Successful',

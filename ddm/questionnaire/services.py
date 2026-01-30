@@ -1,13 +1,11 @@
-from django.core.exceptions import ObjectDoesNotExist
+from typing import Any
+
 from django.utils import timezone
 
-from ddm.datadonation.models import DataDonation
-from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers
 from ddm.logging.utils import log_server_exception
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject
-from ddm.questionnaire.models import (
-    QuestionBase, QuestionnaireResponse, QuestionItem, get_filter_config_id)
+from ddm.questionnaire.models import QuestionBase, QuestionnaireResponse, QuestionItem
 
 
 def get_question_item_response_key_list(project: DonationProject) -> list:
@@ -31,7 +29,7 @@ def get_question_item_response_key_list(project: DonationProject) -> list:
     return response_keys
 
 
-def response_is_valid(response: any, valid_responses: list) -> bool:
+def response_is_valid(response: Any, valid_responses: list) -> bool:
     """
     Validate a single response against a list of valid responses.
 
@@ -168,78 +166,3 @@ def save_questionnaire_response_to_db(
         questionnaire_config=questionnaire_config
     )
     return
-
-
-def create_questionnaire_config(project: DonationProject,
-                                participant: Participant) -> list:
-    """
-    Returns a dictionary containing all information to render the
-    questionnaire for a given participant that can be passed to the frontend
-    questionnaire application.
-
-    Args:
-        project (DonationProject): The project instance to which this questionnaire
-            is related.
-        participant (Participant): The participant for which the questionnaire
-            will be rendered.
-
-    Returns:
-        list: A list in which each entry relates to one question and contains
-            all information needed to render the question.
-    """
-    q_config = []
-    questions = project.questionbase_set.all().order_by('page', 'index')
-    for question in questions:
-        # If question is not associated to a donation blueprint.
-        if question.is_general():
-            q_config.append(question.get_config(participant))
-        else:
-            try:
-                donation = DataDonation.objects.get(
-                    blueprint=question.blueprint,
-                    participant=participant
-                )
-            except ObjectDoesNotExist:
-                msg = ('Questionnaire Rendering Exception: No donation '
-                       f'found for participant {participant.pk} and '
-                       f'blueprint {question.blueprint.pk}.')
-                ExceptionLogEntry.objects.create(
-                    project=project,
-                    raised_by=ExceptionRaisers.SERVER,
-                    message=msg
-                )
-                continue
-
-            if donation.consent and donation.status == 'success':
-                q_config.append(question.get_config(participant))
-    return q_config
-
-
-def create_filter_config(project: DonationProject) -> dict:
-    """
-    Returns a dictionary containing the filter condition configurations
-    for the given project that can be passed to the frontend questionnaire
-    application.
-
-    Args:
-        project (DonationProject): The project for which the filter configuration
-            should be generated.
-
-    Returns:
-        dict: A dictionary containing the project's filter condition
-            (key: question/item identifier ['question-<question.pk>'/'item-<item.pk>'];
-            value: a list of filter conditions for the question/item).
-    """
-    f_config = {}
-    questions = project.questionbase_set.all()
-
-    for question in questions:
-        question_key = get_filter_config_id(question)
-        f_config[question_key] = question.get_filter_config()
-
-        items = question.questionitem_set.all()
-        for item in items:
-            item_key = get_filter_config_id(item)
-            f_config[item_key] = item.get_filter_config()
-
-    return f_config

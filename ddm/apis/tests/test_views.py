@@ -12,6 +12,7 @@ from ddm.apis.serializers import (
 )
 from ddm.datadonation.models import DataDonation, DonationBlueprint
 from ddm.participation.models import Participant
+from ddm.participation.serializers import BlueprintSerializer
 from ddm.projects.models import DonationProject, ResearchProfile
 from ddm.questionnaire.models import OpenQuestion, QuestionnaireResponse
 
@@ -156,10 +157,11 @@ class TestAPIs(TestCase):
         expected_response = {
             'participants': [
                 ParticipantSerializer(self.participant_a).data,
-                ParticipantSerializer(self.participant_b).data,],
+                ParticipantSerializer(self.participant_b).data,
+            ],
             'blueprints': [
-                self.blueprint_a.get_config(),
-                self.blueprint_b.get_config()
+                BlueprintSerializer(self.blueprint_a).data,
+                BlueprintSerializer(self.blueprint_b).data,
             ],
             'project': ProjectSerializer(self.project_base).data,
             'metadata': {

@@ -1,5 +1,6 @@
 from django.contrib.messages.views import SuccessMessageMixin
-from django.forms import inlineformset_factory
+from django.db.models import QuerySet
+from django.forms import inlineformset_factory, BaseInlineFormSet
 from django.urls import reverse
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -11,10 +12,11 @@ from ddm.datadonation.models import DonationBlueprint
 from ddm.projects.models import DonationProject
 from ddm.questionnaire.forms import FilterConditionForm
 from ddm.questionnaire.models import (
-    QuestionBase, QuestionType, SingleChoiceQuestion, MultiChoiceQuestion,
+    QuestionBase, SingleChoiceQuestion, MultiChoiceQuestion,
     OpenQuestion, MatrixQuestion, SemanticDifferential, Transition,
     QuestionItem, ScalePoint, FilterCondition
 )
+from ddm.questionnaire.constants import QuestionType
 
 
 class ProjectMixin:
@@ -25,7 +27,7 @@ class ProjectMixin:
         context.update({'project': self.get_project()})
         return context
 
-    def get_project(self):
+    def get_project(self) -> DonationProject:
         return DonationProject.objects.get(url_id=self.kwargs['project_url_id'])
 
 
@@ -44,11 +46,11 @@ class QuestionnaireOverview(ProjectMixin, DDMAuthMixin, ListView):
         })
         return context
 
-    def get_all_questions(self):
+    def get_all_questions(self) -> QuerySet[QuestionBase]:
         project = self.get_project()
         return project.questionbase_set.all()
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[DonationBlueprint]:
         return super().get_queryset().filter(
             project__url_id=self.kwargs['project_url_id'])
 
@@ -111,19 +113,19 @@ class QuestionCreate(SuccessMessageMixin, DDMAuthMixin, QuestionFormMixin, Creat
     template_name = 'ddm_questionnaire/create.html'
     success_message = 'New %(question_type)s was created.'
 
-    def get_initial(self):
+    def get_initial(self) -> dict:
         initial = super().get_initial()
         initial['question_type'] = self.kwargs['question_type']
         return initial
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict:
         kwargs = super().get_form_kwargs()
         kwargs['instance'] = self.QUESTION_CLASSES[self.kwargs['question_type']](
             project=self.get_project(),
         )
         return kwargs
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         kwargs = {
             'project_url_id': self.kwargs['project_url_id'],
             'question_type': self.kwargs['question_type'],
@@ -131,7 +133,7 @@ class QuestionCreate(SuccessMessageMixin, DDMAuthMixin, QuestionFormMixin, Creat
         }
         return reverse('ddm_questionnaire:edit', kwargs=kwargs)
 
-    def get_success_message(self, cleaned_data):
+    def get_success_message(self, cleaned_data) -> str:
         return self.success_message % dict(
             cleaned_data,
             question_type=self.QUESTION_CLASSES[self.kwargs['question_type']].DEFAULT_QUESTION_TYPE.label
@@ -144,7 +146,7 @@ class QuestionEdit(SuccessMessageMixin, DDMAuthMixin, QuestionFormMixin, UpdateV
     template_name = 'ddm_questionnaire/edit.html'
     success_message = 'Question "%(name)s" was successfully updated.'
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         success_kwargs = {
             'project_url_id': self.kwargs['project_url_id'],
             'question_type': self.kwargs['question_type'],
@@ -159,10 +161,10 @@ class QuestionDelete(SuccessMessageMixin, DDMAuthMixin, ProjectMixin, DeleteView
     template_name = 'ddm_questionnaire/delete.html'
     success_message = 'Question "%s" was deleted.'
 
-    def get_success_message(self, cleaned_data):
+    def get_success_message(self, cleaned_data) -> str:
         return self.success_message % self.object.name
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return reverse(
         'ddm_questionnaire:overview', kwargs={'project_url_id': self.kwargs['project_url_id']})
 
@@ -227,20 +229,20 @@ class ItemEdit(SuccessMessageMixin, DDMAuthMixin, InlineFormsetMixin, UpdateView
     context_title = 'Items'
     success_message = 'Question items updated.'
 
-    def get_initial_extra_data(self):
+    def get_initial_extra_data(self) -> list:
         if self.object.questionitem_set.all().count() == 0:
             return [{'index': 1}]
         else:
             return []
 
-    def get_n_extra_forms(self):
+    def get_n_extra_forms(self) -> int:
         """ Placeholder function to overwrite in views. """
         if self.object.questionitem_set.all().count() == 0:
             return 1
         else:
             return 0
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         question = self.get_object()
         success_kwargs = {
             'project_url_id': self.kwargs['project_url_id'],
@@ -258,20 +260,20 @@ class ScaleEdit(SuccessMessageMixin, DDMAuthMixin, InlineFormsetMixin, UpdateVie
     context_title = 'Scale Points'
     success_message = 'Question scale updated.'
 
-    def get_initial_extra_data(self):
+    def get_initial_extra_data(self) -> list:
         if self.object.scalepoint_set.all().count() == 0:
             return [{'index': 1}]
         else:
             return []
 
-    def get_n_extra_forms(self):
+    def get_n_extra_forms(self) -> int:
         """ Placeholder function to overwrite in views. """
         if self.object.scalepoint_set.all().count() == 0:
             return 1
         else:
             return 0
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         question = self.get_object()
         success_kwargs = {
             'project_url_id': self.kwargs['project_url_id'],
@@ -287,7 +289,7 @@ class FilterEditBase(SuccessMessageMixin, ProjectMixin, DDMAuthMixin, UpdateView
     context_title = 'Filter Conditions'
     success_message = 'Filter conditions updated.'
 
-    def get_filters(self):
+    def get_filters(self) -> QuerySet[FilterCondition]:
         return self.object.filtercondition_set.all()
 
     def get_project(self):
@@ -357,7 +359,7 @@ class FilterEditBase(SuccessMessageMixin, ProjectMixin, DDMAuthMixin, UpdateView
         })
         return context
 
-    def get_initial_extra_data(self):
+    def get_initial_extra_data(self) -> list:
         return []
 
 
@@ -365,10 +367,10 @@ class FilterEditQuestion(FilterEditBase):
     model = QuestionBase
     template_name = 'ddm_questionnaire/edit_set.html'
 
-    def get_project(self):
+    def get_project(self) -> DonationProject:
         return self.object.project
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         question = self.get_object()
         success_kwargs = {
             'project_url_id': self.kwargs['project_url_id'],
@@ -382,10 +384,10 @@ class FilterEditItems(FilterEditBase):
     model = QuestionItem
     template_name = 'ddm_questionnaire/edit_item_set.html'
 
-    def get_project(self):
+    def get_project(self) -> DonationProject:
         return self.object.question.project
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         item = self.get_object()
         success_kwargs = {
             'project_url_id': self.kwargs['project_url_id'],

@@ -22,8 +22,10 @@ from ddm.datadonation.models import DataDonation
 from ddm.encryption.models import Decryption
 from ddm.logging.models import EventLogEntry
 from ddm.participation.models import Participant
+from ddm.participation.serializers import BlueprintSerializer
 from ddm.projects.models import DonationProject
-from ddm.questionnaire.models import QuestionnaireResponse, QuestionType
+from ddm.questionnaire.models import QuestionnaireResponse
+from ddm.questionnaire.constants import QuestionType
 
 
 class DDMAPIMixin:
@@ -94,7 +96,7 @@ class ProjectDetailApiView(ListAPIView, DDMAPIMixin):
     def get_blueprints_info(self, blueprints):
         blueprints_info = []
         for blueprint in blueprints:
-            blueprints_info.append(blueprint.get_config())
+            blueprints_info.append(BlueprintSerializer(blueprint).data)
         return blueprints_info
 
     def get(self, request, format=None, *args, **kwargs):

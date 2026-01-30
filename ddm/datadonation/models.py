@@ -5,6 +5,7 @@ from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.safestring import SafeString
 
 from ddm.auth.models import ProjectAccessToken
 from ddm.core.utils.user_content.template import render_user_content
@@ -55,25 +56,6 @@ class FileUploader(models.Model):
     def delete(self, *args, **kwargs):
         """ This model has a post_delete signal processor (see signals.py). """
         super().delete(*args, **kwargs)
-
-    def get_configs(self, participant_data=None):
-        blueprints = self.donationblueprint_set.all()
-        instructions = self.donationinstruction_set.all()
-
-        extraction_depth = 0 if not self.extract_nested_zips else self.extraction_depth
-        configs = {
-            'uploader_id': self.pk,
-            'upload_type': self.upload_type,
-            'nested_zip_extraction_depth': extraction_depth,
-            'name': self.name,
-            'combined_consent': self.combined_consent,
-            'blueprints': [bp.get_config() for bp in blueprints],
-            'instructions': [{
-                'index': i.index,
-                'text': i.render(participant_data),
-            } for i in instructions]
-        }
-        return configs
 
     def save(self, *args, **kwargs):
         if self.index is None:
@@ -191,7 +173,7 @@ class DonationBlueprint(models.Model):
     def __str__(self):
         return self.name
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse('ddm_datadonation:blueprints:edit', args=[str(self.project.url_id), str(self.id)])
 
     def clean(self):
@@ -223,39 +205,10 @@ class DonationBlueprint(models.Model):
 
         super().clean()
 
-    def get_slug(self):
+    def get_slug(self) -> str:
         return 'blueprint'
 
-    def get_config(self):
-        config = {
-            'id': self.pk,
-            'name': self.name,
-            'description': self.description,
-            'format': self.exp_file_format,
-            'json_extraction_root': self.json_extraction_root,
-            'expected_fields': json.loads("[" + str(self.expected_fields) + "]"),
-            'exp_fields_regex_matching': self.expected_fields_regex_matching,
-            'fields_to_extract': self.get_fields_to_extract(),
-            'regex_path': self.regex_path,
-            'extraction_rules': self.get_filter_rules(),
-            'csv_delimiter': self.csv_delimiter
-        }
-        return config
-
-    def get_associated_questions(self):
-        return self.questionbase_set.all()
-
-    def get_filter_rules(self):
-        return [r.get_rule_config() for r in self.processingrule_set.all().order_by('execution_order')]
-
-    def get_fields_to_extract(self):
-        fields = set()
-        for r in self.processingrule_set.all():
-            if r.comparison_operator is None:
-                fields.add(r.field)
-        return list(fields)
-
-    def process_donation(self, data, participant):
+    def process_donation(self, data, participant) -> None:
         if self.validate_donation(data):
             self.create_donation(data, participant)
         else:
@@ -269,7 +222,7 @@ class DonationBlueprint(models.Model):
             )
         return
 
-    def validate_donation(self, data):
+    def validate_donation(self, data) -> bool:
         # Check if all expected fields are in response.
         response_fields = ['consent', 'extractedData', 'status']
         if not all(k in data for k in response_fields):
@@ -287,7 +240,7 @@ class DonationBlueprint(models.Model):
 
         return True
 
-    def create_donation(self, data, participant):
+    def create_donation(self, data, participant) -> None:
         DataDonation.objects.create(
             project=self.project,
             blueprint=self,
@@ -392,28 +345,6 @@ class ProcessingRule(models.Model):
 
         super().clean()
 
-    def get_rule_config(self):
-        """
-        Return a configuration dict for the processing rule:
-        {
-            'id': primary key
-            'field': 'field_name',
-            'comparison_operator': '==' | '!=' | '>' | '<' | '>=' | '<=' |
-                                   'regex-delete-match' | ' regex-replace-match'
-                                   'regex-delete-row' | None,
-            'comparison_value': '123' | Regex-String | None,
-            'replacement_value': String
-        }
-        """
-        return {
-            'id': self.pk,
-            'field': self.field,
-            'regex_field': self.regex_field,
-            'comparison_operator': self.comparison_operator,
-            'comparison_value': self.comparison_value,
-            'replacement_value': self.replacement_value
-        }
-
 
 class DataDonation(ModelWithEncryptedData):
     project = models.ForeignKey(
@@ -515,5 +446,5 @@ class DonationInstruction(models.Model):
         """ This model has a post_delete signal processor (see signals.py). """
         super().delete(*args, **kwargs)
 
-    def render(self, context=None):
+    def render(self, context=None) -> SafeString:
         return render_user_content(self.text, context)

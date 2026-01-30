@@ -30,4 +30,4 @@ def render_user_content(content: str, context: dict=None) -> SafeString:
     content = preprocess_user_content(content)
     template = Template(content, engine=TestEngine())
     rendered_content = template.render(Context(context))
-    return rendered_content
+    return rendered_content.strip()

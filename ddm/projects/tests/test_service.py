@@ -4,12 +4,18 @@ from django.utils import timezone
 
 from ddm.datadonation.models import DataDonation, DonationBlueprint
 from ddm.participation.models import Participant
+from ddm.participation.utils import get_filter_config_id
 from ddm.projects.models import DonationProject, ResearchProfile
-from ddm.projects.service import get_url_parameters, get_participant_variables, get_donation_variables, \
-    get_questionnaire_variables
-from ddm.questionnaire.models import QuestionnaireResponse, OpenQuestion, get_filter_config_id
+from ddm.projects.service import (
+    get_url_parameters,
+    get_participant_variables,
+    get_donation_variables,
+    get_questionnaire_variables,
+)
+from ddm.questionnaire.models import QuestionnaireResponse, OpenQuestion
 
 User = get_user_model()
+
 
 class TestDonationProject(TestCase):
     @classmethod

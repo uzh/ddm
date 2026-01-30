@@ -7,9 +7,9 @@ from ddm.projects.service import (
     get_url_parameters, get_participant_variables, get_donation_variables
 )
 from ddm.questionnaire.models import (
-    FilterCondition, QuestionBase, QuestionItem, QuestionType, OpenQuestion,
-    FilterSourceTypes
+    FilterCondition, QuestionBase, QuestionItem, OpenQuestion
 )
+from ddm.questionnaire.constants import FilterSourceTypes, QuestionType
 
 
 class FilterConditionForm(forms.ModelForm):

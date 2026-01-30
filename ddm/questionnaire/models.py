@@ -1,19 +1,21 @@
-import random
+from __future__ import annotations
+import typing
 from datetime import datetime
-from typing import Union
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.forms import model_to_dict
 from django.utils import timezone
 
 from polymorphic.models import PolymorphicModel
 
-from ddm.core.utils.user_content.template import render_user_content
 from ddm.encryption.models import ModelWithEncryptedData
 from ddm.datadonation.models import DataDonation
 from ddm.projects.service import get_participant_variables, get_url_parameters
+from ddm.questionnaire.constants import FilterSourceTypes
+
+if typing.TYPE_CHECKING:
+    from ddm.projects.models import DonationProject
 
 
 class FilterConditionMixin:
@@ -21,50 +23,12 @@ class FilterConditionMixin:
     Mixin adding utility functions to models with a generic relationship to
     FilterConditions.
     """
-    def get_filter_config(self):
-        """
-        Creates the filter configuration that can be passed to the vue
-        questionnaire.
-
-        The filter configuration consists of a list of dictionaries, where each
-        dictionary represents the configuration of one filter rule.
-        A filter rule configuration has the following keys:
-
-        - 'index': The index (or order) of the condition.
-        - 'combinator': The filter combinator (is set to None for the first
-            filter condition).
-        - 'condition_operator': The operator set for the filter condition.
-        - 'condition_value': The value against which the condition is evaluated.
-        - 'target': The config ID of the filter target (i.e., the element that
-            will be shown/hidden; e.g., 'item-1').
-        - 'source': The config ID of the filter source (i.e., the element of
-            which the value is compared against the filter condition; e.g., 'item-2').
-
-        Returns:
-            list: A list of dictionaries, each holding a filter configuration.
-        """
-        filter_conditions = self.get_active_filters()
-        active_filters = [f for f in filter_conditions if f.check_source_exists()]
-        filter_configs = []
-        for i, condition in enumerate(active_filters):
-            filter_config = {
-                'index': condition.index,
-                'combinator': condition.combinator,
-                'condition_operator': condition.condition_operator,
-                'condition_value': condition.condition_value,
-                'target': condition.get_target_config_id(),
-                'source': condition.get_source_config_id()
-            }
-
-            # Reset combinator value to None for item with the lowest index.
-            if i == 0:
-                filter_config['combinator'] = None
-            filter_configs.append(filter_config)
-        return filter_configs
 
     def get_active_filters(self):
         """
         Returns the set of associated filters that are still active.
+
+        Also used in templates.
 
         Returns:
             queryset
@@ -153,57 +117,13 @@ class QuestionBase(FilterConditionMixin, PolymorphicModel):
         self.clean()
         super().save(*args, **kwargs)
 
-    def is_general(self):
+    def is_general(self) -> bool:
         return True if self.blueprint is None else False
 
-    def get_config(self, participant_id):
-        config = self.create_config()
-        config = self.render_config_content(config, participant_id)
-        return config
-
-    def get_response_keys(self):
+    def get_response_keys(self) -> list:
         return []
 
-    def create_config(self):
-        config = {
-            'question': f'question-{self.pk}',
-            'type': self.question_type,
-            'page': self.page,
-            'index': self.index,
-            'text': self.text,
-            'required': self.required,
-            'items': [],
-            'scale': [],
-            'options': {}
-        }
-        return config
-
-    def render_config_content(self, config, participant):
-        """
-        Renders references to donated data or participant data in question or
-        item text configurations as html.
-        """
-        if self.is_general():
-            donated_data = None
-        else:
-            data_donation = DataDonation.objects.get(
-                participant=participant,
-                blueprint=self.blueprint
-            )
-            donated_data = data_donation.get_decrypted_data(
-                secret=self.project.secret_key, salt=self.project.get_salt())
-
-        context = {}
-        context.update(participant.get_context_data())
-        context.update({'donated_data': donated_data})
-
-        config['text'] = render_user_content(config['text'], context)
-        for index, item in enumerate(config['items']):
-            item['label'] = render_user_content(item['label'], context)
-            item['label_alt'] = render_user_content(item['label_alt'], context)
-        return config
-
-    def get_valid_responses(self):
+    def get_valid_responses(self) -> list:
         """Returns a list of valid responses for this question."""
         default_missing = -99
         return [default_missing]
@@ -219,38 +139,14 @@ class ItemMixin(models.Model):
     class Meta:
         abstract = True
 
-    def create_config(self):
-        config = super().create_config()
-        config = self.add_item_config(config)
-        return config
-
-    def add_item_config(self, config):
-        items = QuestionItem.objects.filter(question=self)
-        for item in items:
-            config['items'].append(item.serialize_to_config())
-
-        if self.randomize_items:
-            random.shuffle(config['items'])
-        return config
-
-    def get_response_keys(self):
+    def get_response_keys(self) -> list[str]:
         item_pks = self.questionitem_set.all().values_list('pk', flat=True)
         return [f'item-{pk}' for pk in list(item_pks)]
 
 
 class ScaleMixin:
-    def create_config(self):
-        config = super().create_config()
-        config = self.add_scale_config(config)
-        return config
 
-    def add_scale_config(self, config):
-        scale_points = ScalePoint.objects.filter(question=self)
-        for point in scale_points:
-            config['scale'].append(point.serialize_to_config())
-        return config
-
-    def get_valid_responses(self):
+    def get_valid_responses(self) -> list:
         valid_responses = super().get_valid_responses()
         valid_responses += list(self.scalepoint_set.all().values_list('value', flat=True))
         return valid_responses
@@ -259,10 +155,10 @@ class ScaleMixin:
 class SingleChoiceQuestion(ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.SINGLE_CHOICE
 
-    def get_response_keys(self):
+    def get_response_keys(self) -> list[str]:
         return [f'question-{self.pk}']
 
-    def get_valid_responses(self):
+    def get_valid_responses(self) -> list:
         """
         Valid response values include all related item values
         (QuestionItem.value) plus -99 which indicates that a question was not
@@ -277,7 +173,7 @@ class SingleChoiceQuestion(ItemMixin, QuestionBase):
 class MultiChoiceQuestion(ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.MULTI_CHOICE
 
-    def get_valid_responses(self):
+    def get_valid_responses(self) -> list:
         """
         Valid response values include 0 (item not selected), 1 (item selected),
         and -99 which indicates that a question was not answered/skipped.
@@ -328,26 +224,14 @@ class OpenQuestion(ItemMixin, QuestionBase):
 
     multi_item_response = models.BooleanField(default=False)
 
-    def get_response_keys(self):
+    def get_response_keys(self) -> list[str]:
         if self.multi_item_response:
             item_pks = self.questionitem_set.all().values_list('pk', flat=True)
             return [f'item-{pk}' for pk in list(item_pks)]
         else:
             return [f'question-{self.pk}']
 
-    def create_config(self):
-        config = super().create_config()
-        config['options']['display'] = self.display
-        config['options']['input_type'] = self.input_type
-        config['options']['max_input_length'] = self.max_input_length
-        config['options']['multi_item_response'] = self.multi_item_response
-
-        # Ensure that "left-over" items are not included in config.
-        if not self.multi_item_response:
-            config['items'] = []
-        return config
-
-    def get_valid_responses(self):
+    def get_valid_responses(self) -> list:
         valid_responses = super().get_valid_responses()
         valid_responses += ['__any_string__']
         return valid_responses
@@ -358,12 +242,7 @@ class MatrixQuestion(ScaleMixin, ItemMixin, QuestionBase):
 
     show_scale_headings = models.BooleanField(default=False)
 
-    def create_config(self):
-        config = super().create_config()
-        config['options']['show_scale_headings'] = self.show_scale_headings
-        return config
-
-    def get_valid_responses(self):
+    def get_valid_responses(self) -> list:
         valid_responses = super().get_valid_responses()
         return valid_responses
 
@@ -371,7 +250,7 @@ class MatrixQuestion(ScaleMixin, ItemMixin, QuestionBase):
 class SemanticDifferential(ScaleMixin, ItemMixin, QuestionBase):
     DEFAULT_QUESTION_TYPE = QuestionType.SEMANTIC_DIFF
 
-    def get_valid_responses(self):
+    def get_valid_responses(self) -> list:
         valid_responses = super().get_valid_responses()
         return valid_responses
 
@@ -414,13 +293,8 @@ class QuestionItem(FilterConditionMixin, models.Model):
     randomize = models.BooleanField(default=False)
 
     @property
-    def variable_name(self):
+    def variable_name(self) -> str:
         return f'{self.question.variable_name}-{self.value}'
-
-    def serialize_to_config(self):
-        item_config = model_to_dict(self, exclude=['question'])
-        item_config['id'] = f'item-{item_config["id"]}'
-        return item_config
 
 
 class ScalePoint(models.Model):
@@ -454,10 +328,6 @@ class ScalePoint(models.Model):
     value = models.IntegerField()
     secondary_point = models.BooleanField(default=False)
 
-    def serialize_to_config(self):
-        scale_config = model_to_dict(self, exclude=['question'])
-        return scale_config
-
 
 class QuestionnaireResponse(ModelWithEncryptedData):
     # Will only ever be deleted, when the project is deleted.
@@ -466,15 +336,6 @@ class QuestionnaireResponse(ModelWithEncryptedData):
     time_submitted = models.DateTimeField(default=timezone.now)
     data = models.BinaryField()  # Holds the actual response data (encrypted)
     questionnaire_config = models.JSONField(default=list, null=True)  # Holds the questionnaire configuration at the time of participation.
-
-
-class FilterSourceTypes(models.TextChoices):
-    QUESTION = 'question', 'Question'
-    QUESTION_ITEM = 'item', 'Question Item'
-    URL_PARAMETER = 'url_parameter', 'URL Parameter'
-    SYSTEM = 'system', 'System Variable'
-    PARTICIPANT = 'participant', 'Participant Variable'
-    DONATION = 'donation', 'Donation Information'
 
 
 class FilterCondition(models.Model):
@@ -596,7 +457,7 @@ class FilterCondition(models.Model):
             )
         ]
 
-    def get_target(self):
+    def get_target(self) -> QuestionBase | QuestionItem:
         if self.target_question:
             return self.target_question
 
@@ -606,7 +467,7 @@ class FilterCondition(models.Model):
         else:
             raise ValidationError('No target question or target item specified.')
 
-    def get_related_project(self):
+    def get_related_project(self) -> DonationProject | None:
         target = self.get_target()
         if isinstance(target, QuestionBase):
             return target.project
@@ -617,7 +478,7 @@ class FilterCondition(models.Model):
         else:
             return None
 
-    def get_source(self):
+    def get_source(self) -> str | None:
         """
         Returns the filter source.
 
@@ -659,17 +520,15 @@ class FilterCondition(models.Model):
         else:
             raise ValidationError('No valid source specified.')
 
-    def get_source_name(self):
-        """
-        Helper function to display source name in UI.
-        """
+    def get_source_name(self) -> str | None:
+        """Helper function to display source name in UI."""
         source = self.get_source()
         if isinstance(source, QuestionBase) or isinstance(source, QuestionItem):
             return source.variable_name
         else:
             return source
 
-    def check_source_exists(self):
+    def check_source_exists(self) -> bool:
         source = self.get_source()
         if source is not None:
             return True
@@ -709,47 +568,3 @@ class FilterCondition(models.Model):
                         f'Operator "{self.condition_operator}" is not valid for '
                         f'open questions with non-numeric inputs.'
                     )
-
-    def get_source_config_id(self):
-        """
-        Get the ID of the filter's source as used in config dictionaries.
-
-        Returns:
-            str: The config ID of the filter's source.
-        """
-        if self.source_type == FilterSourceTypes.QUESTION:
-            return get_filter_config_id(self.source_question)
-        elif self.source_type == FilterSourceTypes.QUESTION_ITEM:
-            return get_filter_config_id(self.source_item)
-        else:
-            return self.source_identifier
-
-    def get_target_config_id(self):
-        """
-        Get the ID of the filter's target as used in config dictionaries.
-
-        Returns:
-            str: The config ID of the filter's target.
-        """
-        if self.target_question:
-            return get_filter_config_id(self.target_question)
-        elif self.target_item:
-            return get_filter_config_id(self.target_item)
-
-
-def get_filter_config_id(obj: Union[QuestionBase, QuestionItem]) -> str:
-    """
-    Returns the passed objects ID used for the filter configuration.
-
-    Args:
-        obj (QuestionBase | QuestionItem): Either a QuestionBase or a
-            QuestionItem instance.
-
-    Returns:
-        str: 'question-<question.pk> for a QuestionBase or
-            'item-<item.pk>' for a QuestionItem.
-    """
-    if isinstance(obj, QuestionItem):
-        return f'{FilterSourceTypes.QUESTION_ITEM}-{obj.pk}'
-    else:
-        return f'{FilterSourceTypes.QUESTION}-{obj.pk}'

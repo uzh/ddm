@@ -2,6 +2,7 @@ import json
 from itertools import chain
 
 from ddm.participation.models import Participant
+from ddm.participation.utils import get_filter_config_id
 from ddm.projects.models import DonationProject
 
 
@@ -136,9 +137,9 @@ def get_questionnaire_variables(
     """
     from ddm.questionnaire.models import (
         SingleChoiceQuestion, OpenQuestion, QuestionItem,
-        QuestionType, QuestionnaireResponse
+        QuestionnaireResponse
     )
-    from ddm.questionnaire.models import get_filter_config_id
+    from ddm.questionnaire.constants import QuestionType
 
     variables = {}
     response = None

@@ -81,7 +81,7 @@ class ResponseSerializer(SerializerDecryptionMixin, serializers.ModelSerializer)
         responses = dict()
         for response_id in data.keys():
             if response_id.startswith('question-'):
-                question_id = response_id.lstrip('question-')
+                question_id = response_id.removeprefix('question-')
                 try:
                     question = QuestionBase.objects.all().get(id=question_id)
                 except QuestionBase.DoesNotExist:
@@ -91,7 +91,7 @@ class ResponseSerializer(SerializerDecryptionMixin, serializers.ModelSerializer)
                 responses[var_name] = data[response_id]
 
             if response_id.startswith('item-'):
-                item_id = response_id.lstrip('item-')
+                item_id = response_id.removeprefix('item-')
                 try:
                     item = QuestionItem.objects.all().get(id=item_id)
                 except QuestionItem.DoesNotExist:

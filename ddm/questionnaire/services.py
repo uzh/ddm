@@ -109,10 +109,10 @@ def validate_responses(responses: dict, project: DonationProject) -> None:
     overlap_keys = set(expected_keys) & responses.keys()
     for key in overlap_keys:
         if key.startswith('question-'):
-            question_id = key.lstrip('question-')
+            question_id = key.removeprefix('question-')
             question = QuestionBase.objects.get(project=project, pk=question_id)
         elif key.startswith('item-'):
-            item_id = key.lstrip('item-')
+            item_id = key.removeprefix('item-')
             item = QuestionItem.objects.get(question__project=project, pk=item_id)
             question = item.question
         else:

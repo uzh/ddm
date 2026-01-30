@@ -51,3 +51,14 @@ If your DDM instance allows registration by untrusted users, consider these prot
 |Sanitize PDFs
 |If PDFs are necessary, strip JavaScript and embedded content using a sanitization library
 |===
+
+
+== Django REST Framework Configuration
+
+The API endpoints integrated in DDM use the https://www.django-rest-framework.org[Django REST Framework] (DRF)
+
+=== Throttling of API Endpoints
+
+The API endpoints integrated in DDM use DRF's default settings for throttling.
+Therefore, you should configure the throttling settings so that they work best for your setup
+(https://www.django-rest-framework.org/api-guide/throttling/#userratethrottle[see the DRF documentation])

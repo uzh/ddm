@@ -16,7 +16,7 @@ content:
   sources:
     - url: ../
       branches: [develop]
-      tags: [v1.0.19, v1.0.0]
+      tags: [v2.1.7, v2.1.0, v2.0.2, v1.0.19, v1.0.0]
       version: true
       start_path: docs
 

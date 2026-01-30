@@ -124,6 +124,9 @@ export function usePageNavigation(
     getActiveQuestions().forEach(q => {
       if (!q.required) return;
 
+      // Check if question is hidden/filtered out
+      if (hideObjectDict.value[q.question]) return;
+
       // Check if question has items.
       const items: string[] = questionItemMap[q.question];
       if (items.length === 0) {

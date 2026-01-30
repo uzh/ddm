@@ -279,7 +279,7 @@ if (process.env.NODE_ENV === 'test') {
     </div>
   </div>
 </template>
-6
+
 <style>
 .question-app-container {
   font-family: Avenir, Helvetica, Arial, sans-serif;

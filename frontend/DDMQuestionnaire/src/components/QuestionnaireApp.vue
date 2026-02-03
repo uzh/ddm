@@ -33,35 +33,46 @@ import TransitionQuestion from '@questionnaire/components/questions/QuestionTran
 import type {QuestionnaireConfig, FilterConfig, Responses} from '@questionnaire/types/questionnaire';
 
 const props = defineProps<{
-  questionnaireConfigAsString: string,
-  filterConfigAsString: string,
-  staticVariables: string,
+  questionnaireConfig: QuestionnaireConfig,
+  filterConfig: FilterConfig,
+  staticVariables: Record<string, string | number>,
   actionUrl: string,
   language: string
 }>();
 
-// Initialize core configuration and data structures.
-const questionnaireConfig = ref<QuestionnaireConfig>(JSON.parse(props.questionnaireConfigAsString));
+// Constants
 const missingValue: string = '-99';
 const missingFilteredValue: string = '-77';
-const questionItemMap: Record<string, string[]> = initializeQuestionItemMap(questionnaireConfig.value);
+
+// Derived from props (static)
+const questionItemMap: Record<string, string[]> = initializeQuestionItemMap(props.questionnaireConfig);
+
+// Initialize core configuration and data structures.
+const questionnaireConfig = ref<QuestionnaireConfig>(props.questionnaireConfig);
 const responses = ref<Responses>(initializeResponses(questionnaireConfig.value));
-const staticVariables: Record<string, string | number> = JSON.parse(props.staticVariables);
 
 // Initialize filtering functionality.
-const filterConfig = ref<FilterConfig>(JSON.parse(props.filterConfigAsString));
+const filterConfig = ref<FilterConfig>(props.filterConfig);
+const staticVariables = props.staticVariables;
 const hideObjectDict = ref<Record<string, boolean>>({});
-const {
-  evaluateFilters,
-  checkIfAllItemsHidden } = useFilterEngine(filterConfig, responses, staticVariables, hideObjectDict, questionItemMap);
+const { evaluateFilters, checkIfAllItemsHidden } = useFilterEngine(
+    filterConfig,
+    responses,
+    staticVariables,
+    hideObjectDict,
+    questionItemMap
+);
 
 // Page navigation.
 const questionnaireRoot = ref<HTMLElement | null>(null);
-const {
-  currentPage,
-  lastPageSubmitted,
-  next
-} = usePageNavigation(questionnaireConfig, hideObjectDict, responses, questionItemMap, missingValue, questionnaireRoot);
+const { currentPage, lastPageSubmitted, next} = usePageNavigation(
+    questionnaireConfig,
+    hideObjectDict,
+    responses,
+    questionItemMap,
+    missingValue,
+    questionnaireRoot
+);
 const { scrollToTop } = useScrollHandler(questionnaireRoot)
 
 watch(lastPageSubmitted, (submitted) => {

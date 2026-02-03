@@ -28,22 +28,26 @@ function deepMerge(target, source) {
  * This module initializes the Vue application by:
  * 1. Setting up i18n internationalization
  * 2. Finding the mount element in the DOM
- * 3. Parsing configuration data from data attributes
+ * 3. Parsing configuration data from data attributes and JSON script blocks
  * 4. Creating and mounting the Vue application with the appropriate props
  *
  * Expected `data-*` attributes on the mount element:
- * - data-uploader-configs-as-string
  * - data-action-url
  * - data-exception-url
  * - data-language
  * - data-csrf-token
- * - data-custom-translations
+ *
+ * Expected JSON script blocks located within the mount element:
+ *  - #config-data: Contains the uploader configuration
+ *  - #custom-translations: Contains custom translations (optional)
  *
  * @throws {Error} If the mount element is not found or required data attributes are missing
  */
 function initializeUploaderApp(): void {
   const APP_CONFIG = {
     selector: '#uapp',
+    configId: '#config-data',
+    customTranslationsId: '#custom-translations',
     defaultLocale: 'en',
     fallbackLocale: 'en',
   }
@@ -56,7 +60,7 @@ function initializeUploaderApp(): void {
   }
 
   // Validate required attributes.
-  const requiredAttributes = ['actionUrl', 'csrfToken', 'uploaderConfigsAsString', 'exceptionUrl'];
+  const requiredAttributes = ['actionUrl', 'csrfToken', 'exceptionUrl'];
   for (const attr of requiredAttributes) {
     const datasetKey = attr.charAt(0).toLowerCase() + attr.slice(1);
     if (!mountEl.dataset[datasetKey]) {
@@ -64,11 +68,9 @@ function initializeUploaderApp(): void {
     }
   }
 
-  const rawConfig: string = mountEl.dataset.uploaderConfigsAsString;
-  let uploaderConfigs: UploaderConfig[] = [];
-
+  let uploaderConfigs: UploaderConfig[];
   try {
-    uploaderConfigs = JSON.parse(rawConfig ?? "[]") as UploaderConfig[];
+    uploaderConfigs = JSON.parse(mountEl.querySelector(APP_CONFIG.configId).textContent);
   } catch (err) {
     console.error("Failed to parse uploadConfig:", err);
   }
@@ -88,14 +90,16 @@ function initializeUploaderApp(): void {
     it: it,
     fr: fr,
   };
-  if (mountEl.dataset.customTranslations) {
-    const customTranslations = JSON.parse(mountEl.dataset.customTranslations || '{}');
-    if (!(customTranslations == null) && !(customTranslations == '')) {
+
+  const translationsEl = mountEl.querySelector(APP_CONFIG.customTranslationsId);
+  if (translationsEl?.textContent) {
+    const custom = JSON.parse(translationsEl.textContent);
+    if (custom && Object.keys(custom).length) {
       messages = {
-        en: deepMerge(en, customTranslations.en || {}),
-        de: deepMerge(de, customTranslations.de || {}),
-        it: deepMerge(it, customTranslations.it || {}),
-        fr: deepMerge(fr, customTranslations.fr || {}),
+        en: deepMerge(en, custom.en || {}),
+        de: deepMerge(de, custom.de || {}),
+        it: deepMerge(it, custom.it || {}),
+        fr: deepMerge(fr, custom.fr || {}),
       };
     }
   }

@@ -7,13 +7,13 @@
 <div class="container">
     <div id="uapp"
          class="container text-black ps-0 pe-0"
-         data-uploader-configs-as-string='{{ uploader_configs }}'
          data-action-url='{{ request.build_absolute_uri }}'
          data-exception-url='{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url "ddm_logging:exceptions_api" project_url_id %}'
          data-language='{{ LANGUAGE_CODE|slice:"0:2"}}'
          data-csrf-token="{{ csrf_token }}"
-         data-custom-translations="{{ custom_translations }}"
     >
+      {{ uploader_configs|json_script:"config-data" }}
+      {{ custom_translations|json_script:"custom-translations" }}
       <uapp></uapp>
     </div>
     {% render_bundle "ddm_uploader_frontend" config="DDM_UPLOADER" %}

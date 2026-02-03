@@ -13,13 +13,13 @@
   <form method="POST">
     {% csrf_token %}
     <div id="qapp"
-         data-questionnaire-config-as-string='{{ q_config }}'
-         data-filter-config-as-string='{{ filter_config }}'
-         data-static-variables='{{ extra_variables }}'
          data-action-url='{{ request.build_absolute_uri }}'
          data-language='{{ LANGUAGE_CODE|slice:"0:2"}}'
          class="text-black"
     >
+      {{ q_config|json_script:"q-config-data" }}
+      {{ filter_config|json_script:"filter-config-data" }}
+      {{ extra_variables|json_script:"static-variables-data" }}
       <qapp></qapp>
     </div>
   </form>

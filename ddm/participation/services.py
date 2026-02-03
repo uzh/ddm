@@ -94,7 +94,8 @@ class QuestionnaireConfigService:
         try:
             data_donation = DataDonation.objects.get(
                 blueprint=blueprint,
-                participant=self.participant
+                participant=self.participant,
+                status='success'
             )
 
         except DataDonation.DoesNotExist:

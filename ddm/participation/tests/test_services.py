@@ -138,7 +138,7 @@ class QuestionnaireConfigServiceTest(TestCase):
             participant=cls.participant,
             time_submitted=timezone.now(),
             consent=True,
-            status='{}',
+            status='success',
             data='some donated data',
         )
 
@@ -190,11 +190,19 @@ class QuestionnaireConfigServiceTest(TestCase):
         question_ids = [q['question'] for q in result]
         self.assertIn(f'question-{self.general_q.pk}', question_ids)
 
-    def test_blueprint_question_with_donation_included(self):
+    def test_blueprint_question_with_donation_success_included(self):
         svc = QuestionnaireConfigService(self.project, self.participant)
         result = svc.create_questionnaire_config()
         question_ids = [q['question'] for q in result]
         self.assertIn(f'question-{self.blueprint_q.pk}', question_ids)
+
+    def test_blueprint_question_with_donation_failed_excluded(self):
+        svc = QuestionnaireConfigService(self.project, self.participant)
+        self.donation.status = 'failed'
+        self.donation.save()
+        result = svc.create_questionnaire_config()
+        question_ids = [q['question'] for q in result]
+        self.assertNotIn(f'question-{self.blueprint_q.pk}', question_ids)
 
     def test_blueprint_question_without_donation_excluded(self):
         svc = QuestionnaireConfigService(self.project, self.participant)
@@ -210,7 +218,7 @@ class QuestionnaireConfigServiceTest(TestCase):
         pages = [(q['page'], q['index']) for q in result]
         self.assertEqual(pages, sorted(pages))
 
-    # Tests for get_filter_config ------------------------------------
+    # Tests for get_filter_config ----------------------------------------------
     def test_get_filter_config_returns_list(self):
         svc = QuestionnaireConfigService(self.project, self.participant)
         result = svc.get_filter_config(self.general_q)

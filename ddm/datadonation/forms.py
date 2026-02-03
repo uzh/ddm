@@ -13,7 +13,7 @@ from ddm.datadonation.models import (
 )
 
 
-class BlueprintEditForm(forms.ModelForm):
+class BlueprintForm(forms.ModelForm):
 
     class Meta:
         model = DonationBlueprint
@@ -38,12 +38,13 @@ class BlueprintEditForm(forms.ModelForm):
         }
         help_texts = {
             'display_name': (
-                'A name for this blueprint, displayed to participants (e.g., "Watch History").'
+                'A name for this blueprint, displayed to participants '
+                '(e.g., "Watch History").'
             ),
             'description': (
                 'Describe what data this blueprint extracts '
-                '(e.g., "The titles of videos you watched and when you watched them"). '
-                'Displayed to participants.'
+                '(e.g., "The titles of videos you watched and when you watched '
+                'them"). Displayed to participants.'
             ),
             'expected_fields': mark_safe(
                 'Comma-separated, in double quotes: <code>"Field A", "Field B"</code>'
@@ -61,6 +62,27 @@ class BlueprintEditForm(forms.ModelForm):
                 'notation (e.g., <code>friends.real_friends</code>).'
             )
         }
+
+    def __init__(self, *args, **kwargs):
+        self.project = kwargs.pop('project', None)
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        name = cleaned_data.get('name')
+
+        if name and self.project:
+            qs = DonationBlueprint.objects.filter(name=name, project=self.project)
+            if self.instance.pk:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                msg = (
+                    'A Blueprint with this name already exists '
+                    'in this project. Please choose another one.'
+                )
+                self.add_error('name', msg)
+
+        return cleaned_data
 
 
 class InstructionsForm(forms.ModelForm):
@@ -149,6 +171,27 @@ class FileUploaderForm(forms.ModelForm):
                 '(0 = only extract the top-level zip).'
             ),
         }
+
+    def __init__(self, *args, **kwargs):
+        self.project = kwargs.pop('project', None)
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        name = cleaned_data.get('name')
+
+        if name and self.project:
+            qs = FileUploader.objects.filter(name=name, project=self.project)
+            if self.instance.pk:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                msg = (
+                    'A File Uploader with this name already exists '
+                    'in this project. Please choose another one.'
+                )
+                self.add_error('name', msg)
+
+        return cleaned_data
 
 
 class BlueprintFilePathForm(forms.ModelForm):

@@ -5,7 +5,8 @@ import zipfile
 from django import forms
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import Q
+from django.db import transaction
+from django.db.models import Q, QuerySet
 from django.forms.utils import ErrorList
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import get_object_or_404
@@ -17,7 +18,7 @@ from django.views.generic.list import ListView
 from ddm.apis.serializers import DataDonationSerializer
 from ddm.apis.views import DDMAPIMixin
 from ddm.datadonation.forms import (
-    BlueprintEditForm,
+    BlueprintForm,
     BlueprintFilePathInlineFormset,
     FileUploaderForm,
     InstructionsForm,
@@ -35,25 +36,40 @@ from ddm.projects.models import DonationProject
 from ddm.projects.views import DDMAuthMixin
 
 
-class BlueprintMixin:
-    """ Mixin for all blueprint related views. """
+class DDMAdminMixin:
+    """ Mixin for admin views providing extra context and utility functions. """
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        file_uploaders = FileUploader.objects.filter(project__url_id=self.kwargs['project_url_id'])
+
+        url_id = self.get_project_url_id()
+        uploaders = FileUploader.objects.filter(project__url_id=url_id)
+        uploader_meta_data = {str(fu.pk): fu.upload_type for fu in uploaders}
+
         context.update({
-            'project': DonationProject.objects.get(url_id=self.kwargs['project_url_id']),
-            'file_uploader_meta': {str(fu.pk): fu.upload_type for fu in file_uploaders}
+            'project': DonationProject.objects.get(url_id=url_id),
+            'file_uploader_meta': uploader_meta_data
         })
         return context
 
+    def get_project_url_id(self):
+        return self.kwargs['project_url_id']
+
+    def get_project(self):
+        if not hasattr(self, '_project'):
+            self._project = DonationProject.objects.get(
+                url_id=self.get_project_url_id()
+            )
+        return self._project
+
     def get_success_url(self):
+        """Default success url."""
         return reverse(
             'ddm_datadonation:overview',
-            kwargs={'project_url_id': self.kwargs['project_url_id']}
+            kwargs={'project_url_id': self.get_project_url_id()}
         )
 
 
-class DataDonationOverview(DDMAuthMixin, BlueprintMixin, ListView):
+class DataDonationOverview(DDMAuthMixin, DDMAdminMixin, ListView):
     """ View to list all file uploaders associated with a project. """
     model = FileUploader
     context_object_name = 'file_uploaders'
@@ -61,41 +77,67 @@ class DataDonationOverview(DDMAuthMixin, BlueprintMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update({'lonely_blueprints': context['project'].donationblueprint_set.filter(file_uploader=None)})
+        project = self.get_project()
+        context.update({
+            'lonely_blueprints': project.donationblueprint_set.filter(
+                file_uploader=None
+            )
+        })
         return context
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(project__url_id=self.kwargs['project_url_id'])
+        queryset = super().get_queryset().filter(
+            project__url_id=self.get_project_url_id()
+        )
         return queryset
 
 
-class FileUploaderCreate(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, CreateView):
+class FileUploaderCreate(
+    SuccessMessageMixin,
+    DDMAuthMixin,
+    DDMAdminMixin,
+    CreateView
+):
     """ View to create a new file uploader. """
     model = FileUploader
     template_name = 'ddm_datadonation/uploader/create.html'
     form_class = FileUploaderForm
     success_message = 'Uploader created successfully.'
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['project'] = self.get_project()
+        return kwargs
+
     def form_valid(self, form):
-        project_url_id = self.kwargs['project_url_id']
-        project = DonationProject.objects.get(url_id=project_url_id)
+        project = DonationProject.objects.get(url_id=self.get_project_url_id())
         form.instance.project_id = project.pk
         return super().form_valid(form)
 
     def get_success_url(self):
         kwargs = {
-            'project_url_id': self.kwargs['project_url_id'],
+            'project_url_id': self.get_project_url_id(),
             'pk': self.object.pk
         }
         return reverse('ddm_datadonation:uploaders:edit', kwargs=kwargs)
 
 
-class FileUploaderEdit(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, UpdateView):
+class FileUploaderEdit(
+    SuccessMessageMixin,
+    DDMAuthMixin,
+    DDMAdminMixin,
+    UpdateView
+):
     """ View to edit the details of an existing file uploader. """
     model = FileUploader
     template_name = 'ddm_datadonation/uploader/edit.html'
     form_class = FileUploaderForm
     success_message = 'Uploader "%(name)s" successfully updated.'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['project'] = self.get_project()
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -108,30 +150,36 @@ class FileUploaderEdit(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, Update
         the current or no file uploader.
         """
         relevant_blueprints = DonationBlueprint.objects.filter(
-            Q(file_uploader=self.object) | Q(file_uploader=None), project__url_id=self.kwargs['project_url_id'])
+            Q(file_uploader=self.object) | Q(file_uploader=None),
+            project__url_id=self.get_project_url_id()
+        )
         return relevant_blueprints
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_form()
-        selected_blueprints = [int(k[3:]) for k in self.request.POST.keys() if k.startswith('bp-')]
+        selected_blueprints = [
+            int(k[3:]) for k in self.request.POST.keys() if k.startswith('bp-')  # TODO: Optimize this static reference
+        ]
         if form.is_valid():
             return self.form_valid(form, selected_blueprints)
         else:
             return self.form_invalid(form)
 
     def form_valid(self, form, selected_blueprints):
-        self.object = form.save()
+        with transaction.atomic():
+            self.object = form.save()
 
-        # Update file_upload foreign key on donation blueprints.
-        relevant_blueprints = self.get_relevant_blueprints()
-        for bp in relevant_blueprints:
-            if bp.pk in selected_blueprints:
-                bp.file_uploader = self.object
-                bp.save()
-            elif bp.file_uploader == self.object:
-                bp.file_uploader = None
-                bp.save()
+            # Update file_upload foreign key on donation blueprints.
+            relevant_blueprints = self.get_relevant_blueprints()
+            for bp in relevant_blueprints:
+                if bp.pk in selected_blueprints:
+                    bp.file_uploader = self.object
+                    bp.save()
+                elif bp.file_uploader == self.object:
+                    bp.file_uploader = None
+                    bp.save()
+
         messages.add_message(
             self.request, messages.SUCCESS,
             self.success_message % dict(name=self.object.name),
@@ -140,7 +188,7 @@ class FileUploaderEdit(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, Update
         return HttpResponseRedirect(self.get_success_url())
 
 
-class FileUploaderDelete(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, DeleteView):
+class FileUploaderDelete(SuccessMessageMixin, DDMAuthMixin, DDMAdminMixin, DeleteView):
     """ View to delete an existing blueprint uploader. """
     model = FileUploader
     template_name = 'ddm_datadonation/uploader/delete.html'
@@ -156,58 +204,43 @@ class FileUploaderDelete(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, Dele
         return self.success_message % self.object.name
 
 
-class BlueprintCreate(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, CreateView):
-    """ View to create a new donation blueprint. """
-    model = DonationBlueprint
-    template_name = 'ddm_datadonation/blueprint/create.html'
-    form_class = BlueprintEditForm
-    success_message = 'Blueprint created successfully.'
+class BlueprintFormMixin(DDMAdminMixin):
+    """Mixins bundling common functionality for Blueprint related form views."""
 
-    def get_initial(self):
-        """Set initial display_position value to current maximum plus one."""
-        initial = super().get_initial()
-        project_id = self.kwargs['project_url_id']
-        project_blueprints = DonationBlueprint.objects.filter(project__url_id=project_id)
+    object: DonationBlueprint
 
-        if project_blueprints:
-            max_position = project_blueprints.order_by('-display_position').values_list('display_position', flat=True).first()
-            initial['display_position'] = max_position + 1
-        else:
-            initial['display_position'] = 1
-
-        return initial
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        available_file_uploaders = FileUploader.objects.filter(project__url_id=self.kwargs['project_url_id'])
-        context['form'].fields['file_uploader'].queryset = available_file_uploaders
-
-        if 'path_formset' not in kwargs:
-            context['path_formset'] = BlueprintFilePathInlineFormset(
-                instance=self.object,
-                queryset=BlueprintFilePath.objects.none()
-            )
-        return context
-
-    def post(self, request, *args, **kwargs):
-        self.object = None
-
-        form = self.get_form()
-        path_formset = BlueprintFilePathInlineFormset(self.request.POST)
-
-        if form.is_valid() and path_formset.is_valid():
-            # Check if any file paths exist for
-            if self.blueprint_is_missing_file_paths(form, path_formset):
-                path_formset._non_form_errors = ErrorList(
-                    ['ZIP file uploaders require at least one file path.']
+    def get_project(self) -> DonationProject:
+        if not hasattr(self, '_project'):
+            if hasattr(self, 'object') and self.object:
+                self._project = self.object.project
+            else:
+                self._project = DonationProject.objects.get(
+                    url_id=self.get_project_url_id()
                 )
-                return self.form_invalid(form, path_formset)
+        return self._project
 
-            return self.form_valid(form, path_formset)
+    def get_file_uploaders(self) -> QuerySet[FileUploader]:
+        return FileUploader.objects.filter(
+            project__url_id=self.get_project_url_id()
+        )
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['project'] = self.get_project()
+        return kwargs
+
+    def get_path_formset(self, data=None):
+        if self.object is None:
+            queryset = BlueprintFilePath.objects.none()
         else:
-            return self.form_invalid(form, path_formset)
+            queryset = self.object.blueprintfilepath_set.all()
+        return BlueprintFilePathInlineFormset(
+            data,
+            instance=self.object,
+            queryset=queryset
+        )
 
-    def blueprint_is_missing_file_paths(self, form, path_formset) -> bool:
+    def form_is_missing_file_paths(self, form, path_formset) -> bool:
         has_paths = any(
             f.cleaned_data and not f.cleaned_data.get('DELETE', False)
             for f in path_formset
@@ -220,21 +253,78 @@ class BlueprintCreate(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, CreateV
                 return True
         return False
 
-    def form_valid(self, form, path_formset):
-        project_url_id = self.kwargs['project_url_id']
-        project = DonationProject.objects.get(url_id=project_url_id)
-        form.instance.project_id = project.pk
-
-        self.object = form.save()
-
-        path_formset.instance = self.object
-        path_formset.save()
-
-        messages.add_message(
-            self.request, messages.SUCCESS,
-            self.success_message % dict(name=self.object.name),
-            fail_silently=True,
+    def add_file_path_error(self, path_formset):
+        """Add error for missing file paths. Override to change where error appears."""
+        path_formset._non_form_errors = ErrorList(
+            ['ZIP file uploaders require at least one file path.']
         )
+
+
+class BlueprintCreate(
+    SuccessMessageMixin,
+    DDMAuthMixin,
+    BlueprintFormMixin,
+    CreateView
+):
+    """ View to create a new donation blueprint. """
+    model = DonationBlueprint
+    template_name = 'ddm_datadonation/blueprint/create.html'
+    form_class = BlueprintForm
+    success_message = 'Blueprint created successfully.'
+
+    def get_initial(self):
+        """Set initial display_position value to current maximum plus one."""
+        initial = super().get_initial()
+        project_blueprints = DonationBlueprint.objects.filter(
+            project__url_id=self.get_project_url_id()
+        )
+
+        if project_blueprints:
+            max_position = self.get_current_max_position(project_blueprints)
+            initial['display_position'] = max_position + 1
+        else:
+            initial['display_position'] = 1
+
+        return initial
+
+    def get_current_max_position(
+            self,
+            blueprints: QuerySet[DonationBlueprint]
+    ) -> int:
+        return blueprints.order_by('-display_position').values_list(
+            'display_position', flat=True).first()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'].fields['file_uploader'].queryset = self.get_file_uploaders()
+
+        if 'path_formset' not in kwargs:
+            context['path_formset'] = self.get_path_formset()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = None
+
+        form = self.get_form()
+        path_formset = self.get_path_formset(request.POST)
+
+        if form.is_valid() and path_formset.is_valid():
+            if self.form_is_missing_file_paths(form, path_formset):
+                self.add_file_path_error(path_formset)
+                return self.form_invalid(form, path_formset)
+            return self.form_valid(form, path_formset)
+        else:
+            return self.form_invalid(form, path_formset)
+
+    def form_valid(self, form, path_formset):
+        with transaction.atomic():
+            form.instance.project = self.get_project().pk
+
+            self.object = form.save()
+            path_formset.instance = self.object
+            path_formset.save()
+
+        messages.success(self.request, self.success_message)
         return HttpResponseRedirect(self.get_success_url())
 
     def form_invalid(self, form, path_formset):
@@ -245,87 +335,69 @@ class BlueprintCreate(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, CreateV
         return self.render_to_response(context)
 
     def get_success_url(self):
-        return reverse('ddm_datadonation:blueprints:edit',
-                       kwargs={'project_url_id': self.object.project.url_id, 'pk': self.object.pk})
+        kwargs = {
+            'project_url_id': self.object.project.url_id,
+            'pk': self.object.pk
+        }
+        return reverse('ddm_datadonation:blueprints:edit', kwargs=kwargs)
 
 
-class BlueprintEdit(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, UpdateView):
+class BlueprintEdit(
+    SuccessMessageMixin,
+    DDMAuthMixin,
+    BlueprintFormMixin,
+    UpdateView
+):
     """ View to edit the details of an existing donation blueprint. """
     model = DonationBlueprint
     template_name = 'ddm_datadonation/blueprint/edit.html'
-    form_class = BlueprintEditForm
+    form_class = BlueprintForm
     success_message = 'Blueprint "%(name)s" successfully updated.'
-
-    def get_success_url(self):
-        return reverse(
-            'ddm_datadonation:overview',
-            kwargs={'project_url_id': self.object.project.url_id}
-        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        file_uploaders = FileUploader.objects.filter(
-            project__url_id=self.kwargs['project_url_id']
-        )
-        context['form'].fields['file_uploader'].queryset = file_uploaders
+        context['form'].fields['file_uploader'].queryset = self.get_file_uploaders()
 
         if 'rule_formset' not in kwargs:
-            context['rule_formset'] = ProcessingRuleInlineFormset(
-                instance=self.object,
-                queryset=self.object.processingrule_set.order_by('execution_order')
-            )
+            context['rule_formset'] = self.get_rule_formset()
 
         if 'path_formset' not in kwargs:
-            context['path_formset'] = BlueprintFilePathInlineFormset(
-                instance=self.object,
-                queryset=self.object.blueprintfilepath_set.all()
-            )
+            context['path_formset'] = self.get_path_formset()
 
         return context
+
+    def get_rule_formset(self, data=None):
+        return ProcessingRuleInlineFormset(
+            data,
+            instance=self.object,
+            queryset=self.object.processingrule_set.order_by('execution_order')
+        )
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
         form = self.get_form()
-        rule_formset = ProcessingRuleInlineFormset(self.request.POST, instance=self.object)
-        path_formset = BlueprintFilePathInlineFormset(self.request.POST, instance=self.object)
+        rule_formset = self.get_rule_formset(self.request.POST)
+        path_formset = self.get_path_formset(self.request.POST)
 
         if form.is_valid() and rule_formset.is_valid() and path_formset.is_valid():
-            # Check if any file paths exist for
-            if self.blueprint_is_missing_file_paths(form, path_formset):
-                form.add_error(None, 'ZIP file uploaders require at least one file path.')
+            if self.form_is_missing_file_paths(form, path_formset):
+                self.add_file_path_error(path_formset)
                 return self.form_invalid(form, rule_formset, path_formset)
-
             return self.form_valid(form, rule_formset, path_formset)
         else:
             return self.form_invalid(form, rule_formset, path_formset)
 
-    def blueprint_is_missing_file_paths(self, form, path_formset) -> bool:
-        has_paths = any(
-            f.cleaned_data and not f.cleaned_data.get('DELETE', False)
-            for f in path_formset
-        )
-        file_uploader = form.cleaned_data.get('file_uploader')
-
-        if file_uploader and not has_paths:
-            needs_paths = file_uploader.upload_type == FileUploader.UploadTypes.ZIP_FILE
-            if needs_paths:
-                return True
-        return False
-
     def form_valid(self, form, rule_formset, path_formset):
-        self.object = form.save()
+        with transaction.atomic():
+            self.object = form.save()
+            rule_formset.instance = self.object
+            rule_formset.save()
+            path_formset.instance = self.object
+            path_formset.save()
 
-        rule_formset.instance = self.object
-        rule_formset.save()
-
-        path_formset.instance = self.object
-        path_formset.save()
-
-        messages.add_message(
-            self.request, messages.SUCCESS,
-            self.success_message % dict(name=self.object.name),
-            fail_silently=True,
+        messages.success(
+            self.request, self.success_message % {'name': self.object.name}
         )
         return HttpResponseRedirect(self.get_success_url())
 
@@ -338,7 +410,12 @@ class BlueprintEdit(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, UpdateVie
         return self.render_to_response(context)
 
 
-class BlueprintDelete(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, DeleteView):
+class BlueprintDelete(
+    SuccessMessageMixin,
+    DDMAuthMixin,
+    DDMAdminMixin,
+    DeleteView
+):
     """ View to delete an existing donation blueprint. """
     model = DonationBlueprint
     template_name = 'ddm_datadonation/blueprint/delete.html'
@@ -351,14 +428,27 @@ class BlueprintDelete(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, DeleteV
 class InstructionMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update({'project_url_id': self.kwargs['project_url_id']})
-        context.update({'file_uploader': FileUploader.objects.get(pk=self.kwargs['file_uploader_pk'])})
+        context.update({
+            'project_url_id': self.get_project_url_id(),
+            'file_uploader': FileUploader.objects.get(pk=self.get_uploader_id())
+        })
         return context
 
+    def get_project_url_id(self):
+        return self.kwargs['project_url_id']
+
+    def get_uploader_id(self):
+        return self.kwargs['file_uploader_pk']
+
     def get_success_url(self):
-        kwargs = {'project_url_id': self.kwargs['project_url_id'],
-                  'file_uploader_pk': self.kwargs['file_uploader_pk']}
-        return reverse('ddm_datadonation:instructions:overview', kwargs=kwargs)
+        kwargs = {
+            'project_url_id': self.get_project_url_id(),
+            'file_uploader_pk': self.get_uploader_id()
+        }
+        return reverse(
+            'ddm_datadonation:instructions:overview',
+            kwargs=kwargs
+        )
 
 
 class InstructionOverview(DDMAuthMixin, InstructionMixin, ListView):
@@ -369,11 +459,18 @@ class InstructionOverview(DDMAuthMixin, InstructionMixin, ListView):
     fields = ['text', 'index']
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(file_uploader_id=self.kwargs['file_uploader_pk'])
+        queryset = super().get_queryset().filter(
+            file_uploader_id=self.get_uploader_id()
+        )
         return queryset
 
 
-class InstructionCreate(SuccessMessageMixin, DDMAuthMixin, InstructionMixin, CreateView):
+class InstructionCreate(
+    SuccessMessageMixin,
+    DDMAuthMixin,
+    InstructionMixin,
+    CreateView
+):
     """ View to create an instruction page. """
     model = DonationInstruction
     form_class = InstructionsForm
@@ -382,12 +479,14 @@ class InstructionCreate(SuccessMessageMixin, DDMAuthMixin, InstructionMixin, Cre
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['instance'] = DonationInstruction(file_uploader=FileUploader.objects.get(id=self.kwargs['file_uploader_pk']))
+        kwargs['instance'] = DonationInstruction(
+            file_uploader=FileUploader.objects.get(id=self.get_uploader_id())
+        )
         return kwargs
 
     def get_initial(self):
         initial = super().get_initial()
-        related_file_uploader = FileUploader.objects.get(id=self.kwargs['file_uploader_pk'])
+        related_file_uploader = FileUploader.objects.get(id=self.get_uploader_id())
         indices = related_file_uploader.donationinstruction_set.values_list('index', flat=True)
         if indices:
             initial['index'] = max(indices) + 1
@@ -396,7 +495,12 @@ class InstructionCreate(SuccessMessageMixin, DDMAuthMixin, InstructionMixin, Cre
         return initial
 
 
-class InstructionEdit(SuccessMessageMixin, DDMAuthMixin, InstructionMixin, UpdateView):
+class InstructionEdit(
+    SuccessMessageMixin,
+    DDMAuthMixin,
+    InstructionMixin,
+    UpdateView
+):
     """ View to edit an instruction page. """
     model = DonationInstruction
     form_class = InstructionsForm
@@ -404,7 +508,12 @@ class InstructionEdit(SuccessMessageMixin, DDMAuthMixin, InstructionMixin, Updat
     success_message = 'Instruction page successfully updated.'
 
 
-class InstructionDelete(SuccessMessageMixin, DDMAuthMixin, InstructionMixin, DeleteView):
+class InstructionDelete(
+    SuccessMessageMixin,
+    DDMAuthMixin,
+    InstructionMixin,
+    DeleteView
+):
     """ View to delete an instruction page. """
     model = DonationInstruction
     template_name = 'ddm_datadonation/instructions/delete.html'

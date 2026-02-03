@@ -3,12 +3,18 @@ from unittest.mock import patch
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from ddm.datadonation.models import FileUploader, DonationBlueprint, DonationInstruction, ProcessingRule
+from ddm.datadonation.models import (
+    BlueprintFilePath,
+    DonationBlueprint,
+    DonationInstruction,
+    FileUploader,
+    ProcessingRule,
+)
 from ddm.participation.serializers import (
     FileUploaderSerializer, InstructionSerializer,
     BlueprintSerializer, ProcessingRuleSerializer,
     FilterConditionSerializer, QuestionItemConfigSerializer,
-    QuestionConfigSerializer,
+    QuestionConfigSerializer, BlueprintFilePathSerializer,
 )
 from ddm.projects.models import ResearchProfile, DonationProject
 from ddm.questionnaire.models import (
@@ -44,7 +50,8 @@ class DataDonationConfigSerializersTest(TestCase):
 
         cls.file_uploader = FileUploader.objects.create(
             project=project,
-            name='basic file uploader',
+            name='basic_file_uploader',
+            display_name='basic file uploader',
             upload_type=FileUploader.UploadTypes.SINGLE_FILE,
             extract_nested_zips=True,
             extraction_depth=3,
@@ -52,9 +59,17 @@ class DataDonationConfigSerializersTest(TestCase):
 
         cls.blueprint = DonationBlueprint.objects.create(
             project=project,
-            name='donation blueprint',
+            name='donation_blueprint',
+            display_name='donation blueprint',
             expected_fields='"a", "b"',
             file_uploader=cls.file_uploader
+        )
+
+        cls.file_path = BlueprintFilePath.objects.create(
+            blueprint=cls.blueprint,
+            path='some_path/file.txt',
+            priority=1,
+            is_regex=True,
         )
 
         cls.instruction = DonationInstruction.objects.create(
@@ -133,6 +148,18 @@ class DataDonationConfigSerializersTest(TestCase):
 
         self.assertIsInstance(serializer.data['extraction_rules'], list)
         self.assertEqual(len(serializer.data['extraction_rules']), 2)
+
+        self.assertIsInstance(serializer.data['file_paths'], list)
+        self.assertEqual(len(serializer.data['file_paths']), 1)
+
+    # Tests for BlueprintFilePathSerializer ------------------------------------
+    def test_blueprint_file_path_serializer(self):
+        file_path = BlueprintFilePath.objects.create(
+            blueprint=self.blueprint,
+            path='some_path/file\.txt',
+            is_regex=True,
+        )
+        _ = BlueprintFilePathSerializer(file_path)
 
     # Tests for ProcessingRuleSerializer --------------------------------------
     def test_processing_rule_serializer(self):

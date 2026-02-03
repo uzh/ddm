@@ -29,16 +29,16 @@ class TestBlueprintEditForm(TestCase):
         bp = DonationBlueprint.objects.create(
             project=self.file_uploader.project,
             name='valid blueprint',
+            display_name='some name',
             description='some description',
             expected_fields='"some field"',
             file_uploader=self.file_uploader,
-            regex_path='/this/file.json'
         )
         data = {
             'name': bp.name,
+            'display_name': bp.display_name,
             'description': bp.description,
             'display_position': bp.display_position,
-            'regex_path': bp.regex_path,
             'exp_file_format': 'json',
             'csv_delimiter': bp.csv_delimiter,
             'file_uploader': bp.file_uploader.pk,
@@ -53,15 +53,15 @@ class TestBlueprintEditForm(TestCase):
         bp = DonationBlueprint.objects.create(
             project=self.file_uploader.project,
             name='valid blueprint',
+            display_name='some name',
             description='some description',
             expected_fields='"some field"',
             file_uploader=self.file_uploader,
-            regex_path='/this/file.json'
         )
         data = {
             'name': bp.name,
+            'display_name': bp.display_name,
             'description': bp.description,
-            'regex_path': '',
             'exp_file_format': 'json',
             'csv_delimiter': bp.csv_delimiter,
             'file_uploader': bp.file_uploader.pk,

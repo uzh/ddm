@@ -8,7 +8,7 @@ import {
   valueIsGreater,
   regexDeleteMatch,
   regexReplaceMatch,
-  regexDeleteRow, bothDates, getDates, prepareValues
+  regexDeleteRow,
 } from '../utils/ExtractionFunctions'
 
 test('valueIsEqual', () => {

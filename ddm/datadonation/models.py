@@ -24,8 +24,23 @@ COMMA_SEPARATED_STRINGS_VALIDATOR = RegexValidator(
 
 
 class FileUploader(models.Model):
-    name = models.CharField(max_length=250)
-    project = models.ForeignKey('ddm_projects.DonationProject', on_delete=models.CASCADE)
+    project = models.ForeignKey(
+        'ddm_projects.DonationProject',
+        on_delete=models.CASCADE
+    )
+
+    name = models.CharField(
+        max_length=250,
+        help_text=(
+            'Internal name for this File Uploader.'
+        ),
+        blank=False,
+    )
+
+    display_name = models.CharField(
+        max_length=250,
+        help_text='Public name of the File Uploader (displayed to participants)'
+    )
     index = models.PositiveIntegerField()
 
     class UploadTypes(models.TextChoices):
@@ -45,13 +60,14 @@ class FileUploader(models.Model):
     combined_consent = models.BooleanField(
         default=False,
         verbose_name='All-in-one consent',
-        help_text='If enabled, participants will be asked to consent to submit '
-                  'all uploaded data at once. Otherwise, participant will be asked to '
-                  'consent to the submission of the data separately for each blueprint.'
+        help_text='If enabled, participants provide consent once for all data.'
     )
 
+    class Meta:
+        ordering = ['index', 'pk']
+
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.upload_type})"
 
     def delete(self, *args, **kwargs):
         """ This model has a post_delete signal processor (see signals.py). """
@@ -72,20 +88,17 @@ class DonationBlueprint(models.Model):
     name = models.CharField(
         max_length=250,
         help_text=(
-            'Name for this File Blueprint. Will be visible to participants, '
-            'so pick an informative name (e.g., "Watch History").'
+            'Internal name for this File Blueprint.'
         )
     )
     description = models.TextField(
         null=True,
-        help_text=(
-            'A description of which kind of data will be extracted by this '
-            'Blueprint (e.g., "The title of your watched videos will be '
-            'collected together with the time when you watched it."). '
-            'Will be visible to participants.'
-        )
+        help_text='Blueprint description visible for participants.'
     )
-
+    display_name = models.CharField(
+        max_length=250,
+        help_text='Public name of the blueprint (displayed to participants)'
+    )
     display_position = models.PositiveIntegerField(default=1)
 
     class FileFormats(models.TextChoices):
@@ -106,14 +119,7 @@ class DonationBlueprint(models.Model):
         default='',
         blank=True,
         verbose_name='Extraction Root',
-        help_text=(
-            'Indicates on which level of the files\' data structure information should be extractet. '
-            'If you want to extract information contained on the first level (e.g., {\'field to be extracted\': value}, '
-            'you can leave this field empty. If you want to extract data located on a higher level, then you would '
-            'provide the path to the parent field of the data you want to extract (e.g., if your json file is structured like this '
-            '{\'friends\': {\'real_friends\': [{\'name to extract\': name, \'date to extract\': date}], \'fake friends\': [{\'name\': name, \'date\': date }]}} '
-            'and you want to extract the names and dates of real_friends, you would set the extraction root to \'friends.real_friends\'.'
-        )
+        help_text='The level in the data structure from which to extract. (optional)'
     )
 
     csv_delimiter = models.CharField(
@@ -121,10 +127,7 @@ class DonationBlueprint(models.Model):
         default="",
         blank=True,
         help_text=(
-            'This field allows you to specify the character that separates '
-            'values in the expected CSV file (e.g., , ; or \\t).'
-            ' If left empty, DDM will try to infer the delimiter from the '
-            'file structure.'
+            'The character that separates values in the CSV.'
         )
     )
 
@@ -133,15 +136,14 @@ class DonationBlueprint(models.Model):
         blank=False,
         validators=[COMMA_SEPARATED_STRINGS_VALIDATOR],
         help_text=(
-            'Put the field names in double quotes (") and separate them '
-            'with commas ("Field A", "Field B").'
+            'Comma-separated, in double quotes: <code>"Field A", "Field B"</code>'
         )
     )
 
     expected_fields_regex_matching = models.BooleanField(
         default=False,
         null=False,
-        help_text='Select if you use regex expressions in the "Expected fields".'
+        help_text='Select if you use regex expressions in the "Expected fields"'
     )
 
     file_uploader = models.ForeignKey(
@@ -165,7 +167,7 @@ class DonationBlueprint(models.Model):
             'to match files in different languages. Consult the documentation '
             'for some examples.'
         )
-    )
+    )  # TODO: Deprecate in future major release; replaced by FilePath model.
 
     class Meta:
         ordering = ['display_position', 'pk']
@@ -179,12 +181,6 @@ class DonationBlueprint(models.Model):
     def clean(self):
 
         errors = {}
-
-        if self.regex_path:
-            try:
-                validate_safe_regex(self.regex_path)
-            except ValidationError as e:
-                errors['regex_path'] = e.message
 
         # Validate expected_fields when regex matching is enabled
         if self.expected_fields_regex_matching and self.expected_fields:
@@ -252,6 +248,38 @@ class DonationBlueprint(models.Model):
         return
 
 
+class BlueprintFilePath(models.Model):
+    blueprint = models.ForeignKey(
+        'DonationBlueprint',
+        null=False,
+        on_delete=models.CASCADE,
+    )
+
+    path = models.TextField()
+    is_regex = models.BooleanField(default=False)
+
+    priority = models.IntegerField(default=1)
+
+    class Meta:
+        ordering = ['priority', 'path']
+
+    def clean(self):
+        """Validate regex pattern."""
+
+        errors = {}
+        # Validate path when regex is enabled
+        if self.path and self.is_regex:
+            try:
+                validate_safe_regex(self.path)
+            except ValidationError as e:
+                errors['path'] = f'Invalid regex in pattern file path: {e.message}'
+
+        if errors:
+            raise ValidationError(errors)
+
+        super().clean()
+
+
 class ProcessingRule(models.Model):
     """
     A processing rule that defines how the data uploaded to VUE will be processed
@@ -268,24 +296,21 @@ class ProcessingRule(models.Model):
 
     name = models.CharField(
         max_length=250,
-        help_text='An informative name for this rule. Only used internally.'
+        help_text='A label for this rule (internal use only).'
     )
 
     field = models.TextField(
         null=False,
         blank=False,
-        help_text=(
-            'The field on which the rule will be applied (just as a string without quotes).'
-            'If a field is mentioned in a rule, it will be kept in the data that are sent to the server.'
-        )
+        help_text='The field this rule applies to (without quotes).'
     )
     regex_field = models.BooleanField(
         default=False,
         null=False,
-        help_text='Select if you use a regex expression in the "Field" setting to match a variable.'
+        help_text='Enable if the field name above is a regex pattern.'
     )
     execution_order = models.IntegerField(
-        help_text='The order in which the extraction steps are executed.'
+        help_text='The order in which rules are applied..'
     )
 
     class ComparisonOperators(models.TextChoices):
@@ -310,8 +335,7 @@ class ProcessingRule(models.Model):
     )
     comparison_value = models.TextField(
         blank=True,
-        help_text='The value against which the data contained in the indicated field will '
-                  'be compared according to the selected comparison logic.'
+        help_text='The value to compare the field against.'
     )
     replacement_value = models.TextField(
         blank=True,

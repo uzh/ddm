@@ -82,7 +82,7 @@ Response::
             "expected_fields": <list - of expected fields>,
             "exp_fields_regex_matching": <boolean>,
             "fields_to_extract": <list - of strings indicating the fields that are extracted by the blueprint>,
-            "regex_path": <string - indicating the path to the file in an uploaded zip container>,
+            "file_paths": <list - of file paths>,
             "filter_rules": <list - of the filter rules applied to the uploaded donations>,
             "csv_delimiter": <string - indicating the csv delimiter>
         },
@@ -171,7 +171,7 @@ Host: <hostname>
             "expected_fields": ["a", "b"],
             "exp_fields_regex_matching": false,
             "fields_to_extract": [],
-            "regex_path": null,
+            "file_paths": [{"path":  "folder/file.json", "is_regex":  false, "priority":  1}],
             "filter_rules": [],
             "csv_delimiter": ""
         },

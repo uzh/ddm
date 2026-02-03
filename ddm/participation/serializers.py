@@ -5,6 +5,7 @@ from rest_framework import serializers
 
 from ddm.core.utils.user_content.template import render_user_content
 from ddm.datadonation.models import (
+    BlueprintFilePath,
     DonationBlueprint,
     DonationInstruction,
     FileUploader,
@@ -40,11 +41,25 @@ class ProcessingRuleSerializer(serializers.ModelSerializer):
         ]
 
 
+class BlueprintFilePathSerializer(serializers.ModelSerializer):
+    """Serializes a BlueprintFilePath instance into the format expected by the frontend.
+
+    see also: frontend/DDMUploader/src/types/ExtractionRule.ts
+    """
+    class Meta:
+        model = BlueprintFilePath
+        fields = [
+            'path',
+            'is_regex'
+        ]
+
+
 class BlueprintSerializer(serializers.ModelSerializer):
     """Serializes a DonationBlueprint instance into the format expected by the frontend.
 
     see also: frontend/DDMUploader/src/types/Blueprint.ts
     """
+    name = serializers.CharField(source='display_name')
     format = serializers.CharField(source='exp_file_format')
     expected_fields = serializers.SerializerMethodField()
     exp_fields_regex_matching = serializers.BooleanField(
@@ -52,6 +67,7 @@ class BlueprintSerializer(serializers.ModelSerializer):
     )
     fields_to_extract = serializers.SerializerMethodField()
     extraction_rules = serializers.SerializerMethodField()
+    file_paths = serializers.SerializerMethodField()
 
     class Meta:
         model = DonationBlueprint
@@ -64,7 +80,7 @@ class BlueprintSerializer(serializers.ModelSerializer):
             'expected_fields',
             'exp_fields_regex_matching',
             'fields_to_extract',
-            'regex_path',
+            'file_paths',
             'extraction_rules',
             'csv_delimiter',
         ]
@@ -82,6 +98,10 @@ class BlueprintSerializer(serializers.ModelSerializer):
     def get_extraction_rules(self, obj: DonationBlueprint) -> list[dict]:
         rules = obj.processingrule_set.all().order_by('execution_order')
         return [ProcessingRuleSerializer(r).data for r in rules]
+
+    def get_file_paths(self, obj: DonationBlueprint) -> list[dict]:
+        file_paths = obj.blueprintfilepath_set.all().order_by('priority')
+        return [BlueprintFilePathSerializer(fp).data for fp in file_paths]
 
 
 class InstructionSerializer(serializers.ModelSerializer):
@@ -105,6 +125,7 @@ class FileUploaderSerializer(serializers.ModelSerializer):
 
     see also: frontend/DDMUploader/src/types/UploaderConfig.ts
     """
+    name = serializers.CharField(source='display_name')
     uploader_id = serializers.IntegerField(source='id')
     nested_zip_extraction_depth = serializers.SerializerMethodField()
     instructions = serializers.SerializerMethodField()

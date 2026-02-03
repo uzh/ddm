@@ -97,7 +97,6 @@ export function useUploaderValidator(
     for (const uploader of Object.values(uploaderOutcomes.value)) {
 
       if (!uploader.consentMap) {
-        console.log(`Uploader ${uploader.uploaderName} is missing consentMap.`)
         continue;
       }
 

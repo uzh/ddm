@@ -29,8 +29,7 @@ image::datadonation_admin_page.png["Data Donation Admin Page Screenshot", 95%]
 
 When creating an Uploader, you have the following configuration options:
 
-Name:: Name of the Uploader. Will be publicly visible to participants in the header of the Uploader on the
-data donation page.
+Name:: Internal name of the Uploader. Must be unique per project.
 
 Upload Type:: Either "single file" or "zip file" depending on whether your participants are expected to upload
 a single file (e.g., CSV or JSON File) or a ZIP-container.
@@ -52,6 +51,9 @@ The paths of the extracted files will reflect the archive structure. For a file 
 the path is simply the filename (e.g., data.json).
 For a file inside a nested zip, the path includes the nested zip's name (e.g., nested.zip/inner.json).
 ====
+
+Display name:: Name displayed to participants in the header of the Uploader on the
+data donation page.
 
 Index:: The position of the Uploader on the data donation page. Uploaders with a
 lower index will be displayed closer to the top of the page. This setting only has an effect, if you use
@@ -113,18 +115,25 @@ Therefore, it is important to define a meaningful name (e.g., "Watch History", "
 Description:: Description of what information the Blueprint will extract from the uploaded file.
 If defined, the description will be visible for participants in the data donation step.
 
+Display name:: Name displayed to participants on the data donation page.
+
 Display Position:: Sets the display order for this Blueprint in the participation interface.
 Blueprints are shown in ascending order by this value.
 If multiple Blueprints have the same position value, they will be ordered by creation date (oldest first).
 
 Associated Uploader:: The `Uploader` to which the Blueprint is associated.
 
-File path:: Here, the path where the file is expected to be located within a ZIP file is defined.
-Only necessary, if the Blueprint is associated to an Uploader that expects a ZIP file. This path
-can include https://developer.mozilla.org/en-US/docs/Glossary/Regular_expression[regex expressions]
-for flexible file matching (see below).
+File path:: Specify the path to the file you want to extract from the uploaded zip
+(Only necessary, if the Blueprint is associated to an Uploader that expects a ZIP file).
+For example, if the file is `some_data.json` at the root of the zip, enter `some_data.json`.
 +
-If a regex expression matches more than one file, DDM processes and extracts the data of all matched files consecutively.
+Matching works from the right: `data.json` will match both
+`root/data.json` and `root/some-folder/data.json`, selecting the first match.
+Be specific enough to avoid unintended matches.
++
+You can also use regex patterns or define multiple paths, which are tried in priority order (lower numbers first; useful if the filename may not always be the same).
++
+If a path matches more than one file, DDM processes and extracts the data of all matched files consecutively.
 Therefore, we recommend to be as specific as possible when setting the file path.
 +
 [TIP]
@@ -154,7 +163,7 @@ You can find about more about regex https://developer.mozilla.org/en-US/docs/Glo
 On this website, you will https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#tools[also find some Tools]
 that can help you test regex patterns.
 
-If you have the extraction of nested files enabled, see the File Uploader settings above for how to define paths to nested files.
+If you have the extraction of nested zip-files enabled, see the File Uploader settings above for how to define paths to nested zip-files.
 ====
 
 Expected fields:: The fields that must be contained in the file from which information should be extracted.

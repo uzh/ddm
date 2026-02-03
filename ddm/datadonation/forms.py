@@ -1,10 +1,16 @@
 from django import forms
-from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory, TextInput, Textarea
+from django.utils.safestring import mark_safe
 
 from django_ckeditor_5.widgets import CKEditor5Widget
 
-from ddm.datadonation.models import DonationBlueprint, ProcessingRule, FileUploader, DonationInstruction
+from ddm.datadonation.models import (
+    BlueprintFilePath,
+    DonationBlueprint,
+    DonationInstruction,
+    FileUploader,
+    ProcessingRule,
+)
 
 
 class BlueprintEditForm(forms.ModelForm):
@@ -13,9 +19,9 @@ class BlueprintEditForm(forms.ModelForm):
         model = DonationBlueprint
         fields = [
             'name',
+            'display_name',
             'description',
             'display_position',
-            'regex_path',
             'exp_file_format',
             'csv_delimiter',
             'file_uploader',
@@ -25,22 +31,36 @@ class BlueprintEditForm(forms.ModelForm):
         ]
         widgets = {
             'expected_fields': forms.Textarea(attrs={'rows': 1}),
-            'regex_path': forms.Textarea(attrs={'rows': 1}),
             'description': forms.Textarea(attrs={'rows': 3}),
         }
-
-    def clean(self):
-        related_file_uploader = self.data.get('file_uploader', None)
-        regex = self.data.get('regex_path', None)
-
-        if related_file_uploader:
-            file_uploader = FileUploader.objects.get(pk=related_file_uploader)
-            if file_uploader.upload_type == FileUploader.UploadTypes.ZIP_FILE and regex in ['', None]:
-                raise ValidationError(
-                    'Donation Blueprints that belong to a ZIP file uploader must define '
-                    'a regex pattern.'
-                )
-        super().clean()
+        labels = {
+            'expected_fields_regex_matching': 'Expected fields use regex matching',
+        }
+        help_texts = {
+            'display_name': (
+                'A name for this blueprint, displayed to participants (e.g., "Watch History").'
+            ),
+            'description': (
+                'Describe what data this blueprint extracts '
+                '(e.g., "The titles of videos you watched and when you watched them"). '
+                'Displayed to participants.'
+            ),
+            'expected_fields': mark_safe(
+                'Comma-separated, in double quotes: <code>"Field A", "Field B"</code>'
+            ),
+            'expected_fields_regex_matching': '',
+            'csv_delimiter': mark_safe(
+                'The character that separates values in the CSV '
+                '(e.g., <code>,</code> <code>;</code> or <code>\\t</code> for tab). '
+                'If left empty, the delimiter is inferred automatically.'
+            ),
+            'json_extraction_root': mark_safe(
+                'Optional: The root of the data structure from which to extract data. '
+                'Leave empty to extract from the top level. </b>'
+                'To extract from a nested level, specify the path using dot '
+                'notation (e.g., <code>friends.real_friends</code>).'
+            )
+        }
 
 
 class InstructionsForm(forms.ModelForm):
@@ -70,6 +90,9 @@ class ProcessingRuleForm(forms.ModelForm):
             'comparison_value': Textarea(attrs={'cols': 60, 'rows': 1}),
             'replacement_value': Textarea(attrs={'cols': 60, 'rows': 1}),
         }
+        labels = {
+            'replacement_value': 'The replacement for matched text.',
+        }
 
 
 ProcessingRuleInlineFormset = inlineformset_factory(
@@ -91,6 +114,7 @@ class FileUploaderForm(forms.ModelForm):
     class Meta:
         model = FileUploader
         fields = [
+            'display_name',
             'name',
             'upload_type',
             'extract_nested_zips',
@@ -101,15 +125,17 @@ class FileUploaderForm(forms.ModelForm):
         labels = {
             'extract_nested_zips': 'Extract nested zip files',
             'extraction_depth': 'Extraction depth',
+            'combined_consent': 'All-in-one consent enabled'
         }
         widgets = {
             'extraction_depth': forms.NumberInput(),
         }
         help_texts = {
-            'combined_consent': (
-                'If enabled, participants provide consent once for all data. '
-                'Otherwise, they provide consent separately for each blueprint.'
+            'display_name': (
+                'A name for this Uploader, displayed to participants '
+                '(e.g., "TikTok Data Donation").'
             ),
+            'combined_consent': '',
             'index': (
                 'Determines the position of this uploader in the donation interface '
                 '(only relevant, if multiple uploaders are configured).'
@@ -123,3 +149,28 @@ class FileUploaderForm(forms.ModelForm):
                 '(0 = only extract the top-level zip).'
             ),
         }
+
+
+class BlueprintFilePathForm(forms.ModelForm):
+
+    class Meta:
+        model = BlueprintFilePath
+        fields = [
+            'path',
+            'is_regex',
+            'priority',
+        ]
+        widgets = {
+            'path': Textarea(attrs={'cols': 60, 'rows': 1}),
+        }
+        labels = {
+            'path': 'File path',
+        }
+
+
+BlueprintFilePathInlineFormset = inlineformset_factory(
+    DonationBlueprint,
+    BlueprintFilePath,
+    form=BlueprintFilePathForm,
+    extra=0
+)

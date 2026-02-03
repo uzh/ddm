@@ -12,7 +12,12 @@ const jsonBlueprint = {
   expected_fields: ['name'],
   exp_fields_regex_matching: false,
   fields_to_extract: ['name'],
-  regex_path: '.*\\.json',
+  file_paths: [
+    {
+      path: '.*\\.json',
+      is_regex: true
+    }
+  ],
   csv_delimiter: ',',
   extraction_rules: [
     {
@@ -33,7 +38,12 @@ const csvBlueprint = {
   format: 'csv',
   expected_fields: ['name'],
   csv_delimiter: ',',
-  regex_path: '.*\\.csv'
+  file_paths: [
+    {
+      path: '.*\\.csv',
+      is_regex: true
+    }
+  ],
 };
 
 // Dummy JSON file
@@ -111,7 +121,15 @@ describe('useFileProcessor', () => {
     const blob = await zip.generateAsync({ type: 'blob' });
     const zipFile = new File([blob], 'unmatched.zip', { type: 'application/zip' });
 
-    const badRegexBlueprint = { ...jsonBlueprint, regex_path: '^no-match\\.json$' };
+    const badRegexBlueprint = {
+      ...jsonBlueprint,
+      file_paths: [
+        {
+          path: '^no-match\\.json$',
+          is_regex: true
+        }
+      ],
+    };
     const processor = useFileProcessor(true, [badRegexBlueprint]);
     await processor.handleSelectedFile(zipFile);
 

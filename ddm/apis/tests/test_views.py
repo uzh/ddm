@@ -79,13 +79,15 @@ class TestAPIs(TestCase):
 
         cls.blueprint_a = DonationBlueprint.objects.create(
             project=cls.project_base,
-            name='donation blueprint',
+            name='donation_blueprint',
+            display_name='some name',
             expected_fields='"a", "b"',
             file_uploader=None
         )
         cls.blueprint_b = DonationBlueprint.objects.create(
             project=cls.project_base,
-            name='donation blueprint',
+            name='donation_blueprint_b',
+            display_name='some name',
             expected_fields='"a", "b"',
             file_uploader=None
         )
@@ -182,7 +184,7 @@ class TestAPIs(TestCase):
         expected_response = {
             'blueprints': {
                 f'{self.blueprint_a.pk}': {
-                    'blueprint_name': f'{self.blueprint_b.name}',
+                    'blueprint_name': f'{self.blueprint_a.name}',
                     'donations': [
                         {
                             'participant': f'{self.participant_a.external_id}',
@@ -227,7 +229,7 @@ class TestAPIs(TestCase):
         expected_response = {
             'blueprints': {
                 f'{self.blueprint_a.pk}': {
-                    'blueprint_name': f'{self.blueprint_b.name}',
+                    'blueprint_name': f'{self.blueprint_a.name}',
                     'donations': [
                         {
                             'participant': f'{self.participant_a.external_id}',

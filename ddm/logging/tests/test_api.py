@@ -39,7 +39,6 @@ class TestExceptionAPI(TestCase):
             description='some description',
             expected_fields='"some field"',
             file_uploader=cls.file_uploader,
-            regex_path='/this/file.json'
         )
 
         cls.post_url = reverse(
@@ -278,7 +277,6 @@ class TestExceptionLogAPIView(TestCase):
             description='Test description',
             expected_fields='"field1"',
             file_uploader=cls.file_uploader,
-            regex_path='/test/file.json'
         )
 
         cls.exception_log_1 = ExceptionLogEntry.objects.create(

@@ -260,10 +260,10 @@ class DataDonationView(ParticipationFlowBaseView):
         context = super().get_context_data(**kwargs)
         context['uploader_configs'] = self.get_uploader_configs()
         context['project_url_id'] = self.object.url_id
-        context['custom_translations'] = json.dumps(self.object.custom_uploader_translations)
+        context['custom_translations'] = self.object.custom_uploader_translations
         return context
 
-    def get_uploader_configs(self) -> str:
+    def get_uploader_configs(self) -> list:
         project_uploaders = FileUploader.objects.filter(project=self.object)
         return UploaderConfigService.create_configs(
             project_uploaders, self.participant)
@@ -357,7 +357,7 @@ class QuestionnaireView(ParticipationFlowBaseView):
             return redirect(self.steps[self.current_step], slug=self.object.slug)
 
         context = self.get_context_data(object=self.object)
-        if not len(context['q_config']) > 2:
+        if not context['q_config']:
             self.set_step_completed()
             return redirect(self.steps[self.current_step + 1],
                             slug=self.object.slug)
@@ -384,7 +384,7 @@ class QuestionnaireView(ParticipationFlowBaseView):
             'q_config': config_service.create_questionnaire_config(),
             'filter_config': config_service.create_filter_config(),
             'extra_scripts': set(self.extra_scripts),
-            'extra_variables': json.dumps(self.get_extra_variables()),
+            'extra_variables': self.get_extra_variables(),
         })
         return context
 

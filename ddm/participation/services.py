@@ -1,4 +1,3 @@
-import json
 from typing import Union
 
 from django.db.models import QuerySet
@@ -22,9 +21,8 @@ class UploaderConfigService:
     @staticmethod
     def create_configs(
             file_uploaders: QuerySet[FileUploader],
-            participant: Participant | None = None,
-            return_as_string: bool = True
-    ) -> str:
+            participant: Participant | None = None
+    ) -> list:
         """Create uploader configuration that can be passed to frontend.
 
         Returns the json configuration as string or as dict.
@@ -39,7 +37,7 @@ class UploaderConfigService:
             FileUploaderSerializer(fu, context=context).data
             for fu in file_uploaders
         ]
-        return json.dumps(uploader_configs) if return_as_string else uploader_configs
+        return uploader_configs
 
 
 class QuestionnaireConfigService:
@@ -55,15 +53,11 @@ class QuestionnaireConfigService:
         self.participant = participant
         self.questions: QuerySet[QuestionBase] = project.questionbase_set.all()
 
-    def create_questionnaire_config(self, return_as_string: bool = True) -> list:
+    def create_questionnaire_config(self) -> list:
         """
         Returns a dictionary containing all information to render the
         questionnaire for a given participant that can be passed to the frontend
         questionnaire application.
-
-        Args:
-            return_as_string: Whether to return the config stringified with json.dumps()
-                or as dict.
 
         Returns:
             list: A list in which each entry relates to one question and contains
@@ -94,7 +88,7 @@ class QuestionnaireConfigService:
                 QuestionConfigSerializer(question, context=context).data
             )
 
-        return json.dumps(q_config) if return_as_string else q_config
+        return q_config
 
     def get_donation(self, blueprint: DonationBlueprint) -> DataDonation:
         try:
@@ -116,15 +110,11 @@ class QuestionnaireConfigService:
 
         return data_donation
 
-    def create_filter_config(self, return_as_string: bool = True) -> dict:
+    def create_filter_config(self) -> dict:
         """
         Returns a dictionary containing the filter condition configurations
         for the given project that can be passed to the frontend questionnaire
         application.
-
-        Args:
-            return_as_string: Whether to return the config stringified with json.dumps()
-                or as dict.
 
         Returns:
             dict: A dictionary containing the project's filter condition
@@ -142,7 +132,7 @@ class QuestionnaireConfigService:
                 item_key = get_filter_config_id(item)
                 f_config[item_key] = self.get_filter_config(item)
 
-        return json.dumps(f_config) if return_as_string else f_config
+        return f_config
 
     def get_filter_config(
             self,

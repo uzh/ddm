@@ -3,6 +3,7 @@ import {ERROR_CATALOG} from "@uploader/utils/errorCatalog";
 import {registerGeneralError} from "@uploader/composables/useFileProcessor/errorHandling";
 import {Blueprint} from "@uploader/types/Blueprint";
 import {BlueprintExtractionOutcome} from "@uploader/classes/BlueprintExtractionOutcome";
+import {BlueprintFilePath} from "@uploader/types/BlueprintFilePath";
 import {ProcessingError} from "@uploader/types/ProcessingError";
 import {processContent} from "@uploader/composables/useFileProcessor/contentParsers";
 
@@ -147,23 +148,17 @@ export async function handleZipFile(
   const availableFiles = Array.from(new Set(extractedFiles.map(entry => entry.fullPath)));
 
   for (const blueprint of blueprints) {
-    let re: RegExp;
-    try {
-      re = new RegExp(blueprint.regex_path);
-    } catch (error) {
-      blueprintOutcomeMap[blueprint.id].registerError(ERROR_CATALOG.INVALID_REGEX, {error: error});
-      continue;
-    }
 
-    const matchingFiles = extractedFiles.filter(entry => re.test(entry.fullPath));
-    if (matchingFiles.length === 0) {
-      const errorContext = { regexPath: blueprint.regex_path, availableFiles: availableFiles }
+    const matchedFilePaths = matchFilePaths(availableFiles, blueprint.file_paths, blueprint.id, blueprintOutcomeMap);
+    if (matchedFilePaths.length === 0) {
+      const errorContext = { regexPath: blueprint.file_paths, availableFiles: availableFiles }
       blueprintOutcomeMap[blueprint.id].registerError(ERROR_CATALOG.NO_FILE_MATCH, errorContext);
       continue;
     }
 
-    for (const zipEntry of matchingFiles) {
+    for (const zipPath of matchedFilePaths) {
       try {
+        const zipEntry = extractedFiles.find(file => file.fullPath === zipPath);
         const content = await zipEntry.entry.async("string");
         processContent(content, blueprint, blueprintOutcomeMap);
       } catch (error) {
@@ -171,6 +166,66 @@ export async function handleZipFile(
       }
     }
   }
+}
+
+/**
+ * Finds all files in a ZIP archive that matches any of the blueprint's file paths.
+ *
+ * Searches through the blueprint's file paths in priority order and returns all the
+ * matching files found in the ZIP archive. File paths can be:
+ * - Literal paths for exact right-hand-side matching (e.g., "data/report.csv" matches "some_folder/data/report.csv")
+ * - Regex patterns
+ *
+ * The function filters out directories and only matches against actual files.
+ * If a regex pattern is invalid, an error is recorded in the blueprint outcome
+ * and the next file path is tried.
+ *
+ * @param zipPaths - A list of available zip paths
+ * @param blueprintFilePaths - List of configured blueprint file paths
+ * @param blueprintId - ID of Blueprint
+ * @param blueprintOutcomeMap - Map for recording regex parsing errors
+ * @returns The matched file paths within the ZIP, or null if no match found
+ */
+export function matchFilePaths(
+  zipPaths: string[],
+  blueprintFilePaths: BlueprintFilePath[],
+  blueprintId: number,
+  blueprintOutcomeMap: Record<number, BlueprintExtractionOutcome>
+): string[] {
+
+  for (const filePath of blueprintFilePaths) {
+    let path: string | RegExp;
+    if (filePath.is_regex) {
+      // Ensure regex file path is correct RegExp
+      try {
+        path = new RegExp(filePath.path);
+      } catch (error) {
+        blueprintOutcomeMap[blueprintId].registerError(ERROR_CATALOG.INVALID_REGEX, {error: error});
+        continue;
+      }
+    } else {
+      path = filePath.path;
+    }
+
+    let matchedPaths: string[] = [];
+    for (const zipPath of zipPaths) {
+      if (path instanceof RegExp) {
+        if ((path).test(zipPath)) {
+          matchedPaths.push(zipPath);
+        }
+
+      } else {
+        if (zipPath.endsWith(path)) {
+          matchedPaths.push(zipPath);
+        }
+      }
+    }
+
+    if (matchedPaths.length > 0) {
+      return matchedPaths;
+    }
+  }
+  return [];
 }
 
 /**

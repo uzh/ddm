@@ -32,51 +32,61 @@ class BlueprintEditTestCase(TestCase):
         cls.blueprint = DonationBlueprint.objects.create(
             project=cls.project,
             name='valid blueprint',
+            display_name='some name',
             description='some description',
             expected_fields='"some field"',
             file_uploader=cls.file_uploader,
-            regex_path='/this/file.json'
         )
 
-        cls.url = reverse('ddm_datadonation:blueprints:edit',
-                          kwargs={'pk': cls.blueprint.pk, 'project_url_id': cls.project.url_id})
+        cls.url = reverse(
+            'ddm_datadonation:blueprints:edit',
+            kwargs={'pk': cls.blueprint.pk, 'project_url_id': cls.project.url_id}
+        )
 
     def test_post_valid_data(self):
         valid_data = {
-            'name': 'some name',
-            'description': 'some description',
+            'name': 'some_other_name',
+            'display_name': 'some other name',
+            'description': 'some other description',
             'display_position': 1,
-            'regex_path': '/file.path',
             'exp_file_format': DonationBlueprint.FileFormats.JSON_FORMAT,
             'csv_delimiter': '',
             'file_uploader': self.file_uploader.pk,
             'json_extraction_root': '',
             'expected_fields': '"fieldA"',
-            'expected_fields_regex_matching': 'asdflkjklsadjf',
+            'expected_fields_regex_matching': False,
         }
-        formset_data = {
+        rule_formset_data = {
             'processingrule_set-TOTAL_FORMS': '1',
             'processingrule_set-INITIAL_FORMS': '0',
         }
-        data = {**valid_data, **formset_data}
+        path_formset_data = {
+            'blueprintfilepath_set-TOTAL_FORMS': '1',
+            'blueprintfilepath_set-INITIAL_FORMS': '0',
+            'blueprintfilepath_set-0-path': 'some/path.json',
+            'blueprintfilepath_set-0-is_regex': False,
+            'blueprintfilepath_set-0-priority': 1,
+        }
+        data = {**valid_data, **rule_formset_data, **path_formset_data}
         bp_name_before = self.blueprint.name
+        redirect_url = reverse(
+            'ddm_datadonation:overview',
+            kwargs={'project_url_id': self.project.url_id}
+        )
+
         self.client.login(**{'username': 'owner', 'password': '123'})
         response = self.client.post(self.url, data)
         bp_name_after = DonationBlueprint.objects.get(pk=self.blueprint.pk).name
 
         self.assertEqual(response.status_code, 302)
-        redirect_url = reverse(
-            'ddm_datadonation:overview',
-            kwargs={'project_url_id': self.project.url_id}
-        )
         self.assertEqual(response.url, redirect_url)
         self.assertNotEqual(bp_name_before, bp_name_after)
 
     def test_post_invalid_data(self):
         invalid_data = {
-            'name': 'some other name',
+            'name': 'some_other_name',
+            'display_name': 'some other name',
             'description': 'some other description',
-            'regex_path': '',
             'exp_file_format': DonationBlueprint.FileFormats.JSON_FORMAT,
             'csv_delimiter': '1234567891011'
         }
@@ -115,19 +125,19 @@ class FileUploaderEditTestCase(TestCase):
 
         cls.blueprint_a = DonationBlueprint.objects.create(
             project=cls.project,
-            name='valid blueprint',
+            name='valid blueprint_a',
+            display_name='some name',
             description='some description',
             expected_fields='"some field"',
             file_uploader=cls.file_uploader,
-            regex_path='/this/file.json'
         )
         cls.blueprint_b = DonationBlueprint.objects.create(
             project=cls.project,
-            name='valid blueprint',
+            name='valid blueprint_b',
+            display_name='some name',
             description='some description',
             expected_fields='"some field"',
             file_uploader=None,
-            regex_path='/this/file.json'
         )
 
         cls.url = reverse(
@@ -137,7 +147,8 @@ class FileUploaderEditTestCase(TestCase):
 
     def test_post_valid_data(self):
         valid_data = {
-            'name': 'some name',
+            'name': 'some_name',
+            'display_name': 'some name',
             'index': 1,
             'upload_type': FileUploader.UploadTypes.ZIP_FILE,
             'extract_nested_zips': True,
@@ -176,7 +187,8 @@ class FileUploaderEditTestCase(TestCase):
 
     def test_post_invalid_data(self):
         invalid_data = {
-            'name': 'some other name',
+            'name': 'some_other_name',
+            'display_name': 'some other name',
             'upload_type': FileUploader.UploadTypes.ZIP_FILE,
             'combined_consent': False
         }
@@ -255,13 +267,15 @@ class TestAPIs(TestCase):
 
         cls.blueprint_regular = DonationBlueprint.objects.create(
             project=cls.project_base,
-            name='donation blueprint',
+            name='donation_blueprint',
+            display_name='donation blueprint',
             expected_fields='"a", "b"',
             file_uploader=None
         )
         cls.blueprint_secret = DonationBlueprint.objects.create(
             project=cls.project_secret,
-            name='donation blueprint',
+            name='donation_blueprint',
+            display_name='donation blueprint',
             expected_fields='"a", "b"',
             file_uploader=None
         )

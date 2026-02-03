@@ -4,6 +4,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from ddm.datadonation.models import (
+    BlueprintFilePath,
     DataDonation,
     DonationBlueprint,
     DonationInstruction,
@@ -122,7 +123,6 @@ class TestDonationBlueprintModel(TestCase):
             description='some description',
             expected_fields='"some field"',
             file_uploader=cls.file_uploader,
-            regex_path='/this/file.json'
         )
 
         cls.participant = Participant.objects.create(
@@ -215,40 +215,6 @@ class TestDonationBlueprintRegexValidation(TestCase):
             upload_type=FileUploader.UploadTypes.SINGLE_FILE
         )
 
-    def test_valid_regex_path_passes(self):
-        blueprint = DonationBlueprint(
-            project=self.project,
-            name='test blueprint',
-            expected_fields='"field1"',
-            file_uploader=self.file_uploader,
-            regex_path=r'.*\.json$'
-        )
-        blueprint.clean()  # Should not raise
-
-    def test_invalid_regex_path_syntax_raises_error(self):
-        blueprint = DonationBlueprint(
-            project=self.project,
-            name='test blueprint',
-            expected_fields='"field1"',
-            file_uploader=self.file_uploader,
-            regex_path=r'[unclosed'
-        )
-        with self.assertRaises(ValidationError) as ctx:
-            blueprint.clean()
-        self.assertIn('regex_path', ctx.exception.message_dict)
-
-    def test_dangerous_regex_path_raises_error(self):
-        blueprint = DonationBlueprint(
-            project=self.project,
-            name='test blueprint',
-            expected_fields='"field1"',
-            file_uploader=self.file_uploader,
-            regex_path=r'(a+)+'
-        )
-        with self.assertRaises(ValidationError) as ctx:
-            blueprint.clean()
-        self.assertIn('regex_path', ctx.exception.message_dict)
-
     def test_valid_expected_fields_regex_passes(self):
         blueprint = DonationBlueprint(
             project=self.project,
@@ -293,6 +259,67 @@ class TestDonationBlueprintRegexValidation(TestCase):
             file_uploader=self.file_uploader,
         )
         blueprint.clean()  # Should not raise - not treated as regex
+
+
+class TestBlueprintFilePath(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        user = User.objects.create_user(**{
+            'username': 'owner', 'password': '123', 'email': 'owner@mail.com'
+        })
+        profile = ResearchProfile.objects.create(user=user)
+        cls.project = DonationProject.objects.create(
+            name='Base Project', slug='base-regex', owner=profile)
+        cls.file_uploader = FileUploader.objects.create(
+            project=cls.project,
+            name='basic file uploader',
+            upload_type=FileUploader.UploadTypes.SINGLE_FILE
+        )
+        cls.blueprint = DonationBlueprint.objects.create(
+            project=cls.project,
+            name='test_blueprint',
+            display_name='test blueprint',
+            expected_fields='"field1"',
+            file_uploader=cls.file_uploader,
+        )
+
+    def test_valid_regex_pattern_passes(self):
+        path = BlueprintFilePath.objects.create(
+            path='/this/file.json',
+            is_regex=True,
+            blueprint=self.blueprint,
+        )
+        path.clean()  # Should not raise
+
+    def test_invalid_regex_pattern_syntax_raises_error(self):
+        path = BlueprintFilePath.objects.create(
+            path='[unclosed',
+            is_regex=True,
+            blueprint=self.blueprint,
+        )
+
+        with self.assertRaises(ValidationError) as ctx:
+            path.clean()
+        self.assertIn('path', ctx.exception.message_dict)
+
+    def test_invalid_regex_pattern_does_not_raise_when_is_regex_false(self):
+        path = BlueprintFilePath.objects.create(
+            path='[unclosed',
+            is_regex=False,
+            blueprint=self.blueprint,
+        )
+        path.clean()  # should not raise
+
+    def test_dangerous_regex_pattern_raises_error(self):
+        path = BlueprintFilePath.objects.create(
+            path='(a+)+',
+            is_regex=True,
+            blueprint=self.blueprint,
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            path.clean()
+        self.assertIn('path', ctx.exception.message_dict)
 
 
 class TestProcessingRuleRegexValidation(TestCase):

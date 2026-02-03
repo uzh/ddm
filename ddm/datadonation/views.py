@@ -6,6 +6,7 @@ from django import forms
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
+from django.forms.utils import ErrorList
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -17,6 +18,7 @@ from ddm.apis.serializers import DataDonationSerializer
 from ddm.apis.views import DDMAPIMixin
 from ddm.datadonation.forms import (
     BlueprintEditForm,
+    BlueprintFilePathInlineFormset,
     FileUploaderForm,
     InstructionsForm,
     ProcessingRuleInlineFormset,
@@ -25,7 +27,7 @@ from ddm.datadonation.forms import (
 from ddm.datadonation.models import (
     DonationBlueprint,
     DonationInstruction,
-    FileUploader
+    FileUploader, BlueprintFilePath
 )
 from ddm.encryption.models import Decryption, Encryption
 from ddm.participation.models import Participant
@@ -144,6 +146,12 @@ class FileUploaderDelete(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, Dele
     template_name = 'ddm_datadonation/uploader/delete.html'
     success_message = 'Uploader "%s" was deleted.'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['instructions'] = self.object.donationinstruction_set.count()
+        context['blueprints'] = self.object.donationblueprint_set.count()
+        return context
+
     def get_success_message(self, cleaned_data):
         return self.success_message % self.object.name
 
@@ -173,13 +181,68 @@ class BlueprintCreate(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, CreateV
         context = super().get_context_data(**kwargs)
         available_file_uploaders = FileUploader.objects.filter(project__url_id=self.kwargs['project_url_id'])
         context['form'].fields['file_uploader'].queryset = available_file_uploaders
+
+        if 'path_formset' not in kwargs:
+            context['path_formset'] = BlueprintFilePathInlineFormset(
+                instance=self.object,
+                queryset=BlueprintFilePath.objects.none()
+            )
         return context
 
-    def form_valid(self, form):
+    def post(self, request, *args, **kwargs):
+        self.object = None
+
+        form = self.get_form()
+        path_formset = BlueprintFilePathInlineFormset(self.request.POST)
+
+        if form.is_valid() and path_formset.is_valid():
+            # Check if any file paths exist for
+            if self.blueprint_is_missing_file_paths(form, path_formset):
+                path_formset._non_form_errors = ErrorList(
+                    ['ZIP file uploaders require at least one file path.']
+                )
+                return self.form_invalid(form, path_formset)
+
+            return self.form_valid(form, path_formset)
+        else:
+            return self.form_invalid(form, path_formset)
+
+    def blueprint_is_missing_file_paths(self, form, path_formset) -> bool:
+        has_paths = any(
+            f.cleaned_data and not f.cleaned_data.get('DELETE', False)
+            for f in path_formset
+        )
+        file_uploader = form.cleaned_data.get('file_uploader')
+
+        if file_uploader and not has_paths:
+            needs_paths = file_uploader.upload_type == FileUploader.UploadTypes.ZIP_FILE
+            if needs_paths:
+                return True
+        return False
+
+    def form_valid(self, form, path_formset):
         project_url_id = self.kwargs['project_url_id']
         project = DonationProject.objects.get(url_id=project_url_id)
         form.instance.project_id = project.pk
-        return super().form_valid(form)
+
+        self.object = form.save()
+
+        path_formset.instance = self.object
+        path_formset.save()
+
+        messages.add_message(
+            self.request, messages.SUCCESS,
+            self.success_message % dict(name=self.object.name),
+            fail_silently=True,
+        )
+        return HttpResponseRedirect(self.get_success_url())
+
+    def form_invalid(self, form, path_formset):
+        context = self.get_context_data(
+            form=form,
+            path_formset=path_formset,
+        )
+        return self.render_to_response(context)
 
     def get_success_url(self):
         return reverse('ddm_datadonation:blueprints:edit',
@@ -201,26 +264,64 @@ class BlueprintEdit(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, UpdateVie
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        available_file_uploaders = FileUploader.objects.filter(
-            project__url_id=self.kwargs['project_url_id'])
-        context['form'].fields['file_uploader'].queryset = available_file_uploaders
-        context['formset'] = ProcessingRuleInlineFormset(
-            instance=self.object, queryset=self.object.processingrule_set.order_by('execution_order'))
+        file_uploaders = FileUploader.objects.filter(
+            project__url_id=self.kwargs['project_url_id']
+        )
+        context['form'].fields['file_uploader'].queryset = file_uploaders
+
+        if 'rule_formset' not in kwargs:
+            context['rule_formset'] = ProcessingRuleInlineFormset(
+                instance=self.object,
+                queryset=self.object.processingrule_set.order_by('execution_order')
+            )
+
+        if 'path_formset' not in kwargs:
+            context['path_formset'] = BlueprintFilePathInlineFormset(
+                instance=self.object,
+                queryset=self.object.blueprintfilepath_set.all()
+            )
+
         return context
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        form = self.get_form()
-        formset = ProcessingRuleInlineFormset(self.request.POST, instance=self.object)
-        if form.is_valid() and formset.is_valid():
-            return self.form_valid(form, formset)
-        else:
-            return self.form_invalid(form, formset)
 
-    def form_valid(self, form, formset):
+        form = self.get_form()
+        rule_formset = ProcessingRuleInlineFormset(self.request.POST, instance=self.object)
+        path_formset = BlueprintFilePathInlineFormset(self.request.POST, instance=self.object)
+
+        if form.is_valid() and rule_formset.is_valid() and path_formset.is_valid():
+            # Check if any file paths exist for
+            if self.blueprint_is_missing_file_paths(form, path_formset):
+                form.add_error(None, 'ZIP file uploaders require at least one file path.')
+                return self.form_invalid(form, rule_formset, path_formset)
+
+            return self.form_valid(form, rule_formset, path_formset)
+        else:
+            return self.form_invalid(form, rule_formset, path_formset)
+
+    def blueprint_is_missing_file_paths(self, form, path_formset) -> bool:
+        has_paths = any(
+            f.cleaned_data and not f.cleaned_data.get('DELETE', False)
+            for f in path_formset
+        )
+        file_uploader = form.cleaned_data.get('file_uploader')
+
+        if file_uploader and not has_paths:
+            needs_paths = file_uploader.upload_type == FileUploader.UploadTypes.ZIP_FILE
+            if needs_paths:
+                return True
+        return False
+
+    def form_valid(self, form, rule_formset, path_formset):
         self.object = form.save()
-        formset.instance = self.object
-        formset.save()
+
+        rule_formset.instance = self.object
+        rule_formset.save()
+
+        path_formset.instance = self.object
+        path_formset.save()
+
         messages.add_message(
             self.request, messages.SUCCESS,
             self.success_message % dict(name=self.object.name),
@@ -228,8 +329,13 @@ class BlueprintEdit(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, UpdateVie
         )
         return HttpResponseRedirect(self.get_success_url())
 
-    def form_invalid(self, form, formset):
-        return self.render_to_response(self.get_context_data(form=form, formset=formset))
+    def form_invalid(self, form, rule_formset, path_formset):
+        context = self.get_context_data(
+            form=form,
+            rule_formset=rule_formset,
+            path_formset=path_formset,
+        )
+        return self.render_to_response(context)
 
 
 class BlueprintDelete(SuccessMessageMixin, DDMAuthMixin, BlueprintMixin, DeleteView):

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { handleZipFile, handleSingleFile, fileIsZip, collectZipEntries } from '@uploader/composables/useFileProcessor/fileHandlers';
 import { BlueprintExtractionOutcome } from '@uploader/classes/BlueprintExtractionOutcome';
 import JSZip from 'jszip';
+import {matchFilePaths} from "../composables/useFileProcessor/fileHandlers";
 
 // Blueprint stubs for JSON
 const jsonBlueprintA = {
@@ -13,7 +14,12 @@ const jsonBlueprintA = {
   expected_fields: ['name'],
   exp_fields_regex_matching: false,
   fields_to_extract: ['name'],
-  regex_path: 'data_a.json',
+  file_paths: [
+    {
+      path: 'data_a.json',
+      is_regex: false
+    }
+  ],
   csv_delimiter: ',',
   extraction_rules: [
     {
@@ -32,7 +38,12 @@ const jsonBlueprintBoth = {
   id: 2,
   name: 'Basic JSON',
   description: 'Tests simple JSON processing',
-  regex_path: 'data.*\\.json',
+  file_paths: [
+    {
+      path: 'data.*\\.json',
+      is_regex: true
+    }
+  ],
 };
 
 // CSV Blueprint
@@ -40,7 +51,12 @@ const csvBlueprint = {
   ...jsonBlueprintA,
   id: 3,
   format: 'csv',
-  regex_path: '.*\\.csv',
+  file_paths: [
+    {
+      path: '.*\\.csv',
+      is_regex: true
+    }
+  ],
   csv_delimiter: ','
 };
 
@@ -161,7 +177,15 @@ describe('handleZipFile', () => {
 
   it('registers error when no files match the regex pattern', async () => {
     const zipFile = await createZipFile();
-    const noMatchBlueprint = { ...jsonBlueprintA, regex_path: '^no-match\\.json$' };
+    const noMatchBlueprint = {
+      ...jsonBlueprintA,
+      file_paths: [
+        {
+          path: '^no-match\\.json$',
+          is_regex: true
+        }
+      ],
+    };
     const blueprintOutcomeMap = {
       1: new BlueprintExtractionOutcome(noMatchBlueprint)
     };
@@ -188,7 +212,15 @@ describe('handleZipFile', () => {
 
   it('handles invalid regex pattern in blueprint', async () => {
     const zipFile = await createZipFile();
-    const invalidRegexBlueprint = { ...jsonBlueprintA, regex_path: '[invalid(' };
+    const invalidRegexBlueprint = {
+      ...jsonBlueprintA,
+      file_paths: [
+        {
+          path: '[invalid(',
+          is_regex: true
+        }
+      ],
+    };
     const blueprintOutcomeMap = {
       1: new BlueprintExtractionOutcome(invalidRegexBlueprint)
     };
@@ -238,7 +270,12 @@ describe('collectZipEntries (via handleZipFile)', () => {
   const anyJsonBlueprint = {
     ...jsonBlueprintA,
     id: 10,
-    regex_path: '.*\\.json$',
+    file_paths: [
+        {
+          path: '.*\\.json$',
+          is_regex: true
+        }
+      ],
   };
 
   it('extracts files from nested ZIP archives', async () => {
@@ -264,7 +301,12 @@ describe('collectZipEntries (via handleZipFile)', () => {
     const nestedPathBlueprint = {
       ...jsonBlueprintA,
       id: 11,
-      regex_path: 'nested\\.zip/inner_data\\.json',
+      file_paths: [
+        {
+          path: 'nested\\.zip/inner_data\\.json',
+          is_regex: true
+        }
+      ],
     };
     const blueprintOutcomeMap = {
       11: new BlueprintExtractionOutcome(nestedPathBlueprint)
@@ -430,6 +472,101 @@ describe('collectZipEntries (test in isolation)', () => {
     expect(fullPaths).toContainEqual('level2.zip/level2_data.json');
     expect(fullPaths).toContainEqual('level2.zip/level3.zip');
     expect(generalErrors.length).toBe(0);
+  });
+
+});
+
+describe('matchFilePaths', () => {
+  const testBlueprint = {
+    ...jsonBlueprintA,
+    id: 11,
+    file_paths: [
+        {
+          path: 'irrelevant path for this unit test',
+          is_regex: true
+        }
+      ],
+  };
+  const zipPaths = ['folder/file.json', 'file.json'];
+
+  const testOutcomeMap = {
+    11: new BlueprintExtractionOutcome(testBlueprint)
+  };
+
+  it('matches regex pattern correctly (single match)', async () => {
+    const blueprintFilePaths = [{path: 'folder.*\\.json$', is_regex: true}]
+    const result = matchFilePaths(zipPaths, blueprintFilePaths, testBlueprint.id, testOutcomeMap);
+    expect(result.length).toBe(1);
+    expect(result).toContain('folder/file.json');
+  });
+
+  it('matches regex pattern correctly (multiple matches)', async () => {
+    const blueprintFilePaths = [{path: '.*\\.json$', is_regex: true}]
+    const result = matchFilePaths(zipPaths, blueprintFilePaths, testBlueprint.id, testOutcomeMap);
+    expect(result.length).toBe(2);
+    expect(result).toContain('folder/file.json');
+    expect(result).toContain('file.json');
+  });
+
+  it('matches regular pattern correctly (right-hand partial)', async () => {
+    const blueprintFilePaths = [{path: '/file.json', is_regex: false}]
+    const result = matchFilePaths(zipPaths, blueprintFilePaths, testBlueprint.id, testOutcomeMap);
+    expect(result.length).toBe(1);
+    expect(result).toContain('folder/file.json');
+  });
+
+  it('matches regular pattern correctly (full path)', async () => {
+    const blueprintFilePaths = [{path: 'folder/file.json', is_regex: false}]
+    const result = matchFilePaths(zipPaths, blueprintFilePaths, testBlueprint.id, testOutcomeMap);
+    expect(result.length).toBe(1);
+    expect(result).toContain('folder/file.json');
+  });
+
+  it('matches regular pattern correctly (multiple files)', async () => {
+    const blueprintFilePaths = [{path: 'file.json', is_regex: false}]
+    const result = matchFilePaths(zipPaths, blueprintFilePaths, testBlueprint.id, testOutcomeMap);
+    expect(result.length).toBe(2);
+    expect(result).toContain('folder/file.json');
+    expect(result).toContain('file.json');
+  });
+
+  it('handles no match gracefully', async () => {
+    const blueprintFilePaths = [{path: 'file-non-existing.json', is_regex: false}]
+    const result = matchFilePaths(zipPaths, blueprintFilePaths, testBlueprint.id, testOutcomeMap);
+    expect(result.length).toBe(0);
+    expect(testOutcomeMap[11].processingErrors.length).toBe(0);
+  });
+
+  it('respects blueprint file path order', async () => {
+    const blueprintFilePaths = [
+      {path: 'folder/file.json', is_regex: false},
+      {path: '*.json', is_regex: true},
+    ]
+    const result = matchFilePaths(zipPaths, blueprintFilePaths, testBlueprint.id, testOutcomeMap);
+    expect(result.length).toBe(1);
+    expect(result).toContain('folder/file.json');
+  });
+
+  it('handles many blueprint file paths correctly', async () => {
+    const blueprintFilePaths = [
+      {path: '123', is_regex: false},
+      {path: '456', is_regex: false},
+      {path: 'abc', is_regex: false},
+      {path: 'def', is_regex: false},
+      {path: 'gh12', is_regex: false},
+      {path: 'folder/file.json', is_regex: false},
+    ]
+    const result = matchFilePaths(zipPaths, blueprintFilePaths, testBlueprint.id, testOutcomeMap);
+    expect(result.length).toBe(1);
+    expect(result).toContain('folder/file.json');
+  });
+
+  it('handles invalid regex pattern gracefully', async () => {
+    const blueprintFilePaths = [{path: '[invalid(', is_regex: true}];
+    const testInternalOutcomeMap = {11: new BlueprintExtractionOutcome(testBlueprint)};
+    const result = matchFilePaths(zipPaths, blueprintFilePaths, testBlueprint.id, testInternalOutcomeMap);
+    expect(result.length).toBe(0);
+    expect(testInternalOutcomeMap[11].processingErrors.length).toBe(1);
   });
 
 });

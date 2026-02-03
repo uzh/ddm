@@ -1,20 +1,21 @@
-import json
-
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils import timezone
 
 from ddm.datadonation.models import (
-    DataDonation, DonationBlueprint, FileUploader,
+    BlueprintFilePath, DataDonation, DonationBlueprint, FileUploader,
 )
 from ddm.participation.models import Participant
 from ddm.participation.services import (
-    UploaderConfigService, QuestionnaireConfigService,
+    QuestionnaireConfigService,
+    UploaderConfigService,
 )
-from ddm.projects.models import ResearchProfile, DonationProject
+from ddm.projects.models import DonationProject, ResearchProfile
 from ddm.questionnaire.models import (
-    FilterCondition, QuestionItem,
-    SingleChoiceQuestion, OpenQuestion,
+    FilterCondition,
+    OpenQuestion,
+    QuestionItem,
+    SingleChoiceQuestion,
 )
 from ddm.questionnaire.constants import FilterSourceTypes
 
@@ -36,22 +37,26 @@ class UploaderConfigServiceTest(TestCase):
             project=cls.project, name='Uploader',
             upload_type=FileUploader.UploadTypes.SINGLE_FILE,
         )
+        cls.blueprint = DonationBlueprint.objects.create(
+            project=cls.project,
+            name='BP_',
+            display_name='BP',
+            expected_fields='',
+            file_uploader=cls.uploader,
+        )
+        cls.file_path = BlueprintFilePath.objects.create(
+            blueprint=cls.blueprint,
+            path='some_path/file\.txt',
+            priority=1,
+            is_regex=True,
+        )
         cls.participant = Participant.objects.create(
             project=cls.project, start_time=timezone.now(),
         )
 
-    def test_create_configs_returns_json_string(self):
-        result = UploaderConfigService.create_configs(
-            FileUploader.objects.filter(pk=self.uploader.pk)
-        )
-        self.assertIsInstance(result, str)
-        parsed = json.loads(result)
-        self.assertEqual(len(parsed), 1)
-
-    def test_create_configs_returns_list_when_not_stringified(self):
+    def test_create_configs_returns_list(self):
         result = UploaderConfigService.create_configs(
             FileUploader.objects.filter(pk=self.uploader.pk),
-            return_as_string=False,
         )
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 1)
@@ -60,14 +65,12 @@ class UploaderConfigServiceTest(TestCase):
         result = UploaderConfigService.create_configs(
             FileUploader.objects.filter(pk=self.uploader.pk),
             participant=self.participant,
-            return_as_string=False,
         )
         self.assertEqual(len(result), 1)
 
     def test_create_configs_empty_queryset(self):
         result = UploaderConfigService.create_configs(
             FileUploader.objects.none(),
-            return_as_string=False,
         )
         self.assertEqual(result, [])
 
@@ -89,24 +92,44 @@ class QuestionnaireConfigServiceTest(TestCase):
 
         # General question (no blueprint).
         cls.general_q = SingleChoiceQuestion.objects.create(
-            project=cls.project, name='General Q', variable_name='gen_q',
-            page=1, index=1, text='General question text',
+            project=cls.project,
+            name='General Q',
+            variable_name='gen_q',
+            page=1,
+            index=1,
+            text='General question text',
         )
 
         # Blueprint-linked question with a matching donation.
         cls.uploader = FileUploader.objects.create(
-            project=cls.project, name='Uploader',
+            project=cls.project,
+            name='Uploader_',
+            display_name='Uploader',
             upload_type=FileUploader.UploadTypes.SINGLE_FILE,
         )
         cls.blueprint = DonationBlueprint.objects.create(
-            project=cls.project, name='BP', expected_fields='',
+            project=cls.project,
+            name='BP_',
+            display_name='BP',
+            expected_fields='',
             file_uploader=cls.uploader,
         )
-        cls.blueprint_q = OpenQuestion.objects.create(
-            project=cls.project, name='BP Q', variable_name='bp_q',
-            page=2, index=1, text='Blueprint question text',
+        cls.file_path = BlueprintFilePath.objects.create(
             blueprint=cls.blueprint,
-            display='small', input_type='text',
+            path='some_path/file.txt',
+            priority=1,
+            is_regex=True,
+        )
+        cls.blueprint_q = OpenQuestion.objects.create(
+            project=cls.project,
+            name='BP_Q',
+            variable_name='bp_q',
+            page=2,
+            index=1,
+            text='Blueprint question text',
+            blueprint=cls.blueprint,
+            display='small',
+            input_type='text',
             multi_item_response=False,
         )
         cls.donation = DataDonation.objects.create(
@@ -121,55 +144,61 @@ class QuestionnaireConfigServiceTest(TestCase):
 
         # Blueprint-linked question without a donation (should be skipped).
         cls.blueprint_no_don = DonationBlueprint.objects.create(
-            project=cls.project, name='BP No Don', expected_fields='',
+            project=cls.project,
+            name='BP_No_Don',
+            display_name='BP No Don',
+            expected_fields='',
             file_uploader=cls.uploader,
         )
         cls.blueprint_q_no_don = OpenQuestion.objects.create(
-            project=cls.project, name='BP Q No Don',
+            project=cls.project,
+            name='BP Q No Don',
             variable_name='bp_q_no_don',
-            page=3, index=1, text='No donation',
+            page=3,
+            index=1,
+            text='No donation',
             blueprint=cls.blueprint_no_don,
-            display='small', input_type='text',
+            display='small',
+            input_type='text',
             multi_item_response=False,
         )
 
         # Extra objects
         cls.source_q = SingleChoiceQuestion.objects.create(
-            project=cls.project, name='Src', variable_name='src_q',
-            page=1, index=10,
+            project=cls.project,
+            name='Src',
+            variable_name='src_q',
+            page=1,
+            index=10,
         )
         cls.source_q_item = QuestionItem.objects.create(
-            question=cls.source_q, index=1, value=1, label='A',
+            question=cls.source_q,
+            index=1,
+            value=1,
+            label='A',
         )
 
     # Tests for create_questionnaire_config -----------------------------------
-    def test_create_questionnaire_config_returns_json_string(self):
-        svc = QuestionnaireConfigService(self.project, self.participant)
-        result = svc.create_questionnaire_config(return_as_string=True)
-        self.assertIsInstance(result, str)
-        parsed = json.loads(result)
-        self.assertIsInstance(parsed, list)
-
     def test_create_questionnaire_config_returns_list(self):
         svc = QuestionnaireConfigService(self.project, self.participant)
-        result = svc.create_questionnaire_config(return_as_string=False)
+        result = svc.create_questionnaire_config()
         self.assertIsInstance(result, list)
 
     def test_general_question_included_in_config(self):
         svc = QuestionnaireConfigService(self.project, self.participant)
-        result = svc.create_questionnaire_config(return_as_string=False)
+        result = svc.create_questionnaire_config()
         question_ids = [q['question'] for q in result]
         self.assertIn(f'question-{self.general_q.pk}', question_ids)
 
     def test_blueprint_question_with_donation_included(self):
         svc = QuestionnaireConfigService(self.project, self.participant)
-        result = svc.create_questionnaire_config(return_as_string=False)
+        result = svc.create_questionnaire_config()
         question_ids = [q['question'] for q in result]
         self.assertIn(f'question-{self.blueprint_q.pk}', question_ids)
 
     def test_blueprint_question_without_donation_excluded(self):
         svc = QuestionnaireConfigService(self.project, self.participant)
-        result = svc.create_questionnaire_config(return_as_string=False)
+        result = svc.create_questionnaire_config()
         question_ids = [q['question'] for q in result]
         self.assertNotIn(
             f'question-{self.blueprint_q_no_don.pk}', question_ids
@@ -177,7 +206,7 @@ class QuestionnaireConfigServiceTest(TestCase):
 
     def test_questions_ordered_by_page_and_index(self):
         svc = QuestionnaireConfigService(self.project, self.participant)
-        result = svc.create_questionnaire_config(return_as_string=False)
+        result = svc.create_questionnaire_config()
         pages = [(q['page'], q['index']) for q in result]
         self.assertEqual(pages, sorted(pages))
 
@@ -200,9 +229,6 @@ class QuestionnaireConfigServiceTest(TestCase):
         result = svc.get_filter_config(self.general_q)
         self.assertEqual(len(result), 1)
         self.assertIsNone(result[0]['combinator'])
-
-    def test_get_filter_config_order(self):
-        pass
 
     def test_get_filter_config_return_content(self):
         FilterCondition.objects.create(

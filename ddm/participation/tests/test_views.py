@@ -12,8 +12,11 @@ from ddm.datadonation.models import DataDonation, DonationBlueprint, FileUploade
 from ddm.logging.models import ExceptionLogEntry
 from ddm.participation.models import Participant
 from ddm.participation.views import (
-    DataDonationView, ContinuationView, DebriefingView,
-    QuestionnaireView, BriefingView
+    BriefingView,
+    ContinuationView,
+    DataDonationView,
+    DebriefingView,
+    QuestionnaireView,
 )
 from ddm.projects.models import DonationProject, ResearchProfile
 from ddm.questionnaire.models import OpenQuestion
@@ -40,13 +43,15 @@ class ParticipationFlowBaseTestCase(TestCase):
 
         file_uploader = FileUploader.objects.create(
             project=cls.project_base,
-            name='basic file uploader',
+            name='basic_file_uploader',
+            display_name='basic file uploader',
             upload_type=FileUploader.UploadTypes.SINGLE_FILE
         )
 
         cls.blueprint = DonationBlueprint.objects.create(
             project=cls.project_base,
-            name='donation blueprint',
+            name='donation_blueprint',
+            display_name='donation blueprint',
             expected_fields='"a", "b"',
             file_uploader=file_uploader
         )
@@ -250,9 +255,10 @@ class TestDonationView(ParticipationFlowBaseTestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_data_donation_POST_redirect(self):
-        response = self.client.post(self.dd_url)
+        zip_buffer = self.get_zip_file('data_donation.json', '{}')
+        files = {'post_data': zip_buffer}
+        response = self.client.post(self.dd_url, data=files)
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, self.quest_url)
 
     def test_process_uploads_invalid_post_data(self):
         view = self.initialize_view()

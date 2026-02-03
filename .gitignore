@@ -327,5 +327,8 @@ act.secrets
 takeout-demo.zip
 
 
+# Integration tests
+test_failure_*.png
+
 # Claude
 .claude

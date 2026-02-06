@@ -645,7 +645,7 @@ class DonationDownloadView(DDMAuthMixin, DDMAPIMixin, FormView):
         filename = self.get_filename(participant_id, 'zip')
         response = HttpResponse(zip_file, content_type='application/zip')
         response['Content-Length'] = len(zip_file)
-        response['Content-Disposition'] = f'attachment; filename={filename}.zip'
+        response['Content-Disposition'] = f'attachment; filename={filename}'
         return response
 
     @sensitive_variables()

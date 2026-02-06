@@ -3,9 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>DDM | Topic Reference for System Administrators</title>
-    <link rel="prev" href="../installation.html">
-    <link rel="next" href="customize_ckeditor_configs.html">
+    <title>DDM | Security Notices</title>
     <meta name="generator" content="Antora 3.1.14">
     <link rel="stylesheet" href="../../../../_/css/site.css">
     <script>var uiRootPath = '../../../../_'</script>
@@ -156,7 +154,7 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link nav-link-2" href="../installation.html">Installation Guide</a>
   </li>
-  <li class="nav-item is-current-page" data-depth="2">
+  <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle nav-item-toggle-level-2"></button>
     <a class="nav-link nav-link-2" href="index.html">Topic References</a>
 <ul class="nav-list">
@@ -239,16 +237,15 @@
 <!-- <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../../index.html">DDM</a></li>
-    <li><a href="../index.html">Administrators</a></li>
-    <li><a href="index.html">Topic References</a></li>
+    <li><a href="security.html">Security Notices</a></li>
   </ul>
 </nav>
  -->
 <!-- <div class="page-versions">
   <button class="version-menu-toggle" title="Show other versions of page">develop</button>
   <div class="version-menu">
-    <a class="version" href="../../../main/administrators/topics/index.html">main</a>
-    <a class="version is-current" href="index.html">develop</a>
+    <a class="version is-missing" href="../../../main/index.html">main</a>
+    <a class="version is-current" href="security.html">develop</a>
     <a class="version is-missing" href="../../../v1.0.19/index.html">v1.0.19</a>
     <a class="version is-missing" href="../../../v1.0.0/index.html">v1.0.0</a>
   </div>
@@ -265,37 +262,115 @@
   <nav class="breadcrumbs-article" aria-label="breadcrumbs">
   <ul>
     <li><a href="../../index.html">DDM</a></li>
-    <li>        <a href="../index.html">Administrators</a>
-</li>
-    <li>        <span class="is-current">Topic References</span>
+    <li>        <span class="is-current">Security Notices</span>
 </li>
   </ul>
 </nav>
-  <h1 class="page">Topic Reference for System Administrators</h1>
-  <div class="paragraph">
-<p>Here, you will find further information on the following topics:</p>
+  <h1 class="page">Security Notices</h1>
+  <div class="sect1">
+<h2 id="_ckeditor_file_upload_security"><a class="anchor" href="#_ckeditor_file_upload_security"></a>CKEditor File Upload Security</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>DDM uses <a href="https://github.com/hvlads/django-ckeditor-5">django-ckeditor-5</a> for rich text editing.
+File uploads are controlled by these Django settings:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="security.html" class="xref page">Security Notices</a></p>
+<p><code>CKEDITOR_5_FILE_UPLOAD_PERMISSION</code></p>
 </li>
 <li>
-<p><a href="customize_ckeditor_configs.html" class="xref page">CKEditor Configuration</a></p>
+<p><code>CKEDITOR_5_ALLOW_ALL_FILE_TYPES</code></p>
 </li>
 <li>
-<p><a href="customize_admin_templates.html" class="xref page">Template Customization</a></p>
-</li>
-<li>
-<p><a href="user_authentication.html" class="xref page">User Authentication</a></p>
+<p><code>CKEDITOR_5_UPLOAD_FILE_TYPES</code></p>
 </li>
 </ul>
 </div>
-  <nav class="pagination">
-  <span class="prev"><a href="../installation.html">Installation Guide</a></span>
-  <span class="next"><a href="customize_ckeditor_configs.html">CKEditor Configuration</a></span>
-</nav>
-</article>
+<div class="sect2">
+<h3 id="_default_behavior"><a class="anchor" href="#_default_behavior"></a>Default Behavior</h3>
+<div class="paragraph">
+<p>With <code>CKEDITOR_5_ALLOW_ALL_FILE_TYPES = False</code>, only images are allowed and file contents are validated.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_risk_allowing_all_file_types"><a class="anchor" href="#_risk_allowing_all_file_types"></a>Risk: Allowing All File Types</h3>
+<div class="paragraph">
+<p>Setting <code>CKEDITOR_5_ALLOW_ALL_FILE_TYPES = True</code> validates <strong>only file extensions</strong>, not content. This creates vulnerabilities:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Malicious files can use trusted extensions (e.g., <code>malware.pdf</code>)</p>
+</li>
+<li>
+<p>Polyglot files can bypass extension checks</p>
+</li>
+<li>
+<p>PDFs may contain JavaScript or exploits</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_mitigations"><a class="anchor" href="#_mitigations"></a>Mitigations</h3>
+<div class="paragraph">
+<p>If your DDM instance allows registration by untrusted users, consider these protections:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Mitigation</th>
+<th class="tableblock halign-left valign-top">Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Restrict file types</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Limit the upload to images with <code>CKEDITOR_5_ALLOW_ALL_FILE_TYPES = False</code> if PDFs aren&#8217;t required</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Validate content</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Check magic bytes to verify file content matches the claimed type</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set secure headers</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Serve uploads with <code>Content-Disposition: attachment</code> and <code>X-Content-Type-Options: nosniff</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Isolate domains</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Serve uploads from a separate domain to protect session cookies</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sanitize PDFs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If PDFs are necessary, strip JavaScript and embedded content using a sanitization library</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_django_rest_framework_configuration"><a class="anchor" href="#_django_rest_framework_configuration"></a>Django REST Framework Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The API endpoints integrated in DDM use the <a href="https://www.django-rest-framework.org">Django REST Framework</a> (DRF)</p>
+</div>
+<div class="sect2">
+<h3 id="_throttling_of_api_endpoints"><a class="anchor" href="#_throttling_of_api_endpoints"></a>Throttling of API Endpoints</h3>
+<div class="paragraph">
+<p>The API endpoints integrated in DDM use DRF&#8217;s default settings for throttling.
+Therefore, you should configure the throttling settings so that they work best for your setup
+(<a href="https://www.django-rest-framework.org/api-guide/throttling/#userratethrottle">see the DRF documentation</a>)</p>
+</div>
+</div>
+</div>
+</div>
+  </article>
   </div>
 </main>
 <div id="overlay"></div>

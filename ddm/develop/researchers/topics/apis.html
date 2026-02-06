@@ -389,7 +389,7 @@ and project configuration.</p>
             "expected_fields": &lt;list - of expected fields&gt;,
             "exp_fields_regex_matching": &lt;boolean&gt;,
             "fields_to_extract": &lt;list - of strings indicating the fields that are extracted by the blueprint&gt;,
-            "regex_path": &lt;string - indicating the path to the file in an uploaded zip container&gt;,
+            "file_paths": &lt;list - of file paths&gt;,
             "filter_rules": &lt;list - of the filter rules applied to the uploaded donations&gt;,
             "csv_delimiter": &lt;string - indicating the csv delimiter&gt;
         },
@@ -493,7 +493,7 @@ Host: &lt;hostname&gt;</code></pre>
             "expected_fields": ["a", "b"],
             "exp_fields_regex_matching": false,
             "fields_to_extract": [],
-            "regex_path": null,
+            "file_paths": [{"path":  "folder/file.json", "is_regex":  false, "priority":  1}],
             "filter_rules": [],
             "csv_delimiter": ""
         },

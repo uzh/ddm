@@ -312,21 +312,62 @@ Blueprints on the following page:</p>
 <dl>
 <dt class="hdlist1">Name</dt>
 <dd>
-<p>Name of the Uploader. Will be publicly visible to participants in the header of the Uploader on the
-data donation page.</p>
+<p>Internal name of the Uploader. Must be unique per project.</p>
 </dd>
 <dt class="hdlist1">Upload Type</dt>
 <dd>
 <p>Either "single file" or "zip file" depending on whether your participants are expected to upload
 a single file (e.g., CSV or JSON File) or a ZIP-container.</p>
 </dd>
-<dt class="hdlist1">Index</dt>
+<dt class="hdlist1">Extract nested zip files</dt>
+<dd>
+<p>Whether to extract zip files found inside the uploaded zip and make their contents available
+to be handled by donation blueprints.</p>
+</dd>
+<dt class="hdlist1">Extraction depth</dt>
+<dd>
+<p>Maximum levels of nested zip files to extract (0 = only extract the top-level zip).</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If <code>Extract nested zip file</code> is selected, the File Uploader will look inside any zip files
+contained within the main file that participants upload and make those contents available
+for extraction through a Donation Blueprint too.</p>
+</div>
+<div class="paragraph">
+<p>You can control how many levels deep this works—for example, a depth of 1 means it will open any zip inside the main zip, but stop there.</p>
+</div>
+<div class="paragraph">
+<p>The paths of the extracted files will reflect the archive structure. For a file inside the main zip,
+the path is simply the filename (e.g., data.json).
+For a file inside a nested zip, the path includes the nested zip&#8217;s name (e.g., nested.zip/inner.json).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Display name</dt>
+<dd>
+<p>Name displayed to participants in the header of the Uploader on the
+data donation page.</p>
+</dd>
+<dt class="hdlist1">Display position</dt>
 <dd>
 <p>The position of the Uploader on the data donation page. Uploaders with a
-lower index will be displayed closer to the top of the page. This setting only has an effect, if you use
+lower position will be displayed closer to the top of the page. This setting only has an effect, if you use
 multiple Uploaders in the same project.</p>
 </dd>
-<dt class="hdlist1">All-in-one consent</dt>
+<dt class="hdlist1">All-in-one consent enabled</dt>
 <dd>
 <p>By default, participants will be asked to consent to the donation of the data associated with each Blueprint.
 If all-in-one consent is enabled, participants will instead be asked to consent to submit
@@ -401,7 +442,7 @@ this can be done.</p>
 </table>
 </div>
 </dd>
-<dt class="hdlist1">Index</dt>
+<dt class="hdlist1">Page number</dt>
 <dd>
 <p>The order of the page in the slideshow.</p>
 </dd>
@@ -442,35 +483,36 @@ Therefore, it is important to define a meaningful name (e.g., "Watch History", "
 <p>Description of what information the Blueprint will extract from the uploaded file.
 If defined, the description will be visible for participants in the data donation step.</p>
 </dd>
-<dt class="hdlist1">Display Position</dt>
+<dt class="hdlist1">Display name</dt>
+<dd>
+<p>Name displayed to participants on the data donation page.</p>
+</dd>
+<dt class="hdlist1">Display order</dt>
 <dd>
 <p>Sets the display order for this Blueprint in the participation interface.
 Blueprints are shown in ascending order by this value.
-If multiple Blueprints have the same position value, they will be ordered by creation date (oldest first).</p>
+If multiple Blueprints have the same order value, they will be ordered by creation date (oldest first).</p>
 </dd>
 <dt class="hdlist1">Associated Uploader</dt>
 <dd>
 <p>The <code>Uploader</code> to which the Blueprint is associated.</p>
 </dd>
-<dt class="hdlist1">File path</dt>
+<dt class="hdlist1">File paths</dt>
 <dd>
-<p>Here, the path where the file is expected to be located within a ZIP file is defined.
-Only necessary, if the Blueprint is associated to a Uploader that expects a ZIP file. This path
-can include <a href="https://developer.mozilla.org/en-US/docs/Glossary/Regular_expression">regex expressions</a>
-for flexible file matching (see below).</p>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-If a regex expression matches two files, DDM extracts the first one that matches the expression.
-Afterward, it does not look any further, even if the matched file does not contain the expected fields (see below).
-Therefore, we recommend to be as specific as possible when setting the file path.
-</td>
-</tr>
-</table>
+<p>Specify the path to the file you want to extract from the uploaded zip
+(Only necessary, if the Blueprint is associated to an Uploader that expects a ZIP file).
+For example, if the file is <code>some_data.json</code> at the root of the zip, enter <code>some_data.json</code>.</p>
+<div class="paragraph">
+<p>Matching works from the right: <code>data.json</code> will match both
+<code>root/data.json</code> and <code>root/some-folder/data.json</code>, selecting the first match.
+Be specific enough to avoid unintended matches.</p>
+</div>
+<div class="paragraph">
+<p>You can also use regex patterns or define multiple paths, which are tried in priority order (lower numbers first; useful if the filename may not always be the same).</p>
+</div>
+<div class="paragraph">
+<p>If a path matches more than one file, DDM processes and extracts the data of all matched files consecutively.
+Therefore, we recommend to be as specific as possible when setting the file path.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -517,6 +559,9 @@ Can be helpful to match the same file in different languages.</p></td>
 <p>You can find about more about regex <a href="https://developer.mozilla.org/en-US/docs/Glossary/Regular_expression">here</a>.
 On this website, you will <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#tools">also find some Tools</a>
 that can help you test regex patterns.</p>
+</div>
+<div class="paragraph">
+<p>If you have the extraction of nested zip-files enabled, see the File Uploader settings above for how to define paths to nested zip-files.</p>
 </div>
 </td>
 </tr>

@@ -332,3 +332,4 @@ test_failure_*.png
 
 # Claude
 .claude
+*.tmp

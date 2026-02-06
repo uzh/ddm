@@ -15,7 +15,7 @@ jobs:
       max-parallel: 4
       matrix:
         db: [mysql] # postgres, sqlite
-        python-version: [3.10, 3.13]
+        python-version: ['3.10', 3.13]
         include:
           - db: mysql
             db_port: 3306

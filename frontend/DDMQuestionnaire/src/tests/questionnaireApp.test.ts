@@ -4,8 +4,7 @@ import { i18n } from "@questionnaire/tests/testUtils";
 
 import QuestionnaireApp from "../components/QuestionnaireApp.vue";
 
-const questionnaireConfigAsString = JSON.stringify(
-  [
+const questionnaireConfig = [
     {
       "question": "question-1",
       "type": "matrix",
@@ -69,10 +68,8 @@ const questionnaireConfigAsString = JSON.stringify(
       "scale": [],
       "options": {}
     }
-  ]
-);
-const filterConfigAsString = JSON.stringify(
-  {
+];
+const filterConfig = {
     "question-1": [],
     "item-1": [],
     "item-2": [],
@@ -127,8 +124,7 @@ const filterConfigAsString = JSON.stringify(
     "item-5": [],
     "item-6": [],
     "question-4": []
-  }
-);
+};
 const actionUrl = "https://some.url"
 const language = "en"
 
@@ -142,8 +138,8 @@ describe("QuestionnaireApp", () => {
       plugins: [i18n]
     },
     props: {
-      questionnaireConfigAsString: questionnaireConfigAsString,
-      filterConfigAsString: filterConfigAsString,
+      questionnaireConfig: questionnaireConfig,
+      filterConfig: filterConfig,
       actionUrl: actionUrl,
       language: language
     }

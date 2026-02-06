@@ -25,5 +25,9 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 To execute the tests run:
 ```
+# run once:
 npx vitest run
+
+# continuous:
+npm test
 ```

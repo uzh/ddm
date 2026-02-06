@@ -113,6 +113,34 @@ and webpack-stats.json will be updated to reflect this new configuration.
 The vue builds should end up in the static folder of the django module (ddm/static).
 
 
+==== Dependency updates
+
+Dependencies of vue builds are regularly updated.
+
+To update safely:
+
+[source]
+----
+# Check for vulnerabilities
+npm audit
+
+# Fix vulnerabilities
+npm audit fix
+
+# Check for outdated packages
+npm outdated
+
+# Update dependencies incrementally (minor updates to major updates)
+npm install <packages>
+
+# test updates
+npm run lint
+npm run test
+npm run serve
+npm run build
+----
+
+
 === CI/CD
 
 This project uses _GitHub actions_ for automated testing and CI tasks.

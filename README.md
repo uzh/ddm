@@ -6,8 +6,8 @@
 ![PyPI - License](https://img.shields.io/pypi/l/django-ddm?logo=gnu&label=License&color=%2379bee8)
 [![DOI](https://img.shields.io/badge/doi-https%3A%2F%2Fdoi.org%2F10.5117%2FCCR2024.2.4.PFIF-%237800bc)](https://doi.org/10.5117/CCR2024.2.4.PFIF)
 
-**DDM** (Data Donation Module) is a Django application that helps researchers to
-setup data donation projects and to collect data donations for academic research.
+**DDM** (Data Donation Module) is a Django application with which researchers can
+set up data donation projects and collect data donations for academic research.
 
 This is part of a larger initiative from the University of Zurich and the Digital
 Society Initiative to strengthen the exchange about the topic of data donations and

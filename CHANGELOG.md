@@ -1,5 +1,73 @@
 # Changelog
 
+## 2.2.0 - February 2026
+
+This version drops official support for Django < 5.2 and Python versions < 3.10
+
+### Fixed
+
+- **Project logs view**: Fixed timeout and rendering errors for projects with many log entries. Logs are now paginated ([`83aff8a`](https://github.com/uzh/ddm/commit/83aff8a)).
+- **Researcher admin interface**: Fixed responsiveness issues across multiple pages of the researcher admin interface ([`a93f921`](https://github.com/uzh/ddm/commit/a93f921)).
+- **Questionnaire navigation**: Fixed bug where "next page" button required two clicks to proceed when a filtered-out question was marked as required ([`a6bc9f6`](https://github.com/uzh/ddm/commit/a6bc9f6)).
+- **Project deletion**: Deletion event log now correctly reports number of deleted data donations and questionnaire responses (previously showed 0) ([`d3dcbf7`](https://github.com/uzh/ddm/commit/d3dcbf7)).
+- **Data export**: Fixed data donation export filename ending with '.zip.zip' ([`e7439f1`](https://github.com/uzh/ddm/commit/e7439f1)).
+
+### Added
+
+- **Multiple file paths per blueprint**: Blueprints can now match multiple file path patterns (replaces single regex_path) ([`8edd4c9`](https://github.com/uzh/ddm/commit/8edd4c9)).
+- **Display names**: File Uploaders and Donation Blueprints can now have user-friendly display names separate from their internal names ([`8edd4c9`](https://github.com/uzh/ddm/commit/8edd4c9)).
+- **Nested ZIP support**: Added ability to extract and process nested ZIP files in data donations ([`982c305`](https://github.com/uzh/ddm/commit/982c305), [`58bf5cb`](https://github.com/uzh/ddm/commit/58bf5cb)).
+- **Security Enhancement**: Extended regex pattern validation to prevent the use of dangerous regex patterns in blueprints and processing rules ([`5f7c868`](https://github.com/uzh/ddm/commit/5f7c868)).
+- **Unique naming**: System now enforces unique names for File Uploaders and Blueprints within each project ([`6f0867b`](https://github.com/uzh/ddm/commit/6f0867b)).
+
+### Changed
+
+- **Admin interface redesign**: Complete overhaul of the researcher admin interface for improved usability and consistency ([`9a635a3`](https://github.com/uzh/ddm/commit/9a635a3)).
+- **Project logs**: Split into separate views for Exception Logs and Event Logs ([`83aff8a`](https://github.com/uzh/ddm/commit/83aff8a)).
+- **Internal architecture**: Refactored configuration logic for better maintainability (moved from models to services) ([`d394061`](https://github.com/uzh/ddm/commit/d394061), [`d2aaf43`](https://github.com/uzh/ddm/commit/d2aaf43)).
+
+### Deprecated
+
+- **`DonationBlueprint.regex_path`**: `DonationBlueprint.regex_path` was deprecated and replaced with `BlueprintFilePath` model ([`8edd4c9`](https://github.com/uzh/ddm/commit/8edd4c9)).
+
+### Technical
+
+- Changed Vue initialization to use JSON data blocks instead of data-attributes for simpler initialization and better performance ([`db30d15`](https://github.com/uzh/ddm/commit/db30d15)).
+- Refactored `Participant.save()` to prevent race condition in external_id creation ([`4899592`](https://github.com/uzh/ddm/commit/4899592)).
+- Replaced `.lstrip()` with `removeprefix()` for safer string handling ([`a67554c`](https://github.com/uzh/ddm/commit/a67554c)).
+- Migrated to ESLint 9 flat config ([`52f51b1`](https://github.com/uzh/ddm/commit/52f51b1)).
+- Split requirements into base and dev requirements ([`b62537a`](https://github.com/uzh/ddm/commit/b62537a), [`000bdd6`](https://github.com/uzh/ddm/commit/000bdd6)).
+- Added integration tests for Vue components (excluded from the main testing suite) ([`b0755c1`](https://github.com/uzh/ddm/commit/b0755c1)).
+- Added tests for fileHandler composable (uploader frontend) ([`5506d5d`](https://github.com/uzh/ddm/commit/5506d5d)).
+- Added path traversal check to processing of ZIP files received from the data donation frontend (currently not an issue; for future-proofing) ([`c196b3f`](https://github.com/uzh/ddm/commit/c196b3f)).
+
+### Documentation
+
+- Updated screenshots and security considerations ([`47cfbe6`](https://github.com/uzh/ddm/commit/47cfbe6), [`9a13056`](https://github.com/uzh/ddm/commit/9a13056)).
+- Added security notice for CKEditor file upload configuration ([`88cc790`](https://github.com/uzh/ddm/commit/88cc790)).
+- Corrected blueprint file matching behavior documentation ([`f90e944`](https://github.com/uzh/ddm/commit/f90e944)).
+- Added developer section on changelog principles [`d3d0645`](https://github.com/uzh/ddm/commit/d3d0645)).
+
+### Update Guide
+
+1. **Add django-filter to `INSTALLED_APPS`**:
+
+    The updated project log views make use of the [`django-filter`](https://github.com/carltongibson/django-filter) package.
+    The package will be automatically installed in your environment when you upgrade DDM. However, you will have to 
+    update your settings.py by adding:
+    ```python
+        INSTALLED_APPS = [
+            'django.contrib.admin',
+            # etc.
+            'django_filters',
+        ]
+    ```
+
+2. **Run migrations**: `python manage.py migrate`
+
+3. **Collect updated static files**: `python manage.py collectstatic`
+
+
 ## 2.1.7 - 2025-11-27
 
 ### Fixed
@@ -251,12 +319,12 @@ Below, the key updates are highlighted, including breaking changes, new features
 ### UI/UX
 
 - Optimized space usage on mobile devices. ([`9185941`](https://github.com/uzh/ddm/commit/9185941))
-- Redesigned donation page to look sleaker and more modern ([`33b0e59`](https://github.com/uzh/ddm/commit/33b0e59), [`f9ff9e0`](https://github.com/uzh/ddm/commit/f9ff9e0))
+- Redesigned donation page to look sleeker and more modern ([`33b0e59`](https://github.com/uzh/ddm/commit/33b0e59), [`f9ff9e0`](https://github.com/uzh/ddm/commit/f9ff9e0))
 - Restyled instruction carousel. ([`ce067a3`](https://github.com/uzh/ddm/commit/ce067a3))
 - Update instruction title to 'how it works'. ([`6d15a10`](https://github.com/uzh/ddm/commit/6d15a10))
 - Restructured the blueprint create form to look cleaner and align with the blueprint edit form. ([`43b7122`](https://github.com/uzh/ddm/commit/43b7122))
 - Renamed 'label alt' to 'label right' for Semantic Differential questions and updated the semantic differential edit view. ([`ff955e7`](https://github.com/uzh/ddm/commit/ff955e7))
-- Indeces in Question Item and Scale Points forms increase now automatically. ([`bad0611`](https://github.com/uzh/ddm/commit/bad0611))
+- Indexes in Question Item and Scale Points forms increase now automatically. ([`bad0611`](https://github.com/uzh/ddm/commit/bad0611))
 - Various UI fixes and clarifications in the researcher admin interfaced. ([`16e7472`](https://github.com/uzh/ddm/commit/16e7472), [`402205d`](https://github.com/uzh/ddm/commit/402205d), [`46a63b5`](https://github.com/uzh/ddm/commit/46a63b5), [`6825704`](https://github.com/uzh/ddm/commit/6825704), [`8893439`](https://github.com/uzh/ddm/commit/8893439), [`b59b37b`](https://github.com/uzh/ddm/commit/b59b37b), [`3bb0e49`](https://github.com/uzh/ddm/commit/3bb0e49), [`aea17df`](https://github.com/uzh/ddm/commit/aea17df), [`dd065f2`](https://github.com/uzh/ddm/commit/dd065f2), [`dd065f2`](https://github.com/uzh/ddm/commit/dd065f2))
 - Display general and blueprint-related questions in the same table and move extra information to collapsible. ([`4fdd6a2`](https://github.com/uzh/ddm/commit/4fdd6a2))
 

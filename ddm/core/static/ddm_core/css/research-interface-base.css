@@ -1,3 +1,5 @@
+@import url('colors.css');
+@import url('research_interface/headings.css');
 @import url('research_interface/message.css');
 @import url('research_interface/forms.css');
 @import url('research_interface/info-collapsible.css');
@@ -6,6 +8,18 @@
 @import url('research_interface/load-spinner.css');
 @import url('research_interface/progress-bar.css');
 @import url('research_interface/utils.css');
+@import url('research_interface/tables.css');
+
+code {
+    color: var(--code-color);
+    background: var(--code-color-background);
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+.secondary-code-color {
+    color: var(--code-color-secondary);
+}
 
 .research-interface {
     font-family: 'Nunito Sans', sans-serif;
@@ -48,7 +62,6 @@
 
 .ddm-header {
     box-shadow: -10vw 2px #d36a45, 10vw 4px #fff, 0 3px #c6c6c678, 10vw 6px #009c94, 10vw 7px #c6c6c678;
-    /* position: fixed; */
     top: 0;
     width: 100%;
     background: #ffffff;
@@ -66,6 +79,12 @@
     color: #4b4b4b !important;
 }
 
+.ddm-breadcrumbs .bi {
+    color: var(--color-muted);
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
 .ddm-main {
     margin-bottom: 60px;
 }
@@ -76,7 +95,7 @@
 .ddm-admin-section-header {
     margin-top: 20px;
     font-size: 1.35rem;
-    border-bottom: 2px solid #1a1a1a;
+    border-bottom: 1px solid #1a1a1a;
     font-weight: bold;
 }
 .ddm-admin-section-body {
@@ -88,14 +107,14 @@
 }
 
 .errorlist {
-    color: #ab0000;
+    color: var(--color-darkred);
     margin-top: 0.2rem;
     margin-bottom: 0.2rem;
     padding-left: 20px;
 }
 
 .error-disclaimer {
-    color: #ab0000;
+    color: var(--color-darkred);
 }
 
 .page-item.active .page-link {
@@ -104,7 +123,7 @@
 }
 
 .ddm-if-icon {
-    background: #009c94;
+    background: linear-gradient(178deg, var(--color-green-gradiant-brighter) 0%, var(--color-green-gradient-darker) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-size: 2.5rem;
@@ -188,4 +207,21 @@
 
 .item-set-table .checkmark {
 	display: inline-block;
+}
+
+.ddm-ui-link {
+    color: var(--color-main-green-darker);
+}
+.ddm-separator::before {
+    display: inline-block;
+    padding-left: 10px;
+    padding-right: 10px;
+    color: var(--color-muted);
+    content: "|"
+}
+.ddm-instruction-preview-container {
+    border-top: 4px solid var(--bg-color-light);
+    border-bottom: 4px solid var(--bg-color-light);
+    padding: 1.5rem 1.5rem;
+    min-height: 200px;
 }

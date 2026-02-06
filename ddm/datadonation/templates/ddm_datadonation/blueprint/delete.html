@@ -1,64 +1,48 @@
 {% extends 'ddm_core/page_with_form.html' %}
 
-{% block page_title %}Delete File Blueprint{% endblock %}
+{% block page_title %}Delete Blueprint{% endblock %}
 
-{% block main_heading %}Delete File Blueprint "{{ object.name }}"{% endblock %}
+{% block main_heading %}{% endblock %}
 
 {% block main_top %}
-<p>You are about to delete the following blueprint:</p>
 
-<div>
-  <p>
-    <label>Name:</label>
-    {{ object.name }}
-  </p>
+  <div class="ddm-form-section mt-4">
+    <div class="ddm-form-section-header">
+      <h1>Delete Blueprint "{{ object.name }}"?</h1>
+    </div>
+    <div class="ddm-form-section-body">
+      <form method='post'>
+        {% csrf_token %}
 
-  <p>
-    <label>File Format:</label>
-    {{ object.exp_file_format }}
-  </p>
-</div>
+        <p>This will:</p>
 
-<div class="mt-4">
-  <div>
-    <p>The following questions and instructions associated with this blueprint will also be deleted:</p>
-    <div>
-      <p><b>Instructions:</b></p>
-      <ul>
-        {% for instruction in object.instruction_set.all %}
-        <li>{{ instruction }}</li>
-        {% empty %}
-        No instructions associated with this blueprint were found.
-        {% endfor %}
-      </ul>
-      <p><b>Questions:</b></p>
-      <ul>
-        {% for question in object.questionbase_set.all %}
-        <li>{{ question }}</li>
-        {% empty %}
-        No questions associated with this blueprint were found.
-        {% endfor %}
-      </ul>
+        <ul>
+          <li>Permanently delete this Blueprint</li>
+          {% with questions=object.questionbase_set.all %}
+            {% if questions %}<li>Delete the following associated Questions: {% for question in questions %}{{ question.name }}{% endfor %}</li>{% endif %}
+          {% endwith %}
+        </ul>
+
+        <p>If you are unsure, you can also unassign the Blueprint from any Uploaders in the Blueprint menu.</p>
+
+        <div class="mt-4 ddm-btn-group">
+          <div class="inner-btn-group">
+            <div><a class="ddm-btn-base ddm-btn-secondary" href="{{ object.get_absolute_url }}">Cancel</a></div>
+            <div><input class="ddm-btn-base ddm-btn-red" type="submit" value="Delete Blueprint"></div>
+          </div>
+        </div>
+      </form>
+
     </div>
   </div>
-</div>
 
-<form method='post'>
-  {% csrf_token %}
-  <p><b>Are you sure you want to delete this blueprint along with all associated data donations, and questions? This action cannot be reversed.</b></p>
-  <input class="ddm-btn ddm-btn-red" type="submit" value="Delete Donation Blueprint">
-  <p class="mt-3">
-    <a href="{% url 'ddm_datadonation:overview' project.url_id %}"><i class="bi bi-arrow-left-short"></i> Cancel</a>
-  </p>
-</form>
 {% endblock %}
 
 {% block main_form %}{% endblock %}
 
-
 {% block breadcrumbs %}
-<a href="{% url 'ddm_projects:list' %}">Projects</a> /
-<a href="{% url 'ddm_projects:detail' project.url_id %}">"{{ project.name|truncatechars:15 }}" Project</a> /
-<a href="{% url 'ddm_datadonation:overview' project.url_id %}">Data Donation</a> /
-Delete Blueprint
+  <a href="{% url 'ddm_projects:list' %}">Projects</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_projects:detail' project.url_id %}">"{{ project.name|truncatechars:15 }}" Project</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_datadonation:overview' project.url_id %}">Data Donation</a><i class="bi bi-chevron-right"></i>
+  Delete Blueprint
 {% endblock %}

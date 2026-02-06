@@ -1,0 +1,44 @@
+{% extends 'ddm_core/page_with_form.html' %}
+
+{% block page_title %}Delete Question{% endblock page_title %}
+
+{% block main_heading %}{% endblock main_heading %}
+
+{% block main_top %}
+
+  <div class="ddm-form-section mt-4">
+    <div class="ddm-form-section-header">
+      <h1>Delete Question "{{ object.name }}"?</h1>
+    </div>
+    <div class="ddm-form-section-body">
+      <form method='post'>
+        {% csrf_token %}
+
+        <p>This will:</p>
+
+        <ul>
+          <li>Permanently delete this question.</li>
+          <li>Delete all collected data associated with this question.</li>
+        </ul>
+
+        <div class="mt-4 ddm-btn-group">
+          <div class="inner-btn-group">
+            <div><a class="ddm-btn-base ddm-btn-secondary" href="{% url 'ddm_questionnaire:overview' project_url_id %}">Cancel</a></div>
+            <div><input class="ddm-btn-base ddm-btn-red" type="submit" value="Delete"></div>
+          </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+{% endblock main_top %}
+
+{% block main_form %}{% endblock main_form %}
+
+{% block breadcrumbs %}
+  <a href="{% url 'ddm_projects:list' %}">Projects</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_projects:detail' project_url_id %}">"{{ project.name|truncatechars:15 }}" Project</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_questionnaire:overview' project_url_id %}">Questionnaire</a><i class="bi bi-chevron-right"></i>
+  Delete Question
+{% endblock breadcrumbs %}

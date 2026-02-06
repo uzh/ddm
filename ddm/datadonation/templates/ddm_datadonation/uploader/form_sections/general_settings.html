@@ -1,0 +1,34 @@
+{% include "ddm_core/form_components/_basic_field.html" with field=form.upload_type %}
+{% include "ddm_core/form_components/_basic_field.html" with field=form.name %}
+
+<p class="ddm-form-group-header">Nexted zip extraction</p>
+<div id="file-uploader-zip-settings" class="container ddm-form-group">
+  <p class="mt-0 pb-2">
+    When enabled, any zip files found inside the uploaded zip are automatically extracted up to the extraction depth
+    so their contents can be processed by Blueprints.
+  </p>
+
+  <div class="row mt-2">
+    {% for field in form %}
+
+      {% if field.name == 'extract_nested_zips' %}
+
+        <div class="col-12 col-sm-3 col-lg-2 pb-2">
+          <div class="border-md-bottom mb-1"><label>Extract nested zips:</label></div>
+          <div>{{ field.errors }}</div>
+          <div>{{ field }}</div>
+        </div>
+
+      {% elif field.name == 'extraction_depth' %}
+        <div class="col-12 col-sm-9 col-lg-10 pb-2">
+          <div class="border-md-bottom mb-1">{{ field.label_tag }}</div>
+          <div>{{ field.errors }}</div>
+          <div>{{ field }}</div>
+          <div><span class="helptext">{{ field.help_text }}</span></div>
+        </div>
+
+      {% endif %}
+
+    {% endfor %}
+  </div>
+</div>

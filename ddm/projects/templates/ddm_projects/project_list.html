@@ -1,0 +1,41 @@
+{% extends 'ddm_core/base.html' %}
+
+{% block page_title %}Donation Projects{% endblock %}
+
+{% block main_heading %}Donation Projects{% endblock %}
+
+{% block main_body %}
+  <div>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>URL Identifier</th>
+        </tr>
+        </thead>
+        <tbody class="border-top-0">
+        {% for project in object_list %}
+          <tr>
+            <td><a class="ddm-ui-link" href="{{ project.get_absolute_url }}">{{ project.name }}</a></td>
+            <td>{{ project.slug }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td>No projects found.</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <a class="ddm-btn-base ddm-btn-green" href="{% url 'ddm_projects:create' %}">Create New Project</a>
+  </div>
+
+{% endblock %}
+
+{% block breadcrumbs %}
+  Projects
+{% endblock %}

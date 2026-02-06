@@ -1,0 +1,79 @@
+{% extends "ddm_core/page_with_form.html" %}
+{% load static %}
+
+{% block page_title %}Filter Configuration{% endblock %}
+
+{% block main_heading %}Filter Configuration for {{ target_type }} "{{ target_name|truncatechars:24 }}"{% endblock %}
+
+{% block main_form %}
+
+  <p>
+    Configure conditions to hide the {{ target_type }} based on answers to previous questions/items or other variable states.
+  </p>
+
+  {% if form.errors or formset.errors %}
+    <div class="mt-2">
+      {% include "ddm_core/form_components/_general_form_errors.html" with override_standard_errors=True %}
+    </div>
+  {% endif %}
+
+  <p><b>{{ target_type }} is hidden, if:</b></p>
+  <form method="post">
+    {% csrf_token %}
+    {{ formset.management_form }}
+
+    <div class="table-responsive">
+      <table id="filter-condition-table" class="table table-sm mt-3 align-middle">
+        <thead>
+        <tr>
+          <th><label>{{ formset.empty_form.index.label }}</label></th>
+          <th><label>{{ formset.empty_form.combinator.label }}</label></th>
+          <th><label>{{ formset.empty_form.source.label }}</label></th>
+          <th><label>{{ formset.empty_form.condition_operator.label }}</label></th>
+          <th><label>{{ formset.empty_form.condition_value.label }}</label></th>
+          <th><label>Delete</label></th>
+        </tr>
+        </thead>
+
+        <tbody id="filter-condition-form-container" class="border-top-0">
+        {% for form in formset.forms %}
+          {% include "ddm_questionnaire/form_sections/_filter_condition_form.html" with form=form %}
+        {% empty %}
+          <tr id="no-filter-conditions-placeholder"><td colspan="100%">No items defined.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <button class="ddm-btn ddm-btn-inverted mt-2 mb-4" type="button" id="add-filter-condition-form"><i class="bi bi-plus"></i>&nbsp;&nbsp;Add Filter</button>
+
+    {# Empty formset #}
+    <table class="d-none">
+      <tbody id="empty-filter-condition-form">
+      {% include "ddm_questionnaire/form_sections/_filter_condition_form.html" with form=formset.empty_form %}
+      </tbody>
+    </table>
+
+    <div class="ddm-btn-group">
+      <a class="ddm-btn-base ddm-btn-secondary" href="{% url 'ddm_questionnaire:overview' project_url_id %}">Cancel</a>
+      <input class="ddm-btn-base ddm-btn-green mt-4" type="submit" value="Save Filters">
+    </div>
+
+    <p class="mt-3">
+      <a href="{% url 'ddm_questionnaire:edit' project_url_id question.question_type question.pk %}"><i class="bi bi-arrow-left-short"></i> Back</a>
+    </p>
+  </form>
+{% endblock %}
+
+{% block breadcrumbs %}
+  <a href="{% url 'ddm_projects:list' %}">Projects</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_projects:detail' project_url_id %}">"{{ project.name|truncatechars:15 }}" Project</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_questionnaire:overview' project_url_id %}">Questionnaire</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_questionnaire:edit' project_url_id question.question_type question.pk %}">Question</a><i class="bi bi-chevron-right"></i>
+  Filter Configuration
+{% endblock %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script src="{% static 'ddm_questionnaire/js/filter-conditions-form-helper.js' %}"></script>
+{% endblock %}

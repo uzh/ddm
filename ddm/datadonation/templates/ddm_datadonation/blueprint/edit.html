@@ -2,192 +2,105 @@
 
 {% load static %}
 
-{% block extrahead %}
-    <link rel="stylesheet" href="{% static 'ddm_datadonation/css/blueprint_edit.css' %}">
-{% endblock %}
+{% block page_title %}Blueprint Settings{% endblock %}
 
-{% block page_title %}Edit File Blueprint{% endblock %}
+{% block main_heading %}Blueprint Settings{% endblock %}
 
-{% block main_heading %}Edit File Blueprint "{{ object.name }}"{% endblock %}
+{% block main_heading_addendum %}
+  <div>
+    <p class="m-0 text-muted">ID: {{ object.pk }}</p>
+  </div>
+{% endblock main_heading_addendum %}
 
 {% block main_form %}
-<form method='post'>
-  {% csrf_token %}
-  {{ form.media }}
-  {{ form.non_field_errors }}
+  <form method='post'>
+    {% csrf_token %}
+    {{ form.media }}
+    {{ form.non_field_errors }}
 
-  <div>
-    <p><b>Blueprint ID:</b> {{ object.pk }}</p>
-  </div>
-
-  <div class="mt-5">
-    <h5>General Settings</h5>
-
-    {% for field in form %}
-    {% if field.name not in "expected_fields,expected_fields_regex_matching,regex_path,exp_file_format,csv_delimiter,json_extraction_root" %}
-    <p>
-      {{ field.label_tag }}
-      {{ field.errors }}
-      <span class="helptext">{{ field.help_text }}</span><br>
-      {{ field }}
-    </p>
+    {% if form.errors or rule_formset.errors or path_formset.errors %}
+      {% include "ddm_core/form_components/_general_form_errors.html" with override_standard_errors=True %}
     {% endif %}
-    {% endfor %}
-  </div>
 
-  <hr class="mt-5 mb-5">
-
-  <div>
-    <h5>File Validation Settings</h5>
-
-    {% include "ddm_core/components/info_collapsible.html" with element_id="filevalidation" title="How the file validation works" include_path="ddm_datadonation/blueprint/block_file_validation.html" body="" %}
-
-    {% for field in form %}
-    {% if field.name in "expected_fields,expected_fields_regex_matching,regex_path,exp_file_format,csv_delimiter,json_extraction_root" %}
-    <p>
-      {{ field.label_tag }}
-      {{ field.errors }}
-      <span class="helptext">{{ field.help_text }}</span>
-      {{ field }}
-    </p>
+    {% if not rule_formset.forms %}
+      <div class="alert alert-warning" role="alert">
+        Currently, no Extraction Rules are defined for this Blueprint. This means that no data will be extracted when participants
+        upload their data.
+      </div>
     {% endif %}
-    {% endfor %}
-  </div>
 
-  <hr class="mt-5 mb-5">
+    <div class="ddm-accordion mt-2" id="accordionFormA">
 
-  <div>
-    <h5>Data Extraction Settings</h5>
-    {% include "ddm_core/components/info_collapsible.html" with element_id="dataextraction" title="How the data extraction works" include_path="ddm_datadonation/blueprint/block_data_extraction.html" body="" %}
-
-    {{ formset.management_form }}
-
-    <b>Extraction Rules</b>
-    <table id="inlineform-table" class="table table-borderless fs-08">
-      <tr class="border-bottom">
-        <th>Order</th>
-        <th>Rule name</th>
-        <th>Field</th>
-        <th>Description</th>
-        <th></th>
-        <th>Delete</th>
-      </tr>
-
-      {% for form in formset%}
-      <tr>
-        {{ form.non_field_errors }}
-        {% with loop_id=forloop.counter0 %}
-        {% for field in form.visible_fields %}
-        {% if field.name in 'name,field,execution_order' %}
-        <td id="{{ field.name }}-{{ loop_id }}">
-          {{ field.errors }}
-          {{ field.value }}
-        </td>
-        {% endif %}
-        {% endfor %}
+      {# General Settings #}
+      {% with content_include_path="ddm_datadonation/blueprint/form_sections/general_settings.html" %}
+        {% with accordion_description="Name and associated Uploader" %}
+          {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="GeneralSettings" accordion_title="General Settings" is_expanded=True %}
         {% endwith %}
+      {% endwith %}
 
-        <td><span id="step-description-{{ forloop.counter0 }}">–</span></td>
+      {# Display Settings #}
+      {% with content_include_path="ddm_datadonation/blueprint/form_sections/display_settings.html" %}
+        {% with accordion_description="What participants see on the donation page" %}
+          {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="DisplaySettings" accordion_title="Display Settings" %}
+        {% endwith %}
+      {% endwith %}
 
-        <td><a href="" type="button" data-bs-toggle="modal" data-bs-target="#configuration-{{ forloop.counter0 }}">configure rule</a></td>
-
-        {% for field in form.visible_fields %}
-        {% if field.name in 'DELETE' %}
-        <td>
-          {{ field.errors }}
-          {{ field }}
-        </td>
-        {% endif %}
-        {% endfor %}
-
-        {% for hidden in form.hidden_fields %}
-        {{ hidden }}
-        {% endfor %}
-      </tr>
-      {% endfor %}
-
-    </table>
-  </div>
-
-  <div class="mb-3 fs-4 ps-2">
-    <a id="add-inline-form" class="ddm-btn ddm-btn-inverted" type="button"><i class="bi bi-plus"></i>&nbsp;&nbsp;Add Extraction Rule</a>
-  </div>
-
-  {% for form in formset%}
-    {% with modal_id_postfix=forloop.counter0|stringformat:"i" button_id_postfix=forloop.counter0|stringformat:"i" %}
-      {% include "ddm_datadonation/processing_rule_modal.html" with modal_id="configuration-"|add:modal_id_postfix form=form button_id=""|add:button_id_postfix %}
-    {% endwith %}
-  {% empty %}
-    {% include "ddm_datadonation/processing_rule_modal.html" with modal_id="configuration-template" form=formset.empty_form button_id="__prefix__" %}
-  {% endfor %}
-
-  <table id="empty-form-placeholder">
-    <tr>
-      {% for field in formset.empty_form %}
-      {% if field.name in 'name,field,execution_order' %}
-      <td id="{{ field.name }}-__prefix__">
-        {{ field.errors }}
-        {{ field.value }}
-      </td>
-      {% endif %}
-      {% endfor %}
-
-      <td><span id="step-description-__prefix__">–</span></td>
-
-      <td><a href="" type="button" data-bs-toggle="modal" data-bs-target="#configuration-__prefix__">configure rule</a></td>
-
-      {% for field in formset.empty_form.visible_fields %}
-      {% if field.name in 'DELETE' %}
-      <td>
-        {{ field.errors }}
-        {{ field }}
-      </td>
-      {% endif %}
-      {% endfor %}
-
-      {% for hidden in formset.empty_form.hidden_fields %}
-      {{ hidden }}
-      {% endfor %}
-    </tr>
-  </table>
-
-  <div id="empty-form">
-    <div class="rule-configuration-form">
-    {% for field in formset.empty_form %}
-    {% if field.name in 'name,field,regex_field,execution_order,input_type,comparison_operator,comparison_value,replacement_value' %}
-    <p {% if field.name in 'replacement_value,comparison_value' %}class="d-none"{% endif %}>
-      {{ field.label_tag }}
-      <span class="helptext">{{ field.help_text }}</span>
-      {{ field }}
-      {{ field.errors }}
-      <span class="form-error d-none">Please provide a value for this field.</span>
-    </p>
-    {% endif %}
-    {% endfor %}
     </div>
-  </div>
 
-  <hr class="mt-5 mb-5">
+    <h5 class="mt-5 fw-bold mb-3">Data Extraction Configuration</h5>
+    <div class="ddm-accordion mt-2" id="accordionFormB">
 
-  <input class="ddm-btn mt-3" type="submit" value="Save Blueprint">
-  <p class="mt-3">
-    <a href="{% url 'ddm_datadonation:overview' project.url_id %}"><i class="bi bi-arrow-left-short"></i> Back</a>
-  </p>
-</form>
-{{ file_uploader_meta|json_script:'file_uploader_meta' }}
+      {# File Identification #}
+      {% with content_include_path="ddm_datadonation/blueprint/form_sections/file_identification_settings.html" %}
+        {% with accordion_description="Settings: <code>file paths</code> - only necessary if Blueprint belongs to a Zip Uploader" %}
+          {# NOTE: IdentificationSetting ID is used in JS ui helpers. #}
+          {% include "ddm_core/components/accordion_card.html" with accordion_id="IdentificationSettings" accordion_title="File Identi<wbr>fication" %}
+        {% endwith %}
+      {% endwith %}
+
+      {# File Validation #}
+      {% with content_include_path="ddm_datadonation/blueprint/form_sections/file_validation_settings.html" %}
+        {% with accordion_description="How an identified file is validated" %}
+          {% include "ddm_core/components/accordion_card.html" with accordion_id="ValidationSettings" accordion_title="File Validation" %}
+        {% endwith %}
+      {% endwith %}
+
+      {# Data Extraction #}
+      {% with content_include_path="ddm_datadonation/blueprint/form_sections/data_extraction_settings.html" %}
+        {% with accordion_description="What data will be collected" %}
+          {% include "ddm_core/components/accordion_card.html" with accordion_id="DataExtractionSettings" accordion_title="Data Extraction Rules" %}
+        {% endwith %}
+      {% endwith %}
+
+    </div>
+
+    <div class="ddm-btn-group">
+      <div>
+        <a class="ddm-btn-base ddm-btn-red" href="{% url 'ddm_datadonation:blueprints:delete' project.url_id object.pk %}">Delete Blueprint</a>
+      </div>
+      <div class="inner-btn-group">
+        <div><a class="ddm-btn-base ddm-btn-secondary" href="{% url 'ddm_datadonation:overview' project.url_id %}">Cancel</a></div>
+        <div><input class="ddm-btn-base ddm-btn-green" type="submit" value="Save Blueprint"></div>
+      </div>
+    </div>
+
+  </form>
+  {{ file_uploader_meta|json_script:'file_uploader_meta' }}
 {% endblock %}
 
-
 {% block breadcrumbs %}
-<a href="{% url 'ddm_projects:list' %}">Projects</a> /
-<a href="{% url 'ddm_projects:detail' project.url_id %}">"{{ project.name|truncatechars:15 }}" Project</a> /
-<a href="{% url 'ddm_datadonation:overview' project.url_id %}">Data Donation</a> /
-Edit Blueprint
+  <a href="{% url 'ddm_projects:list' %}">Projects</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_projects:detail' project.url_id %}">"{{ project.name|truncatechars:15 }}" Project</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_datadonation:overview' project.url_id %}">Data Donation</a><i class="bi bi-chevron-right"></i>
+  Edit Blueprint
 {% endblock %}
 
 {% block scripts %}
   {{ block.super }}
   <script src="{% static 'ddm_datadonation/js/blueprint-edit-ui-helpers.js' %}"></script>
+  <script src="{% static 'ddm_datadonation/js/file-path-form-helper.js' %}"></script>
   <script src="{% static 'ddm_datadonation/js/processing-rule-modal.js' %}"></script>
+  <script src="{% static 'ddm_datadonation/js/processing-rule-formset-error-indicator.js' %}"></script>
   <script src="{% static 'ddm_datadonation/js/blueprint-general-ui-helpers.js' %}"></script>
+  <script src="{% static 'ddm_datadonation/js/accordion-form-error-indicator.js' %}"></script>
 {% endblock scripts %}

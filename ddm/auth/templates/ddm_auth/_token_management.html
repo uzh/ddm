@@ -1,0 +1,37 @@
+{% if token %}
+  <p class="fw-bold mt-2 mb-0">Current Token</p>
+
+  <table class="table table-responsive">
+    <tbody class="border-top-0">
+    <tr>
+      <td><label>Token:</label></td>
+      <td><code>{{ token.key }}</code></td>
+    </tr>
+
+    <tr>
+      <td><label>Created on:</label></td>
+      <td>{{ token.created|date:"d M Y, H:i" }}</td>
+    </tr>
+
+    <tr>
+      <td><label>Expiration date:</label></td>
+      <td>{{ token.expiration_date|date:"d M Y, H:i" }}</td>
+    </tr>
+
+    <tr>
+      <td><label>Status:</label></td>
+      <td>{% if token.has_expired %}<span class="badge bg-danger">Invalid</span>{% else %}<span class="badge bg-success">valid</span>{% endif %}</td>
+    </tr>
+
+    </tbody>
+
+  </table>
+
+  {% include "ddm_auth/_token_delete_form.html" %}
+
+{% else %}
+  <p class="fw-bold mt-2 mb-0">Create Token</p>
+
+  {% include "ddm_auth/_token_create_form.html" %}
+
+{% endif %}

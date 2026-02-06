@@ -1,8 +1,9 @@
 @import url('ddm-ckeditor-styles.css');
 @import url('fonts.css');
+@import url('colors.css');
 
 .ddm-btn {
-    background-color: #1a1a1a;
+    background-color: var(--color-darkgrey);
     color: white !important;
     border-radius: 5px;
     border: 0;

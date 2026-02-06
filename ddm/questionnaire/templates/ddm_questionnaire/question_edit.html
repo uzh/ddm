@@ -1,0 +1,109 @@
+{% extends 'ddm_core/page_with_form.html' %}
+
+{% load static %}
+
+{% block page_title %}Edit {{ question_type }}{% endblock %}
+
+{% block main_heading %}Edit {{ question_type }} "{{ object.name }}"{% endblock %}
+
+{% block main_form_header %}Question Configuration{% endblock %}
+
+{% block main_form %}
+  <form method='post'>
+    {% csrf_token %}
+    {{ form.media }}
+
+    {% if form.errors or item_formset.errors or scale_formset.errors %}
+      {% include "ddm_core/form_components/_general_form_errors.html" with override_standard_errors=True %}
+    {% endif %}
+
+    {# General Settings #}
+    {% with content_include_path="ddm_questionnaire/form_sections/general_settings.html" %}
+      {% with accordion_description="" %}
+        {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="GeneralSettings" accordion_title="General Settings" is_expanded=True %}
+      {% endwith %}
+    {% endwith %}
+
+    {# Display Options #}
+    {% if question_type == "Open Question"  %}
+      {% with content_include_path="ddm_questionnaire/form_sections/display_settings.html" %}
+        {% with accordion_description="How the question is displayed to participants" %}
+          {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="DisplaySettings" accordion_title="Display Settings" %}
+        {% endwith %}
+      {% endwith %}
+    {% endif %}
+
+    {# Input Settings #}
+    {% if question_type != "Text Block"  %}
+      {% with content_include_path="ddm_questionnaire/form_sections/input_settings.html" %}
+        {% with accordion_description="Configure input restrictions" %}
+          {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="InputSettings" accordion_title="Input Settings" %}
+        {% endwith %}
+      {% endwith %}
+    {% endif %}
+
+    {# Item Configuration #}
+    {% if item_formset  %}
+      {% with content_include_path="ddm_questionnaire/form_sections/item_configuration.html" %}
+        {% with accordion_description="Edit question items" %}
+          {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="QuestionItemsConfig" accordion_title="Question Items" %}
+        {% endwith %}
+      {% endwith %}
+    {% endif %}
+
+    {# Scale Configuration #}
+    {% if scale_formset %}
+      {% with content_include_path="ddm_questionnaire/form_sections/scale_configuration.html" %}
+        {% with accordion_description="Edit response scale" %}
+          {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="ScaleConfig" accordion_title="Scale" %}
+        {% endwith %}
+      {% endwith %}
+    {% endif %}
+
+    <div class="ddm-btn-group">
+      <div>
+        <div>{# Spacing element #}</div>
+      </div>
+      <div class="inner-btn-group">
+        <div><a class="ddm-btn-base ddm-btn-secondary" href="{% url 'ddm_questionnaire:overview' project_url_id %}">Cancel</a></div>
+        <div><input class="ddm-btn-base ddm-btn-green" type="submit" value="Save Question"></div>
+      </div>
+    </div>
+
+  </form>
+
+  {# Filter Configuration #}
+  <div class="mt-5">
+    {% with content_include_path="ddm_questionnaire/form_sections/filter_configuration.html" %}
+      {% with accordion_description="Edit filter conditions" %}
+        {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="FilterConfig" accordion_title="Filter Conditions" %}
+      {% endwith %}
+    {% endwith %}
+  </div>
+
+  <div class="ddm-btn-group">
+    <div>
+      <a class="ddm-btn-base ddm-btn-red" href="{% url 'ddm_questionnaire:delete' project_url_id object.question_type object.pk  %}">Delete Question</a>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <a href="{% url 'ddm_questionnaire:overview' project_url_id %}"><i class="bi bi-arrow-left-short"></i> Back</a>
+  </div>
+
+{% endblock %}
+
+{% block breadcrumbs %}
+  <a href="{% url 'ddm_projects:list' %}">Projects</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_projects:detail' project_url_id %}">"{{ project.name|truncatechars:15 }}" Project</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_questionnaire:overview' project_url_id %}">Questionnaire</a><i class="bi bi-chevron-right"></i>
+  Edit Question
+{% endblock %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script src="{% static 'ddm_datadonation/js/accordion-form-error-indicator.js' %}"></script>
+  <script src="{% static 'ddm_questionnaire/js/question-item-form-helper.js' %}"></script>
+  <script src="{% static 'ddm_questionnaire/js/scale-form-helper.js' %}"></script>
+  <script src="{% static 'ddm_core/js/bootstrap-popovers.js' %}"></script>
+{% endblock scripts %}

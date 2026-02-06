@@ -1,0 +1,94 @@
+<div id="data-center" class="ddm-form-section mb-5">
+  <div class="ddm-form-section-header">
+    <h5 class="fw-bold mb-0">Data Center</h5>
+  </div>
+
+  <div id="data-download-section" class="container pt-4 pb-4 ddm-form-section-body">
+    <div class="row gy-3 border-bottom pb-4">
+      <div class="col-12"><h5 class="fw-bold mb-0">Data Download</h5></div>
+
+      <div id="download-participation-overview" class="col-12 col-md-6 col-lg-4">
+        <div class="pb-1">Download Participation Overview:</div>
+        <div class="mt-1">
+          <a id="download-data-button"
+             class="ddm-btn-base ddm-btn-green"
+             data-download-url='{% url 'ddm_apis:download_project_details' object.url_id %}'
+             data-filename='ddm_{{ object.url_id }}_participation-overview_{% now "Y-m-d-H-i" %}'
+             data-n-started={{ object.get_statistics.n_started }}>
+            <i class="bi bi-download pe-1"></i>
+            Download CSV
+          </a>
+        </div>
+      </div>
+
+      <div id="download-questionnaire-responses" class="col-12 col-md-6 col-lg-4">
+        <div class="pb-1">Download Questionnaire Responses:</div>
+        <div class="mt-1">
+          <a id="download-responses-button"
+             class="ddm-btn-base ddm-btn-green"
+             data-download-url="{% url 'ddm_apis:responses' object.url_id %}">
+            <i class="bi bi-download pe-1"></i> Download CSV
+          </a>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="pb-1">Remote Download:</div>
+        <div>
+          <a class="fw-bold" href="{% url 'ddm_auth:project_token' object.url_id %}">Manage Remote Access</a>
+        </div>
+      </div>
+    </div>
+
+    <div id="project-log-section" class="row gy-3 pb-4 pt-4 border-bottom">
+      <div class="col-12"><h5 class="fw-bold mb-0">Project Logs</h5></div>
+      <div class="col-12 col-lg-6">
+        <div class="pb-1 fw-bold">Exception Logs</div>
+        <div>
+          <p class="m-0 pb-1">Track errors and extraction outcomes during data donation processing</p>
+        </div>
+        <div>
+          <p class="m-0"><a class="fw-bold" href="{% url 'ddm_logging:project_exception_logs' object.url_id %}">See all Exception Logs</a></p>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6">
+        <div class="pb-1 fw-bold">Event Logs</div>
+        <div>
+          <p class="m-0 pb-1">Track access token changes, API authentication failures, and data operations</p>
+        </div>
+        <div>
+          <p class="m-0"><a class="fw-bold" href="{% url 'ddm_logging:project_event_logs' object.url_id %}">See all Event Logs</a></p>
+        </div>
+      </div>
+    </div>
+
+    {% with stats=object.get_statistics %}
+      <div id="participation-statistics-section" class="row gy-3 pb-4 pt-4">
+        <div class="col-12"><h5 class="fw-bold mb-0">Participation Statistics</h5></div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-auto pe-lg-5">
+          <p class="mb-0">Donated Files</p>
+          <p class="fs-3 mb-0">{{ stats.n_donations }}</p>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-auto pe-lg-5">
+          <p class="mb-0">Started</p>
+          <p class="fs-3 mb-0">{{ stats.n_started }}</p>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-auto pe-lg-5">
+          <p class="mb-0">Completed</p>
+          <p class="fs-3 mb-0">{{ stats.n_completed }}</p>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-auto pe-lg-5">
+          <p class="mb-0">Completion Rate</p>
+          <p class="fs-3 mb-0">{{ stats.completion_rate|floatformat:2 }}</p>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-auto pe-lg-5">
+          <p class="mb-0">Avrg. Time to Complete</p>
+          <p class="fs-3 mb-0">{{ stats.average_time }}<span class="fs-6 mb-0 pb-1 ps-2 text-muted">(H:m:s)</span></p>
+        </div>
+
+      </div>
+    {% endwith %}
+  </div>
+
+</div>

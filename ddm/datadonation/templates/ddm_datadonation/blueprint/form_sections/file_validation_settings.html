@@ -1,0 +1,8 @@
+{% include "ddm_core/form_components/_basic_field.html" with field=form.expected_fields %}
+{% include "ddm_core/form_components/_basic_field.html" with field=form.expected_fields_regex_matching %}
+{% include "ddm_core/form_components/_basic_field.html" with field=form.exp_file_format %}
+{% include "ddm_core/form_components/_basic_field.html" with field=form.csv_delimiter %}
+
+<div class="mt-4">
+  {% include "ddm_core/components/info_collapsible.html" with element_id="filevalidation" title="How the file validation works" include_path="ddm_datadonation/blueprint/info_collapsibles/block_file_validation.html" body="" %}
+</div>

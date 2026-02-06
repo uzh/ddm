@@ -10,66 +10,83 @@
 
 {% block cancel_target %}{% url 'ddm_datadonation:overview' project.url_id %}{% endblock %}
 
-{% block breadcrumbs %}
-<a href="{% url 'ddm_projects:list' %}">Projects</a> /
-<a href="{% url 'ddm_projects:detail' project.url_id %}">"{{ project.name|truncatechars:15 }}" Project</a> /
-<a href="{% url 'ddm_datadonation:overview' project.url_id %}">Data Donation</a> /
-Create File Blueprint
-{% endblock %}
-
 {% block main_form %}
   <form method='post'>
     {% csrf_token %}
     {{ form.media }}
+
+    {% if form.errors or rule_formset.errors or path_formset.errors %}
+      {% include "ddm_core/form_components/_general_form_errors.html" with override_standard_errors=True %}
+    {% endif %}
+
     {{ form.non_field_errors }}
 
-    <div>
-      <h5>General Settings</h5>
+    <div class="ddm-accordion mt-2" id="accordionFormA">
 
-      {% for field in form %}
-        {% if field.name not in "expected_fields,expected_fields_regex_matching,regex_path,exp_file_format,csv_delimiter,json_extraction_root" %}
-          <p>
-            {{ field.label_tag }}
-            {{ field.errors }}
-            <span class="helptext">{{ field.help_text }}</span><br>
-            {{ field }}
-          </p>
-        {% endif %}
-      {% endfor %}
+      {# General Settings #}
+      {% with content_include_path="ddm_datadonation/blueprint/form_sections/general_settings.html" %}
+        {% with accordion_description="Name and associated Uploader" %}
+          {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="GeneralSettings" accordion_title="General Settings" is_expanded=True %}
+        {% endwith %}
+      {% endwith %}
+
+      {# Display Settings #}
+      {% with content_include_path="ddm_datadonation/blueprint/form_sections/display_settings.html" %}
+        {% with accordion_description="What participants see on the donation page" %}
+          {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="DisplaySettings" accordion_title="Display Settings" is_expanded=True %}
+        {% endwith %}
+      {% endwith %}
+
     </div>
 
-    <hr class="mt-5 mb-5">
+    <h5 class="mt-5 fw-bold mb-3">Data Extraction Configuration</h5>
+    <div class="ddm-accordion mt-2" id="accordionFormB">
 
-    <div>
-      <h5>File Validation Settings</h5>
+      {# File Identification #}
+      {% with content_include_path="ddm_datadonation/blueprint/form_sections/file_identification_settings.html" %}
+        {% with accordion_description="Only necessary if Blueprint belongs to a Zip Uploader" %}
+          {% include "ddm_core/components/accordion_card.html" with accordion_id="IdentificationSettings" accordion_title="File Identi<wbr>fication" is_expanded=True %}
+        {% endwith %}
+      {% endwith %}
 
-      {% include "ddm_core/components/info_collapsible.html" with element_id="filevalidation" title="How the file validation works" include_path="ddm_datadonation/blueprint/block_file_validation.html" body="" %}
+      {# File Validation #}
+      {% with content_include_path="ddm_datadonation/blueprint/form_sections/file_validation_settings.html" %}
+        {% with accordion_description="How an identified file is validated" %}
+          {% include "ddm_core/components/accordion_card.html" with accordion_id="ValidationSettings" accordion_title="File Validation" is_expanded=True %}
+        {% endwith %}
+      {% endwith %}
 
-      {% for field in form %}
-      {% if field.name in "expected_fields,expected_fields_regex_matching,regex_path,exp_file_format,csv_delimiter,json_extraction_root" %}
-      <p>
-        {{ field.label_tag }}
-        {{ field.errors }}
-        <span class="helptext">{{ field.help_text }}</span>
-        {{ field }}
-      </p>
-      {% endif %}
-      {% endfor %}
+      {# Data Extraction #}
+      {% with content="You can configure the data extraction once you have created the File Blueprint." %}
+        {% with accordion_description="You can configure the data extraction once you have created the Blueprint." %}
+          {% include "ddm_core/components/accordion_card.html" with accordion_id="DataExtractionSettings" accordion_title="Data Extraction Rules" is_expanded=False is_disabled=True %}
+        {% endwith %}
+      {% endwith %}
+
     </div>
 
-    <hr class="mt-5 mb-5">
+    <div class="ddm-btn-group">
+      <div>{# Spacing element #}</div>
+      <div class="inner-btn-group">
+        <div><a class="ddm-btn-base ddm-btn-secondary" href="{% url 'ddm_datadonation:overview' project.url_id %}">Cancel</a></div>
+        <div><input class="ddm-btn-base ddm-btn-green" type="submit" value="Create Blueprint"></div>
+      </div>
+    </div>
 
-    <div class="pb-3"><i>You will be able to define the data extraction settings once you have saved and created the File Blueprint.</i></div>
-
-    <input class="ddm-btn" type="submit" value="Create Blueprint">
-    <p class="mt-3">
-      <a href="{% url 'ddm_datadonation:overview' project.url_id %}"><i class="bi bi-arrow-left-short"></i> Back</a>
-    </p>
   </form>
+{% endblock %}
+
+{% block breadcrumbs %}
+  <a href="{% url 'ddm_projects:list' %}">Projects</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_projects:detail' project.url_id %}">"{{ project.name|truncatechars:15 }}" Project</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_datadonation:overview' project.url_id %}">Data Donation</a><i class="bi bi-chevron-right"></i>
+  Create File Blueprint
 {% endblock %}
 
 {% block scripts %}
   {{ block.super }}
   {{ file_uploader_meta|json_script:'file_uploader_meta' }}
   <script src="{% static 'ddm_datadonation/js/blueprint-general-ui-helpers.js' %}"></script>
+  <script src="{% static 'ddm_datadonation/js/file-path-form-helper.js' %}"></script>
+  <script src="{% static 'ddm_datadonation/js/accordion-form-error-indicator.js' %}"></script>
 {% endblock scripts %}

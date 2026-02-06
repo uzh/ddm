@@ -1,0 +1,39 @@
+<div>
+
+  <p class="mt-0 fw-bold fs-6">Enhanced Encryption</p>
+
+  <p>
+    All collected data (data donations and questionnaire responses) are encrypted and stored securely by default.
+    For projects handling highly sensitive information (e.g., health records),
+    you can add an extra layer of protection by encrypting data with a password only you know.
+  </p>
+
+  <p class="fw-bold">Before enabling, note that:</p>
+
+  <ul>
+    <li>You must enter the password each time you access the data</li>
+    <li>Questions cannot reference donated data</li>
+    <li>This setting cannot be changed after project creation</li>
+    <li>There is no way of resetting your encryption password in the case you loose it</li>
+  </ul>
+
+  <p class="fw-bold">Most projects do not need this option.</p>
+
+  <p>
+    {{ form.super_secret.errors }}
+    {{ form.super_secret.label_tag }}
+    {{ form.super_secret }}
+  </p>
+  <div id="secret-definition" class="d-none">
+    <p>
+      {{ form.project_password.errors }}
+      {{ form.project_password.label_tag }}
+      {{ form.project_password }}
+    </p>
+    <p>
+      {{ form.project_password_confirm.errors }}
+      <label for="{{ form.project_password_confirm.id_for_label }}">Confirm Project Password:</label>
+      {{ form.project_password_confirm }}
+    </p>
+  </div>
+</div>

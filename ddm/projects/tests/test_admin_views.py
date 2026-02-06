@@ -207,27 +207,6 @@ class TestAdminViewAuthentication(TestCase):
                 urls.append(
                     reverse(view, args=[project_url_id, question[0], question[1]]))
 
-        item_views = [
-            reverse('ddm_questionnaire:items',
-                    args=[project_url_id, 'single_choice', cls.sc_quest.pk]),
-            reverse('ddm_questionnaire:items',
-                    args=[project_url_id, 'multi_choice', cls.mc_quest.pk]),
-            reverse('ddm_questionnaire:items',
-                    args=[project_url_id, 'matrix', cls.matrix_quest.pk]),
-            reverse('ddm_questionnaire:items',
-                    args=[project_url_id, 'semantic_diff', cls.diff_quest.pk]),
-            reverse('ddm_questionnaire:item_filters',
-                    args=[project_url_id, 'single_choice', cls.sc_quest.pk, cls.item.pk]),
-        ]
-        urls += item_views
-
-        scale_views = [
-            reverse('ddm_questionnaire:scale',
-                    args=[project_url_id, 'matrix', cls.matrix_quest.pk]),
-            reverse('ddm_questionnaire:scale',
-                    args=[project_url_id, 'semantic_diff', cls.diff_quest.pk]),
-        ]
-        urls += scale_views
         return urls
 
     def test_logged_out_redirects_to_login_view(self):

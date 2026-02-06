@@ -3,6 +3,7 @@ import json
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.utils.safestring import mark_safe
 
 from django_ckeditor_5.widgets import CKEditor5Widget
 
@@ -39,6 +40,16 @@ class ProjectCreateForm(forms.ModelForm):
             'owner': forms.HiddenInput(),
             'data_protection_statement': CKEditor5Widget(config_name='ddm_ckeditor'),
             'contact_information': CKEditor5Widget(config_name='ddm_ckeditor'),
+        }
+        labels = {
+            'super_secret': 'Enable enhanced encryption'
+        }
+        help_texts = {
+            'name': 'Visible to participants (e.g., "TikTok Project")',
+            'slug': mark_safe(
+                'Used in the participant URL (e.g., <code>root.url/<span class="fw-bold">my-url-identifier</span></code>). '
+                'Letters, numbers, hyphens, and underscores only.'
+            )
         }
 
     field_order = [
@@ -96,6 +107,13 @@ class ProjectEditForm(forms.ModelForm):
         widgets = {
             'data_protection_statement': CKEditor5Widget(config_name='ddm_ckeditor'),
             'contact_information': CKEditor5Widget(config_name='ddm_ckeditor'),
+        }
+        help_texts = {
+            'name': 'Visible to participants (e.g., "TikTok Project")',
+            'slug': mark_safe(
+                'Used in the participant URL (e.g., <code>root.url/<span class="fw-bold">my-url-identifier</span></code>). '
+                'Letters, numbers, hyphens, and underscores only.'
+            )
         }
 
     def clean(self):

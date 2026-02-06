@@ -1,0 +1,29 @@
+<form method='post'>
+  {% csrf_token %}
+  {{ form.media }}
+
+  <div>
+
+    {% if form.errors %}
+      <p class="error-disclaimer"><i class="bi bi-exclamation-square-fill"></i> The form could not be processed. Please
+        check the issues highlighted below.</p>
+    {% endif %}
+
+    {{ form.non_field_errors }}
+
+    <table class="table table-responsive">
+      <tbody class="border-top-0">
+      <tr>
+        <td>Token expiration period: {{ form.expiration_days }}</td>
+      </tr>
+      </tbody>
+    </table>
+
+    {% for hidden_field in form.hidden_fields %}
+      {{ hidden_field }}
+    {% endfor %}
+
+    <input class="ddm-btn-base ddm-btn-green" type="submit" value="Create Token">
+
+  </div>
+</form>

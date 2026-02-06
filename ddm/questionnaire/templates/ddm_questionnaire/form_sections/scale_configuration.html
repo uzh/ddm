@@ -1,0 +1,5 @@
+{% include "ddm_core/form_components/_basic_field.html" with field=form.show_scale_headings %}
+
+{% if item_formset %}
+  {% include "ddm_questionnaire/form_sections/_scale_point_formset.html" with field=form.show_scale_headings %}
+{% endif %}

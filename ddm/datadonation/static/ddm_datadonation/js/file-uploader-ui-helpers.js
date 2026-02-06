@@ -1,15 +1,12 @@
 function hideOrShowZipConfig() {
   const expFileFormat = document.getElementById("id_upload_type").value;
 
-  const extractNestedRootParent = document.getElementById("id_extract_nested_zips").parentNode;
-  const extractDepthRootParent = document.getElementById("id_extraction_depth").parentNode;
+  const zipSettingsDiv = document.getElementById("file-uploader-zip-settings");
 
   if (expFileFormat === "zip file") {
-    extractNestedRootParent.style.display = "";
-    extractDepthRootParent.style.display = "";
+    zipSettingsDiv.style.display = "";
   } else {
-    extractNestedRootParent.style.display = "none";
-    extractDepthRootParent.style.display = "none";
+    zipSettingsDiv.style.display = "none";
   }
 }
 

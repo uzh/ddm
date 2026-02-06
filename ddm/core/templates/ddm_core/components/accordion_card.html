@@ -1,0 +1,27 @@
+<div class="ddm-accordion-item ddm-form-section {{ extra_classes }}">
+
+  <div class="ddm-accordion-header" id="heading{{ accordion_id }}">
+    <button class="ddm-accordion-btn ddm-form-section-header {% if is_expanded %}{% else %}collapsed{% endif %}"
+            type="button"
+            id="accordionButton{{ accordion_id }}"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapse{{ accordion_id }}"
+            aria-expanded="{% if is_expanded %}true{% else %}false{% endif %}"
+            aria-controls="collapse{{ accordion_id }}"
+            {% if is_disabled %}disabled{% endif %}
+    >
+      <span class="ddm-accordion-title ddm-accordion-title-width-control {% if not accordion_description %}w-100{% endif %}">{{ accordion_title }}</span><br />
+      {% if accordion_description %}<span class="ddm-accordion-description">{{ accordion_description }}</span>{% endif %}
+    </button>
+  </div>
+
+  <div id="collapse{{ accordion_id }}"
+       class="accordion-collapse ddm-form-section-body collapse {% if is_expanded %}show{% endif %}"
+       aria-labelledby="heading{{ accordion_id }}"
+  >
+    <div class="ddm-accordion-content">
+      {% if content_include_path %}{% include content_include_path %}{% else %}{{ content }}{% endif %}
+    </div>
+  </div>
+
+</div>

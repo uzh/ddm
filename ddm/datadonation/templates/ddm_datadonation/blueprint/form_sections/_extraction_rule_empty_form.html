@@ -1,0 +1,29 @@
+<table id="empty-form-placeholder">
+  <tr>
+    {% for field in rule_formset.empty_form %}
+      {% if field.name in 'name,field,execution_order' %}
+        <td id="{{ field.name }}-__prefix__">
+          {{ field.errors }}
+          {{ field.value }}
+        </td>
+      {% endif %}
+    {% endfor %}
+
+    <td><span id="step-description-__prefix__">–</span></td>
+
+    <td><a href="" type="button" data-bs-toggle="modal" data-bs-target="#configuration-__prefix__">configure rule</a></td>
+
+    {% for field in rule_formset.empty_form.visible_fields %}
+      {% if field.name in 'DELETE' %}
+        <td>
+          {{ field.errors }}
+          {{ field }}
+        </td>
+      {% endif %}
+    {% endfor %}
+
+    {% for hidden in rule_formset.empty_form.hidden_fields %}
+      {{ hidden }}
+    {% endfor %}
+  </tr>
+</table>

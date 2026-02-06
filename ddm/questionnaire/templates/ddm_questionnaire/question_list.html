@@ -1,0 +1,77 @@
+{% extends 'ddm_core/base.html' %}
+
+{% block page_title %}Questionnaire Setup{% endblock %}
+
+{% block main_heading %}Questionnaire{% endblock %}
+
+{% block main_body %}
+
+  <div>
+    <p>
+      The questionnaire appears after participants complete their data donation.
+      If no questions are defined, participants skip directly to the debriefing page.
+    </p>
+    <p>
+      Questions are organized into pages.
+      All questions on a page display together, and participants navigate to the next page using a "Next" button (no back navigation between pages).
+      Responses are submitted only when the questionnaire is complete—partial responses are not currently saved.
+    </p>
+  </div>
+
+  <div class="mt-3">
+    {% for page, page_questions in pages.items %}
+      {% with page_number=page|stringformat:"s" n_questions=page_questions.count|stringformat:"s" %}
+        {% with accordion_description="Questions: "|add:n_questions %}
+          {% with content_include_path="ddm_questionnaire/_question_table.html" accordion_id="Page"|add:page_number title="Page "|add:page_number %}
+            {% include "ddm_core/components/accordion_card.html" with questions=page_questions extra_classes="mb-4 narrow-accordion" accordion_id=accordion_id accordion_title=title is_expanded=True %}
+          {% endwith %}
+        {% endwith %}
+      {% endwith %}
+    {% endfor %}
+  </div>
+
+  <div>
+    <button type="button" class="ddm-btn-base ddm-btn-green" data-bs-toggle="modal" data-bs-target="#questionPickerModal">Create new question</button>
+  </div>
+
+  <div class="pt-3">
+    {% include "ddm_core/components/info_collapsible.html" with element_id="bp-questions-infobox" title="About General Questions and Blueprint-Related Questions" include_path="ddm_questionnaire/text_blocks/text_blueprint_questions.html" body="" %}
+  </div>
+
+  <div class="modal" id="questionPickerModal" tabindex="-1" aria-labelledby="questionPickerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header text-center">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <p class="fw-bold">What type of question do you want to create?</p>
+          {% for question_type in question_types %}
+            {% if question_type.0 != 'generic' %}
+              <p class="pt-2">
+                <a class="ddm-btn ddm-btn-inverted fs-6" href="{% url 'ddm_questionnaire:create' project_url_id question_type.0 %}">
+                  {{ question_type.1 }}
+                </a>
+              </p>
+            {% endif %}
+          {% empty %}
+            <p>No question types defined.</p>
+          {% endfor %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="ddm-btn ddm-btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <a href="{% url 'ddm_projects:detail' project_url_id %}"><i class="bi bi-arrow-left-short"></i> Back</a>
+  </div>
+{% endblock %}
+
+{% block breadcrumbs %}
+  <a href="{% url 'ddm_projects:list' %}">Projects</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_projects:detail' project_url_id %}">"{{ project.name|truncatechars:15 }}" Project</a><i class="bi bi-chevron-right"></i>
+  Questionnaire
+{% endblock %}

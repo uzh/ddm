@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.checks import messages
 from django.http import Http404
 from django.shortcuts import reverse, redirect
 from django.views.generic import FormView
@@ -56,7 +55,8 @@ class DdmNoPermissionView(TemplateView):
     View to inform users that they do not have the needed permission rights.
     Implements the following redirects:
     * Unauthenticated users are redirected to the login page.
-    * Logged-in users with permission and a research profile are redirected to the project list.
+    * Logged-in users with permission and a research profile are redirected
+        to the project list.
     """
     template_name = 'ddm_auth/no_permission.html'
 
@@ -72,7 +72,7 @@ class DdmNoPermissionView(TemplateView):
 
 class ProjectTokenView(SuccessMessageMixin, DDMAuthMixin, FormView):
     """ View to see existing access token or generate a new one. """
-    template_name = 'ddm_auth/token.html'
+    template_name = 'ddm_auth/token_management.html'
     form_class = TokenCreationForm
 
     def get_project(self):
@@ -95,7 +95,9 @@ class ProjectTokenView(SuccessMessageMixin, DDMAuthMixin, FormView):
         action = form.cleaned_data['action']
 
         if action == 'create':
-            project.create_token(expiration_days=form.cleaned_data['expiration_days'])
+            project.create_token(
+                expiration_days=form.cleaned_data['expiration_days']
+            )
 
         if action == 'delete':
             token = project.get_token()
@@ -105,4 +107,7 @@ class ProjectTokenView(SuccessMessageMixin, DDMAuthMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('ddm_auth:project_token', kwargs={'project_url_id': self.kwargs.get('project_url_id')})
+        return reverse(
+            'ddm_auth:project_token',
+            kwargs={'project_url_id': self.kwargs.get('project_url_id')}
+        )

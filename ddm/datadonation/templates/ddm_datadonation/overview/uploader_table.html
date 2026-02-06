@@ -1,0 +1,50 @@
+<div class="table-responsive">
+  <table class="table uploader-overview-table">
+    <thead>
+    <tr>
+      <th class="fit-content">Position</th>
+      <th>Uploader</th>
+      <th class="fit-content">Upload Type</th>
+      <th class="fit-content">Donation Instructions</th>
+      <th>Associated Blueprints</th>
+    </tr>
+    </thead>
+
+    <tbody class="border-top-0">
+    {% for uploader in file_uploaders %}
+      <tr>
+        <td>{{ uploader.index }}</td>
+        <td><a href="{% url 'ddm_datadonation:uploaders:edit' project.url_id uploader.pk %}">{{ uploader.name }}</a></td>
+        <td><span class="badge bg-secondary">{{ uploader.upload_type }}</span></td>
+        <td><a href="{% url 'ddm_datadonation:instructions:overview' project.url_id uploader.pk %}">Instructions</a></td>
+
+        {% if uploader.donationblueprint_set.all %}
+          <td class="p-0">
+            <table class="table blueprint-overview-table">
+              <tbody>
+              {% for blueprint in uploader.donationblueprint_set.all %}
+                <tr><td><a href="{{ blueprint.get_absolute_url }}">{{ blueprint.name }}</a></td></tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </td>
+
+        {% else %}
+          <td>
+            <span class="text-muted">No associated Blueprints</span>
+          </td>
+
+        {% endif %}
+
+        </td>
+      </tr>
+
+    {% empty %}
+      <tr>
+        <td colspan="4">You have yet to create an Uploader for this project.</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+
+  </table>
+</div>

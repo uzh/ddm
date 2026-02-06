@@ -1,0 +1,13 @@
+{% if field %}
+  <p class="{{ extra_field_classes }}">
+    {% if hide_label %}<span class="d-none">{{ field.label_tag }}</span>{% else %}{{ field.label_tag }}{% endif %}
+    {{ field.errors }}
+    {% if field.help_text %}
+      {% if not helptext_end %}<span class="helptext">{{ field.help_text }}</span><br>{% endif %}
+    {% endif %}
+    {{ field }}
+    {% if field.help_text %}
+      {% if helptext_end %}<span class="helptext">{{ field.help_text }}</span><br>{% endif %}
+    {% endif %}
+  </p>
+{% endif %}

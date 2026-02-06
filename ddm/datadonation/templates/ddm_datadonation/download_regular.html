@@ -1,12 +1,43 @@
 {% extends 'ddm_core/page_with_form.html' %}
 
-{% block page_title %}Download Donations{% endblock %}
+{% block page_title %}Download Data Donations{% endblock %}
 
-{% block main_heading %}Download Donations for {{ participant_id }}{% endblock %}
+{% block main_heading %}{% endblock %}
 
-{% block submit_label %}Download Donations{% endblock %}
+{% block main_form %}
 
-{% block cancel_target %}{% url 'ddm_projects:detail' project.url_id %}{% endblock %}
+  <div class="ddm-form-section mt-4">
+    <div class="ddm-form-section-header">
+      <h1>Download Data Donations for {{ participant_id }}?</h1>
+    </div>
+    <div class="ddm-form-section-body">
+      <form method='post' enctype="multipart/form-data">
+
+        {% csrf_token %}
+        {{ form.media }}
+
+        <p>You are about to download the data donated by the participant with ID "{{ participant_id }}".</p>
+        <p>The data will be downloaded as a zip file.</p>
+
+        <div>
+          {% if form.errors %}
+            <p class="error-disclaimer"><i class="bi bi-exclamation-square-fill"></i> The form could not be processed. Please check the issues highlighted below.</p>
+          {% endif %}
+          {{ form.non_field_errors }}
+        </div>
+
+        <div class="ddm-btn-group">
+          <div class="inner-btn-group">
+            {% block cancel %}<div><a class="ddm-btn-base ddm-btn-secondary" href="{% url 'ddm_projects:detail' project.url_id %}">Cancel</a></div>{% endblock cancel %}
+            <div><input class="ddm-btn-base ddm-btn-green" type="submit" value="Download"></div>
+          </div>
+          <div>{# Spacing element #}</div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+{% endblock %}
 
 {% block breadcrumbs %}
 {% endblock %}

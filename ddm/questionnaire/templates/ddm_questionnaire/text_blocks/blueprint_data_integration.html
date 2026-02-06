@@ -1,0 +1,14 @@
+{% verbatim %}
+<p class="mt-0">
+  You can include dynamic data in your question text using template variables:
+</p>
+<p>
+  <span class="fw-bold">Donated data:</span> Use <code>{{ data }}</code> to insert data from the linked Blueprint.
+  Access specific items with <code>{{ data.0 }}</code> (first item), <code>{{ data.1 }}</code> (second), etc.
+</p>
+<p>
+  <span class="fw-bold">Participant info:</span> Use <code>{{ participant }}</code> to include participant-specific information
+  (e.g., <code>{{ participant.url_parameter }}</code>, <code>{{ participant.donation_info }}</code>).
+  For advanced options and examples, see the "template rendering" section in the documentation.
+</p>
+{% endverbatim %}

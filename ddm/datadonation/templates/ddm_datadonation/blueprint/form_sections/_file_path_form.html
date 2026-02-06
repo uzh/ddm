@@ -1,0 +1,50 @@
+{% if iteration == 1 %}
+  <div class="row border-bottom border-light mb-2 d-none d-md-flex">
+
+    {% for field in form %}
+      {% if field.name in 'path' %}
+        <div class="col-12 col-md-8 pb-1">
+          <label>File paths:</label>
+        </div>
+
+      {% elif field.name in 'is_regex,priority,DELETE' %}
+        <div class="col-6 col-sm-4 {% if field.name == 'priority' %}col-md-2{% else %}col-md-1{% endif %}">
+          {{ field.label_tag }}
+        </div>
+
+      {% endif %}
+    {% endfor %}
+
+  </div>
+{% endif %}
+
+<div class="row border-bottom border-light mb-2">
+
+  {% for field in form %}
+
+    {% if field.name in 'path' %}
+      <div class="col-12 col-md-8 pb-2">
+        <div class="d-md-none">{{ field.label_tag }}</div>
+        <div>{{ field.errors }}</div>
+        <div><span class="helptext">{{ field.help_text }}</span></div>
+        <div>{{ field }}</div>
+
+
+      </div>
+
+    {% elif field.name in 'is_regex,priority,DELETE' %}
+      <div class="col-6 col-sm-4 {% if field.name == 'priority' %}col-md-2{% else %}col-md-1{% endif %} pb-2">
+        <div class="d-md-none">{{ field.label_tag }}</div>
+        <div>{{ field.errors }}</div>
+        <div><span class="helptext">{{ field.help_text }}</span></div>
+        <div>{{ field }}</div>
+      </div>
+
+    {% endif %}
+
+  {% endfor %}
+
+  {% for hidden in form.hidden_fields %}
+    {{ hidden }}
+  {% endfor %}
+</div>

@@ -1,0 +1,67 @@
+<div id="project-configuration" class="ddm-form-section mb-5">
+  <div class="ddm-form-section-header">
+    <h5 class="fw-bold mb-0">Project Configuration</h5>
+  </div>
+
+  <div class="container pt-4 ddm-form-section-body">
+    <div class="row">
+
+      <div class="col-12 col-lg-2 project-setup-card text-center d-flex flex-column align-items-center">
+        <div>
+          <a class="card-link" href="{% url 'ddm_projects:briefing_edit' object.url_id %}">
+            <div><i class="bi bi-chat-right-text-fill ddm-if-icon"></i></div>
+            <div><h5>Briefing</h5></div>
+          </a>
+        </div>
+        <div><p>Define how you will greet and brief your participants.</p></div>
+      </div>
+
+      <div class="col-12 col-lg-1 project-setup-filler">
+        <i class="bi bi-chevron-compact-right fs-2 d-none d-lg-inline m-auto"></i>
+        <i class="bi bi-chevron-compact-down fs-2 d-inline d-lg-none"></i>
+      </div>
+
+      <div class="col-12 col-lg-3 project-setup-card text-center d-flex flex-column align-items-center">
+        <div>
+          <a class="card-link" href="{% url 'ddm_datadonation:overview' object.url_id %}">
+            <div><i class="bi bi-box-fill ddm-if-icon"></i></div>
+            <div><h5>Data Donation</h5></div>
+          </a>
+        </div>
+        <div><p>Configure the data donation and the donation instructions.</p></div>
+      </div>
+
+      <div class="col-12 col-lg-1 project-setup-filler">
+        <i class="bi bi-chevron-compact-right fs-2 d-none d-lg-inline m-auto"></i>
+        <i class="bi bi-chevron-compact-down fs-2 d-inline d-lg-none"></i>
+      </div>
+
+      <div class="col-12 col-lg-2 project-setup-card text-center d-flex flex-column align-items-center">
+        <div>
+          <a  class="card-link" href="{% url 'ddm_questionnaire:overview' object.url_id %}">
+            <div><i class="bi bi-pencil-fill ddm-if-icon"></i></div>
+            <div><h5>Questionnaire</h5></div>
+          </a>
+        </div>
+        <div><p>Configure a questionnaire that is displayed after the data donation.</p></div>
+      </div>
+
+      <div class="col-12 col-lg-1 project-setup-filler">
+        <i class="bi bi-chevron-compact-right fs-2 d-none d-lg-inline m-auto"></i>
+        <i class="bi bi-chevron-compact-down fs-2 d-inline d-lg-none"></i>
+      </div>
+
+      <div class="col-12 col-lg-2 project-setup-card text-center d-flex flex-column align-items-center">
+        <div>
+          <a class="card-link" href="{% url 'ddm_projects:debriefing_edit' object.url_id %}">
+            <div><i class="bi bi-chat-left-text-fill ddm-if-icon"></i></div>
+            <div><h5>Debriefing</h5></div>
+          </a>
+        </div>
+        <div><p>Define how you will debrief your participants.</p></div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

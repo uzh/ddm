@@ -1,33 +1,55 @@
 function hideOrShowParameter() {
-    if( $( "#id_url_parameter_enabled" ).is(":checked")) {
-        $( "#id_expected_url_parameters" ).parent().show();
+    const urlParameterEnabled = document.getElementById("id_url_parameter_enabled");
+    const expectedUrlParameters = document.getElementById("id_expected_url_parameters");
+
+    if (urlParameterEnabled && urlParameterEnabled.checked) {
+        if (expectedUrlParameters && expectedUrlParameters.parentElement) {
+            expectedUrlParameters.parentElement.style.display = '';
+        }
     } else {
-        $( "#id_expected_url_parameters" ).parent().hide();
+        if (expectedUrlParameters && expectedUrlParameters.parentElement) {
+            expectedUrlParameters.parentElement.style.display = 'none';
+        }
     }
 }
 
 function hideOrShowRedirect() {
-    if( $( "#id_redirect_enabled" ).is(":checked")) {
-        $( "#id_redirect_target" ).parent().show();
+    const redirectEnabled = document.getElementById("id_redirect_enabled");
+    const redirectTarget = document.getElementById("id_redirect_target");
+
+    if (redirectEnabled && redirectEnabled.checked) {
+        if (redirectTarget && redirectTarget.parentElement) {
+            redirectTarget.parentElement.style.display = '';
+        }
     } else {
-        $( "#id_redirect_target" ).parent().hide();
+        if (redirectTarget && redirectTarget.parentElement) {
+            redirectTarget.parentElement.style.display = 'none';
+        }
     }
 }
 
-$(function() {
+document.addEventListener('DOMContentLoaded', function() {
     hideOrShowParameter();
     hideOrShowRedirect();
-});
 
-$( "#id_url_parameter_enabled" ).change(function() { hideOrShowParameter() });
-$( "#id_redirect_enabled" ).change(function() { hideOrShowRedirect() });
+    const urlParameterEnabled = document.getElementById("id_url_parameter_enabled");
+    if (urlParameterEnabled) {
+        urlParameterEnabled.addEventListener('change', hideOrShowParameter);
+    }
 
-$(document).ready(function () {
-    $('.ddm-accordion-btn').on("click", function () {
-        if ($(this).attr('aria-expanded') === 'true') {
-            $(this).addClass('sign-accordion-open');
-        } else {
-            $(this).removeClass('sign-accordion-open');
-        }
+    const redirectEnabled = document.getElementById("id_redirect_enabled");
+    if (redirectEnabled) {
+        redirectEnabled.addEventListener('change', hideOrShowRedirect);
+    }
+
+    const accordionButtons = document.querySelectorAll('.ddm-accordion-btn');
+    accordionButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            if (this.getAttribute('aria-expanded') === 'true') {
+                this.classList.add('sign-accordion-open');
+            } else {
+                this.classList.remove('sign-accordion-open');
+            }
+        });
     });
 });

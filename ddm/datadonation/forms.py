@@ -35,16 +35,20 @@ class BlueprintForm(forms.ModelForm):
         }
         labels = {
             'expected_fields_regex_matching': 'Expected fields use regex matching',
+            'display_position': 'Display order',
         }
         help_texts = {
+            'name': 'For internal use (e.g., "watch_history")',
             'display_name': (
-                'A name for this blueprint, displayed to participants '
+                'Title of the Blueprint shown to participants '
                 '(e.g., "Watch History").'
             ),
+            'display_position': (
+                'Controls display order in Blueprint list. Lower = first.'
+            ),
             'description': (
-                'Describe what data this blueprint extracts '
-                '(e.g., "The titles of videos you watched and when you watched '
-                'them"). Displayed to participants.'
+                'Explains to participants what data is extracted '
+                '(e.g., "Videos you watched and when")'
             ),
             'expected_fields': mark_safe(
                 'Comma-separated, in double quotes: <code>"Field A", "Field B"</code>'
@@ -88,9 +92,13 @@ class BlueprintForm(forms.ModelForm):
 class InstructionsForm(forms.ModelForm):
     class Meta:
         model = DonationInstruction
-        fields = ['text', 'index']
+        fields = ['index', 'text']
         widgets = {
             'text': CKEditor5Widget(config_name='ddm_ckeditor'),
+        }
+
+        labels = {
+            'index': 'Page number',
         }
 
 
@@ -112,7 +120,7 @@ class ProcessingRuleForm(forms.ModelForm):
             'comparison_value': Textarea(attrs={'cols': 60, 'rows': 1}),
             'replacement_value': Textarea(attrs={'cols': 60, 'rows': 1}),
         }
-        labels = {
+        help_texts = {
             'replacement_value': 'The replacement for matched text.',
         }
 
@@ -147,28 +155,29 @@ class FileUploaderForm(forms.ModelForm):
         labels = {
             'extract_nested_zips': 'Extract nested zip files',
             'extraction_depth': 'Extraction depth',
-            'combined_consent': 'All-in-one consent enabled'
+            'combined_consent': 'All-in-one consent enabled',
+            'index': 'Display position'
         }
         widgets = {
             'extraction_depth': forms.NumberInput(),
         }
         help_texts = {
+            'name': 'For internal use (e.g., "tiktok_uploader")',
             'display_name': (
-                'A name for this Uploader, displayed to participants '
-                '(e.g., "TikTok Data Donation").'
+                'Title of the Uploader shown to participants '
+                '(e.g., "TikTok Data Donation")'
             ),
             'combined_consent': '',
             'index': (
-                'Determines the position of this uploader in the donation interface '
-                '(only relevant, if multiple uploaders are configured).'
+                'Controls display order when multiple Uploaders exist. '
+                'Lower = first.'
             ),
             'extract_nested_zips': (
                 'Whether to extract zip files found inside the uploaded zip and '
-                'make their contents available to be handled by donation blueprints.'
+                'make their contents available to be handled by Blueprints'
             ),
             'extraction_depth': (
-                'Maximum levels of nested zip files to extract '
-                '(0 = only extract the top-level zip).'
+                'Levels of nested zips to extract (0 = top-level only)'
             ),
         }
 

@@ -19,7 +19,7 @@ from ddm.auth.views import DDMAuthMixin
 class ProjectList(DDMAuthMixin, ListView):
     """ View to display a list of existing donation projects. """
     model = DonationProject
-    template_name = 'ddm_projects/list.html'
+    template_name = 'ddm_projects/project_list.html'
 
     def get_queryset(self):
         return DonationProject.objects.filter(owner__user=self.request.user)
@@ -28,7 +28,7 @@ class ProjectList(DDMAuthMixin, ListView):
 class ProjectCreate(SuccessMessageMixin, DDMAuthMixin, CreateView):
     """ View to create a new donation project. """
     model = DonationProject
-    template_name = 'ddm_projects/create.html'
+    template_name = 'ddm_projects/project_create.html'
     form_class = ProjectCreateForm
     success_message = 'Project was created successfully.'
 
@@ -47,7 +47,7 @@ class ProjectDetail(DDMAuthMixin, DetailView):
     model = DonationProject
     slug_url_kwarg = 'project_url_id'
     slug_field = 'url_id'
-    template_name = 'ddm_projects/detail.html'
+    template_name = 'ddm_projects/project_detail.html'
 
 
 class ProjectEdit(SuccessMessageMixin, DDMAuthMixin, UpdateView):
@@ -55,7 +55,7 @@ class ProjectEdit(SuccessMessageMixin, DDMAuthMixin, UpdateView):
     model = DonationProject
     slug_url_kwarg = 'project_url_id'
     slug_field = 'url_id'
-    template_name = 'ddm_projects/edit.html'
+    template_name = 'ddm_projects/project_edit.html'
     form_class = ProjectEditForm
     success_message = 'Project details successfully updated.'
 
@@ -69,7 +69,7 @@ class ProjectEditCustomUploaderTranslations(
     model = DonationProject
     slug_url_kwarg = 'project_url_id'
     slug_field = 'url_id'
-    template_name = 'ddm_projects/edit_custom_uploader_translations.html'
+    template_name = 'ddm_projects/uploader_translations_edit.html'
     form_class = ProjectEditCustomUploaderTranslationsForm
 
     def get_context_data(self, **kwargs):
@@ -112,7 +112,7 @@ class ProjectDelete(SuccessMessageMixin, DDMAuthMixin, DeleteView):
     model = DonationProject
     slug_url_kwarg = 'project_url_id'
     slug_field = 'url_id'
-    template_name = 'ddm_projects/delete.html'
+    template_name = 'ddm_projects/project_delete.html'
     success_url = reverse_lazy('ddm_projects:list')
     success_message = 'Project "%s" was deleted.'
 
@@ -125,7 +125,7 @@ class BriefingEdit(SuccessMessageMixin, DDMAuthMixin, UpdateView):
     model = DonationProject
     slug_url_kwarg = 'project_url_id'
     slug_field = 'url_id'
-    template_name = 'ddm_projects/edit-briefing.html'
+    template_name = 'ddm_projects/briefing_edit.html'
     form_class = BriefingEditForm
     success_message = 'Briefing page successfully updated.'
 
@@ -135,6 +135,6 @@ class DebriefingEdit(SuccessMessageMixin, DDMAuthMixin, UpdateView):
     model = DonationProject
     slug_url_kwarg = 'project_url_id'
     slug_field = 'url_id'
-    template_name = 'ddm_projects/edit-debriefing.html'
+    template_name = 'ddm_projects/debriefing_edit.html'
     form_class = DebriefingEditForm
     success_message = 'Debriefing page successfully updated.'

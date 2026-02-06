@@ -1,0 +1,28 @@
+{% include "ddm_core/form_components/_basic_field.html" with field=form.name %}
+
+{% include "ddm_core/form_components/_basic_field.html" with field=form.variable_name %}
+
+<p class="ddm-form-group-header">Positioning</p>
+<div class="container row ddm-form-group">
+  <div class="col-12 col-sm-4">
+    {% include "ddm_core/form_components/_basic_field.html" with field=form.page extra_field_classes="mt-0" %}
+  </div>
+  <div class="col-12 col-sm-4">
+    {% include "ddm_core/form_components/_basic_field.html" with field=form.index extra_field_classes="mt-0" %}
+  </div>
+</div>
+
+{% if form.text %}
+  {% include "ddm_core/form_components/_basic_field.html" with field=form.text %}
+
+  <div>
+    {% with title="How donated data and participant variables can be included in the question text" %}
+      {% with include_path="ddm_questionnaire/text_blocks/blueprint_data_integration.html" %}
+        {% include "ddm_core/components/info_collapsible.html" with element_id="blueprint-data-integration" title=title include_path=include_path body="" %}
+      {% endwith %}
+    {% endwith %}
+  </div>
+
+{% endif %}
+
+{% include "ddm_core/form_components/_basic_field.html" with field=form.blueprint helptext_end=True %}

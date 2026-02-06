@@ -1,41 +1,51 @@
 .ddm-info-collapsible {
-    border-left: 2px solid black;
-    border-right: 2px solid black;
-    margin: 15px 10PX 25px 10px;
+    border-left: 2px solid var(--color-main-green);;
+    border-right: 2px solid var(--color-main-green);;
+    margin: 15px 0 25px 0;
 }
 
 .ddm-info-collapsible-header {
-    background: #f2f2f2;
+    background: var(--bg-color-light);
 }
 
 .ddm-info-collapsible-button {
-    padding: 5px 15px;
+    padding: 5px 10px;
     background: none;
     border: none;
     width: 100%;
     text-align: left;
+    color: black;
+}
+
+.ddm-info-collapsible-button:hover {
+    background: rgb(221, 221, 221);
 }
 
 .ddm-info-collapsible-button:after {
-    content: "\F229";
+    content: "\F231";
     font-family: "bootstrap-icons";
     display: inline-block;
     float: right;
     transition-duration: .35s;
+    color: black;
 }
 
 .ddm-info-collapsible-button:not(.collapsed):after {
-    content: "\F229";
+    content: "\F231";
     font-family: "bootstrap-icons";
     display: inline-block;
-    transform: rotate(-180deg);
+    transform: rotate(90deg);
     transition-duration: .35s;
     float: right;
+}
+
+.ddm-info-collapsible-icon {
+    color: var(--color-main-green);
 }
 
 .ddm-info-collapsible-body {
     padding: 15px 21px;
-    border-bottom: 1px solid lightgrey;
+    border-bottom: 4px solid var(--bg-color-light);
 }
 
 .ddm-info-collapsible-body ol {

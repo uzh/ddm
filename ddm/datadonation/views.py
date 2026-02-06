@@ -104,6 +104,21 @@ class FileUploaderCreate(
     form_class = FileUploaderForm
     success_message = 'Uploader created successfully.'
 
+    def get_initial(self):
+        """Set initial index value to current maximum plus one."""
+        initial = super().get_initial()
+        uploaders = FileUploader.objects.filter(
+            project__url_id=self.get_project_url_id()
+        )
+
+        if uploaders:
+            max_index = uploaders.count()
+            initial['index'] = max_index + 1
+        else:
+            initial['index'] = 1
+
+        return initial
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['project'] = self.get_project()
@@ -430,9 +445,17 @@ class InstructionMixin:
         context = super().get_context_data(**kwargs)
         context.update({
             'project_url_id': self.get_project_url_id(),
-            'file_uploader': FileUploader.objects.get(pk=self.get_uploader_id())
+            'file_uploader': FileUploader.objects.get(pk=self.get_uploader_id()),
+            'project': self.get_project()
         })
         return context
+
+    def get_project(self):
+        try:
+            project = DonationProject.objects.get(url_id=self.get_project_url_id())
+        except DonationProject.DoesNotExist:
+            project = None
+        return project
 
     def get_project_url_id(self):
         return self.kwargs['project_url_id']

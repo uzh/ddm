@@ -1,0 +1,25 @@
+<div class="ddm-admin-section">
+
+  <div class="table-responsive">
+    <table class="table">
+      <tr>
+        <th>Name</th>
+        <th></th>
+      </tr>
+
+      {% for blueprint in lonely_blueprints %}
+        <tr>
+          <td>{{ blueprint.name }}</td>
+          <td><a href="{{ blueprint.get_absolute_url }}">Edit</a><span class="ddm-separator"></span><a href="{% url 'ddm_datadonation:blueprints:delete' project.url_id blueprint.pk %}">Delete</a></td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="2">No unassociated Blueprints.</td>
+        </tr>
+      {% endfor %}
+
+    </table>
+  </div>
+  <a class="ddm-btn-base ddm-btn-green" href="{% url 'ddm_datadonation:blueprints:create' project.url_id %}">Create Blueprint</a>
+
+</div>

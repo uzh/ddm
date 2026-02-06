@@ -10,13 +10,16 @@ hideOrShowReplacementAndComparisonValue = function (id) {
         comparisonValue.parentElement.classList.remove("d-none");
         replacementInput.parentElement.style.display = "block";
         comparisonValue.parentElement.style.display = "block";
+        comparisonValue.closest(".operator-options").classList.remove("d-none");
     } else if (comparisonOperator === "") {
         replacementInput.parentElement.style.display = "none";
         comparisonValue.parentElement.style.display = "none";
+        comparisonValue.closest(".operator-options").classList.add("d-none");
     } else {
         replacementInput.parentElement.style.display = "none";
         comparisonValue.parentElement.classList.remove("d-none");
         comparisonValue.parentElement.style.display = "block";
+        comparisonValue.closest(".operator-options").classList.remove("d-none");
     }
 
     const comparisonLabel = document.querySelector('label[for="id_processingrule_set-' + id + '-comparison_value"]');

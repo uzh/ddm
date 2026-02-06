@@ -6,45 +6,52 @@
 
 {% block main_body %}
 
-{% block main_top %}{% endblock %}
+  {% block main_top %}{% endblock %}
 
-<div class="ddm-form ddm-admin-section">
-  <div class="ddm-admin-section-header">{% block main_form_header %}{% endblock %}</div>
+  <div class="ddm-form ddm-admin-section">
+    {% block main_form_header %}{% endblock %}
 
-  <div class="ddm-admin-section-body">
-    {% block main_form %}
-    <form method='post' enctype="multipart/form-data">
-      {% csrf_token %}
-      {{ form.media }}
+    <div class="mt-4">
+      {% block main_form %}
+        <form method='post' enctype="multipart/form-data">
+          <div class="ddm-form-section-body border-top border-bottom">
 
-      <div>
-        {% if form.errors %}
-        <p class="error-disclaimer"><i class="bi bi-exclamation-square-fill"></i> The form could not be processed. Please check the issues highlighted below.</p>
-        {% endif %}
+            {% csrf_token %}
+            {{ form.media }}
 
-        {{ form.non_field_errors }}
+            <div>
+              {% if form.errors %}
+                <p class="error-disclaimer"><i class="bi bi-exclamation-square-fill"></i> The form could not be processed. Please check the issues highlighted below.</p>
+              {% endif %}
 
-        {% for field in form %}
-        <p>
-          {{ field.label_tag }}
-          <span class="helptext">{{ field.help_text|safe }}</span>
-          {{ field.errors }}
-          {{ field }}
-        </p>
-        {% endfor %}
-        <input class="ddm-btn" type="submit" value="{% block submit_label %}Submit Form{% endblock %}">
-        {% block cancel %}
-        <p>
-          <a href="{% block cancel_target %}{% endblock %}"><i class="bi bi-arrow-left-short"></i> Cancel</a>
-        </p>
-        {% endblock %}
-      </div>
-    </form>
-    {% endblock %}
+              {{ form.non_field_errors }}
+
+              {% for field in form %}
+                <p>
+                  {{ field.label_tag }}
+                  <span class="helptext">{{ field.help_text|safe }}</span>
+                  {{ field.errors }}
+                  {{ field }}
+                </p>
+              {% endfor %}
+
+            </div>
+          </div>
+
+          <div class="ddm-btn-group">
+            <div>{# Spacing element #}</div>
+            <div class="inner-btn-group">
+              {% block cancel %}<div><a class="ddm-btn-base ddm-btn-secondary" href="{% block cancel_target %}{% endblock cancel_target %}">Cancel</a></div>{% endblock cancel %}
+              <div><input class="ddm-btn-base ddm-btn-green" type="submit" value="{% block submit_label %}Submit Form{% endblock submit_label %}"></div>
+            </div>
+          </div>
+
+        </form>
+      {% endblock %}
+    </div>
   </div>
-</div>
 
-{% block main_bottom %}{% endblock %}
+  {% block main_bottom %}{% endblock %}
 
 {% endblock %}
 

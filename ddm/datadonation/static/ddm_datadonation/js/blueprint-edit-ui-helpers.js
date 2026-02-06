@@ -26,6 +26,11 @@ function updateRuleDescription(id) {
     if (descriptionElement) {
       descriptionElement.textContent = msg;
     }
+
+    const emptyPlaceholder = document.getElementById("no-rules-defined-warning");
+    if (emptyPlaceholder) {
+      emptyPlaceholder.remove();
+    }
   }
 
 }

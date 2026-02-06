@@ -1,0 +1,36 @@
+<div id="danger-zone" class="ddm-form-section">
+  <div class="ddm-form-section-header">
+    <h5 class="fw-bold mb-0">Danger Zone</h5>
+  </div>
+
+  <div class="ddm-form-section-body">
+    <div class="pt-2">
+      <p>
+        <button
+            class="ddm-btn-base ddm-btn-red"
+            data-bs-toggle="modal"
+            data-bs-target="#delete-data-confirm">
+          Reset Project Data
+        </button>
+      </p>
+    </div>
+    <div>
+      <p><button
+          class="ddm-btn-base ddm-btn-red"
+          data-bs-toggle="modal"
+          data-bs-target="#delete-participant">
+        Delete Participant
+      </button>
+      </p>
+    </div>
+    <div>
+      <p>
+        <a
+            class="ddm-btn-base ddm-btn-red text-center d-inline-block"
+            href="{% url 'ddm_projects:delete' object.url_id %}">
+          Delete Project
+        </a>
+      </p>
+    </div>
+  </div>
+</div>

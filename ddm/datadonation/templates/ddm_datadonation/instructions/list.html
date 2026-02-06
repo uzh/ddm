@@ -2,43 +2,39 @@
 
 {% block page_title %}Donation Instructions{% endblock %}
 
-{% block main_heading %}Instructions for File Uploader "{{ file_uploader.name }}"{% endblock %}
+{% block main_heading %}Instructions for Uploader "{{ file_uploader.name }}"{% endblock %}
 
 {% block main_body %}
-<div class="ddm-admin-section">
-  <div class="ddm-admin-section-header"></div>
-  <div class="ddm-admin-section-body">
-    <p>Number of pages: {{ instructions | length }}</p>
 
-    <div class="container border-bottom mb-4">
-      {% for page in instructions %}
-      <div class="row border-top py-2">
-        <div class="col-2 border-end">
-          <h4>Page {{ page.index }}</h4>
-          <a href="{% url 'ddm_datadonation:instructions:edit' project_url_id file_uploader.pk page.pk %}">Edit</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-          <a href="{% url 'ddm_datadonation:instructions:delete' project_url_id file_uploader.pk page.pk %}">Delete</a>
-        </div>
-        <div class="col bg-white">
-          {{ page.text | safe }}
-        </div>
+  <p>Number of pages: {{ instructions | length }}</p>
+
+  <div class="mt-3">
+    {% for page in instructions %}
+      {% url 'ddm_datadonation:instructions:edit' project_url_id file_uploader.pk page.pk as edit_url %}
+      {% url 'ddm_datadonation:instructions:delete' project_url_id file_uploader.pk page.pk as delete_url %}
+
+      {% with page_number=page.index|stringformat:"s" %}
+        {% with content=page.text|safe accordion_id="Page"|add:page_number title="Page "|add:page_number %}
+          {% include "ddm_core/components/accordion_card.html" with extra_classes="narrow-accordion" accordion_id=accordion_id accordion_title=title is_expanded=True %}
+        {% endwith %}
+      {% endwith %}
+      <div class="ddm-accordion-footer">
+        <a class="ddm-ui-link" href="{{ edit_url }}">Edit</a>
+        <span class="ddm-separator"></span>
+        <a class="ddm-ui-link" href="{{ delete_url }}">Delete</a>
       </div>
-      {% empty %}
-      <tr><td>No Instructions defined.</td></tr>
-      {% endfor %}
-    </div>
-    <a class="ddm-btn" href="{% url 'ddm_datadonation:instructions:create' project_url_id file_uploader.pk %}"><b>+</b>&nbsp;&nbsp;Add Instruction Page</a>
+    {% endfor %}
   </div>
-</div>
 
-<div class="mt-3">
-  <a href="{% url 'ddm_datadonation:overview' project_url_id %}"><i class="bi bi-arrow-left-short"></i> Back</a>
-</div>
+  <div class="mt-3">
+    <a href="{% url 'ddm_datadonation:overview' project_url_id %}"><i class="bi bi-arrow-left-short"></i> Back</a>
+  </div>
 {% endblock %}
 
 {% block breadcrumbs %}
-<a href="{% url 'ddm_projects:list' %}">Projects</a> /
-<a href="{% url 'ddm_projects:detail' project_url_id %}">"{{ file_uploader.project.name|truncatechars:15 }}" Project</a> /
-<a href="{% url 'ddm_datadonation:overview' project_url_id %}">Data Donation</a> /
-<a href="{% url 'ddm_datadonation:uploaders:edit' project_url_id file_uploader.pk %}">File Uploader "{{ file_uploader.name|truncatechars:15 }}"</a> /
-Instructions
+  <a href="{% url 'ddm_projects:list' %}">Projects</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_projects:detail' project_url_id %}">"{{ file_uploader.project.name|truncatechars:15 }}" Project</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_datadonation:overview' project_url_id %}">Data Donation</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_datadonation:uploaders:edit' project_url_id file_uploader.pk %}">Uploader "{{ file_uploader.name|truncatechars:15 }}"</a><i class="bi bi-chevron-right"></i>
+  Instructions
 {% endblock %}

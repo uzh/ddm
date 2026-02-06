@@ -1,0 +1,50 @@
+<tr>
+
+  {% with hide_label=True extra_field_classes="mt-0" %}
+    <td>{% include "ddm_core/form_components/_basic_field.html" with field=form.index %}</td>
+    {% if form.label %}<td>{% include "ddm_core/form_components/_basic_field.html" with field=form.label  %}</td>{% endif %}
+    {% if form.label_alt %}<td>{% include "ddm_core/form_components/_basic_field.html" with field=form.label_alt %}</td>{% endif %}
+    <td>{% include "ddm_core/form_components/_basic_field.html" with field=form.value %}</td>
+    <td>{% include "ddm_core/form_components/_basic_field.html" with field=form.randomize %}</td>
+    <td>{% include "ddm_core/form_components/_basic_field.html" with field=form.DELETE %}</td>
+  {% endwith %}
+
+  <td class="fs-08">
+    {% if form.instance.id %}
+      {% with filters=form.instance.get_active_filters %}
+
+        <a href="{% url 'ddm_questionnaire:item_filters' project_url_id object.question_type object.pk form.instance.id %}">{% if filters %}Edit{% else %}Add{% endif %}</a>
+        {% if filters %}
+          <span class="ddm-separator"></span>
+          <a tabindex="0"
+             data-bs-container="body"
+             data-bs-toggle="popover"
+             data-bs-trigger="focus"
+             data-bs-placement="left"
+             data-bs-html="true"
+             title="Hidden when:"
+             data-bs-content="<code>
+              {% for c in form.instance.get_active_filters %}
+                {% if not forloop.first %}
+                  <span class='secondary-code-color'>{{ c.combinator }}</span>
+                {% endif %}
+                {{ c.get_source_name }} {{ c.condition_operator }} {{ c.condition_value }}
+              {% empty %}No filters defined
+              {% endfor %}
+            </code>">
+            Show
+          </a>
+        {% endif %}
+      {% endwith %}
+
+    {% else %}
+      –
+    {% endif %}
+
+  </td>
+
+  {% for hidden in form.hidden_fields %}
+    <td>{{ hidden }}</td>
+  {% endfor %}
+
+</tr>

@@ -1,0 +1,20 @@
+{{ path_formset.management_form }}
+
+{{ path_formset.non_form_errors }}
+
+<div>
+  <div id="file-path-formset-container" class="container">
+    {% for form in path_formset %}
+      {% include "ddm_datadonation/blueprint/form_sections/_file_path_form.html" with iteration=forloop.counter %}
+    {% empty %}
+      <p class="text-muted">No file paths added</p>
+    {% endfor %}
+  </div>
+</div>
+
+{# Empty path formset #}
+<div id="empty-file-path-form" class="d-none">
+  {% include "ddm_datadonation/blueprint/form_sections/_file_path_form.html" with form=path_formset.empty_form %}
+</div>
+
+<button type="button" class="ddm-btn ddm-btn-inverted" id="add-file-path-form">Add File Path</button>

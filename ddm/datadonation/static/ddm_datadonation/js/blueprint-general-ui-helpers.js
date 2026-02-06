@@ -14,31 +14,41 @@ function hideOrShowCsvDelimiter() {
   }
 }
 
-function hideOrShowRegexPath() {
+function hideOrShowFilePath() {
   const fileUploaderVal = document.getElementById("id_file_uploader").value;
-  const regexPathParent = document.getElementById("id_regex_path").parentNode;
 
-  if (file_uploader_meta[fileUploaderVal] === "zip file") {
-    regexPathParent.style.display = "";
+  const fileIdentificationId = "IdentificationSettings";
+  const fileIdentificationButton = document.getElementById(`accordionButton${fileIdentificationId}`);
+  const fileIdentificationBody = document.getElementById(`collapse${fileIdentificationId}`);
+
+  if (file_uploader_meta[fileUploaderVal] === "single file") {
+    fileIdentificationButton.disabled = true;
+
+    fileIdentificationButton.classList.add("collapsed");
+    fileIdentificationBody.classList.remove("show");
+
   } else {
-    regexPathParent.style.display = "none";
+    fileIdentificationButton.disabled = false;
   }
 }
 
 function hideOrShowJsonRoot() {
   const expFileFormat = document.getElementById("id_exp_file_format").value;
-  const jsonExtractionRootParent = document.getElementById("id_json_extraction_root").parentNode;
 
-  if (expFileFormat === "json") {
-    jsonExtractionRootParent.style.display = "";
-  } else {
-    jsonExtractionRootParent.style.display = "none";
+  const jsonExtractionRootParent = document.getElementById("id_json_extraction_root");
+
+  if (jsonExtractionRootParent) {
+    if (expFileFormat === "json") {
+      jsonExtractionRootParent.parentNode.style.display = "";
+    } else {
+      jsonExtractionRootParent.parentNode.style.display = "none";
+    }
   }
 }
 
 document.addEventListener("DOMContentLoaded", function() {
   hideOrShowCsvDelimiter();
-  hideOrShowRegexPath();
+  hideOrShowFilePath();
   hideOrShowJsonRoot();
 
   document.getElementById("id_exp_file_format").addEventListener("change", function() {
@@ -47,6 +57,6 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
   document.getElementById("id_file_uploader").addEventListener("change", function() {
-    hideOrShowRegexPath();
+    hideOrShowFilePath();
   });
 });

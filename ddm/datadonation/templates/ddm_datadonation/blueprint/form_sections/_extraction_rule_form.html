@@ -1,0 +1,20 @@
+<div class="rule-configuration-form mb-3">
+  {% include "ddm_core/form_components/_basic_field.html" with field=form.execution_order %}
+  {% include "ddm_core/form_components/_basic_field.html" with field=form.name %}
+
+  <p>{{ form.field.label_tag }}</p>
+  <div class="ddm-form-group">
+    {% include "ddm_core/form_components/_basic_field.html" with field=form.field extra_field_classes="mt-0" hide_label=True %}
+    {% include "ddm_core/form_components/_basic_field.html" with field=form.regex_field %}
+  </div>
+
+  {% include "ddm_core/form_components/_basic_field.html" with field=form.comparison_operator %}
+
+  <div class="operator-options d-none">
+    <p><label>Operator options</label></p>
+    <div class="ddm-form-group">
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.comparison_value extra_field_classes="mt-0 mb-1" %}
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.replacement_value extra_field_classes="mt-0 mb-1" %}
+    </div>
+  </div>
+</div>

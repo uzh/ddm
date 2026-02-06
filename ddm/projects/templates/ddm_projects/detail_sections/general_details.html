@@ -1,0 +1,42 @@
+<div id="project-details" class="ddm-form-section mb-5 mt-4">
+  <div class="ddm-form-section-header">
+    <h5 class="fw-bold mb-0">Project Details<span class="inline-edit"><a href="{% url 'ddm_projects:edit' object.url_id %}"><i class="bi bi-pencil-square"></i> Edit</a></span></h5>
+  </div>
+
+  <div class="container pt-3 ddm-form-section-body">
+    <div class="row pb-2">
+      <div class="col-12 col-sm-3 col-lg-2 fw-bolder">Name:</div>
+      <div class="col-12 col-sm-auto">{{ object.name }}</div>
+    </div>
+
+    <div class="row pb-2">
+      <div class="col-12 col-sm-3 col-lg-2 fw-bolder">Project ID:</div>
+      <div class="col-12 col-sm-auto">{{ object.url_id }}</div>
+    </div>
+
+    <div class="row pb-2">
+      <div class="col-12 col-sm-3 col-lg-2 fw-bolder">Participant Link:</div>
+      <div class="col-12 col-sm-9">
+        <p class="m-0">
+          <a href="{% url 'ddm_participation:briefing' object.slug %}" target="_blank">
+            {{ request.scheme }}://{{ request.get_host }}{% url 'ddm_participation:briefing' object.slug %}
+          </a>
+        </p>
+        <p class="m-0 helptext">Tip: Test it yourself by opening this link in a private browser window.</p>
+      </div>
+    </div>
+
+    <div class="row pb-2">
+      <div class="col-12 col-sm-3 col-lg-2 fw-bolder">Status:</div>
+      <div class="col-12 col-sm-auto">{% if object.active %}Project is <b>active</b> and participation is possible{% else %}Project is <b>inactive</b> and participation is not possible{% endif %}</div>
+    </div>
+
+    {% if object.super_secret %}
+      <div class="row pb-2">
+        <div class="col-12 col-sm-3 col-lg-2 fw-bolder">Encryption:</div>
+        <div class="col-12 col-sm-auto">Enhanced encryption enabled</div>
+      </div>
+    {% endif %}
+  </div>
+
+</div>

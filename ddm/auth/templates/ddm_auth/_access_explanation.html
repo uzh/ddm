@@ -1,0 +1,36 @@
+<div class="mb-3">
+  <p>Access your project's collected data programmatically using the download API:</p>
+</div>
+
+<table class="table table-responsive">
+  <tbody class="border-top-0">
+
+  <tr>
+    <td class="fw-bold">API Endpoint</td>
+    <td><code>https://{{ request.get_host }}/api/project/{{ project.url_id }}/data/</code></td>
+  </tr>
+
+  <tr>
+    <td class="fw-bold">Authentication</td>
+    <td>
+      <p class="mb-0">Include your token in the Authorization header:</p>
+      <p><code>Authorization: Token your_token_here</code></p>
+      <p class="mb-0">Generate or renew your access token below. Access tokens are valid for a limited time of a maximum of 90 days.</p>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="fw-bold">Example</td>
+    <td class="mb-0">
+      {% if project.super_secret %}
+        <p><code>GET https://{{ request.get_host }}/{{ project.url_id }}/download/ -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b' -H 'Super-Secret: yourPassword'</code></p>
+        <p>Because this project has enhanced encryption enabled, the encryption password must also be included in the request via the <code>Super-Secret</code> header.</p>
+      {% else %}
+        <pre class="p-1"><code>GET /api/project/AqDYFgrX/data/ -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b'</code></pre>
+      {% endif %}
+      <p class="mb-0">The documentation provides some examples how to do this in a Python- or R-Script.</p>
+    </td>
+  </tr>
+
+  </tbody>
+</table>

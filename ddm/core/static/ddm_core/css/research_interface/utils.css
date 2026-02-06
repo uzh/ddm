@@ -2,6 +2,10 @@
     font-size: 0.8rem !important;
 }
 
+.fs-09 {
+    font-size: 0.9rem !important;
+}
+
 .lh-1 {
     line-height: 1;
 }
@@ -33,4 +37,10 @@
 
 .bg-light-red {
     background-color: #ffdfdf;
+}
+.error-border {
+    border: 2px solid var(--color-darkred);
+}
+.fit-content {
+    max-width: fit-content;
 }

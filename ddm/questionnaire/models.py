@@ -53,7 +53,7 @@ class QuestionBase(FilterConditionMixin, PolymorphicModel):
     )
     blueprint = models.ForeignKey(
         'ddm_datadonation.DonationBlueprint',
-        on_delete=models.CASCADE,
+        on_delete=models.CASCADE,    # TODO: Set this to a different policy; possibly add a "active" attribute to question and set inactive. If changed, update blueprint delete view.
         null=True,
         blank=True
     )

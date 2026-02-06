@@ -1,0 +1,33 @@
+{% if object.get_active_filters %}
+  <p class="ddm-form-group-header mt-0">Question will be hidden if:</p>
+  <div class="ddm-form-group">
+
+    <code>
+      {% for c in object.get_active_filters %}
+        {% if not forloop.first %}<span class="secondary-code-color">{{ c.combinator }}</span>{% endif %}
+        {{ c.get_source_name }} {{ c.condition_operator }} {{ c.condition_value }}
+      {% endfor %}
+    </code>
+
+  </div>
+  <p class="mt-4">
+    <a class="ddm-btn-base ddm-btn-dark" href="{% url 'ddm_questionnaire:question_filters' project_url_id object.question_type object.pk %}">
+      Edit Filter Conditions
+    </a>
+  </p>
+
+{% else %}
+  <p class="fw-normal fs-09">
+    No filter conditions defined.
+  </p>
+  <p>
+    <a class="ddm-btn-base ddm-btn-dark" href="{% url 'ddm_questionnaire:question_filters' project_url_id object.question_type object.pk %}">
+      Add Filter Conditions
+    </a>
+  </p>
+
+{% endif %}
+
+<p class="helptext">
+  Make sure to <b class="text-danger">save any changes of the question configuration</b> before editing the filters.
+</p>

@@ -32,7 +32,7 @@ class FileUploader(models.Model):
     name = models.CharField(
         max_length=250,
         help_text=(
-            'Internal name for this File Uploader.'
+            'Internal name for this File Uploader'
         ),
         blank=False,
     )
@@ -60,7 +60,7 @@ class FileUploader(models.Model):
     combined_consent = models.BooleanField(
         default=False,
         verbose_name='All-in-one consent',
-        help_text='If enabled, participants provide consent once for all data.'
+        help_text='If enabled, participants provide consent once for all data'
     )
 
     class Meta:
@@ -88,12 +88,12 @@ class DonationBlueprint(models.Model):
     name = models.CharField(
         max_length=250,
         help_text=(
-            'Internal name for this File Blueprint.'
+            'Internal name for this File Blueprint'
         )
     )
     description = models.TextField(
         null=True,
-        help_text='Blueprint description visible for participants.'
+        help_text='Blueprint description visible for participants'
     )
     display_name = models.CharField(
         max_length=250,
@@ -127,7 +127,7 @@ class DonationBlueprint(models.Model):
         default="",
         blank=True,
         help_text=(
-            'The character that separates values in the CSV.'
+            'The character that separates values in the CSV'
         )
     )
 
@@ -153,7 +153,7 @@ class DonationBlueprint(models.Model):
         on_delete=models.SET_NULL,
         verbose_name='Associated File Uploader',
         help_text=(
-            'The File Uploader through which the related file will be uploaded.'
+            'The File Uploader through which the related file will be uploaded'
         )
     )
     regex_path = models.TextField(
@@ -296,21 +296,21 @@ class ProcessingRule(models.Model):
 
     name = models.CharField(
         max_length=250,
-        help_text='A label for this rule (internal use only).'
+        help_text='A label for this rule (internal use only)'
     )
 
     field = models.TextField(
         null=False,
         blank=False,
-        help_text='The field this rule applies to (without quotes).'
+        help_text='The field this rule applies to (without quotes)'
     )
     regex_field = models.BooleanField(
         default=False,
         null=False,
-        help_text='Enable if the field name above is a regex pattern.'
+        help_text='Enable if the field name above is a regex pattern'
     )
     execution_order = models.IntegerField(
-        help_text='The order in which rules are applied..'
+        help_text='The order in which rules are applied'
     )
 
     class ComparisonOperators(models.TextChoices):
@@ -335,11 +335,11 @@ class ProcessingRule(models.Model):
     )
     comparison_value = models.TextField(
         blank=True,
-        help_text='The value to compare the field against.'
+        help_text='The value to compare the field against'
     )
     replacement_value = models.TextField(
         blank=True,
-        help_text='Only required for operation "Replace match (regex)".'
+        help_text='Only required for operation "Replace match (regex)"'
     )
 
     def clean(self):
@@ -378,7 +378,7 @@ class DataDonation(ModelWithEncryptedData):
     blueprint = models.ForeignKey(
         'DonationBlueprint',
         null=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL  # TODO: Set this to a different policy; not very intuitive
     )
     participant = models.ForeignKey(
         'ddm_participation.Participant',

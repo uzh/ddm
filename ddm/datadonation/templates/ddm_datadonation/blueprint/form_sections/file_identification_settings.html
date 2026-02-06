@@ -1,0 +1,16 @@
+<label>File paths</label>
+<p>
+  Specify the path to the file you want to extract from the uploaded zip.
+  For example, if the file is <code>some_data.json</code> at the root of the zip, enter <code>some_data.json</code>.
+</p>
+<p>
+  You can use regex patterns or define multiple paths, which are tried in priority order (lower numbers first; useful if the filename may not always be the same).
+</p>
+
+<div class="mt-3 mb-4">
+  {% include "ddm_core/components/info_collapsible.html" with element_id="file-path-advanced" title="How file paths are evaluated" include_path="ddm_datadonation/blueprint/info_collapsibles/block_file_paths.html" body="" %}
+</div>
+
+<div class="mt-3" id="file-path-formset-section">
+  {% include "ddm_datadonation/blueprint/form_sections/_file_path_formset.html" %}
+</div>

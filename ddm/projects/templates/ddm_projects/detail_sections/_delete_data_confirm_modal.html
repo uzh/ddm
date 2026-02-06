@@ -1,0 +1,35 @@
+<div class="modal" id="delete-data-confirm" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h4>Careful!</h4>
+        <p>You are about to delete all collected data related to your project.</p>
+        This includes:
+        <ul>
+          <li>All data donations</li>
+          <li>All questionnaire responses</li>
+          <li>All participation statistics</li>
+        </ul>
+        <p>We strongly recommend downloading and storing a copy of your data before you continue with this procedure.</p>
+        <p>Are you sure you want to delete all data related to this project?</p>
+      </div>
+      <div class="modal-footer">
+        <button
+            type="button"
+            class="ddm-btn-base ddm-btn-secondary"
+            data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button
+            id="delete-data-button"
+            type="button"
+            class="ddm-btn-base ddm-btn-red"
+            data-bs-dismiss="modal"
+            data-endpoint-url="{% url 'ddm_apis:project_data_delete' object.url_id %}"
+            data-csrf-token="{{csrf_token}}">
+          Yes, delete all data
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

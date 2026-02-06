@@ -1,47 +1,45 @@
 {% extends 'ddm_core/page_with_form.html' %}
 
-{% block page_title %}Delete Instruction Page{% endblock %}
+{% block page_title %}Delete Instruction Page{% endblock page_title %}
 
-{% block main_heading %}Delete Instruction Page{% endblock %}
+{% block main_heading %}{% endblock main_heading %}
 
 {% block main_top %}
-<p>You are about to delete the following instruction page:</p>
-<div>
-  <table class="table">
-    <tr>
-      <td class="w-15">Related File Uploader:</td>
-      <td>{{ file_uploader }}</td>
-    </tr>
-    <tr>
-      <td>Index:</td>
-      <td>{{ object.index }}</td>
-    </tr>
-    <tr>
-      <td>Text:</td>
-      <td>{{ object.text | safe }}</td>
-    </tr>
-  </table>
-</div>
-{% endblock %}
 
+  <div class="ddm-form-section mt-4">
+    <div class="ddm-form-section-header">
+      <h1>Delete Instruction Page?</h1>
+    </div>
+    <div class="ddm-form-section-body">
+      <form method='post'>
+        {% csrf_token %}
 
-{% block main_form%}
-<form method='post'>
-  {% csrf_token %}
-  <p>Are you sure you want to delete this instruction page? <b>This action cannot be reversed.</b></p>
-  <input class="ddm-btn ddm-btn-red" type="submit" value="Delete Instruction Page">
-  <p class="mt-3">
-    <a href="{% url 'ddm_datadonation:instructions:overview' project_url_id file_uploader.pk %}"><i class="bi bi-arrow-left-short"></i> Cancel</a>
-  </p>
-</form>
-{% endblock %}
+        <p>This will:</p>
 
+        <ul>
+          <li>Permanently delete this Instruction Page</li>
+        </ul>
+
+        <div class="mt-4 ddm-btn-group">
+          <div class="inner-btn-group">
+            <div><a class="ddm-btn-base ddm-btn-secondary" href="{% url 'ddm_datadonation:instructions:overview' project_url_id file_uploader.pk %}">Cancel</a></div>
+            <div><input class="ddm-btn-base ddm-btn-red" type="submit" value="Delete Instruction Page"></div>
+          </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+{% endblock main_top %}
+
+{% block main_form %}{% endblock main_form %}
 
 {% block breadcrumbs %}
-<a href="{% url 'ddm_projects:list' %}">Projects</a> /
-<a href="{% url 'ddm_projects:detail' project_url_id %}">"{{ project.name|truncatechars:15 }}" Project</a> /
-<a href="{% url 'ddm_datadonation:overview' project_url_id %}">Data Donation</a> /
-<a href="{% url 'ddm_datadonation:uploaders:edit' project_url_id file_uploader.pk %}">File Uploader "{{ file_uploader.name|truncatechars:15 }}"</a> /
-<a href="{% url 'ddm_datadonation:instructions:overview' project_url_id file_uploader.pk %}">Instructions</a> /
-Delete Instruction Page
-{% endblock %}
+  <a href="{% url 'ddm_projects:list' %}">Projects</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_projects:detail' project.url_id %}">"{{ project.name|truncatechars:15 }}" Project</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_datadonation:overview' project.url_id %}">Data Donation</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_datadonation:uploaders:edit' project.url_id file_uploader.pk %}">Uploader "{{ file_uploader.name|truncatechars:15 }}"</a><i class="bi bi-chevron-right"></i>
+  <a href="{% url 'ddm_datadonation:instructions:overview' project.url_id file_uploader.pk %}">Instructions</a><i class="bi bi-chevron-right"></i>
+  Delete Instruction Page
+{% endblock breadcrumbs %}

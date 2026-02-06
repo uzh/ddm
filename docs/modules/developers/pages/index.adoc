@@ -21,7 +21,7 @@ Once you have cloned or forked the GitHub repository, activate your local virtua
 
 [source]
 ----
-(venv) <...>/ddm> pip install -r requirements.txt
+(venv) <...>/ddm> pip install -r requirements/base.txt
 ----
 
 ===== Adjust Test Configuration

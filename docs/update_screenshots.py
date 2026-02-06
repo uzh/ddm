@@ -40,9 +40,14 @@ def prepare_project(driver):
     url = f'projects/{PROJECT_ID}/data-donation/file-uploader/{FILE_UPLOADER_ID}/edit/'
     driver.get(BASE_URL + url)
 
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'label[for="id_combined_consent"]')))
-    checkbox_label = driver.find_element(By.CSS_SELECTOR, 'label[for="id_combined_consent"]')
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'label.checkmark[for="id_combined_consent"]')))
+    checkbox_label = driver.find_element(By.CSS_SELECTOR, 'label.checkmark[for="id_combined_consent"]')
     driver.maximize_window()
+    time.sleep(1)
+
+    driver.execute_script("arguments[0].scrollIntoView(true);", checkbox_label)
+    time.sleep(1)
+    driver.execute_script("window.scrollBy(0, 100);")
     time.sleep(1)
 
     checkbox = driver.find_element(By.ID, 'id_combined_consent')
@@ -75,7 +80,9 @@ def highlight_edit(driver, element):
         var parent = arguments[0];
         var child = parent.querySelector('.inline-edit');
         if (child) {
-            child.style.background = 'yellow';
+            child.style.background = '#ffd70094';
+            child.style.padding = '8px 20px';
+            child.style.borderRadius = '20px';
         }
     """, element)
     return element
@@ -85,7 +92,7 @@ def highlight_participation_overview_download(driver, element):
         var parent = arguments[0];
         var child = parent.querySelector('#download-participation-overview');
         if (child) {
-            child.style.background = 'yellow';
+            child.style.background = '#ffd70094';
         }
     """, element)
     return element
@@ -95,18 +102,21 @@ def highlight_responses_download(driver, element):
         var parent = arguments[0];
         var child = parent.querySelector('#download-questionnaire-responses');
         if (child) {
-            child.style.background = 'yellow';
+            child.style.background = '#ffd70094';
         }
     """, element)
     return element
 
 def prepare_project_settings(driver):
-    button = driver.find_element(By.ID, 'project-base-settings-accordion-btn')
+    button = driver.find_element(By.ID, 'accordionButtonGeneralSettings')
     button.click()
     return
 
 def access_donation_stage(driver):
     consent_button = driver.find_element(By.ID, 'consent_yes')
+    time.sleep(1)
+    driver.execute_script("window.scrollBy(0, 300);")
+    time.sleep(1)
     consent_button.click()
 
     next_button = driver.find_element(By.CLASS_NAME, 'flow-btn')
@@ -136,6 +146,10 @@ def enable_all_in_one_consent(driver):
         checkbox_label.click()
 
     save_button = driver.find_element(By.CSS_SELECTOR, 'input[type="submit"][value="Save Uploader"]')
+    time.sleep(1)
+    driver.execute_script("arguments[0].scrollIntoView(true);", save_button)
+    time.sleep(1)
+    driver.execute_script("window.scrollBy(0, 300);")
     time.sleep(1)
     save_button.click()
 

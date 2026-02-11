@@ -9,7 +9,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "axios": "^1.6.7",
+    "axios": "^1.13.5",
     "jszip": "^3.10.1",
     "luxon": "^3.4.4",
     "papaparse": "^5.4.1",

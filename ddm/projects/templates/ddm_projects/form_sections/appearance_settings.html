@@ -7,7 +7,7 @@
       <div class="ddm-form-group fs-09 ">
         {% if field.value %}
           <div class="row mb-3">
-            <div class="col-auto"><label>Current file:</label> <a href="{{ field.value.url }}" target="_blank">{{ field.value }}</a></div>
+            <div class="col-auto"><label>Current file:</label> <a href="{{ field.value.url }}" target="_blank"><img src="{{ field.value.url }}" alt="current image file" height="50px"/></a></div>
             <div class="col"><label for="{{ field.name }}-clear_id">Reset:</label> <input type="checkbox" name="{{ field.name }}-clear" id="{{ field.name }}-clear_id"></div>
           </div>
         {% endif %}

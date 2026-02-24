@@ -1,0 +1,62 @@
+.settings-card,
+.project-setup-card-wrapper {
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 992px) {
+    .project-setup-card-wrapper {
+        margin-bottom: 0;
+    }
+}
+
+.settings-card,
+.project-setup-card {
+    border-radius: 10px;
+    background: #f6fafb;
+    border: 1px solid #e1e7ea;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 25px;
+    text-align: center;
+    position: relative;
+    height: 100%;
+}
+
+.settings-card:hover,
+.project-setup-card:hover {
+    border: 1px solid var(--color-main-green);
+    box-shadow: rgba(0, 0, 0, 0.04) 0 1px 4px;
+}
+
+.project-setup-card h4 {
+    font-size: 1.15rem;
+}
+
+.settings-card h4 {
+    font-size: 1rem;
+    color: var(--font-color-main);
+}
+
+.settings-card p,
+.project-setup-card p {
+    color: var(--font-color-grey);
+    font-size: 0.9rem;
+}
+
+.project-setup-card .step-arrow {
+    position: absolute;
+    top: 50%;
+    right: -25px;
+    transform: translateY(-50%);
+    width: 26px;
+    height: 50px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: rgb(148, 163, 184);
+    z-index: 2;
+}

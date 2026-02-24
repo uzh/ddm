@@ -1,0 +1,27 @@
+.ddm-section-container {
+    background: white;
+    border-radius: 10px;
+    border: 1px solid rgb(226, 232, 240);
+    padding: 24px;
+    margin-bottom: 2rem;
+    box-shadow: rgba(0, 0, 0, 0.04) 0 1px 4px;
+}
+
+.ddm-section-container h2 {
+    font-weight: 600;
+    font-size: 1.15rem;
+    margin-bottom: 1.5rem;
+}
+
+.ddm-section-container h3 {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    color: var(--font-color-grey);
+    letter-spacing: 0.08em;
+    font-family: 'Geist', sans-serif;
+}
+
+.ddm-section-container .row {
+    padding-bottom: 0.7rem;
+}

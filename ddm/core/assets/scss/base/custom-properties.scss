@@ -1,0 +1,36 @@
+@use '../abstracts' as *;
+
+:root {
+    --bg-color-lightest: #{$bg-color-lightest};
+    --bg-color-light: #{$bg-color-light};
+
+    --color-main-green: #{$color-main-green};
+    --color-main-green-darker: #{$color-main-green-darker};
+
+    --color-accent-magenta: #{$color-accent-magenta};
+    --color-darkgrey: #{$color-darkgrey};
+    --color-muted: #{$color-muted};
+    --color-darkred: #{$color-darkred};
+
+    --font-color-main: #{$font-color-main};
+    --font-color-grey: #{$font-color-grey};
+    --font-color-muted: #{$font-color-muted};
+
+    --code-color: #{$code-color};
+    --code-color-secondary: #{$code-color-secondary};
+    --code-color-background: #{$code-color-background};
+
+    /* Components */
+    --color-active: #{$color-active};
+    --color-inactive: #{$color-inactive};
+
+    /* Gradients */
+    --color-green-gradiant-brighter: #{$color-green-gradient-brighter};
+    --color-green-gradient-darker: #{$color-green-gradient-darker};
+
+    --color-red-gradiant-brighter: #{$color-red-gradient-brighter};
+    --color-red-gradient-darker: #{$color-red-gradient-darker};
+
+    --color-grey-gradiant-brighter: #{$color-grey-gradient-brighter};
+    --color-grey-gradient-darker: #{$color-grey-gradient-darker};
+}

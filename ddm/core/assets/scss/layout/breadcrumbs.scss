@@ -1,0 +1,19 @@
+.ddm-breadcrumbs {
+  font-size: 0.85rem !important;
+  color: var(--font-color-grey);
+  padding-top: 1.25rem;
+
+  a {
+    color: var(--font-color-grey) !important;
+  }
+
+  a:hover {
+    filter: brightness(75%);
+  }
+
+  .bi {
+    color: var(--color-muted);
+    padding-left: 3px;
+    padding-right: 3px;
+  }
+}

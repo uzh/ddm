@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "scripts": {
+    "sass:watch": "sass --watch ddm/core/assets/scss/main.scss:ddm/core/static/ddm_core/css/research-interface-base.css",
+    "sass:build": "sass ddm/core/assets/scss/main.scss:ddm/core/static/ddm_core/css/research-interface-base.css --style=compressed --no-source-map"
+  },
+  "devDependencies": {
+    "sass": "^1.89.0"
+  }
+}

@@ -1,0 +1,247 @@
+/* Basic ddm form styling. */
+.ddm-form {
+    font-size: 0.9rem;
+}
+
+.ddm-form label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.ddm-form p {
+    margin-bottom: 0;
+    margin-top: 1rem;
+}
+
+.ddm-form .helptext,
+.helptext {
+    color: black;
+    font-size: 0.8rem;
+}
+
+.ddm-form .ddm-btn {
+    margin-top: 1rem;
+}
+
+.ddm-form h5, h6 {
+    margin-top: 2rem;
+}
+
+.ddm-form input[type=text],
+.ddm-form input[type=number],
+.ddm-form input[type=password],
+.ddm-form input[type=email],
+.ddm-form textarea {
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    padding: 5px;
+    width: 100%;
+    display: block;
+}
+.ddm-form input[type=text],
+.ddm-form textarea {
+    min-width: 200px;
+}
+.ddm-form input[type=number] {
+    max-width: 6rem;
+    min-width: 4rem;
+}
+
+.ddm-form input:focus,
+.ddm-form textarea:focus,
+.ddm-form select:focus {
+    outline: 1px solid #009c94;
+    border-color: white;
+}
+
+.ddm-form select {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    height: 30px;
+    display: block;
+    min-width: 150px;
+}
+
+@media (min-width: 992px) {
+    .ddm-form input[type=number],
+    .ddm-form input[type=password],
+    .ddm-form input[type=email] {
+        width: 50%;
+    }
+}
+
+/* Custom checkbox input: */
+.ddm-form input[type=checkbox] {
+    display: none;
+}
+
+.checkmark {
+    position: relative;
+    height: 20px;
+    width: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.checkmark:hover {
+    cursor: pointer;
+}
+
+.ddm-form input[type=checkbox]:checked + .checkmark {
+    background-color: #009c94;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.ddm-form input:checked + .checkmark:after {
+    display: block;
+}
+
+.ddm-form .checkmark:after {
+    left: 7px;
+    top: 3px;
+    width: 6px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(35deg);
+    -ms-transform: rotate(35deg);
+    transform: rotate(35deg);
+}
+
+.ddm-choice-label {
+    font-weight: normal !important;
+    font-size: 1rem !important;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.ddm-form-file-field label {
+    display: inline-block;
+}
+
+/* Auth form - used on login page. */
+.auth-form {
+    font-size: 1rem !important;
+}
+
+.auth-form input {
+    width: 75% !important;
+    display: inline !important;
+}
+
+.auth-form input {
+    display: block !important;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.auth-form ul {
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+    font-size: 0.8rem;
+    color: gray;
+}
+
+.django-ckeditor-widget {
+    display: block !important;
+}
+
+.form-section-heading {
+    font-size: 1.1rem;
+    border-bottom: 1px solid #1a1a1a;
+    font-weight: bold;
+}
+.form-section-container {
+    border-bottom: 1px solid lightgrey;
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+ul.errorlist {
+    padding-left: 0;
+}
+
+ul.errorlist > li {
+    background: var(--color-darkred) !important;
+    display: inline-block;
+    padding: .35em .65em;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25rem;
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+}
+
+#empty-form-placeholder,
+#empty-form {
+    display: none;
+}
+
+.form-error {
+    color: var(--color-darkred);
+}
+
+.ddm-note {
+    font-size: 0.75rem;
+    color: grey;
+}
+
+/* DDM Form Section (New) */
+.ddm-form-section {
+    border-top: 1px solid lightgrey;
+    border-bottom: 1px solid lightgrey;
+}
+.ddm-form-section-header {
+    font-size: 1rem;
+    background-color: var(--bg-color-light);
+    width: 100%;
+    padding: 1.25rem 1.25rem;
+    font-weight: bold;
+}
+.ddm-form-section-body {
+    padding: 1rem 1.25rem 2rem;
+    border-left: 4px solid var(--bg-color-light);
+    border-right: 4px solid var(--bg-color-light);
+}
+.ddm-form-section-body > p:first-child {
+    margin-top: 0;
+}
+.ddm-form-section.deletion-warning {
+    border: 2px solid var(--color-darkred);
+}
+
+.ddm-form-group {
+    background: var(--bg-color-lightest);
+    border-radius: 0.25rem;
+    margin-left: 0.1rem;
+    padding: 0.8rem 0.5rem;
+}
+.ddm-form-group-header {
+    font-weight: bold;
+    margin-top: 1.5rem;
+    margin-bottom: 0;
+    font-size: 0.8rem;
+}
+
+/* Overrides for specific forms */
+
+#scale-point-table input[type=number],
+#question-item-table input[type=number] {
+    width: 100%;
+    max-width: 6rem;
+}

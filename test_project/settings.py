@@ -142,12 +142,21 @@ LOGOUT_REDIRECT_URL = '/login/'
 DDM_DEFAULT_HEADER_IMG_LEFT = ''
 DDM_DEFAULT_HEADER_IMG_RIGHT = ''
 
-# INTERNAL_IPS = ["127.0.0.1", ]  # Added for debugging purposes
+INTERNAL_IPS = ["127.0.0.1", ]  # Added for debugging purposes (django debug toolbar)
 
 # ckeditor 5 configuration
 CKEDITOR_5_FILE_UPLOAD_PERMISSION = 'authenticated'
 CKEDITOR_5_ALLOW_ALL_FILE_TYPES = True
 CKEDITOR_5_UPLOAD_FILE_TYPES = ['jpeg', 'pdf', 'png', 'mp4']
 
-# TODO: Delete again - only temporary
-# MIDDLEWARE += ['csp.middleware.CSPMiddleware']
+if DEBUG:
+    INSTALLED_APPS += [
+        'django_watchfiles',
+        'django_browser_reload',
+        'debug_toolbar',
+    ]
+
+    MIDDLEWARE += [
+        'django_browser_reload.middleware.BrowserReloadMiddleware',
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    ]

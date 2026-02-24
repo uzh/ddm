@@ -1,5 +1,8 @@
 build==1.4.0
 coverage==7.13.3
+django-browser-reload==1.21.0  # https://github.com/adamchainz/django-browser-reload
+django-debug-toolbar==6.2.0  # https://github.com/django-commons/django-debug-toolbar
+django-watchfiles==1.4.0  # https://github.com/adamchainz/django-watchfiles
 python-dotenv==1.2.1
 selenium==4.40.0  # https://github.com/SeleniumHQ/Selenium
 twine==6.2.0

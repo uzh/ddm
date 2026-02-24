@@ -3,7 +3,10 @@
 
 {% block page_title %}Project Overview{% endblock page_title %}
 
-{% block main_heading_wrapper %}<h1>{{ object.name }}: Project Hub</h1>{% endblock main_heading_wrapper %}
+{% block main_heading_wrapper %}
+  <h1>{{ object.name }}</h1>
+  <p class="fc-grey">Project Hub</p>
+{% endblock main_heading_wrapper %}
 
 {% block main_body %}
 
@@ -47,10 +50,6 @@
 {% endblock main_body %}
 
 
-{% block breadcrumbs %}
-  <a href="{% url 'ddm_projects:list' %}">Projects</a><i class="bi bi-chevron-right"></i>
-  "{{ object.name|truncatechars:15 }}" Project
-{% endblock breadcrumbs %}
 
 {% block scripts %}
   {{ block.super }}

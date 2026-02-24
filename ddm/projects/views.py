@@ -4,33 +4,52 @@ import os
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.staticfiles import finders
 from django.urls import reverse_lazy, reverse
+from django.utils.text import Truncator
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
-from ddm.projects.forms import (
-    ProjectCreateForm, ProjectEditForm, BriefingEditForm, DebriefingEditForm,
-    ProjectEditCustomUploaderTranslationsForm
-)
+from ddm.core.view_mixins import BreadcrumbMixin
+from ddm.projects import forms
 from ddm.projects.models import DonationProject, ResearchProfile
 from ddm.auth.views import DDMAuthMixin
 
 
-class ProjectList(DDMAuthMixin, ListView):
+class BaseProjectMixin(SuccessMessageMixin, BreadcrumbMixin, DDMAuthMixin):
+
+    def get_breadcrumbs(self):
+        return [('Projects', reverse_lazy('ddm_projects:list'))]
+
+    def _project_crumb(self, linked=True):
+        name = Truncator(self.object.name).chars(15)
+        url = (reverse('ddm_projects:detail', kwargs={'project_url_id': self.object.url_id})
+               if linked else None)
+        return (f'"{name}" Project', url)
+
+
+class ProjectList(BaseProjectMixin, ListView):
     """ View to display a list of existing donation projects. """
     model = DonationProject
     template_name = 'ddm_projects/project_list.html'
+
+    def get_breadcrumbs(self):
+        return [('Projects', None)]
 
     def get_queryset(self):
         return DonationProject.objects.filter(owner__user=self.request.user)
 
 
-class ProjectCreate(SuccessMessageMixin, DDMAuthMixin, CreateView):
+class ProjectCreate(BaseProjectMixin, CreateView):
     """ View to create a new donation project. """
     model = DonationProject
     template_name = 'ddm_projects/project_create.html'
-    form_class = ProjectCreateForm
+    form_class = forms.ProjectCreateForm
     success_message = 'Project was created successfully.'
+
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append(('Create New Project', None))
+        return crumbs
 
     def get_initial(self):
         self.initial = super().get_initial()
@@ -42,35 +61,76 @@ class ProjectCreate(SuccessMessageMixin, DDMAuthMixin, CreateView):
         return super().form_valid(form)
 
 
-class ProjectDetail(DDMAuthMixin, DetailView):
+class ProjectDetail(BaseProjectMixin, DetailView):
     """ View to display landing page for project. """
     model = DonationProject
     slug_url_kwarg = 'project_url_id'
     slug_field = 'url_id'
     template_name = 'ddm_projects/project_detail.html'
 
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append(self._project_crumb(linked=False))
+        return crumbs
 
-class ProjectEdit(SuccessMessageMixin, DDMAuthMixin, UpdateView):
+
+class ProjectEditBase(BaseProjectMixin, UpdateView):
     """ View to edit the details of an existing donation project. """
     model = DonationProject
     slug_url_kwarg = 'project_url_id'
     slug_field = 'url_id'
     template_name = 'ddm_projects/project_edit.html'
-    form_class = ProjectEditForm
+    form_class = forms.ProjectEditForm
     success_message = 'Project details successfully updated.'
 
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append(self._project_crumb(linked=True))
+        crumbs.append(('Edit Details', None))
+        return crumbs
 
-class ProjectEditCustomUploaderTranslations(
-    SuccessMessageMixin,
-    DDMAuthMixin,
-    UpdateView
-):
+
+class ProjectEditPublicInformation(ProjectEditBase):
+    template_name = 'ddm_projects/form_sections/public_information_settings.html'
+    form_class = forms.EditPublicInformationForm
+
+    def get_breadcrumbs(self):
+        crumbs = [('Projects', reverse_lazy('ddm_projects:list'))]
+        crumbs.append(self._project_crumb(linked=False))
+        return crumbs
+
+
+class ProjectEdit(BaseProjectMixin, UpdateView):
+    """ View to edit the details of an existing donation project. """
+    model = DonationProject
+    slug_url_kwarg = 'project_url_id'
+    slug_field = 'url_id'
+    template_name = 'ddm_projects/project_edit.html'
+    form_class = forms.ProjectEditForm
+    success_message = 'Project details successfully updated.'
+
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append(self._project_crumb(linked=True))
+        crumbs.append(('Edit Details', None))
+        return crumbs
+
+
+class ProjectEditCustomUploaderTranslations(BaseProjectMixin, UpdateView):
+
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append(self._project_crumb(linked=True))
+        crumbs.append(('Data Donation', reverse('ddm_datadonation:overview', kwargs={'project_url_id': self.object.url_id})))
+        crumbs.append(('Edit Uploader Translations', None))
+        return crumbs
+
     """ View to add/edit custom uploader translations.  """
     model = DonationProject
     slug_url_kwarg = 'project_url_id'
     slug_field = 'url_id'
     template_name = 'ddm_projects/uploader_translations_edit.html'
-    form_class = ProjectEditCustomUploaderTranslationsForm
+    form_class = forms.ProjectEditCustomUploaderTranslationsForm
 
     def get_context_data(self, **kwargs):
         """
@@ -107,7 +167,7 @@ class ProjectEditCustomUploaderTranslations(
         )
 
 
-class ProjectDelete(SuccessMessageMixin, DDMAuthMixin, DeleteView):
+class ProjectDelete(BaseProjectMixin, DeleteView):
     """ View to display a list of existing donation projects. """
     model = DonationProject
     slug_url_kwarg = 'project_url_id'
@@ -116,25 +176,43 @@ class ProjectDelete(SuccessMessageMixin, DDMAuthMixin, DeleteView):
     success_url = reverse_lazy('ddm_projects:list')
     success_message = 'Project "%s" was deleted.'
 
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append(self._project_crumb(linked=True))
+        crumbs.append(('Delete', None))
+        return crumbs
+
     def get_success_message(self, cleaned_data):
         return self.success_message % self.object.name
 
 
-class BriefingEdit(SuccessMessageMixin, DDMAuthMixin, UpdateView):
+class BriefingEdit(BaseProjectMixin, UpdateView):
     """ View to edit the briefing page. """
     model = DonationProject
     slug_url_kwarg = 'project_url_id'
     slug_field = 'url_id'
     template_name = 'ddm_projects/briefing_edit.html'
-    form_class = BriefingEditForm
+    form_class = forms.BriefingEditForm
     success_message = 'Briefing page successfully updated.'
 
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append(self._project_crumb(linked=True))
+        crumbs.append(('Edit Briefing Page', None))
+        return crumbs
 
-class DebriefingEdit(SuccessMessageMixin, DDMAuthMixin, UpdateView):
+
+class DebriefingEdit(BaseProjectMixin, UpdateView):
     """ View to edit the debriefing page. """
     model = DonationProject
     slug_url_kwarg = 'project_url_id'
     slug_field = 'url_id'
     template_name = 'ddm_projects/debriefing_edit.html'
-    form_class = DebriefingEditForm
+    form_class = forms.DebriefingEditForm
     success_message = 'Debriefing page successfully updated.'
+
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append(self._project_crumb(linked=True))
+        crumbs.append(('Edit Debriefing Page', None))
+        return crumbs

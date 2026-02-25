@@ -147,7 +147,10 @@ class TestAdminViewAuthentication(TestCase):
         urls = []
         project_related_views = [
             'ddm_projects:detail',
-            'ddm_projects:edit',
+            'ddm_projects:edit_public_information',
+            'ddm_projects:edit_url_parameter',
+            'ddm_projects:edit_redirect_configuration',
+            'ddm_projects:edit_branding',
             'ddm_projects:delete',
             'ddm_projects:briefing_edit',
             'ddm_projects:debriefing_edit',

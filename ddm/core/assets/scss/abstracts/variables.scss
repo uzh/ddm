@@ -11,28 +11,37 @@ $bp-xxl: 1200px;
 // General Colors
 $color-main-green: #009c94;
 $color-main-green-darker: #007b74;
+$color-main-green-brighter: #05bcb4;
 
 $color-darkred: #af0d0d;
 $color-accent-magenta: #d63384;
+$color-accent-orange: #d36a45;
 $color-darkgrey: #303535;
 $color-muted: rgb(209, 209, 209);
+
+$color-greyish: rgb(226, 232, 240);
 
 $color-active: #10B981;
 $color-inactive: #b91010;
 
 // Background Colors
 $bg-color-lightest: #f8f8f8;
-$bg-color-light: rgb(243, 245, 246);
+$bg-color-light: #f8fafc;
+$bg-color-lightgrey: #f6fafb;
+
+$bg-color-lightred: #ffdcdc;
+
+$border-color-lightgrey: #e1e7ea;
 
 // Code Colors
 $code-color: #00625d;
-$code-color-secondary: #a716ac;
+$code-color-secondary: #0044c6;
 $code-color-background: #f7f7f7;
 
 // Font Colors
 $font-color-main: #101010;
 $font-color-grey: #6a7a7a;
-$font-color-muted: #8c9898;
+$font-color-muted: #9aa6a6;
 
 // Gradient Colors
 $color-green-gradient-brighter: #00a59b;

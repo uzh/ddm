@@ -1,5 +1,14 @@
-<p>
-  By default, participants consent to each blueprint separately. Enable all-in-one consent to ask once for all data.
-</p>
+<div id="consent-settings" class="ddm-section-container">
+  <div class="row">
+    <div class="form-section-heading">
+      <h2>Consent Settings</h2>
+      <p>Configure how consent is obtained for the donation of data uploaded through this Uploader</p>
+    </div>
 
-{% include "ddm_core/form_components/_basic_field.html" with field=form.combined_consent %}
+    <p class="mb-2">
+      By default, participants consent to each blueprint separately. Enable all-in-one consent to ask once for all data.
+    </p>
+
+    {% include "ddm_core/form_components/_checkbox_toggle_field.html" with field=form.combined_consent %}
+  </div>
+</div>

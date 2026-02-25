@@ -1,2 +1,11 @@
-{% include "ddm_core/form_components/_basic_field.html" with field=form.display_name %}
-{% include "ddm_core/form_components/_basic_field.html" with field=form.index %}
+<div id="display-settings" class="ddm-section-container">
+  <div class="row">
+    <div class="form-section-heading">
+      <h2>Display Settings</h2>
+      <p>Configure how the Uploader is displayed in the donation interface</p>
+    </div>
+
+    {% include "ddm_core/form_components/_basic_field.html" with field=form.display_name %}
+    {% include "ddm_core/form_components/_basic_field.html" with field=form.index %}
+  </div>
+</div>

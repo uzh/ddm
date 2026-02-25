@@ -1,0 +1,17 @@
+<tr>
+  <td>
+    {{ form.path }}
+  </td>
+  <td>
+    {{ form.is_regex }}
+  </td>
+  <td>
+    {{ form.priority }}
+  </td>
+  <td>
+    {{ form.DELETE }}
+    {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+    {% endfor %}
+  </td>
+</tr>

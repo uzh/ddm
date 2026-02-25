@@ -1,0 +1,44 @@
+<div id="project-logs" class="ddm-section-container">
+  <div class="row">
+    <h2>Project Logs</h2>
+  </div>
+  <div class="row justify-content-start gy-4">
+
+    <div id="download-participation-overview" class="col-12 col-md-6 col-lg-5">
+      <div class="card-base">
+        <div>
+          <h4>Exception Logs</h4>
+        </div>
+        <div>
+          <p class="m-0 pb-2">Track errors and extraction outcomes during data donation processing</p>
+        </div>
+        <div>
+          <p class="m-0">
+            <a class="internal-link" href="{% url 'ddm_logging:project_exception_logs' object.url_id %}">
+              See all Exception Logs
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div id="download-participation-overview" class="col-12 col-md-6 col-lg-5">
+      <div class="card-base">
+        <div>
+          <h4>Event Logs</h4>
+        </div>
+        <div>
+          <p class="m-0 pb-2">Track access token changes, API authentication failures, and data operations</p>
+        </div>
+        <div>
+          <p class="m-0">
+            <a class="internal-link" href="{% url 'ddm_logging:project_event_logs' object.url_id %}">
+              See all Event Logs
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

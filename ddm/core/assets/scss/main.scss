@@ -1,55 +1,33 @@
-@use 'base/custom-properties';
 @use 'base/base';
+@use 'base/bootstrap-table';
+@use 'base/ckeditor';
+@use 'base/custom-properties';
 @use 'base/fonts';
 @use 'base/typography';
 
-@use 'layout/breadcrumbs';
 @use 'layout/header';
+@use 'layout/main-container';
 @use 'layout/messages';
+@use 'layout/sub-header';
 
 @use 'components/accordion';
+@use 'components/badges';
 @use 'components/buttons';
 @use 'components/cards';
+@use 'components/collapsibles';
+@use 'components/data_extraction_visuals';
 @use 'components/forms';
+@use 'components/icons';
 @use 'components/indicators';
-@use 'components/info-collapsible';
 @use 'components/load-spinner';
+@use 'components/modals';
+@use 'components/overlay';
 @use 'components/progress-bar';
 @use 'components/sections';
 @use 'components/tables';
 
 @use 'utilities/utils';
 
-code {
-    color: var(--code-color);
-    background: var(--code-color-background);
-    padding: 2px 4px;
-    border-radius: 3px;
-}
-
-.secondary-code-color {
-    color: var(--code-color-secondary);
-}
-
-.research-interface {
-    font-family: 'Geist', sans-serif;
-}
-
-.research-interface a,
-.a-no-link {
-    color: #007b74;
-    text-decoration: none;
-    cursor: pointer;
-}
-.research-interface a:hover {
-    color: #005955;
-}
-
-.card-link:hover .ddm-if-icon {
-    background: #00817b;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
 
 .project-setup-filler {
     display: flex;
@@ -60,26 +38,6 @@ code {
 .project-setup-filler .bi-chevron-compact-right,
 .project-setup-filler .bi-chevron-compact-down {
     color: #1a1a1a3d !important;
-}
-
-.ddm-nav-icon {
-    color: #1a1a1a !important;
-    font-size: 1.5rem;
-}
-.ddm-nav-icon:hover {
-    color: #4b4b4b !important;
-}
-
-.ddm-header {
-    box-shadow: -10vw 2px #d36a45, 10vw 4px #fff, 0 3px #c6c6c678, 10vw 6px #009c94, 10vw 7px #c6c6c678;
-    top: 0;
-    width: 100%;
-    background: #ffffff;
-    z-index: 100;
-}
-
-.ddm-main {
-    margin-bottom: 60px;
 }
 
 .ddm-admin-section {
@@ -110,35 +68,10 @@ code {
     color: var(--color-darkred);
 }
 
-.page-item.active .page-link {
-    background-color: #1a1a1a !important;
-    border: none !important;
-}
-
-.ddm-if-icon {
-    background: linear-gradient(178deg, var(--color-green-gradiant-brighter) 0%, var(--color-green-gradient-darker) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-size: 2.15rem;
-}
-
 .inline-edit {
     font-size: 1rem;
     font-weight: normal;
     padding-left: 20px;
-}
-
-.ddm-overlay {
-    position: fixed;
-    display: none;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 10;
-    background-color: rgba(128, 128, 128, 0.9);
 }
 
 .project-statistics-container {
@@ -155,10 +88,6 @@ code {
 
 .data-center-row h5 {
     margin: 0;
-}
-
-.version-info {
-    color: lightgray;
 }
 
 .question-section-heading {
@@ -217,8 +146,4 @@ code {
     border-bottom: 4px solid var(--bg-color-light);
     padding: 1.5rem 1.5rem;
     min-height: 200px;
-}
-
-.property-name {
-    color: var(--font-color-grey);
 }

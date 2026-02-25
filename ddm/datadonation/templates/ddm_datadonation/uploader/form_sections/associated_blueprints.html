@@ -1,21 +1,28 @@
-<p class="mb-2">
-  Select which of the following Blueprints belong to this Uploader. Please note that one Blueprint can only be
-  assigned to one File Uploader.
-</p>
-<div class="table-responsive">
-  <table class="table table-borderless table-striped">
-    {% for blueprint in blueprints %}
-      <tr>
-        <td><input type="checkbox" id="bp-{{ blueprint.pk }}" name="bp-{{ blueprint.pk }}" {% if blueprint.file_uploader == object %}checked{% endif %}></td>
-        <td><label for="bp-{{ blueprint.pk }}" class="ddm-choice-label"><span class="fs-09">{{ blueprint.name }}</span></label></td>
-      </tr>
-    {% empty %}
-      <tr>
-        <td>
-          <p class="m-0">No unassigned Blueprints available</p>
-          <p><a class="ddm-btn ddm-btn-inverted" href="{% url 'ddm_datadonation:blueprints:create' project.url_id %}"><b>+</b>&nbsp;&nbsp;Create new File Blueprint</a></p>
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
+<div id="associated-blueprints" class="ddm-section-container">
+  <div class="row">
+    <div class="form-section-heading">
+      <h2>Associated Blueprints</h2>
+      <p>
+        Select which of the following Blueprints belong to this Uploader. Please note that one Blueprint can only be
+        assigned to one Uploader and Blueprints assigned to other Uploaders are not listed.
+      </p>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-borderless table-striped">
+        {% for blueprint in blueprints %}
+          <tr>
+            <td><input type="checkbox" id="bp-{{ blueprint.pk }}" name="bp-{{ blueprint.pk }}" {% if blueprint.file_uploader == object %}checked{% endif %}></td>
+            <td><label for="bp-{{ blueprint.pk }}" class="ddm-choice-label"><span class="fs-09">{{ blueprint.name }}</span></label></td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td>
+              <p class="m-0 fc-grey">No unassigned Blueprints available</p>
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
 </div>

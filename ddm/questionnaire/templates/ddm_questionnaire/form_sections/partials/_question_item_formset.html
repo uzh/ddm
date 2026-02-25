@@ -1,0 +1,42 @@
+{{ item_formset.management_form }}
+
+{{ item_formset.non_form_errors }}
+
+<div class="table-responsive">
+  <table id="question-item-table" class="table table-sm table-striped mt-3 align-middle">
+    <thead>
+    <tr>
+      <th><label>{{ item_formset.empty_form.index.label }}</label></th>
+
+      {% if item_formset.empty_form.label_alt %}
+        <th><label>Left label</label></th>
+        <th><label>Right label</label></th>
+      {% else %}
+        <th><label>{{ item_formset.empty_form.label.label }}</label></th>
+      {% endif %}
+
+      <th><label>{{ item_formset.empty_form.value.label }}</label></th>
+      <th><label>{{ item_formset.empty_form.randomize.label }}</label></th>
+      <th><label>Delete</label></th>
+      <th><label>Filter Conditions</label></th>
+    </tr>
+    </thead>
+
+    <tbody id="question-item-form-container" class="border-top-0">
+    {% for form in item_formset.forms %}
+      {% include "ddm_questionnaire/form_sections/partials/_question_item_form.html" with form=form %}
+    {% empty %}
+      <tr id="no-question-items-placeholder"><td colspan="100%">No items defined.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<button type="button" class="ddm-btn ddm-btn-inverted" id="add-question-item-form"><i class="bi bi-plus"></i>&nbsp;&nbsp;Add Item</button>
+
+{# Empty formset #}
+<table class="d-none">
+  <tbody id="empty-question-item-form">
+  {% include "ddm_questionnaire/form_sections/partials/_question_item_form.html" with form=item_formset.empty_form %}
+  </tbody>
+</table>

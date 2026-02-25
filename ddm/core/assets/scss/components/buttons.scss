@@ -1,145 +1,173 @@
+@use '../abstracts' as *;
+
 .btn-secondary {
-    background-color: #1a1a1a !important;
-    border: none !important;
+  background-color: #1a1a1a !important;
+  border: none !important;
 }
 
-.ddm-btn-base {
-    border-radius: 0.5rem;
-    border: 0;
-    padding: 6px 15px !important;
-    font-size: 0.9rem;
-    text-decoration: none;
-    text-wrap: nowrap;
-    min-width: 150px;
-    display: inline-block;
-    text-align: center;
+.ddm-btn-base,
+.ddm-btn-form-interaction {
+  border-radius: 0.5rem;
+  padding: 10px 15px !important;
+  font-size: 0.9rem;
+  text-decoration: none;
+  text-wrap: nowrap;
+  min-width: 150px;
+  display: inline-block;
+  text-align: center;
+  font-weight: 500;
+  border: 1.5px solid var(--color-greyish);
 }
 
 .ddm-btn-small {
-    border-radius: 0.5rem;
-    border: 0;
-    padding: 3px 7px !important;
-    font-size: 0.9rem;
-    text-decoration: none;
-    text-wrap: nowrap;
+  border-radius: 0.5rem;
+  border: 0;
+  padding: 3px 7px !important;
+  font-size: 0.9rem;
+  text-decoration: none;
+  text-wrap: nowrap;
 }
 
 .ddm-btn-green {
-    /* background: var(--color-main-green-darker); */
-    background: linear-gradient(178deg, var(--color-green-gradiant-brighter) 0%, var(--color-green-gradient-darker) 100%);
-    color: white !important;
-}
+  background: var(--color-main-green);
+  border: 1.5px solid var(--color-main-green);
+  // background: linear-gradient(178deg, var(--color-green-gradiant-brighter) 0%, var(--color-green-gradient-darker) 100%);
+  color: white !important;
 
-.ddm-btn-green:hover {
+  &:hover {
     background: #106c67;
     color: white !important;
+  }
+
 }
 
 .ddm-btn-green-inverted {
-    background: white !important;
-    color: var(--color-main-green-darker);
-    border: 1px solid var(--color-main-green);
-}
+  background: white !important;
+  color: var(--color-main-green-darker);
+  border: 1px solid var(--color-main-green);
 
-.ddm-btn-green-inverted:hover {
+  &:hover {
     background: #f0fffc !important;
     color: var(--color-main-green-darker);
+  }
+
 }
 
 .ddm-btn-secondary {
-    background: linear-gradient(178deg, #dddddd 0%, #d3d3d3 100%);
-    color: #1b1b1b !important;
+  border: 1.5px solid var(--color-greyish);
+  color: var(--font-color-grey) !important;
+
+  &:hover {
+    background: var(--bg-color-lightest);
+    color: var(--font-color-grey) !important;
+  }
 }
 
-.ddm-btn-secondary:hover {
-    background: #bababa;
-    color: #1b1b1b !important;
-}
 
 .ddm-btn-dark {
-    background: linear-gradient(178deg, var(--color-grey-gradiant-brighter) 0%, var(--color-grey-gradient-darker) 100%);
-    color: white !important;
-}
-.ddm-btn-dark:hover {
+  background: linear-gradient(178deg, var(--color-grey-gradiant-brighter) 0%, var(--color-grey-gradient-darker) 100%);
+  color: white !important;
+
+  &:hover {
     background: rgb(24, 28, 28);
     color: white !important;
+  }
 }
 
+
 .ddm-btn-inverted {
-    color: black !important;
-    border: 1px solid #efefef;
-    background: #eaeded;
+  color: var(--font-color-main) !important;
+  border: 1.5px solid var(--border-color-lightgrey);
+  background: var(--bg-color-lightest);
+  &:hover {
+    filter: brightness(95%);
+  }
+}
+
+.ddm-btn-form-interaction {
+  background: var(--color-main-green);
+  padding: 6px 10px !important;
+  border: 1.5px solid var(--color-greyish);
+  color: white !important;
+
+  &:hover {
+    filter: brightness(102%);
+  }
 }
 
 .ddm-btn-large {
-    background: linear-gradient(142deg, rgb(0, 156, 148) 0%, rgba(0, 156, 148, 0.8) 100%);
-    border-radius: 20px;
-    padding: 10px;
-    color: white !important;
-    border: 0;
+  background: linear-gradient(142deg, rgb(0, 156, 148) 0%, rgba(0, 156, 148, 0.8) 100%);
+  border-radius: 20px;
+  padding: 10px;
+  color: white !important;
+  border: 0;
+
+  &:hover {
+    -webkit-filter: brightness(70%);
+  }
 }
 
-.ddm-btn-large:hover {
-    -webkit-filter: brightness(70%);
-}
 
 .ddm-btn-red {
-    background: linear-gradient(178deg, var(--color-red-gradiant-brighter) 0%, var(--color-red-gradient-darker) 100%);
-    border: 0;
-    color: white !important;
-}
+  background: var(--color-darkred);
+  // background: linear-gradient(178deg, var(--color-red-gradiant-brighter) 0%, var(--color-red-gradient-darker) 100%);
+  border: 0;
+  color: white !important;
 
-.ddm-btn-red:hover {
+  &:hover {
     background: #6c0500;
     color: white !important;
-}
-.ddm-btn-red-inverted {
-    background: white !important;
-    color: var(--color-darkred) !important;
-    border: 1px solid var(--color-darkred);
+  }
 }
 
-.ddm-btn-red-inverted:hover {
+
+.ddm-btn-red-inverted {
+  background: white !important;
+  color: var(--color-darkred) !important;
+  border: 1px solid var(--color-darkred);
+
+  &:hover {
     background: #ffeaea !important;
     color: var(--color-darkred) !important;
+  }
 }
+
+
 
 .ddm-btn-black-inverted {
-    background: white !important;
-    color: #202020 !important;
-    border: 1px solid #202020;
-}
+  background: white !important;
+  color: var(--font-color-main) !important;
+  border: 1px solid var(--border-color-lightgrey);
 
-.ddm-btn-black-inverted:hover {
-    background: #e3e3e3 !important;
-    color: #202020 !important;
+  &:hover {
+    filter: brightness(70%);
+    color: var(--font-color-main) !important;
+  }
 }
 
 .ddm-btn-group {
-    display: flex;
-    flex-direction: column-reverse;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 3rem;
-    row-gap: 2rem;
-}
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 3rem;
+  row-gap: 2rem;
 
-.ddm-btn-group .inner-btn-group {
+  .inner-btn-group {
     display: flex;
     row-gap: 1rem;
     flex-direction: column;
-}
+  }
 
-@media (min-width: 576px) {
-    .ddm-btn-group .inner-btn-group {
-        flex-direction: row;
-        column-gap: 0.5rem;
+  @media (min-width: $bp-sm) {
+    .inner-btn-group {
+      flex-direction: row;
+      column-gap: 0.5rem;
     }
-}
+  }
 
-@media (min-width: 768px) {
-    .ddm-btn-group {
-        flex-direction: row;
-        align-items: flex-end;
-    }
+  @media (min-width: $bp-md) {
+    flex-direction: row;
+    align-items: flex-end;
+  }
 }

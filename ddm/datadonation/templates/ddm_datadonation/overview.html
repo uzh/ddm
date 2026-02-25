@@ -1,46 +1,50 @@
 {% extends 'ddm_core/base.html' %}
 
-{% block page_title %}Data Donation Overview{% endblock %}
+{% block page_title %}Data Donation Overview{% endblock page_title %}
 
-{% block main_heading %}Data Donation Overview{% endblock %}
+{% block main_heading %}Data Donation Overview{% endblock main_heading %}
+
+{% block sub_heading %}
+  <p>
+    Data donations from participants are collected through <code class="bg-white">Uploaders</code>.
+    Each Uploader is associated with a set of <code class="bg-white">Donation Instructions</code>
+    and one or multiple <code class="bg-white">Blueprints</code>.
+  </p>
+
+  {% include "ddm_core/components/info_collapsible.html" with element_id="ulbps" extra_classes="white" title="Learn more about Uploaders and Blueprints" include_path="ddm_datadonation/text_uploader_and_blueprints.html" body="" %}
+{% endblock sub_heading %}
 
 {% block main_body %}
-  <div class="ddm-admin-section">
-    <div>
-      <p>Data donations from participants are collected through <i>Uploaders</i>. Each Uploader is associated with a set of <i>Donation Instructions</i> and one or multiple <i>Blueprints</i>.</p>
+  <div class="ddm-section-container">
+    <div class="row">
+      <div class="section-heading">
+        <h2>Uploader Configuration</h2>
+        <p>Manage uploaders and their associated blueprints</p>
+      </div>
 
-      {% include "ddm_core/components/info_collapsible.html" with element_id="ulbps" title="More about Uploaders and File Blueprints" include_path="ddm_datadonation/text_uploader_and_blueprints.html" body="" %}
+      <div>
+        {% include "ddm_datadonation/overview/uploader_table.html" %}
+        <a class="ddm-btn-base ddm-btn-green" href="{% url 'ddm_datadonation:uploaders:create' project.url_id %}">Create Uploader</a>
+        <a class="ddm-btn-base ddm-btn-green" href="{% url 'ddm_datadonation:blueprints:create' project.url_id %}">Create Blueprint</a>
+      </div>
 
     </div>
   </div>
 
-  <div class="ddm-admin-section">
-    <div class="ddm-admin-section-header">Uploader Configuration</div>
-    <div class="ddm-admin-section-body">
-      {% include "ddm_datadonation/overview/uploader_table.html" %}
-      <a class="ddm-btn-base ddm-btn-green" href="{% url 'ddm_datadonation:uploaders:create' project.url_id %}">Create Uploader</a>
-      <a class="ddm-btn-base ddm-btn-green" href="{% url 'ddm_datadonation:blueprints:create' project.url_id %}">Create Blueprint</a>
-    </div>
-  </div>
+  <div class="ddm-section-container ddm-section-collapsible">
 
-  {% with content_include_path="ddm_datadonation/overview/unassociated_blueprints.html" n_blueprints=lonely_blueprints.count|stringformat:"s" %}
-    {% with accordion_description="Number of unassociated blueprints: "|add:n_blueprints %}
-      {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="unassociatedBlueprintsAcc" accordion_title="Unassociated Blueprints" %}
+    {% with content_include_path="ddm_datadonation/overview/unassociated_blueprints.html" n_blueprints=lonely_blueprints.count|stringformat:"s" %}
+      {% with accordion_description="<span class='badge-grey'>"|add:n_blueprints|add:"</span>" %}
+        {% include "ddm_core/components/accordion_card.html" with accordion_id="unassociatedBlueprintsAcc" accordion_title="Unassociated Blueprints" %}
+      {% endwith %}
     {% endwith %}
-  {% endwith %}
 
-  {% with content_include_path="ddm_datadonation/overview/advanced_options.html" %}
-    {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4 narrow-accordion" accordion_id="advancedOptionsAcc" accordion_title="Advanced Options" %}
-  {% endwith %}
-
-  <div>
-    <a href="{% url 'ddm_projects:detail' project.url_id %}"><i class="bi bi-arrow-left-short"></i> Back</a>
   </div>
 
-{% endblock %}
+  <div class="ddm-section-container ddm-section-collapsible">
+    {% with content_include_path="ddm_datadonation/overview/advanced_options.html" %}
+      {% include "ddm_core/components/accordion_card.html" with accordion_id="advancedOptionsAcc" accordion_title="Advanced Options" %}
+    {% endwith %}
+  </div>
 
-{% block breadcrumbs %}
-  <a href="{% url 'ddm_projects:list' %}">Projects</a><i class="bi bi-chevron-right"></i>
-  <a href="{% url 'ddm_projects:detail' project.url_id %}">"{{ project.name|truncatechars:15 }}" Project</a><i class="bi bi-chevron-right"></i>
-  Data Donation Overview
-{% endblock %}
+{% endblock main_body %}

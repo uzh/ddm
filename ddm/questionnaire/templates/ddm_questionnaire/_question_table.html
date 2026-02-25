@@ -1,7 +1,7 @@
 <div class="table-responsive">
   <table class="table table-striped">
     <thead>
-    <tr class="lh-1 align-bottom border-bottom-dark">
+    <tr class="lh-1 align-bottom">
       <th class="fs-08">Index</th>
       <th class="fs-08">Name</th>
       <th class="fs-08 text-center"></th>
@@ -12,15 +12,27 @@
     {% for question in questions %}
       {% url 'ddm_questionnaire:edit' project_url_id question.question_type question.pk as edit_link %}
 
-      <tr {% if forloop.last %}class="border-bottom-dark"{% endif %}>
-        <td>{{ question.index }}</td>
-        <td><a href="{{ edit_link }}">{{ question.name }}</a></td>
-        <td class="text-center"><span class="badge bg-secondary">{{ question.get_question_type_display }}</span></td>
-        <td>{% if question.blueprint == None %}<span class='text-muted'>–</span>{% else %}{{ question.blueprint }}{% endif %}</td>
+      <tr>
+        <td>
+          {{ question.index }}
+        </td>
+        <td>
+          <a href="{{ edit_link }}">{{ question.name }}</a>
+        </td>
+        <td class="text-center">
+          <span class="badge-grey">{{ question.get_question_type_display }}</span>
+        </td>
+        <td>
+          {% if question.blueprint == None %}
+            <span class='text-muted'>–</span>
+          {% else %}
+            {{ question.blueprint }}
+          {% endif %}
+        </td>
       </tr>
 
     {% empty %}
-      <tr class="border-bottom-dark">
+      <tr>
         <td>General Questions</td>
         <td colspan="4" class="text-muted">No general questions defined.</td>
       </tr>

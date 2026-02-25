@@ -1,0 +1,23 @@
+{% extends 'ddm_core/page_with_form.html' %}
+{% load static %}
+
+{% block page_title %}Edit URL Parameter Extraction{% endblock page_title %}
+
+{% block main_heading %}URL Parameter Extraction{% endblock main_heading %}
+
+{% block sub_heading %}
+  Configure whether and which information to extract from parameters
+  passed with the URL when a project is accessed by a participant.
+{% endblock sub_heading %}
+
+{% block form_content %}
+
+  <div id="url-parameter-settings" class="ddm-section-container">
+    <div class="row">
+      {{ form.non_field_errors }}
+      {% include "ddm_core/form_components/_checkbox_toggle_field.html" with field=form.url_parameter_enabled %}
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.expected_url_parameters %}
+    </div>
+  </div>
+
+{% endblock form_content %}

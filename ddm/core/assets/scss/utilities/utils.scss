@@ -1,9 +1,25 @@
+.fc-main {
+  color: var(--font-color-main) !important;
+}
+
 .fc-grey {
     color: var(--font-color-grey);
 }
 
+.fc-red {
+  color: var(--color-darkred) !important;
+}
+
 .fc-muted {
     color: var(--font-color-muted) !important;
+}
+
+.fw-500 {
+  font-weight: 500;
+}
+
+.fw-600 {
+  font-weight: 600;
 }
 
 .bg-light-grey {

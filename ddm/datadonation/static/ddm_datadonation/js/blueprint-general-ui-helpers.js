@@ -17,18 +17,19 @@ function hideOrShowCsvDelimiter() {
 function hideOrShowFilePath() {
   const fileUploaderVal = document.getElementById("id_file_uploader").value;
 
-  const fileIdentificationId = "IdentificationSettings";
-  const fileIdentificationButton = document.getElementById(`accordionButton${fileIdentificationId}`);
-  const fileIdentificationBody = document.getElementById(`collapse${fileIdentificationId}`);
+  const fileIdZip = document.getElementById("file-identification-info-zip");
+  const fileIdSingleFile = document.getElementById("file-identification-info-single-file");
 
   if (file_uploader_meta[fileUploaderVal] === "single file") {
-    fileIdentificationButton.disabled = true;
-
-    fileIdentificationButton.classList.add("collapsed");
-    fileIdentificationBody.classList.remove("show");
-
+    fileIdZip.classList.add("d-none");
+    fileIdZip.classList.remove("d-block");
+    fileIdSingleFile.classList.add("d-block");
+    fileIdSingleFile.classList.remove("d-none");
   } else {
-    fileIdentificationButton.disabled = false;
+    fileIdZip.classList.add("d-block");
+    fileIdZip.classList.remove("d-none");
+    fileIdSingleFile.classList.add("d-none");
+    fileIdSingleFile.classList.remove("d-block");
   }
 }
 

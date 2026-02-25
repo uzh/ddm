@@ -1,0 +1,13 @@
+<tr>
+  {% with hide_label=True extra_field_classes="mt-2 mb-2" form_template="ddm_core/form_components/_basic_field.html" %}
+    <td>{% include form_template with field=form.index %}</td>
+    <td>{% include form_template with field=form.combinator  %}</td>
+    <td>{% include form_template with field=form.source %}</td>
+    <td>{% include form_template with field=form.condition_operator %}</td>
+    <td>{% include form_template with field=form.condition_value %}</td>
+    <td>{% include form_template with field=form.DELETE %}</td>
+  {% endwith %}
+  {% for hidden in form.hidden_fields %}
+    <td>{{ hidden }}</td>
+  {% endfor %}
+</tr>

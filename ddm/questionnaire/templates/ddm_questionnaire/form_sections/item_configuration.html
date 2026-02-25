@@ -1,6 +1,9 @@
-{% include "ddm_core/form_components/_basic_field.html" with field=form.multi_item_response %}
-{% include "ddm_core/form_components/_basic_field.html" with field=form.randomize_items %}
+{% include "ddm_core/form_components/_checkbox_toggle_field.html" with field=form.multi_item_response %}
 
-{% if item_formset %}
-  {% include "ddm_questionnaire/form_sections/_question_item_formset.html" with field=form.show_scale_headings %}
-{% endif %}
+<div id="oq-question-item-container">
+  {% include "ddm_core/form_components/_checkbox_toggle_field.html" with field=form.randomize_items %}
+
+  {% if item_formset %}
+    {% include "ddm_questionnaire/form_sections/partials/_question_item_formset.html" with field=form.show_scale_headings %}
+  {% endif %}
+</div>

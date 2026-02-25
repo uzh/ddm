@@ -1,0 +1,50 @@
+<div id="data-collection-configuration" class="ddm-section-container">
+  <div>
+    <h2>Data Collection Configuration</h2>
+  </div>
+
+  <div class="row data-collection-config-section">
+
+    <div class="col-12 col-lg-3 project-setup-card-wrapper">
+      <a class="card-link" href="{% url 'ddm_projects:briefing_edit' object.url_id %}">
+        <div class="project-setup-card">
+          <div><i class="bi bi-chat-right-dots-fill ddm-if-icon"></i></div>
+          <div><h4>Briefing</h4></div>
+          <div><p>Set up study briefing and participation consent</p></div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-12 col-lg-3 project-setup-card-wrapper">
+      <a class="card-link" href="{% url 'ddm_datadonation:overview' object.url_id %}">
+        <div class="project-setup-card">
+          <div><i class="bi bi-box-fill ddm-if-icon"></i></div>
+          <div><h4>Data Donation</h4></div>
+          <div><p>Configure data extraction and donation instructions</p></div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-12 col-lg-3 project-setup-card-wrapper">
+      <a class="card-link" href="{% url 'ddm_questionnaire:overview' object.url_id %}">
+        <div class="project-setup-card">
+          <div><i class="bi bi-question-square-fill ddm-if-icon"></i></div>
+          <div><h4>Questionnaire</h4></div>
+          <div><p>Configure a post-donation questionnaire</p></div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-12 col-lg-3 project-setup-card-wrapper">
+      <a class="card-link" href="{% url 'ddm_projects:debriefing_edit' object.url_id %}">
+        <div class="project-setup-card">
+          <div><i class="bi bi-chat-left-dots-fill ddm-if-icon"></i></div>
+          <div><h4>Debriefing</h4></div>
+          <div><p>Debrief and redirect your participants</p></div>
+        </div>
+      </a>
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,40 @@
+<div
+    class="modal"
+    id="questionPickerModal"
+    tabindex="-1"
+    aria-labelledby="questionPickerModalLabel"
+    aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+        >
+        </button>
+      </div>
+      <div class="modal-body text-center">
+        <p class="fw-bold">What type of question do you want to create?</p>
+
+        {% for question_type in question_types %}
+          {% if question_type.0 != 'generic' %}
+            <div>
+              <a href="{% url 'ddm_questionnaire:create' project_url_id question_type.0 %}">
+                <div class="settings-card">
+                  {{ question_type.1 }}
+                </div>
+              </a>
+            </div>
+          {% endif %}
+
+        {% empty %}
+          <p>No question types defined.</p>
+        {% endfor %}
+
+      </div>
+    </div>
+  </div>
+</div>

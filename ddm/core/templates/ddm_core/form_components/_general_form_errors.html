@@ -1,11 +1,13 @@
 {% if override_standard_errors %}
   <div class="alert alert-danger" role="alert">
-    The form contains some errors. Please see below and address them.
+    <i class="bi bi-exclamation-square-fill"></i> The form could not be processed.
+    Please check the issues highlighted below.
   </div>
 {% else %}
   {% if form.errors %}
     <div class="alert alert-danger" role="alert">
-      The form contains some errors. Please see below and address them.
+      <i class="bi bi-exclamation-square-fill"></i> The form could not be processed.
+      Please check the issues highlighted below.
     </div>
   {% endif %}
 {% endif %}

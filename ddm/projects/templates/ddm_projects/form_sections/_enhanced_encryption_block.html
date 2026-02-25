@@ -1,6 +1,6 @@
 <div>
 
-  <p class="mt-0 fw-bold fs-6">Enhanced Encryption</p>
+  <p class="ddm-form-group-header">Enhanced Encryption</p>
 
   <p>
     All collected data (data donations and questionnaire responses) are encrypted and stored securely by default.
@@ -8,7 +8,7 @@
     you can add an extra layer of protection by encrypting data with a password only you know.
   </p>
 
-  <p class="fw-bold">Before enabling, note that:</p>
+  <p class="mt-2">Before enabling, note that:</p>
 
   <ul>
     <li>You must enter the password each time you access the data</li>
@@ -17,23 +17,16 @@
     <li>There is no way of resetting your encryption password in the case you loose it</li>
   </ul>
 
-  <p class="fw-bold">Most projects do not need this option.</p>
+  <p class="fc-red">Most projects do not need this option.</p>
 
-  <p>
-    {{ form.super_secret.errors }}
-    {{ form.super_secret.label_tag }}
-    {{ form.super_secret }}
-  </p>
-  <div id="secret-definition" class="d-none">
-    <p>
-      {{ form.project_password.errors }}
-      {{ form.project_password.label_tag }}
-      {{ form.project_password }}
-    </p>
-    <p>
-      {{ form.project_password_confirm.errors }}
-      <label for="{{ form.project_password_confirm.id_for_label }}">Confirm Project Password:</label>
-      {{ form.project_password_confirm }}
-    </p>
+  <hr />
+
+  <div class="mt-3">
+    {% include "ddm_core/form_components/_checkbox_toggle_field.html" with field=form.super_secret %}
+
+    <div id="secret-definition">
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.project_password %}
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.project_password_confirm %}
+    </div>
   </div>
 </div>

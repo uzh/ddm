@@ -1,0 +1,33 @@
+html body {
+  --ck-color-focus-border: var(--color-main-green);
+  --ck-color-toolbar-background: var(--bg-color-lightgrey);
+  --ck-color-button-on-background: var(--bg-color-lightgrey);
+  --ck-color-button-on-color: var(--color-main-green);
+  --ck-font-size-base: 16px;
+  --ck-spacing-unit: 1em;
+  --ck-border-radius: 10px;
+  --ck-color-base-border: var(--color-muted);
+  --ck-focus-ring: 1px solid var(--color-main-green-brighter);
+  --ck-inner-shadow: none;
+  --ck-color-text: var(--font-color-grey);
+  --ck-font-face: var(--font-family-monospace);
+  --ck-content-font-family: var(--font-family-primary);
+  --ck-color-button-action-background: var(--color-main-green);
+}
+
+.ck-toolbar {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.ck-editor-container {
+  margin-bottom: 1.5rem;
+}
+
+.django-ckeditor-widget {
+  display: block !important;
+}
+
+.ck-powered-by {
+  display: none;
+}

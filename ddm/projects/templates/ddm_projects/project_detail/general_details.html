@@ -1,0 +1,58 @@
+<div id="project-general-details" class="ddm-section-container">
+  <div>
+    <h2>Overview</h2>
+  </div>
+
+  <div>
+    <div class="row">
+      <div class="col-12 col-sm-3 col-lg-2">
+        <span class="property-name">Name</span>
+      </div>
+      <div class="col-12 col-sm-auto">{{ object.name }}</div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-sm-3 col-lg-2">
+        <span class="property-name">Project ID</span>
+      </div>
+      <div class="col-12 col-sm-auto"><span class="badge bg-light text-dark">{{ object.url_id }}</span></div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-sm-3 col-lg-2">
+        <span class="property-name">Participant Link</span>
+      </div>
+      <div class="col-12 col-sm-9">
+        <p class="m-0">
+          <a href="{% url 'ddm_participation:briefing' object.slug %}" target="_blank">
+            {{ request.scheme }}://{{ request.get_host }}{% url 'ddm_participation:briefing' object.slug %}
+          </a>
+        </p>
+        <p class="m-0 helptext fc-muted">Test it by opening this link in a private window</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-sm-3 col-lg-2">
+        <span class="property-name">Status</span>
+      </div>
+      <div class="col-12 col-sm-auto">
+        {% if object.active %}
+          <span class="indicator indicator-active"></span> Participation is possible
+        {% else %}
+          <span class="indicator indicator-inactive"></span>Participation is not possible
+        {% endif %}
+      </div>
+    </div>
+
+    {% if object.super_secret %}
+      <div class="row">
+        <div class="col-12 col-sm-3 col-lg-2">
+          <span class="property-name">Encryption</span>
+        </div>
+        <div class="col-12 col-sm-auto">Enhanced encryption enabled</div>
+      </div>
+    {% endif %}
+  </div>
+
+</div>

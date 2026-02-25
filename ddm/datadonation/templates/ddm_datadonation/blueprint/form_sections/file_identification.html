@@ -1,0 +1,35 @@
+<div id="file-identification-section" class="ddm-section-container">
+  <div class="row">
+    <div class="form-section-heading">
+      <h2>File Identification</h2>
+    </div>
+
+    <div id="file-identification-info-zip">
+
+      <p class="mb-3">
+        Files are identified by their path in the zip file.
+        For example, if the file is <code>some_data.json</code> at the root of the zip, enter <code>some_data.json</code> as the file path.
+      </p>
+
+      <p>
+        You can use regex patterns or define multiple paths, which are tried in priority order
+        (lower numbers first; useful if the filename may not always be the same).
+      </p>
+
+      <div class="mt-3" id="file-path-formset-section">
+        {% include "ddm_datadonation/blueprint/form_sections/partials/_file_path_formset.html" %}
+      </div>
+
+      <div class="mt-5">
+        {% include "ddm_core/components/info_collapsible.html" with extra_classes="mx-0" element_id="file-path-advanced" title="More on how file paths are evaluated" include_path="ddm_datadonation/blueprint/info_collapsibles/block_file_paths.html" body="" %}
+      </div>
+
+    </div>
+
+
+    <div id="file-identification-info-single-file">
+      <p>For single file uploads, the participant will upload a single file – file identification is therefore not necessary.</p>
+    </div>
+
+  </div>
+</div>

@@ -2,44 +2,21 @@
 
 {% block page_title %}Delete Instruction Page{% endblock page_title %}
 
-{% block main_heading %}{% endblock main_heading %}
+{% block main_heading %}Delete Instruction Page {{ object.index }}?{% endblock main_heading %}
 
-{% block main_top %}
+{% block form_content %}
 
-  <div class="ddm-form-section mt-4">
-    <div class="ddm-form-section-header">
-      <h1>Delete Instruction Page?</h1>
-    </div>
-    <div class="ddm-form-section-body">
-      <form method='post'>
-        {% csrf_token %}
+  <div class="ddm-section-container">
+    <div class="row">
+      {{ form.non_field_errors }}
 
-        <p>This will:</p>
+      <p>This will:</p>
 
-        <ul>
-          <li>Permanently delete this Instruction Page</li>
-        </ul>
-
-        <div class="mt-4 ddm-btn-group">
-          <div class="inner-btn-group">
-            <div><a class="ddm-btn-base ddm-btn-secondary" href="{% url 'ddm_datadonation:instructions:overview' project_url_id file_uploader.pk %}">Cancel</a></div>
-            <div><input class="ddm-btn-base ddm-btn-red" type="submit" value="Delete Instruction Page"></div>
-          </div>
-        </div>
-      </form>
+      <ul>
+        <li>Permanently delete this Instruction Page</li>
+      </ul>
 
     </div>
   </div>
 
-{% endblock main_top %}
-
-{% block main_form %}{% endblock main_form %}
-
-{% block breadcrumbs %}
-  <a href="{% url 'ddm_projects:list' %}">Projects</a><i class="bi bi-chevron-right"></i>
-  <a href="{% url 'ddm_projects:detail' project.url_id %}">"{{ project.name|truncatechars:15 }}" Project</a><i class="bi bi-chevron-right"></i>
-  <a href="{% url 'ddm_datadonation:overview' project.url_id %}">Data Donation</a><i class="bi bi-chevron-right"></i>
-  <a href="{% url 'ddm_datadonation:uploaders:edit' project.url_id file_uploader.pk %}">Uploader "{{ file_uploader.name|truncatechars:15 }}"</a><i class="bi bi-chevron-right"></i>
-  <a href="{% url 'ddm_datadonation:instructions:overview' project.url_id file_uploader.pk %}">Instructions</a><i class="bi bi-chevron-right"></i>
-  Delete Instruction Page
-{% endblock breadcrumbs %}
+{% endblock form_content %}

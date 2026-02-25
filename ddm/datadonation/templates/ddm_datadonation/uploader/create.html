@@ -6,53 +6,18 @@
 
 {% block main_heading %}Create New Uploader{% endblock main_heading %}
 
-{% block submit_label %}Create Uploader{% endblock submit_label %}
-
 {% block cancel_target %}{% url 'ddm_datadonation:overview' project.url_id %}{% endblock cancel_target %}
 
-{% block main_form %}
-  <form method='post'>
-    {% csrf_token %}
-    {{ form.media }}
-    {{ form.non_field_errors }}
+{% block form_content %}
+  {{ form.non_field_errors }}
 
-    {# General Settings #}
-    {% with content_include_path="ddm_datadonation/uploader/form_sections/general_settings.html" %}
-      {% with accordion_description="Name and upload type configuration" %}
-        {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="GeneralSettings" accordion_title="General Settings" is_expanded=True %}
-      {% endwith %}
-    {% endwith %}
+  {% include "ddm_datadonation/uploader/form_sections/general_settings.html" %}
 
-    {# Display Settings #}
-    {% with content_include_path="ddm_datadonation/uploader/form_sections/display_settings.html" %}
-      {% with accordion_description="What participants see on the donation page" %}
-        {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="DisplaySettings" accordion_title="Display Settings" is_expanded=True %}
-      {% endwith %}
-    {% endwith %}
+  {% include "ddm_datadonation/uploader/form_sections/display_settings.html" %}
 
-    {# Consent Settings #}
-    {% with content_include_path="ddm_datadonation/uploader/form_sections/consent_settings.html" %}
-      {% with accordion_description="How participants give consent for their data" %}
-        {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="ConsentSettings" accordion_title="Consent Settings" is_expanded=True %}
-      {% endwith %}
-    {% endwith %}
+  {% include "ddm_datadonation/uploader/form_sections/consent_settings.html" %}
 
-    <div class="ddm-btn-group">
-      <div>{# Spacing element #}</div>
-      <div class="inner-btn-group">
-        <div><a class="ddm-btn-base ddm-btn-secondary" href="{% url 'ddm_datadonation:overview' project.url_id %}">Cancel</a></div>
-        <div><input class="ddm-btn-base ddm-btn-green" type="submit" value="Create Uploader"></div>
-      </div>
-    </div>
-  </form>
 {% endblock %}
-
-{% block breadcrumbs %}
-  <a href="{% url 'ddm_projects:list' %}">Projects</a><i class="bi bi-chevron-right"></i>
-  <a href="{% url 'ddm_projects:detail' project.url_id %}">"{{ project.name|truncatechars:15 }}" Project</a><i class="bi bi-chevron-right"></i>
-  <a href="{% url 'ddm_datadonation:overview' project.url_id %}">Data Donation</a><i class="bi bi-chevron-right"></i>
-  Create Uploader
-{% endblock breadcrumbs %}
 
 {% block scripts %}
   {{ block.super }}

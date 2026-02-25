@@ -5,34 +5,38 @@
 {% block main_heading %}Donation Projects{% endblock %}
 
 {% block main_body %}
-  <div>
-    <div class="table-responsive">
-      <table class="table table-striped">
-        <thead>
-        <tr>
-          <th>Name</th>
-          <th>URL Identifier</th>
-        </tr>
-        </thead>
-        <tbody class="border-top-0">
-        {% for project in object_list %}
+  <div id="project-list-section" class="ddm-section-container">
+    <div class="row">
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
           <tr>
-            <td><a class="ddm-ui-link" href="{{ project.get_absolute_url }}">{{ project.name }}</a></td>
-            <td>{{ project.slug }}</td>
+            <th>Name</th>
+            <th>URL Identifier</th>
           </tr>
-        {% empty %}
-          <tr>
-            <td>No projects found.</td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
+          </thead>
+          <tbody class="border-top-0">
+          {% for project in object_list %}
+            <tr>
+              <td><a class="ddm-ui-link" href="{{ project.get_absolute_url }}">{{ project.name }}</a></td>
+              <td>{{ project.slug }}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td>No projects found.</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
-
-  <div class="mt-4">
-    <a class="ddm-btn-base ddm-btn-green" href="{% url 'ddm_projects:create' %}">Create New Project</a>
   </div>
 
 {% endblock %}
 
+{% block pre_footer_left %}
+{% endblock pre_footer_left %}
+
+{% block pre_footer_right %}
+  <a class="ddm-btn-base ddm-btn-green" href="{% url 'ddm_projects:create' %}">Create New Project</a>
+{% endblock pre_footer_right %}

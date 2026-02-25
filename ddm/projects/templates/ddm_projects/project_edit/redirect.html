@@ -1,0 +1,23 @@
+{% extends 'ddm_core/page_with_form.html' %}
+{% load static %}
+
+{% block page_title %}Edit Redirect Configuration{% endblock page_title %}
+
+{% block main_heading %}Redirect Configuration{% endblock main_heading %}
+
+{% block sub_heading %}
+  Configure whether your participants are redirected to another web-address after
+  reaching the end of your study (i.e., after reaching the debriefing page)
+{% endblock sub_heading %}
+
+{% block form_content %}
+
+  <div id="project-redirect-settings" class="ddm-section-container">
+    <div class="row">
+      {{ form.non_field_errors }}
+      {% include "ddm_core/form_components/_checkbox_toggle_field.html" with field=form.redirect_enabled %}
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.redirect_target %}
+    </div>
+  </div>
+
+{% endblock form_content %}

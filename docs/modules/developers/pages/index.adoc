@@ -74,7 +74,19 @@ To run unit tests, use:
 (venv) <...>/ddm/test_project> python manage.py test ddm
 ----
 
-=== Vue Integration
+===== Sass Compilation
+
+To compile the scss file, sass is used.
+
+[source]
+----
+(venv) <...>/ddm/> npm install
+(venv) <...>/ddm/> npm run sass:watch  # To run watcher during development
+(venv) <...>/ddm/> npm run sass:build  # To build file for distribution
+----
+
+
+=== Vue Integration (Frontend)
 
 ==== Development
 

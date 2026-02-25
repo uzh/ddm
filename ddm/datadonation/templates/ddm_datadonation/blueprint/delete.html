@@ -1,18 +1,14 @@
 {% extends 'ddm_core/page_with_form.html' %}
 
-{% block page_title %}Delete Blueprint{% endblock %}
+{% block page_title %}Delete Blueprint{% endblock page_title %}
 
-{% block main_heading %}{% endblock %}
+{% block main_heading %}Delete Blueprint "{{ object.name }}"?{% endblock main_heading %}
 
-{% block main_top %}
+{% block form_content %}
 
-  <div class="ddm-form-section mt-4">
-    <div class="ddm-form-section-header">
-      <h1>Delete Blueprint "{{ object.name }}"?</h1>
-    </div>
-    <div class="ddm-form-section-body">
-      <form method='post'>
-        {% csrf_token %}
+    <div class="ddm-section-container">
+    <div class="row">
+      {{ form.non_field_errors }}
 
         <p>This will:</p>
 
@@ -25,24 +21,9 @@
 
         <p>If you are unsure, you can also unassign the Blueprint from any Uploaders in the Blueprint menu.</p>
 
-        <div class="mt-4 ddm-btn-group">
-          <div class="inner-btn-group">
-            <div><a class="ddm-btn-base ddm-btn-secondary" href="{{ object.get_absolute_url }}">Cancel</a></div>
-            <div><input class="ddm-btn-base ddm-btn-red" type="submit" value="Delete Blueprint"></div>
-          </div>
-        </div>
-      </form>
-
     </div>
   </div>
 
-{% endblock %}
+{% endblock form_content %}
 
-{% block main_form %}{% endblock %}
-
-{% block breadcrumbs %}
-  <a href="{% url 'ddm_projects:list' %}">Projects</a><i class="bi bi-chevron-right"></i>
-  <a href="{% url 'ddm_projects:detail' project.url_id %}">"{{ project.name|truncatechars:15 }}" Project</a><i class="bi bi-chevron-right"></i>
-  <a href="{% url 'ddm_datadonation:overview' project.url_id %}">Data Donation</a><i class="bi bi-chevron-right"></i>
-  Delete Blueprint
-{% endblock %}
+{% block main_form %}{% endblock main_form %}

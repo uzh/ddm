@@ -48,11 +48,11 @@ function getMaxValue(selector) {
  */
 function hideOrShowQuestionItems() {
   const showQuestionItems = document.getElementById('id_multi_item_response').checked;
-  const questionItemTable = document.getElementById('question-item-table');
+  const questionItemContainer = document.getElementById('oq-question-item-container');
   if (showQuestionItems) {
-    questionItemTable.classList.remove('d-none')
+    questionItemContainer.classList.remove('d-none')
   } else {
-    questionItemTable.classList.add('d-none');
+    questionItemContainer.classList.add('d-none');
   }
 }
 

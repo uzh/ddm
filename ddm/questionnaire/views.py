@@ -4,11 +4,13 @@ from django.db import transaction
 from django.db.models import QuerySet
 from django.forms import inlineformset_factory
 from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
+from django.utils.text import Truncator
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from ddm.auth.views import DDMAuthMixin
+from ddm.core.view_mixins import DDMContextMixin
 from ddm.datadonation.models import DonationBlueprint
 from ddm.projects.models import DonationProject
 from ddm.questionnaire.forms import (
@@ -25,7 +27,7 @@ from ddm.questionnaire.models import (
 from ddm.questionnaire.constants import QuestionType
 
 
-class ProjectMixin:
+class ProjectMixin(DDMContextMixin):
     """ Mixin for all blueprint related views. """
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -36,12 +38,31 @@ class ProjectMixin:
     def get_project(self) -> DonationProject:
         return DonationProject.objects.get(url_id=self.kwargs['project_url_id'])
 
+    def get_breadcrumbs(self):
+        project = self.get_project()
+        name = Truncator(project.name).chars(15)
+        return [
+            ('Projects', reverse_lazy('ddm_projects:list')),
+            (
+                f'{name}',
+                reverse(
+                    'ddm_projects:detail',
+                    kwargs={'project_url_id': self.kwargs['project_url_id']}
+                )
+            ),
+        ]
+
 
 class QuestionnaireOverview(ProjectMixin, DDMAuthMixin, ListView):
     """ View to list all donation blueprints associated with a project. """
     model = DonationBlueprint
     context_object_name = 'donation_blueprints'
     template_name = 'ddm_questionnaire/question_list.html'
+
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append(('Questionnaire', None))
+        return crumbs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -122,6 +143,20 @@ class QuestionCreate(
     template_name = 'ddm_questionnaire/question_create.html'
     success_message = 'New %(question_type)s was created.'
 
+    submit_label = 'Create Question'
+
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append((
+            'Questionnaire',
+            reverse(
+                'ddm_questionnaire:overview',
+                kwargs={'project_url_id': self.kwargs['project_url_id']}
+            )
+        ))
+        crumbs.append(('Create Question', None))
+        return crumbs
+
     def get_initial(self) -> dict:
         initial = super().get_initial()
         initial['question_type'] = self.question_type
@@ -153,6 +188,20 @@ class QuestionEdit(SuccessMessageMixin, DDMAuthMixin, QuestionFormMixin, UpdateV
     model = QuestionBase
     template_name = 'ddm_questionnaire/question_edit.html'
     success_message = 'Question "%(name)s" was successfully updated.'
+
+    submit_label = 'Update Question'
+
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append((
+            'Questionnaire',
+            reverse(
+                'ddm_questionnaire:overview',
+                kwargs={'project_url_id': self.kwargs['project_url_id']}
+            )
+        ))
+        crumbs.append(('Edit', None))
+        return crumbs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -247,6 +296,28 @@ class QuestionDelete(SuccessMessageMixin, DDMAuthMixin, ProjectMixin, DeleteView
     template_name = 'ddm_questionnaire/question_delete.html'
     success_message = 'Question "%s" was deleted.'
 
+    submit_label = 'Delete Question'
+
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append((
+            'Questionnaire',
+            reverse('ddm_questionnaire:overview', kwargs={'project_url_id': self.kwargs['project_url_id']})
+        ))
+        crumbs.append((
+            f'Question "{Truncator(self.object.name).chars(15)}"',
+             reverse(
+                 'ddm_questionnaire:edit',
+                 kwargs={
+                     'project_url_id': self.kwargs['project_url_id'],
+                     'question_type': self.object.question_type,
+                     'pk': self.object.pk
+                 }
+             )
+        ))
+        crumbs.append(('Delete', None))
+        return crumbs
+
     def get_success_message(self, cleaned_data) -> str:
         return self.success_message % self.object.name
 
@@ -262,6 +333,8 @@ class FilterEditBase(SuccessMessageMixin, ProjectMixin, DDMAuthMixin, UpdateView
     fields = []
     success_message = 'Filter conditions updated'
     target_type = None
+
+    submit_label = 'Update Filters'
 
     def get_filters(self) -> QuerySet[FilterCondition]:
         return self.object.filtercondition_set.all()
@@ -345,6 +418,23 @@ class FilterEditQuestion(FilterEditBase):
     def get_project(self) -> DonationProject:
         return self.object.project
 
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append((
+            'Questionnaire',
+            reverse(
+                'ddm_questionnaire:overview',
+                kwargs={'project_url_id': self.kwargs['project_url_id']}
+            )
+        ))
+        crumbs.append(('Question', reverse('ddm_questionnaire:edit', kwargs={
+            'project_url_id': self.kwargs['project_url_id'],
+            'question_type': self.object.question_type,
+            'pk': self.object.pk,
+        })))
+        crumbs.append(('Filter Configuration', None))
+        return crumbs
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context.update({
@@ -369,6 +459,23 @@ class FilterEditItems(FilterEditBase):
 
     def get_project(self) -> DonationProject:
         return self.object.question.project
+
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append((
+            'Questionnaire',
+            reverse(
+                'ddm_questionnaire:overview',
+                kwargs={'project_url_id': self.kwargs['project_url_id']}
+            )
+        ))
+        crumbs.append(('Question', reverse('ddm_questionnaire:edit', kwargs={
+            'project_url_id': self.kwargs['project_url_id'],
+            'question_type': self.object.question.question_type,
+            'pk': self.object.question.pk,
+        })))
+        crumbs.append(('Filter Configuration', None))
+        return crumbs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()

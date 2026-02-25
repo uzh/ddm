@@ -1,14 +1,26 @@
 from django.contrib.messages.views import SuccessMessageMixin
+from django.urls import reverse, reverse_lazy
+from django.utils.text import Truncator
 from django.views.generic import TemplateView
 
 from ddm.auth.views import DDMAuthMixin
+from ddm.core.view_mixins import DDMContextMixin
 from ddm.logging.models import ExceptionLogEntry
 from ddm.projects.models import DonationProject
 
 
-class EventLogsListView(SuccessMessageMixin, DDMAuthMixin, TemplateView):
+class EventLogsListView(SuccessMessageMixin, DDMContextMixin, DDMAuthMixin, TemplateView):
     project = None
     template_name = 'ddm_logging/event_log_list.html'
+
+    def get_breadcrumbs(self):
+        project = self.get_project()
+        name = Truncator(project.name).chars(15)
+        return [
+            ('Projects', reverse_lazy('ddm_projects:list')),
+            (f'{name}', reverse('ddm_projects:detail', kwargs={'project_url_id': project.url_id})),
+            ('Logs', None),
+        ]
 
     def get_project(self):
         if self.project is None:
@@ -25,9 +37,18 @@ class EventLogsListView(SuccessMessageMixin, DDMAuthMixin, TemplateView):
         return context
 
 
-class ExceptionLogsListView(SuccessMessageMixin, DDMAuthMixin, TemplateView):
+class ExceptionLogsListView(SuccessMessageMixin, DDMContextMixin, DDMAuthMixin, TemplateView):
     project = None
     template_name = 'ddm_logging/exception_log_list.html'
+
+    def get_breadcrumbs(self):
+        project = self.get_project()
+        name = Truncator(project.name).chars(15)
+        return [
+            ('Projects', reverse_lazy('ddm_projects:list')),
+            (f'{name}', reverse('ddm_projects:detail', kwargs={'project_url_id': project.url_id})),
+            ('Logs', None),
+        ]
 
     def get_project(self):
         if self.project is None:

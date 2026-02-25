@@ -1,0 +1,48 @@
+<div id="project-configuration" class="ddm-section-container">
+  <div>
+    <h2>General Project Settings</h2>
+  </div>
+
+  <div>
+    <div class="row justify-content-between">
+
+      <div class="col-12 col-lg-3 project-setup-card-wrapper">
+        <a class="card-link" href="{% url 'ddm_projects:edit_public_information' object.url_id %}">
+          <div class="settings-card">
+            <div><h4>Public Information</h4></div>
+            <div><p class="mb-0">name, status, URL, contact, data protection statement</p></div>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-12 col-lg-3 project-setup-card-wrapper">
+        <a class="card-link" href="{% url 'ddm_projects:edit_url_parameter' object.url_id %}">
+          <div class="settings-card">
+            <div><h4>URL Parameter Extraction</h4></div>
+            <div><p class="mb-0">e.g., for integration with external survey</p></div>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-12 col-lg-3 project-setup-card-wrapper">
+        <a class="card-link" href="{% url 'ddm_projects:edit_redirect_configuration' object.url_id %}">
+          <div class="settings-card">
+            <div><h4>Redirect Configuration</h4></div>
+            <div><p class="mb-0">e.g., for routing back to external survey</p></div>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-12 col-lg-3 project-setup-card-wrapper">
+        <a class="card-link" href="{% url 'ddm_projects:edit_branding' object.url_id %}">
+          <div class="settings-card">
+            <div><h4>Branding</h4></div>
+            <div><p class="mb-0">Logos</p></div>
+          </div>
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+</div>

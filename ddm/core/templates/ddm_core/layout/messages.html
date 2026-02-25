@@ -1,0 +1,12 @@
+<div class="message-wrapper container">
+  <div class="ddm-message-container container">
+    {% if messages %}
+      {% for message in messages %}
+        <div id="message-{{ forloop.counter }}" class="ddm-message {% if message.tags %} {{ message.tags }}{% endif %}">
+          <div>{{ message }}</div>
+          <div><a class="ddm-message-close" href="#"><i class="bi bi-x-circle"></i></a></div>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>

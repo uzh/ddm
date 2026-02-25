@@ -11,12 +11,14 @@ from django.forms.utils import ErrorList
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
+from django.utils.text import Truncator
 from django.views.decorators.debug import sensitive_variables
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.views.generic.list import ListView
 
 from ddm.apis.serializers import DataDonationSerializer
 from ddm.apis.views import DDMAPIMixin
+from ddm.core.view_mixins import DDMContextMixin
 from ddm.datadonation.forms import (
     BlueprintForm,
     BlueprintFilePathInlineFormset,
@@ -36,8 +38,22 @@ from ddm.projects.models import DonationProject
 from ddm.projects.views import DDMAuthMixin
 
 
-class DDMAdminMixin:
+class DDMAdminMixin(DDMContextMixin):
     """ Mixin for admin views providing extra context and utility functions. """
+    def get_breadcrumbs(self):
+        project = self.get_project()
+        name = Truncator(project.name).chars(15)
+        return [
+            ('Projects', reverse_lazy('ddm_projects:list')),
+            (
+                f'{name}',
+                reverse(
+                    'ddm_projects:detail',
+                    kwargs={'project_url_id': self.get_project_url_id()}
+                )
+            ),
+        ]
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -75,6 +91,11 @@ class DataDonationOverview(DDMAuthMixin, DDMAdminMixin, ListView):
     context_object_name = 'file_uploaders'
     template_name = 'ddm_datadonation/overview.html'
 
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append(('Data Donation', None))
+        return crumbs
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         project = self.get_project()
@@ -103,6 +124,20 @@ class FileUploaderCreate(
     template_name = 'ddm_datadonation/uploader/create.html'
     form_class = FileUploaderForm
     success_message = 'Uploader created successfully.'
+
+    submit_label = 'Create Uploader'
+
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append((
+            'Data Donation',
+            reverse(
+                'ddm_datadonation:overview',
+                kwargs={'project_url_id': self.get_project_url_id()}
+            )
+        ))
+        crumbs.append(('Create Uploader', None))
+        return crumbs
 
     def get_initial(self):
         """Set initial index value to current maximum plus one."""
@@ -134,7 +169,7 @@ class FileUploaderCreate(
             'project_url_id': self.get_project_url_id(),
             'pk': self.object.pk
         }
-        return reverse('ddm_datadonation:uploaders:edit', kwargs=kwargs)
+        return reverse('ddm_datadonation:overview', kwargs=kwargs)
 
 
 class FileUploaderEdit(
@@ -148,6 +183,20 @@ class FileUploaderEdit(
     template_name = 'ddm_datadonation/uploader/edit.html'
     form_class = FileUploaderForm
     success_message = 'Uploader "%(name)s" successfully updated.'
+
+    submit_label = 'Update Uploader'
+
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append((
+            'Data Donation',
+            reverse(
+                'ddm_datadonation:o'
+                'verview', kwargs={'project_url_id': self.get_project_url_id()}
+            )
+        ))
+        crumbs.append(('Edit Uploader', None))
+        return crumbs
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -199,7 +248,7 @@ class FileUploaderEdit(
             self.request, messages.SUCCESS,
             self.success_message % dict(name=self.object.name),
             fail_silently=True,
-        )
+            )
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -208,6 +257,20 @@ class FileUploaderDelete(SuccessMessageMixin, DDMAuthMixin, DDMAdminMixin, Delet
     model = FileUploader
     template_name = 'ddm_datadonation/uploader/delete.html'
     success_message = 'Uploader "%s" was deleted.'
+
+    submit_label = 'Delete Uploader'
+
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append((
+            'Data Donation',
+            reverse(
+                'ddm_datadonation:overview',
+                kwargs={'project_url_id': self.get_project_url_id()}
+            )
+        ))
+        crumbs.append(('Delete Uploader', None))
+        return crumbs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -287,6 +350,20 @@ class BlueprintCreate(
     form_class = BlueprintForm
     success_message = 'Blueprint created successfully.'
 
+    submit_label = 'Create Blueprint'
+
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append((
+            'Data Donation',
+            reverse(
+                'ddm_datadonation:overview',
+                kwargs={'project_url_id': self.get_project_url_id()}
+            )
+        ))
+        crumbs.append(('Create Blueprint', None))
+        return crumbs
+
     def get_initial(self):
         """Set initial display_position value to current maximum plus one."""
         initial = super().get_initial()
@@ -333,7 +410,7 @@ class BlueprintCreate(
 
     def form_valid(self, form, path_formset):
         with transaction.atomic():
-            form.instance.project = self.get_project().pk
+            form.instance.project = self.get_project()
 
             self.object = form.save()
             path_formset.instance = self.object
@@ -368,6 +445,20 @@ class BlueprintEdit(
     template_name = 'ddm_datadonation/blueprint/edit.html'
     form_class = BlueprintForm
     success_message = 'Blueprint "%(name)s" successfully updated.'
+
+    submit_label = 'Update Blueprint'
+
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append((
+            'Data Donation',
+            reverse(
+                'ddm_datadonation:overview',
+                kwargs={'project_url_id': self.get_project_url_id()}
+            )
+        ))
+        crumbs.append(('Edit Blueprint', None))
+        return crumbs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -436,11 +527,59 @@ class BlueprintDelete(
     template_name = 'ddm_datadonation/blueprint/delete.html'
     success_message = 'Blueprint "%s" deleted.'
 
+    submit_label = 'Delete Blueprint'
+
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append((
+            'Data Donation',
+            reverse(
+                'ddm_datadonation:overview',
+                kwargs={'project_url_id': self.get_project_url_id()}
+            )
+        ))
+        crumbs.append(('Delete Blueprint', None))
+        return crumbs
+
     def get_success_message(self, cleaned_data):
         return self.success_message % self.object.name
 
 
-class InstructionMixin:
+class InstructionMixin(DDMContextMixin):
+    def get_breadcrumbs(self):
+        project = self.get_project()
+        uploader = FileUploader.objects.get(pk=self.get_uploader_id())
+        project_name = Truncator(project.name).chars(15)
+        uploader_name = Truncator(uploader.name).chars(15)
+
+        project_id = self.get_project_url_id()
+        uploader_id = self.get_uploader_id()
+
+        crumbs = []
+        crumbs.append(('Projects', reverse_lazy('ddm_projects:list')))
+        crumbs.append((
+            f'{project_name}',
+            reverse(
+                'ddm_projects:detail',
+                kwargs={'project_url_id': project_id}
+            )
+        ))
+        crumbs.append((
+            'Data Donation',
+            reverse(
+                'ddm_datadonation:overview',
+                kwargs={'project_url_id': project_id}
+            )
+        ))
+        crumbs.append((
+            f'{uploader_name}',
+            reverse(
+                'ddm_datadonation:uploaders:edit',
+                kwargs={'project_url_id': project_id, 'pk': uploader_id}
+            )
+        ))
+        return crumbs
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
@@ -481,6 +620,11 @@ class InstructionOverview(DDMAuthMixin, InstructionMixin, ListView):
     template_name = 'ddm_datadonation/instructions/list.html'
     fields = ['text', 'index']
 
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append(('Instructions', None))
+        return crumbs
+
     def get_queryset(self):
         queryset = super().get_queryset().filter(
             file_uploader_id=self.get_uploader_id()
@@ -499,6 +643,23 @@ class InstructionCreate(
     form_class = InstructionsForm
     template_name = 'ddm_datadonation/instructions/create.html'
     success_message = 'Instruction page successfully created.'
+
+    submit_label = 'Create Instruction Page'
+
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append((
+            'Instructions',
+            reverse(
+                'ddm_datadonation:instructions:overview',
+                kwargs={
+                    'project_url_id': self.get_project_url_id(),
+                    'file_uploader_pk': self.get_uploader_id()
+                }
+            )
+        ))
+        crumbs.append(('Create Instruction Page', None))
+        return crumbs
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -530,6 +691,23 @@ class InstructionEdit(
     template_name = 'ddm_datadonation/instructions/edit.html'
     success_message = 'Instruction page successfully updated.'
 
+    submit_label = 'Update Instruction Page'
+
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append((
+            'Instructions',
+            reverse(
+                'ddm_datadonation:instructions:overview',
+                kwargs={
+                    'project_url_id': self.get_project_url_id(),
+                    'file_uploader_pk': self.get_uploader_id()
+                }
+            )
+        ))
+        crumbs.append(('Edit Instruction Page', None))
+        return crumbs
+
 
 class InstructionDelete(
     SuccessMessageMixin,
@@ -542,8 +720,25 @@ class InstructionDelete(
     template_name = 'ddm_datadonation/instructions/delete.html'
     success_message = 'Instruction page deleted.'
 
+    submit_label = 'Delete Instruction Page'
 
-class DonationDownloadView(DDMAuthMixin, DDMAPIMixin, FormView):
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append((
+            'Instructions',
+            reverse(
+                'ddm_datadonation:instructions:overview',
+                kwargs={
+                    'project_url_id': self.get_project_url_id(),
+                    'file_uploader_pk': self.get_uploader_id()
+                }
+            )
+        ))
+        crumbs.append(('Delete Instruction Page', None))
+        return crumbs
+
+
+class DonationDownloadView(DDMAuthMixin, DDMAdminMixin, DDMAPIMixin, FormView):
     """View to download all the donations of one specific participant."""
 
     def dispatch(self, request, *args, **kwargs):
@@ -577,6 +772,11 @@ class DonationDownloadView(DDMAuthMixin, DDMAPIMixin, FormView):
                 'participant_id': self.kwargs.get('participant_id')
             })
         return url
+
+    def get_breadcrumbs(self):
+        crumbs = super().get_breadcrumbs()
+        crumbs.append(('Download Participant Data', None))
+        return crumbs
 
     def get_participant(self):
         """ Returns participant instance. """

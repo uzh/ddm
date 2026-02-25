@@ -6,50 +6,30 @@
 
 {% block main_body %}
 
-  {% block main_top %}{% endblock %}
+  {% block above_form %}{% endblock above_form %}
 
-  <div class="ddm-form ddm-admin-section">
-    {% block main_form_header %}{% endblock %}
+  {% block form %}
+    <form id="base-form" method='post' enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.media }}
 
-    <div class="mt-4">
-      {% block main_form %}
-        <form method='post' enctype="multipart/form-data">
-          <div class="ddm-form-section-body border-top border-bottom">
+      {% block form_content %}
 
-            {% csrf_token %}
-            {{ form.media }}
+        {% include "ddm_core/form_components/_general_form_errors.html" %}
 
-            <div>
-              {% if form.errors %}
-                <p class="error-disclaimer"><i class="bi bi-exclamation-square-fill"></i> The form could not be processed. Please check the issues highlighted below.</p>
-              {% endif %}
+        <div>
+          {{ form.non_field_errors }}
+          {% for field in form %}
+            {% include "ddm_core/form_components/_basic_field.html" %}
+          {% endfor %}
+        </div>
 
-              {{ form.non_field_errors }}
+      {% endblock form_content %}
 
-              {% for field in form %}
-                <p>
-                  {{ field.label_tag }}
-                  <span class="helptext">{{ field.help_text|safe }}</span>
-                  {{ field.errors }}
-                  {{ field }}
-                </p>
-              {% endfor %}
+    </form>
+  {% endblock form %}
 
-            </div>
-          </div>
-
-          <div class="ddm-btn-group">
-            <div>{# Spacing element #}</div>
-            <div class="inner-btn-group">
-              {% block cancel %}<div><a class="ddm-btn-base ddm-btn-secondary" href="{% block cancel_target %}{% endblock cancel_target %}">Cancel</a></div>{% endblock cancel %}
-              <div><input class="ddm-btn-base ddm-btn-green" type="submit" value="{% block submit_label %}Submit Form{% endblock submit_label %}"></div>
-            </div>
-          </div>
-
-        </form>
-      {% endblock %}
-    </div>
-  </div>
+  {% block below_form %}{% endblock below_form %}
 
   {% block main_bottom %}{% endblock %}
 

@@ -13,20 +13,26 @@
     <tbody class="border-top-0">
     {% for uploader in file_uploaders %}
       <tr>
-        <td>{{ uploader.index }}</td>
-        <td><a href="{% url 'ddm_datadonation:uploaders:edit' project.url_id uploader.pk %}">{{ uploader.name }}</a></td>
-        <td><span class="badge bg-secondary">{{ uploader.upload_type }}</span></td>
+        <td class="fw-500">{{ uploader.index }}</td>
+        <td><a class="fw-500" href="{% url 'ddm_datadonation:uploaders:edit' project.url_id uploader.pk %}">{{ uploader.name }}</a></td>
+        <td><span class="badge-grey">{{ uploader.upload_type }}</span></td>
         <td><a href="{% url 'ddm_datadonation:instructions:overview' project.url_id uploader.pk %}">Instructions</a></td>
 
         {% if uploader.donationblueprint_set.all %}
-          <td class="p-0">
-            <table class="table blueprint-overview-table">
-              <tbody>
+          <td>
+
               {% for blueprint in uploader.donationblueprint_set.all %}
-                <tr><td><a href="{{ blueprint.get_absolute_url }}">{{ blueprint.name }}</a></td></tr>
+                <div>
+
+                    <a href="{{ blueprint.get_absolute_url }}">
+                      <div class="blueprint-card">
+                        {{ blueprint.name }}
+                      </div>
+                    </a>
+
+                </div>
               {% endfor %}
-              </tbody>
-            </table>
+
           </td>
 
         {% else %}

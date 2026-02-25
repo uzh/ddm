@@ -82,6 +82,10 @@ def get_question_form(question_type):
             'random order. If only certain items should be positioned randomly, '
             'use the <code>randomize</code> option on the item-level.'
         ),
+        'display': mark_safe(
+            '<code>Small</code> displays a one-line textfield, '
+            '<code>Large</code> a multiline textfield as input.'
+        )
     }
 
     LABELS = {
@@ -89,6 +93,7 @@ def get_question_form(question_type):
         'randomize_items': 'Randomize item order',
         'index': 'Position',
         'show_scale_headings': 'Show scale column headings',
+        'variable_name': 'Variable name'
     }
 
     EMPTY_LABELS = {

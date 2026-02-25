@@ -2,65 +2,30 @@
 
 {% load static %}
 
-{% block page_title %}Edit Uploader{% endblock %}
+{% block page_title %}Edit Uploader{% endblock page_title %}
 
-{% block main_heading %}Edit Uploader "{{ object.name }}"{% endblock %}
+{% block main_heading %}Edit Uploader "{{ object.name }}"{% endblock main_heading %}
 
-{% block submit_label %}Save Uploader{% endblock %}
+{% block form_content %}
 
-{% block main_form %}
-  <form method='post'>
-    {% csrf_token %}
-    {{ form.media }}
-    {{ form.non_field_errors }}
+  {{ form.non_field_errors }}
 
-    {# Base Settings #}
-    {% with content_include_path="ddm_datadonation/uploader/form_sections/general_settings.html" %}
-      {% with accordion_description="Name and upload type configuration" %}
-        {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="GeneralSettings" accordion_title="General Settings" is_expanded=True %}
-      {% endwith %}
-    {% endwith %}
+  {# Base Settings #}
+  {% include "ddm_datadonation/uploader/form_sections/general_settings.html" %}
 
-    {# Layout Settings #}
-    {% with content_include_path="ddm_datadonation/uploader/form_sections/display_settings.html" %}
-      {% with accordion_description="What participants see on the donation page" %}
-        {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="DisplaySettings" accordion_title="Display Settings" is_expanded=True %}
-      {% endwith %}
-    {% endwith %}
+  {# Layout Settings #}
+  {% include "ddm_datadonation/uploader/form_sections/display_settings.html" %}
 
-    {# Consent Settings #}
-    {% with content_include_path="ddm_datadonation/uploader/form_sections/consent_settings.html" %}
-      {% with accordion_description="How participants give consent for their data" %}
-        {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="ConsentSettings" accordion_title="Consent Settings" is_expanded=True %}
-      {% endwith %}
-    {% endwith %}
+  {# Consent Settings #}
+  {% include "ddm_datadonation/uploader/form_sections/consent_settings.html" %}
 
-    {# Associated Blueprints #}
-    {% with content_include_path="ddm_datadonation/uploader/form_sections/associated_blueprints.html" %}
-      {% with accordion_description="Which Blueprints belong to this Uploader" %}
-        {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="AssociatedBlueprints" accordion_title="Associated Blueprints" is_expanded=True %}
-      {% endwith %}
-    {% endwith %}
+  {# Associated Blueprints #}
+  {% include "ddm_datadonation/uploader/form_sections/associated_blueprints.html" %}
 
-    <div class="ddm-btn-group">
-      <div>
-        <a class="ddm-btn-base ddm-btn-red" href="{% url 'ddm_datadonation:uploaders:delete' project.url_id object.pk %}">Delete Uploader</a>
-      </div>
-      <div class="inner-btn-group">
-        <div><a class="ddm-btn-base ddm-btn-secondary me-2" href="{% url 'ddm_datadonation:overview' project.url_id %}">Cancel</a></div>
-        <div><input class="ddm-btn-base ddm-btn-green" type="submit" value="Save Uploader"></div>
-      </div>
-    </div>
+  {# Delete #}
+  {% include "ddm_datadonation/uploader/form_sections/delete.html" %}
 
-  </form>
-{% endblock %}
-
-{% block breadcrumbs %}
-  <a href="{% url 'ddm_projects:list' %}">Projects</a><i class="bi bi-chevron-right"></i>
-  <a href="{% url 'ddm_projects:detail' project.url_id %}">"{{ project.name|truncatechars:15 }}" Project</a><i class="bi bi-chevron-right"></i>
-  <a href="{% url 'ddm_datadonation:overview' project.url_id %}">Data Donation</a><i class="bi bi-chevron-right"></i>
-  Edit Uploader
-{% endblock %}
+{% endblock form_content %}
 
 {% block scripts %}
   {{ block.super }}

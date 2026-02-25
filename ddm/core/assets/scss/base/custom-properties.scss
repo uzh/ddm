@@ -1,36 +1,48 @@
 @use '../abstracts' as *;
 
 :root {
-    --bg-color-lightest: #{$bg-color-lightest};
-    --bg-color-light: #{$bg-color-light};
+  --bg-color-lightest: #{$bg-color-lightest};
+  --bg-color-light: #{$bg-color-light};
+  --bg-color-lightgrey: #{$bg-color-lightgrey};
+  --bg-color-lightred: #{$bg-color-lightred};
 
-    --color-main-green: #{$color-main-green};
-    --color-main-green-darker: #{$color-main-green-darker};
+  --border-color-lightgrey: #{$border-color-lightgrey};
 
-    --color-accent-magenta: #{$color-accent-magenta};
-    --color-darkgrey: #{$color-darkgrey};
-    --color-muted: #{$color-muted};
-    --color-darkred: #{$color-darkred};
+  --color-main-green: #{$color-main-green};
+  --color-main-green-darker: #{$color-main-green-darker};
+  --color-main-green-brighter: #{$color-main-green-brighter};
 
-    --font-color-main: #{$font-color-main};
-    --font-color-grey: #{$font-color-grey};
-    --font-color-muted: #{$font-color-muted};
+  --color-accent-magenta: #{$color-accent-magenta};
+  --color-accent-orange: #{$color-accent-orange};
+  --color-darkgrey: #{$color-darkgrey};
+  --color-muted: #{$color-muted};
+  --color-greyish: #{$color-greyish};
+  --color-darkred: #{$color-darkred};
 
-    --code-color: #{$code-color};
-    --code-color-secondary: #{$code-color-secondary};
-    --code-color-background: #{$code-color-background};
+  --font-color-main: #{$font-color-main};
+  --font-color-grey: #{$font-color-grey};
+  --font-color-muted: #{$font-color-muted};
 
-    /* Components */
-    --color-active: #{$color-active};
-    --color-inactive: #{$color-inactive};
+  --code-color: #{$code-color};
+  --code-color-secondary: #{$code-color-secondary};
+  --code-color-background: #{$code-color-background};
 
-    /* Gradients */
-    --color-green-gradiant-brighter: #{$color-green-gradient-brighter};
-    --color-green-gradient-darker: #{$color-green-gradient-darker};
+  /* Components */
+  --color-active: #{$color-active};
+  --color-inactive: #{$color-inactive};
 
-    --color-red-gradiant-brighter: #{$color-red-gradient-brighter};
-    --color-red-gradient-darker: #{$color-red-gradient-darker};
+  /* Gradients */
+  --color-green-gradiant-brighter: #{$color-green-gradient-brighter};
+  --color-green-gradient-darker: #{$color-green-gradient-darker};
 
-    --color-grey-gradiant-brighter: #{$color-grey-gradient-brighter};
-    --color-grey-gradient-darker: #{$color-grey-gradient-darker};
+  --color-red-gradiant-brighter: #{$color-red-gradient-brighter};
+  --color-red-gradient-darker: #{$color-red-gradient-darker};
+
+  --color-grey-gradiant-brighter: #{$color-grey-gradient-brighter};
+  --color-grey-gradient-darker: #{$color-grey-gradient-darker};
+
+  /* Fonts */
+  --ff-text: 'Geist';
+  --ff-headings: 'IBM Plex Sans';
+  --ff-mono: 'Geist Mono';
 }

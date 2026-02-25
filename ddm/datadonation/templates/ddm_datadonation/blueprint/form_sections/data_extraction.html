@@ -1,0 +1,50 @@
+<div id="data-extraction-section" class="ddm-section-container">
+  <div class="row">
+    <div class="form-section-heading">
+      <h2>Data Extraction</h2>
+      <p>Configure what data will be collected</p>
+    </div>
+
+    <div class="mt-1">
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.json_extraction_root %}
+    </div>
+
+    <p class="pt-2 fw-600">Extraction Rules</p>
+
+    {{ rule_formset.management_form }}
+
+    {{ rule_formset.non_form_errors }}
+
+    <div>
+      {% include "ddm_datadonation/blueprint/form_sections/partials/_extraction_rule_table.html" %}
+    </div>
+
+    <div class="mb-3 fs-4">
+      <a id="add-inline-form" class="ddm-btn ddm-btn-inverted" type="button">Add Extraction Rule</a>
+    </div>
+
+    <div>
+      {% include "ddm_core/components/info_collapsible.html" with extra_classes="mx-0" element_id="howdataextraction" title="How the data extraction works" include_path="ddm_datadonation/blueprint/info_collapsibles/block_data_extraction.html" body="" %}
+    </div>
+
+    <div class="mb-3">
+      {% include "ddm_core/components/info_collapsible.html" with extra_classes="mx-0" element_id="dataextraction" title="Extraction rule options" include_path="ddm_datadonation/blueprint/info_collapsibles/block_data_extraction_rules.html" body="" %}
+    </div>
+
+    {% for form in rule_formset %}
+      {% with modal_id_postfix=forloop.counter0|stringformat:"i" button_id_postfix=forloop.counter0|stringformat:"i" %}
+        {% include "ddm_datadonation/processing_rule_modal.html" with modal_id="configuration-"|add:modal_id_postfix form=form button_id=""|add:button_id_postfix %}
+      {% endwith %}
+    {% empty %}
+      {% include "ddm_datadonation/processing_rule_modal.html" with modal_id="configuration-template" form=rule_formset.empty_form button_id="__prefix__" %}
+    {% endfor %}
+
+    {% include "ddm_datadonation/blueprint/form_sections/partials/_extraction_rule_empty_form.html" %}
+
+    <div id="empty-form">
+      <div class="rule-configuration-form">
+        {% include "ddm_datadonation/blueprint/form_sections/partials/_extraction_rule_form.html" with form=rule_formset.empty_form %}
+      </div>
+    </div>
+  </div>
+</div>

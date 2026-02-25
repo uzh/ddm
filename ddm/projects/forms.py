@@ -49,7 +49,15 @@ class ProjectCreateForm(forms.ModelForm):
             'slug': mark_safe(
                 'Used in the participant URL (e.g., <code>root.url/<span class="fw-bold">my-url-identifier</span></code>). '
                 'Letters, numbers, hyphens, and underscores only.'
-            )
+            ),
+            'contact_information': (
+                'Provide contact information of the project lead '
+                '(name, professional address, email, tel, ...)'
+            ),
+            'data_protection_statement': (
+                'Provide your data protection statement (purpose of data collection, '
+                'how the data will be stored, who has access, retention times etc.)'
+            ),
         }
 
     field_order = [
@@ -88,7 +96,7 @@ class ProjectCreateForm(forms.ModelForm):
         return project
 
 
-class ProjectEditForm(forms.ModelForm):
+class EditPublicInformationForm(forms.ModelForm):
     class Meta:
         model = DonationProject
         fields = [
@@ -97,12 +105,6 @@ class ProjectEditForm(forms.ModelForm):
             'active',
             'contact_information',
             'data_protection_statement',
-            'url_parameter_enabled',
-            'expected_url_parameters',
-            'redirect_enabled',
-            'redirect_target',
-            'img_header_left',
-            'img_header_right'
         ]
         widgets = {
             'data_protection_statement': CKEditor5Widget(config_name='ddm_ckeditor'),
@@ -113,6 +115,29 @@ class ProjectEditForm(forms.ModelForm):
             'slug': mark_safe(
                 'Used in the participant URL (e.g., <code>root.url/<span class="fw-bold">my-url-identifier</span></code>). '
                 'Letters, numbers, hyphens, and underscores only.'
+            ),
+            'contact_information': (
+                'Provide contact information of the project lead '
+                '(name, professional address, email, tel, ...)'
+            ),
+            'data_protection_statement': (
+                'Provide your data protection statement (purpose of data collection, '
+                'how the data will be stored, who has access, retention times etc.)'
+            ),
+        }
+
+
+class EditUrlParameterExtractionForm(forms.ModelForm):
+    class Meta:
+        model = DonationProject
+        fields = [
+            'url_parameter_enabled',
+            'expected_url_parameters',
+        ]
+        help_texts = {
+            'expected_url_parameters': mark_safe(
+                'Separate multiple parameters with semicolons (<code>paramA<b>;</b> paramB</code>) – '
+                'Semicolons are not allowed as part of the expected url parameters'
             )
         }
 
@@ -125,6 +150,31 @@ class ProjectEditForm(forms.ModelForm):
             self.add_error('expected_url_parameters',
                            'URL parameter is enabled but no parameter is defined to be extracted.')
 
+        return cleaned_data
+
+
+class EditRedirectConfigurationForm(forms.ModelForm):
+    class Meta:
+        model = DonationProject
+        fields = [
+            'redirect_enabled',
+            'redirect_target',
+        ]
+
+        help_texts = {
+            'redirect_target': mark_safe(
+                'The redirect address must start with <code>http://</code> or '
+                '<code>https://</code>; '
+                'It is possible to pass information to the redirect address '
+                'by passing variables to URL parameters: '
+                '<code>https://redirect.me/?participantId='
+                '<b>{{ participant.public_id }}</b></code>'
+            )
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+
         redirect_enabled = cleaned_data.get('redirect_enabled', False)
         redirect_target = cleaned_data.get('redirect_target', '')
         if redirect_enabled and not redirect_target:
@@ -132,6 +182,19 @@ class ProjectEditForm(forms.ModelForm):
                            'Redirect is enabled but no redirect target is defined.')
 
         return cleaned_data
+
+
+class EditBrandingForm(forms.ModelForm):
+    class Meta:
+        model = DonationProject
+        fields = [
+            'img_header_left',
+            'img_header_right'
+        ]
+        labels = {
+            'img_header_left': 'Logo Header Left',
+            'img_header_right': 'Logo Header Right',
+        }
 
 
 class CustomJSONWidget(forms.Textarea):
@@ -199,6 +262,21 @@ class BriefingEditForm(forms.ModelForm):
         widgets = {
             'briefing_text': CKEditor5Widget(config_name='ddm_ckeditor'),
         }
+        help_texts = {
+            'briefing_text': (
+                'Introduce your study, provide a quick summary of what your '
+                'participants will be asked to do in the next steps, etc.'
+            ),
+            'briefing_consent_enabled': (
+                'If enabled, participants will have to provide explicit '
+                'participation consent before they can advance to the data '
+                'donation'
+            )
+        }
+        labels = {
+            'briefing_consent_label_yes': 'Response Consent',
+            'briefing_consent_label_no': 'Response Non-Consent',
+        }
 
     def clean(self):
         cleaned_data = super().clean()
@@ -221,4 +299,7 @@ class DebriefingEditForm(forms.ModelForm):
         fields = ['debriefing_text']
         widgets = {
             'debriefing_text': CKEditor5Widget(config_name='ddm_ckeditor_temp_func'),
+        }
+        help_texts = {
+            'debriefing_text': ''
         }

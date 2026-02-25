@@ -1,0 +1,103 @@
+<div id="data-center" class="ddm-section-container">
+  <div class="row">
+    <h2>Data Center</h2>
+  </div>
+
+  {% with stats=object.get_statistics %}
+    <div class="row pb-0">
+      <div class="col">
+        <div class="stats-wrapper">
+
+          <div class="col">
+            <div class="stats-card">
+              <div><h4>Donated Files</h4></div>
+              <div class="statistic">{{ stats.n_donations }}</div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="stats-card">
+              <div><h4>Started</h4></div>
+              <div class="statistic">{{ stats.n_started }}</div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="stats-card">
+              <div><h4>Completed</h4></div>
+              <div class="statistic">{{ stats.n_completed }}</div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="stats-card">
+              <div><h4>Completion Rate</h4></div>
+              <div class="statistic">{{ stats.completion_rate|floatformat:2 }}</div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="stats-card">
+              <div><h4>Avg. Time to Complete</h4></div>
+              <div class="statistic">{{ stats.average_time }}<span class="mb-0 pb-1 ps-2 fs-08">h:m:s</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endwith %}
+
+  <div class="row">
+    <h3 class="mt-4">Data Download</h3>
+  </div>
+  <div class="row justify-content-start gy-4">
+
+    <div id="download-participation-overview" class="col-auto">
+      <div class="card-base">
+        <div>
+          <h4>Participation Overview</h4>
+        </div>
+        <div class="mt-2 mb-2">
+          <a id="download-data-button"
+             class="ddm-btn-base ddm-btn-green ddm-btn-small"
+             data-download-url='{% url 'ddm_apis:download_project_details' object.url_id %}'
+             data-filename='ddm_{{ object.url_id }}_participation-overview_{% now "Y-m-d-H-i" %}'
+             data-n-started={{ object.get_statistics.n_started }}>
+            <i class="bi bi-download pe-1"></i>
+            Download CSV
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div id="download-participation-overview" class="col-auto">
+      <div class="card-base">
+        <div>
+          <h4>Questionnaire Responses</h4>
+        </div>
+        <div class="mt-2 mb-2">
+          <a id="download-responses-button"
+             class="ddm-btn-base ddm-btn-green ddm-btn-small"
+             data-download-url="{% url 'ddm_apis:responses' object.url_id %}">
+            <i class="bi bi-download pe-1"></i> Download CSV
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div id="download-participation-overview" class="col-auto">
+      <div class="card-base">
+        <div>
+          <h4>Remote Download</h4>
+        </div>
+        <div>
+          <a class="fs-09 internal-link" href="{% url 'ddm_auth:project_token' object.url_id %}">
+            Manage Remote Access
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,27 @@
+{% if field %}
+  <div class="form-field-wrapper form-check form-switch {{ extra_field_classes }}">
+
+    <input
+        class="form-check-input"
+        type="checkbox"
+        role="switch"
+        id="{{ field.id_for_label }}"
+        name="{{ field.html_name }}"
+        {% if field.value %}checked{% endif %}
+    >
+    <label class="form-check-label" for="{{ field.id_for_label }}">
+      {{ field.label }}
+    </label>
+  </div>
+
+  <div class="below-switch">
+    {{ field.errors }}
+
+    {% if field.help_text %}
+      <span class="helptext">
+        {{ field.help_text }}
+      </span>
+    {% endif %}
+
+  </div>
+{% endif %}

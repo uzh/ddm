@@ -1,3 +1,12 @@
-{% include "ddm_core/form_components/_basic_field.html" with field=form.display_name %}
-{% include "ddm_core/form_components/_basic_field.html" with field=form.description %}
-{% include "ddm_core/form_components/_basic_field.html" with field=form.display_position %}
+<div id="project-details" class="ddm-section-container">
+  <div class="row">
+    <div class="form-section-heading">
+      <h2>Display Settings</h2>
+      <p>Configure what participants see on the donation interface</p>
+    </div>
+
+    {% include "ddm_core/form_components/_basic_field.html" with field=form.display_name %}
+    {% include "ddm_core/form_components/_basic_field.html" with field=form.description %}
+    {% include "ddm_core/form_components/_basic_field.html" with field=form.display_position %}
+  </div>
+</div>

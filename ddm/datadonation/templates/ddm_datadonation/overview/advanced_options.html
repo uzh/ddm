@@ -1,3 +1,20 @@
-<p class="fw-bold mt-0">Custom Translations</p>
-<p>Overwrite default phrases and translations used in the data donation interface.</p>
-<p><a class="ddm-btn-base ddm-btn-green" href="{% url 'ddm_projects:edit_translations' project.url_id %}">Edit Uploader Translations</a></p>
+<div class="row justify-content-start gy-4">
+
+    <div id="advanced-options-section" class="col-12">
+      <div class="card-base">
+        <div>
+          <h4>Custom Translations</h4>
+        </div>
+        <div>
+          <p class="m-0 pb-2">Override default phrases and translations used in the data donation interface.</p>
+        </div>
+        <div>
+          <p class="m-0">
+            <a class="internal-link" href="{% url 'ddm_projects:edit_translations' project.url_id %}">
+              Edit Uploader Translations
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+</div>

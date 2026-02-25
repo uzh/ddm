@@ -1,0 +1,21 @@
+<div class="form-controls">
+  <div class="container">
+    <div class="row justify-content-center align-items-center">
+
+      <div class="col-6">
+        {% block pre_footer_left %}
+          <div><a href="{{ back_target }}"><i class="bi bi-arrow-left-short"></i> Back</a></div>
+        {% endblock pre_footer_left %}
+      </div>
+
+      <div class="col-6">
+        {% block pre_footer_right %}
+          {% if form %}
+            {% include "ddm_core/form_components/_button_group.html" with for_form="base-form" %}
+          {% endif %}
+        {% endblock pre_footer_right %}
+      </div>
+    </div>
+
+  </div>
+</div>

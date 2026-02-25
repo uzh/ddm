@@ -1,27 +1,69 @@
+@use '../abstracts' as *;
+
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-    font-family: 'IBM Plex Sans', sans-serif;
+  font-family: var(--ff-headings), sans-serif;
 }
-
 
 h1 {
-    font-weight: bold;
+  font-weight: bold;
+
+  @media (min-width: $bp-md) {
+    font-size: 1.75rem;
+  }
+
+  @media (min-width: $bp-xl) {
+    font-size: 2rem;
+  }
+
 }
 
-@media (min-width: 768px) {
-    h1 {
-        font-size:1.75rem;
-    }
-}
-@media (min-width: 992px) {
+// Hyperlinks
+a,
+.a-no-link {
+  color: #007b74;
+  text-decoration: none;
+  cursor: pointer;
 
+  &:hover {
+    color: #005955;
+  }
 }
-@media (min-width: 1200px) {
-    h1 {
-        font-size: 2rem;
-    }
+
+.internal-link {
+  display: inline-flex;
+  font-weight: 500;
+
+  &::after {
+    font-family: "bootstrap-icons";
+    font-weight: 500;
+    content: "\F138";
+    margin-left: 5px;
+    display: inline-block;
+  }
+}
+
+
+// Code Blocks
+code {
+  color: var(--code-color);
+  background: var(--code-color-background);
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-family: var(--ff-mono);
+}
+
+.secondary-code-color {
+  color: var(--code-color-secondary);
+}
+
+// Lists
+
+ul {
+  margin-left: 20px;
+  margin-top: 5px !important;
 }

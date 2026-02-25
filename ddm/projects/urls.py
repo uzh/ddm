@@ -11,8 +11,17 @@ urlpatterns = [
          views.ProjectCreate.as_view(), name='create'),
     path(r'<slug:project_url_id>/',
          views.ProjectDetail.as_view(), name='detail'),
-    path(r'<slug:project_url_id>/edit/',
-         views.ProjectEdit.as_view(), name='edit'),
+
+    # Project settings
+    path(r'<slug:project_url_id>/edit/public-information',
+         views.ProjectEditPublicInformation.as_view(), name='edit_public_information'),
+    path(r'<slug:project_url_id>/edit/url-parameter',
+         views.ProjectEditUrlParameter.as_view(), name='edit_url_parameter'),
+    path(r'<slug:project_url_id>/edit/redirect',
+         views.ProjectEditRedirectConfiguration.as_view(), name='edit_redirect_configuration'),
+    path(r'<slug:project_url_id>/edit/branding',
+         views.ProjectEditBranding.as_view(), name='edit_branding'),
+
     path(r'<slug:project_url_id>/delete/',
          views.ProjectDelete.as_view(), name='delete'),
     path(r'<slug:project_url_id>/briefing/',

@@ -1,0 +1,47 @@
+<table id="inlineform-table" class="table fs-08">
+  <tr class="border-bottom">
+    <th>Order</th>
+    <th>Rule name</th>
+    <th>Field</th>
+    <th>Description</th>
+    <th></th>
+    <th>Delete</th>
+  </tr>
+
+  {% for form in rule_formset%}
+    <tr>
+      {{ form.non_field_errors }}
+      {% with loop_id=forloop.counter0 %}
+        {% for field in form.visible_fields %}
+          {% if field.name in 'name,field,execution_order' %}
+            <td id="{{ field.name }}-{{ loop_id }}">
+              {{ field.errors }}
+              {{ field.value }}
+            </td>
+          {% endif %}
+        {% endfor %}
+      {% endwith %}
+
+      <td><span id="step-description-{{ forloop.counter0 }}">–</span></td>
+
+      <td><a href="" type="button" data-bs-toggle="modal" data-bs-target="#configuration-{{ forloop.counter0 }}">configure rule</a></td>
+
+      {% for field in form.visible_fields %}
+        {% if field.name in 'DELETE' %}
+          <td>
+            {{ field.errors }}
+            {{ field }}
+          </td>
+        {% endif %}
+      {% endfor %}
+
+      {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+      {% endfor %}
+    </tr>
+
+  {% empty %}
+    <tr id="no-rules-defined-warning"><td class="text-danger" colspan="6">No Rules defined - nothing will be extracted.</td></tr>
+  {% endfor %}
+
+</table>

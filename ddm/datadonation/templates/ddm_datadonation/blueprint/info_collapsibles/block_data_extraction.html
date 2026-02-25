@@ -1,65 +1,17 @@
-<table id="extraction-info-table" class="table table-borderless table-striped fs-08">
-  <tr class="border-bottom">
-    <th>Extraction Operator</th>
-    <th>Description</th>
-    <th>Note</th>
-  </tr>
-  <tr>
-    <td>Keep Field</td>
-    <td>Keep this field in the extracted data.</td>
-    <td>–</td>
-  </tr>
-  <tr>
-    <td>Equal (==)</td>
-    <td>Delete row if field value equals <code>comparison value</code>.</td>
-    <td>Works for strings, integers, and dates<sup>1</sup>.</td>
-  </tr>
-  <tr>
-    <td>Not Equal (!=)</td>
-    <td>Delete row if field value does not equal <code>comparison value</code>.</td>
-    <td>Works for strings, integers, and dates<sup>1</sup>.</td>
-  </tr>
-  <tr>
-    <td>Greater than (>)</td>
-    <td>Delete row if field value is greater than <code>comparison value</code>.</td>
-    <td>Works for integers and dates<sup>1</sup>. Strings are skipped and row is kept in the data.</td>
-  </tr>
-  <tr>
-    <td>Smaller than (<)</td>
-    <td>Delete row if field value is smaller than <code>comparison value</code>.</td>
-    <td>Works for integers and dates<sup>1</sup>. Strings are skipped and row is kept in the data.</td>
-  </tr>
-  <tr>
-    <td>Greater than or equal (>=)</td>
-    <td>Delete row if field value is greater than or equal to <code>comparison value</code>.</td>
-    <td>Works for integers and dates<sup>1</sup>. Strings are skipped and row is kept in the data.</td>
-  </tr>
-  <tr>
-    <td>Smaller than or equal (<=)</td>
-    <td>Delete row if field value is smaller than or equal to <code>comparison value</code>.</td>
-    <td>Works for integers and dates<sup>1</sup>. Strings are skipped and row is kept in the data.</td>
-  </tr>
-  <tr>
-    <td>Delete match (regex)</td>
-    <td>Remove the part of the field value that matches the regex.<br>
-      <em>Example:</em> regex <code>^Watched </code> transforms "Watched video XY" → "video XY"</td>
-    <td>Values are converted to strings before regex matching.</td>
-  </tr>
-  <tr>
-    <td>Replace match (regex)</td>
-    <td>Replace the matching part of the field value with <code>replacement value</code>.<br>
-      <em>Example:</em> regex <code>[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,4}</code> with replacement <code>_anonymized_</code> transforms "some text email@address.com" → "some text _anonymized_"</td>
-    <td>Values are converted to strings before regex matching.</td>
-  </tr>
-  <tr>
-    <td>Delete row when match (regex)</td>
-    <td>Delete the entire row if the field value matches the regex.<br>
-      <em>Example:</em> regex <code>^Watched </code> deletes any row where the field starts with "Watched "</td>
-    <td>Values are converted to strings before regex matching.</td>
-  </tr>
-</table>
-
-<p class="ddm-note">
-  <sup>1</sup>Dates are detected if formatted as ISO, RFC2822, or HTTP, and only if both values use the same format.
-  Otherwise, treated as strings.
+<p>
+  Data is extracted by following a set of <code>Extraction Rules</code>.
 </p>
+<p>
+  <code>Extraction Rules</code> are applied to the data located at the defined <code>Extraction Root</code> row-by-row in the order you define them.
+  If no rules are configured, no data is extracted.
+  All extraction happens on the participant's device using JavaScript.
+</p>
+
+<p>Configuring extraction:</p>
+
+<div>
+  <ol class="mb-4 mt-2">
+    <li>For each field you want to keep, add a rule with the <code>Keep field</code> operator.</li>
+    <li>Add additional rules to filter (delete rows) or transform values using comparison or regex operators.</li>
+  </ol>
+</div>

@@ -155,7 +155,7 @@ class FileUploaderForm(forms.ModelForm):
         labels = {
             'extract_nested_zips': 'Extract nested zip files',
             'extraction_depth': 'Extraction depth',
-            'combined_consent': 'All-in-one consent enabled',
+            'combined_consent': 'All-in-one consent',
             'index': 'Display position'
         }
         widgets = {
@@ -173,8 +173,9 @@ class FileUploaderForm(forms.ModelForm):
                 'Lower = first.'
             ),
             'extract_nested_zips': (
-                'Whether to extract zip files found inside the uploaded zip and '
-                'make their contents available to be handled by Blueprints'
+                'When enabled, any zip files found inside the uploaded zip '
+                'are automatically extracted up to the extraction depth '
+                'so their contents can be processed by Blueprints.'
             ),
             'extraction_depth': (
                 'Levels of nested zips to extract (0 = top-level only)'

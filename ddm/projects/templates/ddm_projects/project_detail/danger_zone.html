@@ -1,0 +1,39 @@
+<div id="danger-zone" class="ddm-section-container">
+  <div>
+    <h2 class="fc-red">Danger Zone</h2>
+  </div>
+
+  <div>
+    <p>These actions are permanent and cannot be undone. Proceed with caution.</p>
+  </div>
+
+  <div class="row">
+
+    <div class="col-auto">
+      <button
+          class="ddm-btn-base ddm-btn-red-inverted"
+          data-bs-toggle="modal"
+          data-bs-target="#delete-data-confirm">
+        Reset Project Data
+      </button>
+    </div>
+
+    <div class="col-auto">
+      <button
+          class="ddm-btn-base ddm-btn-red-inverted"
+          data-bs-toggle="modal"
+          data-bs-target="#delete-participant">
+        Delete Participant
+      </button>
+    </div>
+
+    <div class="col-auto">
+      <a
+          class="ddm-btn-base ddm-btn-red-inverted text-center d-inline-block"
+          href="{% url 'ddm_projects:delete' object.url_id %}">
+        Delete Project
+      </a>
+    </div>
+
+  </div>
+</div>

@@ -2,69 +2,47 @@
 
 {% load static %}
 
-{% block page_title %}Edit Uploader Translations{% endblock %}
+{% block page_title %}Edit Uploader Translations{% endblock page_title %}
 
-{% block main_heading %}Edit Uploader Translations for "{{ object.name }}"{% endblock %}
+{% block main_heading %}Uploader Translations{% endblock main_heading %}
 
-{% block main_form %}
-  <form method='post' enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.media }}
+{% block sub_heading %}
+  Override default text included in the donation interface or add translations for additional languages.
+{% endblock sub_heading %}
 
-    <div>
-      {% if form.errors %}
-        <p class="error-disclaimer"><i class="bi bi-exclamation-square-fill"></i> The form could not be processed.
-          Please check the issues highlighted below.</p>
-      {% endif %}
+{% block form_content %}
 
-      {{ form.non_field_errors }}
-
+  <div id="project-translations-section" class="ddm-section-container">
+    <div class="row">
       <div>
-        <h5>Edit Custom Uploader Translations</h5>
-        <div>
-          {% for field in form %}
-            <p>
-              {{ field.help_text }}
-            </p>
+        {% for field in form %}
 
-            <p>
-              For example, the donation consent question can be changed by setting the custom translations to:
-              <code>{"en": {"feedback": {"donation-question": "custom english question"}}, "de": {"feedback": {"donation-question": "custom german question"}}}</code>
-            </p>
+          {% include "ddm_core/form_components/_basic_field.html" with field=field %}
 
-            <p>
-              {{ field.errors }}
-              {{ field }}
-            </p>
+          <p class="pb-3">
+            For example, the donation consent question can be changed by setting the custom translations to:
+            <code>{"en": {"feedback": {"donation-question": "custom english question"}}, "de": {"feedback": {"donation-question": "custom german question"}}}</code>
+          </p>
 
-            <p>
-              Below you can see the structure of the original translation file to identify the keys you
-              want to overwrite.
-            </p>
-          {% endfor %}
-        </div>
-      </div>
-
-      <div class="pt-2">
-        {% with locales_example="<pre>"|add:locales|add:"</pre>" %}
-          {% include "ddm_core/components/info_collapsible.html" with element_id="ulbps" title="See original translations" include_path="" body=locales_example %}
-        {% endwith %}
-      </div>
-
-      <div class="ddm-btn-group">
-        <div>{# Spacing element #}</div>
-        <div class="inner-btn-group">
-          <div><a class="ddm-btn-base ddm-btn-secondary" href="{% url 'ddm_datadonation:overview' object.url_id %}">Cancel</a></div>
-          <div><input class="ddm-btn-base ddm-btn-green" type="submit" value="Update Translations"></div>
-        </div>
+          <p>
+            Below you can see the structure of the original translation file to identify the keys you
+            want to overwrite.
+          </p>
+        {% endfor %}
       </div>
     </div>
-  </form>
 
-{% endblock %}
+    <div class="pt-2">
+      {% with locales_example="<pre>"|add:locales|add:"</pre>" %}
+        {% include "ddm_core/components/info_collapsible.html" with element_id="ulbps" title="See original translations" include_path="" body=locales_example %}
+      {% endwith %}
+    </div>
 
+  </div>
+
+{% endblock form_content %}
 
 {% block scripts %}
   {{ block.super }}
   <script src="{% static 'ddm_projects/js/project-edit-utils.js' %}"></script>
-{% endblock %}
+{% endblock scripts %}

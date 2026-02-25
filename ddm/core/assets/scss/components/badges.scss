@@ -1,0 +1,20 @@
+.badge-grey,
+.badge {
+  display: inline-block;
+  padding: .35em .65em;
+  font-size: .75em;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: .25rem;
+  background: var(--bg-color-lightgrey);
+}
+
+.badge-grey {
+  background: var(--bg-color-lightgrey);
+  color: var(--font-color-grey);
+  border: 1px solid var(--border-color-lightgrey);
+}

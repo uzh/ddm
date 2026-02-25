@@ -4,66 +4,53 @@
 
 {% block page_title %}Create {{ question_type }}{% endblock page_title %}
 
-{% block main_heading %}Create New {{ question_type }}{% endblock main_heading %}
+{% block main_heading %}Create {{ question_type }}{% endblock main_heading %}
 
-{% block submit_label %}Create Question{% endblock submit_label %}
+{% block form_content %}
 
-{% block main_form %}
-  <form method='post'>
-    {% csrf_token %}
-    {{ form.media }}
+  {% if form.errors or item_formset.errors or scale_formset.errors %}
+    {% include "ddm_core/form_components/_general_form_errors.html" with override_standard_errors=True %}
+  {% endif %}
 
-    {# General Settings #}
+  {# General Settings #}
+  <div class="ddm-section-container ddm-section-collapsible-form">
     {% with content_include_path="ddm_questionnaire/form_sections/general_settings.html" %}
-      {% with accordion_description="" %}
-        {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="GeneralSettings" accordion_title="General Settings" is_expanded=True %}
-      {% endwith %}
+      {% include "ddm_core/components/accordion_card.html" with is_expanded=True accordion_id="BaseSettings" accordion_title="Base Settings" %}
     {% endwith %}
+  </div>
 
-    {# Display Options #}
-    {% if question_type == "Open Question"  %}
+  {# Display Options #}
+  {% if question_type == "Open Question"  %}
+    <div class="ddm-section-container ddm-section-collapsible-form">
       {% with content_include_path="ddm_questionnaire/form_sections/display_settings.html" %}
-        {% with accordion_description="How the question is displayed to participants" %}
-          {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="DisplaySettings" accordion_title="Display Settings" is_expanded=True %}
+        {% with accordion_description="Configure how the question is displayed to participants" %}
+          {% include "ddm_core/components/accordion_card.html" with accordion_id="DisplaySettings" accordion_title="Display Settings" %}
         {% endwith %}
       {% endwith %}
-    {% endif %}
+    </div>
+  {% endif %}
 
-    {# Input Settings #}
-    {% if question_type != "Text Block"  %}
+  {# Input Settings #}
+  {% if question_type != "Text Block"  %}
+    <div class="ddm-section-container ddm-section-collapsible-form">
       {% with content_include_path="ddm_questionnaire/form_sections/input_settings.html" %}
         {% with accordion_description="Configure input restrictions" %}
-          {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="InputSettings" accordion_title="Input Settings" is_expanded=True %}
+          {% include "ddm_core/components/accordion_card.html" with accordion_id="InputSettings" accordion_title="Input Settings" %}
         {% endwith %}
       {% endwith %}
-    {% endif %}
-
-    {# Item Configuration #}
-    {% if question_type != "Text Block" and question_type != "single_choice"  %}
-      {% with content_include_path="ddm_questionnaire/form_sections/item_configuration.html" %}
-        {% with accordion_description="You can configure the question items once you have created the Question." %}
-          {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="QuestionItemsConfig" accordion_title="Question Items" is_expanded=False is_disabled=True %}
-        {% endwith %}
-      {% endwith %}
-    {% endif %}
-
-    <div class="ddm-btn-group">
-      <div>{# Spacing element #}</div>
-      <div class="inner-btn-group">
-        <div><a class="ddm-btn-base ddm-btn-secondary" href="{% url 'ddm_questionnaire:overview' project_url_id %}">Cancel</a></div>
-        <div><input class="ddm-btn-base ddm-btn-green" type="submit" value="Create Question"></div>
-      </div>
     </div>
+  {% endif %}
 
-  </form>
-{% endblock main_form %}
+  {# Item Configuration #}
+  {% if item_formset  %}
+    <div class="ddm-section-container ddm-section-collapsible-form ">
+      {% with content_include_path="ddm_questionnaire/form_sections/item_configuration.html" %}
+        {% include "ddm_core/components/accordion_card.html" with accordion_id="QuestionItemsConfig" accordion_title="Question Items" %}
+      {% endwith %}
+    </div>
+  {% endif %}
 
-{% block breadcrumbs %}
-  <a href="{% url 'ddm_projects:list' %}">Projects</a><i class="bi bi-chevron-right"></i>
-  <a href="{% url 'ddm_projects:detail' project_url_id %}">"{{ project.name|truncatechars:15 }}" Project</a><i class="bi bi-chevron-right"></i>
-  <a href="{% url 'ddm_questionnaire:overview' project_url_id %}">Questionnaire</a><i class="bi bi-chevron-right"></i>
-  Create Question
-{% endblock breadcrumbs %}
+{% endblock form_content %}
 
 {% block scripts %}
   {{ block.super }}

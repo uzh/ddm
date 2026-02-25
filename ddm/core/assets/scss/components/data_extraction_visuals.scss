@@ -1,0 +1,38 @@
+@use '../abstracts' as *;
+
+.data-flow-container {
+  opacity: 0.3;
+
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  @media(min-width: $bp-sm) {
+    display: flex;
+  }
+
+  .bi {
+    font-size: 4vw;
+    max-font-size: 30px;
+    color: var(--font-color-muted);
+
+
+    @media(min-width: $bp-lg) {
+      font-size: 40px;
+    }
+
+  }
+
+  .data-flow-border-top {
+    height: 1rem;
+    max-height: 1rem;
+  }
+
+  .data-flow-border-top,
+  .data-flow-border-bottom {
+    border-right: 3px dashed var(--font-color-muted);
+    height: 100%;
+  }
+
+}

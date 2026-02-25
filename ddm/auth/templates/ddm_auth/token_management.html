@@ -4,29 +4,19 @@
 
 {% block main_heading %}Remote Data Access{% endblock %}
 
-{% block main_form_header %}{% endblock %}
+{% block form_content %}
 
-{% block main_form %}
+  <div id="project-details" class="ddm-section-container">
+    <div class="row">
+      <h2>How remote data access works</h2>
+      {% include "ddm_auth/_access_explanation.html" %}
+    </div>
 
-  {# How To #}
-  {% with content_include_path="ddm_auth/_access_explanation.html" %}
-    {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="explanationAcc" accordion_title="How the remote access works" is_expanded=True %}
-  {% endwith %}
+    <div class="row mt-4">
+      {% include "ddm_auth/_token_management.html" %}
+    </div>
+  </div>
 
-  {# Token Management #}
-  {% with content_include_path="ddm_auth/_token_management.html" %}
-    {% include "ddm_core/components/accordion_card.html" with extra_classes="mb-4" accordion_id="accessTokenAcc" accordion_title="Access token" is_expanded=True %}
-  {% endwith %}
+{% endblock form_content %}
 
-  {% block cancel %}
-    <p class="mt-4">
-      <a href="{% url 'ddm_projects:detail' project.url_id %}"><i class="bi bi-arrow-left-short"></i> Back</a>
-    </p>
-  {% endblock %}
-{% endblock %}
-
-{% block breadcrumbs %}
-  <a href="{% url 'ddm_projects:list' %}">Projects</a><i class="bi bi-chevron-right"></i>
-  <a href="{% url 'ddm_projects:detail' project.url_id %}">"{{ project.name|truncatechars:15 }}" Project</a><i class="bi bi-chevron-right"></i>
-  Manage Access Token
-{% endblock %}
+{% block pre_footer_right %}{% endblock pre_footer_right %}

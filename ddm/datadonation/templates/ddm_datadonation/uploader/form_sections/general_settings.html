@@ -1,34 +1,25 @@
-{% include "ddm_core/form_components/_basic_field.html" with field=form.upload_type %}
-{% include "ddm_core/form_components/_basic_field.html" with field=form.name %}
+<div id="general-settings" class="ddm-section-container">
+  <div class="row">
+    <div class="form-section-heading">
+      <h2>Base Settings</h2>
+    </div>
 
-<p class="ddm-form-group-header">Nexted zip extraction</p>
-<div id="file-uploader-zip-settings" class="container ddm-form-group">
-  <p class="mt-0 pb-2">
-    When enabled, any zip files found inside the uploaded zip are automatically extracted up to the extraction depth
-    so their contents can be processed by Blueprints.
-  </p>
+    {% include "ddm_core/form_components/_basic_field.html" with field=form.upload_type %}
+    {% include "ddm_core/form_components/_basic_field.html" with field=form.name %}
 
-  <div class="row mt-2">
-    {% for field in form %}
+    <div
+        id="file-uploader-zip-settings"
+        class="container ddm-form-group"
+        style="visibility: hidden; max-height: 0; opacity: 0; margin: 0; padding: 0;"  {# Added inline style for JS transition #}
+    >
+      <p class="ddm-form-group-header mb-4">Nested zip extraction</p>
 
-      {% if field.name == 'extract_nested_zips' %}
+      <div class="row mt-2">
 
-        <div class="col-12 col-sm-3 col-lg-2 pb-2">
-          <div class="border-md-bottom mb-1"><label>Extract nested zips:</label></div>
-          <div>{{ field.errors }}</div>
-          <div>{{ field }}</div>
-        </div>
+        {% include "ddm_core/form_components/_checkbox_toggle_field.html" with field=form.extract_nested_zips %}
+        {% include "ddm_core/form_components/_basic_field.html" with field=form.extraction_depth %}
 
-      {% elif field.name == 'extraction_depth' %}
-        <div class="col-12 col-sm-9 col-lg-10 pb-2">
-          <div class="border-md-bottom mb-1">{{ field.label_tag }}</div>
-          <div>{{ field.errors }}</div>
-          <div>{{ field }}</div>
-          <div><span class="helptext">{{ field.help_text }}</span></div>
-        </div>
-
-      {% endif %}
-
-    {% endfor %}
+      </div>
+    </div>
   </div>
 </div>

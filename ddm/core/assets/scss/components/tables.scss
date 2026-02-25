@@ -1,7 +1,6 @@
 .uploader-overview-table > tbody > tr > td {
     padding-top: 1rem;
     padding-bottom: 1rem;
-    border-bottom-width: 2px;
 }
 .blueprint-overview-table {
     margin-top: 0.5rem;
@@ -9,4 +8,35 @@
 }
 .blueprint-overview-table > tbody > tr:last-child > td {
     border-bottom: none;
+}
+
+table {
+
+  tbody {
+    border-top: none !important;
+  }
+
+  th {
+    color: var(--font-color-muted);
+    font-weight: 500;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: var(--ff-headings);
+  }
+
+  td {
+    vertical-align: middle;
+  }
+
+  textarea,
+  input,
+  select{
+    margin: 0 !important;
+  }
+}
+
+.table-striped > tbody > tr:nth-of-type(2n+1) > * {
+  --bs-table-accent-bg: var(--bg-color-lightgrey);
+  color: var(--bs-table-striped-color);
 }

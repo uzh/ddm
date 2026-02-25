@@ -1,2 +1,10 @@
-{% include "ddm_core/form_components/_basic_field.html" with field=form.name %}
-{% include "ddm_core/form_components/_basic_field.html" with field=form.file_uploader %}
+<div id="project-details" class="ddm-section-container">
+  <div class="row">
+    <div class="form-section-heading">
+      <h2>General Settings</h2>
+    </div>
+
+    {% include "ddm_core/form_components/_basic_field.html" with field=form.name %}
+    {% include "ddm_core/form_components/_basic_field.html" with field=form.file_uploader %}
+  </div>
+</div>

@@ -1,247 +1,368 @@
-/* Basic ddm form styling. */
-.ddm-form {
-    font-size: 0.9rem;
+@use '../abstracts' as *;
+
+// Inputs
+// -------
+
+input[type=text],
+input[type=number],
+input[type=password],
+input[type=email],
+select,
+textarea {
+  margin-top: 0.75rem;
+  border-radius: 5px;
+  border: 1.5px solid var(--color-greyish);
+  padding: 10px 15px;
+  width: 100%;
+  display: block;
 }
 
-.ddm-form label {
+input[type=text],
+textarea {
+  min-width: 200px;
+}
+input[type=number] {
+  max-width: 6rem;
+  min-width: 4rem;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 1.5px solid var(--color-main-green-brighter);
+  border-color: white;
+}
+
+
+input[type=number],
+input[type=password],
+input[type=email] {
+  @media (min-width: $bp-lg) {
+    width: 50%;
+  }
+}
+
+input[type=checkbox] {
+  display: none;
+
+  &:checked + .checkmark {
+    background-color: var(--color-main-green);
+  }
+
+  &:checked + .checkmark:after {
     display: block;
-    font-size: 0.8rem;
-    font-weight: bold;
+  }
 }
 
-.ddm-form p {
-    margin-bottom: 0;
-    margin-top: 1rem;
-}
+input[role="switch"] {
+  display: block;
 
-.ddm-form .helptext,
-.helptext {
-    color: black;
-    font-size: 0.8rem;
-}
+  &:checked + .checkmark {
+    background-color: var(--color-main-green);
+  }
 
-.ddm-form .ddm-btn {
-    margin-top: 1rem;
-}
-
-.ddm-form h5, h6 {
-    margin-top: 2rem;
-}
-
-.ddm-form input[type=text],
-.ddm-form input[type=number],
-.ddm-form input[type=password],
-.ddm-form input[type=email],
-.ddm-form textarea {
-    border-radius: 3px;
-    border: 1px solid #ddd;
-    padding: 5px;
-    width: 100%;
+  &:checked + .checkmark:after {
     display: block;
-}
-.ddm-form input[type=text],
-.ddm-form textarea {
-    min-width: 200px;
-}
-.ddm-form input[type=number] {
-    max-width: 6rem;
-    min-width: 4rem;
+  }
+
 }
 
-.ddm-form input:focus,
-.ddm-form textarea:focus,
-.ddm-form select:focus {
-    outline: 1px solid #009c94;
-    border-color: white;
+select {
+  background: white;
+  min-width: 150px;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  option:hover {
+    cursor: pointer;
+  }
 }
 
-.ddm-form select {
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    height: 30px;
-    display: block;
-    min-width: 150px;
-}
+.form-field-wrapper.form-switch {
+  padding-left: 2rem;
+  margin-bottom: 0;
 
-@media (min-width: 992px) {
-    .ddm-form input[type=number],
-    .ddm-form input[type=password],
-    .ddm-form input[type=email] {
-        width: 50%;
+  .form-check-input {
+
+    height: 1.25rem;
+    width: 2.5rem;
+    margin-top: .15rem;
+    margin-right: 0.5rem;
+    margin-left: -1.8rem;
+
+    &:hover {
+      cursor: pointer;
     }
+
+    &:checked {
+      background-color: var(--color-main-green);
+      border-color: var(--color-main-green);
+    }
+
+    &:focus {
+      border-color: var(--color-main-green);
+      outline: 0;
+      box-shadow: 0 0 0 .25rem rgba(0, 156, 148, .25);
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23d1d1d1'/%3e%3c/svg%3e");
+    }
+  }
+  .checkmark {
+    display: none;
+  }
 }
 
-/* Custom checkbox input: */
-.ddm-form input[type=checkbox] {
-    display: none;
+.below-switch {
+  margin-bottom: 2rem;
 }
 
 .checkmark {
-    position: relative;
-    height: 20px;
-    width: 20px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 3px;
+  position: relative;
+  height: 22px;
+  width: 22px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 3px;
 }
 
-.checkmark:hover {
+.checkmark{
+
+  &:hover {
     cursor: pointer;
-}
+  }
 
-.ddm-form input[type=checkbox]:checked + .checkmark {
-    background-color: #009c94;
-}
-
-.checkmark:after {
+  &:after {
     content: "";
     position: absolute;
     display: none;
-}
-
-.ddm-form input:checked + .checkmark:after {
-    display: block;
-}
-
-.ddm-form .checkmark:after {
-    left: 7px;
+    left: 8px;
     top: 3px;
     width: 6px;
-    height: 10px;
+    height: 11px;
     border: solid white;
     border-width: 0 3px 3px 0;
     -webkit-transform: rotate(35deg);
     -ms-transform: rotate(35deg);
     transform: rotate(35deg);
+  }
+
 }
 
+// General Styling
+// ---------------
+
+form {
+
+  p {
+    margin-bottom: 0;
+  }
+}
+
+.form-field-wrapper {
+  margin-bottom: 1.5rem;
+}
+
+.form-field-wrapper.ck-field {
+  margin-bottom: 1rem;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+}
+
+.helptext {
+  color: var(--font-color-grey);
+  font-size: 0.9rem;
+}
+
+.form-section-heading {
+
+  margin-bottom: 1.5rem;
+
+  h2 {
+    font-size: 0.9rem !important;
+    text-transform: uppercase;
+    color: var(--font-color-muted);
+    letter-spacing: 1px;
+    margin-bottom: 0.25rem !important;
+  }
+
+  p {
+    color: var(--font-color-muted);
+  }
+
+}
+
+.form-section-intro {
+  margin-bottom: 1.5rem;
+}
+
+.form-controls {
+  background: white;
+  border-top: 1px solid var(--border-color-lightgrey);
+  border-bottom: 1px solid var(--border-color-lightgrey);
+  position: -webkit-sticky; /* For Safari support */
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+
+  .ddm-btn-group {
+    margin-top: 0;
+  }
+
+}
+
+.ddm-form-group {
+  background: var(--bg-color-lightgrey);
+  border: 1.5px solid var(--border-color-lightgrey);
+  border-radius: 10px;
+  margin-left: 0.1rem;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  padding: 15px 20px;
+
+  label {
+    font-size: 0.9rem;
+  }
+}
+.ddm-form-group-header {
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+.form-image-preview {
+  width: 250px;
+  max-width: 50vw;
+  border: 1px solid var(--border-color-lightgrey);
+}
+
+.form-image-preview-empty {
+  height: 100%;
+  background: white;
+  color: var(--font-color-muted);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// Form Errors
+
+ul.errorlist {
+  margin-top: 0.5rem;
+  padding-left: 0;
+
+  li {
+    background: var(--bg-color-lightred) !important;
+    display: inline-block;
+    padding: .35em .65em;
+    line-height: 1;
+    color: var(--color-darkred) !important;
+    text-align: center;
+    vertical-align: baseline;
+    border-radius: .25rem;
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+}
+
+
+
+
+
+
+/* Basic ddm form styling. */
+
+
+
+/* Custom checkbox input: */
+
 .ddm-choice-label {
-    font-weight: normal !important;
-    font-size: 1rem !important;
-    margin-left: 5px;
-    cursor: pointer;
+  font-weight: normal !important;
+  font-size: 1rem !important;
+  margin-left: 5px;
+  cursor: pointer;
 }
 
 .ddm-form-file-field label {
-    display: inline-block;
+  display: inline-block;
 }
 
 /* Auth form - used on login page. */
 .auth-form {
-    font-size: 1rem !important;
-}
+  font-size: 1rem !important;
 
-.auth-form input {
+  input {
     width: 75% !important;
-    display: inline !important;
-}
-
-.auth-form input {
     display: block !important;
     margin-left: auto;
     margin-right: auto;
-}
+  }
 
-.auth-form ul {
+  ul {
     width: 75%;
     margin-left: auto;
     margin-right: auto;
     text-align: left;
     font-size: 0.8rem;
     color: gray;
+  }
 }
 
-.django-ckeditor-widget {
-    display: block !important;
-}
-
-.form-section-heading {
-    font-size: 1.1rem;
-    border-bottom: 1px solid #1a1a1a;
-    font-weight: bold;
-}
 .form-section-container {
-    border-bottom: 1px solid lightgrey;
-    margin-bottom: 3rem;
-    padding-bottom: 1.5rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
-}
-
-ul.errorlist {
-    padding-left: 0;
-}
-
-ul.errorlist > li {
-    background: var(--color-darkred) !important;
-    display: inline-block;
-    padding: .35em .65em;
-    line-height: 1;
-    color: #fff;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: baseline;
-    border-radius: .25rem;
-    font-size: 0.8rem;
-    margin-bottom: 0.5rem;
+  border-bottom: 1px solid lightgrey;
+  margin-bottom: 3rem;
+  padding-bottom: 1.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 #empty-form-placeholder,
 #empty-form {
-    display: none;
+  display: none;
 }
 
 .form-error {
-    color: var(--color-darkred);
+  color: var(--color-darkred);
 }
 
 .ddm-note {
-    font-size: 0.75rem;
-    color: grey;
+  font-size: 0.75rem;
+  color: grey;
 }
 
 /* DDM Form Section (New) */
 .ddm-form-section {
-    border-top: 1px solid lightgrey;
-    border-bottom: 1px solid lightgrey;
+  border-top: 1px solid lightgrey;
+  border-bottom: 1px solid lightgrey;
 }
 .ddm-form-section-header {
-    font-size: 1rem;
-    background-color: var(--bg-color-light);
-    width: 100%;
-    padding: 1.25rem 1.25rem;
-    font-weight: bold;
+  font-size: 1rem;
+  background-color: var(--bg-color-light);
+  width: 100%;
+  padding: 1.25rem 1.25rem;
+  font-weight: bold;
 }
 .ddm-form-section-body {
-    padding: 1rem 1.25rem 2rem;
-    border-left: 4px solid var(--bg-color-light);
-    border-right: 4px solid var(--bg-color-light);
+  padding: 1rem 1.25rem 2rem;
+  border-left: 4px solid var(--bg-color-light);
+  border-right: 4px solid var(--bg-color-light);
 }
 .ddm-form-section-body > p:first-child {
-    margin-top: 0;
+  margin-top: 0;
 }
 .ddm-form-section.deletion-warning {
-    border: 2px solid var(--color-darkred);
-}
-
-.ddm-form-group {
-    background: var(--bg-color-lightest);
-    border-radius: 0.25rem;
-    margin-left: 0.1rem;
-    padding: 0.8rem 0.5rem;
-}
-.ddm-form-group-header {
-    font-weight: bold;
-    margin-top: 1.5rem;
-    margin-bottom: 0;
-    font-size: 0.8rem;
+  border: 2px solid var(--color-darkred);
 }
 
 /* Overrides for specific forms */
 
 #scale-point-table input[type=number],
 #question-item-table input[type=number] {
-    width: 100%;
-    max-width: 6rem;
+  width: 100%;
+  max-width: 6rem;
 }

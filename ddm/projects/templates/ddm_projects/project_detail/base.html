@@ -1,0 +1,56 @@
+{% extends 'ddm_core/base.html' %}
+{% load static %}
+
+{% block page_title %}Project Overview{% endblock page_title %}
+
+{% block main_heading %}{{ object.name }}{% endblock main_heading %}
+{% block sub_heading %}Project Hub{% endblock sub_heading %}
+
+{% block main_body %}
+
+  {# PROJECT DETAILS #}
+  {% include "ddm_projects/project_detail/general_details.html" %}
+
+  {# PROJECT CONFIGURATION #}
+  {% include "ddm_projects/project_detail/project_configuration.html" %}
+
+  {# DATA COLLECTION CONFIGURATION #}
+  {% include "ddm_projects/project_detail/data_collection_configuration.html" %}
+
+  {# DATA CENTER #}
+  {% include "ddm_projects/project_detail/data_center.html" %}
+
+  {# LOGS #}
+  {% include "ddm_projects/project_detail/logs.html" %}
+
+  {# Modal for download error #}
+  {% include "ddm_core/components/info_modal.html" with modal_id="modal-download-error" body="<p><i class='bi bi-x-octagon-fill text-danger pe-2'></i><b>Download Failed</b></p>The download failed due to the following issue: <span id='download-error-message'></span>" %}
+
+  {# DANGER ZONE #}
+  {% include "ddm_projects/project_detail/danger_zone.html" %}
+
+  {# Modal for delete confirm #}
+  {% include "ddm_projects/project_detail/_delete_data_confirm_modal.html" %}
+
+  {# Modal for participant deletion #}
+  {% include "ddm_projects/project_detail/_delete_participant_modal.html" %}
+
+  {# Modal for participant delete success #}
+  {% include "ddm_core/components/info_modal.html" with modal_id="modal-participant-delete-success" body="<p><i class='bi bi-check-circle-fill text-success pe-2'></i><b>Participant Deleted</b></p>Participant was successfully deleted. This page will be reloaded in a few seconds." %}
+
+  {# Modal for delete success #}
+  {% include "ddm_core/components/info_modal.html" with modal_id="modal-delete-success" body="<p><i class='bi bi-check-circle-fill text-success pe-2'></i><b>All data were successfully deleted. This page will be reloaded in a few seconds.</b></p>" %}
+
+  {# Modal for delete error #}
+  {% include "ddm_core/components/info_modal.html" with modal_id="modal-delete-error" body="<p><i class='bi bi-x-octagon-fill text-danger pe-2'></i><b>An error occurred</b></p>Something went wrong during the data deletion: <span id='delete-error-message'></span>" %}
+
+  {# Download Overlay #}
+  {% include "ddm_projects/project_detail/_download_overlay.html" %}
+
+{% endblock main_body %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script src="{% static 'ddm_projects/js/download-data.js' %}"></script>
+  <script src="{% static 'ddm_projects/js/delete-data.js' %}"></script>
+{% endblock scripts %}

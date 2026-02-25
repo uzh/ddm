@@ -1,0 +1,43 @@
+{{ path_formset.management_form }}
+
+{{ path_formset.non_form_errors }}
+
+<div>
+  <div id="file-path-formset-container" class="table-responsive">
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Filepath</th>
+        <th>Is regex</th>
+        <th>Priority</th>
+        <th>Remove</th>
+      </tr>
+      </thead>
+
+      <tbody id="file-path-table-body">
+      {% for form in path_formset %}
+        {% include "ddm_datadonation/blueprint/form_sections/partials/_file_path_form.html" with form=form %}
+      {% empty %}
+        <tr id="no-file-path-table-row">
+          <td colspan="4" class="text-muted">No file paths added</td>
+        </tr>
+      {% endfor %}
+
+      </tbody>
+
+    </table>
+
+  </div>
+</div>
+
+{# Empty path formset #}
+<div class="d-none">
+  <table>
+    <tbody id="empty-file-path-form">
+    {% include "ddm_datadonation/blueprint/form_sections/partials/_file_path_form.html" with form=path_formset.empty_form %}
+    </tbody>
+  </table>
+</div>
+
+<button type="button" class="ddm-btn ddm-btn-inverted" id="add-file-path-form">Add File Path</button>

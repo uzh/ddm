@@ -1,28 +1,34 @@
-{% include "ddm_core/form_components/_basic_field.html" with field=form.name %}
+<div class="row">
 
-{% include "ddm_core/form_components/_basic_field.html" with field=form.variable_name %}
+  {% include "ddm_core/form_components/_basic_field.html" with field=form.name %}
 
-<p class="ddm-form-group-header">Positioning</p>
-<div class="container row ddm-form-group">
-  <div class="col-12 col-sm-4">
-    {% include "ddm_core/form_components/_basic_field.html" with field=form.page extra_field_classes="mt-0" %}
-  </div>
-  <div class="col-12 col-sm-4">
-    {% include "ddm_core/form_components/_basic_field.html" with field=form.index extra_field_classes="mt-0" %}
-  </div>
-</div>
+  {% include "ddm_core/form_components/_basic_field.html" with field=form.variable_name %}
 
-{% if form.text %}
-  {% include "ddm_core/form_components/_basic_field.html" with field=form.text %}
+  <p class="ddm-form-group-header mb-1">Positioning</p>
 
   <div>
-    {% with title="How donated data and participant variables can be included in the question text" %}
-      {% with include_path="ddm_questionnaire/text_blocks/blueprint_data_integration.html" %}
-        {% include "ddm_core/components/info_collapsible.html" with element_id="blueprint-data-integration" title=title include_path=include_path body="" %}
+    <div class="row">
+    <div class="col-12 col-sm-4 col-lg-2 fs-09">
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.page extra_field_classes="mt-0" %}
+    </div>
+    <div class="col-12 col-sm-4 col-lg-2 fs-09">
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.index extra_field_classes="mt-0" %}
+    </div>
+    </div>
+    </div>
+
+  {% if form.text %}
+    {% include "ddm_core/form_components/_basic_field.html" with field=form.text extra_field_classes="mb-1" %}
+
+    <div class="mb-3">
+      {% with title="How donated data and participant variables can be included in the question text" %}
+        {% with include_path="ddm_questionnaire/text_blocks/blueprint_data_integration.html" %}
+          {% include "ddm_core/components/info_collapsible.html" with extra_classes="mt-0 mx-0" element_id="blueprint-data-integration" title=title include_path=include_path body="" %}
+        {% endwith %}
       {% endwith %}
-    {% endwith %}
-  </div>
+    </div>
 
-{% endif %}
+  {% endif %}
 
-{% include "ddm_core/form_components/_basic_field.html" with field=form.blueprint helptext_end=True %}
+  {% include "ddm_core/form_components/_basic_field.html" with field=form.blueprint %}
+</div>

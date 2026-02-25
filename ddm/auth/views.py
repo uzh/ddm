@@ -2,12 +2,15 @@ from django.contrib.auth import get_user_model
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import Http404
 from django.shortcuts import reverse, redirect
+from django.urls import reverse_lazy
+from django.utils.text import Truncator
 from django.views.generic import FormView
 from django.views.generic.base import TemplateView
 
 from ddm.auth.forms import TokenCreationForm
 from ddm.auth.models import ProjectAccessToken
 from ddm.auth.utils import user_is_permitted, user_has_project_access
+from ddm.core.view_mixins import DDMContextMixin
 from ddm.projects.models import DonationProject, ResearchProfile
 
 
@@ -70,10 +73,19 @@ class DdmNoPermissionView(TemplateView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class ProjectTokenView(SuccessMessageMixin, DDMAuthMixin, FormView):
+class ProjectTokenView(SuccessMessageMixin, DDMContextMixin, DDMAuthMixin, FormView):
     """ View to see existing access token or generate a new one. """
     template_name = 'ddm_auth/token_management.html'
     form_class = TokenCreationForm
+
+    def get_breadcrumbs(self):
+        project = self.get_project()
+        name = Truncator(project.name).chars(15)
+        return [
+            ('Projects', reverse_lazy('ddm_projects:list')),
+            (f'{name}', reverse('ddm_projects:detail', kwargs={'project_url_id': project.url_id})),
+            ('Manage Access Token', None),
+        ]
 
     def get_project(self):
         """ Returns current project. """

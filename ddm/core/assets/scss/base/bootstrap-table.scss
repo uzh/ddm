@@ -1,0 +1,23 @@
+.page-link {
+  color: var(--color-main-green);
+
+  &:hover {
+    color: var(--color-main-green);
+  }
+}
+
+  .pagination-detail {
+    color: var(--font-color-muted);
+  }
+
+.page-list {
+  .dropdown-toggle::after,
+  .page-size {
+    color: var(--font-color-muted);
+  }
+}
+
+.page-item.active .page-link {
+  background-color: var(--font-color-grey) !important;
+  border: none !important;
+}

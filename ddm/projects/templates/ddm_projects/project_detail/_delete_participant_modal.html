@@ -1,0 +1,31 @@
+<div class="modal" id="delete-participant" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h4>Delete Participant</h4>
+        <p>You can delete a specific participant by providing their external ID:</p>
+        <p>
+          <input id="participant-id-input" type="text" class="w-100 mt-2" name="participant-id" />
+        </p>
+
+      </div>
+      <div class="modal-footer">
+        <button
+            type="button"
+            class="ddm-btn-base ddm-btn-secondary"
+            data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button
+            id="delete-participant-button"
+            type="button"
+            class="ddm-btn-base ddm-btn-red"
+            data-bs-dismiss="modal"
+            data-endpoint-url="{% url 'ddm_apis:participant_delete' object.url_id 'placeholder' %}"
+            data-csrf-token="{{csrf_token}}">
+          Delete Participant
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,45 @@
+{% extends 'ddm_core/page_with_form.html' %}
+{% load static %}
+
+{% block page_title %}Edit Public Information{% endblock page_title %}
+
+{% block main_heading %}Public Information{% endblock main_heading %}
+
+{% block sub_heading %}
+  Edit the general project information participants will see during the study
+{% endblock sub_heading %}
+
+{% block form_content %}
+
+  <div id="public-information-base" class="ddm-section-container">
+
+    <div class="form-section-heading">
+      <h2>Base Information</h2>
+    </div>
+
+    <div class="row">
+
+      {{ form.non_field_errors }}
+
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.name %}
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.slug %}
+      {% include "ddm_core/form_components/_checkbox_toggle_field.html" with field=form.active %}
+    </div>
+  </div>
+
+  <div id="public-information-text" class="ddm-section-container">
+
+    <div class="form-section-heading">
+      <h2>Study Information</h2>
+      <p>
+        This information is linked in the participation interface and participants can access this information at any time
+      </p>
+    </div>
+
+    <div class="row">
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.contact_information extra_field_classes="ck-field" %}
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.data_protection_statement extra_field_classes="ck-field" %}
+    </div>
+  </div>
+
+{% endblock form_content %}

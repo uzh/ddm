@@ -40,21 +40,20 @@ def prepare_project(driver):
     url = f'projects/{PROJECT_ID}/data-donation/file-uploader/{FILE_UPLOADER_ID}/edit/'
     driver.get(BASE_URL + url)
 
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'label.checkmark[for="id_combined_consent"]')))
-    checkbox_label = driver.find_element(By.CSS_SELECTOR, 'label.checkmark[for="id_combined_consent"]')
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[id="id_combined_consent"]')))
+    consent_toggle = driver.find_element(By.CSS_SELECTOR, 'input[id="id_combined_consent"]')
     driver.maximize_window()
     time.sleep(1)
 
-    driver.execute_script("arguments[0].scrollIntoView(true);", checkbox_label)
+    driver.execute_script("arguments[0].scrollIntoView(true);", consent_toggle)
     time.sleep(1)
     driver.execute_script("window.scrollBy(0, 100);")
     time.sleep(1)
 
-    checkbox = driver.find_element(By.ID, 'id_combined_consent')
-    if checkbox.is_selected():
-        checkbox_label.click()
+    if consent_toggle.is_selected():
+        consent_toggle.click()
 
-    save_button = driver.find_element(By.CSS_SELECTOR, 'input[type="submit"][value="Save Uploader"]')
+    save_button = driver.find_element(By.CSS_SELECTOR, 'input[type="submit"][value="Update Uploader"]')
     time.sleep(1)
     save_button.click()
     return
@@ -73,43 +72,6 @@ def add_margins_to_sc(sc_path):
 
     # Replace the original screenshot.
     new_img.save(sc_path)
-    return
-
-def highlight_edit(driver, element):
-    driver.execute_script("""
-        var parent = arguments[0];
-        var child = parent.querySelector('.inline-edit');
-        if (child) {
-            child.style.background = '#ffd70094';
-            child.style.padding = '8px 20px';
-            child.style.borderRadius = '20px';
-        }
-    """, element)
-    return element
-
-def highlight_participation_overview_download(driver, element):
-    driver.execute_script("""
-        var parent = arguments[0];
-        var child = parent.querySelector('#download-participation-overview');
-        if (child) {
-            child.style.background = '#ffd70094';
-        }
-    """, element)
-    return element
-
-def highlight_responses_download(driver, element):
-    driver.execute_script("""
-        var parent = arguments[0];
-        var child = parent.querySelector('#download-questionnaire-responses');
-        if (child) {
-            child.style.background = '#ffd70094';
-        }
-    """, element)
-    return element
-
-def prepare_project_settings(driver):
-    button = driver.find_element(By.ID, 'accordionButtonGeneralSettings')
-    button.click()
     return
 
 def access_donation_stage(driver):
@@ -136,16 +98,15 @@ def enable_all_in_one_consent(driver):
     url = f'projects/{PROJECT_ID}/data-donation/file-uploader/{FILE_UPLOADER_ID}/edit/'
     driver.get(BASE_URL + url)
 
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'label[for="id_combined_consent"]')))
-    checkbox_label = driver.find_element(By.CSS_SELECTOR, 'label[for="id_combined_consent"]')
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[id="id_combined_consent"]')))
+    consent_toggle = driver.find_element(By.CSS_SELECTOR, 'input[id="id_combined_consent"]')
     driver.maximize_window()
     time.sleep(1)
 
-    checkbox = driver.find_element(By.ID, 'id_combined_consent')
-    if not checkbox.is_selected():
-        checkbox_label.click()
+    if not consent_toggle.is_selected():
+        consent_toggle.click()
 
-    save_button = driver.find_element(By.CSS_SELECTOR, 'input[type="submit"][value="Save Uploader"]')
+    save_button = driver.find_element(By.CSS_SELECTOR, 'input[type="submit"][value="Update Uploader"]')
     time.sleep(1)
     driver.execute_script("arguments[0].scrollIntoView(true);", save_button)
     time.sleep(1)
@@ -215,6 +176,11 @@ def access_debriefing(driver):
             break
     return
 
+def scroll_to_bottom(driver, element=None):
+    driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
+    time.sleep(1)
+    return element
+
 def load_element_list():
     elements_to_capture = [
         {
@@ -231,7 +197,7 @@ def load_element_list():
             'url': 'projects/create/',
             'element_id': 'ddm-main',
             'function_pre': None,
-            'function_post': None,
+            'function_post': scroll_to_bottom,
         },
         {
             'module': 'researchers',
@@ -239,22 +205,38 @@ def load_element_list():
             'url': f'projects/{PROJECT_ID}/',
             'element_id': 'ddm-main',
             'function_pre': None,
+            'function_post': scroll_to_bottom,
+        },
+        {
+            'module': 'researchers',
+            'sc_name': 'project_settings_pub_info.png',
+            'url': f'projects/{PROJECT_ID}/edit/public-information',
+            'element_id': 'ddm-main',
+            'function_pre': None,
+            'function_post': scroll_to_bottom,
+        },
+        {
+            'module': 'researchers',
+            'sc_name': 'project_settings_url_param.png',
+            'url': f'projects/{PROJECT_ID}/edit/url-parameter',
+            'element_id': 'ddm-main',
+            'function_pre': None,
             'function_post': None,
         },
         {
             'module': 'researchers',
-            'sc_name': 'project_hub_edit.png',
-            'url': f'projects/{PROJECT_ID}/',
-            'element_id': 'project-details',
+            'sc_name': 'project_settings_redirect.png',
+            'url': f'projects/{PROJECT_ID}/edit/redirect',
+            'element_id': 'ddm-main',
             'function_pre': None,
-            'function_post': highlight_edit,
+            'function_post': None,
         },
         {
             'module': 'researchers',
-            'sc_name': 'project_settings.png',
-            'url': f'projects/{PROJECT_ID}/edit/',
+            'sc_name': 'project_settings_branding.png',
+            'url': f'projects/{PROJECT_ID}/edit/branding',
             'element_id': 'ddm-main',
-            'function_pre': prepare_project_settings,
+            'function_pre': None,
             'function_post': None,
         },
         {
@@ -271,7 +253,7 @@ def load_element_list():
             'url': f'projects/{PROJECT_ID}/data-donation',
             'element_id': 'ddm-main',
             'function_pre': None,
-            'function_post': None,
+            'function_post': scroll_to_bottom,
         },
         # Screenshot Briefing Page
         {
@@ -337,39 +319,15 @@ def load_element_list():
             'module': 'researchers',
             'sc_name': 'data_download_section.png',
             'url': f'projects/{PROJECT_ID}/',
-            'element_id': 'data-download-section',
+            'element_id': 'data-center',
             'function_pre': None,
             'function_post': None,
-        },
-        {
-            'module': 'researchers',
-            'sc_name': 'download_participation_overview.png',
-            'url': f'projects/{PROJECT_ID}/',
-            'element_id': 'data-download-section',
-            'function_pre': None,
-            'function_post': highlight_participation_overview_download,
-        },
-        {
-            'module': 'researchers',
-            'sc_name': 'download_responses.png',
-            'url': f'projects/{PROJECT_ID}/',
-            'element_id': 'data-download-section',
-            'function_pre': None,
-            'function_post': highlight_responses_download,
         },
         {
             'module': 'researchers',
             'sc_name': 'project_log_section.png',
             'url': f'projects/{PROJECT_ID}/',
-            'element_id': 'project-log-section',
-            'function_pre': None,
-            'function_post': None,
-        },
-        {
-            'module': 'researchers',
-            'sc_name': 'participation_statistics_section.png',
-            'url': f'projects/{PROJECT_ID}/',
-            'element_id': 'participation-statistics-section',
+            'element_id': 'project-logs',
             'function_pre': None,
             'function_post': None,
         },

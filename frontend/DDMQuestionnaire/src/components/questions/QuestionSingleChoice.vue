@@ -25,7 +25,7 @@ function responseChanged(event: Event) {
 </script>
 
 <template>
-  <div>
+  <div class="ddm-question ddm-question--single-choice">
     <div class="question-text" v-html="props.text"></div>
 
     <div :id="'answer-' + props.qid" class="response-body question-response-body item-container">

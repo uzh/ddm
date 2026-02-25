@@ -47,6 +47,8 @@ const props = defineProps<{
   blueprintOutcome: BlueprintExtractionOutcome
 }>();
 
+const searchInputId = `data-search-${props.blueprintOutcome.blueprintId}`;
+
 const pageSize: number = 20;
 const currentPage: Ref<number> = ref(1);
 const tableContainer = useTemplateRef('table-container');
@@ -169,12 +171,12 @@ const toggleShowHideData = (): void => {
       <div v-if="showData"
            class="font-size-875 mb-2 text-end text-md-start pe-2">
         <div>
-          <label for="data-search"
+          <label :for="searchInputId"
                class="visually-hidden">
             {{ t('extraction-table.search-entries') }}
           </label>
           <input
-              id="data-search"
+              :id="searchInputId"
               type="text"
               v-model="searchTerm"
               :placeholder="t('extraction-table.search-entries')"

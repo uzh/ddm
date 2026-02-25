@@ -32,7 +32,7 @@ function responseChanged(event: Event) {
 </script>
 
 <template>
-  <div>
+  <div class="ddm-question ddm-question--open">
     <div class="question-text" v-html="props.text"></div>
 
     <div
@@ -56,7 +56,7 @@ function responseChanged(event: Event) {
           :maxlength="getMaxLength"
           @change="responseChanged"
         ></textarea>
-        <p :id="'required-hint-' + props.qid" class="required-hint mb-0 hidden">
+        <p :id="'required-hint-' + props.qid" class="required-hint mb-0">
           {{ t('required-but-missing-hint') }}
         </p>
       </template>
@@ -71,7 +71,7 @@ function responseChanged(event: Event) {
           @change="responseChanged"
         />
         <p class="input-hint">{{ t('hint-number-input') }}</p>
-        <p :id="'required-hint-' + props.qid" class="required-hint mb-0 hidden">
+        <p :id="'required-hint-' + props.qid" class="required-hint mb-0">
           {{ t('required-but-missing-hint') }}
         </p>
       </template>
@@ -87,7 +87,7 @@ function responseChanged(event: Event) {
         />
         <p class="input-hint hint-invalid-input pb-0 mb-0">{{ t('hint-invalid-email') }}</p>
         <p class="input-hint">{{ t('hint-email-input') }}</p>
-        <p :id="'required-hint-' + props.qid" class="required-hint mb-0 hidden">
+        <p :id="'required-hint-' + props.qid" class="required-hint mb-0">
           {{ t('required-but-missing-hint') }}
         </p>
       </template>

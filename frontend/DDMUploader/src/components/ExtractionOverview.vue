@@ -180,6 +180,7 @@ const introText = computed(() =>
 </script>
 
 <template>
+  <div class="ddm-extraction-overview">
   <!-- Intro -->
   <div class="pb-3 d-flex align-items-center">
     <span class="section-icon pe-3 pe-sm-0"><i class="bi bi-file-earmark-text"></i></span>
@@ -200,6 +201,7 @@ const introText = computed(() =>
     :combined-consent="combinedConsent"
     @consent-updated="passConsentUpdateToParent"
   />
+  </div>
 </template>
 
 <style scoped>

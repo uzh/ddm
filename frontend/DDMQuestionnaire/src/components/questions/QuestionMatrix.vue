@@ -34,7 +34,7 @@ function responseChanged(event: Event) {
 </script>
 
 <template>
-  <div>
+  <div class="ddm-question ddm-question--matrix">
     <div class="question-text" v-html="props.text"></div>
     <div class="response-body ps-0 pe-0">
       <template v-for="item in props.items" :key="item.id">
@@ -243,8 +243,6 @@ function responseChanged(event: Event) {
   background: none !important;
 }
 
-.main-scale {}
-
 .main-scale-first label {
   border-radius: 5px 5px 0 0;
 }
@@ -346,8 +344,6 @@ input[type="radio"]:checked + label {
     overflow-wrap: break-word;
     white-space: normal;
   }
-
-  .scale-label {}
 
   .scale-label-mockup {
     text-align: center;

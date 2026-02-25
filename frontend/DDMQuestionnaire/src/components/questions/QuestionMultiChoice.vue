@@ -25,9 +25,9 @@ function responseChanged(event: Event) {
 </script>
 
 <template>
-  <div>
+  <div class="ddm-question ddm-question--multi-choice">
     <div class="question-text" v-html="props.text"></div>
-    <div class="response-body question-response-body item-container">
+    <div :id="'answer-' + props.qid" class="response-body question-response-body item-container">
       <div
         v-for="item in props.items"
         :key="item.id"
@@ -50,7 +50,7 @@ function responseChanged(event: Event) {
           <span v-html="item.label"></span>
         </label>
       </div>
-      <p :id="'required-hint-' + props.qid" class="required-hint mb-0 hidden">
+      <p :id="'required-hint-' + props.qid" class="required-hint mb-0">
         {{ t('required-but-missing-hint') }}
       </p>
     </div>

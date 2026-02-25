@@ -252,7 +252,7 @@ if (process.env.NODE_ENV === 'test') {
 
 <template>
 
-  <div ref="questionnaireRoot">
+  <div ref="questionnaireRoot" class="ddm-questionnaire">
     <template v-for="question in questionnaireConfig" :key="question.question">
       <div
         :data-page-index="question.page"

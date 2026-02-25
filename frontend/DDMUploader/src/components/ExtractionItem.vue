@@ -153,10 +153,10 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
 
           <div v-if="hasDetailErrors">
             <details>
-              <summary role="button" aria-expanded="false" id="error-details-summary">
+              <summary role="button" aria-expanded="false" :id="'error-details-summary-' + blueprint.id">
                 {{ t('feedback.show-error-details') }}
               </summary>
-              <div role="region" aria-labelledby="error-details-summary">
+              <div role="region" :aria-labelledby="'error-details-summary-' + blueprint.id">
                 <template v-for="(error, i) in errors" :key="i">
                   <p v-if="te(`${error.i18nDetail}-detail`)" class="error-details">{{ t(`${error.i18nDetail}-detail`, error.context) }}</p>
                 </template>

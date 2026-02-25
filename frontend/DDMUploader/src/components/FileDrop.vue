@@ -174,7 +174,7 @@ const extractionNoData = computed(() =>
 </script>
 
 <template>
-  <div class="d-lg-flex flex-row align-items-center justify-content-between">
+  <div class="ddm-file-drop d-lg-flex flex-row align-items-center justify-content-between">
 
     <div class="pe-5 pb-3 pb-lg-0 d-flex align-items-center ">
       <span class="section-icon">
@@ -189,16 +189,15 @@ const extractionNoData = computed(() =>
       <div class="border rounded text-center position-relative bg-lightgrey" :class="fileSelectorBorderClass">
         <!-- Processing pending -->
         <div v-if="showFileSelector"
-             class="p-4"
+             class="p-4 ddm-dropzone-clickable"
              :class="{ 'dropzone-hover': isDragging }"
              @dragover.prevent="isDragging = true"
              @dragleave.prevent="isDragging = false"
              @drop="handleDrop"
              @click="$refs.fileInput.click()"
-             style="cursor: pointer;"
         >
           <p class="mb-0">
-            <i id="ul-modal-info-icon" class="bi bi-upload fs-5 pe-3"></i>
+            <i class="bi bi-upload fs-5 pe-3"></i>
             <span v-if="!isDragging" class="ps-2 fw-bold fs-6">{{ t('file-drop.selection-prompt') }}</span>
             <span v-if="isDragging" class="ps-2 fw-bold fs-6">{{ t('file-drop.release-to-select') }}</span>
           </p>
@@ -267,6 +266,9 @@ const extractionNoData = computed(() =>
   --color-dark-grey: #6c6c6c;
 }
 
+.ddm-dropzone-clickable {
+  cursor: pointer;
+}
 .bg-lightgrey {
   background-color:  var(--color-light-bg);
 }

@@ -141,6 +141,7 @@ function initializeUploaderOutcomes(): Record<number, UploaderOutcome> {
 </script>
 
 <template>
+  <div class="ddm-uploader-app">
   <template v-for="config in uploaderConfigs">
     <div class="ddm-uploader mb-5">
       <UploaderWrapper
@@ -174,6 +175,7 @@ function initializeUploaderOutcomes(): Record<number, UploaderOutcome> {
   <div class="row">
     <div class="col">
       <button
+          id="ddm-uploader-proceed-btn"
           class="flow-btn"
           type="button"
           @click="proceed"
@@ -184,6 +186,7 @@ function initializeUploaderOutcomes(): Record<number, UploaderOutcome> {
   <form id="uploader-form" method="POST" enctype="multipart/form-data" v-show="false">
     <input type="hidden" name="csrfmiddlewaretoken" :value="csrfToken">
   </form>
+  </div>
 
 </template>
 

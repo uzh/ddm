@@ -1,4 +1,3 @@
-from debug_toolbar.toolbar import debug_toolbar_urls
 from django.conf import settings
 from django.conf.urls import include
 from django.conf.urls.static import static
@@ -19,4 +18,7 @@ if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += [path('__reload__/', include('django_browser_reload.urls'))]
-    urlpatterns += debug_toolbar_urls()
+
+    if 'debug_toolbar' in settings.INSTALLED_APPS:
+        from debug_toolbar.toolbar import debug_toolbar_urls
+        urlpatterns += debug_toolbar_urls()

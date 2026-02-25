@@ -33,7 +33,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'django_ckeditor_5',
-    # 'debug_toolbar',  # Added for debugging purposes
 ]
 
 MIDDLEWARE = [
@@ -45,7 +44,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',  # Added for debugging purposes
 ]
 
 TEMPLATES = [
@@ -158,5 +156,9 @@ if DEBUG:
 
     MIDDLEWARE += [
         'django_browser_reload.middleware.BrowserReloadMiddleware',
-        'debug_toolbar.middleware.DebugToolbarMiddleware',
     ]
+
+    if 'debug_toolbar' in INSTALLED_APPS:
+        MIDDLEWARE += [
+            'debug_toolbar.middleware.DebugToolbarMiddleware',
+        ]

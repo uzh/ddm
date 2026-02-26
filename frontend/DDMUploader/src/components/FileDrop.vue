@@ -257,32 +257,23 @@ const extractionNoData = computed(() =>
 <style scoped>
 @import "@uploader/assets/styles/buttons.css";
 
-* {
-  --color-success: #198754;
-  --color-failed: #d90015;
-  --color-no-data: #0272ff;
-  --color-light-bg: #f8f9fa;
-  --color-hover-bg: #efefef;
-  --color-dark-grey: #6c6c6c;
-}
-
 .ddm-dropzone-clickable {
   cursor: pointer;
 }
 .bg-lightgrey {
-  background-color:  var(--color-light-bg);
+  background-color: var(--ddm-file-bg);
 }
 .dropzone-hover {
-  background-color: var(--color-hover-bg) !important;
+  background-color: var(--ddm-file-bg-hover) !important;
 }
 .border-success {
-  border-color: var(--color-success) !important;
+  border-color: var(--ddm-success) !important;
 }
 .border-failed {
-  border-color: var(--color-failed) !important;
+  border-color: var(--ddm-error) !important;
 }
 .border-no-data {
-  border-color: var(--color-no-data) !important;
+  border-color: var(--ddm-no-data) !important;
 }
 .color-darkred {
   color: darkred !important;

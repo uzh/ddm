@@ -104,8 +104,8 @@ const { t, locale } = useI18n();
   width: 12px;
   height: 12px;
   border-radius: 6px;
-  background-color: #009c94;
-  color: #009c94;
+  background-color: var(--ddm-loading-accent);
+  color: var(--ddm-loading-accent);
   animation: dotFloating 3s infinite cubic-bezier(0.15, 0.6, 0.9, 0.1);
 }
 
@@ -121,8 +121,8 @@ const { t, locale } = useI18n();
   width: 12px;
   height: 12px;
   border-radius: 6px;
-  background-color: #009c94;
-  color: #009c94;
+  background-color: var(--ddm-loading-accent);
+  color: var(--ddm-loading-accent);
   animation: dotFloatingBefore 3s infinite ease-in-out;
 }
 
@@ -131,8 +131,8 @@ const { t, locale } = useI18n();
   width: 12px;
   height: 12px;
   border-radius: 6px;
-  background-color: #009c94;
-  color: #009c94;
+  background-color: var(--ddm-loading-accent);
+  color: var(--ddm-loading-accent);
   animation: dotFloatingAfter 3s infinite cubic-bezier(0.4, 0, 1, 1);
 }
 

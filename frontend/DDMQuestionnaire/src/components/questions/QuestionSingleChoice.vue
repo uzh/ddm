@@ -71,14 +71,14 @@ function responseChanged(event: Event) {
 
 .item-label {
   width: 100%;
-  background: #eaeaea;
+  background: var(--ddm-item-bg);
   border-radius: 5px;
   cursor: pointer;
   padding: 10px;
 }
 
 .item-label:hover {
-  background: #cfcfcf;
+  background: var(--ddm-item-bg-hover);
 }
 
 input[type="radio"] {
@@ -86,7 +86,7 @@ input[type="radio"] {
 }
 
 input[type="radio"]:checked + label {
-  background-color: #45819e;
-  color: white;
+  background-color: var(--ddm-primary);
+  color: var(--ddm-primary-fg);
 }
 </style>

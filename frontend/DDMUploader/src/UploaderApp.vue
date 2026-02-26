@@ -191,6 +191,17 @@ function initializeUploaderOutcomes(): Record<number, UploaderOutcome> {
 </template>
 
 <style>
+.ddm-uploader-app {
+  --ddm-success: #198754;
+  --ddm-error: #c8270d;
+  --ddm-no-data: #0272ff;
+  --ddm-file-bg: #f8f9fa;
+  --ddm-file-bg-hover: #efefef;
+  --ddm-consent-agree: #069143;
+  --ddm-consent-disagree: #f38896;
+  --ddm-loading-accent: #009c94;
+}
+
 .modal-open {
   overflow: hidden;
 }
@@ -205,6 +216,6 @@ function initializeUploaderOutcomes(): Record<number, UploaderOutcome> {
 }
 
 .color-red {
-  color: #d90015 !important;
+  color: var(--ddm-error) !important;
 }
 </style>

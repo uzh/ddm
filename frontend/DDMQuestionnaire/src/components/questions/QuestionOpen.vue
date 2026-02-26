@@ -164,11 +164,11 @@ function responseChanged(event: Event) {
   width: 80%;
 }
 .invalid-email {
-  border: 2px solid #c51c00 !important;
+  border: 2px solid var(--ddm-error) !important;
   border-radius: 3px;
 }
 .hint-invalid-input {
-  color: #c51c00;
+  color: var(--ddm-error);
   display: none;
 }
 .open-question-textarea {

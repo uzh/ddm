@@ -292,6 +292,16 @@ if (process.env.NODE_ENV === 'test') {
 </template>
 
 <style>
+.ddm-questionnaire {
+  --ddm-primary: #45819e;
+  --ddm-primary-fg: white;
+  --ddm-item-bg: #eaeaea;
+  --ddm-item-bg-hover: #cfcfcf;
+  --ddm-heading-bg: white;
+  --ddm-separator-color: #b8b8b8;
+  --ddm-error: #c8270d;
+}
+
 .question-app-container {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   text-align: left;
@@ -301,7 +311,7 @@ if (process.env.NODE_ENV === 'test') {
   padding: 60px 10px 15px;
   position: sticky;
   top: 0;
-  background: white;
+  background: var(--ddm-heading-bg);
   border-bottom: 3px solid #fbfbfb;
   z-index: 999;
 }
@@ -314,7 +324,7 @@ if (process.env.NODE_ENV === 'test') {
 
 .question-container {
   font-size: 1rem;
-  border-bottom: 2px solid #b8b8b8;
+  border-bottom: 2px solid var(--ddm-separator-color);
   padding-bottom: 100px;
 }
 
@@ -353,14 +363,14 @@ if (process.env.NODE_ENV === 'test') {
 .required-but-missing {
   background: #fff3f4 !important;
   border-radius: 5px;
-  border: 1px solid #c8270d !important;
+  border: 1px solid var(--ddm-error) !important;
   margin-bottom: 10px;
   margin-top: 5px;
 }
 
 .required-hint {
   font-size: 0.9rem;
-  color: #c51c00;
+  color: var(--ddm-error);
   display: none;
 }
 

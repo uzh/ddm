@@ -92,12 +92,12 @@ function updateConsent(consent: boolean): void {
 
 <style scoped>
 .selected-donate-agree {
-  background: #069143 !important;
+  background: var(--ddm-consent-agree) !important;
   color: white !important;
   font-weight: 600;
 }
 .selected-donate-disagree {
-  background: #f38896 !important;
+  background: var(--ddm-consent-disagree) !important;
   font-weight: 600;
 }
 .donation-btn {

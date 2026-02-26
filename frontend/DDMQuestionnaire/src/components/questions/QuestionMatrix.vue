@@ -211,7 +211,7 @@ function responseChanged(event: Event) {
   height: 100%;
   padding: 5px;
   text-align: center;
-  background: #eaeaea;
+  background: var(--ddm-item-bg);
   text-wrap: auto;
   word-break: break-word;
   overflow-wrap: break-word;
@@ -224,7 +224,7 @@ function responseChanged(event: Event) {
 }
 
 .scale-label:hover {
-  background: #cfcfcf;
+  background: var(--ddm-item-bg-hover);
 }
 
 .scale-label-mockup {
@@ -265,8 +265,8 @@ input[type="radio"] {
 }
 
 input[type="radio"]:checked + label {
-  background-color: #45819e;
-  color: white;
+  background-color: var(--ddm-primary);
+  color: var(--ddm-primary-fg);
 }
 
 @media (min-width: 769px) {

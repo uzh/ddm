@@ -11,6 +11,7 @@ This version drops official support for Django < 5.2 and Python versions < 3.10
 - **Questionnaire navigation**: Fixed bug where "next page" button required two clicks to proceed when a filtered-out question was marked as required ([`a6bc9f6`](https://github.com/uzh/ddm/commit/a6bc9f6)).
 - **Project deletion**: Deletion event log now correctly reports number of deleted data donations and questionnaire responses (previously showed 0) ([`d3dcbf7`](https://github.com/uzh/ddm/commit/d3dcbf7)).
 - **Data export**: Fixed data donation export filename ending with '.zip.zip' ([`e7439f1`](https://github.com/uzh/ddm/commit/e7439f1)).
+- **Question validation**: Validation now accepts -77 as an expected missing value ([`4a8ffab`](https://github.com/uzh/ddm/commit/4a8ffab)).
 
 ### Added
 
@@ -22,7 +23,7 @@ This version drops official support for Django < 5.2 and Python versions < 3.10
 
 ### Changed
 
-- **Admin interface redesign**: Complete overhaul of the researcher admin interface for improved usability and consistency ([`9a635a3`](https://github.com/uzh/ddm/commit/9a635a3)).
+- **Admin interface redesign**: Complete overhaul of the researcher admin interface for improved usability and consistency ([`1cb8fe8`](https://github.com/uzh/ddm/commit/1cb8fe8), [`9a635a3`](https://github.com/uzh/ddm/commit/9a635a3)).
 - **Project logs**: Split into separate views for Exception Logs and Event Logs ([`83aff8a`](https://github.com/uzh/ddm/commit/83aff8a)).
 - **Internal architecture**: Refactored configuration logic for better maintainability (moved from models to services) ([`d394061`](https://github.com/uzh/ddm/commit/d394061), [`d2aaf43`](https://github.com/uzh/ddm/commit/d2aaf43)).
 
@@ -40,6 +41,8 @@ This version drops official support for Django < 5.2 and Python versions < 3.10
 - Added integration tests for Vue components (excluded from the main testing suite) ([`b0755c1`](https://github.com/uzh/ddm/commit/b0755c1)).
 - Added tests for fileHandler composable (uploader frontend) ([`5506d5d`](https://github.com/uzh/ddm/commit/5506d5d)).
 - Added path traversal check to processing of ZIP files received from the data donation frontend (currently not an issue; for future-proofing) ([`c196b3f`](https://github.com/uzh/ddm/commit/c196b3f)).
+- Introduced sass as css compiler and refactored css to scss for DDM admin interface components ([`fdefaea`](https://github.com/uzh/ddm/commit/fdefaea)).
+- Frontend components: Extracted all hard-coded color values to css variables and added IDs and classes to html components to make it easier to target specific elements for style overrides ([`f5dd96e`](https://github.com/uzh/ddm/commit/f5dd96e), [`df99e25`](https://github.com/uzh/ddm/commit/df99e25)).
 
 ### Documentation
 

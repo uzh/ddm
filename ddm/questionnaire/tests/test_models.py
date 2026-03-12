@@ -43,7 +43,7 @@ class TestSingleChoiceQuestion(TestQuestionModelsBaseCase):
         QuestionItem.objects.create(question=cls.question, index=2, value=8)
 
     def test_get_valid_responses(self):
-        valid_values = [1, 8, -99]
+        valid_values = [1, 8, -99, -77]
         self.assertCountEqual(valid_values, self.question.get_valid_responses())
 
 
@@ -58,7 +58,7 @@ class TestMultiChoiceQuestion(TestQuestionModelsBaseCase):
             question=cls.question, index=2, value=8)
 
     def test_get_valid_responses(self):
-        valid_values = [1, 0, -99]
+        valid_values = [1, 0, -99, -77]
         self.assertCountEqual(valid_values, self.question.get_valid_responses())
 
 
@@ -77,7 +77,7 @@ class TestMatrixQuestion(TestQuestionModelsBaseCase):
             question=cls.question, index=2, value=6)
 
     def test_get_valid_responses(self):
-        valid_values = [1, 6, -99]
+        valid_values = [1, 6, -99, -77]
         self.assertCountEqual(valid_values, self.question.get_valid_responses())
 
 
@@ -96,7 +96,7 @@ class TestSemanticDifferentialQuestion(TestQuestionModelsBaseCase):
             question=cls.question, index=2, value=6)
 
     def test_get_valid_responses(self):
-        valid_values = [1, 6, -99]
+        valid_values = [1, 6, -99, -77]
         self.assertCountEqual(valid_values, self.question.get_valid_responses())
 
 

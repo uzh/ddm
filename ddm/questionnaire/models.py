@@ -125,8 +125,8 @@ class QuestionBase(FilterConditionMixin, PolymorphicModel):
 
     def get_valid_responses(self) -> list:
         """Returns a list of valid responses for this question."""
-        default_missing = -99
-        return [default_missing]
+        default_missings = [-99, -77]
+        return default_missings
 
     def validate_response(self, response_key, response):
         """Placeholder method - must be defined in derivative models."""

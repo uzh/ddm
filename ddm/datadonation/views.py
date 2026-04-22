@@ -167,7 +167,6 @@ class FileUploaderCreate(
     def get_success_url(self):
         kwargs = {
             'project_url_id': self.get_project_url_id(),
-            'pk': self.object.pk
         }
         return reverse('ddm_datadonation:overview', kwargs=kwargs)
 

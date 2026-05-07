@@ -119,7 +119,7 @@ onUnmounted(() => {
 
     <div class="modal-backdrop" @click="hideModal"></div>
 
-    <div class="modal-container">
+    <div class="modal-container ddm-issue-modal-container">
 
       <div
           class="issue-modal"

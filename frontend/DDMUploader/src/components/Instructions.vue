@@ -60,10 +60,10 @@ const currentInstruction = computed(() => props.instructions[currentStep.value].
 <template>
   <div class="d-flex align-items-center" ref="instruction-heading">
     <span class="section-icon"><i class="bi bi-list-ol"></i></span>
-    <span class="section-heading">{{ t("instructions.heading") }}</span>
+    <span class="section-heading ddm-instruction-heading">{{ t("instructions.heading") }}</span>
   </div>
 
-  <div class="d-flex flex-row align-items-center carousel">
+  <div class="d-flex flex-row align-items-center carousel ddm-instruction-carousel">
     <div v-if="props.instructions.length > 1"
          class="control-container hidden-small">
     </div>

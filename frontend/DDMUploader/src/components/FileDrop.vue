@@ -196,10 +196,10 @@ const extractionNoData = computed(() =>
              @drop="handleDrop"
              @click="$refs.fileInput.click()"
         >
-          <p class="mb-0">
-            <i class="bi bi-upload fs-5 pe-3"></i>
-            <span v-if="!isDragging" class="ps-2 fw-bold fs-6">{{ t('file-drop.selection-prompt') }}</span>
-            <span v-if="isDragging" class="ps-2 fw-bold fs-6">{{ t('file-drop.release-to-select') }}</span>
+          <p class="mb-0 ddm-dropzone-msg">
+            <i class="bi bi-upload fs-5 pe-3 ddm-dropzone-msg-icon"></i>
+            <span v-if="!isDragging" class="ps-2 fw-bold fs-6 ddm-dropzone-msg-selection">{{ t('file-drop.selection-prompt') }}</span>
+            <span v-if="isDragging" class="ps-2 fw-bold fs-6 ddm-dropzone-msg-release">{{ t('file-drop.release-to-select') }}</span>
           </p>
           <input
             ref="fileInput"
@@ -212,20 +212,20 @@ const extractionNoData = computed(() =>
 
         <!-- Processing ongoing -->
         <div v-else-if="showProcessingIndicator"
-             class="d-flex align-items-center justify-content-center p-4">
+             class="d-flex align-items-center justify-content-center p-4 ddm-processing-ongoing-container">
           <span class="spinner-border float-right me-3" role="status"><span class="sr-only"></span></span>
           <p class="mb-0">{{ t('file-drop.file-is-being-processed') }}</p>
         </div>
 
         <!-- Processing complete -->
-        <div v-else-if="showResults" class="p-4">
+        <div v-else-if="showResults" class="p-4 ddm-processing-complete-container">
 
-          <div v-if="extractionSuccess">
+          <div v-if="extractionSuccess" class="ddm-extraction-success-msg">
             <p class="fs-5 fw-bold text-success"><i class="bi bi-check-circle pe-3"></i>{{ t('file-drop.processing-success') }}</p>
             {{ t('extraction-state.file.success') }}
           </div>
 
-          <div v-else-if="extractionFailed">
+          <div v-else-if="extractionFailed" class="ddm-extraction-failed-msg">
             <p class="fs-5 fw-bold color-red">{{ t('file-drop.processing-failed') }}</p>
 
             <div v-if="props.generalErrors.length">
@@ -237,7 +237,7 @@ const extractionNoData = computed(() =>
             <p class="pt-2">{{ t('file-drop.retry-hint') }} <button class="button grey-button border border-secondary mt-2" @click="chooseDifferentFile">{{ t('file-drop.choose-different-file') }}</button></p>
           </div>
 
-          <div v-else-if="extractionNoData">
+          <div v-else-if="extractionNoData" class="ddm-extraction-no-data-msg">
             <p class="fs-5 fw-bold">{{ t('file-drop.processing-complete') }}</p>
             {{ t('extraction-state.file.no-data-extracted') }}
           </div>
@@ -245,8 +245,8 @@ const extractionNoData = computed(() =>
       </div>
 
       <!-- Retry button -->
-      <div v-if="showRetryButton" class="pt-2 w-100 text-center">
-        <button class="button grey-button button-small muted-button font-size-small" @click="chooseDifferentFile">{{ t('file-drop.choose-different-file') }}</button>
+      <div v-if="showRetryButton" class="pt-2 w-100 text-center ddm-retry-btn-container">
+        <button class="button grey-button button-small muted-button font-size-small ddm-retry-upload-button" @click="chooseDifferentFile">{{ t('file-drop.choose-different-file') }}</button>
       </div>
 
     </div>

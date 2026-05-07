@@ -121,14 +121,14 @@ const showCombinedConsent = computed(() =>
   <div class="uploader-name">{{ name }}</div>
   <div :id="'ddm-uploader-' + componentId" class="uploader-container">
     <div v-if="instructionConfig.length > 0"
-         class="uploader-section">
+         class="uploader-section ddm-instruction-section">
       <Instructions
         :instructions="instructionConfig"
         :component-id="componentId"
       />
     </div>
 
-    <div class="uploader-section">
+    <div class="uploader-section ddm-upload-section">
       <FileDrop
           :expects-zip="props.expectsZip"
           :uploader-state="uploaderState"
@@ -138,7 +138,7 @@ const showCombinedConsent = computed(() =>
       />
     </div>
 
-    <div class="uploader-section">
+    <div class="uploader-section ddm-review-section">
       <ExtractionOverview
           :uploader-state="uploaderState"
           :extraction-state="extractionState"
@@ -151,7 +151,7 @@ const showCombinedConsent = computed(() =>
     </div>
 
     <div v-if="showCombinedConsent"
-         class="uploader-section">
+         class="uploader-section ddm-combined-consent-section">
       <ConsentQuestion
           :combined-consent="combinedConsent"
           :blueprint-id="null"

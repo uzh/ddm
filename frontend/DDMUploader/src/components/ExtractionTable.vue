@@ -170,7 +170,7 @@ const toggleShowHideData = (): void => {
     <Transition name="slide-down">
       <div v-if="showData"
            class="font-size-875 mb-2 text-end text-md-start pe-2">
-        <div>
+        <div class="ddm-review-table-search-container">
           <label :for="searchInputId"
                class="visually-hidden">
             {{ t('extraction-table.search-entries') }}
@@ -184,7 +184,7 @@ const toggleShowHideData = (): void => {
           >
         </div>
 
-        <div class="ps-1 pt-1 pe-2">
+        <div class="ps-1 pt-1 pe-2 ddm-review-table-search-info">
           <span v-if="filteredItems.length > 0">{{ t('extraction-table.entry-info', {'lower': lowerPosition + 1, 'upper': upperPosition, 'total': filteredItems.length}) }}</span>
           <span v-else>{{ t('extraction-table.all-filtered') }}</span>
 
@@ -203,7 +203,7 @@ const toggleShowHideData = (): void => {
       <div ref="table-container"
            class="table-container"
            :class="{'no-scroll': !showData }">
-        <table class="table table-sm mb-0">
+        <table class="table table-sm mb-0 ddm-table-extraction-review">
           <thead>
           <tr>
             <th v-for="value in blueprintOutcome.extractedFieldsMap.values()" :key="value">{{ value }}</th>
@@ -218,7 +218,7 @@ const toggleShowHideData = (): void => {
             </template>
           </tr>
           <tr v-if="filteredItems.length === 0">
-            <td class="pb-3 pt-3">{{ t('extraction-table.all-filtered') }}</td>
+            <td class="pb-3 pt-3 ddm-table-all-filtered-msg">{{ t('extraction-table.all-filtered') }}</td>
           </tr>
           </tbody>
         </table>
@@ -248,26 +248,26 @@ const toggleShowHideData = (): void => {
     </div>
 
     <Transition name="slide-down">
-      <div v-if="showData" class="font-size-875 page-controls">
+      <div v-if="showData" class="font-size-875 page-controls ddm-review-table-pagination-container">
         <!-- Page control buttons -->
         <div v-if="props.blueprintOutcome.extractedData.length > pageSize"
              class="ps-2 pt-2 text-end text-md-start">
           <!-- Prev button -->
           <button
               @click="prevTablePage"
-              class="button grey-button button-small me-2"
+              class="button grey-button button-small me-2 ddm-pagination-button-prev"
               :disabled="currentPage <= 1"
               aria-label="Previous page"
           >
             <i class="bi bi-chevron-left"></i>
           </button>
 
-          <span>{{ t('extraction-table.page') }} {{currentPage}}/{{Math.max(maxPage, 1)}}</span>
+          <span class="ddm-pagination-info-msg">{{ t('extraction-table.page') }} {{currentPage}}/{{Math.max(maxPage, 1)}}</span>
 
           <!-- Next button -->
           <button
               @click="nextTablePage"
-              class="button grey-button button-small ms-2"
+              class="button grey-button button-small ms-2 ddm-pagination-button-next"
               :disabled="currentPage >= maxPage"
               aria-label="Next page"
           >

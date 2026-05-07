@@ -54,8 +54,8 @@ function updateConsent(consent: boolean): void {
 
 <template>
 
-  <div v-if="combinedConsent" class="fs-5 fw-bold pb-2">{{ t('feedback.donation-question') }}</div>
-  <div v-else class="fw-bold pb-2">{{ t('feedback.donation-question') }}</div>
+  <div v-if="combinedConsent" class="fs-5 fw-bold pb-2 ddm-combined-consent-question">{{ t('feedback.donation-question') }}</div>
+  <div v-else class="fw-bold pb-2 ddm-separate-consent-question">{{ t('feedback.donation-question') }}</div>
 
   <div class="btn-group" role="group" aria-label="Consent options">
     <input type="radio"
@@ -69,7 +69,7 @@ function updateConsent(consent: boolean): void {
            required>
     <label :class="{ 'selected-donate-agree': consented === true }"
            :for="'donate-agree-' + blueprintId"
-           class="btn button grey-button donation-btn shadow-none">
+           class="btn button grey-button donation-btn ddm-donation-btn-agree shadow-none">
       {{ t('feedback.donation-agree') }}
     </label>
 
@@ -83,7 +83,7 @@ function updateConsent(consent: boolean): void {
            @change="updateConsent(false)">
     <label :class="{ 'selected-donate-disagree': consented === false }"
            :for="'donate-disagree-' + blueprintId"
-           class="btn button grey-button donation-btn shadow-none">
+           class="btn button grey-button donation-btn ddm-donation-btn-disagree shadow-none">
       {{ t('feedback.donation-disagree') }}
     </label>
   </div>

@@ -13,7 +13,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
   pages: pages,
   filenameHashing: false,
-  runtimeCompiler: true,
+  runtimeCompiler: false,
   publicPath: '/static/ddm_core/frontend/uploader',
   outputDir: path.resolve('../../ddm/core/static/ddm_core/frontend/uploader'),
 

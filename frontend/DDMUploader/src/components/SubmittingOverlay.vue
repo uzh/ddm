@@ -27,7 +27,7 @@ const { t, locale } = useI18n();
 
 <template>
   <div
-      class="custom-modal"
+      class="custom-modal ddm-data-submission-overlay"
       id="processingModal"
       role="dialog"
       aria-modal="true"

@@ -116,12 +116,12 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
 
         <!-- Pending -->
         <template v-if="extractionPending">
-          <div>{{ blueprint.description }}</div>
+          <div class="ddm-blueprint-description-pending">{{ blueprint.description }}</div>
         </template>
 
         <!-- Success -->
         <template v-else-if="extractionSuccess">
-          <div class="pb-3">{{ blueprint.description }}</div>
+          <div class="pb-3 ddm-blueprint-description-success">{{ blueprint.description }}</div>
           <div>
             <ExtractionTable
                 :blueprint-outcome="extractionOutcome"
@@ -141,18 +141,18 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
 
         <!-- Nothing extracted -->
         <template v-else-if="nothingExtracted">
-          <div>{{ t(`${extractionMessage}`) }}</div>
+          <div class="ddm-extraction-msg-nothing-extracted">{{ t(`${extractionMessage}`) }}</div>
         </template>
 
         <!-- Failed -->
         <template v-else-if="extractionFailed">
-          <div>
+          <div class="ddm-extraction-msg-failed">
             {{ t(`${extractionMessage}`) }}
             {{ extractionErrorText }}
           </div>
 
           <div v-if="hasDetailErrors">
-            <details>
+            <details class="ddm-extraction-errors-details">
               <summary role="button" aria-expanded="false" :id="'error-details-summary-' + blueprint.id">
                 {{ t('feedback.show-error-details') }}
               </summary>

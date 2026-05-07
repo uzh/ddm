@@ -2,6 +2,7 @@ import json
 import os
 import sys
 
+from csp.constants import NONE, SELF
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -33,6 +34,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'django_ckeditor_5',
+
+    # Testing purposes
+    'csp'
 ]
 
 MIDDLEWARE = [
@@ -44,6 +48,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
+
+    # Testing purposes
+    'csp.middleware.CSPMiddleware'
 ]
 
 TEMPLATES = [
@@ -140,12 +147,25 @@ LOGOUT_REDIRECT_URL = '/login/'
 DDM_DEFAULT_HEADER_IMG_LEFT = ''
 DDM_DEFAULT_HEADER_IMG_RIGHT = ''
 
-INTERNAL_IPS = ["127.0.0.1", ]  # Added for debugging purposes (django debug toolbar)
+INTERNAL_IPS = ['127.0.0.1', ]  # Added for debugging purposes (django debug toolbar)
 
 # ckeditor 5 configuration
 CKEDITOR_5_FILE_UPLOAD_PERMISSION = 'authenticated'
 CKEDITOR_5_ALLOW_ALL_FILE_TYPES = True
 CKEDITOR_5_UPLOAD_FILE_TYPES = ['jpeg', 'pdf', 'png', 'mp4']
+
+# Tests for CSP-compatibility
+CONTENT_SECURITY_POLICY_REPORT_ONLY = {
+    'DIRECTIVES': {
+        'default-src': [NONE],
+        'script-src': [SELF],
+        'style-src': [SELF],
+        'img-src': [SELF],
+        'connect-src': [SELF],
+        'font-src': [SELF],
+    }
+}
+
 
 if DEBUG:
     INSTALLED_APPS += [

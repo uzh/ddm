@@ -1,10 +1,10 @@
 import {ProcessingError} from "@uploader/types/ProcessingError";
 
 /**
- * Registers a general error in the provided errors collection.
+ * Registers a general error in the provided errors-collection.
  *
  * This function takes an error from the error catalog and enhances it with
- * additional context information, then adds it to the specified errors collection.
+ * additional context information, then adds it to the specified errors-collection.
  * The original error's properties are preserved, with additional context merged in.
  *
  * @param errorsCollection - The array where the error should be registered

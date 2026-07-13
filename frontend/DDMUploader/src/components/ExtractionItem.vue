@@ -48,7 +48,7 @@ import ConsentQuestion from "@uploader/components/ConsentQuestion.vue";
 import {computed} from "vue";
 import {useI18n} from "vue-i18n";
 
-const { t, te, locale } = useI18n();
+const { t, te, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps<{
   blueprint: Blueprint,
@@ -103,17 +103,21 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
 
 <template>
   <div class="d-flex flex-column align-items-start pt-4 pb-4 blueprint-row">
-
     <div class="d-flex flex-row align-items-start pb-1">
-      <div class="status-icon"><i :class="iconClass"></i></div>
-      <div class="fw-bold">{{ blueprint.name }}</div>
+      <div class="status-icon">
+        <i :class="iconClass" />
+      </div>
+      <div class="fw-bold">
+        {{ blueprint.name }}
+      </div>
     </div>
 
     <div class="d-flex flex-row align-items-start w-100 overflow-hidden">
-      <div class="status-icon opacity-0"><i :class="iconClass"></i></div>
+      <div class="status-icon opacity-0">
+        <i :class="iconClass" />
+      </div>
 
       <div class="d-flex flex-column w-100 extraction-item-content">
-
         <!-- Pending -->
         <template v-if="extractionPending">
           <div>{{ blueprint.description }}</div>
@@ -121,22 +125,25 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
 
         <!-- Success -->
         <template v-else-if="extractionSuccess">
-          <div class="pb-3">{{ blueprint.description }}</div>
+          <div class="pb-3">
+            {{ blueprint.description }}
+          </div>
           <div>
             <ExtractionTable
-                :blueprint-outcome="extractionOutcome"
+              :blueprint-outcome="extractionOutcome"
             />
           </div>
 
-          <div v-if="combinedConsent === false"
-               class="pt-4 pb-1">
+          <div
+            v-if="combinedConsent === false"
+            class="pt-4 pb-1"
+          >
             <ConsentQuestion
-                :combined-consent="combinedConsent"
-                :blueprint-id="blueprint.id"
-                @consentUpdated="passConsentUpdateToParent"
+              :combined-consent="combinedConsent"
+              :blueprint-id="blueprint.id"
+              @consent-updated="passConsentUpdateToParent"
             />
           </div>
-
         </template>
 
         <!-- Nothing extracted -->
@@ -153,12 +160,27 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
 
           <div v-if="hasDetailErrors">
             <details>
-              <summary role="button" aria-expanded="false" :id="'error-details-summary-' + blueprint.id">
+              <summary
+                :id="'error-details-summary-' + blueprint.id"
+                role="button"
+                aria-expanded="false"
+              >
                 {{ t('feedback.show-error-details') }}
               </summary>
-              <div role="region" :aria-labelledby="'error-details-summary-' + blueprint.id">
-                <template v-for="(error, i) in errors" :key="i">
-                  <p v-if="te(`${error.i18nDetail}-detail`)" class="error-details">{{ t(`${error.i18nDetail}-detail`, error.context) }}</p>
+              <div
+                role="region"
+                :aria-labelledby="'error-details-summary-' + blueprint.id"
+              >
+                <template
+                  v-for="(error, i) in errors"
+                  :key="i"
+                >
+                  <p
+                    v-if="te(`${error.i18nDetail}-detail`)"
+                    class="error-details"
+                  >
+                    {{ t(`${error.i18nDetail}-detail`, error.context) }}
+                  </p>
                 </template>
               </div>
             </details>
@@ -166,7 +188,6 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
         </template>
       </div>
     </div>
-
   </div>
 </template>
 

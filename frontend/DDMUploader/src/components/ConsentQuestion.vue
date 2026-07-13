@@ -23,7 +23,7 @@
 
 import { useI18n } from 'vue-i18n';
 import {Ref, ref} from "vue";
-const { t, te, locale } = useI18n();
+const { t, te, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps<{
   combinedConsent: boolean,
@@ -53,41 +53,61 @@ function updateConsent(consent: boolean): void {
 </script>
 
 <template>
+  <div
+    v-if="combinedConsent"
+    class="fs-5 fw-bold pb-2"
+  >
+    {{ t('feedback.donation-question') }}
+  </div>
+  <div
+    v-else
+    class="fw-bold pb-2"
+  >
+    {{ t('feedback.donation-question') }}
+  </div>
 
-  <div v-if="combinedConsent" class="fs-5 fw-bold pb-2">{{ t('feedback.donation-question') }}</div>
-  <div v-else class="fw-bold pb-2">{{ t('feedback.donation-question') }}</div>
-
-  <div class="btn-group" role="group" aria-label="Consent options">
-    <input type="radio"
-           class="btn-check"
-           :id="'donate-agree-' + blueprintId"
-           :name="'agreement-' + blueprintId"
-           :value="true"
-           :aria-checked="consented === true"
-           autocomplete="off"
-           @change="updateConsent(true)"
-           required>
-    <label :class="{ 'selected-donate-agree': consented === true }"
-           :for="'donate-agree-' + blueprintId"
-           class="btn button grey-button donation-btn shadow-none">
+  <div
+    class="btn-group"
+    role="group"
+    aria-label="Consent options"
+  >
+    <input
+      :id="'donate-agree-' + blueprintId"
+      type="radio"
+      class="btn-check"
+      :name="'agreement-' + blueprintId"
+      :value="true"
+      :aria-checked="consented === true"
+      autocomplete="off"
+      required
+      @change="updateConsent(true)"
+    >
+    <label
+      :class="{ 'selected-donate-agree': consented === true }"
+      :for="'donate-agree-' + blueprintId"
+      class="btn button grey-button donation-btn shadow-none"
+    >
       {{ t('feedback.donation-agree') }}
     </label>
 
-    <input type="radio"
-           class="btn-check"
-           :id="'donate-disagree-' + blueprintId"
-           :name="'agreement-' + blueprintId"
-           :value="false"
-           :aria-checked="consented === false"
-           autocomplete="off"
-           @change="updateConsent(false)">
-    <label :class="{ 'selected-donate-disagree': consented === false }"
-           :for="'donate-disagree-' + blueprintId"
-           class="btn button grey-button donation-btn shadow-none">
+    <input
+      :id="'donate-disagree-' + blueprintId"
+      type="radio"
+      class="btn-check"
+      :name="'agreement-' + blueprintId"
+      :value="false"
+      :aria-checked="consented === false"
+      autocomplete="off"
+      @change="updateConsent(false)"
+    >
+    <label
+      :class="{ 'selected-donate-disagree': consented === false }"
+      :for="'donate-disagree-' + blueprintId"
+      class="btn button grey-button donation-btn shadow-none"
+    >
       {{ t('feedback.donation-disagree') }}
     </label>
   </div>
-
 </template>
 
 <style scoped>

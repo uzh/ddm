@@ -38,12 +38,12 @@
 
 import {computed, nextTick, onMounted, ref, toRef, useTemplateRef, watch} from 'vue';
 import { useI18n } from 'vue-i18n';
-import {ExtractionStates} from '@uploader/types/extractionStates';
+import {ExtractionStates} from '@uploader/types/ExtractionStates';
 import {EXTRACTION_STATES} from '@uploader/utils/stateCatalog';
 import {UPLOADER_STATES, UploaderStates} from '@uploader/types/UploaderState';
 import {ProcessingError} from '@uploader/types/ProcessingError';
 
-const { t, locale } = useI18n();
+const { t, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps<{
   expectsZip: boolean,
@@ -175,31 +175,49 @@ const extractionNoData = computed(() =>
 
 <template>
   <div class="ddm-file-drop d-lg-flex flex-row align-items-center justify-content-between">
-
     <div class="pe-5 pb-3 pb-lg-0 d-flex align-items-center ">
       <span class="section-icon">
-        <i v-if="['success', 'partial'].includes(props.extractionState)" class="bi bi-check-square fs-2 pe-3 text-success"></i>
-        <i v-else class="bi bi-upload fs-2 pe-3"></i>
+        <i
+          v-if="['success', 'partial'].includes(props.extractionState)"
+          class="bi bi-check-square fs-2 pe-3 text-success"
+        />
+        <i
+          v-else
+          class="bi bi-upload fs-2 pe-3"
+        />
       </span>
       <span class="section-heading">{{ t("file-drop.heading") }}</span>
     </div>
 
     <div class="flex-grow-1">
-
-      <div class="border rounded text-center position-relative bg-lightgrey" :class="fileSelectorBorderClass">
+      <div
+        class="border rounded text-center position-relative bg-lightgrey"
+        :class="fileSelectorBorderClass"
+      >
         <!-- Processing pending -->
-        <div v-if="showFileSelector"
-             class="p-4 ddm-dropzone-clickable"
-             :class="{ 'dropzone-hover': isDragging }"
-             @dragover.prevent="isDragging = true"
-             @dragleave.prevent="isDragging = false"
-             @drop="handleDrop"
-             @click="$refs.fileInput.click()"
+        <div
+          v-if="showFileSelector"
+          class="p-4 ddm-dropzone-clickable"
+          :class="{ 'dropzone-hover': isDragging }"
+          @dragover.prevent="isDragging = true"
+          @dragleave.prevent="isDragging = false"
+          @drop="handleDrop"
+          @click="$refs.fileInput.click()"
         >
           <p class="mb-0">
-            <i class="bi bi-upload fs-5 pe-3"></i>
-            <span v-if="!isDragging" class="ps-2 fw-bold fs-6">{{ t('file-drop.selection-prompt') }}</span>
-            <span v-if="isDragging" class="ps-2 fw-bold fs-6">{{ t('file-drop.release-to-select') }}</span>
+            <i class="bi bi-upload fs-5 pe-3" />
+            <span
+              v-if="!isDragging"
+              class="ps-2 fw-bold fs-6"
+            >
+              {{ t('file-drop.selection-prompt') }}
+            </span>
+            <span
+              v-if="isDragging"
+              class="ps-2 fw-bold fs-6"
+            >
+              {{ t('file-drop.release-to-select') }}
+            </span>
           </p>
           <input
             ref="fileInput"
@@ -207,50 +225,85 @@ const extractionNoData = computed(() =>
             class="d-none"
             :accept="acceptedFileInput"
             @change="handleFileInput"
-          />
+          >
         </div>
 
         <!-- Processing ongoing -->
-        <div v-else-if="showProcessingIndicator"
-             class="d-flex align-items-center justify-content-center p-4">
-          <span class="spinner-border float-right me-3" role="status"><span class="sr-only"></span></span>
-          <p class="mb-0">{{ t('file-drop.file-is-being-processed') }}</p>
+        <div
+          v-else-if="showProcessingIndicator"
+          class="d-flex align-items-center justify-content-center p-4"
+        >
+          <span
+            class="spinner-border float-right me-3"
+            role="status"
+          >
+            <span class="sr-only" />
+          </span>
+          <p class="mb-0">
+            {{ t('file-drop.file-is-being-processed') }}
+          </p>
         </div>
 
         <!-- Processing complete -->
-        <div v-else-if="showResults" class="p-4">
-
+        <div
+          v-else-if="showResults"
+          class="p-4"
+        >
           <div v-if="extractionSuccess">
-            <p class="fs-5 fw-bold text-success"><i class="bi bi-check-circle pe-3"></i>{{ t('file-drop.processing-success') }}</p>
+            <p class="fs-5 fw-bold text-success">
+              <i class="bi bi-check-circle pe-3" />{{ t('file-drop.processing-success') }}
+            </p>
             {{ t('extraction-state.file.success') }}
           </div>
 
           <div v-else-if="extractionFailed">
-            <p class="fs-5 fw-bold color-red">{{ t('file-drop.processing-failed') }}</p>
+            <p class="fs-5 fw-bold color-red">
+              {{ t('file-drop.processing-failed') }}
+            </p>
 
             <div v-if="props.generalErrors.length">
-              <p v-for="(error, i) in props.generalErrors" :key="i" class="pt-3 color-darkred">
+              <p
+                v-for="(error, i) in props.generalErrors"
+                :key="i"
+                class="pt-3 color-darkred"
+              >
                 {{ t(error.i18nDetail, error.context) }}
               </p>
             </div>
 
-            <p class="pt-2">{{ t('file-drop.retry-hint') }} <button class="button grey-button border border-secondary mt-2" @click="chooseDifferentFile">{{ t('file-drop.choose-different-file') }}</button></p>
+            <p class="pt-2">
+              {{ t('file-drop.retry-hint') }}
+              <button
+                class="button grey-button border border-secondary mt-2"
+                @click="chooseDifferentFile"
+              >
+                {{ t('file-drop.choose-different-file') }}
+              </button>
+            </p>
           </div>
 
           <div v-else-if="extractionNoData">
-            <p class="fs-5 fw-bold">{{ t('file-drop.processing-complete') }}</p>
+            <p class="fs-5 fw-bold">
+              {{ t('file-drop.processing-complete') }}
+            </p>
             {{ t('extraction-state.file.no-data-extracted') }}
           </div>
         </div>
       </div>
 
       <!-- Retry button -->
-      <div v-if="showRetryButton" class="pt-2 w-100 text-center">
-        <button class="button grey-button button-small muted-button font-size-small" @click="chooseDifferentFile">{{ t('file-drop.choose-different-file') }}</button>
+      <div
+        v-if="showRetryButton"
+        class="pt-2 w-100 text-center"
+      >
+        <button
+          class="button grey-button button-small muted-button font-size-small"
+          @click="chooseDifferentFile"
+        >
+          {{ t('file-drop.choose-different-file') }}
+        </button>
       </div>
-
     </div>
-
   </div>
 </template>
 

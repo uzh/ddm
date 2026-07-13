@@ -22,27 +22,35 @@
  */
 import {useI18n} from 'vue-i18n';
 
-const { t, locale } = useI18n();
+const { t, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
 </script>
 
 <template>
   <div
-      class="custom-modal"
-      id="processingModal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="loading-message"
-      aria-live="assertive"
+    id="processingModal"
+    class="custom-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="loading-message"
+    aria-live="assertive"
   >
     <div class="modal-dialog modal-dialog-centered custom-modal-container m-0">
       <div class="modal-content fs-1 text-center custom-modal-content">
-        <div id="loading-message" class="p-3 modal-message">{{ t('submitting-modal.submit-wait') }}</div>
-        <div class="dot-floating" aria-hidden="true"></div>
+        <div
+          id="loading-message"
+          class="p-3 modal-message"
+        >
+          {{ t('submitting-modal.submit-wait') }}
+        </div>
+        <div
+          class="dot-floating"
+          aria-hidden="true"
+        />
       </div>
     </div>
   </div>
 
-  <div class="modal-backdrop"></div>
+  <div class="modal-backdrop" />
 </template>
 
 <style scoped>
@@ -71,7 +79,7 @@ const { t, locale } = useI18n();
   background: #212529 !important;
   color: white !important;
   border: none;
-  border-radius: 0px;
+  border-radius: 0;
   font-size: 1.8rem;
   display: flex;
   justify-content: center;

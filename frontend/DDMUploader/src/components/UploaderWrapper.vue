@@ -21,7 +21,7 @@ import {UPLOADER_STATES, UploaderStates} from "@uploader/types/UploaderState";
 
 import {EXTRACTION_STATES} from "@uploader/utils/stateCatalog";
 
-const { t, locale } = useI18n();
+const { t, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps<{
   blueprintConfigs: Blueprint[],
@@ -40,7 +40,7 @@ const emit = defineEmits<{
    consentMap: Record<number, boolean>,
    extractionState: ExtractionStates,
    blueprintStates: BlueprintExtractionStates,
-   extractedData: BlueprintExtractionOutcome[]
+   extractedData: Record<number, BlueprintExtractionOutcome>
   ): void;
 }>()
 
@@ -117,11 +117,17 @@ const showCombinedConsent = computed(() =>
 </script>
 
 <template>
-
-  <div class="uploader-name">{{ name }}</div>
-  <div :id="'ddm-uploader-' + componentId" class="uploader-container">
-    <div v-if="instructionConfig.length > 0"
-         class="uploader-section">
+  <div class="uploader-name">
+    {{ name }}
+  </div>
+  <div
+    :id="'ddm-uploader-' + componentId"
+    class="uploader-container"
+  >
+    <div
+      v-if="instructionConfig.length > 0"
+      class="uploader-section"
+    >
       <Instructions
         :instructions="instructionConfig"
         :component-id="componentId"
@@ -130,32 +136,34 @@ const showCombinedConsent = computed(() =>
 
     <div class="uploader-section">
       <FileDrop
-          :expects-zip="props.expectsZip"
-          :uploader-state="uploaderState"
-          :extraction-state="extractionState"
-          :general-errors="generalErrorsToDisplay"
-          @fileDropped="processFile"
+        :expects-zip="props.expectsZip"
+        :uploader-state="uploaderState"
+        :extraction-state="extractionState"
+        :general-errors="generalErrorsToDisplay"
+        @file-dropped="processFile"
       />
     </div>
 
     <div class="uploader-section">
       <ExtractionOverview
-          :uploader-state="uploaderState"
-          :extraction-state="extractionState"
-          :blueprints="props.blueprintConfigs"
-          :blueprint-extraction-states="blueprintExtractionStates"
-          :blueprint-outcome-map="blueprintOutcomeMap"
-          :combined-consent="combinedConsent"
-          @consentUpdated="updateConsent"
+        :uploader-state="uploaderState"
+        :extraction-state="extractionState"
+        :blueprints="props.blueprintConfigs"
+        :blueprint-extraction-states="blueprintExtractionStates"
+        :blueprint-outcome-map="blueprintOutcomeMap"
+        :combined-consent="combinedConsent"
+        @consent-updated="updateConsent"
       />
     </div>
 
-    <div v-if="showCombinedConsent"
-         class="uploader-section">
+    <div
+      v-if="showCombinedConsent"
+      class="uploader-section"
+    >
       <ConsentQuestion
-          :combined-consent="combinedConsent"
-          :blueprint-id="null"
-          @consentUpdated="updateConsent"
+        :combined-consent="combinedConsent"
+        :blueprint-id="null"
+        @consent-updated="updateConsent"
       />
     </div>
   </div>

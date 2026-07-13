@@ -37,11 +37,11 @@
  */
 
 import { useI18n } from 'vue-i18n';
-import {BlueprintExtractionOutcome} from "@uploader/classes/blueprintExtractionOutcome";
+import {BlueprintExtractionOutcome} from "@uploader/classes/BlueprintExtractionOutcome";
 import {computed, Ref, ref, useTemplateRef, watch} from "vue";
 import {debounce} from "@uploader/utils/debounce";
 
-const { t, te, locale } = useI18n();
+const { t, te, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps<{
   blueprintOutcome: BlueprintExtractionOutcome
@@ -162,25 +162,30 @@ const toggleShowHideData = (): void => {
 </script>
 
 <template>
-
-  <div class="pb-3">{{ t('extraction-table.donation-info') }}</div>
+  <div class="pb-3">
+    {{ t('extraction-table.donation-info') }}
+  </div>
 
   <!-- Filter search field -->
   <div v-if="props.blueprintOutcome.extractedData.length > 1">
     <Transition name="slide-down">
-      <div v-if="showData"
-           class="font-size-875 mb-2 text-end text-md-start pe-2">
+      <div
+        v-if="showData"
+        class="font-size-875 mb-2 text-end text-md-start pe-2"
+      >
         <div>
-          <label :for="searchInputId"
-               class="visually-hidden">
+          <label
+            :for="searchInputId"
+            class="visually-hidden"
+          >
             {{ t('extraction-table.search-entries') }}
           </label>
           <input
-              :id="searchInputId"
-              type="text"
-              v-model="searchTerm"
-              :placeholder="t('extraction-table.search-entries')"
-              aria-label="Search data entries"
+            :id="searchInputId"
+            v-model="searchTerm"
+            type="text"
+            :placeholder="t('extraction-table.search-entries')"
+            aria-label="Search data entries"
           >
         </div>
 
@@ -191,95 +196,120 @@ const toggleShowHideData = (): void => {
           <span v-if="filteredItems.length < props.blueprintOutcome.extractedData.length"> ({{ props.blueprintOutcome.extractedData.length }} total)</span>
         </div>
       </div>
-
     </Transition>
   </div>
 
   <div>
-
     <!-- Table of extracted entries. -->
-    <div class="table-wrapper font-size-875"
-         :class="{ 'table-condensed': !showData, 'table-expanded': showData}">
-      <div ref="table-container"
-           class="table-container"
-           :class="{'no-scroll': !showData }">
+    <div
+      class="table-wrapper font-size-875"
+      :class="{ 'table-condensed': !showData, 'table-expanded': showData}"
+    >
+      <div
+        ref="table-container"
+        class="table-container"
+        :class="{'no-scroll': !showData }"
+      >
         <table class="table table-sm mb-0">
           <thead>
-          <tr>
-            <th v-for="value in blueprintOutcome.extractedFieldsMap.values()" :key="value">{{ value }}</th>
-          </tr>
+            <tr>
+              <th
+                v-for="value in blueprintOutcome.extractedFieldsMap.values()"
+                :key="value"
+              >
+                {{ value }}
+              </th>
+            </tr>
           </thead>
 
           <tbody>
-          <tr v-for="row in filteredItems.slice(lowerPosition, upperPosition)" :key="row">
-            <template v-for="key in blueprintOutcome.extractedFieldsMap.keys()" :key="key">
-              <td v-if="key in row" :key="row">{{ row[key] }}</td>
-              <td v-else>–</td>
-            </template>
-          </tr>
-          <tr v-if="filteredItems.length === 0">
-            <td class="pb-3 pt-3">{{ t('extraction-table.all-filtered') }}</td>
-          </tr>
+            <tr
+              v-for="row in filteredItems.slice(lowerPosition, upperPosition)"
+              :key="row"
+            >
+              <template
+                v-for="key in blueprintOutcome.extractedFieldsMap.keys()"
+                :key="key"
+              >
+                <td
+                  v-if="key in row"
+                  :key="row"
+                >
+                  {{ row[key] }}
+                </td>
+                <td v-else>
+                  –
+                </td>
+              </template>
+            </tr>
+            <tr v-if="filteredItems.length === 0">
+              <td class="pb-3 pt-3">
+                {{ t('extraction-table.all-filtered') }}
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
     </div>
 
     <!-- Expand-table control -->
-    <div v-if="maxPage > 1 || (maxPage == 1 && upperPosition > 5)"
-         class="show-data-control text-center font-size-875 mb-3"
-         :class="{ 'control-expanded': showData, 'control-condensed': !showData }">
-
-      <button class="button grey-button button-small font-size-small expansion-control-button"
-         :class="{ 'expansion-control-btn-expanded': showData, 'expansion-control-btn-condensed': !showData }"
-         @click="toggleShowHideData">
-
+    <div
+      v-if="maxPage > 1 || (maxPage == 1 && upperPosition > 5)"
+      class="show-data-control text-center font-size-875 mb-3"
+      :class="{ 'control-expanded': showData, 'control-condensed': !showData }"
+    >
+      <button
+        class="button grey-button button-small font-size-small expansion-control-button"
+        :class="{ 'expansion-control-btn-expanded': showData, 'expansion-control-btn-condensed': !showData }"
+        @click="toggleShowHideData"
+      >
         <template v-if="!showData">
           <span>{{ t('extraction-table.show-data') }}</span>
-          <span class="extraction-table-show-arrow"><i class="bi bi-chevron-compact-down"></i></span>
+          <span class="extraction-table-show-arrow"><i class="bi bi-chevron-compact-down" /></span>
         </template>
 
         <template v-else-if="showData">
           <span>{{ t('extraction-table.hide-data') }}</span>
-          <span class="extraction-table-hide-arrow"><i class="bi bi-chevron-compact-up"></i></span>
+          <span class="extraction-table-hide-arrow"><i class="bi bi-chevron-compact-up" /></span>
         </template>
-
       </button>
     </div>
 
     <Transition name="slide-down">
-      <div v-if="showData" class="font-size-875 page-controls">
+      <div
+        v-if="showData"
+        class="font-size-875 page-controls"
+      >
         <!-- Page control buttons -->
-        <div v-if="props.blueprintOutcome.extractedData.length > pageSize"
-             class="ps-2 pt-2 text-end text-md-start">
+        <div
+          v-if="props.blueprintOutcome.extractedData.length > pageSize"
+          class="ps-2 pt-2 text-end text-md-start"
+        >
           <!-- Prev button -->
           <button
-              @click="prevTablePage"
-              class="button grey-button button-small me-2"
-              :disabled="currentPage <= 1"
-              aria-label="Previous page"
+            class="button grey-button button-small me-2"
+            :disabled="currentPage <= 1"
+            aria-label="Previous page"
+            @click="prevTablePage"
           >
-            <i class="bi bi-chevron-left"></i>
+            <i class="bi bi-chevron-left" />
           </button>
 
-          <span>{{ t('extraction-table.page') }} {{currentPage}}/{{Math.max(maxPage, 1)}}</span>
+          <span>{{ t('extraction-table.page') }} {{ currentPage }}/{{ Math.max(maxPage, 1) }}</span>
 
           <!-- Next button -->
           <button
-              @click="nextTablePage"
-              class="button grey-button button-small ms-2"
-              :disabled="currentPage >= maxPage"
-              aria-label="Next page"
+            :disabled="currentPage >= maxPage"
+            class="button grey-button button-small ms-2"
+            aria-label="Next page"
+            @click="nextTablePage"
           >
-            <i class="bi bi-chevron-right"></i>
+            <i class="bi bi-chevron-right" />
           </button>
-
         </div>
       </div>
     </Transition>
-
   </div>
-
 </template>
 
 <style scoped>

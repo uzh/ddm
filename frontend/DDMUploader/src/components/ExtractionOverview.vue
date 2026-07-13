@@ -42,14 +42,14 @@
 import {computed, onMounted, reactive, watch} from 'vue';
 import { useI18n } from 'vue-i18n';
 import {EXTRACTION_STATES} from "@uploader/utils/stateCatalog";
-import {BlueprintExtractionStates, ExtractionStates} from "@uploader/types/extractionStates";
-import {BlueprintExtractionOutcome} from "@uploader/classes/blueprintExtractionOutcome";
+import {BlueprintExtractionStates, ExtractionStates} from "@uploader/types/ExtractionStates";
+import {BlueprintExtractionOutcome} from "@uploader/classes/BlueprintExtractionOutcome";
 import {UploaderStates} from "@uploader/types/UploaderState";
 import {Blueprint} from "@uploader/types/Blueprint";
 import {ProcessingError} from "@uploader/types/ProcessingError";
 import ExtractionItem from "@uploader/components/ExtractionItem.vue";
 
-const { t, te, locale } = useI18n();
+const { t, te, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps<{
   uploaderState: UploaderStates,
@@ -181,26 +181,26 @@ const introText = computed(() =>
 
 <template>
   <div class="ddm-extraction-overview">
-  <!-- Intro -->
-  <div class="pb-3 d-flex align-items-center">
-    <span class="section-icon pe-3 pe-sm-0"><i class="bi bi-file-earmark-text"></i></span>
-    <span class="section-heading">{{ introText }}</span>
-  </div>
+    <!-- Intro -->
+    <div class="pb-3 d-flex align-items-center">
+      <span class="section-icon pe-3 pe-sm-0"><i class="bi bi-file-earmark-text" /></span>
+      <span class="section-heading">{{ introText }}</span>
+    </div>
 
-  <!-- Blueprint overview -->
-  <ExtractionItem
-    v-for="blueprint in props.blueprints"
-    :key="blueprint.id"
-    :blueprint="blueprint"
-    :extraction-state="blueprintUIMap[blueprint.id]?.state"
-    :extraction-message="blueprintUIMap[blueprint.id]?.msg"
-    :extraction-error-text="blueprintUIMap[blueprint.id]?.errorText"
-    :extraction-outcome="blueprintOutcomeMap[blueprint.id]"
-    :has-detail-errors="blueprintUIMap[blueprint.id].anyDetails"
-    :errors="blueprintUIMap[blueprint.id]?.errors || []"
-    :combined-consent="combinedConsent"
-    @consent-updated="passConsentUpdateToParent"
-  />
+    <!-- Blueprint overview -->
+    <ExtractionItem
+      v-for="blueprint in props.blueprints"
+      :key="blueprint.id"
+      :blueprint="blueprint"
+      :extraction-state="blueprintUIMap[blueprint.id]?.state"
+      :extraction-message="blueprintUIMap[blueprint.id]?.msg"
+      :extraction-error-text="blueprintUIMap[blueprint.id]?.errorText"
+      :extraction-outcome="blueprintOutcomeMap[blueprint.id]"
+      :has-detail-errors="blueprintUIMap[blueprint.id].anyDetails"
+      :errors="blueprintUIMap[blueprint.id]?.errors || []"
+      :combined-consent="combinedConsent"
+      @consent-updated="passConsentUpdateToParent"
+    />
   </div>
 </template>
 

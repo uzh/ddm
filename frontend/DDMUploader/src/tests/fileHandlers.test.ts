@@ -153,7 +153,7 @@ describe('handleZipFile', () => {
     };
     const generalErrors = [];
 
-    await handleZipFile(zipFile, [jsonBlueprintA], blueprintOutcomeMap, generalErrors);
+    await handleZipFile(zipFile, [jsonBlueprintA], blueprintOutcomeMap, generalErrors, 1);
 
     expect(blueprintOutcomeMap[1].extractedData.length).toBe(2);
     expect(blueprintOutcomeMap[1].extractedData).toContainEqual({ name: 'Alice' });
@@ -167,7 +167,7 @@ describe('handleZipFile', () => {
     };
     const generalErrors = [];
 
-    await handleZipFile(zipFile, [jsonBlueprintBoth], blueprintOutcomeMap, generalErrors);
+    await handleZipFile(zipFile, [jsonBlueprintBoth], blueprintOutcomeMap, generalErrors, 1);
 
     expect(blueprintOutcomeMap[2].extractedData.length).toBe(4);
     expect(blueprintOutcomeMap[2].extractedData).toContainEqual({ name: 'Alice' });
@@ -191,7 +191,7 @@ describe('handleZipFile', () => {
     };
     const generalErrors = [];
 
-    await handleZipFile(zipFile, [noMatchBlueprint], blueprintOutcomeMap, generalErrors);
+    await handleZipFile(zipFile, [noMatchBlueprint], blueprintOutcomeMap, generalErrors, 1);
 
     expect(blueprintOutcomeMap[1].extractedData.length).toBe(0);
     expect(blueprintOutcomeMap[1].processingErrors.length).toBeGreaterThan(0);
@@ -205,7 +205,7 @@ describe('handleZipFile', () => {
     };
     const generalErrors = [];
 
-    await handleZipFile(invalidZip, [jsonBlueprintA], blueprintOutcomeMap, generalErrors);
+    await handleZipFile(invalidZip, [jsonBlueprintA], blueprintOutcomeMap, generalErrors, 1);
 
     expect(generalErrors.length).toBeGreaterThan(0);
   });
@@ -226,7 +226,7 @@ describe('handleZipFile', () => {
     };
     const generalErrors = [];
 
-    await handleZipFile(zipFile, [invalidRegexBlueprint], blueprintOutcomeMap, generalErrors);
+    await handleZipFile(zipFile, [invalidRegexBlueprint], blueprintOutcomeMap, generalErrors, 1);
 
     expect(blueprintOutcomeMap[1].processingErrors.length).toBeGreaterThan(0);
   });
@@ -238,7 +238,7 @@ describe('handleZipFile', () => {
     };
     const generalErrors = [];
 
-    await handleZipFile(notZip, [jsonBlueprintA], blueprintOutcomeMap, generalErrors);
+    await handleZipFile(notZip, [jsonBlueprintA], blueprintOutcomeMap, generalErrors, 1);
 
     expect(generalErrors.length).toBeGreaterThan(0);
     expect(blueprintOutcomeMap[1].extractedData.length).toBe(0);
@@ -257,7 +257,7 @@ describe('handleZipFile', () => {
     };
     const generalErrors = [];
 
-    await handleZipFile(zipFile, [jsonBlueprintA, csvBlueprint], blueprintOutcomeMap, generalErrors);
+    await handleZipFile(zipFile, [jsonBlueprintA, csvBlueprint], blueprintOutcomeMap, generalErrors, 1);
 
     expect(blueprintOutcomeMap[1].extractedData.length).toBe(2);
     expect(blueprintOutcomeMap[3].extractedData.length).toBe(2);

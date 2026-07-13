@@ -32,7 +32,7 @@ import {UploaderOutcome} from "@uploader/types/UploaderOutcome";
 import SubmittingOverlay from "@uploader/components/SubmittingOverlay.vue";
 import {UploaderConfig} from "@uploader/types/UploaderConfig";
 
-const { t, locale } = useI18n();
+const { t, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps<{
   uploaderConfigs: UploaderConfig[];
@@ -142,23 +142,28 @@ function initializeUploaderOutcomes(): Record<number, UploaderOutcome> {
 
 <template>
   <div class="ddm-uploader-app">
-  <template v-for="config in uploaderConfigs">
-    <div class="ddm-uploader mb-5">
-      <UploaderWrapper
+    <template
+      v-for="(config, index) in uploaderConfigs"
+      :key="index"
+    >
+      <div
+        class="ddm-uploader mb-5"
+      >
+        <UploaderWrapper
           :blueprint-configs="config.blueprints"
           :combined-consent="config.combined_consent"
-          :componentId="config.uploader_id"
+          :component-id="config.uploader_id"
           :exception-url="props.exceptionUrl"
           :expects-zip="config.upload_type === 'zip file'"
           :nested-zip-extraction-depth="config.nested_zip_extraction_depth"
           :instruction-config="config.instructions"
           :name="config.name"
-          @statusChanged="updateUploaderOutcome"
-      />
-    </div>
-  </template>
+          @status-changed="updateUploaderOutcome"
+        />
+      </div>
+    </template>
 
-  <IssueModal
+    <IssueModal
       :failed-uploader-names="failedUploaderNames"
       :unattended-uploader-share="unattendedUploaderShare"
       :unattended-uploader-names="unattendedUploaderNames"
@@ -166,28 +171,38 @@ function initializeUploaderOutcomes(): Record<number, UploaderOutcome> {
       :blueprints-without-consent-names="blueprintsWithoutConsentNames"
       :all-uploaders-valid="allUploadersValid"
       :show-modal="showModal"
-      @continueAnyway="submitDonation"
+      @continue-anyway="submitDonation"
       @modal-closed="hideModal"
-  />
+    />
 
-  <SubmittingOverlay v-if="submitting" />
+    <SubmittingOverlay v-if="submitting" />
 
-  <div class="row">
-    <div class="col">
-      <button
+    <div class="row">
+      <div class="col">
+        <button
           id="ddm-uploader-proceed-btn"
           class="flow-btn"
           type="button"
           @click="proceed"
-      >{{ t('uploader-app.next-btn') }}&nbsp;&nbsp;&#8250;</button>
+        >
+          {{ t('uploader-app.next-btn') }}&nbsp;&nbsp;&#8250;
+        </button>
+      </div>
     </div>
-  </div>
 
-  <form id="uploader-form" method="POST" enctype="multipart/form-data" v-show="false">
-    <input type="hidden" name="csrfmiddlewaretoken" :value="csrfToken">
-  </form>
+    <form
+      v-show="false"
+      id="uploader-form"
+      method="POST"
+      enctype="multipart/form-data"
+    >
+      <input
+        type="hidden"
+        name="csrfmiddlewaretoken"
+        :value="csrfToken"
+      >
+    </form>
   </div>
-
 </template>
 
 <style>

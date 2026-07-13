@@ -200,18 +200,18 @@ test('valueIsGreater', () => {
 test('regexDeleteMatch', () => {
   expect(regexDeleteMatch('abc', 'a')).toBe('bc');
   expect(regexDeleteMatch([1,2], '\\[')).toBe('1,2]');
-  expect(regexDeleteMatch('some string with email@address.com in the middle', 'email@address\.com')).toBe('some string with  in the middle');
+  expect(regexDeleteMatch('some string with email@address.com in the middle', 'email@address.com')).toBe('some string with  in the middle');
 })
 
 test('regexReplaceMatch', () => {
   expect(regexReplaceMatch('abc', 'a', 'd')).toBe('dbc');
   expect(regexReplaceMatch([1,2], '\\[', 'd')).toBe('d1,2]');
-  expect(regexReplaceMatch('some string with email@address.com in the middle', 'email@address\.com', 'anonymized')).toBe('some string with anonymized in the middle');
+  expect(regexReplaceMatch('some string with email@address.com in the middle', 'email@address.com', 'anonymized')).toBe('some string with anonymized in the middle');
 })
 
 test('regexDeleteRow', () => {
   expect(regexDeleteRow('abc', 'a')).toBe(true);
   expect(regexDeleteRow([1,2], '^\\[')).toBe(true);
   expect(regexDeleteRow([1,2], '^.\\[')).toBe(false);
-  expect(regexDeleteRow('some string with email@address.com in the middle', 'email@address\.com')).toBe(true);
+  expect(regexDeleteRow('some string with email@address.com in the middle', 'email@address.com')).toBe(true);
 })

@@ -17,7 +17,7 @@ import {computed, ref, useTemplateRef} from 'vue';
 import { useI18n } from 'vue-i18n';
 import {Instruction} from "@uploader/types/Instruction";
 
-const { t, locale } = useI18n();
+const { t, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps<{
   instructions: Instruction[];
@@ -58,44 +58,64 @@ const currentInstruction = computed(() => props.instructions[currentStep.value].
 </script>
 
 <template>
-  <div class="d-flex align-items-center" ref="instruction-heading">
-    <span class="section-icon"><i class="bi bi-list-ol"></i></span>
+  <div
+    ref="instruction-heading"
+    class="d-flex align-items-center"
+  >
+    <span class="section-icon"><i class="bi bi-list-ol" /></span>
     <span class="section-heading">{{ t("instructions.heading") }}</span>
   </div>
 
   <div class="d-flex flex-row align-items-center carousel">
-    <div v-if="props.instructions.length > 1"
-         class="control-container hidden-small">
-    </div>
+    <div
+      v-if="props.instructions.length > 1"
+      class="control-container hidden-small"
+    />
 
     <div class="carousel-inner">
-      <transition name="fade" mode="out-in">
-        <component :is="'div'" :key="currentStep" class="carousel-item active" v-html="currentInstruction" />
+      <transition
+        name="fade"
+        mode="out-in"
+      >
+        <component
+          :is="'div'"
+          :key="currentStep"
+          class="carousel-item active"
+          v-html="currentInstruction"
+        />
       </transition>
     </div>
 
-    <div v-if="props.instructions.length > 1"
-         class="control-container hidden-small">
-    </div>
-
+    <div
+      v-if="props.instructions.length > 1"
+      class="control-container hidden-small"
+    />
   </div>
 
-  <div v-if="props.instructions.length > 1"
-       class="text-center d-flex flex-row align-items-center justify-content-center pt-3">
-
-    <div v-if="props.instructions.length > 1"
-         class="control-container d-flex justify-content-start">
-      <button v-if="canStepDown"
-         @click="stepDown"
-         class="button grey-button button-small"
-         :class="{ 'btn-disabled': currentStep === 0 }">
-        <i class="bi bi-chevron-left"></i>
+  <div
+    v-if="props.instructions.length > 1"
+    class="text-center d-flex flex-row align-items-center justify-content-center pt-3"
+  >
+    <div
+      v-if="props.instructions.length > 1"
+      class="control-container d-flex justify-content-start"
+    >
+      <button
+        v-if="canStepDown"
+        class="button grey-button button-small"
+        :class="{ 'btn-disabled': currentStep === 0 }"
+        @click="stepDown"
+      >
+        <i class="bi bi-chevron-left" />
         <span class="visually-hidden">Previous</span>
       </button>
     </div>
 
     <div class="d-flex flex-wrap flex-row align-items-center justify-content-center">
-      <template v-for="(i, index) in props.instructions" :key="index">
+      <template
+        v-for="(i, index) in props.instructions"
+        :key="index"
+      >
         <button
           type="button"
           class="button grey-button button-small m-1"
@@ -108,17 +128,20 @@ const currentInstruction = computed(() => props.instructions[currentStep.value].
       </template>
     </div>
 
-    <div v-if="props.instructions.length > 1"
-         class="control-container d-flex justify-content-end">
-      <button v-if="canStepUp"
-         @click="stepUp"
-         class="button grey-button button-small"
-         :class="{ 'btn-disabled': currentStep === props.instructions.length - 1 }">
-        <i class="bi bi-chevron-right"></i>
+    <div
+      v-if="props.instructions.length > 1"
+      class="control-container d-flex justify-content-end"
+    >
+      <button
+        v-if="canStepUp"
+        class="button grey-button button-small"
+        :class="{ 'btn-disabled': currentStep === props.instructions.length - 1 }"
+        @click="stepUp"
+      >
+        <i class="bi bi-chevron-right" />
         <span class="visually-hidden">Next</span>
       </button>
     </div>
-
   </div>
 </template>
 

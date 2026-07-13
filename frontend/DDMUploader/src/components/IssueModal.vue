@@ -35,7 +35,7 @@
 
 import { useI18n } from 'vue-i18n';
 import {computed, onMounted, onUnmounted, ref, Ref, watch} from "vue";
-const { t, locale } = useI18n();
+const { t, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps<{
   failedUploaderNames: string[],
@@ -114,67 +114,79 @@ onUnmounted(() => {
 </script>
 
 <template>
-
   <template v-if="modalVisible">
-
-    <div class="modal-backdrop" @click="hideModal"></div>
+    <div
+      class="modal-backdrop"
+      @click="hideModal"
+    />
 
     <div class="modal-container">
-
       <div
-          class="issue-modal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modal-title"
-          tabindex="-1"
+        class="issue-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+        tabindex="-1"
       >
         <div class="modal-body pt-4 pt-md-5">
-          <h2 id="modal-title" class="visually-hidden">{{ t("issue-modal.title") }}</h2>
+          <h2
+            id="modal-title"
+            class="visually-hidden"
+          >
+            {{ t("issue-modal.title") }}
+          </h2>
 
           <div class="pb-2 pb-md-0 ps-md-2 pe-md-3 text-center">
-            <i class="bi bi-info-circle-fill fs-1"></i>
+            <i class="bi bi-info-circle-fill fs-1" />
           </div>
 
           <div class="modal-text">
-
-            <p v-if="unattendedUploaderShare === 1" class="m-0">
+            <p
+              v-if="unattendedUploaderShare === 1"
+              class="m-0"
+            >
               {{ t("issue-modal.none-attempted") }}
             </p>
-            <p v-else-if="blueprintsWithoutConsentCount > 0 && unattendedUploaderShare < 1" class="m-0">
-              {{ t("issue-modal.not-all-consented", {"blueprints-wo-consent": combineStrings(props.blueprintsWithoutConsentNames)})  }}
+            <p
+              v-else-if="blueprintsWithoutConsentCount > 0 && unattendedUploaderShare < 1"
+              class="m-0"
+            >
+              {{ t("issue-modal.not-all-consented", {"blueprints-wo-consent": combineStrings(props.blueprintsWithoutConsentNames)}) }}
             </p>
-            <p v-else-if="unattendedUploaderShare > 0" class="m-0">
+            <p
+              v-else-if="unattendedUploaderShare > 0"
+              class="m-0"
+            >
               {{ t("issue-modal.not-all-attempted", {"skipped-uploads": combineStrings(props.unattendedUploaderNames)}) }}
             </p>
-            <p v-else-if="failedUploaderNames.length > 0" class="m-0">
+            <p
+              v-else-if="failedUploaderNames.length > 0"
+              class="m-0"
+            >
               {{ t("issue-modal.failed-uploaders", {"uploads": combineStrings(props.failedUploaderNames)}) }}
             </p>
-
           </div>
-
         </div>
 
         <div class="modal-footer">
           <button
-              type="button"
-              class="button black-button"
-              @click="hideModal"
+            type="button"
+            class="button black-button"
+            @click="hideModal"
           >
             {{ t("issue-modal.back") }}
           </button>
 
           <button
-              v-if="canContinueAnyway"
-              type="button"
-              class="button grey-button"
-              @click="hideModal(); emit('continueAnyway')"
+            v-if="canContinueAnyway"
+            type="button"
+            class="button grey-button"
+            @click="hideModal(); emit('continueAnyway')"
           >
             {{ t("issue-modal.continue-anyway") }}
           </button>
         </div>
-
       </div>
-
     </div>
   </template>
 </template>

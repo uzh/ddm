@@ -28,7 +28,8 @@ import {ExtractionRule} from "@uploader/types/ExtractionRule";
  */
 export class BlueprintExtractionOutcome {
   blueprintId: number;
-  extractedData: any[];  // Usually, this is an array of dictionaries, with each dictionary holding extracted-field:value pairs.
+  extractedData: any[];  // eslint-disable-line @typescript-eslint/no-explicit-any
+    // Usually, this is an array of dictionaries, with each dictionary holding extracted-field:value pairs.
   extractedFieldsMap: Map<string, string>;  // Used to map the name of extracted fields to the field definition used in extraction rules.
   extractionStats: {
     nRowsMissingField: number,

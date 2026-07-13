@@ -4,28 +4,28 @@ from django.utils.safestring import SafeString
 
 
 class TestEngine(Engine):
-    default_builtins = ['ddm.core.utils.user_content.limited_template_library']
+    default_builtins = ["ddm.core.utils.user_content.limited_template_library"]
 
 
 def preprocess_user_content(content: str) -> str:
-    """
-    Helper function to convert numeric html codes to characters to ensure the functionality of the custom
-    templating features.
+    """Helper function to convert numeric html codes to characters
+
+    Used to ensure the functionality of the custom templating features.
     """
     if not content:
-        return ''
+        return ""
 
-    content = content.replace('&gt;', '>')
-    content = content.replace('&lt;', '<')
-    return content
+    content = content.replace("&gt;", ">")
+    return content.replace("&lt;", "<")
 
 
-def render_user_content(content: str, context: dict=None) -> SafeString:
-    """
-    Function to render user provided content (used, e.g., to render a project's question text or debriefing text).
+def render_user_content(content: str, context: dict | None = None) -> SafeString:
+    """Function to render user provided content.
 
-    Provides users (researchers) the flexibility to use a limited set of template tags to include variables and
-    conditionals in their content.
+    Used, e.g., to render a project's question text or debriefing text.
+
+    Provides users (researchers) the flexibility to use a limited set of
+    template tags to include variables and conditionals in their content.
     """
     content = preprocess_user_content(content)
     template = Template(content, engine=TestEngine())

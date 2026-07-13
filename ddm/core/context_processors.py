@@ -1,5 +1,7 @@
-from ddm import VERSION as ddm_version
+from django.http import HttpRequest
+
+from ddm import VERSION as DDM_VERSION
 
 
-def add_ddm_version(request):
-    return {'ddm_version': 'DDM v' + ddm_version}
+def add_ddm_version(request: HttpRequest) -> dict[str, str]:
+    return {"ddm_version": "DDM v" + DDM_VERSION}

@@ -10,28 +10,29 @@ def validate_regex_pattern(pattern: str) -> None:
     try:
         re.compile(pattern)
     except re.error as e:
-        raise ValidationError(f'Invalid regex pattern: {e}')
+        msg = "Invalid regex pattern"
+        raise ValidationError(msg) from e
 
 
 DANGEROUS_REGEX_PATTERNS = [
     # Nested quantifiers: (x+)+, (x*)+, (x+)*, (x*)*
     # Catches: (a+)+, (.*)+, (\d*)*, etc.
     (
-        r'\([^)]*[+*][^)]*\)[+*?]|\([^)]*[+*][^)]*\)\{',
-        'Nested quantifiers (e.g., (a+)+ or (.*)+) are not allowed as they can '
-        'cause excessive backtracking.'
+        r"\([^)]*[+*][^)]*\)[+*?]|\([^)]*[+*][^)]*\)\{",
+        "Nested quantifiers (e.g., (a+)+ or (.*)+) are not allowed as they can "
+        "cause excessive backtracking.",
     ),
     # Adjacent wildcards: .*.*  .+.+ .*.+
     (
-        r'\.\*\.[\*\+]|\.\+\.[\*\+]',
-        'Adjacent wildcards (e.g., .*.* or .+.+) are not allowed as they can '
-        'cause excessive backtracking.'
+        r"\.\*\.[\*\+]|\.\+\.[\*\+]",
+        "Adjacent wildcards (e.g., .*.* or .+.+) are not allowed as they can "
+        "cause excessive backtracking.",
     ),
     # Quantified backreference: (.+)\1+
     (
-        r'\\[1-9][+*]|\{\\[1-9]\}[+*]',
-        'Quantified backreferences like (e.g., (.+)\\1+) are not allowed as '
-        'they can cause excessive backtracking.'
+        r"\\[1-9][+*]|\{\\[1-9]\}[+*]",
+        "Quantified backreferences like (e.g., (.+)\\1+) are not allowed as "
+        "they can cause excessive backtracking.",
     ),
 ]
 

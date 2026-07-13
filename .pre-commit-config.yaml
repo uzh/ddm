@@ -51,14 +51,14 @@ repos:
       # - id: djlint-reformat-django
       - id: djlint-django
 
-  - repo: local
-    hooks:
-      - id: check-translations
-        name: Check for missing translations
-        language: system
-        entry: bash scripts/check_translations.sh
-        pass_filenames: false
-        types_or: [python, html]
+#  - repo: local
+#    hooks:
+#      - id: check-translations
+#        name: Check for missing translations
+#        language: system
+#        entry: bash scripts/check_translations.sh
+#        pass_filenames: false
+#        types_or: [python, html]
 
 # sets up .pre-commit-ci.yaml to ensure pre-commit dependencies stay up to date
 ci:

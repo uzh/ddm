@@ -1,26 +1,28 @@
 import re
 
 from django.conf import settings
+from django.contrib.auth.models import User
 
 from ddm.projects.models import DonationProject, ResearchProfile
 
 
-def email_is_valid(email_string):
+def email_is_valid(email_string: str) -> bool:
     """
     Check if an email address complies with the pattern specified in
     DDM_SETTINGS['EMAIL_PERMISSION_CHECK'].
     If this setting is not defined, returns True.
     """
-    if hasattr(settings, 'DDM_SETTINGS'):
-        if 'EMAIL_PERMISSION_CHECK' in settings.DDM_SETTINGS:
-            match = re.match(settings.DDM_SETTINGS['EMAIL_PERMISSION_CHECK'],
-                             email_string)
+    if hasattr(settings, "DDM_SETTINGS"):
+        if "EMAIL_PERMISSION_CHECK" in settings.DDM_SETTINGS:
+            match = re.match(
+                settings.DDM_SETTINGS["EMAIL_PERMISSION_CHECK"], email_string
+            )
             if not match:
                 return False
     return True
 
 
-def user_has_project_access(user, project):
+def user_has_project_access(user: User, project: DonationProject) -> bool:
     """
     Returns true if user is owner or collaborator of a project. False otherwise.
     """
@@ -30,20 +32,16 @@ def user_has_project_access(user, project):
     user_profile = ResearchProfile.objects.filter(user=user).first()
     if not user_profile:
         return False
-    else:
-        if project.owner == user_profile:
-            return True
-        else:
-            return False
+    return project.owner == user_profile
 
 
-def user_is_permitted(user):
+def user_is_permitted(user: User) -> bool:
     """
     Check if a user has access permission.
     """
     if user.is_superuser:
         return True
-    elif user.is_authenticated:
+    if user.is_authenticated:
         profile = ResearchProfile.objects.filter(user=user).first()
         if profile:
             if profile.ignore_email_restriction:

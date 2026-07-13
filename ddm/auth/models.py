@@ -1,7 +1,9 @@
 import binascii
 import os
 
+from django.contrib.auth.models import User
 from django.db import models
+from django.http import HttpRequest
 from django.utils import timezone
 from rest_framework import exceptions
 from rest_framework.authentication import TokenAuthentication, get_authorization_header
@@ -12,38 +14,43 @@ from ddm.logging.models import EventLogEntry
 class ProjectAccessToken(models.Model):
     """
     Custom authorization token that is linked to a DonationProject.
-    Adapted from the Token model as implemented in rest_framework.authtoken.models.Token.
+    Adapted from the Token model as implemented in
+    rest_framework.authtoken.models.Token.
     """
+
     key = models.CharField(max_length=40, primary_key=True)
     project = models.OneToOneField(
-        'ddm_projects.DonationProject', related_name='donation_project',
-        on_delete=models.CASCADE, verbose_name='Donation Project'
+        "ddm_projects.DonationProject",
+        related_name="donation_project",
+        on_delete=models.CASCADE,
+        verbose_name="Donation Project",
     )
     created = models.DateTimeField(auto_now_add=True)
     expiration_date = models.DateTimeField(blank=True, null=True)
 
-    def save(self, *args, **kwargs):
+    def __str__(self) -> str:
+        return self.key
+
+    def save(self, *args, **kwargs) -> None:
         if not self.key:
             self.key = self.generate_key()
         return super().save(*args, **kwargs)
 
-    def delete(self, *args, **kwargs):
+    def delete(self, *args, **kwargs) -> None:
         EventLogEntry.objects.create(
-            project=self.project,
-            description='Access Token Deleted'
+            project=self.project, description="Access Token Deleted"
         )
         super().delete(*args, **kwargs)
 
     @classmethod
-    def generate_key(cls):
+    def generate_key(cls) -> str:
         return binascii.hexlify(os.urandom(20)).decode()
 
-    def __str__(self):
-        return self.key
-
-    def has_expired(self):
-        """ Returns False if token has expired. """
-        return self.expiration_date is not None and timezone.now() > self.expiration_date
+    def has_expired(self) -> bool:
+        """Returns False if token has expired."""
+        return (
+            self.expiration_date is not None and timezone.now() > self.expiration_date
+        )
 
 
 class ProjectTokenAuthenticator(TokenAuthentication):
@@ -59,9 +66,10 @@ class ProjectTokenAuthenticator(TokenAuthentication):
 
         Authorization: Token 401f7ac837da42b97f613d789819ff93537bee6a
     """
+
     model = ProjectAccessToken
 
-    def authenticate(self, request):
+    def authenticate(self, request: HttpRequest) -> tuple[User, ProjectAccessToken]:
         """
         Adopted from parent model. Added that request is passed to
         authenticate_credentials in order to check if the requested project
@@ -73,40 +81,42 @@ class ProjectTokenAuthenticator(TokenAuthentication):
             return None
 
         if len(auth) == 1:
-            msg = 'Invalid token header. No credentials provided.'
+            msg = "Invalid token header. No credentials provided."
             raise exceptions.AuthenticationFailed(msg)
-        elif len(auth) > 2:
-            msg = 'Invalid token header. Token string should not contain spaces.'
+        if len(auth) > 2:  # noqa: PLR2004
+            msg = "Invalid token header. Token string should not contain spaces."
             raise exceptions.AuthenticationFailed(msg)
 
         try:
             token = auth[1].decode()
-        except UnicodeError:
-            msg = 'Invalid token header. Token string should not contain invalid characters.'
-            raise exceptions.AuthenticationFailed(msg)
+        except UnicodeError as e:
+            msg = "Invalid token header - contains invalid characters."
+            raise exceptions.AuthenticationFailed(msg) from e
 
         try:
-            project_id = request.parser_context['kwargs'].get('project_url_id', None)
-        except ValueError:
-            msg = 'Invalid project identifier provided.'
-            raise exceptions.AuthenticationFailed(msg)
+            project_id = request.parser_context["kwargs"].get("project_url_id", None)
+        except ValueError as e:
+            msg = "Invalid project identifier provided."
+            raise exceptions.AuthenticationFailed(msg) from e
 
         return self.authenticate_credentials(token, project_id)
 
-    def authenticate_credentials(self, key, project_id):
+    def authenticate_credentials(
+        self, key: str, project_id: str
+    ) -> tuple[User, ProjectAccessToken]:
         model = self.get_model()
         try:
-            token = model.objects.select_related('project').get(key=key)
-        except model.DoesNotExist:
-            msg = 'Invalid token.'
-            raise exceptions.AuthenticationFailed(msg)
+            token = model.objects.select_related("project").get(key=key)
+        except model.DoesNotExist as e:
+            msg = "Invalid token."
+            raise exceptions.AuthenticationFailed(msg) from e
 
         if token.has_expired():
-            msg = 'Token has expired. You can create a new one in the admin backend.'
+            msg = "Token has expired. You can create a new one in the admin backend."
             raise exceptions.AuthenticationFailed(msg)
 
         if token.project.url_id != project_id:
-            msg = 'The provided token does not belong to the requested project.'
+            msg = "The provided token does not belong to the requested project."
             raise exceptions.AuthenticationFailed(msg)
 
         return token.project.owner.user, token

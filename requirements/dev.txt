@@ -1,9 +1,12 @@
-build==1.4.0
-coverage==7.13.3
+build==1.5.1
+coverage==7.15.1  # https://github.com/nedbat/coveragepy
 django-browser-reload==1.21.0  # https://github.com/adamchainz/django-browser-reload
-django-debug-toolbar==6.2.0  # https://github.com/django-commons/django-debug-toolbar
+django-debug-toolbar==7.0.0  # https://github.com/django-commons/django-debug-toolbar
 django-watchfiles==1.4.0  # https://github.com/adamchainz/django-watchfiles
-python-dotenv==1.2.1
-selenium==4.40.0  # https://github.com/SeleniumHQ/Selenium
+pip-audit==2.10.1  # https://pypi.org/project/pip-audit/
+pre-commit==4.6.0  # https://github.com/pre-commit/pre-commit
+python-dotenv==1.2.2
+ruff==0.15.21  # https://github.com/astral-sh/ruff
+selenium==4.46.0  # https://github.com/SeleniumHQ/Selenium
 twine==6.2.0
-webdriver_manager==4.0.2  # https://github.com/SergeyPirogov/webdriver_manager
+webdriver_manager==4.1.2  # https://github.com/SergeyPirogov/webdriver_manager

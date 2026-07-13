@@ -22,6 +22,15 @@ Once you have cloned or forked the GitHub repository, activate your local virtua
 [source]
 ----
 (venv) <...>/ddm> pip install -r requirements/base.txt
+(venv) <...>/ddm> pip install -r requirements/dev.txt
+----
+
+===== Install pre-commit hooks
+
+[source]
+----
+(venv) <...>/ddm> pre-commit install
+(venv) <...>/ddm> pre-commit install --hook-type pre-push   # enables pip-audit on push
 ----
 
 ===== Adjust Test Configuration

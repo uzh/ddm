@@ -251,14 +251,19 @@ if (process.env.NODE_ENV === 'test') {
 </script>
 
 <template>
-
-  <div ref="questionnaireRoot" class="ddm-questionnaire">
-    <template v-for="question in questionnaireConfig" :key="question.question">
+  <div
+    ref="questionnaireRoot"
+    class="ddm-questionnaire"
+  >
+    <template
+      v-for="question in questionnaireConfig"
+      :key="question.question"
+    >
       <div
+        v-show="currentPage === question.page && !hideObjectDict[question.question]"
+        ref="questionDivs"
         :data-page-index="question.page"
         :data-question-id="question.question"
-        ref="questionDivs"
-        v-show="currentPage === question.page && !hideObjectDict[question.question]"
         class="question-app-container"
       >
         <div class="question-container">
@@ -270,19 +275,22 @@ if (process.env.NODE_ENV === 'test') {
             :scale="question.scale"
             :options="question.options"
             :required="question.required"
-            :hideObjectDict="hideObjectDict"
-            @responseChanged="updateResponses"
+            :hide-object-dict="hideObjectDict"
             class="question-body"
+            @response-changed="updateResponses"
           />
-
         </div>
       </div>
     </template>
 
-
     <div class="row flow-navigation">
       <div class="col">
-        <button id="next-page-btn" class="flow-btn" type="button" @click="() => { clickOnNextPage(); }">
+        <button
+          id="next-page-btn"
+          class="flow-btn"
+          type="button"
+          @click="() => { clickOnNextPage(); }"
+        >
           {{ t('next-btn-label') }}
           &nbsp;&nbsp;&#8250;
         </button>

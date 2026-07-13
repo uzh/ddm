@@ -26,31 +26,40 @@ function responseChanged(event: Event) {
 
 <template>
   <div class="ddm-question ddm-question--multi-choice">
-    <div class="question-text" v-html="props.text"></div>
-    <div :id="'answer-' + props.qid" class="response-body question-response-body item-container">
+    <div
+      class="question-text"
+      v-html="props.text"
+    />
+    <div
+      :id="'answer-' + props.qid"
+      class="response-body question-response-body item-container"
+    >
       <div
         v-for="item in props.items"
+        v-show="!props.hideObjectDict[item.id]"
         :key="item.id"
         class="question-item"
-        v-show="!props.hideObjectDict[item.id]"
       >
         <input
+          :id="'q-' + props.qid + '-' + item.id"
           class="item-check"
           type="checkbox"
-          :id="'q-' + props.qid + '-' + item.id"
           :name="item.id"
           :value="item.value"
           @change="responseChanged"
-        />
+        >
         <label
           :for="'q-' + props.qid + '-' + item.id"
           class="item-label prevent-select"
         >
           <span class="span-check-icon">&#10003;</span>
-          <span v-html="item.label"></span>
+          <span v-html="item.label" />
         </label>
       </div>
-      <p :id="'required-hint-' + props.qid" class="required-hint mb-0">
+      <p
+        :id="'required-hint-' + props.qid"
+        class="required-hint mb-0"
+      >
         {{ t('required-but-missing-hint') }}
       </p>
     </div>

@@ -33,7 +33,10 @@ function responseChanged(event: Event) {
 
 <template>
   <div class="ddm-question ddm-question--open">
-    <div class="question-text" v-html="props.text"></div>
+    <div
+      class="question-text"
+      v-html="props.text"
+    />
 
     <div
       v-if="!props.options.multi_item_response"
@@ -48,46 +51,61 @@ function responseChanged(event: Event) {
           :name="props.qid"
           :maxlength="getMaxLength"
           @change="responseChanged"
-        />
+        >
         <textarea
           v-if="props.options.display === 'large'"
           class="open-question-textarea"
           :name="props.qid"
           :maxlength="getMaxLength"
           @change="responseChanged"
-        ></textarea>
-        <p :id="'required-hint-' + props.qid" class="required-hint mb-0">
+        />
+        <p
+          :id="'required-hint-' + props.qid"
+          class="required-hint mb-0"
+        >
           {{ t('required-but-missing-hint') }}
         </p>
       </template>
 
       <template v-else-if="props.options.input_type === 'numbers'">
         <input
+          v-only-digits
           type="text"
           class="oq-input"
-          v-only-digits
           :name="props.qid"
           :maxlength="getMaxLength"
           @change="responseChanged"
-        />
-        <p class="input-hint">{{ t('hint-number-input') }}</p>
-        <p :id="'required-hint-' + props.qid" class="required-hint mb-0">
+        >
+        <p class="input-hint">
+          {{ t('hint-number-input') }}
+        </p>
+        <p
+          :id="'required-hint-' + props.qid"
+          class="required-hint mb-0"
+        >
           {{ t('required-but-missing-hint') }}
         </p>
       </template>
 
       <template v-else-if="props.options.input_type === 'email'">
         <input
+          v-valid-email
           type="email"
           class="oq-input"
-          v-valid-email
           :name="props.qid"
           :maxlength="getMaxLength"
           @change="responseChanged"
-        />
-        <p class="input-hint hint-invalid-input pb-0 mb-0">{{ t('hint-invalid-email') }}</p>
-        <p class="input-hint">{{ t('hint-email-input') }}</p>
-        <p :id="'required-hint-' + props.qid" class="required-hint mb-0">
+        >
+        <p class="input-hint hint-invalid-input pb-0 mb-0">
+          {{ t('hint-invalid-email') }}
+        </p>
+        <p class="input-hint">
+          {{ t('hint-email-input') }}
+        </p>
+        <p
+          :id="'required-hint-' + props.qid"
+          class="required-hint mb-0"
+        >
           {{ t('required-but-missing-hint') }}
         </p>
       </template>
@@ -100,12 +118,12 @@ function responseChanged(event: Event) {
     >
       <div
         v-for="item in props.items"
-        :key="item.id"
-        :id="'answer-' + item.id"
         v-show="!props.hideObjectDict[item.id]"
+        :id="'answer-' + item.id"
+        :key="item.id"
         class="input-row"
       >
-        <div v-html="item.label"></div>
+        <div v-html="item.label" />
         <div>
           <template v-if="props.options.input_type === 'text'">
             <input
@@ -115,14 +133,14 @@ function responseChanged(event: Event) {
               :name="item.id"
               :maxlength="getMaxLength"
               @change="responseChanged"
-            />
+            >
             <textarea
               v-if="props.options.display === 'large'"
               class="open-question-textarea"
               :name="item.id"
               :maxlength="getMaxLength"
               @change="responseChanged"
-            ></textarea>
+            />
           </template>
 
           <template v-else-if="props.options.input_type === 'numbers'">
@@ -133,21 +151,27 @@ function responseChanged(event: Event) {
               :name="item.id"
               :maxlength="getMaxLength"
               @change="responseChanged"
-            />
-            <p class="input-hint">{{ t('hint-number-input') }}</p>
+            >
+            <p class="input-hint">
+              {{ t('hint-number-input') }}
+            </p>
           </template>
 
           <template v-else-if="props.options.input_type === 'email'">
             <input
+              v-valid-email
               type="email"
               class="oq-input"
-              v-valid-email
               :name="item.id"
               :maxlength="getMaxLength"
               @change="responseChanged"
-            />
-            <p class="input-hint hint-invalid-input pb-0 mb-0">{{ t('hint-invalid-email') }}</p>
-            <p class="input-hint">{{ t('hint-email-input') }}</p>
+            >
+            <p class="input-hint hint-invalid-input pb-0 mb-0">
+              {{ t('hint-invalid-email') }}
+            </p>
+            <p class="input-hint">
+              {{ t('hint-email-input') }}
+            </p>
           </template>
         </div>
       </div>

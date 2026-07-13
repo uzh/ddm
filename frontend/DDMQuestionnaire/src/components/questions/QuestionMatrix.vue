@@ -35,27 +35,36 @@ function responseChanged(event: Event) {
 
 <template>
   <div class="ddm-question ddm-question--matrix">
-    <div class="question-text" v-html="props.text"></div>
+    <div
+      class="question-text"
+      v-html="props.text"
+    />
     <div class="response-body ps-0 pe-0">
-      <template v-for="item in props.items" :key="item.id">
+      <template
+        v-for="item in props.items"
+        :key="item.id"
+      >
         <div
-          class="response-row"
-          :id="'answer-' + item.id"
           v-show="!props.hideObjectDict[item.id]"
+          :id="'answer-' + item.id"
+          class="response-row"
         >
           <div
             class="item-separate-line"
             :class="{ show: props.scale.length > 7 }"
             v-html="item.label"
-          ></div>
+          />
 
           <div class="mq-item-container">
-            <div v-if="props.options.show_scale_headings" class="heading-container">
+            <div
+              v-if="props.options.show_scale_headings"
+              class="heading-container"
+            >
               <div
                 class="item-label-container item-label-placeholder"
                 :class="{ hidden: props.scale.length > 7 }"
                 v-html="item.label"
-              ></div>
+              />
               <div class="scale-container scale-heading-container">
                 <div
                   v-for="(point, id) in props.scale"
@@ -63,18 +72,24 @@ function responseChanged(event: Event) {
                   :class="[ 'scale-label-container', { 'main-scale': !point.secondary_point, 'secondary-scale': point.secondary_point } ]"
                 >
                   <div class="scale-label scale-label-mockup">
-                    <span class="scale-label-span" v-html="point.heading_label"></span>
+                    <span
+                      class="scale-label-span"
+                      v-html="point.heading_label"
+                    />
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="response-container" :class="{ 'border-bottom-light': props.scale.length < 7 }">
+            <div
+              class="response-container"
+              :class="{ 'border-bottom-light': props.scale.length < 7 }"
+            >
               <div
                 class="item-label-container"
                 :class="{ hidden: props.scale.length > 7 }"
                 v-html="item.label"
-              ></div>
+              />
               <div class="scale-container scale-input-container">
                 <div
                   v-for="(point, id) in props.scale"
@@ -82,25 +97,31 @@ function responseChanged(event: Event) {
                   :class="[ 'scale-label-container', { 'main-scale': !point.secondary_point, 'secondary-scale': point.secondary_point } ]"
                 >
                   <input
-                    type="radio"
                     :id="props.qid + '-' + item.id + '-' + point.value"
+                    type="radio"
                     :name="item.id"
                     :value="point.value"
                     @change="responseChanged"
                     @click="scrollToNext"
-                  />
+                  >
                   <label
                     :for="props.qid + '-' + item.id + '-' + point.value"
                     class="scale-label prevent-select"
                     :class="{ 'main-label': !point.secondary_point }"
                   >
-                    <span class="scale-label-span" v-html="point.input_label"></span>
+                    <span
+                      class="scale-label-span"
+                      v-html="point.input_label"
+                    />
                   </label>
                 </div>
               </div>
             </div>
           </div>
-          <p :id="'required-hint-' + item.id" class="required-hint mb-0 hidden">
+          <p
+            :id="'required-hint-' + item.id"
+            class="required-hint mb-0 hidden"
+          >
             {{ t('required-but-missing-hint') }}
           </p>
         </div>

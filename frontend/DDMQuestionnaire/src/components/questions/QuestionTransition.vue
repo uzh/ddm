@@ -7,7 +7,7 @@ const props = defineProps<{
 
 <template>
   <div class="ddm-question ddm-question--transition question-text">
-    <div v-html="props.text"></div>
+    <div v-html="props.text" />
   </div>
 </template>
 

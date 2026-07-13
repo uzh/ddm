@@ -34,69 +34,96 @@ function responseChanged(event: Event) {
 
 <template>
   <div class="ddm-question ddm-question--semantic-diff">
-    <div class="question-text" v-html="props.text"></div>
+    <div
+      class="question-text"
+      v-html="props.text"
+    />
     <div class="response-body ps-0 pe-0">
-      <template v-for="item in props.items" :key="item.id">
+      <template
+        v-for="item in props.items"
+        :key="item.id"
+      >
         <div
+          v-show="!props.hideObjectDict[item.id]"
           :id="'answer-' + item.id"
           class="response-row"
-          v-show="!props.hideObjectDict[item.id]"
         >
           <div class="item-container">
-            <div class="item-label-container item-label-start" v-html="item.label"></div>
+            <div
+              class="item-label-container item-label-start"
+              v-html="item.label"
+            />
 
             <div class="scale-container">
-              <template v-for="(point, idx) in props.scale" :key="idx">
+              <template
+                v-for="(point, idx) in props.scale"
+                :key="idx"
+              >
                 <div
                   v-if="!point.secondary_point"
                   class="scale-label-container main-scale"
                 >
                   <input
-                    type="radio"
                     :id="props.qid + '-' + item.id + '-' + point.value"
+                    type="radio"
                     :name="item.id"
                     :value="point.value"
                     @change="responseChanged"
                     @click="scrollToNext"
-                  />
+                  >
                   <label
                     :for="props.qid + '-' + item.id + '-' + point.value"
                     class="scale-label prevent-select"
                     :class="{ 'main-label': !point.secondary_point }"
                   >
-                    <span class="scale-label-span prevent-select" v-html="point.input_label"></span>
+                    <span
+                      class="scale-label-span prevent-select"
+                      v-html="point.input_label"
+                    />
                   </label>
                 </div>
               </template>
             </div>
 
-            <div class="item-label-container" v-html="item.label_alt"></div>
+            <div
+              class="item-label-container"
+              v-html="item.label_alt"
+            />
 
             <div class="scale-container scale-container-secondary">
-              <template v-for="(point, idx) in props.scale" :key="'sec-' + idx">
+              <template
+                v-for="(point, idx) in props.scale"
+                :key="'sec-' + idx"
+              >
                 <div
                   v-if="point.secondary_point"
                   class="scale-label-container secondary-scale"
                 >
                   <input
-                    type="radio"
                     :id="props.qid + '-' + item.id + '-' + point.value"
+                    type="radio"
                     :name="item.id"
                     :value="point.value"
                     @change="responseChanged"
-                  />
+                  >
                   <label
                     :for="props.qid + '-' + item.id + '-' + point.value"
                     class="scale-label prevent-select"
                     :class="{ 'main-label': !point.secondary_point }"
                   >
-                    <span class="scale-label-span prevent-select" v-html="point.input_label"></span>
+                    <span
+                      class="scale-label-span prevent-select"
+                      v-html="point.input_label"
+                    />
                   </label>
                 </div>
               </template>
             </div>
           </div>
-          <p :id="'required-hint-' + item.id" class="required-hint mb-0 ps-10px hidden">
+          <p
+            :id="'required-hint-' + item.id"
+            class="required-hint mb-0 ps-10px hidden"
+          >
             {{ t('required-but-missing-hint') }}
           </p>
         </div>

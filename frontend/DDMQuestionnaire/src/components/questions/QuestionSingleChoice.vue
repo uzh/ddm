@@ -26,28 +26,34 @@ function responseChanged(event: Event) {
 
 <template>
   <div class="ddm-question ddm-question--single-choice">
-    <div class="question-text" v-html="props.text"></div>
+    <div
+      class="question-text"
+      v-html="props.text"
+    />
 
-    <div :id="'answer-' + props.qid" class="response-body question-response-body item-container">
+    <div
+      :id="'answer-' + props.qid"
+      class="response-body question-response-body item-container"
+    >
       <div
         v-for="item in props.items"
+        v-show="!props.hideObjectDict[item.id]"
         :key="item.id"
         class="question-item"
-        v-show="!props.hideObjectDict[item.id]"
       >
         <input
+          :id="'q-' + props.qid + '-' + item.id"
           class="form-check-input"
           type="radio"
-          :id="'q-' + props.qid + '-' + item.id"
           :name="props.qid"
           :value="item.value"
           @change="responseChanged"
-        />
+        >
         <label
           :for="'q-' + props.qid + '-' + item.id"
           class="item-label prevent-select"
         >
-          <span v-html="item.label"></span>
+          <span v-html="item.label" />
         </label>
       </div>
     </div>

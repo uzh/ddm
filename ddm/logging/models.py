@@ -3,48 +3,41 @@ from django.utils import timezone
 
 
 class ExceptionRaisers(models.TextChoices):
-    SERVER = 'server'
-    CLIENT = 'client'
+    SERVER = "server"
+    CLIENT = "client"
 
 
 class ExceptionLogEntry(models.Model):
     date = models.DateTimeField(default=timezone.now)
     project = models.ForeignKey(
-        'ddm_projects.DonationProject',
-        on_delete=models.CASCADE
+        "ddm_projects.DonationProject", on_delete=models.CASCADE
     )
     participant = models.ForeignKey(
-        'ddm_participation.Participant',
-        null=True,
-        on_delete=models.SET_NULL
+        "ddm_participation.Participant", null=True, on_delete=models.SET_NULL
     )
     uploader = models.ForeignKey(
-        'ddm_datadonation.FileUploader',
-        null=True,
-        on_delete=models.CASCADE
+        "ddm_datadonation.FileUploader", null=True, on_delete=models.CASCADE
     )
     blueprint = models.ForeignKey(
-        'ddm_datadonation.DonationBlueprint',
-        null=True,
-        on_delete=models.CASCADE
+        "ddm_datadonation.DonationBlueprint", null=True, on_delete=models.CASCADE
     )
-    raised_by = models.CharField(
-        max_length=20,
-        choices=ExceptionRaisers.choices,
-        blank=True
-    )
+    raised_by = models.CharField(max_length=20, choices=ExceptionRaisers, blank=True)
     exception_type = models.CharField(
         max_length=255,
-        null=True
     )
     message = models.TextField()
+
+    def __str__(self) -> str:
+        return f"Exception Log {self.date}"
 
 
 class EventLogEntry(models.Model):
     date = models.DateTimeField(default=timezone.now)
     project = models.ForeignKey(
-        'ddm_projects.DonationProject',
-        on_delete=models.CASCADE
+        "ddm_projects.DonationProject", on_delete=models.CASCADE
     )
     description = models.TextField()
     message = models.TextField()
+
+    def __str__(self) -> str:
+        return f"Event Log {self.date}"

@@ -5,7 +5,8 @@
 
 ### Update Guide
 
-- Removed `null=True` from DonationBlueprint.regex_path, DonationBlueprint.description and ProcessingRule.comparison_operator;
+- Removed `null=True` from DonationBlueprint.regex_path, DonationBlueprint.description, ProcessingRule.comparison_operator
+  ExceptionLogEntry.exception_type;
   during migration, provide `""` as the default value for instances with null values.
 
 ## 2.2.0 - February 2026

@@ -1,56 +1,63 @@
 import json
 
 from django.contrib import admin
+from django.http import HttpRequest
 from django.utils.html import format_html
 
-from ddm.logging.models import ExceptionLogEntry, EventLogEntry
+from ddm.logging.models import EventLogEntry, ExceptionLogEntry
 
 
+@admin.register(ExceptionLogEntry)
 class ExceptionsAdmin(admin.ModelAdmin):
     """
     Provides an overview of all registered exceptions.
     """
-    list_display = [
-        'formatted_date', 'project', 'participant', 'raised_by',
-        'exception_type', 'formatted_message'
-    ]
-    list_filter = [
-        'project', 'exception_type', 'raised_by'
-    ]
 
-    def has_add_permission(self, request, obj=None):
+    list_display = [
+        "formatted_date",
+        "project",
+        "participant",
+        "raised_by",
+        "exception_type",
+        "formatted_message",
+    ]
+    list_filter = ["project", "exception_type", "raised_by"]
+
+    def has_add_permission(
+        self, request: HttpRequest, obj: ExceptionLogEntry | None = None
+    ) -> bool:
         return False
 
-    @admin.display(description='Message')
-    def formatted_message(self, obj):
+    @admin.display(description="Message")
+    def formatted_message(self, obj: ExceptionLogEntry) -> str:
         msg = obj.message
         try:
             msg_json = json.loads(msg)
             msg = json.dumps(msg_json, indent=4, ensure_ascii=False)
-            return format_html('<pre>{}</pre>', msg)
+            return format_html("<pre>{}</pre>", msg)  # TODO: Check deprecation hint
         except ValueError:
-            msg = msg
+            pass
         return msg
 
-    @admin.display(ordering='date', description='Date')
-    def formatted_date(self, obj):
-        return obj.date.strftime('%Y-%m-%d %H:%M:%S')
+    @admin.display(ordering="date", description="Date")
+    def formatted_date(self, obj: ExceptionLogEntry) -> str:
+        return obj.date.strftime("%Y-%m-%d %H:%M:%S")
 
 
+@admin.register(EventLogEntry)
 class EventsAdmin(admin.ModelAdmin):
     """
     Provides an overview of all registered exceptions.
     """
-    list_display = ['formatted_date', 'project', 'description', 'message']
-    list_filter = ['description']
 
-    def has_add_permission(self, request, obj=None):
+    list_display = ["formatted_date", "project", "description", "message"]
+    list_filter = ["description"]
+
+    def has_add_permission(
+        self, request: HttpRequest, obj: EventLogEntry | None = None
+    ) -> bool:
         return False
 
-    @admin.display(ordering='date', description='Date')
-    def formatted_date(self, obj):
-        return obj.date.strftime('%Y-%m-%d %H:%M:%S')
-
-
-admin.site.register(ExceptionLogEntry, ExceptionsAdmin)
-admin.site.register(EventLogEntry, EventsAdmin)
+    @admin.display(ordering="date", description="Date")
+    def formatted_date(self, obj: EventLogEntry) -> str:
+        return obj.date.strftime("%Y-%m-%d %H:%M:%S")

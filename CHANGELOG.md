@@ -1,5 +1,13 @@
 # Changelog
 
+# 3.0.0
+
+
+### Update Guide
+
+- Removed `null=True` from DonationBlueprint.regex_path, DonationBlueprint.description and ProcessingRule.comparison_operator;
+  during migration, provide `""` as the default value for instances with null values.
+
 ## 2.2.0 - February 2026
 
 This version drops official support for Django < 5.2 and Python versions < 3.10
@@ -56,7 +64,7 @@ This version drops official support for Django < 5.2 and Python versions < 3.10
 1. **Add django-filter to `INSTALLED_APPS`**:
 
     The updated project log views make use of the [`django-filter`](https://github.com/carltongibson/django-filter) package.
-    The package will be automatically installed in your environment when you upgrade DDM. However, you will have to 
+    The package will be automatically installed in your environment when you upgrade DDM. However, you will have to
     update your settings.py by adding:
     ```python
         INSTALLED_APPS = [
@@ -92,7 +100,7 @@ This version drops official support for Django < 5.2 and Python versions < 3.10
 
 - **Translations**: Minor corrections to French and Italian translations ([`7ae9cb9`](https://github.com/uzh/ddm/commit/7ae9cb9)).
 
-#### *Uploader (data donation interface)* 
+#### *Uploader (data donation interface)*
 
 - **File re-upload**: Clicking re-upload now opens file dialog directly (reduced from 2 clicks) ([`9ad0c39`](https://github.com/uzh/ddm/commit/9ad0c39)).
 - **Instructions**: Auto-scroll to top when navigating pages, hide controls for single-page instructions, and improved small-screen layout ([`fc6824a`](https://github.com/uzh/ddm/commit/fc6824a), [`030d02a`](https://github.com/uzh/ddm/commit/030d02a), [`d268885`](https://github.com/uzh/ddm/commit/d268885), [`d056368`](https://github.com/uzh/ddm/commit/d056368)).
@@ -148,7 +156,7 @@ Run `python manage.py collectstatic` after upgrading to DDM v2.1.4 from the prev
 
 ### Fixed
 
-- **Filter evaluation**: Fixed filter evaluation when navigating to next page without answering any questions ([`d019810`](https://github.com/uzh/ddm/commit/d019810)). 
+- **Filter evaluation**: Fixed filter evaluation when navigating to next page without answering any questions ([`d019810`](https://github.com/uzh/ddm/commit/d019810)).
 - **Project link in Django admin**: Fix broken link to donation project in Django admin interface ([`d272bb2`](https://github.com/uzh/ddm/commit/d272bb2)).
 
 ### Update Guide
@@ -192,7 +200,7 @@ Run `python manage.py collectstatic` after upgrading to DDM v2.1.3 from the prev
 - **Questionnaire Frontend Refactor**: Moved questionnaire frontend to separate application, updated dependencies, split large files into submodules, and refactored to TypeScript. ([`ba91828`](https://github.com/uzh/ddm/commit/ba91828), [`fea71d7`](https://github.com/uzh/ddm/commit/fea71d7), [`b395bcf`](https://github.com/uzh/ddm/commit/b395bcf), [`38d8c16`](https://github.com/uzh/ddm/commit/38d8c16))
 - **Modern Questionnaire Design**: Restyled questionnaire interface with a more modern look and improved responsiveness. ([`19f7dfc`](https://github.com/uzh/ddm/commit/19f7dfc), [`2ce4d4a`](https://github.com/uzh/ddm/commit/2ce4d4a))
 - **Enhanced Response Handling**: Updated response serializer to handle both new and old response structures for backward compatibility. ([`26f31ce`](https://github.com/uzh/ddm/commit/26f31ce))
-- **Refactored Exception Logs**: Introduced new exception log specifications that contain more information and are more accessible/verbose than the previous exception logs ([`169aa80`](https://github.com/uzh/ddm/commit/169aa80)). 
+- **Refactored Exception Logs**: Introduced new exception log specifications that contain more information and are more accessible/verbose than the previous exception logs ([`169aa80`](https://github.com/uzh/ddm/commit/169aa80)).
 
 ### Fixed
 
@@ -252,7 +260,7 @@ WEBPACK_LOADER = {
 }
 ```
 
-Additionally, you will need to run `python manage.py migrate` to apply changes in the database models as well as 
+Additionally, you will need to run `python manage.py migrate` to apply changes in the database models as well as
 `python manage.py collectstatic` to load newly added static files.
 
 
@@ -275,15 +283,15 @@ Run `python manage.py collectstatic` after upgrading to DDM v2.0.1 from a previo
 
 ## 2.0.0 - 2025-02-27
 
-This release marks a significant update, restructuring the codebase to enhance the maintainability and scalability of DDM. 
-The application has been modularized into smaller sub-apps, each focused on a specific aspect of the application logic. 
-Additionally, the update includes an improved user interface and user experience, making DDM more accessible to 
+This release marks a significant update, restructuring the codebase to enhance the maintainability and scalability of DDM.
+The application has been modularized into smaller sub-apps, each focused on a specific aspect of the application logic.
+Additionally, the update includes an improved user interface and user experience, making DDM more accessible to
 both researchers and participants. The accompanying documentation has also been extensively revamped.
 
-**Important:** Due to the comprehensive restructuring, v2.0 introduces breaking changes. 
-Upgrading from version 1.x to 2.x will result in the loss of configured questionnaires in existing projects and 
-migrating requires several adjustments to the settings (see below and in the documentation). Furthermore, the API 
-endpoints have been re-specified and return structures altered meaning that scripts drawing on endpoints from v1.x will 
+**Important:** Due to the comprehensive restructuring, v2.0 introduces breaking changes.
+Upgrading from version 1.x to 2.x will result in the loss of configured questionnaires in existing projects and
+migrating requires several adjustments to the settings (see below and in the documentation). Furthermore, the API
+endpoints have been re-specified and return structures altered meaning that scripts drawing on endpoints from v1.x will
 have to be updated.
 
 Below, the key updates are highlighted, including breaking changes, new features, and guidance for a seamless migration.
@@ -333,24 +341,24 @@ Below, the key updates are highlighted, including breaking changes, new features
 
 ### Breaking Changes
 
-- **Loss of Configured Questionnaires:** 
-Upgrading from 1.x to 2.x will result in the loss of configured questionnaires in existing projects. 
-This is due to migration challenges caused by the polymorphic structure of the QuestionBase model. 
-To retain existing configurations, create a database backup and write a custom script to re-import the old questionnaire data. 
+- **Loss of Configured Questionnaires:**
+Upgrading from 1.x to 2.x will result in the loss of configured questionnaires in existing projects.
+This is due to migration challenges caused by the polymorphic structure of the QuestionBase model.
+To retain existing configurations, create a database backup and write a custom script to re-import the old questionnaire data.
 Since the structure of the models in the questionnaire app remains unchanged, re-creating objects based on the v1.x configurations should be feasible.
-- **Deprecated Function:** 
+- **Deprecated Function:**
 The `ddm.auth.user_is_allowed` function has been removed in v2.0. Replace it with `ddm_auth.utils.user_has_project_access`.
 
 ### Migration Guide
 
-To migrate from 1.x to 2.0, follow the installation steps outlined in the updated administrator documentation, 
+To migrate from 1.x to 2.0, follow the installation steps outlined in the updated administrator documentation,
 particularly regarding included apps and template context processors.
 
 If you have integrated DDM functionality into your own code, ensure the following updates are made:
 
 - **Update Imports:** Functions and models have been moved to specific sub-apps.
 - **Update URL References:** URL patterns have been renamed, and URL namespaces have been introduced for each sub-app.
-- **Update Template and Static File Paths:** Templates and static files have been reorganized, with resources now 
+- **Update Template and Static File Paths:** Templates and static files have been reorganized, with resources now
 housed in their respective sub-app directories instead of the top-level.
 
 ### Update Guide
@@ -360,7 +368,7 @@ Run `python manage.py migrate` and `python manage.py collectstatic` after upgrad
 
 ## 1.0.19 - 2024-09-21
 
-_Download of collected data donations is only possible through the API not through the admin interface. 
+_Download of collected data donations is only possible through the API not through the admin interface.
 Fix and comprehensive documentation will be released in a subsequent version._
 
 ### Fixed
@@ -369,11 +377,11 @@ Fix and comprehensive documentation will be released in a subsequent version._
 
 ## 1.0.18 - 2024-09-19
 
-_Download of collected data donations is only possible through the API not through the admin interface. 
+_Download of collected data donations is only possible through the API not through the admin interface.
 Fix and comprehensive documentation will be released in a subsequent version._
 
 ### Changed
-- Questionnaire: Optimize mobile layout of matrix questions and semantic differential type questions. ([`b1607e7`](https://github.com/uzh/ddm/commit/b1607e7), 
+- Questionnaire: Optimize mobile layout of matrix questions and semantic differential type questions. ([`b1607e7`](https://github.com/uzh/ddm/commit/b1607e7),
 [`0c60352`](https://github.com/uzh/ddm/commit/0c60352), [`b6b9b58`](https://github.com/uzh/ddm/commit/b6b9b58))
 - Questionnaire: Jump to top of page after clicking on 'next page'. ([`fb55c10`](https://github.com/uzh/ddm/commit/fb55c10))
 - Allow customization of briefing consent labels through html. ([`32d7c59`](https://github.com/uzh/ddm/commit/32d7c59))
@@ -381,7 +389,7 @@ Fix and comprehensive documentation will be released in a subsequent version._
 
 ## 1.0.17 - 2024-07-29
 
-_Download of collected data donations is only possible through the API not through the admin interface. 
+_Download of collected data donations is only possible through the API not through the admin interface.
 Fix and comprehensive documentation will be released in a subsequent version._
 
 ### Changed
@@ -394,11 +402,11 @@ Fix and comprehensive documentation will be released in a subsequent version._
 
 ## 1.0.16 - 2024-07-19
 
-_Questionnaire was not working in this version due to the inclusion of a deprecated template tag (see fix in v1.0.17)._ 
+_Questionnaire was not working in this version due to the inclusion of a deprecated template tag (see fix in v1.0.17)._
 
 ### Changed
 
-- Improve robustness of extraction operators: ([`5b3a0af`](https://github.com/uzh/ddm/commit/5b3a0af), [`855796f`](https://github.com/uzh/ddm/commit/855796f)) 
+- Improve robustness of extraction operators: ([`5b3a0af`](https://github.com/uzh/ddm/commit/5b3a0af), [`855796f`](https://github.com/uzh/ddm/commit/855796f))
 
     - Detect and convert date-strings (in ISO, RFC2822, or HTTP format) to date objects for greater/smaller-comparisons.
     - Detect and convert numeric-strings to numbers for 'greater/smaller'-comparisons.
@@ -425,5 +433,5 @@ _Questionnaire was not working in this version due to the inclusion of a depreca
 ### Fixed
 
 - Change type of `EventLogEntry.description` from CharField to TextField to allow the posting of longer event descriptions. ([`d0d1c7d`](https://github.com/uzh/ddm/commit/d0d1c7d))
-- Start data entry count from 1 instead of 0 in the data donation feedback navigation. ([`88e9295`](https://github.com/uzh/ddm/commit/88e9295)) 
+- Start data entry count from 1 instead of 0 in the data donation feedback navigation. ([`88e9295`](https://github.com/uzh/ddm/commit/88e9295))
 - Fix bug that has limited the number of extraction rules to 10 and remove this limitation. ([`d9ef58c`](https://github.com/uzh/ddm/commit/d9ef58c))

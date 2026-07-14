@@ -1,18 +1,16 @@
-from typing import Union
-
 from django.db.models import QuerySet
 
-from ddm.datadonation.models import FileUploader, DataDonation, DonationBlueprint
+from ddm.datadonation.models import DataDonation, DonationBlueprint, FileUploader
 from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers
 from ddm.participation.models import Participant
 from ddm.participation.serializers import (
-    FilterConditionSerializer,
     FileUploaderSerializer,
+    FilterConditionSerializer,
     QuestionConfigSerializer,
 )
 from ddm.participation.utils import get_filter_config_id
 from ddm.projects.models import DonationProject
-from ddm.questionnaire.models import QuestionBase, FilterCondition, QuestionItem
+from ddm.questionnaire.models import FilterCondition, QuestionBase, QuestionItem
 
 
 class UploaderConfigService:
@@ -20,8 +18,7 @@ class UploaderConfigService:
 
     @staticmethod
     def create_configs(
-            file_uploaders: QuerySet[FileUploader],
-            participant: Participant | None = None
+        file_uploaders: QuerySet[FileUploader], participant: Participant | None = None
     ) -> list:
         """Create uploader configuration that can be passed to frontend.
 
@@ -31,19 +28,16 @@ class UploaderConfigService:
         """
 
         participant_data = participant.get_context_data() if participant else None
-        context = {'participant_data': participant_data}
-
-        uploader_configs = [
-            FileUploaderSerializer(fu, context=context).data
-            for fu in file_uploaders
+        context = {"participant_data": participant_data}
+        return [
+            FileUploaderSerializer(fu, context=context).data for fu in file_uploaders
         ]
-        return uploader_configs
 
 
 class QuestionnaireConfigService:
     """Service class to create questionnaire configuration to be passed to frontend."""
 
-    def __init__(self, project: DonationProject, participant: Participant):
+    def __init__(self, project: DonationProject, participant: Participant) -> None:
         """
         Args:
             project: The DonationProject instance for which to create the config.
@@ -64,9 +58,9 @@ class QuestionnaireConfigService:
                 all information needed to render the question.
         """
         q_config = []
-        questions = self.questions.order_by('page', 'index')
+        questions = self.questions.order_by("page", "index")
         for question in questions:
-            if not question.is_general(): # means question associated to blueprint
+            if not question.is_general():  # means question associated to blueprint
                 # Check if donation exists
                 try:
                     donation = self.get_donation(question.blueprint)
@@ -82,30 +76,26 @@ class QuestionnaireConfigService:
 
             context = {**self.participant.get_context_data()}
             if donated_data is not None:
-                context.update({'donated_data': donated_data})
+                context.update({"donated_data": donated_data})
 
-            q_config.append(
-                QuestionConfigSerializer(question, context=context).data
-            )
+            q_config.append(QuestionConfigSerializer(question, context=context).data)
 
         return q_config
 
     def get_donation(self, blueprint: DonationBlueprint) -> DataDonation:
         try:
             data_donation = DataDonation.objects.get(
-                blueprint=blueprint,
-                participant=self.participant,
-                status='success'
+                blueprint=blueprint, participant=self.participant, status="success"
             )
 
         except DataDonation.DoesNotExist:
-            msg = ('Questionnaire Rendering Exception: No donation '
-                   f'found for participant {self.participant.pk} and '
-                   f'blueprint {blueprint.pk}.')
+            msg = (
+                "Questionnaire Rendering Exception: No donation "
+                f"found for participant {self.participant.pk} and "
+                f"blueprint {blueprint.pk}."
+            )
             ExceptionLogEntry.objects.create(
-                project=self.project,
-                raised_by=ExceptionRaisers.SERVER,
-                message=msg
+                project=self.project, raised_by=ExceptionRaisers.SERVER, message=msg
             )
             raise
 
@@ -119,8 +109,9 @@ class QuestionnaireConfigService:
 
         Returns:
             dict: A dictionary containing the project's filter condition
-                (key: question/item identifier ['question-<question.pk>'/'item-<item.pk>'];
-                value: a list of filter conditions for the question/item).
+              (key: question/item identifier ['question-<question.pk>'/
+              'item-<item.pk>']; value: a list of filter conditions for the
+              question/item).
         """
 
         f_config = {}
@@ -135,14 +126,11 @@ class QuestionnaireConfigService:
 
         return f_config
 
-    def get_filter_config(
-            self,
-            obj: Union[QuestionBase, QuestionItem]
-    ) -> list[dict]:
+    def get_filter_config(self, obj: QuestionBase | QuestionItem) -> list[dict]:
 
-        filter_conditions = obj.filtercondition_set.filter(
-            source_exists=True
-        ).order_by('index')
+        filter_conditions = obj.filtercondition_set.filter(source_exists=True).order_by(
+            "index"
+        )
         active_filters = self.remove_inactive_filters(filter_conditions)
         filter_configs = []
         for i, condition in enumerate(active_filters):
@@ -150,14 +138,14 @@ class QuestionnaireConfigService:
 
             # Reset combinator value to None for item with the lowest index.
             if i == 0:
-                filter_config['combinator'] = None
+                filter_config["combinator"] = None
             filter_configs.append(filter_config)
 
         return filter_configs
 
     @staticmethod
     def remove_inactive_filters(
-            filter_conditions: QuerySet[FilterCondition]
+        filter_conditions: QuerySet[FilterCondition],
     ) -> list[FilterCondition]:
 
         return [fc for fc in filter_conditions if fc.check_source_exists()]

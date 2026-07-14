@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 import typing
-from typing import Union
 
 from ddm.questionnaire.constants import FilterSourceTypes
 
 if typing.TYPE_CHECKING:
-    from ddm.questionnaire.models import QuestionBase, FilterCondition, QuestionItem
+    from ddm.questionnaire.models import FilterCondition, QuestionBase, QuestionItem
 
 
 def get_filter_source_config_id(filter_condition: FilterCondition) -> str:
@@ -14,10 +13,9 @@ def get_filter_source_config_id(filter_condition: FilterCondition) -> str:
 
     if filter_condition.source_type == FilterSourceTypes.QUESTION:
         return get_filter_config_id(filter_condition.source_question)
-    elif filter_condition.source_type == FilterSourceTypes.QUESTION_ITEM:
+    if filter_condition.source_type == FilterSourceTypes.QUESTION_ITEM:
         return get_filter_config_id(filter_condition.source_item)
-    else:
-        return filter_condition.source_identifier
+    return filter_condition.source_identifier
 
 
 def get_filter_target_config_id(filter_condition: FilterCondition) -> str:
@@ -25,14 +23,13 @@ def get_filter_target_config_id(filter_condition: FilterCondition) -> str:
 
     if filter_condition.target_question:
         return get_filter_config_id(filter_condition.target_question)
-    elif filter_condition.target_item:
+    if filter_condition.target_item:
         return get_filter_config_id(filter_condition.target_item)
-    else:
-        msg = 'Misconfigured filter condition type'
-        raise ValueError(msg)
+    msg = "Misconfigured filter condition type"
+    raise ValueError(msg)
 
 
-def get_filter_config_id(obj: Union[QuestionBase, QuestionItem]) -> str:
+def get_filter_config_id(obj: QuestionBase | QuestionItem) -> str:
     """
     Returns the passed objects ID used for the filter configuration.
 
@@ -45,7 +42,6 @@ def get_filter_config_id(obj: Union[QuestionBase, QuestionItem]) -> str:
             'item-<item.pk>' for a QuestionItem.
     """
 
-    if not hasattr(obj, 'question_type'):
-        return f'{FilterSourceTypes.QUESTION_ITEM}-{obj.pk}'
-    else:
-        return f'{FilterSourceTypes.QUESTION}-{obj.pk}'
+    if not hasattr(obj, "question_type"):
+        return f"{FilterSourceTypes.QUESTION_ITEM}-{obj.pk}"
+    return f"{FilterSourceTypes.QUESTION}-{obj.pk}"

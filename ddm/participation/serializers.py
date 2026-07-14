@@ -12,16 +12,16 @@ from ddm.datadonation.models import (
     ProcessingRule,
 )
 from ddm.participation.utils import (
-    get_filter_target_config_id,
     get_filter_source_config_id,
+    get_filter_target_config_id,
 )
+from ddm.questionnaire.constants import QuestionType
 from ddm.questionnaire.models import (
     FilterCondition,
     QuestionBase,
     QuestionItem,
     ScalePoint,
 )
-from ddm.questionnaire.constants import QuestionType
 
 
 class ProcessingRuleSerializer(serializers.ModelSerializer):
@@ -29,15 +29,16 @@ class ProcessingRuleSerializer(serializers.ModelSerializer):
 
     see also: frontend/DDMUploader/src/types/ExtractionRule.ts
     """
+
     class Meta:
         model = ProcessingRule
         fields = [
-            'id',
-            'field',
-            'regex_field',
-            'comparison_operator',
-            'comparison_value',
-            'replacement_value',
+            "id",
+            "field",
+            "regex_field",
+            "comparison_operator",
+            "comparison_value",
+            "replacement_value",
         ]
 
 
@@ -46,12 +47,10 @@ class BlueprintFilePathSerializer(serializers.ModelSerializer):
 
     see also: frontend/DDMUploader/src/types/ExtractionRule.ts
     """
+
     class Meta:
         model = BlueprintFilePath
-        fields = [
-            'path',
-            'is_regex'
-        ]
+        fields = ["path", "is_regex"]
 
 
 class BlueprintSerializer(serializers.ModelSerializer):
@@ -59,11 +58,12 @@ class BlueprintSerializer(serializers.ModelSerializer):
 
     see also: frontend/DDMUploader/src/types/Blueprint.ts
     """
-    name = serializers.CharField(source='display_name')
-    format = serializers.CharField(source='exp_file_format')
+
+    name = serializers.CharField(source="display_name")
+    format = serializers.CharField(source="exp_file_format")
     expected_fields = serializers.SerializerMethodField()
     exp_fields_regex_matching = serializers.BooleanField(
-        source='expected_fields_regex_matching'
+        source="expected_fields_regex_matching"
     )
     fields_to_extract = serializers.SerializerMethodField()
     extraction_rules = serializers.SerializerMethodField()
@@ -72,17 +72,17 @@ class BlueprintSerializer(serializers.ModelSerializer):
     class Meta:
         model = DonationBlueprint
         fields = [
-            'id',
-            'name',
-            'description',
-            'format',
-            'json_extraction_root',
-            'expected_fields',
-            'exp_fields_regex_matching',
-            'fields_to_extract',
-            'file_paths',
-            'extraction_rules',
-            'csv_delimiter',
+            "id",
+            "name",
+            "description",
+            "format",
+            "json_extraction_root",
+            "expected_fields",
+            "exp_fields_regex_matching",
+            "fields_to_extract",
+            "file_paths",
+            "extraction_rules",
+            "csv_delimiter",
         ]
 
     def get_expected_fields(self, obj: DonationBlueprint) -> dict:
@@ -96,27 +96,29 @@ class BlueprintSerializer(serializers.ModelSerializer):
         return list(fields)
 
     def get_extraction_rules(self, obj: DonationBlueprint) -> list[dict]:
-        rules = obj.processingrule_set.all().order_by('execution_order')
+        rules = obj.processingrule_set.all().order_by("execution_order")
         return [ProcessingRuleSerializer(r).data for r in rules]
 
     def get_file_paths(self, obj: DonationBlueprint) -> list[dict]:
-        file_paths = obj.blueprintfilepath_set.all().order_by('priority')
+        file_paths = obj.blueprintfilepath_set.all().order_by("priority")
         return [BlueprintFilePathSerializer(fp).data for fp in file_paths]
 
 
 class InstructionSerializer(serializers.ModelSerializer):
-    """Serializes a DonationInstruction instance into the format expected by the frontend.
+    """Serializes a DonationInstruction instance into the format expected by
+    the frontend.
 
     see also: frontend/DDMUploader/src/types/Instruction.ts
     """
+
     text = serializers.SerializerMethodField()
 
     class Meta:
         model = DonationInstruction
-        fields = ['index', 'text']
+        fields = ["index", "text"]
 
     def get_text(self, obj: DonationInstruction) -> str:
-        participant_data = self.context.get('participant_data')
+        participant_data = self.context.get("participant_data")
         return obj.render(participant_data)
 
 
@@ -125,8 +127,9 @@ class FileUploaderSerializer(serializers.ModelSerializer):
 
     see also: frontend/DDMUploader/src/types/UploaderConfig.ts
     """
-    name = serializers.CharField(source='display_name')
-    uploader_id = serializers.IntegerField(source='id')
+
+    name = serializers.CharField(source="display_name")
+    uploader_id = serializers.IntegerField(source="id")
     nested_zip_extraction_depth = serializers.SerializerMethodField()
     instructions = serializers.SerializerMethodField()
     blueprints = serializers.SerializerMethodField()
@@ -134,13 +137,13 @@ class FileUploaderSerializer(serializers.ModelSerializer):
     class Meta:
         model = FileUploader
         fields = [
-            'uploader_id',
-            'upload_type',
-            'nested_zip_extraction_depth',
-            'name',
-            'combined_consent',
-            'instructions',
-            'blueprints',
+            "uploader_id",
+            "upload_type",
+            "nested_zip_extraction_depth",
+            "name",
+            "combined_consent",
+            "instructions",
+            "blueprints",
         ]
 
     def get_nested_zip_extraction_depth(self, obj: FileUploader) -> int:
@@ -148,12 +151,8 @@ class FileUploaderSerializer(serializers.ModelSerializer):
 
     def get_instructions(self, obj: FileUploader) -> list[dict]:
         instructions = obj.donationinstruction_set.all()
-        context = {'participant_data': self.context.get('participant_data')}
-        instructions = [
-            InstructionSerializer(i, context=context).data
-            for i in instructions
-        ]
-        return instructions
+        context = {"participant_data": self.context.get("participant_data")}
+        return [InstructionSerializer(i, context=context).data for i in instructions]
 
     def get_blueprints(self, obj: FileUploader) -> list[dict]:
         blueprints = obj.donationblueprint_set.all()
@@ -167,12 +166,12 @@ class FilterConditionSerializer(serializers.ModelSerializer):
     class Meta:
         model = FilterCondition
         fields = [
-            'index',
-            'combinator',
-            'condition_operator',
-            'condition_value',
-            'target',
-            'source',
+            "index",
+            "combinator",
+            "condition_operator",
+            "condition_value",
+            "target",
+            "source",
         ]
 
     def get_target(self, obj: FilterCondition) -> str:
@@ -186,8 +185,12 @@ class ScalePointConfigSerializer(serializers.ModelSerializer):
     class Meta:
         model = ScalePoint
         fields = [
-            'id', 'index', 'input_label', 'heading_label',
-            'value', 'secondary_point'
+            "id",
+            "index",
+            "input_label",
+            "heading_label",
+            "value",
+            "secondary_point",
         ]
 
 
@@ -198,10 +201,10 @@ class QuestionItemConfigSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = QuestionItem
-        fields = ['index', 'label', 'label_alt', 'value', 'randomize', 'id']
+        fields = ["index", "label", "label_alt", "value", "randomize", "id"]
 
     def get_id(self, obj: QuestionItem) -> str:
-        return f'item-{obj.id}'
+        return f"item-{obj.id}"
 
     def get_label(self, obj: QuestionItem) -> str | None:
         if not obj.label:
@@ -216,7 +219,7 @@ class QuestionItemConfigSerializer(serializers.ModelSerializer):
 
 class QuestionConfigSerializer(serializers.ModelSerializer):
     question = serializers.SerializerMethodField()
-    type = serializers.CharField(source='question_type')
+    type = serializers.CharField(source="question_type")
     text = serializers.SerializerMethodField()
     items = serializers.SerializerMethodField()
     scale = serializers.SerializerMethodField()
@@ -226,19 +229,19 @@ class QuestionConfigSerializer(serializers.ModelSerializer):
         model = QuestionBase
 
         fields = [
-            'question',
-            'type',
-            'page',
-            'index',
-            'text',
-            'required',
-            'items',
-            'scale',
-            'options',
+            "question",
+            "type",
+            "page",
+            "index",
+            "text",
+            "required",
+            "items",
+            "scale",
+            "options",
         ]
 
     def get_question(self, obj: QuestionBase) -> str:
-        return f'question-{obj.pk}'
+        return f"question-{obj.pk}"
 
     def get_text(self, obj: QuestionBase) -> str:
         return render_user_content(obj.text, self.context)
@@ -254,8 +257,7 @@ class QuestionConfigSerializer(serializers.ModelSerializer):
                 return []
 
         item_configs = [
-            QuestionItemConfigSerializer(i, context=self.context).data
-            for i in items
+            QuestionItemConfigSerializer(i, context=self.context).data for i in items
         ]
         if obj.randomize_items:
             random.shuffle(item_configs)
@@ -264,18 +266,18 @@ class QuestionConfigSerializer(serializers.ModelSerializer):
 
     def get_scale(self, obj: QuestionBase) -> list:
         scale_points = obj.scalepoint_set.all()
-        return[ScalePointConfigSerializer(s).data for s in scale_points]
+        return [ScalePointConfigSerializer(s).data for s in scale_points]
 
     def get_options(self, obj: QuestionBase) -> dict:
         if obj.question_type == QuestionType.OPEN:
             return {
-                'display': obj.display,
-                'input_type': obj.input_type,
-                'max_input_length': obj.max_input_length,
-                'multi_item_response': obj.multi_item_response,
+                "display": obj.display,
+                "input_type": obj.input_type,
+                "max_input_length": obj.max_input_length,
+                "multi_item_response": obj.multi_item_response,
             }
 
-        elif obj.question_type == QuestionType.MATRIX:
-            return {'show_scale_headings': obj.show_scale_headings}
+        if obj.question_type == QuestionType.MATRIX:
+            return {"show_scale_headings": obj.show_scale_headings}
 
         return {}

@@ -5,7 +5,12 @@ from typing import Any
 
 from django.conf import settings
 from django.core.files.uploadedfile import UploadedFile
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseBase,
+    HttpResponseRedirect,
+)
 from django.shortcuts import redirect, reverse
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
@@ -95,26 +100,43 @@ class ParticipationFlowBaseView(DetailView):
         super().setup(request, *args, **kwargs)
         self._initialize_values(request)
 
-    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
-        # Check if project is active.
+    def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponseBase:
         if not self.object.active:
-            return redirect("ddm_participation:project_inactive", slug=self.object.slug)
+            return redirect(self.inactive_url())
 
         # Redirect to previous step if necessary.
         if self.steps[self.current_step] != self.step_name:
-            return redirect(self.steps[self.current_step], slug=self.object.slug)
+            return redirect(self.current_step_url())
 
-        # Render current view.
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         context = self.get_context_data(object=self.object)
         self.extra_before_render(request)
         return self.render_to_response(context)
 
-    def post(self, request: HttpRequest, *arges, **kwargs) -> HttpResponse:
+    def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         # Account for 'page back' action in browser
         if self.steps[self.current_step] == self.step_name:
             self.set_step_completed()
-            return redirect(self.steps[self.current_step + 1], slug=self.object.slug)
-        return redirect(self.steps[self.current_step], slug=self.object.slug)
+            return redirect(self.next_step_url())
+        return redirect(self.current_step_url())
+
+    def current_step_url(self) -> str:
+        return reverse(self.steps[self.current_step], kwargs={"slug": self.object.slug})
+
+    def next_step_url(self) -> str:
+        return reverse(
+            self.steps[self.current_step + 1], kwargs={"slug": self.object.slug}
+        )
+
+    def inactive_url(self) -> str:
+        return reverse(
+            "ddm_participation:project_inactive", kwargs={"slug": self.object.slug}
+        )
+
+    def end_page_url(self) -> str:
+        return reverse(self.steps[-1], kwargs={"slug": self.object.slug})
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -133,19 +155,20 @@ class ParticipationFlowBaseView(DetailView):
     def get_participant_from_session(self, request: HttpRequest) -> Participant:
         """Gets participant from session.
 
-        If participant has not yet been created, creates new participant and
-        saves it to session.
+        If participant does not exist, creates new participant and saves it to
+        session.
         """
         session_id = get_participation_session_id(self.object)
         participant_id = request.session[session_id]["participant_id"]
-        try:
-            participant = Participant.objects.get(pk=participant_id)
-        except Participant.DoesNotExist:
-            participant = Participant.objects.create(
-                project=self.object, start_time=timezone.now()
-            )
+
+        participant, created = Participant.objects.get_or_create(
+            pk=participant_id,
+            defaults={"project": self.object, "start_time": timezone.now()},
+        )
+        if created:
             request.session[session_id]["participant_id"] = participant.id
             request.session.modified = True
+
         return participant
 
     @staticmethod
@@ -194,6 +217,11 @@ class BriefingView(ParticipationFlowBaseView):
     template_name = "ddm_participation/briefing.html"
     step_name = "ddm_participation:briefing"
 
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        if self.object.url_parameter_enabled:
+            self.extract_url_parameter()
+        return super().get(request, *args, **kwargs)
+
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         """Checks whether participant has provided briefing consent.
 
@@ -215,32 +243,35 @@ class BriefingView(ParticipationFlowBaseView):
         Renders next step if consent has been given.
         """
         # Check that answer has been provided and is valid.
-        consent = request.POST.get("briefing_consent", None)
-        if consent not in ["0", "1"]:
+        consent = request.POST.get("briefing_consent")
+        if consent not in {"0", "1"}:
             # Render briefing view again with error message.
             context = self.get_context_data(object=self.object)
-            context.update({"briefing_error": True})
+            context["briefing_error"] = True
             return self.render_to_response(context)
 
         # Save consent to participant data.
         self.participant.extra_data["briefing_consent"] = consent
-        self.participant.save()
 
         if consent == "0":
             # Redirect to debriefing page.
             self.participant.current_step = len(self.steps) - 1
             self.participant.save()
-            return redirect(self.steps[-1], slug=self.object.slug)
+            return redirect(self.end_page_url())
+
+        self.participant.save()
         return super().post(request, **kwargs)
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        if self.object.url_parameter_enabled:
-            self.extract_url_parameter()
-        context["participant"] = self.participant
         participant_info = self.participant.get_context_data()
-        context["briefing"] = render_user_content(
-            self.object.briefing_text, participant_info
+        context.update(
+            {
+                "participant": self.participant,
+                "briefing": render_user_content(
+                    self.object.briefing_text, participant_info
+                ),
+            }
         )
         return context
 
@@ -264,9 +295,13 @@ class DataDonationView(ParticipationFlowBaseView):
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["uploader_configs"] = self.get_uploader_configs()
-        context["project_url_id"] = self.object.url_id
-        context["custom_translations"] = self.object.custom_uploader_translations
+        context.update(
+            {
+                "uploader_configs": self.get_uploader_configs(),
+                "project_url_id": self.object.url_id,
+                "custom_translations": self.object.custom_uploader_translations,
+            }
+        )
         return context
 
     def get_uploader_configs(self) -> list:
@@ -276,86 +311,101 @@ class DataDonationView(ParticipationFlowBaseView):
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         super().post(request, **kwargs)
         self.process_uploads(request.FILES)
-        redirect_url = reverse(
+        return HttpResponseRedirect(self.post_redirect_url())
+
+    def post_redirect_url(self) -> str:
+        return reverse(
             self.steps[self.current_step + 1], kwargs={"slug": self.object.slug}
         )
-        return HttpResponseRedirect(redirect_url)
 
-    # TODO: Refactor function to simplify.
-    def process_uploads(self, files: dict[str, UploadedFile]) -> None:  # noqa: PLR0911
+    def process_uploads(self, files: dict[str, UploadedFile]) -> None:
+        file = self._get_uploaded_file(files)
+        if file is None:
+            return
+
+        unzipped_file = self._get_validated_zip(file)
+        if unzipped_file is None:
+            return
+
+        file_data = self._load_donation_json(unzipped_file)
+        if file_data is None:
+            return
+
+        self.process_blueprints(file_data)
+
+    def _log_error(self, msg: str) -> None:
+        log_server_exception(self.object, f"Data Donation Processing Exception: {msg}")
+
+    def _get_uploaded_file(self, files: dict[str, UploadedFile]) -> UploadedFile | None:
         try:
-            file = files["post_data"]
+            return files["post_data"]
         except (MultiValueDictKeyError, KeyError) as e:
-            msg = (
-                "Data Donation Processing Exception: Did not receive "
-                f"expected data file from client. {e}"
+            self._log_error(
+                f"Did not receive expected data file from client"
+                f" - missing key 'post_data'. {e}"
             )
-            log_server_exception(self.object, msg)
-            return
+            return None
 
+    def _get_validated_zip(self, file: UploadedFile) -> zipfile.ZipFile | None:
         if not zipfile.is_zipfile(file):
-            msg = (
-                "Data Donation Processing Exception: Data file received "
-                "from client is not a zip file."
-            )
-            log_server_exception(self.object, msg)
-            return
+            self._log_error("File received in post_data is not a zip file.")
+            return None
 
-        # Check if zip file contains expected file.
         unzipped_file = zipfile.ZipFile(file, "r")
 
         if not has_valid_zip_paths(unzipped_file):
-            msg = (
-                "Data Donation Processing Exception: "
-                "ZIP file contains invalid file paths."
-            )
-            log_server_exception(self.object, msg)
-            return
+            self._log_error("ZIP file contains invalid file paths.")
+            return None
 
         if "data_donation.json" not in unzipped_file.namelist():
-            msg = (
-                "Data Donation Processing Exception: "
-                "'data_donation.json' is not in namelist."
+            self._log_error(
+                "ZIP file does not contain expected 'data_donation.json' file."
             )
-            log_server_exception(self.object, msg)
-            return
+            return None
 
-        # Process donation data.
-        try:
-            file_data = json.loads(
-                unzipped_file.read("data_donation.json").decode("utf-8")
-            )
-        except UnicodeDecodeError:
+        return unzipped_file
+
+    def _decode_bytes(self, raw_bytes: bytes) -> str | None:
+        for encoding in ("utf-8", "latin-1"):
             try:
-                file_data = json.loads(
-                    unzipped_file.read("data_donation.json").decode("latin-1")
-                )
-            except ValueError:
-                msg = (
-                    "Donated data could not be decoded - "
-                    "tried utf-8 and latin-1 decoding."
-                )
-                log_server_exception(self.object, msg)
-                return
-        except JSONDecodeError:
-            msg = "JSON decode error in donated data."
-            log_server_exception(self.object, msg)
-            return
+                return raw_bytes.decode(encoding)
+            except UnicodeDecodeError:
+                continue
+        self._log_error(
+            "Donated data could not be decoded - tried utf-8 and latin-1 decoding."
+        )
+        return None
 
-        for upload in file_data:
-            blueprint_id = upload
-            blueprint_data = file_data[upload]
+    def _load_donation_json(self, unzipped_file: zipfile.ZipFile) -> dict | None:
+        raw_bytes = unzipped_file.read("data_donation.json")
+
+        text = self._decode_bytes(raw_bytes)
+        if text is None:
+            return None
+
+        try:
+            return json.loads(text)
+        except JSONDecodeError:
+            self._log_error("JSON decode error in donated data.")
+            return None
+
+    def process_blueprints(self, file_data: dict[str, dict]) -> None:
+        """Process each blueprint's donation data.
+
+        Args:
+            file_data: mapping of blueprint_id (str) -> blueprint_data (dict),
+                as parsed from the uploaded data_donation.json.
+        """
+        for blueprint_id, blueprint_data in file_data.items():
             try:
                 blueprint = DonationBlueprint.objects.get(
                     pk=blueprint_id, project=self.object
                 )
             except DonationBlueprint.DoesNotExist:
-                msg = (
-                    "Data Donation Processing Exception: Referenced "
-                    f"blueprint with id={blueprint_id} does not exist for "
-                    "this project."
+                self._log_error(
+                    f"Referenced blueprint with id={blueprint_id} does not exist "
+                    "for this project."
                 )
-                log_server_exception(self.object, msg)
                 return
             blueprint.process_donation(blueprint_data, self.participant)
 
@@ -364,9 +414,8 @@ class QuestionnaireView(ParticipationFlowBaseView):
     template_name = "ddm_participation/questionnaire.html"
     step_name = "ddm_participation:questionnaire"
 
-    def setup(self, request: HttpRequest, *args, **kwargs) -> None:
-        """Reset extra_scripts"""
-        super().setup(request, *args, **kwargs)
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
         self.extra_scripts = []
 
     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
@@ -375,18 +424,10 @@ class QuestionnaireView(ParticipationFlowBaseView):
         Redirects to next step if questionnaire is skipped.
         Otherwise, render questionnaire.
         """
-        # Check if project is active.
-        if not self.object.active:
-            return redirect("ddm_participation:project_inactive", slug=self.object.slug)
-
-        # Redirect to previous step if necessary.
-        if self.steps[self.current_step] != self.step_name:
-            return redirect(self.steps[self.current_step], slug=self.object.slug)
-
         context = self.get_context_data(object=self.object)
         if not context["q_config"]:
             self.set_step_completed()
-            return redirect(self.steps[self.current_step + 1], slug=self.object.slug)
+            return redirect(self.next_step_url())
         return self.render_to_response(context)
 
     def get_extra_variables(self) -> dict:
@@ -418,7 +459,12 @@ class QuestionnaireView(ParticipationFlowBaseView):
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         super().post(request, **kwargs)
         self.process_response(request.POST)
-        return redirect(self.steps[self.current_step + 1], slug=self.object.slug)
+        return redirect(self.post_redirect_url())
+
+    def post_redirect_url(self) -> str:
+        return reverse(
+            self.steps[self.current_step + 1], kwargs={"slug": self.object.slug}
+        )
 
     def process_response(self, response: dict) -> None:
         try:
@@ -448,17 +494,22 @@ class DebriefingView(ParticipationFlowBaseView):
 
         template_context = self.participant.get_context_data()
         template_context.update({"project_id": self.object.url_id})
-        context["debriefing"] = render_user_content(
-            self.object.debriefing_text, template_context
-        )
 
-        if self.object.redirect_enabled:
-            context["redirect_target"] = render_user_content(
-                self.object.redirect_target, template_context
-            )
-        else:
-            context["redirect_target"] = None
+        context.update(
+            {
+                "debriefing": self.render_debriefing_text(template_context),
+                "redirect_target": self.render_redirect_url(template_context),
+            }
+        )
         return context
+
+    def render_debriefing_text(self, template_context: dict | None = None) -> str:
+        return render_user_content(self.object.debriefing_text, template_context)
+
+    def render_redirect_url(self, template_context: dict | None = None) -> str | None:
+        if not self.object.redirect_enabled:
+            return None
+        return render_user_content(self.object.redirect_target, template_context)
 
     def extra_before_render(self, request: HttpRequest) -> None:
         """Set step to completed and update participant information."""

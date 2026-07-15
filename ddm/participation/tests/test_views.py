@@ -291,7 +291,9 @@ class TestDonationView(ParticipationFlowBaseTestCase):
         exceptions_count_after = ExceptionLogEntry.objects.count()
         last_exception = ExceptionLogEntry.objects.order_by("date").last()
         self.assertEqual(exceptions_count_before, (exceptions_count_after - 1))
-        self.assertIn("'data_donation.json' is not in namelist", last_exception.message)
+        self.assertIn(
+            "does not contain expected 'data_donation.json'", last_exception.message
+        )
 
     def test_process_uploads_invalid_encoding(self):
         view = self.initialize_view()

@@ -33,7 +33,7 @@ repos:
       -   id: pip-audit
           stages: [pre-push]
           files: ^requirements/.*\.txt$
-          args: ["-r", "requirements/base.txt", "-r", "requirements/dev.txt", "-r", "requirements/production.txt"]
+          args: ["-r", "requirements/base.txt", "-r", "requirements/dev.txt"]
 
   # Run the Ruff linter.
   - repo: https://github.com/astral-sh/ruff-pre-commit

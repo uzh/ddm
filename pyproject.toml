@@ -38,15 +38,14 @@ indent_size = 2
 indent_size = 2
 
 [tool.ruff]
-exclude = [
-    "*.html"
-]
 target-version = "py312"
 
 extend-exclude = [
+    "*.html",
     "*/migrations/*.py",
     "staticfiles/*",
-    "docs/*"
+    "docs/*",
+    "frontend/*",
 ]
 
 [tool.ruff.lint]

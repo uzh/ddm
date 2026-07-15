@@ -2,12 +2,12 @@
 
 # 3.0.0
 
+This version drops official support for Python versions < 3.12.
 
 ### Update Guide
 
 - Removed `null=True` from DonationBlueprint.regex_path, DonationBlueprint.description, ProcessingRule.comparison_operator
-  ExceptionLogEntry.exception_type;
-  during migration, provide `""` as the default value for instances with null values.
+  ExceptionLogEntry.exception_type, ScalePoint.heading_label, ScalePoint.input_label, QuestionItem.label, QuestionItem.label_alt, and FilterCondition.source_identifier.
 
 ## 2.2.0 - February 2026
 

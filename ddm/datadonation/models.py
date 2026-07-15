@@ -327,7 +327,6 @@ class ProcessingRule(models.Model):
         max_length=24,
         blank=True,
         choices=ComparisonOperators.choices,
-        default=None,
         verbose_name="Extraction Operator",
     )
     comparison_value = models.TextField(

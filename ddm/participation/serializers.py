@@ -91,7 +91,7 @@ class BlueprintSerializer(serializers.ModelSerializer):
     def get_fields_to_extract(self, obj: DonationBlueprint) -> list:
         fields = set()
         for rule in obj.processingrule_set.all():
-            if rule.comparison_operator is None:
+            if rule.comparison_operator == "":  # TODO: Check actual choice value
                 fields.add(rule.field)  # which equals "Keep Field"
         return list(fields)
 
@@ -206,14 +206,10 @@ class QuestionItemConfigSerializer(serializers.ModelSerializer):
     def get_id(self, obj: QuestionItem) -> str:
         return f"item-{obj.id}"
 
-    def get_label(self, obj: QuestionItem) -> str | None:
-        if not obj.label:
-            return None
+    def get_label(self, obj: QuestionItem) -> str:
         return render_user_content(obj.label, self.context)
 
-    def get_label_alt(self, obj: QuestionItem) -> str | None:
-        if not obj.label_alt:
-            return None
+    def get_label_alt(self, obj: QuestionItem) -> str:
         return render_user_content(obj.label_alt, self.context)
 
 

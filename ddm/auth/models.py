@@ -3,10 +3,10 @@ import os
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.http import HttpRequest
 from django.utils import timezone
 from rest_framework import exceptions
 from rest_framework.authentication import TokenAuthentication, get_authorization_header
+from rest_framework.request import Request
 
 from ddm.logging.models import EventLogEntry
 
@@ -69,7 +69,7 @@ class ProjectTokenAuthenticator(TokenAuthentication):
 
     model = ProjectAccessToken
 
-    def authenticate(self, request: HttpRequest) -> tuple[User, ProjectAccessToken]:
+    def authenticate(self, request: Request) -> tuple[User, ProjectAccessToken] | None:
         """
         Adopted from parent model. Added that request is passed to
         authenticate_credentials in order to check if the requested project
@@ -104,7 +104,7 @@ class ProjectTokenAuthenticator(TokenAuthentication):
     def authenticate_credentials(
         self, key: str, project_id: str
     ) -> tuple[User, ProjectAccessToken]:
-        model = self.get_model()
+        model: ProjectAccessToken = self.get_model()
         try:
             token = model.objects.select_related("project").get(key=key)
         except model.DoesNotExist as e:

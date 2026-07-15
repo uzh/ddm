@@ -34,7 +34,7 @@ class ExceptionsAdmin(admin.ModelAdmin):
         try:
             msg_json = json.loads(msg)
             msg = json.dumps(msg_json, indent=4, ensure_ascii=False)
-            return format_html("<pre>{}</pre>", msg)  # TODO: Check deprecation hint
+            return format_html("<pre>{}</pre>", msg)
         except ValueError:
             pass
         return msg

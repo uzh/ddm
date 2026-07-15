@@ -83,7 +83,7 @@ HELP_TEXTS = {
         "linked to the Blueprint the question will not be shown to a participant "
         "(e.g., because no consent was given or no data was extracted)."
     ),
-    "multi_item_response": ("Control if its one text field to respond or multiple"),
+    "multi_item_response": "Control if its one text field to respond or multiple",
     "randomize_items": mark_safe(
         "If enabled, <strong>all</strong> items will be displayed in "
         "random order. If only certain items should be positioned randomly, "
@@ -476,7 +476,8 @@ class FilterConditionForm(forms.ModelForm):
         cleaned_data["source_identifier"] = source_id
         return cleaned_data
 
-    def _validate_source(self, source_type: type, source_id: int) -> None:
+    @staticmethod
+    def _validate_source(source_type: type, source_id: int) -> None:
         """Validate that the source object exists."""
         if source_type == FilterSourceTypes.QUESTION:
             if not QuestionBase.objects.filter(pk=source_id).exists():

@@ -1,5 +1,7 @@
 import csv
 import io
+from collections.abc import Generator
+from typing import Any
 
 from django.core.exceptions import BadRequest, ObjectDoesNotExist
 from django.db.models import QuerySet
@@ -660,7 +662,7 @@ class DownloadProjectDetailsView(APIView, DDMAPIMixin):
         )
         return self.request.build_absolute_uri(url)
 
-    def generate_csv(self) -> str:
+    def generate_csv(self) -> Generator[str, Any, None]:
         blueprints = self.get_blueprints()
         header = self.get_csv_header(blueprints)
         yield header

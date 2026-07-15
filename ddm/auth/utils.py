@@ -1,7 +1,7 @@
 import re
 
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AnonymousUser, User
 
 from ddm.projects.models import DonationProject, ResearchProfile
 
@@ -22,7 +22,9 @@ def email_is_valid(email_string: str) -> bool:
     return True
 
 
-def user_has_project_access(user: User, project: DonationProject) -> bool:
+def user_has_project_access(
+    user: User | AnonymousUser, project: DonationProject
+) -> bool:
     """
     Returns true if user is owner or collaborator of a project. False otherwise.
     """
@@ -35,7 +37,7 @@ def user_has_project_access(user: User, project: DonationProject) -> bool:
     return project.owner == user_profile
 
 
-def user_is_permitted(user: User) -> bool:
+def user_is_permitted(user: User | AnonymousUser) -> bool:
     """
     Check if a user has access permission.
     """

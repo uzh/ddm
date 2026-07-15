@@ -84,7 +84,7 @@ class ProjectCreateForm(forms.ModelForm):
         return super().clean()
 
     def save(self, commit: bool = True) -> DonationProject:  # noqa: FBT002
-        project = super().save(commit=False)
+        project: DonationProject = super().save(commit=False)
         if project.super_secret:
             project.secret_key = self.data["project_password"]
         project.save()
@@ -161,8 +161,7 @@ class EditRedirectConfigurationForm(forms.ModelForm):
 
         help_texts = {
             "redirect_target": mark_safe(
-                "The redirect address must start with <code>http://</code> or "
-                "<code>https://</code>; "
+                "The redirect address must start with <code>https://</code>; "
                 "It is possible to pass information to the redirect address "
                 "by passing variables to URL parameters: "
                 "<code>https://redirect.me/?participantId="

@@ -23,5 +23,4 @@ class DonationProjectAdmin(admin.ModelAdmin):
     @admin.display(description="Link to Project")
     def edit_link(self, obj: DonationProject) -> str:
         url = reverse("ddm_projects:detail", args=[obj.url_id])
-        # TODO: Check deprecation hint
-        return format_html(f'<a href="{url}">Show Detail Page</a>')
+        return format_html('<a href="{}">Show Detail Page</a>', url)

@@ -36,7 +36,7 @@ class FileUploader(models.Model):
 
     name = models.CharField(
         max_length=250,
-        help_text=("Internal name for this File Uploader"),
+        help_text="Internal name for this File Uploader",
         blank=False,
     )
 
@@ -90,7 +90,7 @@ class DonationBlueprint(models.Model):
         "ddm_projects.DonationProject", on_delete=models.CASCADE
     )
     name = models.CharField(
-        max_length=250, help_text=("Internal name for this File Blueprint")
+        max_length=250, help_text="Internal name for this File Blueprint"
     )
     description = models.TextField(
         blank=True, help_text="Blueprint description visible for participants"
@@ -124,7 +124,7 @@ class DonationBlueprint(models.Model):
         max_length=10,
         default="",
         blank=True,
-        help_text=("The character that separates values in the CSV"),
+        help_text="The character that separates values in the CSV",
     )
 
     expected_fields = models.TextField(
@@ -148,7 +148,7 @@ class DonationBlueprint(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
         verbose_name="Associated File Uploader",
-        help_text=("The File Uploader through which the related file will be uploaded"),
+        help_text="The File Uploader through which the related file will be uploaded",
     )
     regex_path = models.TextField(
         blank=True,
@@ -197,7 +197,8 @@ class DonationBlueprint(models.Model):
 
         super().clean()
 
-    def get_slug(self) -> str:
+    @staticmethod
+    def get_slug() -> str:
         return "blueprint"
 
     def process_donation(self, data: dict, participant: Participant) -> None:
@@ -285,7 +286,7 @@ class ProcessingRule(models.Model):
     """
     A processing rule that defines how the data uploaded to VUE will be processed
     before being sent to the server.
-    Generates a json configuration that is passed to the VUE frontend component
+    Generates a JSON configuration that is passed to the VUE frontend component
     'UploaderApp'.
     """
 

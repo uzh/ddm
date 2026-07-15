@@ -102,7 +102,7 @@ class QuestionnaireOverview(ProjectMixin, DDMAuthMixin, ListView):
         project = self.get_project()
         return project.questionbase_set.all()
 
-    def get_queryset(self) -> QuerySet[DonationBlueprint]:
+    def get_queryset(self) -> QuerySet:
         return (
             super().get_queryset().filter(project__url_id=self.kwargs["project_url_id"])
         )
@@ -133,7 +133,7 @@ class QuestionFormMixin(ProjectMixin):
     def question_class(self) -> type[QuestionBase]:
         return self.QUESTION_CLASSES[self.question_type]
 
-    def get_form(self, form_class: type[Form] | None = None) -> type[BaseQuestionForm]:
+    def get_form(self, form_class: type[Form] | None = None) -> BaseQuestionForm:
         return super().get_form(form_class)
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
@@ -272,7 +272,7 @@ class QuestionEdit(SuccessMessageMixin, DDMAuthMixin, QuestionFormMixin, UpdateV
 
     def form_valid(
         self,
-        form: Form,
+        form: BaseQuestionForm,
         item_formset: BaseInlineFormSet | None,
         scale_formset: BaseInlineFormSet | None,
     ) -> HttpResponse:
@@ -294,7 +294,7 @@ class QuestionEdit(SuccessMessageMixin, DDMAuthMixin, QuestionFormMixin, UpdateV
 
     def form_invalid(
         self,
-        form: Form,
+        form: BaseQuestionForm,
         item_formset: BaseInlineFormSet | None,
         scale_formset: BaseInlineFormSet | None,
     ) -> HttpResponse:

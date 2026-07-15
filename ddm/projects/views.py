@@ -113,10 +113,11 @@ class ProjectEditPublicInformation(ProjectEditBase):
     form_class = forms.EditPublicInformationForm
 
     def get_breadcrumbs(self) -> list[tuple]:
-        crumbs = [("Projects", reverse_lazy("ddm_projects:list"))]
-        crumbs.append(self._project_crumb(is_linked=True))
-        crumbs.append(("Public Information", None))
-        return crumbs
+        return [
+            ("Projects", reverse_lazy("ddm_projects:list")),
+            self._project_crumb(is_linked=True),
+            ("Public Information", None),
+        ]
 
 
 class ProjectEditUrlParameter(ProjectEditBase):
@@ -124,10 +125,11 @@ class ProjectEditUrlParameter(ProjectEditBase):
     form_class = forms.EditUrlParameterExtractionForm
 
     def get_breadcrumbs(self) -> list[tuple]:
-        crumbs = [("Projects", reverse_lazy("ddm_projects:list"))]
-        crumbs.append(self._project_crumb(is_linked=True))
-        crumbs.append(("URL Parameter Extraction", None))
-        return crumbs
+        return [
+            ("Projects", reverse_lazy("ddm_projects:list")),
+            self._project_crumb(is_linked=True),
+            ("URL Parameter Extraction", None),
+        ]
 
 
 class ProjectEditRedirectConfiguration(ProjectEditBase):
@@ -135,10 +137,11 @@ class ProjectEditRedirectConfiguration(ProjectEditBase):
     form_class = forms.EditRedirectConfigurationForm
 
     def get_breadcrumbs(self) -> list[tuple]:
-        crumbs = [("Projects", reverse_lazy("ddm_projects:list"))]
-        crumbs.append(self._project_crumb(is_linked=True))
-        crumbs.append(("Redirect Configuration", None))
-        return crumbs
+        return [
+            ("Projects", reverse_lazy("ddm_projects:list")),
+            self._project_crumb(is_linked=True),
+            ("Redirect Configuration", None),
+        ]
 
 
 class ProjectEditBranding(ProjectEditBase):
@@ -146,10 +149,11 @@ class ProjectEditBranding(ProjectEditBase):
     form_class = forms.EditBrandingForm
 
     def get_breadcrumbs(self) -> list[tuple]:
-        crumbs = [("Projects", reverse_lazy("ddm_projects:list"))]
-        crumbs.append(self._project_crumb(is_linked=True))
-        crumbs.append(("Branding", None))
-        return crumbs
+        return [
+            ("Projects", reverse_lazy("ddm_projects:list")),
+            self._project_crumb(is_linked=True),
+            ("Branding", None),
+        ]
 
 
 class ProjectEditCustomUploaderTranslations(BaseProjectMixin, UpdateView):

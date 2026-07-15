@@ -13,9 +13,13 @@ class DDMContextMixin:
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         breadcrumbs = self.get_breadcrumbs()
-        context["breadcrumbs"] = breadcrumbs
-        context["back_target"] = self.get_back_target(breadcrumbs)
-        context["submit_label"] = self.submit_label
+        context.update(
+            {
+                "breadcrumbs": breadcrumbs,
+                "back_target": self.get_back_target(breadcrumbs),
+                "submit_label": self.submit_label,
+            }
+        )
         return context
 
     def get_back_target(self, breadcrumbs: list | None = None) -> None:

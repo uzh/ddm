@@ -392,7 +392,8 @@ class BlueprintCreate(
 
         return initial
 
-    def get_current_max_position(self, blueprints: QuerySet[DonationBlueprint]) -> int:
+    @staticmethod
+    def get_current_max_position(blueprints: QuerySet[DonationBlueprint]) -> int | None:
         return (
             blueprints.order_by("-display_position")
             .values_list("display_position", flat=True)
@@ -573,32 +574,26 @@ class InstructionMixin(DDMContextMixin):
         project_id = self.get_project_url_id()
         uploader_id = self.get_uploader_id()
 
-        crumbs = []
-        crumbs.append(("Projects", reverse_lazy("ddm_projects:list")))
-        crumbs.append(
+        return [
+            ("Projects", reverse_lazy("ddm_projects:list")),
             (
                 f"{project_name}",
                 reverse("ddm_projects:detail", kwargs={"project_url_id": project_id}),
-            )
-        )
-        crumbs.append(
+            ),
             (
                 "Data Donation",
                 reverse(
                     "ddm_datadonation:overview", kwargs={"project_url_id": project_id}
                 ),
-            )
-        )
-        crumbs.append(
+            ),
             (
                 f"{uploader_name}",
                 reverse(
                     "ddm_datadonation:uploaders:edit",
                     kwargs={"project_url_id": project_id, "pk": uploader_id},
                 ),
-            )
-        )
-        return crumbs
+            ),
+        ]
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)

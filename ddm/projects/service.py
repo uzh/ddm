@@ -194,15 +194,15 @@ def get_project_variables(project: DonationProject) -> list:
     variables = []
 
     # System Variables
-    variables.append(get_url_parameters(project))
+    variables.extend(get_url_parameters(project).keys())
 
     # Participant Variables
-    variables.append(get_participant_variables())
+    variables.extend(get_participant_variables().keys())
 
     # Donation Variables
-    variables.append(get_donation_variables())
+    variables.extend(get_donation_variables().keys())
 
     # Questionnaire Variables
-    variables.append(get_questionnaire_variables(project))
+    variables.extend(get_questionnaire_variables(project).keys())
 
     return variables

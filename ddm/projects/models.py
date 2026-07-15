@@ -146,7 +146,7 @@ class DonationProject(models.Model):
         blank=True,
         verbose_name="Redirect address",
         help_text=mark_safe(
-            "Always include <i>http://</i> or <i>https://</i> in the redirect address. "
+            "Always include <i>https://</i> in the redirect address. "
             "If URL parameter extraction is enabled for this project, you can "
             "include the extracted URL parameters in the redirect address as follows: "
             '"https://redirect.me/?redirectpara=<b>{{participant.data.url_param.URLParameter}}</b>".'

@@ -5,7 +5,7 @@ from django.utils import timezone
 from ddm.logging.utils import log_server_exception
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject
-from ddm.questionnaire.models import QuestionBase, QuestionnaireResponse, QuestionItem
+from ddm.questionnaire.models import QuestionBase, QuestionItem, QuestionnaireResponse
 
 
 def get_question_item_response_key_list(project: DonationProject) -> list:
@@ -29,7 +29,7 @@ def get_question_item_response_key_list(project: DonationProject) -> list:
     return response_keys
 
 
-def response_is_valid(response: Any, valid_responses: list) -> bool:
+def response_is_valid(response: Any, valid_responses: list) -> bool:  # noqa: ANN401
     """
     Validate a single response against a list of valid responses.
 
@@ -44,8 +44,9 @@ def response_is_valid(response: Any, valid_responses: list) -> bool:
     if "__any_string__" in valid_responses:
         try:
             str(response)
-            return True
-        except Exception:
+            return True  # noqa: TRY300
+        except Exception:  # noqa: BLE001
+            # TODO: Log exception
             return False
 
     for valid in valid_responses:
@@ -57,7 +58,8 @@ def response_is_valid(response: Any, valid_responses: list) -> bool:
         try:
             if str(response).lower() == str(valid).lower():
                 return True
-        except Exception:
+        except Exception:  # noqa: BLE001, S112
+            # TODO: Log exception.
             continue
 
     return False
@@ -94,25 +96,29 @@ def validate_responses(responses: dict, project: DonationProject) -> None:
     # Check for missing keys.
     missing_keys = set(expected_keys) - responses.keys()
     if missing_keys:
-        msg = ('Questionnaire Post Exception: '
-               f'Posted responses are missing the following keys: {missing_keys}')
+        msg = (
+            "Questionnaire Post Exception: "
+            f"Posted responses are missing the following keys: {missing_keys}"
+        )
         log_server_exception(project, msg)
 
     # Check for excess keys.
     excess_keys = responses.keys() - set(expected_keys)
     if excess_keys:
-        msg = ('Questionnaire Post Exception: '
-               f'Posted responses contain the following excess keys: {excess_keys}')
+        msg = (
+            "Questionnaire Post Exception: "
+            f"Posted responses contain the following excess keys: {excess_keys}"
+        )
         log_server_exception(project, msg)
 
     # Validate responses.
     overlap_keys = set(expected_keys) & responses.keys()
     for key in overlap_keys:
-        if key.startswith('question-'):
-            question_id = key.removeprefix('question-')
+        if key.startswith("question-"):
+            question_id = key.removeprefix("question-")
             question = QuestionBase.objects.get(project=project, pk=question_id)
-        elif key.startswith('item-'):
-            item_id = key.removeprefix('item-')
+        elif key.startswith("item-"):
+            item_id = key.removeprefix("item-")
             item = QuestionItem.objects.get(question__project=project, pk=item_id)
             question = item.question
         else:
@@ -120,16 +126,19 @@ def validate_responses(responses: dict, project: DonationProject) -> None:
 
         valid_responses = question.get_valid_responses()
         if not response_is_valid(responses[key], valid_responses):
-            msg = (f'Questionnaire Post Exception: Invalid response for {key} - '
-                   f'{responses[key]} not in {valid_responses}')
+            msg = (
+                f"Questionnaire Post Exception: Invalid response for {key} - "
+                f"{responses[key]} not in {valid_responses}"
+            )
             log_server_exception(project, msg)
 
 
 def save_questionnaire_response_to_db(
-        responses: dict,
-        project: DonationProject,
-        participant: Participant,
-        questionnaire_config: list = None) -> None:
+    responses: dict,
+    project: DonationProject,
+    participant: Participant,
+    questionnaire_config: list | None = None,
+) -> None:
     """
     Validates and saves questionnaire responses submitted by a participant.
 
@@ -163,6 +172,5 @@ def save_questionnaire_response_to_db(
         participant=participant,
         time_submitted=timezone.now(),
         data=responses,
-        questionnaire_config=questionnaire_config
+        questionnaire_config=questionnaire_config,
     )
-    return

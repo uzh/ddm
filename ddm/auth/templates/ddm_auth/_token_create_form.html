@@ -5,8 +5,11 @@
   <div>
 
     {% if form.errors %}
-      <p class="error-disclaimer"><i class="bi bi-exclamation-square-fill"></i> The form could not be processed. Please
-        check the issues highlighted below.</p>
+      <p class="error-disclaimer">
+        <i class="bi bi-exclamation-square-fill"></i>
+        The form could not be processed. Please
+        check the issues highlighted below.
+      </p>
     {% endif %}
 
     {{ form.non_field_errors }}
@@ -23,7 +26,11 @@
       {{ hidden_field }}
     {% endfor %}
 
-    <input class="ddm-btn-base ddm-btn-green" type="submit" value="Create Token">
+    <input
+      class="ddm-btn-base ddm-btn-green"
+      type="submit"
+      value="Create Token"
+    />
 
   </div>
 </form>

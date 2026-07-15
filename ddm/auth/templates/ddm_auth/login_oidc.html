@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block page_title %}Data Donation Module: Login{% endblock %}
+{% block page_title %}Data Donation Module: Login{% endblock page_title %}
 
 {% block header %}{% endblock header %}
 
@@ -11,7 +11,7 @@
 <div class="container row justify-content-center">
   <div class="col-4 text-center mt-5">
     <div class="row">
-      <img alt="Data Donation Module" height="100" alt="" src="{% static 'ddm_core/img/logos/DDM_Logo_Schwarz.svg' %}">
+      <img alt="Data Donation Module" height="100" src="{% static 'ddm_core/img/logos/DDM_Logo_Schwarz.svg' %}" />
     </div>
 
     <div>
@@ -30,7 +30,7 @@
 
   </div>
 </div>
-{% endblock %}
+{% endblock main_body %}
 
 {% block pre_footer %}
 {% endblock pre_footer %}

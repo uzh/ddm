@@ -2,7 +2,7 @@
 
   {% with hide_label=True extra_field_classes="mt-2 mb-2" %}
     <td>{% include "ddm_core/form_components/_basic_field.html" with field=form.index %}</td>
-    {% if form.label %}<td>{% include "ddm_core/form_components/_basic_field.html" with field=form.label  %}</td>{% endif %}
+    {% if form.label %}<td>{% include "ddm_core/form_components/_basic_field.html" with field=form.label %}</td>{% endif %}
     {% if form.label_alt %}<td>{% include "ddm_core/form_components/_basic_field.html" with field=form.label_alt %}</td>{% endif %}
     <td>{% include "ddm_core/form_components/_basic_field.html" with field=form.value %}</td>
     <td>{% include "ddm_core/form_components/_basic_field.html" with field=form.randomize %}</td>
@@ -23,15 +23,15 @@
              data-bs-placement="left"
              data-bs-html="true"
              title="Hidden when:"
-             data-bs-content="<code>
+             data-bs-content='<code>
               {% for c in form.instance.get_active_filters %}
                 {% if not forloop.first %}
-                  <span class='secondary-code-color'>{{ c.combinator }}</span>
+                  <span class="secondary-code-color">{{ c.combinator }}</span>
                 {% endif %}
                 {{ c.get_source_name }} {{ c.condition_operator }} {{ c.condition_value }}
               {% empty %}No filters defined
               {% endfor %}
-            </code>">
+            </code>'>
             Show
           </a>
         {% endif %}

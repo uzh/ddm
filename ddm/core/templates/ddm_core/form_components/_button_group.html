@@ -4,11 +4,11 @@
     {% block cancel %}<div><a class="ddm-btn-base ddm-btn-secondary" href="{{ back_target }}">Cancel</a></div>{% endblock cancel %}
     <div>
       <input
-          {% if for_form %}form="{{ for_form }}"{% endif %}
-          class="ddm-btn-base {% if 'Delete' in submit_label %}ddm-btn-red{% else %}ddm-btn-green{% endif %}"
-          type="submit"
-          value="{{ submit_label }}"
-      >
+        {% if for_form %}form="{{ for_form }}"{% endif %}
+        class="ddm-btn-base {% if 'Delete' in submit_label %}ddm-btn-red{% else %}ddm-btn-green{% endif %}"
+        type="submit"
+        value="{{ submit_label }}"
+      />
     </div>
   </div>
 </div>

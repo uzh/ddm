@@ -22,7 +22,7 @@
             class="ddm-btn-base ddm-btn-red"
             data-bs-dismiss="modal"
             data-endpoint-url="{% url 'ddm_apis:participant_delete' object.url_id 'placeholder' %}"
-            data-csrf-token="{{csrf_token}}">
+            data-csrf-token="{{ csrf_token }}">
           Delete Participant
         </button>
       </div>

@@ -1,8 +1,8 @@
 {% extends 'ddm_core/base.html' %}
 
-{% block page_title %}Donation Projects{% endblock %}
+{% block page_title %}Donation Projects{% endblock page_title %}
 
-{% block main_heading %}Donation Projects{% endblock %}
+{% block main_heading %}Donation Projects{% endblock main_heading %}
 
 {% block main_body %}
   <div id="project-list-section" class="ddm-section-container">
@@ -18,7 +18,11 @@
           <tbody class="border-top-0">
           {% for project in object_list %}
             <tr>
-              <td><a class="ddm-ui-link" href="{{ project.get_absolute_url }}">{{ project.name }}</a></td>
+              <td>
+                <a class="ddm-ui-link" href="{{ project.get_absolute_url }}">
+                  {{ project.name }}
+                </a>
+              </td>
               <td>{{ project.slug }}</td>
             </tr>
           {% empty %}
@@ -33,7 +37,7 @@
     </div>
   </div>
 
-{% endblock %}
+{% endblock main_body %}
 
 {% block pre_footer_left %}
 {% endblock pre_footer_left %}

@@ -34,7 +34,7 @@
   <div class="ddm-section-container ddm-section-collapsible">
 
     {% with content_include_path="ddm_datadonation/overview/unassociated_blueprints.html" n_blueprints=lonely_blueprints.count|stringformat:"s" %}
-      {% with accordion_description="<span class='badge-grey'>"|add:n_blueprints|add:"</span>" %}
+      {% with accordion_description='<span class="badge-grey">'|add:n_blueprints|add:"</span>" %}
         {% include "ddm_core/components/accordion_card.html" with accordion_id="unassociatedBlueprintsAcc" accordion_title="Unassociated Blueprints" %}
       {% endwith %}
     {% endwith %}

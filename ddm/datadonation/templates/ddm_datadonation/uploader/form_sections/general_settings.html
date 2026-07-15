@@ -8,9 +8,11 @@
     {% include "ddm_core/form_components/_basic_field.html" with field=form.name %}
 
     <div
-        id="file-uploader-zip-settings"
-        class="container ddm-form-group"
-        style="visibility: hidden; max-height: 0; opacity: 0; margin: 0; padding: 0;"  {# Added inline style for JS transition #}
+      id="file-uploader-zip-settings"
+      class="container ddm-form-group"
+      {# djlint:off #}
+      style="visibility: hidden; max-height: 0; opacity: 0; margin: 0; padding: 0;"  {# Added inline style for JS transition #}
+      {# djlint:on #}
     >
       <p class="ddm-form-group-header mb-4">Nested zip extraction</p>
 

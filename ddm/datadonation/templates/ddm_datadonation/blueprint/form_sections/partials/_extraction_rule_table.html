@@ -8,7 +8,7 @@
     <th>Delete</th>
   </tr>
 
-  {% for form in rule_formset%}
+  {% for form in rule_formset %}
     <tr>
       {{ form.non_field_errors }}
       {% with loop_id=forloop.counter0 %}
@@ -41,7 +41,11 @@
     </tr>
 
   {% empty %}
-    <tr id="no-rules-defined-warning"><td class="text-danger" colspan="6">No Rules defined - nothing will be extracted.</td></tr>
+    <tr id="no-rules-defined-warning">
+      <td class="text-danger" colspan="6">
+        No Rules defined - nothing will be extracted.
+      </td>
+    </tr>
   {% endfor %}
 
 </table>

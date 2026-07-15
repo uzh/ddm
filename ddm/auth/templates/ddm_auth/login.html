@@ -11,7 +11,11 @@
   <div class="container row justify-content-center">
     <div class="col-12 col-lg-6 text-center mt-5">
       <div class="row">
-        <img alt="Data Donation Module" height="100" src="{% static 'ddm_core/img/logos/DDM_Logo_Schwarz.svg' %}">
+        <img
+          alt="Data Donation Module"
+          height="100"
+          src="{% static 'ddm_core/img/logos/DDM_Logo_Schwarz.svg' %}"
+        />
       </div>
 
       <div>
@@ -32,7 +36,12 @@
               {% include "ddm_core/form_components/_basic_field.html" with field=field %}
             {% endfor %}
 
-            <input id="login-btn" class="ddm-btn-large mt-3 w-75" type="submit" value="{% block submit_label %}Login{% endblock submit_label %}">
+            <input
+              id="login-btn"
+              class="ddm-btn-large mt-3 w-75"
+              type="submit"
+              value="{% block submit_label %}Login{% endblock submit_label %}"
+            />
           </div>
         </form>
       </div>

@@ -41,19 +41,19 @@
   </tr>
   <tr>
     <td>Delete match (regex)</td>
-    <td>Remove the part of the field value that matches the regex.<br>
+    <td>Remove the part of the field value that matches the regex.<br />
       <em>Example:</em> regex <code>^Watched </code> transforms "Watched video XY" → "video XY"</td>
     <td>Values are converted to strings before regex matching.</td>
   </tr>
   <tr>
     <td>Replace match (regex)</td>
-    <td>Replace the matching part of the field value with <code>replacement value</code>.<br>
+    <td>Replace the matching part of the field value with <code>replacement value</code>.<br />
       <em>Example:</em> regex <code>[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,4}</code> with replacement <code>_anonymized_</code> transforms "some text email@address.com" → "some text _anonymized_"</td>
     <td>Values are converted to strings before regex matching.</td>
   </tr>
   <tr>
     <td>Delete row when match (regex)</td>
-    <td>Delete the entire row if the field value matches the regex.<br>
+    <td>Delete the entire row if the field value matches the regex.<br />
       <em>Example:</em> regex <code>^Watched </code> deletes any row where the field starts with "Watched "</td>
     <td>Values are converted to strings before regex matching.</td>
   </tr>

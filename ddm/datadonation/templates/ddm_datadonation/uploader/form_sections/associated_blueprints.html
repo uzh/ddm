@@ -12,13 +12,26 @@
       <table class="table table-borderless table-striped">
         {% for blueprint in blueprints %}
           <tr>
-            <td><input type="checkbox" id="bp-{{ blueprint.pk }}" name="bp-{{ blueprint.pk }}" {% if blueprint.file_uploader == object %}checked{% endif %}></td>
-            <td><label for="bp-{{ blueprint.pk }}" class="ddm-choice-label"><span class="fs-09">{{ blueprint.name }}</span></label></td>
+            <td>
+              <input
+                type="checkbox"
+                id="bp-{{ blueprint.pk }}"
+                name="bp-{{ blueprint.pk }}"
+                {% if blueprint.file_uploader == object %}checked{% endif %}
+              />
+            </td>
+            <td>
+              <label for="bp-{{ blueprint.pk }}" class="ddm-choice-label">
+                <span class="fs-09">{{ blueprint.name }}</span>
+              </label>
+            </td>
           </tr>
         {% empty %}
           <tr>
             <td>
-              <p class="m-0 fc-grey">No unassigned Blueprints available</p>
+              <p class="m-0 fc-grey">
+                No unassigned Blueprints available
+              </p>
             </td>
           </tr>
         {% endfor %}

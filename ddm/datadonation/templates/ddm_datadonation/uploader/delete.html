@@ -1,8 +1,8 @@
 {% extends 'ddm_core/page_with_form.html' %}
 
-{% block page_title %}Delete Uploader{% endblock %}
+{% block page_title %}Delete Uploader{% endblock page_title %}
 
-{% block main_heading %}Delete Uploader "{{ object.name }}"?{% endblock %}
+{% block main_heading %}Delete Uploader "{{ object.name }}"?{% endblock main_heading %}
 
 {% block form_content %}
 
@@ -21,4 +21,4 @@
     </div>
   </div>
 
-{% endblock %}
+{% endblock form_content %}

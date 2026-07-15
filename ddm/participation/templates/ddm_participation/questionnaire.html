@@ -8,17 +8,19 @@
 {% block content %}
 
 <div>
-  <form method="POST">
+  <form method="post">
     {% csrf_token %}
     <div id="qapp"
          data-action-url='{{ request.build_absolute_uri }}'
-         data-language='{{ LANGUAGE_CODE|slice:"0:2"}}'
+         data-language='{{ LANGUAGE_CODE|slice:"0:2" }}'
          class="text-black"
     >
       {{ q_config|json_script:"q-config-data" }}
       {{ filter_config|json_script:"filter-config-data" }}
       {{ extra_variables|json_script:"static-variables-data" }}
+      {# djlint:off #}
       <qapp></qapp>
+      {# djlint:on #}
     </div>
   </form>
   {% render_bundle 'ddm_questionnaire_frontend' config='DDM_QUESTIONNAIRE' %}

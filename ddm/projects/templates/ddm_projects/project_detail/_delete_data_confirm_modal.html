@@ -26,7 +26,7 @@
             class="ddm-btn-base ddm-btn-red"
             data-bs-dismiss="modal"
             data-endpoint-url="{% url 'ddm_apis:project_data_delete' object.url_id %}"
-            data-csrf-token="{{csrf_token}}">
+            data-csrf-token="{{ csrf_token }}">
           Yes, delete all data
         </button>
       </div>

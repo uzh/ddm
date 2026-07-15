@@ -20,7 +20,7 @@
   </div>
 
   {# Display Options #}
-  {% if question_type == "Open Question"  %}
+  {% if question_type == "Open Question" %}
     <div class="ddm-section-container ddm-section-collapsible-form">
       {% with content_include_path="ddm_questionnaire/form_sections/display_settings.html" %}
         {% with accordion_description="Configure how the question is displayed to participants" %}
@@ -31,7 +31,7 @@
   {% endif %}
 
   {# Input Settings #}
-  {% if question_type != "Text Block"  %}
+  {% if question_type != "Text Block" %}
     <div class="ddm-section-container ddm-section-collapsible-form">
       {% with content_include_path="ddm_questionnaire/form_sections/input_settings.html" %}
         {% with accordion_description="Configure input restrictions" %}
@@ -42,7 +42,7 @@
   {% endif %}
 
   {# Item Configuration #}
-  {% if item_formset  %}
+  {% if item_formset %}
     <div class="ddm-section-container ddm-section-collapsible-form ">
       {% with content_include_path="ddm_questionnaire/form_sections/item_configuration.html" %}
         {% include "ddm_core/components/accordion_card.html" with accordion_id="QuestionItemsConfig" accordion_title="Question Items" %}

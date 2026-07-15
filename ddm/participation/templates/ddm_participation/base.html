@@ -4,16 +4,16 @@
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <title>{% block title %}{{ project.name }}{% endblock title %}</title>
 
-  <link rel="stylesheet" href="{% static 'ddm_core/css/bootstrap/bootstrap.min.css' %}">
-  <link rel="stylesheet" href="{% static 'ddm_core/css/bootstrap/bootstrap-icons.css' %}">
-  <link href="{% static 'ddm_core/css/fonts.css' %}" rel="stylesheet">
-  <link href="{% static 'ddm_participation/css/public-base.css' %}" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'ddm_core/css/bootstrap/bootstrap.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'ddm_core/css/bootstrap/bootstrap-icons.css' %}" />
+  <link href="{% static 'ddm_core/css/fonts.css' %}" rel="stylesheet" />
+  <link href="{% static 'ddm_participation/css/public-base.css' %}" rel="stylesheet" />
 
   {% block extrahead %}{% endblock extrahead %}
 
@@ -40,7 +40,7 @@
 
   <div class="container public-main ps-0 pe-0 ps-sm-2 pe-sm-2">
     <div class="row">
-      {% block content %}{% endblock %}
+      {% block content %}{% endblock content %}
     </div>
   </div>
 

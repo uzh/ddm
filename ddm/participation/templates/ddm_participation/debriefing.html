@@ -14,7 +14,7 @@
   </div>
 
   {% if object.redirect_enabled %}
-  <a class="flow-btn" href="{{ redirect_target }}">{% translate 'Continue' %}&nbsp;&nbsp;&#8250;</a>
+  <a class="flow-btn" href="{{ redirect_target }}">{% translate 'Continue' %}{# djlint:off #}&nbsp;&nbsp;&#8250;{# djlint:on #}</a>
   {% endif %}
 
 </div>

@@ -1,8 +1,8 @@
 {% extends 'ddm_core/base.html' %}
 
-{% block page_title %}Create {{ object_type }}{% endblock %}
+{% block page_title %}Create {{ object_type }}{% endblock page_title %}
 
-{% block main_heading %}{{ heading }}{% endblock %}
+{% block main_heading %}{{ heading }}{% endblock main_heading %}
 
 {% block main_body %}
 
@@ -31,8 +31,8 @@
 
   {% block below_form %}{% endblock below_form %}
 
-  {% block main_bottom %}{% endblock %}
+  {% block main_bottom %}{% endblock main_bottom %}
 
-{% endblock %}
+{% endblock main_body %}
 
-{% block breadcrumbs %}{% endblock %}
+{% block breadcrumbs %}{% endblock breadcrumbs %}

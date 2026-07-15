@@ -38,12 +38,15 @@ indent_size = 2
 indent_size = 2
 
 [tool.ruff]
-include = ["ddm/apis/"]
+exclude = [
+    "*.html"
+]
 target-version = "py312"
 
 extend-exclude = [
     "*/migrations/*.py",
     "staticfiles/*",
+    "docs/*"
 ]
 
 [tool.ruff.lint]
@@ -123,3 +126,4 @@ force-single-line = false
 
 [tool.ruff.lint.per-file-ignores]
 "test*.py" = ["SLF001", "PLR2004", "FBT003", "PT009", "S106", "PT027", "S105", "ANN"]
+"**/test_project/*" = ["INP001"]

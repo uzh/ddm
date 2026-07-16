@@ -56,19 +56,23 @@ This will download a CSV file containing one row for every participant that has 
 |Contains any extra data recorded in relation to a participation
 (e.g., extracted URL parameters).
 
-|blueprint_<X>_name
+|bp-<X>_name
 |The name of the blueprint with ID "X".
 
-|blueprint_<X>_time_submitted
+|bp-<X>_time_submitted
 |Date and time in ISO 8601 format when the participant has submitted their donation for blueprint X.
 
-|blueprint_<X>_consent
-|Indicates whether the participant has consented to the donation of their data related to blueprint X.
+|bp-<X>_consent
+|Indicates whether the participant has consented to the donation of their data related to blueprint X. `True` = consent, `False` = no consent.
 
-|blueprint_<X>_status
+|bp-<X>_extraction_state
 |Indicates the status of the participant's donation in relation to blueprint X
-("success" = donation was successful, "pending" = data donation step reached but donation not attempted,
-"failed" = donation attempted but donation failed due to an error, "nothing extracted" = all data filtered out)
+("DATA_EXTRACTED" = donation was successful, "NOT_ATTEMPTED" = data donation step reached but donation not attempted,
+"FAILED" = donation attempted but donation failed due to an error, "NO_DATA_EXTRACTED" = all data filtered out)
+
+|bp-<X>_n_data_entries
+|The number of entries detected in the donated data (depending on the data structure, this value may underestimate how
+many entries the donation actually contained).
 
 |donation_download_link
 |A link though which the donation for the participant can be downloaded. Can be opened in the browser where

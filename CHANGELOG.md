@@ -4,11 +4,21 @@
 
 This version drops official support for Python versions < 3.12.
 
+
+### Added
+
+- Added `DataDonation.data_extraction_state` (replaces `DataDonation.status`) and `DataDonation.n_data_entries` to `DataDonation` model.
+
 ### Changed
 
 - Introduced ruff and refactored codebase to align.
 - Removed `null=True` from DonationBlueprint.regex_path, DonationBlueprint.description, ProcessingRule.comparison_operator
   ExceptionLogEntry.exception_type, ScalePoint.heading_label, ScalePoint.input_label, QuestionItem.label, QuestionItem.label_alt, and FilterCondition.source_identifier.
+
+### Deprecated
+
+- `DataDonation.status` was deprecated and replaced by `DataDonation.data_extraction_state`.
+
 
 ## 2.2.0 - February 2026
 

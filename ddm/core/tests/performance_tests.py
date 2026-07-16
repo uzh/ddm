@@ -132,7 +132,7 @@ class TestDownloadAPIPerformance(PerformanceTest):
         donation_data = {
             "consent": True,
             "extracted_data": json.dumps(data_1mb * donation_size),
-            "status": "some status",
+            "data_extraction_state": DataDonation.DataExtractionState.DATA_EXTRACTED,
         }
 
         self.client.login(**self.user_creds)
@@ -148,7 +148,7 @@ class TestDownloadAPIPerformance(PerformanceTest):
                     blueprint=self.blueprint,
                     participant=self.participant,
                     consent=donation_data["consent"],
-                    status=donation_data["status"],
+                    data_extraction_state=donation_data["data_extraction_state"],
                     data=donation_data["extracted_data"],
                 )
             n_donations += 10

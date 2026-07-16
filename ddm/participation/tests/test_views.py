@@ -117,7 +117,7 @@ class ParticipationFlowBaseTestCase(TestCase):
             participant=participant,
             time_submitted=timezone.now(),
             consent=True,
-            status="success",
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
             data="{}",
         )
 
@@ -335,7 +335,7 @@ class TestDonationView(ParticipationFlowBaseTestCase):
             f"{self.blueprint.pk}": {
                 "consent": True,
                 "extractedData": [],
-                "status": "complete",
+                "status": "DATA_EXTRACTED",
             }
         }
         zip_buffer = self.get_zip_file("data_donation.json", json.dumps(valid_data))

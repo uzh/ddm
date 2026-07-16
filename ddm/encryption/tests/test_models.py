@@ -83,7 +83,7 @@ class TestModelEncryption(TestCase):
                     blueprint=self.base_blueprint,
                     participant=self.base_participant,
                     consent=True,
-                    status="some status",
+                    data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
                     data=raw_data,
                 )
                 self.assertNotEqual(raw_data, dd.data)
@@ -118,7 +118,7 @@ class TestModelEncryption(TestCase):
                     blueprint=self.alt_blueprint,
                     participant=self.alt_participant,
                     consent=True,
-                    status="some status",
+                    data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
                     data=raw_data,
                 )
                 self.assertNotEqual(raw_data, dd.data)
@@ -164,7 +164,7 @@ class TestModelEncryption(TestCase):
                     blueprint=self.base_blueprint,
                     participant=self.base_participant,
                     consent=True,
-                    status="some status",
+                    data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
                     data=raw_data,
                 )
                 dd.save(encryptor=encryptor)
@@ -187,7 +187,7 @@ class TestModelEncryption(TestCase):
                     blueprint=self.base_blueprint,
                     participant=self.base_participant,
                     consent=True,
-                    status="some status",
+                    data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
                     data=raw_data,
                 )
                 self.assertNotEqual(raw_data, dd.data)
@@ -202,7 +202,7 @@ class TestModelEncryption(TestCase):
             blueprint=self.base_blueprint,
             participant=self.base_participant,
             consent=True,
-            status="some status",
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
             data=self.raw_data_long,
         )
         dd.consent = False

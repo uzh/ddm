@@ -66,10 +66,10 @@ const emit = defineEmits<{
 }>();
 
 const iconStateMap: Record<ExtractionStates, string> = {
-  [EXTRACTION_STATES.SUCCESS]: 'bi bi-file-earmark-check-fill text-success',
+  [EXTRACTION_STATES.DATA_EXTRACTED]: 'bi bi-file-earmark-check-fill text-success',
   [EXTRACTION_STATES.FAILED]: 'bi bi-file-earmark-x-fill text-danger',
-  [EXTRACTION_STATES.NO_DATA]: 'bi bi-file-earmark-x-fill text-grey',
-  [EXTRACTION_STATES.PENDING]: 'bi bi-file-earmark-fill text-grey',
+  [EXTRACTION_STATES.NO_DATA_EXTRACTED]: 'bi bi-file-earmark-x-fill text-grey',
+  [EXTRACTION_STATES.NOT_ATTEMPTED]: 'bi bi-file-earmark-fill text-grey',
   [EXTRACTION_STATES.PARTIAL]: ''
 };
 
@@ -79,12 +79,12 @@ const iconStateMap: Record<ExtractionStates, string> = {
  * @returns The Bootstrap icon class string for the current state
  */
 const iconClass = computed(() =>
-  props.extractionState ? iconStateMap[props.extractionState] : iconStateMap[EXTRACTION_STATES.PENDING]
+  props.extractionState ? iconStateMap[props.extractionState] : iconStateMap[EXTRACTION_STATES.NOT_ATTEMPTED]
 );
 
-const extractionPending = computed(() => props.extractionState == EXTRACTION_STATES.PENDING);
-const extractionSuccess = computed(() => props.extractionState == EXTRACTION_STATES.SUCCESS);
-const nothingExtracted = computed(() => props.extractionState == EXTRACTION_STATES.NO_DATA);
+const extractionPending = computed(() => props.extractionState == EXTRACTION_STATES.NOT_ATTEMPTED);
+const extractionSuccess = computed(() => props.extractionState == EXTRACTION_STATES.DATA_EXTRACTED);
+const nothingExtracted = computed(() => props.extractionState == EXTRACTION_STATES.NO_DATA_EXTRACTED);
 const extractionFailed = computed(() => props.extractionState == EXTRACTION_STATES.FAILED);
 
 /**

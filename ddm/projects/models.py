@@ -266,7 +266,8 @@ class DonationProject(models.Model):
             "n_completed": participants.filter(completed=True).count(),
             "completion_rate": self.get_completion_rate(participants),
             "n_donations": DataDonation.objects.filter(
-                project=self, status="success"
+                project=self,
+                data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
             ).count(),
             "n_errors": ExceptionLogEntry.objects.filter(project=self).count(),
             "average_time": self.get_average_completion_time(participants),

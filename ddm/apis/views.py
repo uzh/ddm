@@ -566,7 +566,8 @@ class DownloadProjectDetailsView(APIView, DDMAPIMixin):
     -- name
     -- time submitted
     -- consent
-    -- status
+    -- data extraction state
+    -- n data entries
 
     Returns a StreamingHttpResponse.
     """
@@ -621,10 +622,11 @@ class DownloadProjectDetailsView(APIView, DDMAPIMixin):
         for blueprint in blueprints:
             pk = blueprint.pk
             blueprint_header = (
-                f"blueprint_{pk}_name,"
-                f"blueprint_{pk}_time_submitted,"
-                f"blueprint_{pk}_consent,"
-                f"blueprint_{pk}_status,"
+                f"bp-{pk}_name,"
+                f"bp-{pk}_time_submitted,"
+                f"bp-{pk}_consent,"
+                f"bp-{pk}_extraction_state,"
+                f"bp-{pk}_n_data_entries,"
             )
             header += blueprint_header
         return header
@@ -642,7 +644,8 @@ class DownloadProjectDetailsView(APIView, DDMAPIMixin):
                     f'"{blueprint.name}",'
                     f'"{donation.time_submitted}",'
                     f'"{donation.consent}",'
-                    f'"{donation.status}",'
+                    f'"{donation.data_extraction_state}",'
+                    f'"{donation.n_data_entries}",'
                 )
                 n_donations += 1
             else:

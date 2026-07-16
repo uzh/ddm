@@ -84,7 +84,7 @@ onMounted(() => {
 watch(
   () => props.uploaderState,
   () => {
-    if (props.extractionState != EXTRACTION_STATES.PENDING) {
+    if (props.extractionState != EXTRACTION_STATES.NOT_ATTEMPTED) {
       updateBlueprintUIMap();
     }
   },
@@ -173,7 +173,7 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
 }
 
 const introText = computed(() =>
-  props.extractionState === EXTRACTION_STATES.PENDING
+  props.extractionState === EXTRACTION_STATES.NOT_ATTEMPTED
     ? t("feedback.intro-extraction-pending")
     : t('feedback.intro-extraction-complete')
 );

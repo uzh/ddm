@@ -34,7 +34,7 @@ export function useExtractionStateTracker(
   errors: ProcessingError[],
   results: Record<number,  BlueprintExtractionOutcome>
 ) {
-  const extractionState: Ref<ExtractionStates> = ref(EXTRACTION_STATES.PENDING);
+  const extractionState: Ref<ExtractionStates> = ref(EXTRACTION_STATES.NOT_ATTEMPTED);
   const generalErrorsToDisplay: Ref<ProcessingError[]> = ref([]);
   const blueprintExtractionStates: Ref<BlueprintExtractionStates> = ref({});
 
@@ -46,7 +46,7 @@ export function useExtractionStateTracker(
    */
   function initialize(): void {
     for (const blueprintId of Object.keys(results)) {
-      blueprintExtractionStates.value[blueprintId] = {state: EXTRACTION_STATES.PENDING, i18nState: null, errorsToDisplay: []};
+      blueprintExtractionStates.value[blueprintId] = {state: EXTRACTION_STATES.NOT_ATTEMPTED, i18nState: null, errorsToDisplay: []};
     }
   }
 
@@ -57,7 +57,7 @@ export function useExtractionStateTracker(
    * ensuring that old states don't affect new evaluations.
    */
   function resetState(): void {
-    extractionState.value = EXTRACTION_STATES.PENDING;
+    extractionState.value = EXTRACTION_STATES.NOT_ATTEMPTED;
     generalErrorsToDisplay.value = [];
     blueprintExtractionStates.value = {};
   }
@@ -124,8 +124,8 @@ export function useExtractionStateTracker(
     }
 
     const nBlueprints = Object.keys(blueprintExtractionStates.value).length;
-    const nSuccess = getStateCount(EXTRACTION_STATES.SUCCESS);
-    const nNoData = getStateCount(EXTRACTION_STATES.NO_DATA);
+    const nSuccess = getStateCount(EXTRACTION_STATES.DATA_EXTRACTED);
+    const nNoData = getStateCount(EXTRACTION_STATES.NO_DATA_EXTRACTED);
     const nFailed = getStateCount(EXTRACTION_STATES.FAILED);
 
     extractionState.value = determineOverallState(nBlueprints, nSuccess, nNoData, nFailed);
@@ -146,8 +146,8 @@ export function useExtractionStateTracker(
     noData: number,
     failed:number
   ): ExtractionStates {
-    if (success === total) return EXTRACTION_STATES.SUCCESS;
-    if (noData === total) return EXTRACTION_STATES.NO_DATA;
+    if (success === total) return EXTRACTION_STATES.DATA_EXTRACTED;
+    if (noData === total) return EXTRACTION_STATES.NO_DATA_EXTRACTED;
     if (failed === total) return EXTRACTION_STATES.FAILED;
     return EXTRACTION_STATES.PARTIAL;
   }
@@ -167,7 +167,7 @@ export function useExtractionStateTracker(
    * @returns A BlueprintDetailState object with state, i18n key, and errors
    */
   function getBlueprintState(blueprintOutcome: BlueprintExtractionOutcome): BlueprintDetailState {
-    let state: ExtractionStates = EXTRACTION_STATES.PENDING;
+    let state: ExtractionStates = EXTRACTION_STATES.NOT_ATTEMPTED;
     let i18nState: string | null = null;
     const criticalErrors = blueprintOutcome.processingErrors.filter(error => error.level === ERROR_LEVELS.CRITICAL);
 
@@ -188,7 +188,7 @@ export function useExtractionStateTracker(
       : 0;
 
     if (nExtracted === 0 && criticalErrors.length === 0) {
-      state = EXTRACTION_STATES.NO_DATA;
+      state = EXTRACTION_STATES.NO_DATA_EXTRACTED;
       if (ratioMissing === 1) {
         i18nState = 'extraction-state.blueprint.all-missing-fields';
       } else if (ratioFilteredOut === 1) {
@@ -197,7 +197,7 @@ export function useExtractionStateTracker(
         i18nState = 'extraction-state.blueprint.no-data-extracted';
       }
     } else if (criticalErrors.length === 0) {
-      state = EXTRACTION_STATES.SUCCESS;
+      state = EXTRACTION_STATES.DATA_EXTRACTED;
       i18nState = 'extraction-state.blueprint.success'
     }
 

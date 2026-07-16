@@ -46,7 +46,7 @@ class TestDonationProject(TestCase):
             blueprint=cls.blueprint,
             participant=cls.participant,
             consent=True,
-            status="success",
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
             data="{}",
         )
 

@@ -64,7 +64,7 @@ export function useUploaderValidator(
   /**
    * Checks if all uploads have been attempted.
    *
-   * An upload is considered "not attempted" if its state is still PENDING.
+   * An upload is considered "not attempted" if its state is still NOT_ATTEMPTED.
    * This function collects the names of unattended uploaders for display
    * in the UI.
    *
@@ -74,7 +74,7 @@ export function useUploaderValidator(
     unattendedUploaderNames.value = [];
 
     for (const uploader of Object.values(uploaderOutcomes.value)) {
-      if (uploader.uploaderState === EXTRACTION_STATES.PENDING) {
+      if (uploader.uploaderState === EXTRACTION_STATES.NOT_ATTEMPTED) {
         unattendedUploaderNames.value.push(uploader.uploaderName);
       }
     }
@@ -102,7 +102,7 @@ export function useUploaderValidator(
 
       for (const blueprint of Object.keys(uploader.consentMap)) {
         if (uploader.consentMap[blueprint] === null &&
-            uploader.blueprintStates[blueprint].state === EXTRACTION_STATES.SUCCESS) {
+            uploader.blueprintStates[blueprint].state === EXTRACTION_STATES.DATA_EXTRACTED) {
           blueprintsWithoutConsentNames.value.push(uploader.blueprintNames[blueprint]);
           blueprintsWithoutConsentCount.value += 1;
         }

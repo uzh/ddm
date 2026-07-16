@@ -89,7 +89,8 @@ class TestAPIs(TestCase):
             participant=cls.participant_a,
             time_submitted=timezone.now(),
             consent=True,
-            status="{}",
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
+            n_data_entries=2,
             data=["data1_pA_bpA", "data2_pA_bpA"],
         )
         cls.donation_pA_b = DataDonation.objects.create(
@@ -98,7 +99,8 @@ class TestAPIs(TestCase):
             participant=cls.participant_a,
             time_submitted=timezone.now(),
             consent=True,
-            status="{}",
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
+            n_data_entries=2,
             data=["data1_pA_bpB", "data2_pA_bpB"],
         )
 
@@ -108,7 +110,8 @@ class TestAPIs(TestCase):
             participant=cls.participant_b,
             time_submitted=timezone.now(),
             consent=True,
-            status="{}",
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
+            n_data_entries=2,
             data=["data1_pB_bpA", "data2_pB_bpA"],
         )
         cls.donation_pB_b = DataDonation.objects.create(
@@ -117,7 +120,8 @@ class TestAPIs(TestCase):
             participant=cls.participant_b,
             time_submitted=timezone.now(),
             consent=True,
-            status="{}",
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
+            n_data_entries=2,
             data=["data1_pB_bpB", "data2_pB_bpB"],
         )
 
@@ -178,8 +182,9 @@ class TestAPIs(TestCase):
                             "participant": f"{self.participant_a.external_id}",
                             "data": ["data1_pA_bpA", "data2_pA_bpA"],
                             "time_submitted": f"{localtime(self.donation_pA_a.time_submitted).isoformat()}",  # noqa: E501
-                            "status": f"{self.donation_pA_a.status}",
+                            "data_extraction_state": f"{self.donation_pA_a.data_extraction_state}",  # noqa: E501
                             "consent": self.donation_pA_a.consent,
+                            "n_data_entries": self.donation_pA_a.n_data_entries,
                         },
                     ],
                 },
@@ -190,8 +195,9 @@ class TestAPIs(TestCase):
                             "participant": f"{self.participant_a.external_id}",
                             "data": ["data1_pA_bpB", "data2_pA_bpB"],
                             "time_submitted": f"{localtime(self.donation_pA_b.time_submitted).isoformat()}",  # noqa: E501
-                            "status": f"{self.donation_pA_b.status}",
+                            "data_extraction_state": f"{self.donation_pA_b.data_extraction_state}",  # noqa: E501
                             "consent": self.donation_pA_b.consent,
+                            "n_data_entries": self.donation_pA_b.n_data_entries,
                         },
                     ],
                 },
@@ -221,15 +227,17 @@ class TestAPIs(TestCase):
                             "participant": f"{self.participant_a.external_id}",
                             "data": ["data1_pA_bpA", "data2_pA_bpA"],
                             "time_submitted": f"{localtime(self.donation_pA_a.time_submitted).isoformat()}",  # noqa: E501
-                            "status": f"{self.donation_pA_a.status}",
+                            "data_extraction_state": f"{self.donation_pA_a.data_extraction_state}",  # noqa: E501
                             "consent": self.donation_pA_a.consent,
+                            "n_data_entries": self.donation_pA_a.n_data_entries,
                         },
                         {
                             "participant": f"{self.participant_b.external_id}",
                             "data": ["data1_pB_bpA", "data2_pB_bpA"],
                             "time_submitted": f"{localtime(self.donation_pB_a.time_submitted).isoformat()}",  # noqa: E501
-                            "status": f"{self.donation_pB_a.status}",
+                            "data_extraction_state": f"{self.donation_pB_a.data_extraction_state}",  # noqa: E501
                             "consent": self.donation_pB_a.consent,
+                            "n_data_entries": self.donation_pB_a.n_data_entries,
                         },
                     ],
                 },

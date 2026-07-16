@@ -40,8 +40,9 @@ class DataDonationSerializer(SerializerDecryptionMixin, serializers.ModelSeriali
             "participant",
             "data",
             "time_submitted",
-            "status",
+            "data_extraction_state",
             "consent",
+            "n_data_entries",
         ]
 
 

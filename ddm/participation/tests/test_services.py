@@ -144,7 +144,7 @@ class QuestionnaireConfigServiceTest(TestCase):
             participant=cls.participant,
             time_submitted=timezone.now(),
             consent=True,
-            status="success",
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
             data="some donated data",
         )
 
@@ -204,7 +204,7 @@ class QuestionnaireConfigServiceTest(TestCase):
 
     def test_blueprint_question_with_donation_failed_excluded(self):
         svc = QuestionnaireConfigService(self.project, self.participant)
-        self.donation.status = "failed"
+        self.donation.data_extraction_state = DataDonation.DataExtractionState.FAILED
         self.donation.save()
         result = svc.create_questionnaire_config()
         question_ids = [q["question"] for q in result]

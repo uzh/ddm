@@ -106,7 +106,7 @@ onMounted(() => {
 });
 
 const isExtractionSuccessful = computed(() =>
-  extractionState.value === EXTRACTION_STATES.SUCCESS ||
+  extractionState.value === EXTRACTION_STATES.DATA_EXTRACTED ||
   extractionState.value === EXTRACTION_STATES.PARTIAL
 );
 

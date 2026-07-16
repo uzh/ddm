@@ -146,7 +146,11 @@ class TestDonationBlueprintModel(TestCase):
         self.assertEqual(self.blueprint.get_slug(), "blueprint")
 
     def test_validate_donation_case_valid(self):
-        data = {"consent": True, "extractedData": ["some data"], "status": "success"}
+        data = {
+            "consent": True,
+            "extractedData": ["some data"],
+            "status": "DATA_EXTRACTED",
+        }
         self.assertTrue(self.blueprint.validate_donation(data))
 
     def test_validate_donation_case_invalid(self):
@@ -157,7 +161,11 @@ class TestDonationBlueprintModel(TestCase):
         self.assertFalse(self.blueprint.validate_donation(data))
 
     def test_process_donation_case_valid(self):
-        data = {"consent": True, "extractedData": ["some data"], "status": "success"}
+        data = {
+            "consent": True,
+            "extractedData": ["some data"],
+            "status": "DATA_EXTRACTED",
+        }
         n_donations_pre = DataDonation.objects.count()
         self.blueprint.process_donation(data, self.participant)
         n_donations_post = DataDonation.objects.count()

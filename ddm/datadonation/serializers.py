@@ -16,7 +16,8 @@ class DonationSerializer(
         fields = [
             "time_submitted",
             "consent",
-            "status",
+            "data_extraction_state",
+            "n_data_entries",
             "data",
             "project",
             "participant",

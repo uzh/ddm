@@ -68,11 +68,24 @@ class Participant(models.Model):
 
     def get_donation_info(self) -> dict[str, Any]:
         donations = DataDonation.objects.filter(participant=self)
+        ExtractionState = DataDonation.DataExtractionState  # noqa: N806
         return {
-            "n_success": donations.filter(status="success").count(),
-            "n_pending": donations.filter(status="pending").count(),
-            "n_failed": donations.filter(status="failed").count(),
-            "n_consent": donations.filter(status="success", consent=True).count(),
-            "n_no_consent": donations.filter(status="success", consent=False).count(),
-            "n_no_data_extracted": donations.filter(status="nothing extracted").count(),
+            "n_success": donations.filter(
+                data_extraction_state=ExtractionState.DATA_EXTRACTED
+            ).count(),
+            "n_pending": donations.filter(
+                data_extraction_state=ExtractionState.NO_DATA_EXTRACTED
+            ).count(),
+            "n_failed": donations.filter(
+                data_extraction_state=ExtractionState.FAILED
+            ).count(),
+            "n_consent": donations.filter(
+                data_extraction_state=ExtractionState.DATA_EXTRACTED, consent=True
+            ).count(),
+            "n_no_consent": donations.filter(
+                data_extraction_state=ExtractionState.DATA_EXTRACTED, consent=False
+            ).count(),
+            "n_no_data_extracted": donations.filter(
+                data_extraction_state=ExtractionState.NO_DATA_EXTRACTED
+            ).count(),
         }

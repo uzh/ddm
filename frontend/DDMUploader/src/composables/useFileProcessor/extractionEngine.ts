@@ -132,6 +132,10 @@ export function extractData(
         extractedRowData[rule.field] = dataRow[key];
         break;
 
+      case '':
+        extractedRowData[rule.field] = dataRow[key];
+        break;
+
       case '==':
         if (valueIsEqual(dataRow[key], rule.comparison_value)) return discardRow(rule, blueprintId, blueprintOutcomeMap);
         break;

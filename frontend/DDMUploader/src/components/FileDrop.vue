@@ -69,11 +69,11 @@ onMounted(() => {
 });
 
 const borderClassMap: Record<ExtractionStates, string> = {
-  [EXTRACTION_STATES.SUCCESS]: 'border-success',
+  [EXTRACTION_STATES.DATA_EXTRACTED]: 'border-success',
   [EXTRACTION_STATES.PARTIAL]: 'border-success',
   [EXTRACTION_STATES.FAILED]: 'border-failed',
-  [EXTRACTION_STATES.NO_DATA]: 'border-no-data',
-  [EXTRACTION_STATES.PENDING]: 'bg-lightgrey'
+  [EXTRACTION_STATES.NO_DATA_EXTRACTED]: 'border-no-data',
+  [EXTRACTION_STATES.NOT_ATTEMPTED]: 'bg-lightgrey'
 };
 
 watch(extractionState, (val: ExtractionStates) => {
@@ -160,7 +160,7 @@ const showRetryButton = computed(() =>
 );
 
 const extractionSuccess = computed(() =>
-  props.extractionState === EXTRACTION_STATES.SUCCESS ||
+  props.extractionState === EXTRACTION_STATES.DATA_EXTRACTED ||
   props.extractionState === EXTRACTION_STATES.PARTIAL
 );
 
@@ -169,7 +169,7 @@ const extractionFailed = computed(() =>
 );
 
 const extractionNoData = computed(() =>
-  props.extractionState === EXTRACTION_STATES.NO_DATA
+  props.extractionState === EXTRACTION_STATES.NO_DATA_EXTRACTED
 );
 </script>
 

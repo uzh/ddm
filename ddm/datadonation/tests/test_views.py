@@ -280,7 +280,7 @@ class TestAPIs(TestCase):
             participant=cls.participant_regular,
             time_submitted=timezone.now(),
             consent=True,
-            status="{}",
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
             data=["data1_pA_bpA", "data2_pA_bpA"],
         )
         cls.donation_secret = DataDonation.objects.create(
@@ -289,7 +289,7 @@ class TestAPIs(TestCase):
             participant=cls.participant_secret,
             time_submitted=timezone.now(),
             consent=True,
-            status="{}",
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
             data=["data1_pA_bpB", "data2_pA_bpB"],
         )
 

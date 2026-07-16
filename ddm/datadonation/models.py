@@ -11,6 +11,7 @@ from django.utils import timezone
 
 from ddm.core.utils.user_content.template import render_user_content
 from ddm.core.utils.validators import validate_regex_pattern, validate_safe_regex
+from ddm.datadonation.utils import count_data_entries
 from ddm.encryption.models import ModelWithEncryptedData
 from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers
 
@@ -242,8 +243,9 @@ class DonationBlueprint(models.Model):
             blueprint=self,
             participant=participant,
             consent=data["consent"],
-            status=data["status"],
+            data_extraction_state=data["status"],
             data=data["extractedData"],
+            n_data_entries=count_data_entries(data["extractedData"]),
         )
 
 
@@ -383,10 +385,26 @@ class DataDonation(ModelWithEncryptedData):
     )
     time_submitted = models.DateTimeField(default=timezone.now)
     consent = models.BooleanField(default=False, null=True)
-    status = models.JSONField()
-    # TODO: Change this to a CHOICE filed or similar
-    #  (attention: also affects other parts of the code)
+    status = models.JSONField(null=True)
+    # Status is replaced by data_extraction_state in v3.0.0 -
+    #  TODO: deprecate in future release
+
     data = models.BinaryField()
+
+    class DataExtractionState(models.TextChoices):
+        DATA_EXTRACTED = "DATA_EXTRACTED"
+        NO_DATA_EXTRACTED = "NO_DATA_EXTRACTED"
+        NOT_ATTEMPTED = "NOT_ATTEMPTED"
+        FAILED = "FAILED"
+
+    data_extraction_state = models.CharField(
+        max_length=24,
+        choices=DataExtractionState.choices,
+        blank=True,
+        default="",
+    )
+
+    n_data_entries = models.IntegerField(null=True)
 
 
 class DonationInstruction(models.Model):

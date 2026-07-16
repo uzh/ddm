@@ -342,7 +342,7 @@ class TestAPIs(TestCase):
         self.assertEqual(response["Content-Type"], "text/csv")
 
     def test_responses_api_get_csv_with_no_questionnaire(self):
-        token = self.project_no_quest.create_token()  # TODO: Change to no
+        token = self.project_no_quest.create_token()
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
         url = reverse("ddm_apis:responses", args=[self.project_no_quest.url_id])

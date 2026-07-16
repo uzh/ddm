@@ -7,9 +7,15 @@ from ddm.encryption.models import Decryption
 
 
 class SerializerDecryptionMixin:
-    """
-    Allows to pass the secret for the decryption of super secret projects to
-    the serializer on init.  # TODO: Improve description.
+    """Enables decryption of encrypted project data during serialization.
+
+    Used by DataDonation and QuestionnaireResponse models.
+    Accepts a `secret` and `decryptor` on init (falling back to
+    `obj.project.secret_key` if no secret is given). `get_data()` returns
+    the decrypted value and is meant to back a `SerializerMethodField`.
+
+    Note: Both methods are wrapped in `@sensitive_variables()` since `secret`/
+    `decryptor` are sensitive and shouldn't appear in tracebacks.
     """
 
     @sensitive_variables()

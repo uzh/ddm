@@ -120,9 +120,9 @@ class Decryption(AsyncSyncCrypto):
         self.rsa = self.get_rsa(secret, salt)
 
     def decrypt(self, value: Any) -> Any:  # noqa: ANN401
-        """
-        Fetch encrypted data from the database, try to decode the stored data,
-        None if decryption fails.
+        """Fetch encrypted data from the database and decode it.
+
+        Raises ValueError if decryption fails.
         """
         value_bytes = BytesIO(base64.decodebytes(value))
         encrypted_session_key = value_bytes.read(self.rsa.size_in_bytes())

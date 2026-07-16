@@ -34,7 +34,7 @@ class TestDonationProject(TestCase):
         cls.participant = Participant.objects.create(
             project=cls.project,
             start_time=timezone.now(),
-            extra_data={"url_param": {"param_a": "something"}},
+            url_parameter={"param_a": "something"},
         )
 
         cls.blueprint = DonationBlueprint.objects.create(

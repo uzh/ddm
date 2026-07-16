@@ -149,9 +149,9 @@ class TestBriefingView(ParticipationFlowBaseTestCase):
         project_session = self.client.session[f"project-{self.project_base.pk}"]
         participant_id = project_session["participant_id"]
         participant = Participant.objects.get(pk=participant_id)
-        self.assertIn("testparam", participant.extra_data["url_param"])
-        self.assertNotIn("altparam", participant.extra_data["url_param"])
-        self.assertEqual(participant.extra_data["url_param"]["testparam"], "okay")
+        self.assertIn("testparam", participant.url_parameter)
+        self.assertNotIn("altparam", participant.url_parameter)
+        self.assertEqual(participant.url_parameter["testparam"], "okay")
 
     def test_project_briefing_view_get_valid_url(self):
         response = self.client.get(self.briefing_url)

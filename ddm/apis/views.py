@@ -603,7 +603,10 @@ class DownloadProjectDetailsView(APIView, DDMAPIMixin):
 
     @staticmethod
     def get_participant_header() -> str:
-        return "participant_id,start_time,end_time,current_step,completed,extra_data,"
+        return (
+            "participant_id,start_time,end_time,"
+            "current_step,completed,url_parameter,extra_data,"
+        )
 
     @staticmethod
     def get_participant_data(participant: Participant) -> str:
@@ -613,6 +616,7 @@ class DownloadProjectDetailsView(APIView, DDMAPIMixin):
             f'"{participant.end_time}",'
             f'"{participant.current_step}",'
             f'"{participant.completed}",'
+            f'"{participant.url_parameter}",'
             f'"{participant.extra_data}",'
         )
 

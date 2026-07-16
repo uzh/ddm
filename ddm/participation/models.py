@@ -9,7 +9,7 @@ from ddm.datadonation.models import DataDonation
 
 def get_extra_data_default() -> dict[str, dict]:
     """Return default value for Participant.extra_data."""
-    return {"url_param": {}}
+    return {}
 
 
 EXTERNAL_ID_LENGTH = 24  # Length of participant external ID
@@ -34,6 +34,7 @@ class Participant(models.Model):
     current_step = models.IntegerField(blank=True, null=True)
 
     extra_data = models.JSONField(default=get_extra_data_default)
+    url_parameter = models.JSONField(default=dict)
 
     def __str__(self) -> str:
         return self.external_id
@@ -59,7 +60,7 @@ class Participant(models.Model):
         """
         context_data = {
             "participant_id": self.external_id,
-            "url_parameter": self.extra_data["url_param"],
+            "url_parameter": self.url_parameter,
             "donation_info": self.get_donation_info(),
         }
         if "briefing_consent" in self.extra_data:

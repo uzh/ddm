@@ -31,11 +31,7 @@ def get_url_parameters(
     variable_dict = {}
     url_parameters = project.get_expected_url_parameters()
     for parameter in url_parameters:
-        if participant:
-            value = participant.extra_data["url_param"].get(parameter, None)
-        else:
-            value = None
-
+        value = participant.url_parameter.get(parameter, None) if participant else None
         variable_dict[f"_url_{parameter}"] = value
 
     return variable_dict

@@ -278,11 +278,11 @@ class BriefingView(ParticipationFlowBaseView):
     def extract_url_parameter(self) -> None:
         """Extract URL parameters on first call of the view
 
-        Saves parameters to participant.extra_data.
+        Saves parameters to participant.url_parameter.
         """
-        if not self.participant.extra_data["url_param"]:
+        if not self.participant.url_parameter:
             for param in self.object.get_expected_url_parameters():
-                self.participant.extra_data["url_param"][param] = self.request.GET.get(
+                self.participant.url_parameter[param] = self.request.GET.get(
                     param, None
                 )
             self.participant.save()

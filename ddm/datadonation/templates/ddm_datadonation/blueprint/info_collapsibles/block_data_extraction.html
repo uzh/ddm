@@ -1,17 +1,29 @@
 <p>
-  Data is extracted by following a set of <code>Extraction Rules</code>.
+  Only fields listed in the <code>Relevant Fields</code> section and marked
+  <code>keep in donation</code> are included in the donated data.
+  Optionally, you can provide a field alias via <code>rename to</code>,
+  which is used both in the data export and when referencing the field in
+  <code>Extraction Rules</code>.
+  Data is then extracted and transformed according to the defined
+  <code>Extraction Rules</code> (if any).
 </p>
 <p>
-  <code>Extraction Rules</code> are applied to the data located at the defined <code>Extraction Root</code> row-by-row in the order you define them.
-  If no rules are configured, no data is extracted.
-  All extraction happens on the participant's device using JavaScript.
+  <code>Extraction Rules</code> are applied row-by-row to the data located at
+  the defined <code>Extraction Root</code>, in the order you define them.
+  All extraction happens on the participant's device, using JavaScript.
 </p>
 
 <p>Configuring extraction:</p>
 
 <div>
   <ol class="mb-4 mt-2">
-    <li>For each field you want to keep, add a rule with the <code>Keep field</code> operator.</li>
-    <li>Add additional rules to filter (delete rows) or transform values using comparison or regex operators.</li>
+    <li>
+      In the <code>Extraction Fields</code> section, list each field you
+      want to keep and mark it <code>keep in donation</code>.
+    </li>
+    <li>
+      Add <code>Extraction Rules</code> to filter (delete rows) or transform
+      values using comparison or regex operators.
+    </li>
   </ol>
 </div>

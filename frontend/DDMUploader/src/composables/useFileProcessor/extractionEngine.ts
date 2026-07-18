@@ -7,6 +7,7 @@ import {
 } from "@uploader/utils/ExtractionFunctions";
 import {ERROR_CATALOG} from "@uploader/utils/errorCatalog";
 import {ExtractionRule} from "@uploader/types/ExtractionRule";
+import {ExtractionField} from "@uploader/types/ExtractionField";
 import {BlueprintExtractionOutcome} from "@uploader/classes/BlueprintExtractionOutcome";
 
 /**
@@ -39,57 +40,68 @@ export function getMissingFields(
 }
 
 /**
- * Builds a mapping between expected fields (defined in extraction rules) and actual keys in the data row.
+ * Builds a mapping between expected fields and actual keys in the data row.
  *
- * For each rule, the function attempts to match the rule's field against the keys in the data row,
- * using either exact string matching or a regular expression, depending on the `regex_field` flag.
+ * Attempts to match each extraction field against the keys in the data row,
+ * using either exact string matching or a regular expression,
+ * depending on the `match_regex` flag.
  *
- * If multiple keys match a rule, the first is used and a warning is recorded.
+ * If multiple keys match a field, the first is used and a warning is recorded.
  * If no match is found, an error is recorded.
  * All errors and warnings are pushed to the `extractionOutcome.extractionErrors` array.
  *
  * @param dataRow - The object representing a row of data with string keys.
- * @param extractionRules - Array of extraction rule objects.
+ * @param extractionFields - Array of extraction rule objects.
  * @param blueprintId - The numerical ID of the currently processed blueprint.
  * @param blueprintOutcomeMap - A map of blueprint ids to their extraction outcome.
- * @returns A Map where each key is the rule field name and the value is the corresponding key in the dataRow.
+ * @returns A Map where each key is the extraction field name and the value is
+ *   the corresponding matched key in the dataRow.
  */
-export function getKeyMap(
+export function getFieldKeyMap(
   dataRow: Record<string, any>,
-  extractionRules: ExtractionRule[],
+  extractionFields: ExtractionField[],
   blueprintId: number,
   blueprintOutcomeMap: Record<number, BlueprintExtractionOutcome>
 ): Map<string, string> {
-  const keyMap = new Map<string, string>;
+  const fieldKeyMap = new Map<string, string>();
 
-  for (const rule of extractionRules) {
-    const keys = Object.keys(dataRow).filter(key => {
-      if (rule.regex_field) {
+  for (const field of extractionFields) {
+    const field_name = field.alias ? field.alias : field.expected_name
+
+    if (fieldKeyMap.has(field_name)) {
+      continue;
+    }
+
+    const keys = (() => {
+      if (field.match_regex) {
+        let pattern: RegExp;
         try {
-          return new RegExp(rule.field).test(key);
+          pattern = new RegExp(field.expected_name);
         } catch (error) {
           blueprintOutcomeMap[blueprintId].registerError(
-            ERROR_CATALOG.INVALID_REGEX, {blueprintId: blueprintId, ruleId: rule.id, ruleRegex: rule.field}
+            ERROR_CATALOG.INVALID_FIELD_REGEX, {blueprintId: blueprintId, fieldExpectedName: field.expected_name}
           );
-          return false;
+          return [];
         }
+        return Object.keys(dataRow).filter(key => pattern.test(key));
       }
-      return rule.field === key
-    });
+      return Object.keys(dataRow).filter(key => field.expected_name === key);
+    })();
 
     if(keys.length > 1) {
-      const errorContext = { field: rule.field, keys: keys, defaultKey: keys[0] };
+      const errorContext = { field: field.expected_name, keys: keys, defaultKey: keys[0] };
       blueprintOutcomeMap[blueprintId].registerError(ERROR_CATALOG.MORE_THAN_ONE_KEY_MATCH, errorContext);
-      keyMap.set(rule.field, keys[0]);
-      blueprintOutcomeMap[blueprintId].mapExtractedField(rule.field, keys[0]);
+      fieldKeyMap.set(field_name, keys[0]);
+      blueprintOutcomeMap[blueprintId].mapExtractedKey(field_name, keys[0]);
     } else if(keys.length === 0) {
-      blueprintOutcomeMap[blueprintId].registerNoKeyMatch(rule.field, Object.keys(dataRow));
+      blueprintOutcomeMap[blueprintId].registerNoKeyMatch(field.expected_name, Object.keys(dataRow));
     } else {
-      keyMap.set(rule.field, keys[0]);
-      blueprintOutcomeMap[blueprintId].mapExtractedField(rule.field, keys[0]);
+      fieldKeyMap.set(field_name, keys[0]);
+      blueprintOutcomeMap[blueprintId].mapExtractedKey(field_name, keys[0]);
     }
+
   }
-  return keyMap;
+  return fieldKeyMap;
 }
 
 /**
@@ -106,34 +118,37 @@ export function getKeyMap(
  * Transformation operators (regex-delete-match, etc.) modify field values in place.
  *
  * @param dataRow - A single row of data as a key-value object
+ * @param fieldsToExtract - List of the fields to keep in extracted data
  * @param extractionRules - Array of rules defining how to process fields
- * @param keyMap - Mapping from rule field names to actual data keys
+ * @param fieldKeyMap - Mapping from rule field names to actual data keys
  * @param blueprintId - ID of the blueprint being processed
  * @param blueprintOutcomeMap - Map of blueprint outcomes
  */
 export function extractData(
   dataRow: Record<string, any>,
+  fieldsToExtract: string[],
   extractionRules: ExtractionRule[],
-  keyMap: Map<string, string>,
+  fieldKeyMap: Map<string, string>,
   blueprintId: number,
   blueprintOutcomeMap: Record<number, BlueprintExtractionOutcome>
 ): void | null {
   const extractedRowData: Record<string, any> = {};
 
   for (const rule of extractionRules) {
-    const key = keyMap.get(rule.field);
+    const key = fieldKeyMap.get(rule.field);
 
     if (key === undefined) {
+      // TODO: Log undefined key
       continue;
     }
 
     switch (rule.comparison_operator) {
       case null:
-        extractedRowData[rule.field] = dataRow[key];
+        // Note: Deprecated; should not be triggered.
         break;
 
       case '':
-        extractedRowData[rule.field] = dataRow[key];
+        // Note: Deprecated; should not be triggered.
         break;
 
       case '==':
@@ -161,29 +176,23 @@ export function extractData(
         break;
 
       case 'regex-delete-match':
-        if (key in extractedRowData) {
+        if (key in dataRow) {
           try {
-            let newValue = regexDeleteMatch(dataRow[key], rule.comparison_value);
-            extractedRowData[rule.field] = newValue;
-            dataRow[key] = newValue;
+            dataRow[key] = regexDeleteMatch(dataRow[key], rule.comparison_value);
             blueprintOutcomeMap[blueprintId].extractionRuleLog[rule.id] += 1;
           } catch {
-            // Fallback if an error occurs.
-            extractedRowData[rule.field] = dataRow[key];
+            break;
           }
         }
         break;
 
       case 'regex-replace-match':
-        if (key in extractedRowData) {
+        if (key in dataRow) {
           try {
-            let newValue = regexReplaceMatch(dataRow[key], rule.comparison_value, rule.replacement_value);
-            extractedRowData[rule.field] = newValue;
-            dataRow[key] = newValue;
+            dataRow[key] = regexReplaceMatch(dataRow[key], rule.comparison_value, rule.replacement_value);
             blueprintOutcomeMap[blueprintId].extractionRuleLog[rule.id] += 1;
           } catch {
-            // Fallback if an error occurs.
-            extractedRowData[rule.field] = dataRow[key];
+            break;
           }
         }
         break;
@@ -204,9 +213,17 @@ export function extractData(
       default: break;
     }
   }
-
-  if (Object.keys(extractedRowData).length > 0) {
-    blueprintOutcomeMap[blueprintId].extractedData.push(extractedRowData);
+  if (Object.keys(dataRow).length > 0) {
+    for (const [field, key] of fieldKeyMap.entries()) {
+      if (key in dataRow && fieldsToExtract.includes(field)) {
+        extractedRowData[field] = dataRow[key];
+      }
+    }
+    if (Object.keys(extractedRowData).length > 0) {
+      blueprintOutcomeMap[blueprintId].extractedData.push(extractedRowData);
+    } else {
+      // TODO: Log no keys extracted
+    }
   }
   return;
 }

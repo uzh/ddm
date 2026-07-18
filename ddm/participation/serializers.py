@@ -8,6 +8,7 @@ from ddm.datadonation.models import (
     BlueprintFilePath,
     DonationBlueprint,
     DonationInstruction,
+    ExtractionField,
     FileUploader,
     ProcessingRule,
 )
@@ -30,15 +31,38 @@ class ProcessingRuleSerializer(serializers.ModelSerializer):
     see also: frontend/DDMUploader/src/types/ExtractionRule.ts
     """
 
+    field = serializers.SerializerMethodField()
+
     class Meta:
         model = ProcessingRule
         fields = [
             "id",
             "field",
-            "regex_field",
             "comparison_operator",
             "comparison_value",
             "replacement_value",
+        ]
+
+    def get_field(self, obj: ProcessingRule) -> str | None:
+        if not obj.field:
+            return None
+        return obj.field.get_name()
+
+
+class ExtractionFieldSerializer(serializers.ModelSerializer):
+    """Serializes a ExtractionField instance into the format expected by the frontend.
+
+    see also: frontend/DDMUploader/src/types/ExtractionField.ts
+    """
+
+    class Meta:
+        model = ExtractionField
+        fields = [
+            "id",
+            "expected_name",
+            "match_regex",
+            "keep_in_donation",
+            "alias",
         ]
 
 
@@ -66,6 +90,7 @@ class BlueprintSerializer(serializers.ModelSerializer):
         source="expected_fields_regex_matching"
     )
     fields_to_extract = serializers.SerializerMethodField()
+    extraction_fields = serializers.SerializerMethodField()
     extraction_rules = serializers.SerializerMethodField()
     file_paths = serializers.SerializerMethodField()
 
@@ -80,6 +105,7 @@ class BlueprintSerializer(serializers.ModelSerializer):
             "expected_fields",
             "exp_fields_regex_matching",
             "fields_to_extract",
+            "extraction_fields",
             "file_paths",
             "extraction_rules",
             "csv_delimiter",
@@ -90,13 +116,18 @@ class BlueprintSerializer(serializers.ModelSerializer):
 
     def get_fields_to_extract(self, obj: DonationBlueprint) -> list:
         fields = set()
-        for rule in obj.processingrule_set.all():
-            if rule.comparison_operator == "":  # TODO: Check actual choice value
-                fields.add(rule.field)  # which equals "Keep Field"
+        for field in obj.extractionfield_set.filter(keep_in_donation=True):
+            fields.add(field.get_name())
         return list(fields)
 
+    def get_extraction_fields(self, obj: DonationBlueprint) -> list:
+        fields = obj.extractionfield_set.all()
+        return [ExtractionFieldSerializer(f).data for f in fields]
+
     def get_extraction_rules(self, obj: DonationBlueprint) -> list[dict]:
-        rules = obj.processingrule_set.all().order_by("execution_order")
+        rules = obj.processingrule_set.filter(field__isnull=False).order_by(
+            "execution_order"
+        )
         return [ProcessingRuleSerializer(r).data for r in rules]
 
     def get_file_paths(self, obj: DonationBlueprint) -> list[dict]:

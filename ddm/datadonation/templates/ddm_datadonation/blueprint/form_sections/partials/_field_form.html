@@ -1,0 +1,20 @@
+<tr>
+  <td>
+    {{ form.expected_name }}
+  </td>
+  <td>
+    {{ form.match_regex }}
+  </td>
+  <td class="border-start">
+    {{ form.alias }}
+  </td>
+  <td>
+    {{ form.keep_in_donation }}
+  </td>
+  <td>
+    {{ form.DELETE }}
+    {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+    {% endfor %}
+  </td>
+</tr>

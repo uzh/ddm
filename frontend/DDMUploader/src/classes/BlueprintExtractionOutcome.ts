@@ -108,17 +108,17 @@ export class BlueprintExtractionOutcome {
   }
 
   /**
-   * Associates an extracted field name with its corresponding rule-defined field.
+   * Associates an extracted key with its corresponding extraction field.
    *
-   * Maintains a mapping between field names found in the data and their formal definitions
-   * in extraction rules. The first mapping for each field is preserved.
+   * Maintains a mapping between field names (key) found in the data and their formal definitions
+   * in extraction fields. The first mapping for each field is preserved.
    *
-   * @param extractedField - The field name as found in the extracted data
-   * @param ruleField - The formal field name from the extraction rule
+   * @param expectedField - The formal field name from the extraction field
+   * @param extractedKey - The field name as found in the extracted data
    */
-  mapExtractedField(extractedField: string, ruleField: string): void {
-    if (!this.extractedFieldsMap.has(extractedField)) {
-      this.extractedFieldsMap.set(extractedField, ruleField);
+  mapExtractedKey(expectedField: string, extractedKey: string): void {
+    if (!this.extractedFieldsMap.has(expectedField)) {
+      this.extractedFieldsMap.set(expectedField, extractedKey);
     }
   }
 }

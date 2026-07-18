@@ -25,8 +25,8 @@ _Description:_ Indicates that an error occurred trying to read a ZIP-file.  +
 *INVALID_REGEX* +
 _Description:_ Indicates that an invalid RegEx was provided as blueprint path. +
 
-*INVALID_RULE_REGEX* +
-_Description:_ Indicates that an invalid RegEx was provided as file rule field name. +
+*INVALID_FIELD_REGEX* +
+_Description:_ Indicates that an invalid RegEx was provided as field name. +
 
 *NO_FILE_MATCH* +
 _Description:_ Indicates that a ZIP-container did not contain the file as defined on the blueprint. +
@@ -37,8 +37,8 @@ _Description:_ Indicates that an unexpected error occurred during processing of 
 *STRING_CONVERSION_ERROR* +
 _Description:_ Indicates that a file's content could not be converted to a string. +
 
-*NO_EXTRACTION_RULES* +
-_Description:_ Indicates that a blueprint has no extraction rules defined (meaning that nothing will be extracted). +
+*NO_FIELDS_TO_EXTRACT* +
+_Description:_ Indicates no fields were defined that should be kept in the data donation. +
 
 *PARSING_ERROR* +
 _Description:_ Indicates that an error occurred when trying to parse a file's content. +

@@ -2,7 +2,7 @@ import Papa from "papaparse";
 import {ERROR_CATALOG} from "@uploader/utils/errorCatalog";
 import {Blueprint} from "@uploader/types/Blueprint";
 import {BlueprintExtractionOutcome} from "@uploader/classes/BlueprintExtractionOutcome";
-import {extractData, getKeyMap, getMissingFields} from "@uploader/composables/useFileProcessor/extractionEngine";
+import {extractData, getFieldKeyMap, getMissingFields} from "@uploader/composables/useFileProcessor/extractionEngine";
 
 /**
  * Processes a single file's content using a provided blueprint definition.
@@ -23,9 +23,9 @@ export function processContent(
   blueprint: Blueprint,
   blueprintOutcomeMap: Record<number, BlueprintExtractionOutcome>
 ): void {
-  // Exit early, if no extraction rules are defined.
-  if (blueprint.extraction_rules.length === 0) {
-    blueprintOutcomeMap[blueprint.id].registerError(ERROR_CATALOG.NO_EXTRACTION_RULES, {});
+  // Exit early, if no fields to extract are defined.
+  if (blueprint.fields_to_extract.length === 0) {
+    blueprintOutcomeMap[blueprint.id].registerError(ERROR_CATALOG.NO_FIELDS_TO_EXTRACT, {});
     return;
   }
   const parsedContentArray = getParsedContentArray(content, blueprint, blueprintOutcomeMap);
@@ -55,8 +55,8 @@ export function processContent(
     }
 
     // Construct key map and extract data.
-    const keyMap = getKeyMap(dataRow, blueprint.extraction_rules, blueprint.id, blueprintOutcomeMap);
-    extractData(dataRow, blueprint.extraction_rules, keyMap, blueprint.id, blueprintOutcomeMap);
+    const keyMap = getFieldKeyMap(dataRow, blueprint.extraction_fields, blueprint.id, blueprintOutcomeMap);
+    extractData(dataRow, blueprint.fields_to_extract, blueprint.extraction_rules, keyMap, blueprint.id, blueprintOutcomeMap);
   }
 }
 

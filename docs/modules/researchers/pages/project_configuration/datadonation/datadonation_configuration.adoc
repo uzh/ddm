@@ -198,25 +198,46 @@ CSV Delimiter:: This field allows you to specify the character that separates va
 expected CSV file. (e.g., `,`, `;` or `\t`). If left empty, DDM will try to infer the delimiter from the file structure.
 
 
+=== Relevant Fields
+
+The settings above are used to identify and validate the file from which data
+should be extracted. Once file validation succeeds, the blueprint starts
+extracting information from the file.
+
+To do this, you need to define which fields to keep in the extracted data.
+Optionally, you can also rename fields during extraction — this is especially
+useful when using regex matching, where you want a clean, predictable field
+name in the exported data rather than the raw matched name.
+
+To define a field, provide:
+
+Expected name:: The field/variable name expected to be contained in the
+uploaded file. This can be an exact name, or a regex pattern (e.g., to match
+across different translations of the same field).
+
+Match regex:: Enable this if `expected name` is a regex pattern rather than
+an exact field name.
+
+Rename to:: Optionally, provide the name the matched field should be renamed
+to in the extracted data. If left empty, the name from `expected name` is
+used as-is.
+
+Keep in donation:: Enable this if the field should be included in the
+donation (i.e., submitted to you as part of the participant's donation).
+
 === Extraction Rules
 
-The settings above are used to identify and validate the correct file from which data should be extracted.
-When the file validation is successful, the Blueprint will start to extract information from the file.
-For this, it uses `Extraction Rules` which will be applied to the file one after another.
+Data extraction is performed using `Extraction Rules`, which are applied to
+the file one after another, in the order you define.
 
-The base assumption for the extraction of the data contained in a file is
-that you do not want any data. This means that when you configure your extraction rules,
-you first have to add a "Keep Field"-rule for each field that you want to keep in your data (see the setting
-`Extraction Operator` below).
+Execution Order:: The order in which the extraction rules are applied to the file.
 
-Execution Order:: The order in which the extraction rules are applied to a file.
+Name:: The name of the extraction rule. For internal organization only —
+this is not the field name itself.
 
-Name:: The name of an extraction rule. For internal organisation only.
-
-Field:: The field to which the rule will be applied. This can either be a "normal" string or a
-regular expression (regex). If the latter is the case, you must also select `regex field` (below).
-
-Regex field:: Select if you use a regex expression in the `Field` setting of this rule.
+Field:: The field the rule applies to. This must match either the
+`expected name` set in the Extraction Fields section, or, if provided, its
+`rename to` value.
 
 Extraction Operator:: Defines the main logic of the extraction step. Below, you see the list of available extraction
 operators:

@@ -8,6 +8,7 @@ from ddm.datadonation.models import (
     DataDonation,
     DonationBlueprint,
     DonationInstruction,
+    ExtractionField,
     FileUploader,
     ProcessingRule,
 )
@@ -120,17 +121,32 @@ class TestDonationBlueprintModel(TestCase):
             project=project, start_time=timezone.now()
         )
 
+        cls.field_a = ExtractionField.objects.create(
+            blueprint=cls.blueprint,
+            expected_name="fieldA",
+        )
+
+        cls.field_b = ExtractionField.objects.create(
+            blueprint=cls.blueprint,
+            expected_name="fieldB",
+        )
+
+        cls.field_c = ExtractionField.objects.create(
+            blueprint=cls.blueprint,
+            expected_name="fieldC",
+        )
+
         ProcessingRule.objects.create(
             blueprint=cls.blueprint,
             name="",
-            field="fieldA",
+            field=cls.field_a,
             execution_order=1,
         )
 
         ProcessingRule.objects.create(
             blueprint=cls.blueprint,
             name="",
-            field="fieldB",
+            field=cls.field_b,
             execution_order=2,
             comparison_operator=ProcessingRule.ComparisonOperators.EQUAL,
         )
@@ -138,7 +154,7 @@ class TestDonationBlueprintModel(TestCase):
         ProcessingRule.objects.create(
             blueprint=cls.blueprint,
             name="",
-            field="fieldC",
+            field=cls.field_c,
             execution_order=3,
         )
 
@@ -313,6 +329,65 @@ class TestBlueprintFilePath(TestCase):
         self.assertIn("path", ctx.exception.message_dict)
 
 
+class TestExtractionFieldRegexValidation(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        user = User.objects.create_user(
+            username="owner2", password="123", email="owner2@mail.com"
+        )
+        profile = ResearchProfile.objects.create(user=user)
+        project = DonationProject.objects.create(
+            name="Base Project 2", slug="base-regex-2", owner=profile
+        )
+        file_uploader = FileUploader.objects.create(
+            project=project,
+            name="basic file uploader",
+            upload_type=FileUploader.UploadTypes.SINGLE_FILE,
+        )
+        cls.blueprint = DonationBlueprint.objects.create(
+            project=project,
+            name="valid blueprint",
+            expected_fields='"field"',
+            file_uploader=file_uploader,
+        )
+
+    def test_valid_regex_field_passes(self):
+        field = ExtractionField(
+            blueprint=self.blueprint,
+            expected_name=r"field_\d+",
+            match_regex=True,
+        )
+        field.clean()  # Should not raise
+
+    def test_invalid_regex_field_no_regex_match_passes(self):
+        field = ExtractionField(
+            blueprint=self.blueprint,
+            expected_name=r"[unclosed",
+            match_regex=False,
+        )
+        field.clean()  # Should not raise
+
+    def test_invalid_regex_field_syntax_raises_error(self):
+        field = ExtractionField(
+            blueprint=self.blueprint,
+            expected_name=r"[unclosed",
+            match_regex=True,
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            field.clean()
+        self.assertIn("expected_name", ctx.exception.message_dict)
+
+    def test_dangerous_regex_field_raises_error(self):
+        field = ExtractionField(
+            blueprint=self.blueprint,
+            expected_name=r"(a+)+",
+            match_regex=True,
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            field.clean()
+        self.assertIn("expected_name", ctx.exception.message_dict)
+
+
 class TestProcessingRuleRegexValidation(TestCase):
     """Tests for regex validation in ProcessingRule.clean()."""
 
@@ -337,56 +412,16 @@ class TestProcessingRuleRegexValidation(TestCase):
             file_uploader=file_uploader,
         )
 
-    def test_valid_regex_field_passes(self):
-        rule = ProcessingRule(
-            blueprint=self.blueprint,
-            name="test rule",
-            field=r"field_\d+",
-            regex_field=True,
-            execution_order=1,
+        cls.field = ExtractionField(
+            blueprint=cls.blueprint,
+            expected_name="some_field",
         )
-        rule.clean()  # Should not raise
-
-    def test_invalid_regex_field_syntax_raises_error(self):
-        rule = ProcessingRule(
-            blueprint=self.blueprint,
-            name="test rule",
-            field=r"[unclosed",
-            regex_field=True,
-            execution_order=1,
-        )
-        with self.assertRaises(ValidationError) as ctx:
-            rule.clean()
-        self.assertIn("field", ctx.exception.message_dict)
-
-    def test_dangerous_regex_field_raises_error(self):
-        rule = ProcessingRule(
-            blueprint=self.blueprint,
-            name="test rule",
-            field=r"(a+)+",
-            regex_field=True,
-            execution_order=1,
-        )
-        with self.assertRaises(ValidationError) as ctx:
-            rule.clean()
-        self.assertIn("field", ctx.exception.message_dict)
-
-    def test_field_not_validated_when_regex_disabled(self):
-        """When regex_field is False, field isn't validated as regex."""
-        rule = ProcessingRule(
-            blueprint=self.blueprint,
-            name="test rule",
-            field=r"[not valid regex",
-            regex_field=False,
-            execution_order=1,
-        )
-        rule.clean()  # Should not raise
 
     def test_valid_regex_comparison_value_passes(self):
         rule = ProcessingRule(
             blueprint=self.blueprint,
             name="test rule",
-            field="some_field",
+            field=self.field,
             execution_order=1,
             comparison_operator=ProcessingRule.ComparisonOperators.REGEX_DELETE_MATCH,
             comparison_value=r"\d{4}-\d{2}-\d{2}",
@@ -397,7 +432,7 @@ class TestProcessingRuleRegexValidation(TestCase):
         rule = ProcessingRule(
             blueprint=self.blueprint,
             name="test rule",
-            field="some_field",
+            field=self.field,
             execution_order=1,
             comparison_operator=ProcessingRule.ComparisonOperators.REGEX_DELETE_MATCH,
             comparison_value=r"[unclosed",
@@ -410,7 +445,7 @@ class TestProcessingRuleRegexValidation(TestCase):
         rule = ProcessingRule(
             blueprint=self.blueprint,
             name="test rule",
-            field="some_field",
+            field=self.field,
             execution_order=1,
             comparison_operator=ProcessingRule.ComparisonOperators.REGEX_REPLACE_MATCH,
             comparison_value=r"(a+)+",
@@ -424,7 +459,7 @@ class TestProcessingRuleRegexValidation(TestCase):
         rule = ProcessingRule(
             blueprint=self.blueprint,
             name="test rule",
-            field="some_field",
+            field=self.field,
             execution_order=1,
             comparison_operator=ProcessingRule.ComparisonOperators.EQUAL,
             comparison_value=r"[not valid regex",
@@ -443,7 +478,7 @@ class TestProcessingRuleRegexValidation(TestCase):
                 rule = ProcessingRule(
                     blueprint=self.blueprint,
                     name="test rule",
-                    field="some_field",
+                    field=self.field,
                     execution_order=1,
                     comparison_operator=operator,
                     comparison_value=r"[unclosed",

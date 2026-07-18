@@ -5,7 +5,6 @@
   <p>{{ form.field.label_tag }}</p>
   <div class="ddm-form-group">
     {% include "ddm_core/form_components/_basic_field.html" with field=form.field extra_field_classes="mt-0" hide_label=True %}
-    {% include "ddm_core/form_components/_basic_field.html" with field=form.regex_field %}
   </div>
 
   {% include "ddm_core/form_components/_basic_field.html" with field=form.comparison_operator %}

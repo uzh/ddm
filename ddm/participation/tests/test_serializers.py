@@ -7,12 +7,14 @@ from ddm.datadonation.models import (
     BlueprintFilePath,
     DonationBlueprint,
     DonationInstruction,
+    ExtractionField,
     FileUploader,
     ProcessingRule,
 )
 from ddm.participation.serializers import (
     BlueprintFilePathSerializer,
     BlueprintSerializer,
+    ExtractionFieldSerializer,
     FileUploaderSerializer,
     FilterConditionSerializer,
     InstructionSerializer,
@@ -86,17 +88,28 @@ class DataDonationConfigSerializersTest(TestCase):
             text="instruction", index=1, file_uploader=cls.file_uploader
         )
 
+        cls.field_a = ExtractionField.objects.create(
+            blueprint=cls.blueprint,
+            expected_name="fieldA",
+            keep_in_donation=True,
+        )
+
+        cls.field_b = ExtractionField.objects.create(
+            blueprint=cls.blueprint,
+            expected_name="fieldB",
+        )
+
         cls.rule_a = ProcessingRule.objects.create(
             blueprint=cls.blueprint,
             name="",
-            field="fieldA",
+            field=cls.field_a,
             execution_order=1,
         )
 
         cls.rule_b = ProcessingRule.objects.create(
             blueprint=cls.blueprint,
             name="",
-            field="fieldB",
+            field=cls.field_b,
             execution_order=2,
             comparison_operator=ProcessingRule.ComparisonOperators.EQUAL,
         )
@@ -115,6 +128,15 @@ class DataDonationConfigSerializersTest(TestCase):
 
         self.assertEqual(serializer.data["text"], "instruction")
         self.assertEqual(serializer.data["index"], 1)
+
+    # Tests for ExtractionFieldSerializer ------------------------------------
+    def test_extraction_field_serializer(self):
+        serializer = ExtractionFieldSerializer(self.field_a)
+
+        self.assertEqual(serializer.data["expected_name"], "fieldA")
+        self.assertEqual(serializer.data["match_regex"], False)
+        self.assertEqual(serializer.data["keep_in_donation"], True)
+        self.assertEqual(serializer.data["alias"], "")
 
     # Tests for FileUploaderSerializer -----------------------------------------
     def test_uploader_serializer(self):

@@ -30,6 +30,7 @@ from ddm.core.view_mixins import DDMContextMixin
 from ddm.datadonation.forms import (
     BlueprintFilePathInlineFormset,
     BlueprintForm,
+    ExtractionFieldInlineFormset,
     FileUploaderForm,
     InstructionsForm,
     ProcessingRuleInlineFormset,
@@ -476,12 +477,18 @@ class BlueprintEdit(SuccessMessageMixin, DDMAuthMixin, BlueprintFormMixin, Updat
         context = super().get_context_data(**kwargs)
         context["form"].fields["file_uploader"].queryset = self.get_file_uploaders()
 
-        if "rule_formset" not in kwargs:
-            context["rule_formset"] = self.get_rule_formset()
+        formset_getters = {
+            "rule_formset": self.get_rule_formset,
+            "path_formset": self.get_path_formset,
+            "field_formset": self.get_field_formset,
+        }
+        for context_key, getter in formset_getters.items():
+            if context_key not in kwargs:
+                context[context_key] = getter()
 
-        if "path_formset" not in kwargs:
-            context["path_formset"] = self.get_path_formset()
-
+        context["has_fields_to_keep"] = self.object.extractionfield_set.filter(
+            keep_in_donation=True
+        ).exists()
         return context
 
     def get_rule_formset(self, data: dict | None = None) -> BaseInlineFormSet:
@@ -489,6 +496,14 @@ class BlueprintEdit(SuccessMessageMixin, DDMAuthMixin, BlueprintFormMixin, Updat
             data,
             instance=self.object,
             queryset=self.object.processingrule_set.order_by("execution_order"),
+            form_kwargs={"blueprint": self.object},
+        )
+
+    def get_field_formset(self, data: dict | None = None) -> BaseInlineFormSet:
+        return ExtractionFieldInlineFormset(
+            data,
+            instance=self.object,
+            queryset=self.object.extractionfield_set.order_by("pk"),
         )
 
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
@@ -497,26 +512,32 @@ class BlueprintEdit(SuccessMessageMixin, DDMAuthMixin, BlueprintFormMixin, Updat
         form = self.get_form()
         rule_formset = self.get_rule_formset(self.request.POST)
         path_formset = self.get_path_formset(self.request.POST)
+        field_formset = self.get_field_formset(self.request.POST)
 
-        if form.is_valid() and rule_formset.is_valid() and path_formset.is_valid():
-            if self.form_is_missing_file_paths(form, path_formset):
-                self.add_file_path_error(path_formset)
-                return self.form_invalid(form, rule_formset, path_formset)
-            return self.form_valid(form, rule_formset, path_formset)
-        return self.form_invalid(form, rule_formset, path_formset)
+        forms_to_validate = [form, rule_formset, path_formset, field_formset]
+        all_valid = all(f.is_valid() for f in forms_to_validate)
+        missing_file_paths = self.form_is_missing_file_paths(form, path_formset)
+
+        if all_valid and not missing_file_paths:
+            return self.form_valid(form, rule_formset, path_formset, field_formset)
+
+        if all_valid and missing_file_paths:
+            self.add_file_path_error(path_formset)
+
+        return self.form_invalid(form, rule_formset, path_formset, field_formset)
 
     def form_valid(
         self,
         form: BlueprintForm,
         rule_formset: BaseInlineFormSet,
         path_formset: BaseInlineFormSet,
+        field_formset: BaseInlineFormSet,
     ) -> HttpResponseRedirect:
         with transaction.atomic():
             self.object = form.save()
-            rule_formset.instance = self.object
-            rule_formset.save()
-            path_formset.instance = self.object
-            path_formset.save()
+            for formset in (rule_formset, path_formset, field_formset):
+                formset.instance = self.object
+                formset.save()
 
         messages.success(
             self.request, self.success_message % {"name": self.object.name}
@@ -528,11 +549,13 @@ class BlueprintEdit(SuccessMessageMixin, DDMAuthMixin, BlueprintFormMixin, Updat
         form: BlueprintForm,
         rule_formset: BaseInlineFormSet,
         path_formset: BaseInlineFormSet,
+        field_formset: BaseInlineFormSet,
     ) -> HttpResponse:
         context = self.get_context_data(
             form=form,
             rule_formset=rule_formset,
             path_formset=path_formset,
+            field_formset=field_formset,
         )
         return self.render_to_response(context)
 

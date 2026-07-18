@@ -1,7 +1,7 @@
 from typing import Any
 
 from django import forms
-from django.forms import Textarea, TextInput, inlineformset_factory
+from django.forms import Textarea, inlineformset_factory
 from django.utils.safestring import mark_safe
 from django_ckeditor_5.widgets import CKEditor5Widget
 
@@ -9,6 +9,7 @@ from ddm.datadonation.models import (
     BlueprintFilePath,
     DonationBlueprint,
     DonationInstruction,
+    ExtractionField,
     FileUploader,
     ProcessingRule,
 )
@@ -101,6 +102,26 @@ class InstructionsForm(forms.ModelForm):
         }
 
 
+class ExtractionFieldForm(forms.ModelForm):
+    class Meta:
+        model = ExtractionField
+        fields = [
+            "expected_name",
+            "match_regex",
+            "keep_in_donation",
+            "alias",
+        ]
+        widgets = {
+            "expected_name": Textarea(attrs={"cols": 60, "rows": 1}),
+        }
+        labels = {"alias": "Rename to"}
+
+
+ExtractionFieldInlineFormset = inlineformset_factory(
+    DonationBlueprint, ExtractionField, form=ExtractionFieldForm, extra=0
+)
+
+
 class ProcessingRuleForm(forms.ModelForm):
     class Meta:
         model = ProcessingRule
@@ -108,19 +129,32 @@ class ProcessingRuleForm(forms.ModelForm):
             "execution_order",
             "name",
             "field",
-            "regex_field",
             "comparison_operator",
             "comparison_value",
             "replacement_value",
         ]
         widgets = {
-            "field": TextInput(),
             "comparison_value": Textarea(attrs={"cols": 60, "rows": 1}),
             "replacement_value": Textarea(attrs={"cols": 60, "rows": 1}),
         }
         help_texts = {
             "replacement_value": "The replacement for matched text.",
         }
+
+    def __init__(
+        self, *args, blueprint: DonationBlueprint | None = None, **kwargs
+    ) -> None:
+        """Limit field queryset to ExtractionFields belonging to same blueprint."""
+        super().__init__(*args, **kwargs)
+
+        blueprint = blueprint or getattr(self.instance, "blueprint", None)
+
+        if blueprint is not None:
+            self.fields["field"].queryset = ExtractionField.objects.filter(
+                blueprint=blueprint
+            )
+        else:
+            self.fields["field"].queryset = ExtractionField.objects.none()
 
 
 ProcessingRuleInlineFormset = inlineformset_factory(

@@ -284,6 +284,54 @@ class BlueprintFilePath(models.Model):
         super().clean()
 
 
+class ExtractionField(models.Model):
+    blueprint = models.ForeignKey(
+        "DonationBlueprint",
+        null=False,
+        on_delete=models.CASCADE,
+    )
+    expected_name = models.TextField(
+        blank=False,
+        help_text="Pattern to match field that needs to be present in file",
+    )
+    match_regex = models.BooleanField(default=False)
+    keep_in_donation = models.BooleanField(default=False)
+    alias = models.CharField(
+        max_length=125,
+        blank=True,
+        help_text=(
+            "Optional internal name to store this field under, esp. useful when "
+            "`expected name` is a regex pattern and you want a clean field name "
+            "in the stored data structure rather than the value defined in "
+            "`expected name`."
+        ),
+    )
+
+    def __str__(self) -> str:
+        return self.get_name()
+
+    def clean(self) -> None:
+        errors = {}
+
+        # Validate expected_fields when regex matching is enabled
+        if self.match_regex and self.expected_name:
+            try:
+                validate_safe_regex(self.expected_name)
+            except ValidationError as e:
+                errors["expected_name"] = f"Invalid regex: {e.message}"
+
+        if errors:
+            raise ValidationError(errors)
+
+        super().clean()
+
+    def get_name(self) -> str:
+        if self.alias not in ["", None]:
+            return self.alias
+        return self.expected_name
+
+
+# TODO: Rename to ExtractionRule
 class ProcessingRule(models.Model):
     """
     A processing rule that defines how the data uploaded to VUE will be processed
@@ -300,22 +348,17 @@ class ProcessingRule(models.Model):
         max_length=250, help_text="A label for this rule (internal use only)"
     )
 
-    field = models.TextField(
-        null=False,
-        blank=False,
-        help_text="The field this rule applies to (without quotes)",
+    field = models.ForeignKey(
+        "ExtractionField",
+        null=True,
+        on_delete=models.SET_NULL,
     )
-    regex_field = models.BooleanField(
-        default=False,
-        null=False,
-        help_text="Enable if the field name above is a regex pattern",
-    )
+
     execution_order = models.IntegerField(
         help_text="The order in which rules are applied"
     )
 
     class ComparisonOperators(models.TextChoices):
-        EMPTY = "", "Keep Field"
         EQUAL = "==", "Equal (==)"
         NOT_EQUAL = "!=", "Not Equal (!=)"
         GREATER = ">", "Greater than (>)"
@@ -328,7 +371,6 @@ class ProcessingRule(models.Model):
 
     comparison_operator = models.CharField(
         max_length=24,
-        blank=True,
         choices=ComparisonOperators.choices,
         verbose_name="Extraction Operator",
     )
@@ -350,13 +392,6 @@ class ProcessingRule(models.Model):
         ]
 
         errors = {}
-
-        # Validate expected_fields when regex matching is enabled
-        if self.regex_field and self.field:
-            try:
-                validate_safe_regex(self.field)
-            except ValidationError as e:
-                errors["field"] = f"Invalid regex: {e.message}"
 
         if self.comparison_operator in regex_operators and self.comparison_value:
             try:

@@ -9,7 +9,7 @@ document.getElementById("add-file-path-form").addEventListener("click", function
     const newForm = emptyForm.replace(/__prefix__/g, formCount);
 
     container.insertAdjacentHTML("beforeend", newForm);
-    emptyPlaceholder.remove();
+    emptyPlaceholder?.remove();
 
     totalForms.value = formCount + 1;
 });

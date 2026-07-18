@@ -9,7 +9,28 @@
       {% include "ddm_core/form_components/_basic_field.html" with field=form.json_extraction_root %}
     </div>
 
-    <p class="pt-2 fw-600">Extraction Rules</p>
+    <p class="pt-2 fw-600">
+      Relevant Fields
+    </p>
+
+    <p>
+      Register the fields/variables you expect the uploaded file to contain.
+      List any field you want to (a) keep in the donated data (enable
+      <code>keep in donation</code>), or (b) reference in an
+      <code>Extraction Rule</code>.
+    </p>
+
+    {{ field_formset.management_form }}
+
+    {{ field_formset.non_form_errors }}
+
+    <div class="mb-4">
+      {% include "ddm_datadonation/blueprint/form_sections/partials/_field_formset.html" %}
+    </div>
+
+    <p class="pt-2 fw-600">
+      Extraction Rules
+    </p>
 
     {{ rule_formset.management_form }}
 
@@ -24,7 +45,7 @@
     </div>
 
     <div>
-      {% include "ddm_core/components/info_collapsible.html" with extra_classes="mx-0" element_id="howdataextraction" title="How the data extraction works" include_path="ddm_datadonation/blueprint/info_collapsibles/block_data_extraction.html" body="" %}
+      {% include "ddm_core/components/info_collapsible.html" with extra_classes="mx-0 mb-0 mt-4" element_id="howdataextraction" title="How the data extraction works" include_path="ddm_datadonation/blueprint/info_collapsibles/block_data_extraction.html" body="" %}
     </div>
 
     <div class="mb-3">

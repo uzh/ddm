@@ -12,25 +12,33 @@
     <tr>
       {{ form.non_field_errors }}
       {% with loop_id=forloop.counter0 %}
-        {% for field in form.visible_fields %}
-          {% if field.name in 'name,field,execution_order' %}
-            <td id="{{ field.name }}-{{ loop_id }}">
-              {{ field.errors }}
-              {{ field.value }}
+        {% for bound_field in form.visible_fields %}
+          {% if bound_field.name in 'name,field,execution_order' %}
+            <td id="{{ bound_field.name }}-{{ loop_id }}">
+              {{ bound_field.errors }}
+              {% if bound_field.name == 'field' %}
+                {{ form.instance.field.get_name }}
+              {% else %}
+                {{ bound_field.value }}
+              {% endif %}
             </td>
           {% endif %}
         {% endfor %}
       {% endwith %}
 
-      <td><span id="step-description-{{ forloop.counter0 }}">–</span></td>
+      <td>
+        <span id="step-description-{{ forloop.counter0 }}">–</span>
+      </td>
 
-      <td><a href="" type="button" data-bs-toggle="modal" data-bs-target="#configuration-{{ forloop.counter0 }}">configure rule</a></td>
+      <td>
+        <a href="" type="button" data-bs-toggle="modal" data-bs-target="#configuration-{{ forloop.counter0 }}">configure rule</a>
+      </td>
 
-      {% for field in form.visible_fields %}
-        {% if field.name in 'DELETE' %}
+      {% for bound_field in form.visible_fields %}
+        {% if bound_field.name == 'DELETE' %}
           <td>
-            {{ field.errors }}
-            {{ field }}
+            {{ bound_field.errors }}
+            {{ bound_field }}
           </td>
         {% endif %}
       {% endfor %}
@@ -42,8 +50,8 @@
 
   {% empty %}
     <tr id="no-rules-defined-warning">
-      <td class="text-danger" colspan="6">
-        No Rules defined - nothing will be extracted.
+      <td colspan="6">
+        No Rules defined
       </td>
     </tr>
   {% endfor %}

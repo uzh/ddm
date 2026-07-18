@@ -1,0 +1,40 @@
+<div>
+  <div id="field-formset-container" class="table-responsive">
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Expected name</th>
+        <th>Regex</th>
+        <th>Rename to</th>
+        <th>Keep in donation</th>
+        <th>Remove</th>
+      </tr>
+      </thead>
+
+      <tbody id="field-table-body">
+      {% for form in field_formset %}
+        {% include "ddm_datadonation/blueprint/form_sections/partials/_field_form.html" with form=form %}
+      {% empty %}
+        <tr id="no-field-table-row">
+          <td colspan="4" class="text-muted">No fields defined</td>
+        </tr>
+      {% endfor %}
+
+      </tbody>
+
+    </table>
+
+  </div>
+</div>
+
+{# Empty field formset #}
+<div class="d-none">
+  <table>
+    <tbody id="empty-field-form">
+    {% include "ddm_datadonation/blueprint/form_sections/partials/_field_form.html" with form=field_formset.empty_form %}
+    </tbody>
+  </table>
+</div>
+
+<button type="button" class="ddm-btn ddm-btn-inverted" id="add-field-form">Add field</button>

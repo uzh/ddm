@@ -36,16 +36,15 @@ export const ERROR_CATALOG: Record<string, ProcessingError> = {
       blueprintId: '[blueprint ID]',
     }
   },
-  INVALID_RULE_REGEX: {
-    type: 'INVALID_RULE_REGEX',
+  INVALID_FIELD_REGEX: {
+    type: 'INVALID_FIELD_REGEX',
     category: ERROR_CATEGORIES.EXTRACTION,
     scope: ERROR_SCOPES.BLUEPRINT,
-    i18nDetail: 'errors.invalid-rule-regex',
+    i18nDetail: 'errors.invalid-field-regex',
     level: ERROR_LEVELS.WARN,
     context: {
       blueprintId: '[blueprint ID]',
-      ruleId: '[rule ID]',
-      ruleRegex: '[rule regex]'
+      fieldExpectedName: '[field expeted name]'
     }
   },
   NO_FILE_MATCH: {
@@ -79,11 +78,11 @@ export const ERROR_CATALOG: Record<string, ProcessingError> = {
     level: ERROR_LEVELS.CRITICAL,
     context: {}
   },
-  NO_EXTRACTION_RULES: {
-    type: 'NO_EXTRACTION_RULES',
+  NO_FIELDS_TO_EXTRACT: {
+    type: 'NO_FIELDS_TO_EXTRACT',
     category: ERROR_CATEGORIES.BLUEPRINT_SPECIFICATION,
     scope: ERROR_SCOPES.BLUEPRINT,
-    i18nDetail: 'errors.no-extraction-rules',
+    i18nDetail: 'errors.no-fields-to-extract',
     level: ERROR_LEVELS.CRITICAL,
     context: {
       blueprintId: '[blueprint ID]',

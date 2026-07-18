@@ -60,6 +60,10 @@ class BlueprintEditTestCase(TestCase):
             "processingrule_set-TOTAL_FORMS": "1",
             "processingrule_set-INITIAL_FORMS": "0",
         }
+        field_formset_data = {
+            "extractionfield_set-TOTAL_FORMS": "1",
+            "extractionfield_set-INITIAL_FORMS": "0",
+        }
         path_formset_data = {
             "blueprintfilepath_set-TOTAL_FORMS": "1",
             "blueprintfilepath_set-INITIAL_FORMS": "0",
@@ -67,7 +71,12 @@ class BlueprintEditTestCase(TestCase):
             "blueprintfilepath_set-0-is_regex": False,
             "blueprintfilepath_set-0-priority": 1,
         }
-        data = {**valid_data, **rule_formset_data, **path_formset_data}
+        data = {
+            **valid_data,
+            **rule_formset_data,
+            **path_formset_data,
+            **field_formset_data,
+        }
         bp_name_before = self.blueprint.name
         redirect_url = reverse(
             "ddm_datadonation:overview", kwargs={"project_url_id": self.project.url_id}

@@ -11,15 +11,15 @@ function updateRuleDescription(id) {
   let msg = "";
   if (field !== "") {
     if (operator === "" && field !== "") {
-      msg = "Keep field '" + field + "' in uploaded data.";
+      msg = "Keep field in uploaded data.";
     } else if (operator === "regex-delete-match") {
-      msg = "Delete parts of '" + field + "' field that match the following regex expression: '" + comp_value + "'.";
+      msg = "Delete parts of field that match the following regex expression: '" + comp_value + "'.";
     } else if (operator === "regex-replace-match") {
-      msg = "Replace parts of '" + field + "' field that match the regex expression '" + comp_value + "' with '" + repl_value + "'.";
+      msg = "Replace parts of field that match the regex expression '" + comp_value + "' with '" + repl_value + "'.";
     } else if (operator === "regex-delete-row") {
-      msg = "Delete entry if '" + field + "' field value matches the following regex expression: '" + comp_value + "'.";
+      msg = "Delete entry if field value matches the following regex expression: '" + comp_value + "'.";
     } else {
-      msg = "Delete row if current value of field '" + field + "' " + operator + " '" + comp_value + "'.";
+      msg = "Delete row if current value of field " + operator + " '" + comp_value + "'.";
     }
 
     const descriptionElement = document.querySelector(`[id=step-description-${id}]`);

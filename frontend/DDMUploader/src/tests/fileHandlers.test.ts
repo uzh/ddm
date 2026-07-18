@@ -14,6 +14,15 @@ const jsonBlueprintA = {
   expected_fields: ['name'],
   exp_fields_regex_matching: false,
   fields_to_extract: ['name'],
+  extraction_fields: [
+    {
+      id: 1,
+      expected_name: 'name',
+      match_regex: false,
+      keep_in_donation: true,
+      alias: null,
+    }
+  ],
   file_paths: [
     {
       path: 'data_a.json',
@@ -25,7 +34,6 @@ const jsonBlueprintA = {
     {
       id: 1,
       field: 'name',
-      regex_field: false,
       comparison_operator: null,
       comparison_value: null,
       replacement_value: null

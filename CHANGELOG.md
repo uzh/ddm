@@ -7,6 +7,7 @@ This version drops official support for Python versions < 3.12.
 
 ### Added
 
+- Added TXT format to Donation Blueprint.
 - Added `DataDonation.data_extraction_state` (replaces `DataDonation.status`) and `DataDonation.n_data_entries` to `DataDonation` model.
 
 ### Changed

@@ -4,6 +4,8 @@ from django import forms
 from django.forms import Textarea, inlineformset_factory
 from django.utils.safestring import mark_safe
 from django_ckeditor_5.widgets import CKEditor5Widget
+from pydantic import ValidationError as PydanticValidationError
+from pydantic_core import PydanticUndefined
 
 from ddm.datadonation.models import (
     BlueprintFilePath,
@@ -13,9 +15,139 @@ from ddm.datadonation.models import (
     FileUploader,
     ProcessingRule,
 )
+from ddm.datadonation.schemas import CSVParserConfig, JSONParserConfig, TXTParserConfig
+
+# Maps Django form field names -> Pydantic schema field names, per format.
+FIELD_NAME_MAP: dict[str, dict[str, str]] = {
+    "json": {
+        "json_extraction_root": "extraction_root",
+    },
+    "csv": {
+        "csv_delimiter": "delimiter",
+    },
+    "txt": {
+        "txt_record_separator": "record_separator",
+        "txt_field_separator": "field_separator",
+        "txt_kv_separator": "kv_separator",
+        "txt_skip_header_lines": "skip_header_lines",
+        "txt_skip_footer_lines": "skip_footer_lines",
+        "txt_ignore_blank_lines": "ignore_blank_lines",
+        "txt_trim_whitespace": "trim_whitespace",
+    },
+}
+
+CONFIG_CLASSES: dict[str, type] = {
+    "json": JSONParserConfig,
+    "csv": CSVParserConfig,
+    "txt": TXTParserConfig,
+}
+
+
+def _schema_default(model_cls, field_name: str, fallback: Any = "") -> Any:  # noqa: ANN001, ANN401
+    default = model_cls.model_fields[field_name].default
+    return fallback if default is PydanticUndefined else default
+
+
+def _unescape(value: str) -> str:
+    """Convert literal escape sequences typed by the user (\\n, \\t) into
+    their real character equivalents (actual newline, actual tab)."""
+    return value.replace("\\n", "\n").replace("\\t", "\t")
+
+
+def _escape(value: str) -> str:
+    """Inverse of _unescape: convert real control characters back into
+    their literal escape-sequence text, for display in a text input."""
+    return value.replace("\n", "\\n").replace("\t", "\\t")
 
 
 class BlueprintForm(forms.ModelForm):
+    # --- JSON-specific ---
+    json_extraction_root = forms.CharField(
+        max_length=200,
+        required=False,
+        label="Extraction Root",
+        help_text=mark_safe(
+            "Optional: The root of the data structure from which to extract data. "
+            "Leave empty to extract from the top level. "
+            "To extract from a nested level, specify the path using dot "
+            "notation (e.g., <code>friends.real_friends</code>)."
+        ),
+    )
+
+    # --- CSV-specific ---
+    csv_delimiter = forms.CharField(
+        max_length=10,
+        required=False,
+        help_text=mark_safe(
+            "The character that separates values in the CSV "
+            "(e.g., <code>,</code> <code>;</code> or <code>\\t</code> for tab). "
+            "If left empty, the delimiter is inferred automatically."
+        ),
+    )
+
+    # --- TXT-specific ---
+    txt_record_separator = forms.CharField(
+        max_length=20,
+        required=False,
+        initial="\n\n",
+        label="Record/entry separator",
+        help_text=mark_safe(
+            "The character sequence that marks the boundary between individual "
+            "records/entries in the file (e.g., a blank line or a single line break). "
+            "Use <code>\\n</code> for a line break or <code>\\n\\n</code> for a blank "
+            "line."
+        ),
+    )
+    txt_field_separator = forms.CharField(
+        max_length=20,
+        required=False,
+        initial="\n",
+        label="Field separator",
+        help_text=mark_safe(
+            "The character sequence that separates individual fields within a single "
+            "record (e.g., a line break if each field is on its own line). "
+            "Use <code>\\n</code> for a line break."
+        ),
+    )
+    txt_kv_separator = forms.CharField(
+        max_length=10,
+        required=False,
+        initial=":",
+        label="Key-value separator",
+        help_text=mark_safe(
+            "The character that separates a field's name from its value within a line "
+            "(e.g., <code>:</code> in <code>Name: John</code>, or <code>=</code> in "
+            "<code>name=John</code>)."
+        ),
+    )
+    txt_skip_header_lines = forms.IntegerField(
+        required=False,
+        initial=0,
+        min_value=0,
+        label="Skip header lines",
+        help_text="How many lines to skip at the beginning of the TXT-file.",
+    )
+    txt_skip_footer_lines = forms.IntegerField(
+        required=False,
+        initial=0,
+        min_value=0,
+        label="Skip footer lines",
+        help_text="How many lines to skip at the end of the TXT-file.",
+    )
+    txt_ignore_blank_lines = forms.BooleanField(
+        required=False,
+        initial=True,
+        label="Ignore blank lines",
+    )
+    txt_trim_whitespace = forms.BooleanField(
+        required=False,
+        initial=True,
+        label="Trim whitespace",
+        help_text=(
+            "Whether to trim whitespace around records/entries and key-value pairs."
+        ),
+    )
+
     class Meta:
         model = DonationBlueprint
         fields = [
@@ -24,9 +156,7 @@ class BlueprintForm(forms.ModelForm):
             "description",
             "display_position",
             "exp_file_format",
-            "csv_delimiter",
             "file_uploader",
-            "json_extraction_root",
             "expected_fields",
             "expected_fields_regex_matching",
         ]
@@ -54,25 +184,40 @@ class BlueprintForm(forms.ModelForm):
                 'Comma-separated, in double quotes: <code>"Field A", "Field B"</code>'
             ),
             "expected_fields_regex_matching": "",
-            "csv_delimiter": mark_safe(
-                "The character that separates values in the CSV "
-                "(e.g., <code>,</code> <code>;</code> or <code>\\t</code> for tab). "
-                "If left empty, the delimiter is inferred automatically."
-            ),
-            "json_extraction_root": mark_safe(
-                "Optional: The root of the data structure from which to extract data. "
-                "Leave empty to extract from the top level. </b>"
-                "To extract from a nested level, specify the path using dot "
-                "notation (e.g., <code>friends.real_friends</code>)."
-            ),
         }
 
     def __init__(self, *args, **kwargs) -> None:
         self.project = kwargs.pop("project", None)
         super().__init__(*args, **kwargs)
 
+        if self.project and not self.instance.pk:
+            self.instance.project = self.project
+
+        # Populate the format-specific fields from the stored parser_config
+        # when editing an existing instance.
+        config = getattr(self.instance, "parser_config", None) or {}
+        fmt = config.get("format") or (
+            self.instance.exp_file_format if self.instance.pk else ""
+        )
+
+        config_class = CONFIG_CLASSES.get(fmt)
+        if config_class is None:
+            return
+
+        field_map = FIELD_NAME_MAP.get(fmt, {})
+
+        for form_field, schema_field in field_map.items():
+            fallback = _schema_default(config_class, schema_field)
+            raw_value = config.get(schema_field, fallback)
+            self.fields[form_field].initial = (
+                _escape(raw_value) if isinstance(raw_value, str) else raw_value
+            )
+
     def clean(self) -> dict[str, Any] | None:
         cleaned_data = super().clean()
+        if cleaned_data is None:
+            return cleaned_data
+
         name = cleaned_data.get("name")
 
         if name and self.project:
@@ -86,7 +231,46 @@ class BlueprintForm(forms.ModelForm):
                 )
                 self.add_error("name", msg)
 
+        fmt = cleaned_data.get("exp_file_format")
+        config_class = CONFIG_CLASSES.get(fmt)
+        field_map = FIELD_NAME_MAP.get(fmt, {})
+
+        if config_class is None:
+            self.add_error("exp_file_format", "Unsupported file format.")
+            return cleaned_data
+
+        # form_field -> schema_field, so build raw_config keyed by schema_field.
+        raw_config = {
+            schema_field: (
+                _unescape(cleaned_data.get(form_field))
+                if isinstance(cleaned_data.get(form_field), str)
+                else cleaned_data.get(form_field)
+            )
+            for form_field, schema_field in field_map.items()
+            if cleaned_data.get(form_field) not in (None, "")
+        }
+
+        try:
+            config = config_class(**raw_config)
+        except PydanticValidationError as e:
+            # Map errors to specific form fields.
+            reverse_map = {v: k for k, v in field_map.items()}
+            for error in e.errors():
+                schema_field = error["loc"][0]
+                form_field = reverse_map.get(schema_field)
+                if form_field:
+                    self.add_error(form_field, error["msg"])
+                else:
+                    self.add_error(None, error["msg"])
+            return cleaned_data
+
+        cleaned_data["parser_config"] = config.model_dump()
+        self.instance.parser_config = config.model_dump()
         return cleaned_data
+
+    def save(self, commit: bool = True) -> DonationBlueprint:  # noqa: FBT002
+        self.instance.parser_config = self.cleaned_data["parser_config"]
+        return super().save(commit=commit)
 
 
 class InstructionsForm(forms.ModelForm):

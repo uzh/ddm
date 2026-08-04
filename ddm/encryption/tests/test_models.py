@@ -3,6 +3,7 @@ from django.test import TestCase, override_settings
 from django.utils import timezone
 
 from ddm.datadonation.models import DataDonation, DonationBlueprint
+from ddm.datadonation.schemas import JSONParserConfig
 from ddm.encryption.models import Decryption, Encryption
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject, ResearchProfile
@@ -57,12 +58,14 @@ class TestModelEncryption(TestCase):
             name="donation blueprint",
             expected_fields='"a", "b"',
             file_uploader=None,
+            parser_config=JSONParserConfig().model_dump(),
         )
         cls.alt_blueprint = DonationBlueprint.objects.create(
             project=cls.alt_project,
             name="donation blueprint",
             expected_fields='"a", "b"',
             file_uploader=None,
+            parser_config=JSONParserConfig().model_dump(),
         )
 
         cls.base_participant = Participant.objects.create(

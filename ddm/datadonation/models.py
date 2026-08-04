@@ -8,9 +8,16 @@ from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from pydantic import ValidationError as PydanticValidationError
 
 from ddm.core.utils.user_content.template import render_user_content
 from ddm.core.utils.validators import validate_regex_pattern, validate_safe_regex
+from ddm.datadonation.schemas import (
+    CSVParserConfig,
+    FileParserConfigAdapter,
+    JSONParserConfig,
+    TXTParserConfig,
+)
 from ddm.datadonation.utils import count_data_entries
 from ddm.encryption.models import ModelWithEncryptedData
 from ddm.logging.models import ExceptionLogEntry, ExceptionRaisers
@@ -90,6 +97,14 @@ class DonationBlueprint(models.Model):
     project = models.ForeignKey(
         "ddm_projects.DonationProject", on_delete=models.CASCADE
     )
+    file_uploader = models.ForeignKey(
+        "FileUploader",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        verbose_name="Associated File Uploader",
+        help_text="The File Uploader through which the related file will be uploaded",
+    )
     name = models.CharField(
         max_length=250, help_text="Internal name for this File Blueprint"
     )
@@ -105,6 +120,7 @@ class DonationBlueprint(models.Model):
     class FileFormats(models.TextChoices):
         JSON_FORMAT = "json", "JSON file"
         CSV_FORMAT = "csv", "CSV file"
+        TXT_FORMAT = "txt", "TXT file"
 
     exp_file_format = models.CharField(
         max_length=10,
@@ -113,20 +129,7 @@ class DonationBlueprint(models.Model):
         verbose_name="Expected file format",
     )
 
-    json_extraction_root = models.CharField(
-        max_length=200,
-        default="",
-        blank=True,
-        verbose_name="Extraction Root",
-        help_text="The level in the data structure from which to extract. (optional)",
-    )
-
-    csv_delimiter = models.CharField(
-        max_length=10,
-        default="",
-        blank=True,
-        help_text="The character that separates values in the CSV",
-    )
+    parser_config = models.JSONField()
 
     expected_fields = models.TextField(
         null=False,
@@ -143,14 +146,6 @@ class DonationBlueprint(models.Model):
         help_text='Select if you use regex expressions in the "Expected fields"',
     )
 
-    file_uploader = models.ForeignKey(
-        "FileUploader",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        verbose_name="Associated File Uploader",
-        help_text="The File Uploader through which the related file will be uploaded",
-    )
     regex_path = models.TextField(
         blank=True,
         validators=[validate_regex_pattern],
@@ -178,6 +173,8 @@ class DonationBlueprint(models.Model):
     def clean(self) -> None:
         errors = {}
 
+        self.clean_parser_config(errors)
+
         # Validate expected_fields when regex matching is enabled
         if self.expected_fields_regex_matching and self.expected_fields:
             # Parse the comma-separated quoted strings: "pattern1", "pattern2"
@@ -197,6 +194,15 @@ class DonationBlueprint(models.Model):
             raise ValidationError(errors)
 
         super().clean()
+
+    def clean_parser_config(self, errors: dict) -> None:
+        try:
+            FileParserConfigAdapter.validate_python(self.parser_config)
+        except PydanticValidationError as e:
+            errors["parser_config"] = str(e)
+
+    def get_parser_config(self) -> CSVParserConfig | JSONParserConfig | TXTParserConfig:
+        return FileParserConfigAdapter.validate_python(self.parser_config)
 
     @staticmethod
     def get_slug() -> str:

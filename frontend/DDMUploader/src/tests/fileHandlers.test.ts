@@ -3,6 +3,18 @@ import { handleZipFile, handleSingleFile, fileIsZip, collectZipEntries } from '@
 import { BlueprintExtractionOutcome } from '@uploader/classes/BlueprintExtractionOutcome';
 import JSZip from 'jszip';
 import {matchFilePaths} from "../composables/useFileProcessor/fileHandlers";
+import {CSVParserConfig, JSONParserConfig} from "@uploader/types/ParserConfigs";
+
+
+const JSONConfig: JSONParserConfig = {
+  format: 'json',
+  extraction_root: '',
+}
+
+const CSVConfig: CSVParserConfig = {
+  format: 'csv',
+  delimiter: ',',
+}
 
 // Blueprint stubs for JSON
 const jsonBlueprintA = {
@@ -10,7 +22,7 @@ const jsonBlueprintA = {
   name: 'Basic JSON',
   description: 'Tests simple JSON processing',
   format: 'json',
-  json_extraction_root: '',
+  parser_config: JSONConfig,
   expected_fields: ['name'],
   exp_fields_regex_matching: false,
   fields_to_extract: ['name'],
@@ -29,7 +41,6 @@ const jsonBlueprintA = {
       is_regex: false
     }
   ],
-  csv_delimiter: ',',
   extraction_rules: [
     {
       id: 1,
@@ -59,6 +70,7 @@ const csvBlueprint = {
   ...jsonBlueprintA,
   id: 3,
   format: 'csv',
+  parser_config: CSVConfig,
   file_paths: [
     {
       path: '.*\\.csv',

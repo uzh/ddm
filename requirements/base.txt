@@ -6,4 +6,5 @@ django-polymorphic==4.11.6  # https://github.com/jazzband/django-polymorphic
 django-webpack-loader==3.2.4  # https://github.com/django-webpack/django-webpack-loader
 djangorestframework==3.17.1  # https://github.com/encode/django-rest-framework
 pycryptodome==3.23.0  # https://github.com/Legrandin/pycryptodome/
+pydantic==2.13.4  # https://github.com/pydantic/pydantic
 sqlparse==0.5.5  # https://github.com/andialbrecht/sqlparse

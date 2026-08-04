@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from ddm.datadonation.models import DataDonation, DonationBlueprint, FileUploader
+from ddm.datadonation.schemas import JSONParserConfig
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject, ResearchProfile
 
@@ -36,6 +37,7 @@ class BlueprintEditTestCase(TestCase):
             description="some description",
             expected_fields='"some field"',
             file_uploader=cls.file_uploader,
+            parser_config=JSONParserConfig().model_dump(),
         )
 
         cls.url = reverse(
@@ -50,7 +52,6 @@ class BlueprintEditTestCase(TestCase):
             "description": "some other description",
             "display_position": 1,
             "exp_file_format": DonationBlueprint.FileFormats.JSON_FORMAT,
-            "csv_delimiter": "",
             "file_uploader": self.file_uploader.pk,
             "json_extraction_root": "",
             "expected_fields": '"fieldA"',
@@ -139,6 +140,7 @@ class FileUploaderEditTestCase(TestCase):
             description="some description",
             expected_fields='"some field"',
             file_uploader=cls.file_uploader,
+            parser_config=JSONParserConfig().model_dump(),
         )
         cls.blueprint_b = DonationBlueprint.objects.create(
             project=cls.project,
@@ -147,6 +149,7 @@ class FileUploaderEditTestCase(TestCase):
             description="some description",
             expected_fields='"some field"',
             file_uploader=None,
+            parser_config=JSONParserConfig().model_dump(),
         )
 
         cls.url = reverse(
@@ -274,6 +277,7 @@ class TestAPIs(TestCase):
             display_name="donation blueprint",
             expected_fields='"a", "b"',
             file_uploader=None,
+            parser_config=JSONParserConfig().model_dump(),
         )
         cls.blueprint_secret = DonationBlueprint.objects.create(
             project=cls.project_secret,
@@ -281,6 +285,7 @@ class TestAPIs(TestCase):
             display_name="donation blueprint",
             expected_fields='"a", "b"',
             file_uploader=None,
+            parser_config=JSONParserConfig().model_dump(),
         )
 
         cls.donation_regular = DataDonation.objects.create(

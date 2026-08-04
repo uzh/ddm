@@ -5,6 +5,7 @@ from django.utils import timezone
 from rest_framework.test import APIClient
 
 from ddm.datadonation.models import DonationBlueprint, FileUploader
+from ddm.datadonation.schemas import JSONParserConfig
 from ddm.logging.models import EventLogEntry, ExceptionLogEntry, ExceptionRaisers
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject, ResearchProfile
@@ -36,6 +37,7 @@ class TestExceptionAPI(TestCase):
             description="some description",
             expected_fields='"some field"',
             file_uploader=cls.file_uploader,
+            parser_config=JSONParserConfig().model_dump(),
         )
 
         cls.post_url = reverse("ddm_logging:exceptions_api", args=[cls.project.url_id])
@@ -257,6 +259,7 @@ class TestExceptionLogAPIView(TestCase):
             description="Test description",
             expected_fields='"field1"',
             file_uploader=cls.file_uploader,
+            parser_config=JSONParserConfig().model_dump(),
         )
 
         cls.exception_log_1 = ExceptionLogEntry.objects.create(

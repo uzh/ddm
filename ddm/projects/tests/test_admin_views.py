@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from ddm.datadonation.models import DonationBlueprint, DonationInstruction, FileUploader
+from ddm.datadonation.schemas import JSONParserConfig
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject, ResearchProfile
 from ddm.questionnaire.models import (
@@ -86,6 +87,7 @@ class TestAdminViewAuthentication(TestCase):
             name="donation blueprint",
             expected_fields='"a", "b"',
             file_uploader=None,
+            parser_config=JSONParserConfig().model_dump(),
         )
 
         # File Uploader

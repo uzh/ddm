@@ -101,14 +101,13 @@ class BlueprintSerializer(serializers.ModelSerializer):
             "name",
             "description",
             "format",
-            "json_extraction_root",
             "expected_fields",
             "exp_fields_regex_matching",
+            "parser_config",
             "fields_to_extract",
             "extraction_fields",
             "file_paths",
             "extraction_rules",
-            "csv_delimiter",
         ]
 
     def get_expected_fields(self, obj: DonationBlueprint) -> dict:

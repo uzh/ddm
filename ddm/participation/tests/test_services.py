@@ -8,6 +8,7 @@ from ddm.datadonation.models import (
     DonationBlueprint,
     FileUploader,
 )
+from ddm.datadonation.schemas import JSONParserConfig
 from ddm.participation.models import Participant
 from ddm.participation.services import (
     QuestionnaireConfigService,
@@ -47,6 +48,7 @@ class UploaderConfigServiceTest(TestCase):
             display_name="BP",
             expected_fields="",
             file_uploader=cls.uploader,
+            parser_config=JSONParserConfig().model_dump(),
         )
         cls.file_path = BlueprintFilePath.objects.create(
             blueprint=cls.blueprint,
@@ -119,6 +121,7 @@ class QuestionnaireConfigServiceTest(TestCase):
             display_name="BP",
             expected_fields="",
             file_uploader=cls.uploader,
+            parser_config=JSONParserConfig().model_dump(),
         )
         cls.file_path = BlueprintFilePath.objects.create(
             blueprint=cls.blueprint,
@@ -155,6 +158,7 @@ class QuestionnaireConfigServiceTest(TestCase):
             display_name="BP No Don",
             expected_fields="",
             file_uploader=cls.uploader,
+            parser_config=JSONParserConfig().model_dump(),
         )
         cls.blueprint_q_no_don = OpenQuestion.objects.create(
             project=cls.project,

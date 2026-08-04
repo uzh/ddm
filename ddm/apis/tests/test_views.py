@@ -12,6 +12,7 @@ from ddm.apis.serializers import (
     ResponseSerializerWithSnapshot,
 )
 from ddm.datadonation.models import DataDonation, DonationBlueprint
+from ddm.datadonation.schemas import JSONParserConfig
 from ddm.participation.models import Participant
 from ddm.participation.serializers import BlueprintSerializer
 from ddm.projects.models import DonationProject, ResearchProfile
@@ -74,6 +75,7 @@ class TestAPIs(TestCase):
             display_name="some name",
             expected_fields='"a", "b"',
             file_uploader=None,
+            parser_config=JSONParserConfig().model_dump(),
         )
         cls.blueprint_b = DonationBlueprint.objects.create(
             project=cls.project_base,
@@ -81,6 +83,7 @@ class TestAPIs(TestCase):
             display_name="some name",
             expected_fields='"a", "b"',
             file_uploader=None,
+            parser_config=JSONParserConfig().model_dump(),
         )
 
         cls.donation_pA_a = DataDonation.objects.create(

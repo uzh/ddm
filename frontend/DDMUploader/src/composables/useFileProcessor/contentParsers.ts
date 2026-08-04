@@ -3,6 +3,7 @@ import {ERROR_CATALOG} from "@uploader/utils/errorCatalog";
 import {Blueprint} from "@uploader/types/Blueprint";
 import {BlueprintExtractionOutcome} from "@uploader/classes/BlueprintExtractionOutcome";
 import {extractData, getFieldKeyMap, getMissingFields} from "@uploader/composables/useFileProcessor/extractionEngine";
+import {CSVParserConfig, JSONParserConfig, TXTParserConfig} from "@uploader/types/ParserConfigs";
 
 /**
  * Processes a single file's content using a provided blueprint definition.
@@ -79,26 +80,45 @@ export function getParsedContentArray(
 ): any[] | null {
   let parsedContentArray: any[] | null = null;
 
-  if (blueprint.format === 'json') {
-    try {
-      parsedContentArray = loadJsonContent(content, blueprint.json_extraction_root);
-    } catch (error) {
-      blueprintOutcomeMap[blueprint.id].registerError(ERROR_CATALOG.PARSING_ERROR, {contentType: 'JSON', error: error});
-    }
-  }
-  else if (blueprint.format === 'csv') {
-    try {
-      parsedContentArray = loadCsvContent(content, blueprint.csv_delimiter);
-    } catch (error) {
-      blueprintOutcomeMap[blueprint.id].registerError(ERROR_CATALOG.PARSING_ERROR, {contentType: 'CSV', error: error});
-    }
-  } else {
-    blueprintOutcomeMap[blueprint.id].registerError(ERROR_CATALOG.UNSUPPORTED_BP_FORMAT, {format: blueprint.format});
-    return null;
+  switch (blueprint.parser_config.format) {
+    case "csv":
+      try {
+        parsedContentArray = parseCsvContent(content, blueprint.parser_config);
+      } catch (error) {
+        blueprintOutcomeMap[blueprint.id].registerError(
+          ERROR_CATALOG.PARSING_ERROR, {contentType: 'CSV', error: error}
+        );
+      }
+      break;
+    case "json":
+      try {
+        parsedContentArray = parseJsonContent(content, blueprint.parser_config);
+      } catch (error) {
+        blueprintOutcomeMap[blueprint.id].registerError(
+          ERROR_CATALOG.PARSING_ERROR, {contentType: 'JSON', error: error}
+        );
+      }
+      break;
+    case "txt":
+      try {
+        parsedContentArray = parseTxtContent(content, blueprint.parser_config);
+      } catch (error) {
+        blueprintOutcomeMap[blueprint.id].registerError(
+          ERROR_CATALOG.PARSING_ERROR, {contentType: 'TXT', error: error}
+        );
+      }
+      break;
+    default:
+      blueprintOutcomeMap[blueprint.id].registerError(
+        ERROR_CATALOG.UNSUPPORTED_BP_FORMAT, {format: blueprint.parser_config}
+      );
+      return null;
   }
 
   if (!parsedContentArray){
-    blueprintOutcomeMap[blueprint.id].registerError(ERROR_CATALOG.PARSING_ERROR, {contentType: blueprint.format});
+    blueprintOutcomeMap[blueprint.id].registerError(
+      ERROR_CATALOG.PARSING_ERROR, {contentType: blueprint.parser_config.format}
+    );
     return null;
   }
   return parsedContentArray;
@@ -117,13 +137,13 @@ interface ParsedData {
  *
  * Errors encountered during parsing or extraction are pushed to the `generalErrors` array.
  *
- * @param {string} content - Raw JSON content as a string.
- * @param {string} extractionRoot - Dot/bracket path to the desired nested value.
- * @returns {Array|null} - An array of extracted entries, or null if parsing or extraction fails.
+ * @param content - Raw JSON content as a string.
+ * @param parserConfig - The parser config.
+ * @returns - An array of extracted entries, or null if parsing or extraction fails.
  */
-export function loadJsonContent(
+export function parseJsonContent(
   content: string,
-  extractionRoot: string
+  parserConfig: JSONParserConfig,
 ): ParsedData[] | null {
   let fileContent: any;
 
@@ -133,9 +153,9 @@ export function loadJsonContent(
     throw new Error(`Failed to parse JSON content: ${error}`)
   }
 
-  if (extractionRoot && extractionRoot !== '') {
+  if (parserConfig.extraction_root && parserConfig.extraction_root !== '') {
     try {
-      fileContent = getNestedJsonContent(fileContent, extractionRoot)
+      fileContent = getNestedJsonContent(fileContent, parserConfig.extraction_root)
     } catch(error) {
       throw new Error(`Failed to get nested JSON content: ${error}`);
     }
@@ -153,17 +173,17 @@ export function loadJsonContent(
  * Parses CSV content into an array of objects using PapaParse.
  *
  * @param content - Raw CSV string content.
- * @param csvDelimiter - The delimiter used in the CSV (e.g., ',' or ';').
- * @returns An array of parsed rows as objects, or null if parsing fails.
+ * @param parserConfig - The CSV parser config.
+ * @returns An array of parsed rows as objects.
  */
-export function loadCsvContent(
+export function parseCsvContent(
   content: string,
-  csvDelimiter: string,
+  parserConfig: CSVParserConfig,
 ): any[] | null {
   try {
     const parserResult = Papa.parse<Record<string, any>>(content, {
       header: true,
-      delimiter: csvDelimiter,
+      delimiter: parserConfig.delimiter,
       skipEmptyLines: true,
       dynamicTyping: false
     });
@@ -175,6 +195,109 @@ export function loadCsvContent(
   } catch (error) {
     throw new Error(`An error occurred during csv parsing: ${error}`);
   }
+}
+
+/**
+ * Parses TXT content into an array of objects.
+ *
+ * @param content - Raw txt string content.
+ * @param parserConfig - The txt parser config.
+ * @returns An array of parsed rows as objects.
+ */
+export function parseTxtContent(
+  content: string,
+  parserConfig: TXTParserConfig,
+): ParsedData[] | null {
+  const {
+    record_separator,
+    field_separator,
+    kv_separator,
+    skip_header_lines,
+    skip_footer_lines,
+    ignore_blank_lines,
+    trim_whitespace,
+  } = parserConfig;
+
+  let lines: string[];
+
+  try {
+    lines = content.split("\n");
+  } catch (error) {
+    throw new Error(`Failed to split content into lines: ${error}`);
+  }
+
+  // Apply header/footer skipping.
+  const start = skip_header_lines ?? 0;
+  const end = lines.length - (skip_footer_lines ?? 0);
+  lines = lines.slice(start, Math.max(start, end));
+
+  const trimmedContent = lines.join("\n");
+
+  // Split into records.
+  let rawRecords: string[];
+  try {
+    rawRecords = trimmedContent.split(record_separator);
+  } catch (error) {
+    throw new Error(`Failed to split content into records: ${error}`);
+  }
+
+  const records: ParsedData[] = [];
+
+  for (const rawRecord of rawRecords) {
+    const record = trim_whitespace ? rawRecord.trim() : rawRecord;
+
+    if (ignore_blank_lines && record === "") {
+      continue;
+    }
+
+    let fieldLines: string[];
+    try {
+      fieldLines = record.split(field_separator);
+    } catch (error) {
+      throw new Error(`Failed to split record into fields: ${error}`);
+    }
+
+    const parsedRecord: ParsedData = {};
+
+    for (let fieldLine of fieldLines) {
+      if (trim_whitespace) {
+        fieldLine = fieldLine.trim();
+      }
+
+      if (ignore_blank_lines && fieldLine === "") {
+        continue;
+      }
+
+      const separatorIndex = fieldLine.indexOf(kv_separator);
+
+      if (separatorIndex === -1) {
+        // No kv separator found on this line; skip it (field-level
+        // matching/labeling is handled downstream).
+        continue;
+      }
+
+      let key = fieldLine.slice(0, separatorIndex);
+      let value: string | string[] = fieldLine.slice(
+        separatorIndex + kv_separator.length,
+      );
+
+      if (trim_whitespace) {
+        key = key.trim();
+        value = (value as string).trim();
+      }
+
+      // Collect repeated keys into an array rather than overwriting.
+      if (key in parsedRecord) {
+        parsedRecord[key] = `${parsedRecord[key]}, ${value}`;
+      } else {
+        parsedRecord[key] = value;
+      }
+    }
+
+    records.push(parsedRecord);
+  }
+
+  return records;
 }
 
 /**

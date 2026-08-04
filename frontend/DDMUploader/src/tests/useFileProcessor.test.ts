@@ -5,6 +5,28 @@ import {ERROR_CATALOG} from "@uploader/utils/errorCatalog";
 import { regexDeleteMatch, valueIsEqual } from "@uploader/utils/ExtractionFunctions";
 import { extractData, getFieldKeyMap } from '@uploader/composables/useFileProcessor/extractionEngine';
 import {ExtractionRule} from "@uploader/types/ExtractionRule";
+import {CSVParserConfig, JSONParserConfig, TXTParserConfig} from "@uploader/types/ParserConfigs";
+
+const JSONConfig: JSONParserConfig = {
+  format: 'json',
+  extraction_root: '',
+}
+
+const CSVConfig: CSVParserConfig = {
+  format: 'csv',
+  delimiter: ',',
+}
+
+const TXTConfig: TXTParserConfig = {
+  format: 'txt',
+  record_separator: '\n\n',
+  field_separator: '\n',
+  kv_separator: ':',
+  skip_header_lines: 0,
+  skip_footer_lines: 0,
+  ignore_blank_lines: true,
+  trim_whitespace: true,
+}
 
 // Blueprint stub for JSON
 const jsonBlueprint = {
@@ -12,7 +34,7 @@ const jsonBlueprint = {
   name: 'Basic JSON',
   description: 'Tests simple JSON processing',
   format: 'json',
-  json_extraction_root: '',
+  parser_config: JSONConfig,
   expected_fields: ['name'],
   exp_fields_regex_matching: false,
   fields_to_extract: ['name'],
@@ -31,7 +53,6 @@ const jsonBlueprint = {
       is_regex: true
     }
   ],
-  csv_delimiter: ',',
   extraction_rules: [
     {
       id: 1,
@@ -48,14 +69,47 @@ const csvBlueprint = {
   ...jsonBlueprint,
   id: 2,
   format: 'csv',
+  parser_config: CSVConfig,
   expected_fields: ['name'],
-  csv_delimiter: ',',
   file_paths: [
     {
       path: '.*\\.csv',
       is_regex: true
     }
   ],
+};
+
+// Blueprint stub for TXT
+const txtBlueprint = {
+  ...jsonBlueprint,
+  id: 3,
+  format: 'txt',
+  parser_config: TXTConfig,
+  expected_fields: ['Datum', 'Link'],
+  fields_to_extract: ['Datum', 'Link'],
+  extraction_fields: [
+    {
+      id: 1,
+      expected_name: 'Datum',
+      match_regex: false,
+      keep_in_donation: true,
+      alias: '',
+    },
+    {
+      id: 2,
+      expected_name: 'Link',
+      match_regex: false,
+      keep_in_donation: true,
+      alias: '',
+    },
+  ],
+  file_paths: [
+    {
+      path: '.*\\.txt',
+      is_regex: true
+    }
+  ],
+  extraction_rules: [],
 };
 
 // Dummy JSON file
@@ -65,6 +119,25 @@ const jsonFile = new File([jsonData], 'test.json', { type: 'application/json' })
 // Dummy CSV file
 const csvData = 'name\nAlice\nBob';
 const csvFile = new File([csvData], 'test.csv', { type: 'text/csv' });
+
+// Dummy TXT file
+const txtData = [
+  'Datum: 2026-04-01 14:09:16 UTC',
+  'Link: https://www.tiktokv.com/share/video/7293967691570842886/',
+  '',
+  'Datum: 2026-04-02 15:30:48 UTC',
+  'Link: https://www.tiktokv.com/share/video/7624084211107941665/',
+  '',
+  'Datum: 2026-04-16 11:15:40 UTC',
+  'Link: https://www.tiktokv.com/share/video/7610355719434472726/',
+  '',
+  'Datum: 2026-04-16 18:36:09 UTC',
+  'Link: https://www.tiktokv.com/share/video/7628573958056463638/',
+  '',
+  'Datum: 2026-04-16 18:36:13 UTC',
+  'Link: https://www.tiktokv.com/share/video/7628336930605862157/',
+].join('\n');
+const txtFile = new File([txtData], 'test.txt', { type: 'text/plain' });
 
 // Helper: Create ZIP containing a JSON file
 async function createZipFile(): Promise<File> {
@@ -389,4 +462,20 @@ describe('extractData', () => {
     ).not.toThrow();
     expect(outcome.extractionRuleLog[1]).toBe(0);
   });
+
+  it('processes a TXT file correctly', async () => {
+    const processor = useFileProcessor(false, [txtBlueprint]);
+    await processor.handleSelectedFile(txtFile);
+
+    const result = processor.blueprintOutcomeMap[3];
+    expect(result.extractedData.length).toBe(5);
+    expect(result.extractedData[0]).toHaveProperty('Datum', '2026-04-01 14:09:16 UTC');
+    expect(result.extractedData[0]).toHaveProperty(
+      'Link',
+      'https://www.tiktokv.com/share/video/7293967691570842886/'
+    );
+    expect(result.extractedData[4]).toHaveProperty('Datum', '2026-04-16 18:36:13 UTC');
+    expect(result.extractionStats.nRowsTotal).toBe(5);
+  });
+
 });

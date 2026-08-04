@@ -197,6 +197,58 @@ extraction root to `friends.real_friends`.
 CSV Delimiter:: This field allows you to specify the character that separates values in the
 expected CSV file. (e.g., `,`, `;` or `\t`). If left empty, DDM will try to infer the delimiter from the file structure.
 
+=== TXT specific settings
+
+Record separator:: The character sequence that marks the boundary between
+individual records/entries in the file (e.g., a blank line or a single line
+break). Use `\n` for a line break or `\n\n` for a blank line.
+
+Field separator:: The character sequence that separates individual fields
+within a single record (e.g., a line break if each field is on its own line).
+Use `\n` for a line break.
+
+Key-value separator:: The character that separates a field's name from its
+value within a line (e.g., `:` in `Name: John`, or `=` in `name=John`).
+
+Skip header lines:: The number of lines to skip at the beginning of the TXT
+file before processing begins (e.g., to ignore a title or metadata block).
+
+Skip footer lines:: The number of lines to skip at the end of the TXT file
+(e.g., to ignore a trailing summary or signature block).
+
+Ignore blank lines:: If enabled, empty lines within a record are ignored
+rather than treated as part of the field data.
+
+Trim whitespace:: If enabled, leading and trailing whitespace is removed from
+each record and from each key-value pair before extraction.
+
+[NOTE]
+====
+*Example*
+
+Given a TXT file structured like this:
+
+[source]
+----
+Datum: 2026-04-01 14:09:16 UTC
+Link: https://example.com/video/1
+
+Datum: 2026-04-02 15:30:48 UTC
+Link: https://example.com/video/2
+----
+
+with `Record separator` set to `\n\n` (blank line), `Field separator` set
+to `\n` (line break) and `Key-value separator` set to `:`, DDM extracts two records,
+each containing a `Datum` and a `Link` field.
+====
+
+[NOTE]
+====
+When entering `Record separator` or `Field separator`, type `\n` (backslash
+followed by "n") to represent a line break, and `\n\n` for a blank line — DDM
+automatically converts these into actual line breaks internally. Do not paste
+an actual line break into the field.
+====
 
 === Relevant Fields
 

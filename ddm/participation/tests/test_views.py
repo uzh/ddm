@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from ddm.datadonation.models import DataDonation, DonationBlueprint, FileUploader
+from ddm.datadonation.schemas import JSONParserConfig
 from ddm.logging.models import ExceptionLogEntry
 from ddm.participation.models import Participant
 from ddm.participation.views import (
@@ -54,6 +55,7 @@ class ParticipationFlowBaseTestCase(TestCase):
             display_name="donation blueprint",
             expected_fields='"a", "b"',
             file_uploader=file_uploader,
+            parser_config=JSONParserConfig().model_dump(),
         )
 
         OpenQuestion.objects.create(

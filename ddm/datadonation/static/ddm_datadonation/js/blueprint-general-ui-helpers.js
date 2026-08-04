@@ -1,7 +1,7 @@
 // Get variables from template.
 const file_uploader_meta = JSON.parse(document.getElementById("file_uploader_meta").textContent);
 
-function hideOrShowCsvDelimiter() {
+function hideOrShowCsvFields() {
   const expFileFormat = document.getElementById("id_exp_file_format").value;
   const csvDelimiterParent = document.getElementById("id_csv_delimiter").parentNode;
 
@@ -33,7 +33,7 @@ function hideOrShowFilePath() {
   }
 }
 
-function hideOrShowJsonRoot() {
+function hideOrShowJsonFields() {
   const expFileFormat = document.getElementById("id_exp_file_format").value;
 
   const jsonExtractionRootParent = document.getElementById("id_json_extraction_root");
@@ -47,14 +47,30 @@ function hideOrShowJsonRoot() {
   }
 }
 
+function hideOrShowTxtFields() {
+  const expFileFormat = document.getElementById("id_exp_file_format").value;
+
+  const jsonExtractionRootParent = document.getElementById("txt-parser-fields");
+
+  if (jsonExtractionRootParent) {
+    if (expFileFormat === "txt") {
+      jsonExtractionRootParent.style.display = "";
+    } else {
+      jsonExtractionRootParent.style.display = "none";
+    }
+  }
+}
+
 document.addEventListener("DOMContentLoaded", function() {
-  hideOrShowCsvDelimiter();
+  hideOrShowCsvFields();
   hideOrShowFilePath();
-  hideOrShowJsonRoot();
+  hideOrShowJsonFields();
+  hideOrShowTxtFields();
 
   document.getElementById("id_exp_file_format").addEventListener("change", function() {
-    hideOrShowCsvDelimiter();
-    hideOrShowJsonRoot();
+    hideOrShowCsvFields();
+    hideOrShowJsonFields();
+    hideOrShowTxtFields();
   });
 
   document.getElementById("id_file_uploader").addEventListener("change", function() {

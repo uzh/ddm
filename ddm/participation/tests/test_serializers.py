@@ -11,6 +11,7 @@ from ddm.datadonation.models import (
     FileUploader,
     ProcessingRule,
 )
+from ddm.datadonation.schemas import JSONParserConfig
 from ddm.participation.serializers import (
     BlueprintFilePathSerializer,
     BlueprintSerializer,
@@ -75,6 +76,7 @@ class DataDonationConfigSerializersTest(TestCase):
             display_name="donation blueprint",
             expected_fields='"a", "b"',
             file_uploader=cls.file_uploader,
+            parser_config=JSONParserConfig().model_dump(),
         )
 
         cls.file_path = BlueprintFilePath.objects.create(

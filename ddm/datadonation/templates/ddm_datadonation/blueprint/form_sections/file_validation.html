@@ -6,6 +6,37 @@
     </div>
     {% include "ddm_core/form_components/_basic_field.html" with field=form.exp_file_format %}
     {% include "ddm_core/form_components/_basic_field.html" with field=form.csv_delimiter %}
+
+    <div id="txt-parser-fields" class="mt-1 row g-4">
+      <div class="col-md-12 mt-0">
+        {% include "ddm_core/form_components/_basic_field.html" with field=form.txt_record_separator %}
+      </div>
+      <div class="col-md-12 mt-0">
+        {% include "ddm_core/form_components/_basic_field.html" with field=form.txt_field_separator %}
+      </div>
+      <div class="col-md-12 mt-0">
+        {% include "ddm_core/form_components/_basic_field.html" with field=form.txt_kv_separator %}
+      </div>
+
+      <div class="col-md-3 mt-0">
+        {% include "ddm_core/form_components/_basic_field.html" with field=form.txt_skip_header_lines %}
+      </div>
+      <div class="col-md-3 mt-0">
+        {% include "ddm_core/form_components/_basic_field.html" with field=form.txt_skip_footer_lines %}
+      </div>
+      <div class="col-md-6 mt-0">
+      </div>
+
+      <div class="col-md-3 mt-0">
+        {% include "ddm_core/form_components/_basic_field.html" with field=form.txt_ignore_blank_lines %}
+      </div>
+      <div class="col-md-3 mt-0">
+        {% include "ddm_core/form_components/_basic_field.html" with field=form.txt_trim_whitespace %}
+      </div>
+      <div class="col-md-6 mt-0">
+      </div>
+    </div>
+
     {% include "ddm_core/form_components/_basic_field.html" with field=form.expected_fields %}
     {% include "ddm_core/form_components/_checkbox_toggle_field.html" with field=form.expected_fields_regex_matching %}
 

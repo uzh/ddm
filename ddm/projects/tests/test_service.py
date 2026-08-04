@@ -3,6 +3,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from ddm.datadonation.models import DataDonation, DonationBlueprint
+from ddm.datadonation.schemas import JSONParserConfig
 from ddm.participation.models import Participant
 from ddm.participation.utils import get_filter_config_id
 from ddm.projects.models import DonationProject, ResearchProfile
@@ -38,7 +39,10 @@ class TestDonationProject(TestCase):
         )
 
         cls.blueprint = DonationBlueprint.objects.create(
-            project=cls.project, name="some name", expected_fields=""
+            project=cls.project,
+            name="some name",
+            expected_fields="",
+            parser_config=JSONParserConfig().model_dump(),
         )
 
         DataDonation.objects.create(

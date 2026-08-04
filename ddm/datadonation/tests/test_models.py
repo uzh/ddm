@@ -12,6 +12,7 @@ from ddm.datadonation.models import (
     FileUploader,
     ProcessingRule,
 )
+from ddm.datadonation.schemas import JSONParserConfig, TXTParserConfig
 from ddm.logging.models import ExceptionLogEntry
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject, ResearchProfile
@@ -112,9 +113,11 @@ class TestDonationBlueprintModel(TestCase):
         cls.blueprint = DonationBlueprint.objects.create(
             project=project,
             name="valid blueprint",
+            display_name="some display name",
             description="some description",
             expected_fields='"some field"',
             file_uploader=cls.file_uploader,
+            parser_config=JSONParserConfig().model_dump(),
         )
 
         cls.participant = Participant.objects.create(
@@ -203,6 +206,99 @@ class TestDonationBlueprintModel(TestCase):
         self.assertEqual(n_donations_post - n_donations_pre, 0)
         self.assertEqual(n_exceptions_post - n_exceptions_pre, 2)
 
+    def test_get_parser_config_returns_typed_json_config(self):
+        config = self.blueprint.get_parser_config()
+        self.assertIsInstance(config, JSONParserConfig)
+        self.assertEqual(config.format, "json")
+
+    def test_get_parser_config_returns_typed_txt_config(self):
+        bp = DonationBlueprint.objects.create(
+            project=self.blueprint.project,
+            name="txt blueprint",
+            description="some description",
+            expected_fields='"Datum", "Link"',
+            file_uploader=self.file_uploader,
+            exp_file_format="txt",
+            parser_config=TXTParserConfig().model_dump(),
+        )
+        config = bp.get_parser_config()
+        self.assertIsInstance(config, TXTParserConfig)
+        self.assertEqual(config.record_separator, "\n\n")
+
+    def test_clean_parser_config_valid_does_not_raise(self):
+        # Should not raise; a valid parser_config produces no errors dict entry.
+        errors = {}
+        self.blueprint.clean_parser_config(errors)
+        self.assertNotIn("parser_config", errors)
+
+    def test_clean_parser_config_invalid_registers_error(self):
+        self.blueprint.parser_config = {
+            "format": "json",
+            "extraction_root": 123,
+        }  # wrong type
+        errors = {}
+        self.blueprint.clean_parser_config(errors)
+        self.assertIn("parser_config", errors)
+
+    def test_clean_parser_config_missing_format_registers_error(self):
+        self.blueprint.parser_config = {"extraction_root": ""}  # missing format
+        errors = {}
+        self.blueprint.clean_parser_config(errors)
+        self.assertIn("parser_config", errors)
+
+    def test_full_clean_raises_on_invalid_parser_config(self):
+        """End-to-end: full_clean() should surface parser_config errors via
+        clean(), not just clean_parser_config() in isolation."""
+        self.blueprint.parser_config = {"format": "not_a_real_format"}
+        with self.assertRaises(ValidationError) as ctx:
+            self.blueprint.full_clean()
+        self.assertIn("parser_config", ctx.exception.message_dict)
+
+    # ---- expected_fields regex validation branch in clean() ----
+
+    def test_clean_valid_regex_expected_fields(self):
+        self.blueprint.expected_fields = '"^item_\\\\d+$", "other_field"'
+        self.blueprint.expected_fields_regex_matching = True
+        # Should not raise.
+        self.blueprint.full_clean()
+
+    def test_clean_invalid_regex_expected_fields_raises(self):
+        self.blueprint.expected_fields = '"(unclosed"'
+        self.blueprint.expected_fields_regex_matching = True
+        with self.assertRaises(ValidationError) as ctx:
+            self.blueprint.full_clean()
+        self.assertIn("expected_fields", ctx.exception.message_dict)
+
+    def test_clean_unsafe_regex_expected_fields_raises(self):
+        """Assumes validate_safe_regex rejects catastrophic-backtracking
+        patterns (ReDoS); adjust the pattern if your implementation's
+        specific unsafe-pattern definition differs."""
+        self.blueprint.expected_fields = '"(a+)+$"'
+        self.blueprint.expected_fields_regex_matching = True
+        with self.assertRaises(ValidationError) as ctx:
+            self.blueprint.full_clean()
+        self.assertIn("expected_fields", ctx.exception.message_dict)
+
+    def test_clean_regex_matching_disabled_skips_regex_validation(self):
+        """When regex matching is off, expected_fields is not validated as
+        regex even if it would otherwise be invalid regex syntax."""
+        self.blueprint.expected_fields = '"(unclosed"'
+        self.blueprint.expected_fields_regex_matching = False
+        # Should not raise — regex validation branch is skipped entirely.
+        self.blueprint.full_clean()
+
+    def test_clean_malformed_expected_fields_json_does_not_raise_in_clean(self):
+        """A json.JSONDecodeError while parsing expected_fields for regex
+        validation is intentionally swallowed in clean(); the field-format
+        error itself is expected to surface via COMMA_SEPARATED_STRINGS_VALIDATOR
+        during full_clean()'s standard field validation instead."""
+        self.blueprint.expected_fields = "not valid quoted csv at all"
+        self.blueprint.expected_fields_regex_matching = True
+        with self.assertRaises(ValidationError) as ctx:
+            self.blueprint.full_clean()
+        # Should come from the validator, not from the regex-checking branch.
+        self.assertIn("expected_fields", ctx.exception.message_dict)
+
 
 class TestDonationBlueprintRegexValidation(TestCase):
     """Tests for regex validation in DonationBlueprint.clean()."""
@@ -229,6 +325,7 @@ class TestDonationBlueprintRegexValidation(TestCase):
             expected_fields=r'"field_\d+", "other_[a-z]+"',
             expected_fields_regex_matching=True,
             file_uploader=self.file_uploader,
+            parser_config=JSONParserConfig(),
         )
         blueprint.clean()  # Should not raise
 
@@ -239,6 +336,7 @@ class TestDonationBlueprintRegexValidation(TestCase):
             expected_fields=r'"[unclosed"',
             expected_fields_regex_matching=True,
             file_uploader=self.file_uploader,
+            parser_config=JSONParserConfig(),
         )
         with self.assertRaises(ValidationError) as ctx:
             blueprint.clean()
@@ -251,6 +349,7 @@ class TestDonationBlueprintRegexValidation(TestCase):
             expected_fields=r'"(a+)+"',
             expected_fields_regex_matching=True,
             file_uploader=self.file_uploader,
+            parser_config=JSONParserConfig(),
         )
         with self.assertRaises(ValidationError) as ctx:
             blueprint.clean()
@@ -264,6 +363,7 @@ class TestDonationBlueprintRegexValidation(TestCase):
             expected_fields=r'"[not a valid regex"',
             expected_fields_regex_matching=False,
             file_uploader=self.file_uploader,
+            parser_config=JSONParserConfig(),
         )
         blueprint.clean()  # Should not raise - not treated as regex
 
@@ -289,6 +389,7 @@ class TestBlueprintFilePath(TestCase):
             display_name="test blueprint",
             expected_fields='"field1"',
             file_uploader=cls.file_uploader,
+            parser_config=JSONParserConfig().model_dump(),
         )
 
     def test_valid_regex_pattern_passes(self):
@@ -349,6 +450,7 @@ class TestExtractionFieldRegexValidation(TestCase):
             name="valid blueprint",
             expected_fields='"field"',
             file_uploader=file_uploader,
+            parser_config=JSONParserConfig().model_dump(),
         )
 
     def test_valid_regex_field_passes(self):
@@ -410,6 +512,7 @@ class TestProcessingRuleRegexValidation(TestCase):
             name="valid blueprint",
             expected_fields='"field"',
             file_uploader=file_uploader,
+            parser_config=JSONParserConfig().model_dump(),
         )
 
         cls.field = ExtractionField(

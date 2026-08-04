@@ -177,6 +177,50 @@ const introText = computed(() =>
     ? t("feedback.intro-extraction-pending")
     : t('feedback.intro-extraction-complete')
 );
+
+const blueprintLookup = computed(() =>
+  new Map(props.blueprints.map(bp => [bp.id, bp]))
+);
+
+/**
+ * True if the blueprint with the given id has successfully extracted data.
+ */
+function hasSucceeded(id: number): boolean {
+  return blueprintUIMap[id]?.state === EXTRACTION_STATES.DATA_EXTRACTED;
+}
+
+/**
+ * True if the blueprint with the given id has explicitly failed extraction.
+ */
+function hasFailed(id: number): boolean {
+  return blueprintUIMap[id]?.state === EXTRACTION_STATES.FAILED;
+}
+
+/**
+ * The blueprints to actually render: one entry per primary blueprint.
+ * If a primary blueprint failed extraction but one of its backups
+ * (in priority order) succeeded, the successful backup is shown instead.
+ * Backup blueprints are otherwise never rendered on their own.
+ */
+const visibleBlueprints = computed(() => {
+  const primaries = props.blueprints.filter(bp => !bp.is_backup);
+
+  return primaries.map(primary => {
+    if (!hasFailed(primary.id)) {
+      return primary;
+    }
+
+    const successfulBackupId = (primary.backup_ids ?? [])
+      .find(backupId => hasSucceeded(backupId));
+
+    if (successfulBackupId === undefined) {
+      return primary;
+    }
+
+    return blueprintLookup.value.get(successfulBackupId) ?? primary;
+  });
+});
+
 </script>
 
 <template>
@@ -189,14 +233,14 @@ const introText = computed(() =>
 
     <!-- Blueprint overview -->
     <ExtractionItem
-      v-for="blueprint in props.blueprints"
+      v-for="blueprint in visibleBlueprints"
       :key="blueprint.id"
       :blueprint="blueprint"
       :extraction-state="blueprintUIMap[blueprint.id]?.state"
       :extraction-message="blueprintUIMap[blueprint.id]?.msg"
       :extraction-error-text="blueprintUIMap[blueprint.id]?.errorText"
       :extraction-outcome="blueprintOutcomeMap[blueprint.id]"
-      :has-detail-errors="blueprintUIMap[blueprint.id].anyDetails"
+      :has-detail-errors="blueprintUIMap[blueprint.id]?.anyDetails"
       :errors="blueprintUIMap[blueprint.id]?.errors || []"
       :combined-consent="combinedConsent"
       @consent-updated="passConsentUpdateToParent"

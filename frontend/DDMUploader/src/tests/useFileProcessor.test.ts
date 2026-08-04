@@ -61,7 +61,9 @@ const jsonBlueprint = {
       comparison_value: null,
       replacement_value: null
     }
-  ]
+  ],
+  is_backup: false,
+  backup_ids: [],
 };
 
 // Blueprint stub for CSV

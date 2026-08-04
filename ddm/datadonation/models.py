@@ -146,6 +146,26 @@ class DonationBlueprint(models.Model):
         help_text='Select if you use regex expressions in the "Expected fields"',
     )
 
+    backup_for = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        related_name="backups",
+        help_text=(
+            "If set, this blueprint is used as a fallback when the referenced "
+            "blueprint's parser fails to extract data (either because it does "
+            "not find the expected file or because it encounters an error)."
+        ),
+    )
+    backup_priority = models.PositiveIntegerField(
+        default=0,
+        help_text=(
+            "If a Blueprint has multiple backups, backup blueprints with lower "
+            "priority values are tried first when the main blueprint's parser fails."
+        ),
+    )
+
     regex_path = models.TextField(
         blank=True,
         validators=[validate_regex_pattern],
@@ -156,7 +176,7 @@ class DonationBlueprint(models.Model):
             "to match files in different languages. Consult the documentation "
             "for some examples."
         ),
-    )  # TODO: Deprecate in future major release; replaced by FilePath model.
+    )  # TODO: Deprecate in future major release v4; replaced by FilePath model.
 
     class Meta:
         ordering = ["display_position", "pk"]
@@ -170,25 +190,16 @@ class DonationBlueprint(models.Model):
             args=[str(self.project.url_id), str(self.id)],
         )
 
+    @property
+    def is_backup(self) -> bool:
+        return self.backup_for_id is not None
+
     def clean(self) -> None:
         errors = {}
 
         self.clean_parser_config(errors)
-
-        # Validate expected_fields when regex matching is enabled
-        if self.expected_fields_regex_matching and self.expected_fields:
-            # Parse the comma-separated quoted strings: "pattern1", "pattern2"
-            try:
-                patterns = json.loads("[" + self.expected_fields + "]")
-                for _, pattern in enumerate(patterns):
-                    try:
-                        validate_safe_regex(pattern)
-                    except ValidationError as e:
-                        msg = f"Invalid regex in pattern '{pattern}': {e.message}"
-                        errors["expected_fields"] = msg
-                        break
-            except json.JSONDecodeError:
-                pass  # Existing COMMA_SEPARATED_STRINGS_VALIDATOR handles format errors
+        self.clean_backup_config(errors)
+        self.clean_expected_fields_regex(errors)
 
         if errors:
             raise ValidationError(errors)
@@ -200,6 +211,47 @@ class DonationBlueprint(models.Model):
             FileParserConfigAdapter.validate_python(self.parser_config)
         except PydanticValidationError as e:
             errors["parser_config"] = str(e)
+
+    def clean_backup_config(self, errors: dict) -> None:
+        if self.backup_for_id is None:
+            return
+
+        if self.pk is not None and self.backup_for_id == self.pk:
+            errors["backup_for"] = "A blueprint cannot be a backup for itself."
+            return
+
+        if self.backup_for.backup_for_id is not None:
+            errors["backup_for"] = (
+                "A backup blueprint cannot itself have a backup. Select a "
+                "primary blueprint (one that is not already a backup)."
+            )
+            return
+
+        if self.backup_for.project_id != self.project_id:
+            errors["backup_for"] = (
+                "A backup blueprint must belong to the same project as the "
+                "blueprint it backs up."
+            )
+
+    def clean_expected_fields_regex(self, errors: dict) -> None:
+        """Validate expected_fields as regex patterns when regex matching is enabled."""
+        if not (self.expected_fields_regex_matching and self.expected_fields):
+            return
+
+        # Parse the comma-separated quoted strings: "pattern1", "pattern2"
+        try:
+            patterns = json.loads("[" + self.expected_fields + "]")
+        except json.JSONDecodeError:
+            return  # Existing COMMA_SEPARATED_STRINGS_VALIDATOR handles format errors
+
+        for pattern in patterns:
+            try:
+                validate_safe_regex(pattern)
+            except ValidationError as e:
+                errors["expected_fields"] = (
+                    f"Invalid regex in pattern '{pattern}': {e.message}"
+                )
+                break
 
     def get_parser_config(self) -> CSVParserConfig | JSONParserConfig | TXTParserConfig:
         return FileParserConfigAdapter.validate_python(self.parser_config)

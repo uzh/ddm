@@ -93,6 +93,8 @@ class BlueprintSerializer(serializers.ModelSerializer):
     extraction_fields = serializers.SerializerMethodField()
     extraction_rules = serializers.SerializerMethodField()
     file_paths = serializers.SerializerMethodField()
+    is_backup = serializers.BooleanField(read_only=True)
+    backup_ids = serializers.SerializerMethodField()
 
     class Meta:
         model = DonationBlueprint
@@ -108,6 +110,8 @@ class BlueprintSerializer(serializers.ModelSerializer):
             "extraction_fields",
             "file_paths",
             "extraction_rules",
+            "is_backup",
+            "backup_ids",
         ]
 
     def get_expected_fields(self, obj: DonationBlueprint) -> dict:
@@ -132,6 +136,11 @@ class BlueprintSerializer(serializers.ModelSerializer):
     def get_file_paths(self, obj: DonationBlueprint) -> list[dict]:
         file_paths = obj.blueprintfilepath_set.all().order_by("priority")
         return [BlueprintFilePathSerializer(fp).data for fp in file_paths]
+
+    def get_backup_ids(self, obj: DonationBlueprint) -> list[int]:
+        return list(
+            obj.backups.order_by("backup_priority").values_list("id", flat=True)
+        )
 
 
 class InstructionSerializer(serializers.ModelSerializer):

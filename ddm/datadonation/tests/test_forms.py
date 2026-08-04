@@ -47,6 +47,8 @@ class TestBlueprintForm(TestCase):
             "file_uploader": bp.file_uploader.pk,
             "expected_fields": bp.expected_fields,
             "expected_fields_regex_matching": bp.expected_fields_regex_matching,
+            "backup_for": None,
+            "backup_priority": 0,
         }
         form = BlueprintForm(data=data)
         self.assertTrue(form.is_valid())
@@ -71,6 +73,8 @@ class TestBlueprintForm(TestCase):
             "file_uploader": bp.file_uploader.pk,
             "expected_fields": bp.expected_fields,
             "expected_fields_regex_matching": bp.expected_fields_regex_matching,
+            "backup_for": None,
+            "backup_priority": 0,
         }
         form = BlueprintForm(data=data)
         self.assertFalse(form.is_valid())
@@ -95,6 +99,8 @@ class TestBlueprintForm(TestCase):
             "file_uploader": bp.file_uploader.pk,
             "expected_fields": bp.expected_fields,
             "expected_fields_regex_matching": bp.expected_fields_regex_matching,
+            "backup_for": None,
+            "backup_priority": 0,
         }
         form = BlueprintForm(data=data, project=self.project)
         self.assertFalse(form.is_valid())
@@ -112,6 +118,8 @@ class TestBlueprintForm(TestCase):
             "file_uploader": self.file_uploader.pk,
             "expected_fields": '"some field"',
             "expected_fields_regex_matching": False,
+            "backup_for": None,
+            "backup_priority": 0,
         }
         form = BlueprintForm(data=data, project=self.project)
         self.assertTrue(form.is_valid(), form.errors)
@@ -137,6 +145,8 @@ class TestBlueprintForm(TestCase):
             "file_uploader": self.file_uploader.pk,
             "expected_fields": '"Datum", "Link"',
             "expected_fields_regex_matching": False,
+            "backup_for": None,
+            "backup_priority": 0,
         }
         form = BlueprintForm(data=data, project=self.project)
         self.assertTrue(form.is_valid(), form.errors)
@@ -167,6 +177,8 @@ class TestBlueprintForm(TestCase):
             "file_uploader": self.file_uploader.pk,
             "expected_fields": '"some field"',
             "expected_fields_regex_matching": False,
+            "backup_for": None,
+            "backup_priority": 0,
         }
         form = BlueprintForm(data=data, project=self.project)
         self.assertTrue(form.is_valid(), form.errors)
@@ -199,6 +211,8 @@ class TestBlueprintForm(TestCase):
             "file_uploader": self.file_uploader.pk,
             "expected_fields": '"some field"',
             "expected_fields_regex_matching": False,
+            "backup_for": None,
+            "backup_priority": 0,
         }
         form = BlueprintForm(data=data, project=self.project)
         self.assertFalse(form.is_valid())
@@ -252,6 +266,8 @@ class TestBlueprintForm(TestCase):
             "file_uploader": bp.file_uploader.pk,
             "expected_fields": bp.expected_fields,
             "expected_fields_regex_matching": bp.expected_fields_regex_matching,
+            "backup_for": None,
+            "backup_priority": 0,
         }
         form = BlueprintForm(data=data, instance=bp, project=self.project)
         self.assertTrue(form.is_valid(), form.errors)
@@ -283,10 +299,126 @@ class TestBlueprintForm(TestCase):
             "file_uploader": self.file_uploader.pk,
             "expected_fields": '"some field"',
             "expected_fields_regex_matching": False,
+            "backup_for": None,
+            "backup_priority": 0,
         }
         # No `project=` passed -> uniqueness check is skipped by design.
         form = BlueprintForm(data=data)
         self.assertTrue(form.is_valid(), form.errors)
+
+
+class TestGetBackupQueryset(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        user = User.objects.create_user(
+            username="owner", password="123", email="owner@mail.com"
+        )
+        profile = ResearchProfile.objects.create(user=user)
+
+        cls.project = DonationProject.objects.create(
+            name="Base Project", slug="base", owner=profile
+        )
+        cls.other_project = DonationProject.objects.create(
+            name="Other Project", slug="other", owner=profile
+        )
+
+        cls.uploader = FileUploader.objects.create(
+            project=cls.project,
+            name="uploader A",
+            upload_type=FileUploader.UploadTypes.ZIP_FILE,
+        )
+        cls.other_uploader = FileUploader.objects.create(
+            project=cls.project,
+            name="uploader B",
+            upload_type=FileUploader.UploadTypes.ZIP_FILE,
+        )
+
+        cls.primary = DonationBlueprint.objects.create(
+            project=cls.project,
+            name="primary",
+            display_name="primary",
+            expected_fields='"f"',
+            file_uploader=cls.uploader,
+            parser_config=JSONParserConfig().model_dump(),
+        )
+        cls.eligible = DonationBlueprint.objects.create(
+            project=cls.project,
+            name="eligible",
+            display_name="eligible",
+            expected_fields='"f"',
+            file_uploader=cls.uploader,
+            parser_config=JSONParserConfig().model_dump(),
+        )
+        cls.wrong_uploader = DonationBlueprint.objects.create(
+            project=cls.project,
+            name="wrong uploader",
+            display_name="x",
+            expected_fields='"f"',
+            file_uploader=cls.other_uploader,
+            parser_config=JSONParserConfig().model_dump(),
+        )
+        cls.already_backup = DonationBlueprint.objects.create(
+            project=cls.project,
+            name="already backup",
+            display_name="x",
+            expected_fields='"f"',
+            file_uploader=cls.uploader,
+            backup_for=cls.primary,
+            parser_config=JSONParserConfig().model_dump(),
+        )
+
+    def _form(self, instance=None, project=None):
+        return BlueprintForm(instance=instance, project=project)
+
+    def test_excludes_blueprints_with_wrong_file_uploader(self):
+        form = self._form(instance=self.primary, project=self.project)
+        queryset = form.get_backup_queryset()
+        self.assertNotIn(self.wrong_uploader, queryset)
+
+    def test_excludes_blueprints_already_used_as_backup(self):
+        form = self._form(instance=self.primary, project=self.project)
+        queryset = form.get_backup_queryset()
+        self.assertNotIn(self.already_backup, queryset)
+
+    def test_excludes_self(self):
+        form = self._form(instance=self.primary, project=self.project)
+        queryset = form.get_backup_queryset()
+        self.assertNotIn(self.primary, queryset)
+
+    def test_includes_eligible_blueprint(self):
+        form = self._form(instance=self.primary, project=self.project)
+        queryset = form.get_backup_queryset()
+        self.assertIn(self.eligible, queryset)
+
+    def test_excludes_blueprints_from_other_project(self):
+        other_uploader = FileUploader.objects.create(
+            project=self.other_project,
+            name="other project uploader",
+            upload_type=FileUploader.UploadTypes.ZIP_FILE,
+        )
+        other_bp = DonationBlueprint.objects.create(
+            project=self.other_project,
+            name="other project bp",
+            display_name="x",
+            expected_fields='"f"',
+            file_uploader=other_uploader,
+            parser_config=JSONParserConfig().model_dump(),
+        )
+        form = self._form(instance=self.primary, project=self.project)
+        queryset = form.get_backup_queryset()
+        self.assertNotIn(other_bp, queryset)
+
+    def test_returns_none_queryset_when_no_file_uploader(self):
+        new_bp = DonationBlueprint(project=self.project)  # unsaved, no file_uploader
+        form = self._form(instance=new_bp, project=self.project)
+        queryset = form.get_backup_queryset()
+        self.assertEqual(queryset.count(), 0)
+
+    def test_no_project_skips_project_filter(self):
+        form = self._form(instance=self.primary, project=None)
+        queryset = form.get_backup_queryset()
+        # Still restricted by file_uploader/backup_for, just not by project.
+        self.assertIn(self.eligible, queryset)
 
 
 class TestFileUploaderForm(TestCase):

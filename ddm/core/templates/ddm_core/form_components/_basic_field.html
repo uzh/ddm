@@ -1,5 +1,5 @@
 {% if field %}
-  <p class="form-field-wrapper {{ extra_field_classes }}">
+  <div class="form-field-wrapper {{ extra_field_classes }}">
     {% if hide_label %}
       <span class="d-none">{{ field.label_tag }}</span>
     {% else %}
@@ -13,5 +13,5 @@
     {% if field.help_text %}
       {% if helptext_end %}<span class="helptext">{{ field.help_text }}</span>{% endif %}
     {% endif %}
-  </p>
+  </div>
 {% endif %}

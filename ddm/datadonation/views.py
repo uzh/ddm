@@ -515,8 +515,11 @@ class BlueprintEdit(SuccessMessageMixin, DDMAuthMixin, BlueprintFormMixin, Updat
         field_formset = self.get_field_formset(self.request.POST)
 
         forms_to_validate = [form, rule_formset, path_formset, field_formset]
-        all_valid = all(f.is_valid() for f in forms_to_validate)
-        missing_file_paths = self.form_is_missing_file_paths(form, path_formset)
+        validity_results = [f.is_valid() for f in forms_to_validate]
+        all_valid = all(validity_results)
+        missing_file_paths = all_valid and self.form_is_missing_file_paths(
+            form, path_formset
+        )
 
         if all_valid and not missing_file_paths:
             return self.form_valid(form, rule_formset, path_formset, field_formset)

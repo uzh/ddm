@@ -1,6 +1,7 @@
 from typing import Any
 
 from django import forms
+from django.db.models import QuerySet
 from django.forms import Textarea, inlineformset_factory
 from django.utils.safestring import mark_safe
 from django_ckeditor_5.widgets import CKEditor5Widget
@@ -159,6 +160,8 @@ class BlueprintForm(forms.ModelForm):
             "file_uploader",
             "expected_fields",
             "expected_fields_regex_matching",
+            "backup_for",
+            "backup_priority",
         ]
         widgets = {
             "expected_fields": forms.Textarea(attrs={"rows": 1}),
@@ -193,8 +196,17 @@ class BlueprintForm(forms.ModelForm):
         if self.project and not self.instance.pk:
             self.instance.project = self.project
 
-        # Populate the format-specific fields from the stored parser_config
-        # when editing an existing instance.
+        self.populate_format_specific_fields()
+
+        if "backup_for" in self.fields:
+            self.fields["backup_for"].queryset = self.get_backup_queryset()
+            self.fields["backup_for"].error_messages["invalid_choice"] = (
+                "The selected blueprint must use the same file uploader "
+                "as this blueprint (or is not eligible as a backup)."
+            )
+
+    def populate_format_specific_fields(self) -> None:
+        """Populates format-specific fields from the stored parser_config."""
         config = getattr(self.instance, "parser_config", None) or {}
         fmt = config.get("format") or (
             self.instance.exp_file_format if self.instance.pk else ""
@@ -213,11 +225,44 @@ class BlueprintForm(forms.ModelForm):
                 _escape(raw_value) if isinstance(raw_value, str) else raw_value
             )
 
+    def get_backup_queryset(self) -> QuerySet[DonationBlueprint]:
+        file_uploader = self._get_effective_file_uploader()
+        if file_uploader is None:
+            return DonationBlueprint.objects.none()
+
+        queryset = DonationBlueprint.objects.filter(
+            backup_for__isnull=True, file_uploader=file_uploader
+        )
+
+        if self.project:
+            queryset = queryset.filter(project=self.project)
+
+        if self.instance.pk:
+            queryset = queryset.exclude(pk=self.instance.pk)
+
+        return queryset
+
+    def _get_effective_file_uploader(self) -> None | FileUploader:
+        """The FileUploader that should govern backup_for choices: the
+        submitted value on a bound form, falling back to the instance's
+        current value otherwise (e.g. on initial GET)."""
+        if self.is_bound:
+            uploader_id = self.data.get(self.add_prefix("file_uploader"))
+            if uploader_id:
+                return FileUploader.objects.filter(pk=uploader_id).first()
+            return None
+        return self.instance.file_uploader
+
     def clean(self) -> dict[str, Any] | None:
         cleaned_data = super().clean()
         if cleaned_data is None:
             return cleaned_data
 
+        self._clean_name(cleaned_data)
+        self._clean_parser_config(cleaned_data)
+        return cleaned_data
+
+    def _clean_name(self, cleaned_data: dict[str, Any]) -> None:
         name = cleaned_data.get("name")
 
         if name and self.project:
@@ -231,13 +276,14 @@ class BlueprintForm(forms.ModelForm):
                 )
                 self.add_error("name", msg)
 
+    def _clean_parser_config(self, cleaned_data: dict[str, Any]) -> None:
         fmt = cleaned_data.get("exp_file_format")
         config_class = CONFIG_CLASSES.get(fmt)
         field_map = FIELD_NAME_MAP.get(fmt, {})
 
         if config_class is None:
             self.add_error("exp_file_format", "Unsupported file format.")
-            return cleaned_data
+            return
 
         # form_field -> schema_field, so build raw_config keyed by schema_field.
         raw_config = {
@@ -262,11 +308,11 @@ class BlueprintForm(forms.ModelForm):
                     self.add_error(form_field, error["msg"])
                 else:
                     self.add_error(None, error["msg"])
-            return cleaned_data
+            return
 
-        cleaned_data["parser_config"] = config.model_dump()
-        self.instance.parser_config = config.model_dump()
-        return cleaned_data
+        dumped_config = config.model_dump()
+        cleaned_data["parser_config"] = dumped_config
+        self.instance.parser_config = dumped_config
 
     def save(self, commit: bool = True) -> DonationBlueprint:  # noqa: FBT002
         self.instance.parser_config = self.cleaned_data["parser_config"]

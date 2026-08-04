@@ -15,4 +15,6 @@ export type Blueprint = {
   file_paths: BlueprintFilePath[];
   parser_config: JSONParserConfig | CSVParserConfig | TXTParserConfig;
   extraction_rules: ExtractionRule[];
+  is_backup: boolean;
+  backup_ids: number[];
 }

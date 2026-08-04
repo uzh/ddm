@@ -21,17 +21,31 @@
         {% if uploader.donationblueprint_set.all %}
           <td>
 
-              {% for blueprint in uploader.donationblueprint_set.all %}
+            {% for blueprint in uploader.donationblueprint_set.all %}
+
+              {% if not blueprint.is_backup %}
                 <div>
+                  <a href="{{ blueprint.get_absolute_url }}">
+                    <div class="blueprint-card">
+                      {{ blueprint.name }}
+                    </div>
+                  </a>
+                </div>
+              {% endif %}
 
-                    <a href="{{ blueprint.get_absolute_url }}">
-                      <div class="blueprint-card">
-                        {{ blueprint.name }}
-                      </div>
-                    </a>
-
+              {% for backup in blueprint.backups.all %}
+                <div class="backup-blueprint-card-container">
+                  <a href="{{ backup.get_absolute_url }}">
+                    <div class="blueprint-card">
+                      <p class="mb-0">
+                        {{ backup.name }} <span class="badge bg-secondary ms-2">backup</span>
+                      </p>
+                    </div>
+                  </a>
                 </div>
               {% endfor %}
+
+            {% endfor %}
 
           </td>
 

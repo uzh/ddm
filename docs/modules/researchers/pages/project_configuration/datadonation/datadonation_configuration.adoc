@@ -360,6 +360,46 @@ to the selected Extraction Operator.
 Replacement Value:: Only required for operation "Replace match (regex)". The value
 that will be used as a replacement if the regex pattern matches.
 
+=== Backup blueprints (advanced settings)
+
+A backup blueprint acts as a fallback: if a blueprint's parser fails to
+extract data from a participant's file (e.g., because the file cannot be identified,
+or the data extraction produces an error) DDM will try its backup blueprints
+instead. This is useful for handling files whose structure occasionally
+varies (e.g. a platform export format that changes over time), without
+having to guess a single configuration that covers every case.
+
+Backup for:: Selects the primary blueprint that this blueprint should act as
+a backup for. Leave empty if this blueprint is not a backup. Only blueprints
+using the same File Uploader (and belonging to the same project) are
+available for selection; a blueprint that is itself a backup cannot be
+selected here — backups cannot be chained.
+
+Backup priority:: If a primary blueprint has more than one backup, this
+number determines the order in which they are tried. Lower values are tried
+first.
+
+[NOTE]
+====
+A backup blueprint is only used if the primary blueprint's parser fails to
+extract data. If the primary blueprint succeeds, its backups are never
+attempted, even if they are configured.
+====
+
+==== Example
+
+Suppose `Watch History` is a primary blueprint expecting a JSON export, and
+the platform occasionally changes its export format in a way that breaks
+extraction. A second blueprint, `Watch History (legacy format)`, can be
+configured with `Backup for` set to `Watch History` and used as a fallback:
+if the primary JSON structure fails to parse, DDM automatically tries the
+legacy-format blueprint instead (e.g., TXT), and participants see the result of
+whichever blueprint succeeded.
+
+If multiple backups are configured for the same primary blueprint, set
+`Backup priority` on each to control the order they are attempted in (e.g.
+`0` for the first fallback, `1` for the second).
+
 
 == Advanced Options
 

@@ -56,6 +56,8 @@ class BlueprintEditTestCase(TestCase):
             "json_extraction_root": "",
             "expected_fields": '"fieldA"',
             "expected_fields_regex_matching": False,
+            "backup_for": "",
+            "backup_priority": 0,
         }
         rule_formset_data = {
             "processingrule_set-TOTAL_FORMS": "1",

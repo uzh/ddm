@@ -147,23 +147,46 @@ export async function handleZipFile(
   const extractedFiles = await collectZipEntries(zip, generalErrors, nestedZipExtractionDepth);
   const availableFiles = Array.from(new Set(extractedFiles.map(entry => entry.fullPath)));
 
-  for (const blueprint of blueprints) {
+  const blueprintLookup = new Map(blueprints.map(bp => [bp.id, bp]));
+  const blueprintsToProcess = blueprints.filter(bp => !bp.is_backup);
+
+  for (const blueprint of blueprintsToProcess) {
+    let succeeded = false;
 
     const matchedFilePaths = matchFilePaths(availableFiles, blueprint.file_paths, blueprint.id, blueprintOutcomeMap);
     if (matchedFilePaths.length === 0) {
       const errorContext = { regexPath: blueprint.file_paths, availableFiles: availableFiles }
       blueprintOutcomeMap[blueprint.id].registerError(ERROR_CATALOG.NO_FILE_MATCH, errorContext);
-      continue;
+    } else {
+      for (const zipPath of matchedFilePaths) {
+        try {
+          const zipEntry = extractedFiles.find(f => f.fullPath === zipPath);
+          const content = await zipEntry.entry.async("string");
+          processContent(content, blueprint, blueprintOutcomeMap);
+          succeeded = true;
+        } catch (error) {
+          blueprintOutcomeMap[blueprint.id].registerError(ERROR_CATALOG.FILE_PROCESSING_FAIL_GENERAL, {error: error});
+        }
+      }
     }
 
-    for (const zipPath of matchedFilePaths) {
-      try {
-        const zipEntry = extractedFiles.find(file => file.fullPath === zipPath);
-        const content = await zipEntry.entry.async("string");
-        processContent(content, blueprint, blueprintOutcomeMap);
-      } catch (error) {
-        blueprintOutcomeMap[blueprint.id].registerError(ERROR_CATALOG.FILE_PROCESSING_FAIL_GENERAL, {error: error});
-      }
+    if (!succeeded) {
+      addBackupBlueprint(blueprint, blueprintsToProcess, blueprintLookup);
+    }
+  }
+}
+
+function addBackupBlueprint(
+  blueprint: Blueprint,
+  blueprintList: Blueprint[],
+  blueprintLookup: Map<number, Blueprint>
+) {
+  if (blueprint.is_backup) return;
+
+  for (const backupId of blueprint.backup_ids ?? []) {
+    const backupBlueprint = blueprintLookup.get(backupId);
+    if (backupBlueprint && !blueprintList.includes(backupBlueprint)) {
+      blueprintList.push(backupBlueprint);
     }
   }
 }

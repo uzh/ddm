@@ -7,7 +7,24 @@ This version drops official support for Python versions < 3.12.
 
 ### Added
 
-- Added TXT format to Donation Blueprint.
+- **TXT file parsing**: Blueprints can now be configured to extract data from plain text
+  (`.txt`) files, in addition to the existing JSON and CSV support.
+  - New TXT-specific settings in the Blueprint form: record separator, field separator,
+    key-value separator, header/footer line skipping, blank-line ignoring, and whitespace
+    trimming — see the documentation for details and an example.
+  - TXT files are parsed by splitting content into records (e.g. by blank line), then into
+    labeled key-value fields within each record (e.g. `Date: 2026-04-01`), matching the
+    same field-extraction and processing-rule pipeline already used for JSON and CSV.
+- **Backup blueprints**: Blueprints can now be configured with one or more backup blueprints
+  that are used as a fallback when the primary blueprint's parser fails to extract data.
+  - New `backup_for` field on `DonationBlueprint` links a blueprint to the primary blueprint
+    it backs up. Backup blueprints must use the same `FileUploader` and belong to the same
+    project as their primary; chained backups (a backup of a backup) are not permitted.
+  - New `backup_priority` field controls the order in which backups are attempted when
+    multiple are configured (lower values are tried first).
+  - In the data donation interface, if a primary blueprint's extraction fails but one
+    of its backups succeeds, the successful backup is shown to participants in place of the
+    failed primary.
 - Added `DataDonation.data_extraction_state` (replaces `DataDonation.status`) and `DataDonation.n_data_entries` to `DataDonation` model.
 
 ### Changed

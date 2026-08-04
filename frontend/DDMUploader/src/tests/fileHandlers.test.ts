@@ -49,7 +49,9 @@ const jsonBlueprintA = {
       comparison_value: null,
       replacement_value: null
     }
-  ]
+  ],
+  is_backup: false,
+  backup_ids: [],
 };
 
 const jsonBlueprintBoth = {

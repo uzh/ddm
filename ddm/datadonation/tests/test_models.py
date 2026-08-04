@@ -120,6 +120,16 @@ class TestDonationBlueprintModel(TestCase):
             parser_config=JSONParserConfig().model_dump(),
         )
 
+        cls.blueprint_b = DonationBlueprint.objects.create(
+            project=project,
+            name="valid blueprint b",
+            display_name="some display name",
+            description="some description",
+            expected_fields='"some field"',
+            file_uploader=cls.file_uploader,
+            parser_config=JSONParserConfig().model_dump(),
+        )
+
         cls.participant = Participant.objects.create(
             project=project, start_time=timezone.now()
         )
@@ -224,6 +234,31 @@ class TestDonationBlueprintModel(TestCase):
         config = bp.get_parser_config()
         self.assertIsInstance(config, TXTParserConfig)
         self.assertEqual(config.record_separator, "\n\n")
+
+    def test_is_backup_property(self):
+        self.assertFalse(self.blueprint_b.is_backup)
+        self.blueprint_b.backup_for = self.blueprint
+        self.assertTrue(self.blueprint_b.is_backup)
+        self.blueprint_b.backup_for = None
+
+    def test_clean_backup_config_does_not_add_error(self):
+        errors = {}
+        self.blueprint_b.backup_for = self.blueprint
+        self.blueprint_b.clean_backup_config(errors)
+        self.assertNotIn("backup_for", errors)
+
+    def test_clean_backup_config_self_pointing_registers_error(self):
+        errors = {}
+        self.blueprint_b.backup_for = self.blueprint_b
+        self.blueprint_b.clean_backup_config(errors)
+        self.assertIn("backup_for", errors)
+
+    def test_clean_backup_config_using_backup_on_backup_registers_error(self):
+        errors = {}
+        self.blueprint_b.backup_for = self.blueprint
+        self.blueprint.backup_for = self.blueprint_b
+        self.blueprint.clean_backup_config(errors)
+        self.assertIn("backup_for", errors)
 
     def test_clean_parser_config_valid_does_not_raise(self):
         # Should not raise; a valid parser_config produces no errors dict entry.

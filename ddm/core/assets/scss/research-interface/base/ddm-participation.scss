@@ -1,3 +1,5 @@
+@use '../abstracts' as *;
+
 #ddm-participation-body {
   background: var(--bg-color-light);
   font-family: var(--ff-text), sans-serif;
@@ -14,8 +16,25 @@
 
 #ddm-participation-header {
   background: white;
-}
 
+  .project-title {
+    font-weight: 500;
+  }
+
+  .project-logo {
+    max-height: 40px;
+    max-width: 100%;
+
+    @media (min-width: $bp-md) {
+      max-height: 50px;
+    }
+
+    @media (min-width: $bp-lg) {
+      max-width: 100%;
+    }
+
+  }
+}
 
 #ddm-participation-main {
   .flow-btn {
@@ -39,14 +58,16 @@
   }
 }
 
-
 #ddm-participation-footer {
   font-size: 0.9rem;
 
   a {
-    color: var(--color-darkgrey);
+    color: var(--color-lighter-grey);
+    text-decoration: underline;
+    text-underline-offset: 8px;
+    text-decoration-color: var(--font-color-muted);
   }
   a:hover {
-    color: black;
+    filter: brightness(50%);
   }
 }

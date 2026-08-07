@@ -29,6 +29,7 @@ This version drops official support for Python versions < 3.12.
 
 ### Changed
 
+- Donation interface now follows a three-step flow (Instructions → Upload → Review & Submit) instead of displaying all steps on one page.
 - Introduced ruff and refactored codebase to align.
 - Removed `null=True` from DonationBlueprint.regex_path, DonationBlueprint.description, ProcessingRule.comparison_operator
   ExceptionLogEntry.exception_type, ScalePoint.heading_label, ScalePoint.input_label, QuestionItem.label, QuestionItem.label_alt, and FilterCondition.source_identifier.

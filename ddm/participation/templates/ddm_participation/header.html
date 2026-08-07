@@ -13,7 +13,9 @@
       </div>
 
       <div class="col-12 col-sm-6 col-md-4 order-2 order-sm-1 text-center project-title pt-4 pt-sm-0">
-        {{ project.name }}
+        {% if project.show_project_title %}
+          {{ project.name }}
+        {% endif %}
       </div>
 
       <div class="col-6 col-sm-3 col-md-4 order-1 order-sm-2 text-end text-sm-center">

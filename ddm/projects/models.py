@@ -120,6 +120,7 @@ class DonationProject(models.Model):
     )
 
     # Appearance settings.
+    show_project_title = models.BooleanField(default=False)
     img_header_left = ImageField(
         upload_to=project_header_dir_path,
         null=True,

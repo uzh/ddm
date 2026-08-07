@@ -15,6 +15,8 @@
     <div class="row">
       {{ form.non_field_errors }}
 
+      {% include "ddm_core/form_components/_checkbox_toggle_field.html" with field=form.show_project_title %}
+
       {% for field in form %}
         {% if field.name in "img_header_left,img_header_right" %}
 

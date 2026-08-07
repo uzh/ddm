@@ -186,10 +186,20 @@ class EditRedirectConfigurationForm(forms.ModelForm):
 class EditBrandingForm(forms.ModelForm):
     class Meta:
         model = DonationProject
-        fields = ["img_header_left", "img_header_right"]
+        fields = [
+            "show_project_title",
+            "img_header_left",
+            "img_header_right",
+        ]
         labels = {
             "img_header_left": "Logo Header Left",
             "img_header_right": "Logo Header Right",
+        }
+        help_texts = {
+            "show_project_title": (
+                "If enabled, the project title is shown in the header of the "
+                "participation interface."
+            ),
         }
 
 

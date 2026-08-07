@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-import { Item, QuestionOptions } from "@questionnaire/types/questionnaire";
+import { Item, QuestionOptions, Responses } from "@questionnaire/types/questionnaire";
 
 const props = defineProps<{
   qid: string;
@@ -10,7 +10,11 @@ const props = defineProps<{
   options: QuestionOptions;
   items: Item[];
   hideObjectDict: Record<string, boolean>;
+  responses: Responses;
 }>();
+
+// Constants
+import { MISSING_VALUE, MISSING_FILTERED_VALUE } from '@questionnaire/constants/missings';
 
 const emit = defineEmits<{
   (e: 'responseChanged', payload: { id: string; response: string; }): void;
@@ -21,6 +25,17 @@ const { t } = useI18n();
 const getMaxLength = computed(() =>
   props.options.max_input_length !== null ? props.options.max_input_length : undefined
 );
+
+/**
+ * Resolves the display value for a given response id, treating the
+ * missing/filtered sentinel values as "nothing entered yet" rather than
+ * literal text to show in the input.
+ */
+function displayValue(id: string): string {
+  const raw = props.responses[id];
+  if (raw === MISSING_VALUE || raw === MISSING_FILTERED_VALUE) return '';
+  return String(raw ?? '');
+}
 
 function responseChanged(event: Event) {
   const target = event.target as HTMLInputElement;
@@ -50,6 +65,7 @@ function responseChanged(event: Event) {
           type="text"
           :name="props.qid"
           :maxlength="getMaxLength"
+          :value="displayValue(props.qid)"
           @change="responseChanged"
         >
         <textarea
@@ -57,6 +73,8 @@ function responseChanged(event: Event) {
           class="open-question-textarea"
           :name="props.qid"
           :maxlength="getMaxLength"
+          :value="displayValue(props.qid)"
+          placeholder="|"
           @change="responseChanged"
         />
         <p
@@ -74,6 +92,7 @@ function responseChanged(event: Event) {
           class="oq-input"
           :name="props.qid"
           :maxlength="getMaxLength"
+          :value="displayValue(props.qid)"
           @change="responseChanged"
         >
         <p class="input-hint">
@@ -94,6 +113,7 @@ function responseChanged(event: Event) {
           class="oq-input"
           :name="props.qid"
           :maxlength="getMaxLength"
+          :value="displayValue(props.qid)"
           @change="responseChanged"
         >
         <p class="input-hint hint-invalid-input pb-0 mb-0">
@@ -132,6 +152,7 @@ function responseChanged(event: Event) {
               type="text"
               :name="item.id"
               :maxlength="getMaxLength"
+              :value="displayValue(item.id)"
               @change="responseChanged"
             >
             <textarea
@@ -139,6 +160,8 @@ function responseChanged(event: Event) {
               class="open-question-textarea"
               :name="item.id"
               :maxlength="getMaxLength"
+              :value="displayValue(item.id)"
+              placeholder="|"
               @change="responseChanged"
             />
           </template>
@@ -150,6 +173,7 @@ function responseChanged(event: Event) {
               v-only-digits
               :name="item.id"
               :maxlength="getMaxLength"
+              :value="displayValue(item.id)"
               @change="responseChanged"
             >
             <p class="input-hint">
@@ -164,6 +188,7 @@ function responseChanged(event: Event) {
               class="oq-input"
               :name="item.id"
               :maxlength="getMaxLength"
+              :value="displayValue(item.id)"
               @change="responseChanged"
             >
             <p class="input-hint hint-invalid-input pb-0 mb-0">
@@ -200,13 +225,13 @@ function responseChanged(event: Event) {
   width: 100%;
   min-height: 150px;
   border-radius: 3px;
-  border: 1px solid gray;
+  border: 1px solid var(--border-color-components);
   padding: 10px;
   font-size: 0.9rem;
 }
 .input-row {
   padding: 15px 10px;
-  border-bottom: 1px solid #cdcdcd;
+  border-bottom: 1px solid var(--border-color-components);
   display: flex;
   flex-direction: column;
   justify-content: center;

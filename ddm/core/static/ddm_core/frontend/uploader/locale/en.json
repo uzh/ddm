@@ -4,13 +4,13 @@
     "instructions": "Instructions",
     "upload": "Upload data",
     "review-and-consent": "Review & submit",
-    "button-next": "next",
-    "button-prev": "back"
+    "button-next": "Next",
+    "button-prev": "Back"
   },
   "instructions": {
     "heading": "How it works",
-    "back": "back",
-    "next-page": "next page",
+    "back": "Back",
+    "next-page": "Next page",
     "end": "End",
     "start": "Start"
   },
@@ -82,7 +82,7 @@
     "page": "Page",
     "more-entries": "more entries",
     "show-complete-list": "show complete list",
-    "modal-close": "close"
+    "modal-close": "Close"
   },
   "uploader-app": {
     "next-btn": "Next"

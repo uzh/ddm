@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Item } from "@questionnaire/types/questionnaire";
-import {useI18n} from "vue-i18n";
+import { Item, Responses } from "@questionnaire/types/questionnaire";
+import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
@@ -9,6 +9,7 @@ const props = defineProps<{
   text: string;
   items: Item[];
   hideObjectDict: Record<string, boolean>;
+  responses: Responses;
 }>();
 
 const emit = defineEmits<{
@@ -19,7 +20,7 @@ function responseChanged(event: Event) {
   const target = event.target as HTMLInputElement;
   emit('responseChanged', {
     id: target.name,
-    response: target.value,
+    response: target.checked ? '1' : '0',
   });
 }
 </script>
@@ -46,13 +47,14 @@ function responseChanged(event: Event) {
           type="checkbox"
           :name="item.id"
           :value="item.value"
+          :checked="String(props.responses[item.id]) === '1'"
           @change="responseChanged"
         >
         <label
           :for="'q-' + props.qid + '-' + item.id"
           class="item-label prevent-select"
         >
-          <span class="span-check-icon">&#10003;</span>
+          <span class="span-check-icon"><i class="bi bi-check"/></span>
           <span v-html="item.label" />
         </label>
       </div>
@@ -67,14 +69,11 @@ function responseChanged(event: Event) {
 </template>
 
 <style scoped>
+@import "@questionnaire/assets/styles/variables.css";
+
 .item-container {
   display: flex;
   flex-direction: column;
-}
-
-.question-response-body {
-  padding: 20px 10px;
-  width: 100%;
 }
 
 .question-item {
@@ -103,7 +102,7 @@ input[type="checkbox"]:checked + label {
 }
 
 input[type="checkbox"]:checked + label .span-check-icon {
-  color: black;
+  color: var(--ddm-primary);
 }
 
 .item-check {
@@ -135,6 +134,7 @@ input[type="checkbox"]:checked + label .span-check-icon {
   font-weight: bold;
   line-height: 15px;
   color: white;
+  border-radius: var(--border-radius-components);
 }
 
 @media (min-width: 769px) {

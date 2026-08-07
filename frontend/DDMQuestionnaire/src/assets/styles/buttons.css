@@ -10,14 +10,7 @@
 
 .ddm-primary-button {
   background-color: var(--ddm-primary-accent) !important;
-  border-color: var(--ddm-primary-accent);
   color: var(--font-color-primary-accent) !important;
-}
-
-.ddm-primary-button:hover {
-  filter: none !important;
-  background-color: var(--ddm-primary-lighter) !important;
-  border-color: var(--ddm-primary-lighter) !important;
 }
 
 .ddm-secondary-button {
@@ -31,6 +24,7 @@
 }
 
 .ddm-primary-button-base:hover,
+.ddm-primary-button:hover,
 .ddm-secondary-button:hover {
   filter: brightness(90%);
 }

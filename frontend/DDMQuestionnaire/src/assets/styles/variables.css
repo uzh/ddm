@@ -1,4 +1,5 @@
-.ddm-uploader-app {
+.ddm-questionnaire-app,
+.ddm-questionnaire {
   /* COLORS */
   --ddm-success: #198754;
   --ddm-error: #b30630;
@@ -9,13 +10,16 @@
   --ddm-consent-disagree: #7c000b;
   --ddm-loading-accent: #009c94;
 
+  --ddm-main-bg-color: #f8fafc;
   --ddm-primary-accent: #007b74;
-  --ddm-primary-lighter: #009c94;
+  --ddm-primary: var(--ddm-primary-accent);
 
   --bg-components: white;
   --border-color-components: #dee2e6;
   --border-components: 1px solid var(--border-color-components);
   --border-radius-components: 3px;
+
+  --border-color-lighter: #efefef;
 
   --lightgrey: #dee2e6;
   --grey-disabled: #dee2e6;
@@ -39,4 +43,10 @@
   --bp-lg: 992px;
   --bp-xl: 1200px;
   --bp-xxl: 1200px;
+
+  --ddm-primary-fg: white;
+  --ddm-item-bg: #eaeaea;
+  --ddm-item-bg-hover: #cfcfcf;
+  --ddm-heading-bg: white;
+  --ddm-separator-color: #b8b8b8;
 }

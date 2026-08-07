@@ -29,6 +29,7 @@ This version drops official support for Python versions < 3.12.
 - Added `show project name` option to Donation Projects to control whether the
   project name should be displayed in the header of the participation interface.
 - Added `DataDonation.data_extraction_state` (replaces `DataDonation.status`) and `DataDonation.n_data_entries` to `DataDonation` model.
+- The questionnaire now caches responses and progress on browser reload for 24 hours or until the questionnaire configuration changes.
 
 ### Changed
 

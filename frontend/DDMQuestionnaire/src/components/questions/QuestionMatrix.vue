@@ -2,7 +2,7 @@
 import {onMounted, Ref } from 'vue';
 import { updateMainScaleClasses, scrollToNext } from '@questionnaire/utils/scrollFunctions';
 
-import { Item, ScalePoint, QuestionOptions } from "@questionnaire/types/questionnaire";
+import {Item, ScalePoint, QuestionOptions, Responses} from "@questionnaire/types/questionnaire";
 import {useI18n} from "vue-i18n";
 
 const { t } = useI18n();
@@ -14,6 +14,7 @@ const props = defineProps<{
   scale: ScalePoint[];
   options: QuestionOptions;
   hideObjectDict:  Ref<Record<string, boolean>>;
+  responses: Responses;
 }>();
 
 const emit = defineEmits<{
@@ -101,6 +102,7 @@ function responseChanged(event: Event) {
                     type="radio"
                     :name="item.id"
                     :value="point.value"
+                    :checked="String(props.responses[item.id]) === String(point.value)"
                     @change="responseChanged"
                     @click="scrollToNext"
                   >
@@ -151,13 +153,21 @@ function responseChanged(event: Event) {
 }
 
 .response-row {
-  padding-left: 10px;
-  padding-right: 10px;
   min-height: 40vh;
-  border-bottom: 1px solid #cdcdcd;
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.response-row {
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.response-body .response-row:not(:last-child) {
+  border-bottom: 1px solid var(--border-color-lighter);
 }
 
 .response-body > .response-row:last-of-type {
@@ -315,8 +325,8 @@ input[type="radio"]:checked + label {
   .response-row {
     height: auto;
     min-height: auto;
-    padding-bottom: 13px;
-    padding-top: 13px;
+    padding-bottom: 15px;
+    padding-top: 15px;
   }
 
   .response-container {

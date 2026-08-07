@@ -12,6 +12,7 @@
  * Props:
  * - `questionnaireConfig` (String): JSON string of questionnaire configuration.
  * - `filterConfig` (String): JSON string of filter condition configuration.
+ * - `staticVariables`: Map of static variables and values passed from backend.
  * - `actionUrl` (String): Backend endpoint to POST responses to.
  * - `language` (String): Locale code to initialize i18n.
  */
@@ -30,7 +31,9 @@ import MatrixQuestion from '@questionnaire/components/questions/QuestionMatrix.v
 import SemanticDifferential from '@questionnaire/components/questions/QuestionSemanticDifferential.vue';
 import TransitionQuestion from '@questionnaire/components/questions/QuestionTransition.vue';
 
-import type {QuestionnaireConfig, FilterConfig, Responses} from '@questionnaire/types/questionnaire';
+import type { QuestionnaireConfig, FilterConfig, QuestionConfig } from '@questionnaire/types/questionnaire';
+
+import { usePersistedRef } from '@questionnaire/composables/usePersistedRef'
 
 const props = defineProps<{
   questionnaireConfig: QuestionnaireConfig,
@@ -41,15 +44,20 @@ const props = defineProps<{
 }>();
 
 // Constants
-const missingValue: string = '-99';
-const missingFilteredValue: string = '-77';
+import { MISSING_VALUE, MISSING_FILTERED_VALUE } from '@questionnaire/constants/missings';
 
 // Derived from props (static)
 const questionItemMap: Record<string, string[]> = initializeQuestionItemMap(props.questionnaireConfig);
 
 // Initialize core configuration and data structures.
 const questionnaireConfig = ref<QuestionnaireConfig>(props.questionnaireConfig);
-const responses = ref<Responses>(initializeResponses(questionnaireConfig.value));
+
+const { state: responses, clearProgress: clearResponses } = usePersistedRef(
+  'questionnaire-responses',
+  initializeResponses(questionnaireConfig.value),
+  24 * 60 * 60 * 1000,
+  questionnaireConfig.value,
+)
 
 // Initialize filtering functionality.
 const filterConfig = ref<FilterConfig>(props.filterConfig);
@@ -65,15 +73,15 @@ const { evaluateFilters, checkIfAllItemsHidden } = useFilterEngine(
 
 // Page navigation.
 const questionnaireRoot = ref<HTMLElement | null>(null);
-const { currentPage, lastPageSubmitted, next} = usePageNavigation(
+const { currentPage, lastPageSubmitted, next, clearCurrentPage } = usePageNavigation(
     questionnaireConfig,
     hideObjectDict,
     responses,
     questionItemMap,
-    missingValue,
+    MISSING_VALUE,
     questionnaireRoot
 );
-const { scrollToTop } = useScrollHandler(questionnaireRoot)
+const { scrollToTop } = useScrollHandler()
 
 watch(lastPageSubmitted, (submitted) => {
   if (submitted) submitData();
@@ -89,6 +97,10 @@ const questionTypeMap: Record<string, any> = {
   transition: TransitionQuestion,
 };
 
+const questionMap: Record<number, QuestionConfig> = Object.fromEntries(
+  questionnaireConfig.value.map((q) => [q.question, q])
+);
+
 watch(() => props.language, (val) => {
   // @ts-ignore
   if (typeof val === 'string' && val.length > 0) {
@@ -96,67 +108,6 @@ watch(() => props.language, (val) => {
     locale.value = val;
   }
 });
-
-/**
- * Builds a mapping from each question ID to its associated item IDs.
- *
- * Iterates over the questionnaire configuration and creates a dictionary where
- * each key is a `question_id`, and the value is an array of `item_id`s belonging to that question.
- * If a question has no items, the value will be an empty array.
- *
- * @param questionnaireConfig - The full questionnaire structure containing questions and optional items.
- * @returns A map of question IDs to arrays of their corresponding item IDs.
- */
-function initializeQuestionItemMap(questionnaireConfig: QuestionnaireConfig) {
-  const questionItemMap: Record<string, string[]> = {};
-  questionnaireConfig.forEach((q) => {
-    questionItemMap[q.question] = [];
-    q.items.forEach((i) => {
-      questionItemMap[q.question].push(i.id);
-    })
-  })
-  return questionItemMap;
-}
-
-/**
- * Initializes the response object based on the received questionnaire configuration.
- *
- * Returns a flat map of response placeholders, with keys for both question IDs
- * and item IDs (if present). All values are initialized to the sentinel string '-99',
- * representing unanswered or uninitialized state.
- *
- * @param questionnaireConfig - The full questionnaire structure containing questions and items.
- * @returns A Record mapping each question and item ID to '-99'.
- */
-function initializeResponses(questionnaireConfig: QuestionnaireConfig) {
-  const responses: Responses = {};
-  questionnaireConfig.forEach((q) => {
-    if (q.type === 'single_choice') {
-      responses[q.question] = missingValue;
-    }
-
-    else if (q.type === 'transition') {
-      // skip.
-    }
-
-    else if (q.type === 'open') {
-      if (q.options.multi_item_response === true) {
-        q.items.forEach((i) => responses[i.id] = missingValue);
-      } else {
-        responses[q.question] = missingValue;
-      }
-    }
-
-    else if (q.type === 'multi_choice') {
-      q.items.forEach((i) => responses[i.id] = 0);
-    }
-
-    else {
-      q.items.forEach((i) => responses[i.id] = missingValue);
-    }
-  })
-  return responses;
-}
 
 /**
  * Updates the stored response for a given question or item and triggers dependent logic.
@@ -184,7 +135,7 @@ function cleanResponses() {
   hiddenKeys.forEach((key) => {
     // Directly mark the response as filtered out.
     if (key in responses.value) {
-      responses.value[key] = missingFilteredValue;
+      responses.value[key] = MISSING_FILTERED_VALUE;
     }
 
     // If it's a question, mark its items as filtered too.
@@ -192,7 +143,7 @@ function cleanResponses() {
       const items = questionItemMap[key] || [];
       items.forEach((itemId) => {
         if (itemId in responses.value) {
-          responses.value[itemId] = missingFilteredValue;
+          responses.value[itemId] = MISSING_FILTERED_VALUE;
         }
       });
     }
@@ -230,6 +181,10 @@ function submitData() {
       }
     })
     .catch(err => console.error("Submit error:", err));
+
+  // Clear cached information.^
+  clearResponses();
+  clearCurrentPage();
 }
 
 function clickOnNextPage() {
@@ -248,12 +203,20 @@ if (process.env.NODE_ENV === 'test') {
     currentPage
   };
 }
+
+// Manage question stickyness
+import { useStickyQuestions } from '@questionnaire/composables/useStickyQuestions';
+import {initializeQuestionItemMap, initializeResponses} from "@questionnaire/utils/questionnaireInit";
+
+const { questionDivs, isSticky } = useStickyQuestions(questionMap, currentPage, hideObjectDict);
+
 </script>
 
 <template>
   <div
+    id="ddm-questionnaire-app"
     ref="questionnaireRoot"
-    class="ddm-questionnaire"
+    class="ddm-questionnaire ddm-questionnaire-app"
   >
     <template
       v-for="question in questionnaireConfig"
@@ -266,7 +229,11 @@ if (process.env.NODE_ENV === 'test') {
         :data-question-id="question.question"
         class="question-app-container"
       >
-        <div class="question-container">
+        <div
+          class="sticky-gap-mask"
+          :class="{ 'is-active': isSticky[question.question] }"
+        />
+        <div class="question-container mb-5">
           <component
             :is="questionTypeMap[question.type]"
             :qid="question.question"
@@ -276,8 +243,15 @@ if (process.env.NODE_ENV === 'test') {
             :options="question.options"
             :required="question.required"
             :hide-object-dict="hideObjectDict"
+            :responses="responses"
             class="question-body"
+            :class="{ 'is-sticky': isSticky[question.question] }"
             @response-changed="updateResponses"
+          />
+          <div
+            ref="sentinelRefs"
+            class="end-sentinel"
+            :data-question-id="question.question"
           />
         </div>
       </div>
@@ -291,8 +265,8 @@ if (process.env.NODE_ENV === 'test') {
           type="button"
           @click="() => { clickOnNextPage(); }"
         >
-          {{ t('next-btn-label') }}
-          &nbsp;&nbsp;&#8250;
+          <span class="pe-2">{{ t('next-btn-label') }}</span>
+          <i class="step-chevron bi bi-chevron-right"></i>
         </button>
       </div>
     </div>
@@ -300,48 +274,86 @@ if (process.env.NODE_ENV === 'test') {
 </template>
 
 <style>
-.ddm-questionnaire {
-  --ddm-primary: #45819e;
-  --ddm-primary-fg: white;
-  --ddm-item-bg: #eaeaea;
-  --ddm-item-bg-hover: #cfcfcf;
-  --ddm-heading-bg: white;
-  --ddm-separator-color: #b8b8b8;
-  --ddm-error: #c8270d;
-}
+@import "@questionnaire/assets/styles/variables.css";
+@import "@questionnaire/assets/styles/buttons.css";
 
 .question-app-container {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   text-align: left;
 }
 
-.question-text {
-  padding: 60px 10px 15px;
-  position: sticky;
-  top: 0;
-  background: var(--ddm-heading-bg);
-  border-bottom: 3px solid #fbfbfb;
-  z-index: 999;
-}
-
-.response-body {
-  padding-top: 15px;
-  padding-left: 10px;
-  padding-right: 10px;
-}
-
 .question-container {
+  padding-bottom: 20px;
   font-size: 1rem;
-  border-bottom: 2px solid var(--ddm-separator-color);
-  padding-bottom: 100px;
+  border: var(--border-components);
+  border-radius: var(--border-radius-components);
+  background: var(--bg-components);
+  border-radius: var(--border-radius-components);
+}
+
+.ddm-question {
+  display: flex;
+  flex-direction: column;
 }
 
 .question-body {
   text-align: center;
-  min-height: 50vh;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+
+  @media (min-width: 769px) {
+    text-align: left;
+  }
+}
+
+.question-text {
+  padding: 40px 25px 15px;
+  position: static;
+  top: 0;
+  background: var(--ddm-heading-bg);
+  border-top-left-radius: var(--border-radius-components);
+  border-top-right-radius: var(--border-radius-components);
+  border-bottom: 1px solid var(--border-color-components);
+  z-index: 999;
+}
+
+.question-body.is-sticky .question-text {
+  position: sticky;
+  top: 12px;
+  border-top: 1px solid var(--border-color-components);
+  border-left: 1px solid var(--border-color-components);
+  border-right: 1px solid var(--border-color-components);
+  margin-left: -1px;
+  margin-right: -1px;
+  margin-top: -1px;
+}
+
+.sticky-gap-mask {
+  position: sticky;
+  top: 0;
+  height: 20px;
+  background: var(--ddm-main-bg-color);
+  border: 1px solid var(--ddm-main-bg-color);
+  z-index: 2;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.sticky-gap-mask.is-active {
+  visibility: visible;
+}
+
+.end-sentinel {
+  height: 1px;
+}
+
+.response-body {
+  padding-top: 15px;
+  padding-left: 25px;
+  padding-right: 25px;
+
+  label {
+    font-weight: normal;
+  }
 }
 
 .prevent-select {
@@ -354,18 +366,6 @@ if (process.env.NODE_ENV === 'test') {
   .question-container {
     margin: 0;
   }
-}
-
-@media (min-width: 769px) {
-  .question-body {
-    text-align: left;
-    padding-left: 25px;
-    padding-right: 25px;
-  }
-}
-
-.flow-navigation {
-  padding-top: 50px;
 }
 
 .required-but-missing {

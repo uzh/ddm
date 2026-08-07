@@ -12,4 +12,7 @@ const props = defineProps<{
 </template>
 
 <style scoped>
+.question-text {
+  border-bottom: none;
+}
 </style>

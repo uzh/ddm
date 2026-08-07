@@ -1,6 +1,7 @@
-import {onMounted, Ref, ref} from 'vue';
+import { onMounted, Ref, ref } from 'vue';
 
-import {QuestionConfig, QuestionnaireConfig} from "@questionnaire/types/questionnaire";
+import { QuestionConfig, QuestionnaireConfig } from "@questionnaire/types/questionnaire";
+import { usePersistedRef } from './usePersistedRef'
 
 /**
  * Composable for handling questionnaire page navigation logic.
@@ -26,7 +27,12 @@ export function usePageNavigation(
   missingValue: string,
   rootElement: Ref<HTMLElement | null>
 ) {
-  const currentPage = ref(1);
+  const { state: currentPage, clearProgress: clearCurrentPage } = usePersistedRef(
+    'questionnaire-current-page',
+    1,
+    24 * 60 * 60 * 1000,
+    questionnaireConfig.value
+  )
   const minPage = ref(1);
   const maxPage = ref(1);
   const lastPageSubmitted = ref(false);
@@ -51,7 +57,11 @@ export function usePageNavigation(
       minPage.value = Math.min(...pages);
       maxPage.value = Math.max(...pages);
     }
-    currentPage.value = minPage.value;
+    // Only default currentPage to minPage if it wasn't already restored
+    // from persisted state (i.e. it's still at usePersistedRef's default).
+    if (currentPage.value < minPage.value || currentPage.value > maxPage.value) {
+      currentPage.value = minPage.value;
+    }
   }
 
   /**
@@ -183,6 +193,7 @@ export function usePageNavigation(
   return {
     currentPage,
     lastPageSubmitted,
-    next
+    next,
+    clearCurrentPage,
   };
 }

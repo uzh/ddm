@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Item } from "@questionnaire/types/questionnaire";
-import {useI18n} from "vue-i18n";
+import { Item, Responses } from "@questionnaire/types/questionnaire";
+import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
@@ -9,6 +9,7 @@ const props = defineProps<{
   text: string;
   items: Item[];
   hideObjectDict: Record<string, boolean>;
+  responses: Responses;
 }>();
 
 const emit = defineEmits<{
@@ -47,6 +48,7 @@ function responseChanged(event: Event) {
           type="radio"
           :name="props.qid"
           :value="item.value"
+          :checked="String(props.responses[props.qid]) === String(item.value)"
           @change="responseChanged"
         >
         <label

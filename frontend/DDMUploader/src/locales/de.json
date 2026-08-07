@@ -4,13 +4,13 @@
     "instructions": "Anleitung",
     "upload": "Daten hochladen",
     "review-and-consent": "Prüfen & übermitteln",
-    "button-next": "weiter",
-    "button-prev": "zurück"
+    "button-next": "Weiter",
+    "button-prev": "Zurück"
   },
   "instructions": {
     "heading": "So funktioniert es",
-    "back": "zurück",
-    "next-page": "nächste Seite",
+    "back": "Zurück",
+    "next-page": "Nächste Seite",
     "end": "Ende",
     "start": "Anfang"
   },
@@ -82,7 +82,7 @@
     "page": "Seite",
     "more-entries": "weitere Einträge",
     "show-complete-list": "vollständige Liste anzeigen",
-    "modal-close": "schliessen"
+    "modal-close": "Schliessen"
   },
   "uploader-app": {
     "next-btn": "Weiter"

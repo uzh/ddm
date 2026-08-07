@@ -29,7 +29,7 @@ export function getHeightOfLastQuestionTextBefore(el: HTMLElement): number {
   if (!questionBody) return 0;
 
   const questionText = questionBody.querySelector('.question-text') as HTMLElement | null;
-  return questionText ? questionText.offsetHeight : 0;
+  return questionText ? questionText.offsetHeight : 100;
 }
 
 /**
@@ -43,15 +43,17 @@ export function getHeightOfLastQuestionTextBefore(el: HTMLElement): number {
  */
 export function scrollToNext(event: Event): void {
   const currentRow = (event.target as HTMLElement).closest('div.response-row') as HTMLElement | null;
-
   if (!currentRow) return;
+
+  const questionBody = currentRow?.closest('.question-body') as HTMLElement | null;
+  if (!questionBody?.classList.contains('is-sticky')) return;
 
   const nextRow = currentRow.nextElementSibling as HTMLElement | null;
 
   if (nextRow) {
     const stickyHeight = getHeightOfLastQuestionTextBefore(currentRow);
     const nextRowTop = nextRow.getBoundingClientRect().top + window.scrollY;
-    const adjustedPosition = nextRowTop - stickyHeight;
+    const adjustedPosition = nextRowTop - stickyHeight - 12;
     window.scrollTo({ top: adjustedPosition, behavior: 'smooth' });
   } else {
     const nextQuestionBody = getNextQuestionBody(currentRow);

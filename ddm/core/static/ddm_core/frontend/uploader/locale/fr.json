@@ -4,13 +4,13 @@
     "instructions": "Instructions",
     "upload": "Téléverser des données",
     "review-and-consent": "Vérifier et soumettre",
-    "button-next": "suivant",
-    "button-prev": "précédent"
+    "button-next": "Suivant",
+    "button-prev": "Précédent"
   },
   "instructions": {
     "heading": "Comment ça fonctionne",
-    "back": "précédent",
-    "next-page": "page suivante",
+    "back": "Précédent",
+    "next-page": "Page suivante",
     "end": "Fin",
     "start": "Début"
   },
@@ -82,7 +82,7 @@
     "page": "Page",
     "more-entries": "entrées supplémentaires",
     "show-complete-list": "afficher la liste complète",
-    "modal-close": "fermer"
+    "modal-close": "Fermer"
   },
   "uploader-app": {
     "next-btn": "Suivant"

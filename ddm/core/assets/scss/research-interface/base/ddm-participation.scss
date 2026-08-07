@@ -1,6 +1,55 @@
 @use '../abstracts' as *;
 
 #ddm-participation-body {
+
+  h1 {
+    font-weight: bold;
+
+    @media (min-width: $bp-md) {
+      font-size: 1.75rem;
+    }
+
+    @media (min-width: $bp-xl) {
+      font-size: 2rem;
+    }
+  }
+
+  h2 {
+    font-weight: 600;
+
+    @media (min-width: $bp-md) {
+      font-size: 1.5rem;
+    }
+
+    @media (min-width: $bp-xl) {
+      font-size: 1.75rem;
+    }
+  }
+
+  h3 {
+    font-weight: 400;
+
+    @media (min-width: $bp-md) {
+      font-size: 1.5rem;
+    }
+
+    @media (min-width: $bp-xl) {
+      font-size: 1.75rem;
+    }
+  }
+
+  h4 {
+    font-weight: 400;
+
+    @media (min-width: $bp-md) {
+      font-size: 1.25rem;
+    }
+
+    @media (min-width: $bp-xl) {
+      font-size: 1.5rem;
+    }
+  }
+
   background: var(--bg-color-light);
   font-family: var(--ff-text), sans-serif;
   min-height: 100vh;
@@ -49,12 +98,15 @@
     text-decoration: none;
     margin-top: 20px;
     padding: .375rem;
-    border-radius: .25rem;
+    border-radius: var(--border-radius-components);
     border: none;
   }
   .flow-btn:hover {
       background-color: var(--color-main-green);
       color: white !important;
+  }
+  .step-chevron {
+    font-size: 0.8rem;
   }
 }
 
@@ -70,4 +122,17 @@
   a:hover {
     filter: brightness(50%);
   }
+}
+
+.form-check-input,
+.form-check-label {
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.briefing-consent-container {
+  padding: 20px;
+  border-radius: var(--border-radius-components);
+  background: var(--bg-components);
+  border: var(--border-components);
 }

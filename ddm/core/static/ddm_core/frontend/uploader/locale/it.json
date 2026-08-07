@@ -4,13 +4,13 @@
     "instructions": "Istruzioni",
     "upload": "Caricare i dati",
     "review-and-consent": "Verifica e invio",
-    "button-next": "avanti",
-    "button-prev": "indietro"
+    "button-next": "Avanti",
+    "button-prev": "Indietro"
   },
   "instructions": {
     "heading": "Come funziona",
-    "back": "indietro",
-    "next-page": "pagina successiva",
+    "back": "Indietro",
+    "next-page": "Pagina successiva",
     "end": "Fine",
     "start": "Inizio"
   },
@@ -82,7 +82,7 @@
     "page": "Pagina",
     "more-entries": "altri record",
     "show-complete-list": "mostra elenco completo",
-    "modal-close": "chiudi"
+    "modal-close": "Chiudi"
   },
   "uploader-app": {
     "next-btn": "Avanti"

@@ -46,4 +46,10 @@
   --ff-text: 'Geist';
   --ff-headings: 'IBM Plex Sans';
   --ff-mono: 'Geist Mono';
+
+  /* Participant interface */
+  --bg-components: #{$bg-components};
+  --border-color-components: #{$border-color-components};
+  --border-radius-components: #{$border-radius-components};
+  --border-components: 1px solid var(--border-color-components);
 }

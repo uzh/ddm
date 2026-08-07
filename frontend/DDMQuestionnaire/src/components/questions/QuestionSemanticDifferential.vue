@@ -2,8 +2,8 @@
 import { onMounted } from 'vue';
 import { updateMainScaleClasses, scrollToNext } from '@questionnaire/utils/scrollFunctions';
 
-import { Item, ScalePoint } from "@questionnaire/types/questionnaire";
-import {useI18n} from "vue-i18n";
+import { Item, Responses, ScalePoint } from "@questionnaire/types/questionnaire";
+import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
@@ -13,6 +13,7 @@ const props = defineProps<{
   items: Item[];
   scale: ScalePoint[];
   hideObjectDict: Record<string, boolean>;
+  responses: Responses;
 }>();
 
 const emit = defineEmits<{
@@ -68,6 +69,7 @@ function responseChanged(event: Event) {
                     type="radio"
                     :name="item.id"
                     :value="point.value"
+                    :checked="String(props.responses[item.id]) === String(point.value)"
                     @change="responseChanged"
                     @click="scrollToNext"
                   >
@@ -104,6 +106,7 @@ function responseChanged(event: Event) {
                     type="radio"
                     :name="item.id"
                     :value="point.value"
+                    :checked="String(props.responses[item.id]) === String(point.value)"
                     @change="responseChanged"
                   >
                   <label
@@ -138,27 +141,30 @@ function responseChanged(event: Event) {
 }
 
 .response-row {
-  padding-left: 10px;
-  padding-right: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.response-body .response-row:not(:last-child) {
+  border-bottom: 1px solid var(--border-color-lighter);
 }
 
 .item-container {
   display: flex;
   flex-direction: column;
+  padding-top: 20px;
   padding-bottom: 20px;
-  padding-top: 70px;
-  border-bottom: 1px solid #ededed;
   width: 70%;
   text-align: center;
   margin: auto;
 }
 
 .item-label-container {
-  padding-bottom: 15px;
+  padding-bottom: 5px;
 }
 
 .item-label-start {
-  padding-bottom: 15px;
+  padding-bottom: 5px;
 }
 
 .scale-label-container {
@@ -198,11 +204,7 @@ function responseChanged(event: Event) {
   border-radius: 0 0 5px 5px;
 }
 .main-scale-last {
-  margin-bottom: 15px;
-}
-
-.scale-container-secondary {
-  padding-top: 30px;
+  margin-bottom: 5px;
 }
 
 .secondary-scale > label {
@@ -226,7 +228,6 @@ input[type="radio"]:checked + label {
     align-items: center;
     padding-bottom: 20px;
     padding-top: 20px;
-    border-bottom: 1px solid #ededed;
     width: 100%;
   }
 
@@ -247,7 +248,6 @@ input[type="radio"]:checked + label {
 
   .scale-container-secondary {
     max-width: 10%;
-    padding-top: 0;
   }
 
   .scale-label-container {

@@ -2,7 +2,7 @@
 {% load static i18n %}
 
 {% block content %}
-<div class="col-12 col-md-8">
+<div class="col-12 col-md-10 col-lg-8">
 
   <div>
     {% if object.debriefing_text == None %}
@@ -14,7 +14,13 @@
   </div>
 
   {% if object.redirect_enabled %}
-  <a class="flow-btn" href="{{ redirect_target }}">{% translate 'Continue' %}{# djlint:off #}&nbsp;&nbsp;&#8250;{# djlint:on #}</a>
+  <a
+    class="flow-btn"
+    href="{{ redirect_target }}"
+  >
+    <span class="pe-2">{% translate 'Continue' %}</span>
+    <i class="step-chevron bi bi-chevron-right"></i>
+  </a>
   {% endif %}
 
 </div>

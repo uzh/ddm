@@ -39,6 +39,12 @@ This version drops official support for Python versions < 3.12.
   ExceptionLogEntry.exception_type, ScalePoint.heading_label, ScalePoint.input_label, QuestionItem.label, QuestionItem.label_alt, and FilterCondition.source_identifier.
 - Moved URL parameters extracted for a participant from `Particiapnt.extra_data["url_param"]` to dedicated `Participant.url_parameters` attribute.
 
+### Fixed
+
+- Fixed a bug where questionnaire filter conditions comparing numeric answers
+  (e.g. >, <, >=) could produce incorrect results, because it was being compared
+  as text rather than as a number (e.g. "9" was evaluated as greater than "10").
+
 ### Deprecated
 
 - `DataDonation.status` was deprecated and replaced by `DataDonation.data_extraction_state`.

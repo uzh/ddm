@@ -140,6 +140,7 @@ describe("QuestionnaireApp", () => {
     props: {
       questionnaireConfig: questionnaireConfig,
       filterConfig: filterConfig,
+      staticVariables: [],
       actionUrl: actionUrl,
       language: language
     }

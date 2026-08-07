@@ -1,7 +1,7 @@
-import {onMounted, Ref} from 'vue';
+import { onMounted, Ref } from 'vue';
 import { evaluateFilter, evaluateFilterChain } from '@questionnaire/utils/filterEvaluation';
 
-import {FilterConfig, Responses} from "@questionnaire/types/questionnaire";
+import { FilterConfig, Responses } from "@questionnaire/types/questionnaire";
 
 /**
  * Composable handling all logic related to filtering, related visibility, and response mapping.

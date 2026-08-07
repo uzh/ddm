@@ -1,6 +1,18 @@
 {
+  "step-indicator": {
+    "step": "Étape",
+    "instructions": "Instructions",
+    "upload": "Téléverser des données",
+    "review-and-consent": "Vérifier et soumettre",
+    "button-next": "suivant",
+    "button-prev": "précédent"
+  },
   "instructions": {
-    "heading": "Comment ça fonctionne"
+    "heading": "Comment ça fonctionne",
+    "back": "précédent",
+    "next-page": "page suivante",
+    "end": "Fin",
+    "start": "Début"
   },
   "errors": {
     "invalid-zip": "Un fichier ZIP était attendu, mais un fichier {fileType} a été téléchargé.",
@@ -22,21 +34,23 @@
   },
   "file-drop": {
     "heading": "Sélectionner un fichier",
-    "selection-prompt": "Cliquez ici pour sélectionner un fichier",
+    "selection-prompt": "Glissez-déposez un fichier ici, ou cliquez pour en sélectionner un",
     "release-to-select": "Relâchez pour sélectionner le fichier",
     "file-is-being-processed": "Traitement du fichier en cours…",
     "processing-complete": "Traitement terminé",
     "processing-success": "Fichier traité avec succès",
-    "processing-failed": "Le fichier n'a pas pu être traité",
     "choose-different-file": "sélectionner un autre fichier",
-    "retry-hint": "Le fichier sélectionné ne contient peut-être pas les informations nécessaires (voir ci-dessous pour plus de détails). Sélectionnez un autre fichier pour réessayer :"
+    "something-went-wrong": "Une erreur s'est produite lors du traitement du fichier",
+    "retry-hint": "Sélectionnez un autre fichier pour réessayer.",
+    "relevant-data-hint": "Seules les données pertinentes pour l'étude seront extraites.",
+    "upload-info": "Votre fichier est traité localement dans votre navigateur, et aucune donnée n'est transmise au projet avant votre consentement explicite. À l'étape suivante, vous pourrez consulter les données extraites et décider si vous souhaitez les transmettre."
   },
   "extraction-state": {
-    "file" : {
-      "success": "Les données extraites sont affichées ci-dessous.",
+    "file": {
+      "success": "Les données extraites sont affichées à la page suivante.",
       "no-data-extracted": "Aucune information n'a pu être extraite du fichier."
     },
-    "blueprint" : {
+    "blueprint": {
       "success": "Données extraites avec succès.",
       "no-data-extracted": "Aucune donnée pertinente trouvée dans le fichier.",
       "all-missing-fields": "Toutes les entrées du fichier sont incomplètes et ne peuvent pas être extraites.",
@@ -45,12 +59,18 @@
     }
   },
   "feedback": {
+    "check-data-heading": "Vérifier les données extraites",
     "intro-extraction-pending": "Les données suivantes seront extraites",
-    "intro-extraction-complete": "Données extraites",
+    "intro-extraction-complete": "Les données suivantes ont été extraites et seront transmises si vous y consentez.",
+    "intro-nothing-extracted": "Aucune donnée n'a été extraite",
     "show-error-details": "Afficher les détails",
-    "donation-question": "Acceptez-vous de faire don de ces données et de les transmettre ?",
+    "donation-question": "Faire don de ces données ?",
+    "donation-question-combined": "Acceptez-vous de faire don de ces données et de les transmettre ?",
     "donation-agree": "Oui",
-    "donation-disagree": "Non"
+    "donation-disagree": "Non",
+    "details": "Détails",
+    "x-entries-found": "{nEntries} entrées trouvées",
+    "nothing-extracted-header": "Types de données sans résultats extraits"
   },
   "extraction-table": {
     "entry-info": "Affichage des entrées {lower}-{upper} sur {total}",
@@ -59,21 +79,27 @@
     "all-filtered": "Aucune entrée trouvée",
     "show-data": "afficher toutes les données",
     "hide-data": "afficher moins",
-    "page": "Page"
+    "page": "Page",
+    "more-entries": "entrées supplémentaires",
+    "show-complete-list": "afficher la liste complète",
+    "modal-close": "fermer"
   },
   "uploader-app": {
     "next-btn": "Suivant"
   },
   "issue-modal": {
-    "title": "Le don de données n’a pas été finalisé",
-    "none-attempted": "Aucun fichier n'a été téléchargé. \n \n Continuer sans don de données ?",
-    "not-all-attempted": "Certains téléchargements ont été ignorés : {skipped-uploads}. \n \n Continuer avec les fichiers traités jusqu'à présent ?",
+    "title": "Le don de données n'a pas été finalisé",
+    "none-attempted": "Aucun fichier n'a été téléchargé. Continuer sans don de données ?",
+    "not-all-attempted": "Certains téléchargements ont été ignorés : {skipped-uploads}. Continuer avec les fichiers traités jusqu'à présent ?",
     "not-all-consented": "Pour certaines données, il n'a pas été indiqué si elles peuvent être transmises : {blueprints-wo-consent}. \n \n Veuillez vérifier.",
-    "failed-uploaders": "Les téléchargements suivants semblent avoir échoué : {uploads}. \n \n Continuer quand même ?",
+    "failed-uploaders": "Les téléchargements suivants semblent avoir échoué : {uploads}. Continuer quand même ?",
     "continue-anyway": "Continuer quand même",
     "back": "Retour"
   },
   "submitting-modal": {
     "submit-wait": "Traitement du don de données en cours..."
+  },
+  "general": {
+    "step": "Étape"
   }
 }

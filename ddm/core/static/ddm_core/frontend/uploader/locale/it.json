@@ -1,6 +1,18 @@
 {
+  "step-indicator": {
+    "step": "Passaggio",
+    "instructions": "Istruzioni",
+    "upload": "Caricare i dati",
+    "review-and-consent": "Verifica e invio",
+    "button-next": "avanti",
+    "button-prev": "indietro"
+  },
   "instructions": {
-    "heading": "Come funziona"
+    "heading": "Come funziona",
+    "back": "indietro",
+    "next-page": "pagina successiva",
+    "end": "Fine",
+    "start": "Inizio"
   },
   "errors": {
     "invalid-zip": "Era atteso un file ZIP, ma è stato caricato un file {fileType}.",
@@ -22,21 +34,23 @@
   },
   "file-drop": {
     "heading": "Seleziona file",
-    "selection-prompt": "Clicca qui per selezionare un file",
+    "selection-prompt": "Trascina un file qui, oppure clicca per selezionarne uno",
     "release-to-select": "Rilascia per selezionare il file",
     "file-is-being-processed": "Elaborazione del file in corso…",
     "processing-complete": "Elaborazione completata",
     "processing-success": "File elaborato con successo",
-    "processing-failed": "Il file non ha potuto essere elaborato",
     "choose-different-file": "Seleziona un file diverso",
-    "retry-hint": "Il file selezionato potrebbe non contenere le informazioni necessarie (vedi sotto per ulteriori dettagli). Seleziona un file diverso per riprovare:"
+    "something-went-wrong": "Si è verificato un errore durante l'elaborazione del file",
+    "retry-hint": "Seleziona un file diverso per riprovare.",
+    "relevant-data-hint": "Verranno estratti solo i dati rilevanti per lo studio.",
+    "upload-info": "Il file viene elaborato localmente nel browser e nessun dato viene trasmesso al progetto prima del suo consenso esplicito. Nel passaggio successivo potrà visualizzare i dati estratti e decidere se trasmetterli."
   },
   "extraction-state": {
-    "file" : {
-      "success": "Di seguito vengono visualizzati i dati estratti.",
+    "file": {
+      "success": "Nella pagina seguente vengono visualizzati i dati estratti.",
       "no-data-extracted": "Non è stato possibile estrarre informazioni dal file."
     },
-    "blueprint" : {
+    "blueprint": {
       "success": "Dati estratti con successo.",
       "no-data-extracted": "Nessun dato rilevante trovato nel file.",
       "all-missing-fields": "Tutti i record nel file sono incompleti e non possono essere estratti.",
@@ -45,12 +59,18 @@
     }
   },
   "feedback": {
+    "check-data-heading": "Verifica dei dati estratti",
     "intro-extraction-pending": "I seguenti dati verranno estratti",
-    "intro-extraction-complete": "Dati estratti",
+    "intro-extraction-complete": "I seguenti dati sono stati estratti e verranno trasmessi previo consenso.",
+    "intro-nothing-extracted": "Non è stato estratto alcun dato",
     "show-error-details": "Mostra dettagli",
-    "donation-question": "Acconsente a donare e trasmettere questi dati?",
+    "donation-question": "Donare questi dati?",
+    "donation-question-combined": "Acconsente a donare e trasmettere questi dati?",
     "donation-agree": "Sì",
-    "donation-disagree": "No"
+    "donation-disagree": "No",
+    "details": "Dettagli",
+    "x-entries-found": "{nEntries} record trovati",
+    "nothing-extracted-header": "Tipi di dati senza risultati"
   },
   "extraction-table": {
     "entry-info": "Visualizzazione dei record {lower}-{upper} su {total}",
@@ -59,7 +79,10 @@
     "all-filtered": "Nessun record trovato",
     "show-data": "mostra tutti i dati",
     "hide-data": "mostra meno",
-    "page": "Pagina"
+    "page": "Pagina",
+    "more-entries": "altri record",
+    "show-complete-list": "mostra elenco completo",
+    "modal-close": "chiudi"
   },
   "uploader-app": {
     "next-btn": "Avanti"
@@ -75,5 +98,8 @@
   },
   "submitting-modal": {
     "submit-wait": "Elaborazione della donazione dei dati in corso..."
+  },
+  "general": {
+    "step": "Passaggio"
   }
 }

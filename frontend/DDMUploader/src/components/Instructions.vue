@@ -45,150 +45,155 @@ function stepUp(): void {
   }
 }
 
-function setStep(step: number): void {
-  currentStep.value = step;
-  if (tableContainer.value.getBoundingClientRect().top < 0) {
-    tableContainer.value.scrollIntoView();
-  }
-}
-
 const canStepDown = computed(() => currentStep.value > 0);
 const canStepUp = computed(() => currentStep.value < props.instructions.length - 1);
-const currentInstruction = computed(() => props.instructions[currentStep.value].text);
 </script>
 
 <template>
   <div
     ref="instruction-heading"
     class="d-flex align-items-center"
-  >
-    <span class="section-icon"><i class="bi bi-list-ol" /></span>
-    <span class="section-heading">{{ t("instructions.heading") }}</span>
-  </div>
+  />
 
-  <div class="d-flex flex-row align-items-center carousel">
-    <div
-      v-if="props.instructions.length > 1"
-      class="control-container hidden-small"
-    />
-
-    <div class="carousel-inner">
-      <transition
-        name="fade"
-        mode="out-in"
-      >
-        <component
-          :is="'div'"
-          :key="currentStep"
-          class="carousel-item active"
-          v-html="currentInstruction"
-        />
-      </transition>
-    </div>
-
-    <div
-      v-if="props.instructions.length > 1"
-      class="control-container hidden-small"
-    />
-  </div>
-
-  <div
-    v-if="props.instructions.length > 1"
-    class="text-center d-flex flex-row align-items-center justify-content-center pt-3"
-  >
-    <div
-      v-if="props.instructions.length > 1"
-      class="control-container d-flex justify-content-start"
-    >
-      <button
-        v-if="canStepDown"
-        class="button grey-button button-small"
-        :class="{ 'btn-disabled': currentStep === 0 }"
-        @click="stepDown"
-      >
-        <i class="bi bi-chevron-left" />
-        <span class="visually-hidden">Previous</span>
-      </button>
-    </div>
-
-    <div class="d-flex flex-wrap flex-row align-items-center justify-content-center">
-      <template
+  <div class="instruction-container">
+    <div class="instruction-content">
+      <div
         v-for="(i, index) in props.instructions"
+        v-show="index === currentStep"
         :key="index"
-      >
-        <button
-          type="button"
-          class="button grey-button button-small m-1"
-          :class="{ 'active selected-button': index === currentStep }"
-          :aria-label="`Slide ${index + 1}`"
-          @click="setStep(index)"
-        >
-          <span>{{ index + 1 }}</span>
-        </button>
-      </template>
+        class="instruction-page"
+        v-html="i.text"
+      />
     </div>
-
     <div
-      v-if="props.instructions.length > 1"
-      class="control-container d-flex justify-content-end"
+      v-if="instructions.length > 1"
+      class="instruction-nav"
     >
-      <button
-        v-if="canStepUp"
-        class="button grey-button button-small"
-        :class="{ 'btn-disabled': currentStep === props.instructions.length - 1 }"
-        @click="stepUp"
-      >
-        <i class="bi bi-chevron-right" />
-        <span class="visually-hidden">Next</span>
-      </button>
+      <div class="instruction-nav-prev">
+        <button
+          class="ddm-secondary-button"
+          :class="{ 'btn-disabled': currentStep === 0 }"
+          :disabled="!canStepDown"
+          @click="stepDown"
+        >
+          <template v-if="canStepDown">
+            <i class="step-chevron bi bi-chevron-left" />
+            <span class="ps-2">{{ t("instructions.back") }}</span>
+          </template>
+          <template v-else>
+            <span>{{ t("instructions.start") }}</span>
+          </template>
+        </button>
+      </div>
+
+      <div class="instruction-nav-dots">
+        <div
+          v-for="(i, index) in props.instructions"
+          :key="index"
+          class="instruction-nav-dot"
+          :class="{ 'active': currentStep === index }"
+        />
+      </div>
+
+      <div class="instruction-nav-next">
+        <button
+          class="ddm-secondary-button"
+          :class="{ 'btn-disabled': currentStep === props.instructions.length - 1 }"
+          :disabled="!canStepUp"
+          @click="stepUp"
+        >
+          <template v-if="canStepUp">
+            <span class="pe-2">{{ t("instructions.next-page") }}</span>
+            <i class="step-chevron bi bi-chevron-right" />
+          </template>
+          <template v-else>
+            <span>{{ t("instructions.end") }}</span>
+          </template>
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
 @import "@uploader/assets/styles/buttons.css";
-@import "@uploader/assets/styles/fonts.css";
+@import "@uploader/assets/styles/typography.css";
 
-.carousel {
-  min-height: 250px;
-  padding-top: 20px;
+.step-chevron {
+  font-size: 0.8rem;
 }
 
-.control-container {
-  width: 3rem;
+.instruction-container {
+  border: var(--border-components);
+  border-radius: var(--border-radius-components);
+  background: var(--bg-components);
 }
 
-.carousel-inner {
-  padding-left: 42px;
-  padding-right: 42px;
+.instruction-content {
+  padding: 25px;
+  min-height: 150px;
 }
 
-@media (min-width: 768px) {
-  .small-only {
-    display: none !important;
+.instruction-page {
+  overflow-y: scroll;
+}
+
+.instruction-nav {
+  border-top: 1px solid var(--lightgrey);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 20px;
+}
+
+.instruction-nav-dots,
+.instruction-nav-next,
+.instruction-nav-prev {
+  flex: 1;
+}
+.instruction-nav-next,
+.instruction-nav-prev {
+  order: 1;
+}
+.instruction-nav-next {
+  text-align: right;
+}
+
+.instruction-nav-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  order: 0;
+  flex-basis: 100%;
+  padding-bottom: 15px;
+}
+.instruction-nav-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--lightgrey);
+  border: none;
+  padding: 0;
+}
+.instruction-nav-dot.active {
+  background: var(--ddm-primary-accent);
+  width: 16px;
+  border-radius: 4px;
+}
+
+@media(min-width: 768px) {
+  .instruction-nav-dots,
+  .instruction-nav-next,
+  .instruction-nav-prev {
+    order: 1;
   }
-}
 
-@media (max-width: 767px) {
-  .hidden-small {
-    display: none;
+  .instruction-nav-dots {
+    flex-basis: auto;
+    padding-bottom: 0;
   }
-
-  .carousel-inner {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-}
-.carousel-item {
-  transition: transform 0.3s ease, opacity 0.3s ease-out;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.15s;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
 }
 </style>

@@ -128,18 +128,12 @@ onUnmounted(() => {
         aria-labelledby="modal-title"
         tabindex="-1"
       >
-        <div class="modal-body pt-4 pt-md-5">
-          <h2
+        <div class="modal-body">
+          <h3
             id="modal-title"
-            class="visually-hidden"
           >
             {{ t("issue-modal.title") }}
-          </h2>
-
-          <div class="pb-2 pb-md-0 ps-md-2 pe-md-3 text-center">
-            <i class="bi bi-info-circle-fill fs-1" />
-          </div>
-
+          </h3>
           <div class="modal-text">
             <p
               v-if="unattendedUploaderShare === 1"
@@ -171,7 +165,7 @@ onUnmounted(() => {
         <div class="modal-footer">
           <button
             type="button"
-            class="button black-button"
+            class="ddm-primary-button-base ddm-primary-button"
             @click="hideModal"
           >
             {{ t("issue-modal.back") }}
@@ -180,7 +174,7 @@ onUnmounted(() => {
           <button
             v-if="canContinueAnyway"
             type="button"
-            class="button grey-button"
+            class="ddm-primary-button-base"
             @click="hideModal(); emit('continueAnyway')"
           >
             {{ t("issue-modal.continue-anyway") }}
@@ -213,7 +207,7 @@ onUnmounted(() => {
   background: white;
   z-index: 2000;
   max-height: 90%;
-  border-radius: .25rem;
+  border-radius: var(--border-radius-components);
 }
 
 .modal-backdrop {
@@ -227,7 +221,7 @@ onUnmounted(() => {
 
 .modal-body {
   display: flex;
-  flex-direction: column;
+  flex-direction: column !important;
   overflow: hidden;
   flex: 1;
   min-height: 0;

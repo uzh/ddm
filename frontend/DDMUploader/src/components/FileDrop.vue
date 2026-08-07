@@ -175,50 +175,44 @@ const extractionNoData = computed(() =>
 
 <template>
   <div class="ddm-file-drop d-lg-flex flex-row align-items-center justify-content-between">
-    <div class="pe-5 pb-3 pb-lg-0 d-flex align-items-center ">
-      <span class="section-icon">
-        <i
-          v-if="['success', 'partial'].includes(props.extractionState)"
-          class="bi bi-check-square fs-2 pe-3 text-success"
-        />
-        <i
-          v-else
-          class="bi bi-upload fs-2 pe-3"
-        />
-      </span>
-      <span class="section-heading">{{ t("file-drop.heading") }}</span>
-    </div>
-
     <div class="flex-grow-1">
       <div
-        class="border rounded text-center position-relative bg-lightgrey"
+        class="text-center position-relative"
         :class="fileSelectorBorderClass"
       >
         <!-- Processing pending -->
         <div
           v-if="showFileSelector"
-          class="p-4 ddm-dropzone-clickable"
+          class="p-4 ddm-dropzone ddm-dropzone-clickable"
           :class="{ 'dropzone-hover': isDragging }"
           @dragover.prevent="isDragging = true"
           @dragleave.prevent="isDragging = false"
           @drop="handleDrop"
           @click="$refs.fileInput.click()"
         >
-          <p class="mb-0">
-            <i class="bi bi-upload fs-5 pe-3" />
+          <div class="dropzone-icon">
+            <i class="bi bi-upload" />
+          </div>
+
+          <div class="dropzone-label">
             <span
               v-if="!isDragging"
-              class="ps-2 fw-bold fs-6"
+              class="fw-bold fs-6"
             >
               {{ t('file-drop.selection-prompt') }}
             </span>
             <span
               v-if="isDragging"
-              class="ps-2 fw-bold fs-6"
+              class="fw-bold fs-6"
             >
               {{ t('file-drop.release-to-select') }}
             </span>
-          </p>
+          </div>
+
+          <div class="dropzone-info">
+            {{ t('file-drop.relevant-data-hint') }}
+          </div>
+
           <input
             ref="fileInput"
             type="file"
@@ -231,73 +225,96 @@ const extractionNoData = computed(() =>
         <!-- Processing ongoing -->
         <div
           v-else-if="showProcessingIndicator"
-          class="d-flex align-items-center justify-content-center p-4"
+          class="ddm-dropzone"
         >
-          <span
-            class="spinner-border float-right me-3"
-            role="status"
-          >
-            <span class="sr-only" />
-          </span>
-          <p class="mb-0">
+          <div class="dropzone-icon">
+            <span
+              class="spinner-border float-right"
+              role="status"
+            >
+              <span class="sr-only" />
+            </span>
+          </div>
+
+          <div class="dropzone-info">
             {{ t('file-drop.file-is-being-processed') }}
-          </p>
+          </div>
         </div>
 
         <!-- Processing complete -->
         <div
           v-else-if="showResults"
-          class="p-4"
+          class="ddm-dropzone"
         >
-          <div v-if="extractionSuccess">
-            <p class="fs-5 fw-bold text-success">
-              <i class="bi bi-check-circle pe-3" />{{ t('file-drop.processing-success') }}
-            </p>
-            {{ t('extraction-state.file.success') }}
-          </div>
+          <template v-if="extractionSuccess">
+            <div class="dropzone-icon fc-success">
+              <i class="bi bi-check-circle" />
+            </div>
 
-          <div v-else-if="extractionFailed">
-            <p class="fs-5 fw-bold color-red">
-              {{ t('file-drop.processing-failed') }}
-            </p>
+            <div class="dropzone-label">
+              {{ t('file-drop.processing-success') }}
+            </div>
 
-            <div v-if="props.generalErrors.length">
+            <div class="dropzone-info">
+              {{ t('extraction-state.file.success') }}
+            </div>
+          </template>
+
+          <template v-else-if="extractionFailed">
+            <div class="dropzone-label">
+              {{ t('file-drop.something-went-wrong') }}
+            </div>
+
+            <div
+              v-if="props.generalErrors.length"
+              class="dropzone-info error-info-container"
+            >
               <p
                 v-for="(error, i) in props.generalErrors"
                 :key="i"
-                class="pt-3 color-darkred"
+                class="pt-3 fc-error"
               >
                 {{ t(error.i18nDetail, error.context) }}
               </p>
             </div>
 
-            <p class="pt-2">
+            <div class="dropzone-info">
               {{ t('file-drop.retry-hint') }}
+            </div>
+
+            <div class="dropzone-retry">
               <button
-                class="button grey-button border border-secondary mt-2"
+                class="ddm-secondary-button ddm-primary-button mt-2"
                 @click="chooseDifferentFile"
               >
                 {{ t('file-drop.choose-different-file') }}
               </button>
-            </p>
-          </div>
+            </div>
+          </template>
 
-          <div v-else-if="extractionNoData">
-            <p class="fs-5 fw-bold">
+          <template v-else-if="extractionNoData">
+            <div class="dropzone-icon">
+              <i class="bi bi-upload fs-4 pb-4" />
+            </div>
+
+            <div class="dropzone-label">
               {{ t('file-drop.processing-complete') }}
-            </p>
-            {{ t('extraction-state.file.no-data-extracted') }}
-          </div>
+            </div>
+
+            <div class="dropzone-info">
+              {{ t('extraction-state.file.no-data-extracted') }}
+            </div>
+          </template>
         </div>
       </div>
 
       <!-- Retry button -->
       <div
         v-if="showRetryButton"
-        class="pt-2 w-100 text-center"
+        class="pt-2 w-100 text-center retry-button-container"
       >
         <button
-          class="button grey-button button-small muted-button font-size-small"
+          class="ddm-secondary-button"
           @click="chooseDifferentFile"
         >
           {{ t('file-drop.choose-different-file') }}
@@ -305,14 +322,83 @@ const extractionNoData = computed(() =>
       </div>
     </div>
   </div>
+
+  <div class="upload-info">
+    <div class="upload-info-icon">
+      <i class="bi bi-lock-fill" />
+    </div>
+    <div class="upload-info-text">
+      {{ t('file-drop.upload-info') }}
+    </div>
+  </div>
 </template>
 
 <style scoped>
 @import "@uploader/assets/styles/buttons.css";
 
+.ddm-dropzone {
+  border: var(--border-components);
+  border-radius: var(--border-radius-components);
+  background: var(--bg-components);
+  min-height: 300px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .ddm-dropzone-clickable {
   cursor: pointer;
 }
+
+.ddm-dropzone-clickable:hover {
+  background: color-mix(in oklab, var(--ddm-primary-accent), white 90%);
+}
+
+.dropzone-icon {
+  padding-bottom: 10px;
+  font-size: 1.5rem;
+}
+
+.dropzone-label {
+  font-weight: bold;
+
+}
+
+.dropzone-info {
+  color: var(--font-color-secondary);
+  font-size: var(--fs-secondary);
+  padding-top: 4px;
+}
+
+.error-info-container {
+  border: 1px solid var(--ddm-error);
+  border-radius: var(--border-radius);
+  background: color-mix(in oklab, var(--ddm-error), white 95%);
+  margin-top: 15px;
+  margin-bottom: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.upload-info {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid grey;
+  border-radius: 3px;
+  background: #e1ffe9;
+  color: var(--font-color-secondary);
+  font-size: var(--fs-secondary);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.upload-info-icon {
+  padding-right: 10px;
+}
+
 .bg-lightgrey {
   background-color: var(--ddm-file-bg);
 }

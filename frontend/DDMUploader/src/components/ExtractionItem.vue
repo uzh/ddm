@@ -45,7 +45,7 @@ import {ProcessingError} from "@uploader/types/ProcessingError";
 import {EXTRACTION_STATES} from "@uploader/utils/stateCatalog";
 import ExtractionTable from "@uploader/components/ExtractionTable.vue";
 import ConsentQuestion from "@uploader/components/ConsentQuestion.vue";
-import {computed} from "vue";
+import {computed, ref} from "vue";
 import {useI18n} from "vue-i18n";
 
 const { t, te, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -99,93 +99,109 @@ const extractionFailed = computed(() => props.extractionState == EXTRACTION_STAT
 const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null): void => {
   emit('consentUpdated', consent, blueprintId);
 }
+
+const detailsExpanded = ref(extractionSuccess.value);
 </script>
 
 <template>
-  <div class="d-flex flex-column align-items-start pt-4 pb-4 blueprint-row">
-    <div class="d-flex flex-row align-items-start pb-1">
-      <div class="status-icon">
-        <i :class="iconClass" />
-      </div>
-      <div class="fw-bold">
-        {{ blueprint.name }}
-      </div>
-    </div>
+  <div class="py-2">
+    <div
+      class="extraction-container"
+      :class="{ 'success': extractionSuccess, 'pending': extractionPending, 'failed': extractionFailed }"
+    >
+      <div class="extraction-header">
+        <div class="extraction-icon">
+          <i :class="iconClass" />
+        </div>
 
-    <div class="d-flex flex-row align-items-start w-100 overflow-hidden">
-      <div class="status-icon opacity-0">
-        <i :class="iconClass" />
-      </div>
-
-      <div class="d-flex flex-column w-100 extraction-item-content">
-        <!-- Pending -->
-        <template v-if="extractionPending">
-          <div>{{ blueprint.description }}</div>
-        </template>
-
-        <!-- Success -->
-        <template v-else-if="extractionSuccess">
-          <div class="pb-3">
-            {{ blueprint.description }}
+        <div class="extraction-header-content">
+          <div class="extraction-heading">
+            <template v-if="extractionPending">
+              <span class="fw-bold">{{ blueprint.name }}:</span> {{ blueprint.description }}
+            </template>
+            <template v-else>
+              <span class="fw-bold">{{ blueprint.name }}</span>
+            </template>
           </div>
+
+          <div class="extraction-header-info">
+            <template v-if="extractionSuccess">
+              {{ t('feedback.x-entries-found', { nEntries: extractionOutcome.extractedData.length }) }}
+            </template>
+            <template v-if="nothingExtracted">
+              <div>{{ t(`${extractionMessage}`) }}</div>
+            </template>
+            <template v-if="extractionFailed">
+              <div>{{ extractionErrorText }}</div>
+            </template>
+          </div>
+        </div>
+
+        <div v-if="!extractionPending && !nothingExtracted">
+          <button
+            class="expansion-button"
+            type="button"
+            @click="detailsExpanded = !detailsExpanded"
+          >
+            {{ t('feedback.details') }}
+            <span
+              class="details-expansion-icon"
+              :class="{expanded: detailsExpanded}"
+            >▸</span>
+          </button>
+        </div>
+      </div>
+
+      <div
+        v-if="!extractionPending && !nothingExtracted"
+        class="extraction-info"
+        :class="{ expanded: detailsExpanded }"
+      >
+        <!-- Success -->
+        <template v-if="extractionSuccess">
           <div>
             <ExtractionTable
+              :blueprint-id="blueprint.id"
+              :blueprint-name="blueprint.name"
               :blueprint-outcome="extractionOutcome"
             />
           </div>
-
-          <div
-            v-if="combinedConsent === false"
-            class="pt-4 pb-1"
-          >
-            <ConsentQuestion
-              :combined-consent="combinedConsent"
-              :blueprint-id="blueprint.id"
-              @consent-updated="passConsentUpdateToParent"
-            />
-          </div>
-        </template>
-
-        <!-- Nothing extracted -->
-        <template v-else-if="nothingExtracted">
-          <div>{{ t(`${extractionMessage}`) }}</div>
         </template>
 
         <!-- Failed -->
         <template v-else-if="extractionFailed">
-          <div>
-            {{ t(`${extractionMessage}`) }}
-            {{ extractionErrorText }}
-          </div>
-
           <div v-if="hasDetailErrors">
-            <details>
-              <summary
-                :id="'error-details-summary-' + blueprint.id"
-                role="button"
-                aria-expanded="false"
+            <div
+              role="region"
+              :aria-labelledby="'error-details-summary-' + blueprint.id"
+            >
+              <template
+                v-for="(error, i) in errors"
+                :key="i"
               >
-                {{ t('feedback.show-error-details') }}
-              </summary>
-              <div
-                role="region"
-                :aria-labelledby="'error-details-summary-' + blueprint.id"
-              >
-                <template
-                  v-for="(error, i) in errors"
-                  :key="i"
+                <p
+                  v-if="te(`${error.i18nDetail}-detail`)"
+                  class="error-details"
                 >
-                  <p
-                    v-if="te(`${error.i18nDetail}-detail`)"
-                    class="error-details"
-                  >
-                    {{ t(`${error.i18nDetail}-detail`, error.context) }}
-                  </p>
-                </template>
-              </div>
-            </details>
+                  {{ t(`${error.i18nDetail}-detail`, error.context) }}
+                </p>
+              </template>
+            </div>
           </div>
         </template>
+      </div>
+
+      <div
+        v-if="extractionSuccess && combinedConsent === false"
+        class="extraction-consent-container"
+      >
+        <div>
+          <ConsentQuestion
+            :combined-consent="combinedConsent"
+            :blueprint-id="blueprint.id"
+            @consent-updated="passConsentUpdateToParent"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -196,18 +212,75 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
   color: #d0d0d0;
 }
 
-.extraction-item-content {
-  min-width: 0;
-}
-
-.status-icon {
+.extraction-icon {
   padding-right: 10px;
 }
 
-.blueprint-row {
-  padding-top: .5rem;
-  padding-bottom: .5rem;
-  border-top: 1px solid #dee2e6;
+.extraction-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: var(--border-components);
+  border-radius: var(--border-radius-components);
+  border-left: 4px solid var(--border-color-components);
+}
+
+.extraction-container.success {
+  border-left-color: var(--ddm-success);
+}
+
+.extraction-container.error {
+  border-left-color: var(--ddm-error);
+}
+
+.extraction-header {
+  background: var(--bg-components);
+  padding: 15px 20px;
+  border-radius: var(--border-radius-components);
+  display: flex;
+  flex-direction: row;
+}
+
+.extraction-header-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  flex-grow: 1;
+}
+
+.extraction-header-info {
+  font-size: var(--fs-secondary);
+  color: var(--font-color-secondary);
+}
+
+.extraction-info {
+  padding: 6px 20px 12px;
+  font-size: 0.8rem !important;
+  color: var(--font-color-secondary);
+  display: none;
+}
+
+.extraction-info.expanded {
+  display: block;
+}
+
+.extraction-consent-container {
+  background: var(--bg-components);
+  padding: 10px 20px;
+  border-top: 1px solid var(--border-color-components);
+  border-bottom-left-radius: var(--border-radius-components);
+  border-bottom-right-radius: var(--border-radius-components);
+}
+
+.expansion-button {
+  font-family: var(--ff-mono), monospace;
+  font-size: var(--fs-secondary-mono);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--ddm-primary-accent);
 }
 
 details {
@@ -220,8 +293,16 @@ details {
   color: #3d3d3d;
 }
 
+.details-expansion-icon {
+  display: inline-block !important;
+}
+
+.details-expansion-icon.expanded {
+  transform: rotate(90deg);
+}
+
 .error-details {
-   white-space: pre-line;
+  white-space: pre-line;
 }
 
 summary {

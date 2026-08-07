@@ -4,13 +4,15 @@
 {% get_current_language as LANGUAGE_CODE %}
 
 {% block content %}
-<div class="container">
-    <div id="uapp"
-         class="container text-black ps-0 pe-0"
-         data-action-url='{{ request.build_absolute_uri }}'
-         data-exception-url='{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url "ddm_logging:exceptions_api" project_url_id %}'
-         data-language='{{ LANGUAGE_CODE|slice:"0:2" }}'
-         data-csrf-token="{{ csrf_token }}"
+
+  <div class="col-12 col-lg-9 col-xl-8">
+    <div
+      id="uapp"
+      class="container text-black ps-0 pe-0"
+      data-action-url='{{ request.build_absolute_uri }}'
+      data-exception-url='{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url "ddm_logging:exceptions_api" project_url_id %}'
+      data-language='{{ LANGUAGE_CODE|slice:"0:2" }}'
+      data-csrf-token="{{ csrf_token }}"
     >
       {{ uploader_configs|json_script:"config-data" }}
       {{ custom_translations|json_script:"custom-translations" }}
@@ -18,7 +20,7 @@
       <uapp></uapp>
       {# djlint:on #}
     </div>
-    {% render_bundle "ddm_uploader_frontend" config="DDM_UPLOADER" %}
+  </div>
+  {% render_bundle "ddm_uploader_frontend" config="DDM_UPLOADER" %}
 
-</div>
 {% endblock content %}

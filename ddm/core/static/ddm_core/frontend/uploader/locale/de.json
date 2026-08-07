@@ -1,6 +1,18 @@
 {
+  "step-indicator": {
+    "step": "Schritt",
+    "instructions": "Anleitung",
+    "upload": "Daten hochladen",
+    "review-and-consent": "Prüfen & übermitteln",
+    "button-next": "weiter",
+    "button-prev": "zurück"
+  },
   "instructions": {
-    "heading": "So funktioniert es"
+    "heading": "So funktioniert es",
+    "back": "zurück",
+    "next-page": "nächste Seite",
+    "end": "Ende",
+    "start": "Anfang"
   },
   "errors": {
     "invalid-zip": "Eine ZIP-Datei wurde erwartet, aber eine {fileType}-Datei wurde hochgeladen.",
@@ -22,18 +34,20 @@
   },
   "file-drop": {
     "heading": "Datei auswählen",
-    "selection-prompt": "Hier klicken um eine Datei auszuwählen",
+    "selection-prompt": "Datei hierher ziehen oder klicken um Datei auszuwählen",
     "release-to-select": "Loslassen, um Datei auszuwählen",
     "file-is-being-processed": "Datei wird verarbeitet…",
     "processing-complete": "Verarbeitung abgeschlossen",
     "processing-success": "Datei erfolgreich verarbeitet",
-    "processing-failed": "Datei konnte nicht verarbeitet werden",
-    "choose-different-file": "eine andere Datei auswählen",
-    "retry-hint": "Die ausgewählte Datei enthält möglicherweise nicht die benötigten Informationen (siehe unten für weitere Details). Eine andere Datei auswählen, um es erneut zu versuchen:"
+    "choose-different-file": "neue Datei auswählen",
+    "something-went-wrong": "Bei der Verarbeitung der Datei ging etwas schief",
+    "retry-hint": "Eine andere Datei auswählen, um es erneut zu versuchen.",
+    "relevant-data-hint": "Nur die für die Studie relevanten Daten werden ausgelesen.",
+    "upload-info": "Ihre Datei wird lokal in Ihrem Browser verarbeitet und vor Ihrer expliziten Zustimmung werden keine Daten an das Projekt übermittelt. Im nächsten Schritt können Sie die ausgelesenen Daten anschauen und entscheiden, ob Sie sie übermitteln möchten."
   },
   "extraction-state": {
     "file" : {
-      "success": "Unten werden die ausgelesenen Daten angezeigt.",
+      "success": "Auf der nächsten Seite werden die ausgelesenen Daten angezeigt.",
       "no-data-extracted": "Es konnten keine Informationen aus der Datei ausgelesen werden."
     },
     "blueprint" : {
@@ -45,12 +59,18 @@
     }
   },
   "feedback": {
+    "check-data-heading": "Ausgelesene Daten prüfen",
     "intro-extraction-pending": "Die folgenden Daten werden ausgelesen",
-    "intro-extraction-complete": "Ausgelesene Daten",
+    "intro-extraction-complete": "Die folgenden Daten wurden ausgelesen und werden bei Zustimmung übermittelt",
+    "intro-nothing-extracted": "Es wurden keine Daten ausgelesen",
     "show-error-details": "Details anzeigen",
-    "donation-question": "Sind Sie damit einverstanden, diese Daten zu spenden und zu übermitteln?",
+    "donation-question": "Diese Daten spenden?",
+    "donation-question-combined": "Möchten Sie die oben gelisteten Daten spenden?",
     "donation-agree": "Ja",
-    "donation-disagree": "Nein"
+    "donation-disagree": "Nein",
+    "details": "Details",
+    "x-entries-found": "Es wurden {nEntries} Einträge gefunden",
+    "nothing-extracted-header": "Datentypen ohne ausgelesene Daten"
   },
   "extraction-table": {
     "entry-info": "Einträge {lower}-{upper} von {total} werden angezeigt",
@@ -59,21 +79,27 @@
     "all-filtered": "Keine Einträge gefunden",
     "show-data": "alle Daten anzeigen",
     "hide-data": "weniger anzeigen",
-    "page": "Seite"
+    "page": "Seite",
+    "more-entries": "weitere Einträge",
+    "show-complete-list": "vollständige Liste anzeigen",
+    "modal-close": "schliessen"
   },
   "uploader-app": {
     "next-btn": "Weiter"
   },
   "issue-modal": {
     "title": "Datenspende wurde nicht abgeschlossen",
-    "none-attempted": "Es wurden keine Dateien hochgeladen. \n \n Ohne Datenspende fortfahren?",
-    "not-all-attempted": "Einige Uploads wurden übersprungen: {skipped-uploads}.  \n \n Mit den bisher verarbeiteten Dateien fortfahren?",
+    "none-attempted": "Es wurden keine Dateien hochgeladen. Ohne Datenspende fortfahren?",
+    "not-all-attempted": "Einige Uploads wurden übersprungen: {skipped-uploads}.  Mit den bisher verarbeiteten Dateien fortfahren?",
     "not-all-consented": "Es muss für alle ausgelesenen Daten angegeben werden, ob diese übermittelt werden dürfen. \n \n Für die folgenden Daten fehlt diese Information noch: {blueprints-wo-consent}.",
-    "failed-uploaders": "Die folgenden Uploads scheinen nicht funktioniert zu haben: {uploads}. \n \n Trotzdem fortfahren?",
+    "failed-uploaders": "Die folgenden Uploads scheinen nicht funktioniert zu haben: {uploads}. Trotzdem fortfahren?",
     "continue-anyway": "Trotzdem fortfahren",
     "back": "Zurück"
   },
   "submitting-modal": {
     "submit-wait": "Die Datenspende wird verarbeitet..."
+  },
+  "general": {
+    "step": "Schritt"
   }
 }

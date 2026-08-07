@@ -40,19 +40,26 @@
       <div><i class="bi bi-2-circle-fill"></i></div>
       <div class="data-flow-border-bottom"></div>
     </div>
+
     <div class="col-12 col-sm-11">
       {# File Validation #}
       {% include "ddm_datadonation/blueprint/form_sections/file_validation.html" %}
     </div>
+
     <div class="col-sm-1 data-flow-container">
       <div class="data-flow-border-top"></div>
       <div><i class="bi bi-3-circle-fill"></i></div>
       <div class="data-flow-border-bottom border-0"></div>
     </div>
+
     <div class="col-12 col-sm-11">
       {# Data Extraction #}
       {% include "ddm_datadonation/blueprint/form_sections/data_extraction_create.html" %}
     </div>
+
+    {# Advanced Settings #}
+    {% include "ddm_datadonation/blueprint/form_sections/advanced_settings.html" %}
+
   </div>
 
 {% endblock form_content %}

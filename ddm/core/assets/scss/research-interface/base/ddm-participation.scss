@@ -1,0 +1,52 @@
+#ddm-participation-body {
+  background: var(--bg-color-light);
+  font-family: var(--ff-text), sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .modal-dialog, .modal-content {
+    min-height: 33vh;
+    max-height: 800px;
+  }
+}
+
+#ddm-participation-header {
+  background: white;
+}
+
+
+#ddm-participation-main {
+  .flow-btn {
+    background-color: var(--color-main-green-darker);
+    font-size: 1.1rem;
+    min-width: 140px;
+    float: right;
+    color: white !important;
+    transition: none;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    margin-top: 20px;
+    padding: .375rem;
+    border-radius: .25rem;
+    border: none;
+  }
+  .flow-btn:hover {
+      background-color: var(--color-main-green);
+      color: white !important;
+  }
+}
+
+
+#ddm-participation-footer {
+  font-size: 0.9rem;
+
+  a {
+    color: var(--color-darkgrey);
+  }
+  a:hover {
+    color: black;
+  }
+}

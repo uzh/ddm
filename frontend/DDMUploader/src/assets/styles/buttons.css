@@ -1,3 +1,45 @@
+.ddm-primary-button-base {
+  border: 1px solid var(--lightgrey);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  background: none;
+  padding: 8px 16px 8px 16px;
+  font-size: var(--fs-primary);
+  color: var(--font-color-primary);
+}
+
+.ddm-primary-button {
+  background-color: var(--ddm-primary-accent) !important;
+  color: var(--font-color-primary-accent) !important;
+}
+
+.ddm-secondary-button {
+  border: 1px solid var(--lightgrey);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  background: none;
+  padding: 8px 16px 8px 16px;
+  font-size: var(--fs-secondary);
+  color: var(--font-color-secondary);
+}
+
+.ddm-primary-button-base:hover,
+.ddm-primary-button:hover,
+.ddm-secondary-button:hover {
+  filter: brightness(90%);
+}
+
+.ddm-secondary-button:disabled {
+  cursor: auto;
+  filter: none;
+  color: var(--grey-disabled);
+  border-color: var(--grey-disabled);
+}
+
+.ddm-secondary-button:disabled:hover {
+  filter: none;
+}
+
 .button {
     display: inline-block;
     font-weight: normal;

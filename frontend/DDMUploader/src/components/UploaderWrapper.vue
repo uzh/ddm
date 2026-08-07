@@ -20,6 +20,7 @@ import {Instruction} from "@uploader/types/Instruction";
 import {UPLOADER_STATES, UploaderStates} from "@uploader/types/UploaderState";
 
 import {EXTRACTION_STATES} from "@uploader/utils/stateCatalog";
+import StepIndicator from "@uploader/components/StepIndicator.vue";
 
 const { t, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
@@ -42,6 +43,8 @@ const emit = defineEmits<{
    blueprintStates: BlueprintExtractionStates,
    extractedData: Record<number, BlueprintExtractionOutcome>
   ): void;
+
+  (e: 'proceed'): void;
 }>()
 
 let uploaderState: Ref<UploaderStates> = ref(UPLOADER_STATES.IDLE);
@@ -92,13 +95,17 @@ watch(blueprintConsentMap, () => {
  */
 function emitStatus(): void {
   emit(
-      'statusChanged',
-      props.componentId,
-      blueprintConsentMap.value,
-      extractionState.value,
-      blueprintExtractionStates.value,
-      blueprintOutcomeMap
+    'statusChanged',
+    props.componentId,
+    blueprintConsentMap.value,
+    extractionState.value,
+    blueprintExtractionStates.value,
+    blueprintOutcomeMap
   );
+}
+
+function emitProceed(): void {
+  emit('proceed');
 }
 
 onMounted(() => {
@@ -114,19 +121,88 @@ const showCombinedConsent = computed(() =>
   props.combinedConsent === true && isExtractionSuccessful.value
 );
 
+
+/* Step Handling */
+const INSTRUCTIONS_STEP = 'instructions';
+const UPLOAD_STEP = 'upload';
+const REVIEW_STEP = 'review-and-consent';
+
+const steps = [
+  INSTRUCTIONS_STEP,
+  UPLOAD_STEP,
+  REVIEW_STEP,
+]
+
+const activeSteps = computed(() => {
+  if (props.instructionConfig.length > 0) {
+    return steps;
+  } else {
+    return steps.filter(step => step !== INSTRUCTIONS_STEP);
+  }
+})
+
+const activeStep = ref(0);
+
+const activeStepName = computed(() => {
+  return activeSteps.value[activeStep.value];
+})
+
+function nextStep(): void {
+  if (activeStep.value < (activeSteps.value.length - 1)) {
+    activeStep.value = activeStep.value + 1;
+  } else if (activeStep.value === (activeSteps.value.length - 1)) {
+    emitProceed();
+  }
+}
+
+function prevStep(): void {
+  if (activeStep.value > 0) {
+    activeStep.value = activeStep.value - 1;
+  }
+}
+
+const nextButtonHighlighted: Ref<boolean> = computed(() => {
+  if (activeSteps.value[activeStep.value] === UPLOAD_STEP) {
+    return !(extractionState.value === EXTRACTION_STATES.FAILED || extractionState.value === EXTRACTION_STATES.NOT_ATTEMPTED);
+  } else if (activeSteps.value[activeStep.value] === REVIEW_STEP) {
+    if (extractionState.value === EXTRACTION_STATES.FAILED || extractionState.value === EXTRACTION_STATES.NOT_ATTEMPTED) {
+      return false;
+    }
+
+    return allConsented.value;
+  }
+  return true;
+})
+
+const allConsented: Ref<boolean> = computed(() => {
+  console.log(blueprintConsentMap.value)
+  for (const blueprint of Object.keys(blueprintConsentMap.value)) {
+    if (blueprintConsentMap.value[blueprint] === null &&
+        blueprintExtractionStates.value[blueprint].state === EXTRACTION_STATES.DATA_EXTRACTED) {
+      return false;
+    }
+  }
+  return true;
+})
+
 </script>
 
 <template>
-  <div class="uploader-name">
-    {{ name }}
-  </div>
   <div
     :id="'ddm-uploader-' + componentId"
     class="uploader-container"
   >
+    <div class="uploader-section mb-0 pb-0 pt-0">
+      <StepIndicator
+        :has-instructions="instructionConfig.length > 0"
+        :current-step="activeStep"
+      />
+    </div>
+
     <div
       v-if="instructionConfig.length > 0"
-      class="uploader-section"
+      v-show="activeStepName === INSTRUCTIONS_STEP"
+      class="uploader-section pt-3"
     >
       <Instructions
         :instructions="instructionConfig"
@@ -134,7 +210,10 @@ const showCombinedConsent = computed(() =>
       />
     </div>
 
-    <div class="uploader-section">
+    <div
+      v-show="activeStepName === UPLOAD_STEP"
+      class="uploader-section pt-3"
+    >
       <FileDrop
         :expects-zip="props.expectsZip"
         :uploader-state="uploaderState"
@@ -144,61 +223,78 @@ const showCombinedConsent = computed(() =>
       />
     </div>
 
-    <div class="uploader-section">
-      <ExtractionOverview
-        :uploader-state="uploaderState"
-        :extraction-state="extractionState"
-        :blueprints="props.blueprintConfigs"
-        :blueprint-extraction-states="blueprintExtractionStates"
-        :blueprint-outcome-map="blueprintOutcomeMap"
-        :combined-consent="combinedConsent"
-        @consent-updated="updateConsent"
-      />
-    </div>
-
     <div
-      v-if="showCombinedConsent"
-      class="uploader-section"
+      v-show="activeStepName === REVIEW_STEP"
+      class="uploader-section pt-3"
     >
-      <ConsentQuestion
-        :combined-consent="combinedConsent"
-        :blueprint-id="null"
-        @consent-updated="updateConsent"
-      />
+      <div class="d-flex flex-column">
+        <ExtractionOverview
+          :uploader-state="uploaderState"
+          :extraction-state="extractionState"
+          :blueprints="props.blueprintConfigs"
+          :blueprint-extraction-states="blueprintExtractionStates"
+          :blueprint-outcome-map="blueprintOutcomeMap"
+          :combined-consent="combinedConsent"
+          @consent-updated="updateConsent"
+        />
+
+        <div
+          v-if="showCombinedConsent"
+          class="combined-consent-container mt-4 mb-2"
+        >
+          <ConsentQuestion
+            :combined-consent="combinedConsent"
+            :blueprint-id="null"
+            @consent-updated="updateConsent"
+          />
+        </div>
+      </div>
     </div>
+  </div>
+
+  <div class="d-flex flex-row justify-content-between">
+    <button
+      type="button"
+      class="ddm-primary-button-base"
+      :class="{ 'is-invisible': activeStep === 0 }"
+      @click="prevStep"
+    >
+      <i class="step-chevron bi bi-chevron-left" />
+      <span class="ps-2">{{ t('step-indicator.button-prev') }}</span>
+    </button>
+    <button
+      v-show="activeStep <= (activeSteps.length - 1)"
+      type="button"
+      class="ddm-primary-button-base"
+      :class="{'ddm-primary-button': nextButtonHighlighted}"
+      @click="nextStep"
+    >
+      <span class="pe-2">{{ t('step-indicator.button-next') }}</span>
+      <i class="step-chevron bi bi-chevron-right" />
+    </button>
   </div>
 </template>
 
 <style scoped>
+.is-invisible {
+  visibility: hidden;
+}
+
 .uploader-container {
-  border-top: 2px solid #000;
-  border-bottom: 2px solid #000;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.uploader-container .uploader-section:not(:last-child) {
-  border-bottom: 3px solid #dee2e6;
-}
-
-.uploader-container .uploader-section:not(:first-child),
-.uploader-container .uploader-section:not(:last-child) {
-  padding: 40px 0 40px 0;
-}
-
-.uploader-container .uploader-section:first-child {
-  padding: 10px 0 40px 0;
-}
-
-.uploader-container .uploader-section:last-child {
-  padding: 40px 0 30px 0;
-}
-
-
-.uploader-name {
-  font-weight: bold;
-  font-size: 1.5rem;
-  padding-bottom: 0.5rem;
+.combined-consent-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: var(--border-components);
+  border-radius: var(--border-radius-components);
+  background-color: var(--bg-components);
+  order: 2;
+  padding: 15px 20px;
+  font-weight: bold !important;
 }
 
 .uploader-section {
@@ -207,14 +303,7 @@ const showCombinedConsent = computed(() =>
 
 @media (min-width: 768px) {
   .uploader-container {
-    box-shadow: 6px 7px 20px #80808040;
-    border-radius: 8px;
     border: none;
-  }
-
-  .uploader-container .uploader-section:not(:first-child),
-  .uploader-container .uploader-section:not(:last-child) {
-    padding: 40px 20px;
   }
 
   .uploader-container .uploader-section:last-child {

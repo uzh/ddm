@@ -39,7 +39,7 @@
  * manages state and coordinates, while ExtractionItem handles presentation details.
  */
 
-import {computed, onMounted, reactive, watch} from 'vue';
+import {computed, onMounted, reactive, ref, watch} from 'vue';
 import { useI18n } from 'vue-i18n';
 import {EXTRACTION_STATES} from "@uploader/utils/stateCatalog";
 import {BlueprintExtractionStates, ExtractionStates} from "@uploader/types/ExtractionStates";
@@ -172,26 +172,33 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
   emit('consentUpdated', consent, blueprintId);
 }
 
-const introText = computed(() =>
-  props.extractionState === EXTRACTION_STATES.NOT_ATTEMPTED
-    ? t("feedback.intro-extraction-pending")
-    : t('feedback.intro-extraction-complete')
-);
+// Dynamically choose correct intro text
+const introText = computed(() => {
+  if (props.extractionState === EXTRACTION_STATES.NOT_ATTEMPTED) {
+    return `${t("feedback.intro-extraction-pending")}:`;
+  } else if (
+    props.extractionState === EXTRACTION_STATES.NO_DATA_EXTRACTED
+    || props.extractionState === EXTRACTION_STATES.FAILED
+  ) {
+    return `${t('feedback.intro-nothing-extracted')}.`;
+  } else {
+    return `${t('feedback.intro-extraction-complete')}:`;
+  }
+});
 
 const blueprintLookup = computed(() =>
   new Map(props.blueprints.map(bp => [bp.id, bp]))
 );
 
-/**
- * True if the blueprint with the given id has successfully extracted data.
- */
+
 function hasSucceeded(id: number): boolean {
   return blueprintUIMap[id]?.state === EXTRACTION_STATES.DATA_EXTRACTED;
 }
 
-/**
- * True if the blueprint with the given id has explicitly failed extraction.
- */
+function hasNotSucceeded(id: number): boolean {
+  return blueprintUIMap[id]?.state !== EXTRACTION_STATES.DATA_EXTRACTED;
+}
+
 function hasFailed(id: number): boolean {
   return blueprintUIMap[id]?.state === EXTRACTION_STATES.FAILED;
 }
@@ -221,19 +228,31 @@ const visibleBlueprints = computed(() => {
   });
 });
 
+const visibleBlueprintsTop = computed(() => {
+    if (props.extractionState === EXTRACTION_STATES.NOT_ATTEMPTED) {
+      return visibleBlueprints.value;
+    } else {
+      return visibleBlueprints.value.filter(bp => hasSucceeded(bp.id));
+    }
+  }
+);
+
+const visibleBlueprintsBottom = computed(() =>
+  visibleBlueprints.value.filter(bp => hasNotSucceeded(bp.id))
+);
+
+const notSucceededExpanded = ref(false);
 </script>
 
 <template>
-  <div class="ddm-extraction-overview">
-    <!-- Intro -->
-    <div class="pb-3 d-flex align-items-center">
-      <span class="section-icon pe-3 pe-sm-0"><i class="bi bi-file-earmark-text" /></span>
-      <span class="section-heading">{{ introText }}</span>
-    </div>
+  <div>
+    <p>{{ introText }}</p>
+  </div>
 
-    <!-- Blueprint overview -->
+  <!-- Blueprint overview -->
+  <div class="extraction-items-container">
     <ExtractionItem
-      v-for="blueprint in visibleBlueprints"
+      v-for="blueprint in visibleBlueprintsTop"
       :key="blueprint.id"
       :blueprint="blueprint"
       :extraction-state="blueprintUIMap[blueprint.id]?.state"
@@ -246,8 +265,81 @@ const visibleBlueprints = computed(() => {
       @consent-updated="passConsentUpdateToParent"
     />
   </div>
+
+  <div class="pt-4 extraction-items-secondary-container">
+    <div
+      v-if="extractionState != EXTRACTION_STATES.NOT_ATTEMPTED"
+      class="line-to-end"
+    >
+      <button
+        class="expansion-button"
+        type="button"
+        @click="notSucceededExpanded = !notSucceededExpanded"
+      >
+        <span
+          class="expansion-icon"
+          :class="{expanded: notSucceededExpanded}"
+        >▸</span>
+        {{ t('feedback.nothing-extracted-header') }}
+      </button>
+    </div>
+
+    <div
+      v-show="notSucceededExpanded"
+    >
+      <ExtractionItem
+        v-for="blueprint in visibleBlueprintsBottom"
+        :key="blueprint.id"
+        :blueprint="blueprint"
+        :extraction-state="blueprintUIMap[blueprint.id]?.state"
+        :extraction-message="blueprintUIMap[blueprint.id]?.msg"
+        :extraction-error-text="blueprintUIMap[blueprint.id]?.errorText"
+        :extraction-outcome="blueprintOutcomeMap[blueprint.id]"
+        :has-detail-errors="blueprintUIMap[blueprint.id]?.anyDetails"
+        :errors="blueprintUIMap[blueprint.id]?.errors || []"
+        :combined-consent="combinedConsent"
+        @consent-updated="passConsentUpdateToParent"
+      />
+    </div>
+  </div>
 </template>
 
 <style scoped>
+.step-heading-container,
+.extraction-items-container {
+  order: 1;
+}
+.extraction-items-secondary-container {
+  order: 10;
+}
+.expansion-button {
+  font-size: var(--fs-secondary);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--font-color-secondary);
+}
 
+.expansion-icon {
+  display: inline-block !important;
+}
+
+.expansion-icon.expanded {
+  transform: rotate(90deg);
+}
+
+.line-to-end {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.line-to-end::after {
+  content: "";
+  flex-grow: 1;
+  height: 1px;
+  background-color: var(--font-color-secondary);
+}
 </style>

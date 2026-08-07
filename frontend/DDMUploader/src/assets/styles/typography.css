@@ -1,0 +1,23 @@
+.fs-secondary {
+    font-size: 0.9rem;
+}
+
+.font-size-small {
+    font-size: 0.8rem;
+}
+
+.font-size-875 {
+    font-size: 0.875rem;
+}
+
+.fc-error {
+  color: var(--ddm-error);
+}
+
+.fc-success {
+  color: var(--ddm-success);
+}
+
+.text-grey {
+  color: #d0d0d0;
+}

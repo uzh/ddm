@@ -7,13 +7,14 @@
 
 {% block content %}
 
-<div>
+<div class="col-12 col-lg-9 col-xl-8">
   <form method="post">
     {% csrf_token %}
-    <div id="qapp"
-         data-action-url='{{ request.build_absolute_uri }}'
-         data-language='{{ LANGUAGE_CODE|slice:"0:2" }}'
-         class="text-black"
+    <div
+      id="qapp"
+      data-action-url='{{ request.build_absolute_uri }}'
+      data-language='{{ LANGUAGE_CODE|slice:"0:2" }}'
+      class="text-black"
     >
       {{ q_config|json_script:"q-config-data" }}
       {{ filter_config|json_script:"filter-config-data" }}

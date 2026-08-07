@@ -159,6 +159,7 @@ function initializeUploaderOutcomes(): Record<number, UploaderOutcome> {
           :instruction-config="config.instructions"
           :name="config.name"
           @status-changed="updateUploaderOutcome"
+          @proceed="proceed"
         />
       </div>
     </template>
@@ -177,19 +178,6 @@ function initializeUploaderOutcomes(): Record<number, UploaderOutcome> {
 
     <SubmittingOverlay v-if="submitting" />
 
-    <div class="row">
-      <div class="col">
-        <button
-          id="ddm-uploader-proceed-btn"
-          class="flow-btn"
-          type="button"
-          @click="proceed"
-        >
-          {{ t('uploader-app.next-btn') }}&nbsp;&nbsp;&#8250;
-        </button>
-      </div>
-    </div>
-
     <form
       v-show="false"
       id="uploader-form"
@@ -206,16 +194,7 @@ function initializeUploaderOutcomes(): Record<number, UploaderOutcome> {
 </template>
 
 <style>
-.ddm-uploader-app {
-  --ddm-success: #198754;
-  --ddm-error: #c8270d;
-  --ddm-no-data: #0272ff;
-  --ddm-file-bg: #f8f9fa;
-  --ddm-file-bg-hover: #efefef;
-  --ddm-consent-agree: #069143;
-  --ddm-consent-disagree: #f38896;
-  --ddm-loading-accent: #009c94;
-}
+@import "@uploader/assets/styles/variables.css";
 
 .modal-open {
   overflow: hidden;
@@ -233,4 +212,9 @@ function initializeUploaderOutcomes(): Record<number, UploaderOutcome> {
 .color-red {
   color: var(--ddm-error) !important;
 }
+
+.step-heading-eyebrow {
+  color: var(--ddm-primary-accent);
+}
+
 </style>

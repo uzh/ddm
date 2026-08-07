@@ -1,0 +1,41 @@
+.ddm-uploader-app {
+  /* COLORS */
+  --ddm-success: #198754;
+  --ddm-error: #b30630;
+  --ddm-no-data: #0272ff;
+  --ddm-file-bg: #f8f9fa;
+  --ddm-file-bg-hover: #efefef;
+  --ddm-consent-agree: var(--ddm-success);
+  --ddm-consent-disagree: #7c000b;
+  --ddm-loading-accent: #009c94;
+
+  --ddm-primary-accent: #007b74;
+
+  --bg-components: white;
+  --border-color-components: #dee2e6;
+  --border-components: 1px solid var(--border-color-components);
+  --border-radius-components: 3px;
+
+  --lightgrey: #dee2e6;
+  --grey-disabled: #dee2e6;
+
+  /* TYPOGRAPHY */
+  --fs-primary: 1rem;
+  --fs-primary-mono: 0.9rem;
+  --font-color-primary: black;
+  --font-color-primary-accent: white;
+
+  --fs-secondary: 0.9rem;
+  --fs-secondary-mono: 0.85rem;
+  --font-color-secondary: #58595a;
+
+  /* VARIA */
+  --border-radius: 3px;
+
+  /* BREAKPOINTS */
+  --bp-sm: 576px;
+  --bp-md: 768px;
+  --bp-lg: 992px;
+  --bp-xl: 1200px;
+  --bp-xxl: 1200px;
+}

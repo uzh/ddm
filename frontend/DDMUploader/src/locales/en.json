@@ -1,6 +1,18 @@
 {
+  "step-indicator": {
+    "step": "Step",
+    "instructions": "Instructions",
+    "upload": "Upload data",
+    "review-and-consent": "Review & submit",
+    "button-next": "next",
+    "button-prev": "back"
+  },
   "instructions": {
-    "heading": "How it works"
+    "heading": "How it works",
+    "back": "back",
+    "next-page": "next page",
+    "end": "End",
+    "start": "Start"
   },
   "errors": {
     "invalid-zip": "A ZIP-file was expected but a {fileType}-file was uploaded.",
@@ -22,21 +34,23 @@
   },
   "file-drop": {
     "heading": "Select file",
-    "selection-prompt": "Click to select a file from your device",
+    "selection-prompt": "Drag and drop a file here, or click to select one",
     "release-to-select": "Drop the file to continue",
     "file-is-being-processed": "Processing your file...",
     "processing-complete": "Processing complete",
     "processing-success": "File successfully processed",
-    "processing-failed": "The file could not be successfully processed",
     "choose-different-file": "select a different file",
-    "retry-hint": "The file may not contain the right information. See below for more details or try again by selecting a different file:"
+    "something-went-wrong": "Something went wrong while processing the file",
+    "retry-hint": "Select a different file to try again.",
+    "relevant-data-hint": "Only data relevant to the study will be extracted.",
+    "upload-info": "Your file is processed locally in your browser, and no data is transmitted to the project before you explicitly consent. In the next step, you can review the extracted data and decide whether to submit it."
   },
   "extraction-state": {
-    "file" : {
-      "success": "Below you can see which data were extracted.",
+    "file": {
+      "success": "In the next step you can see which data were extracted.",
       "no-data-extracted": "No information could be extracted from the file."
     },
-    "blueprint" : {
+    "blueprint": {
       "success": "Your data has been successfully extracted",
       "no-data-extracted": "No relevant data found in the file.",
       "all-missing-fields": "Required information was missing from all entries in the file.",
@@ -45,12 +59,18 @@
     }
   },
   "feedback": {
+    "check-data-heading": "Review extracted data",
     "intro-extraction-pending": "Data to be extracted",
-    "intro-extraction-complete": "Extracted data",
+    "intro-extraction-complete": "The following data has been extracted and will be submitted if you consent.",
+    "intro-nothing-extracted": "No data was extracted",
     "show-error-details": "Show details",
-    "donation-question": "Do you agree to donate and submit the data listed above?",
+    "donation-question": "Donate this data?",
+    "donation-question-combined": "Do you agree to donate and submit the data listed above?",
     "donation-agree": "Yes",
-    "donation-disagree": "No"
+    "donation-disagree": "No",
+    "details": "Details",
+    "x-entries-found": "Found {nEntries} entries",
+    "nothing-extracted-header": "Data types without extracted data"
   },
   "extraction-table": {
     "entry-info": "Entries {lower}-{upper} of {total}",
@@ -59,21 +79,27 @@
     "all-filtered": "No entries found",
     "show-data": "Show all data",
     "hide-data": "Show less",
-    "page": "Page"
+    "page": "Page",
+    "more-entries": "more entries",
+    "show-complete-list": "show complete list",
+    "modal-close": "close"
   },
   "uploader-app": {
     "next-btn": "Next"
   },
   "issue-modal": {
     "title": "Data donation not complete",
-    "none-attempted": "You have not uploaded any files. \n \n Continue without a donation?",
+    "none-attempted": "You have not uploaded any files. Continue without a donation?",
     "not-all-attempted": "Some uploads were skipped: {skipped-uploads}. Continue with the files processed so far?",
     "not-all-consented": "For some extracted data, it was not indicated whether these may be transmitted: {blueprints-wo-consent}. \n \n Please go back to review.",
-    "failed-uploaders": "The following uploads appear to have failed: {uploads}. \n \n Continue anyway?",
+    "failed-uploaders": "The following uploads appear to have failed: {uploads}. Continue anyway?",
     "continue-anyway": "Yes, continue anyway",
     "back": "Go back"
   },
   "submitting-modal": {
     "submit-wait": "Processing your data donation..."
+  },
+  "general": {
+    "step": "Step"
   }
 }

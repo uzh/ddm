@@ -19,6 +19,11 @@ urlpatterns = [
         name="delete",
     ),
     path(
+        r"<slug:question_type>/<int:pk>/copy/",
+        views.QuestionCopy.as_view(),
+        name="copy",
+    ),
+    path(
         r"<slug:question_type>/<int:pk>/filters/",
         views.FilterEditQuestion.as_view(),
         name="question_filters",

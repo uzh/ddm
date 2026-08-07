@@ -74,9 +74,15 @@
     {% endwith %}
   </div>
 
-  {% include "ddm_questionnaire/form_sections/delete.html" %}
-
 {% endblock form_content %}
+
+{% block below_form %}
+  {# Copy Section #}
+  {% include "ddm_questionnaire/form_sections/copy.html" %}
+
+  {# Delete Section #}
+  {% include "ddm_questionnaire/form_sections/delete.html" %}
+{% endblock below_form %}
 
 {% block scripts %}
   {{ block.super }}

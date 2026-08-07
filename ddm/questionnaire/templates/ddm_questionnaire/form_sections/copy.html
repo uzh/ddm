@@ -1,13 +1,13 @@
-<div id="copy-blueprint-section" class="ddm-section-container">
+<div id="copy-question-section" class="ddm-section-container">
   <div class="row">
     <div class="form-section-heading">
-      <h2>Copy Blueprint</h2>
+      <h2>Copy Question</h2>
     </div>
 
     <div class="col-auto">
       <form
         method="post"
-        action="{% url 'ddm_datadonation:blueprints:copy' object.project.url_id object.pk %}"
+        action="{% url 'ddm_questionnaire:copy' project_url_id object.question_type object.pk %}"
         onsubmit="this.querySelector('button').disabled = true;"
       >
         {% csrf_token %}
@@ -15,7 +15,7 @@
           class="ddm-btn-base ddm-btn-secondary"
           type="submit"
         >
-          Create a copy of this Blueprint
+          Create a copy of this question
         </button>
       </form>
     </div>

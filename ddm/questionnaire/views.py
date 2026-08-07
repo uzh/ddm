@@ -2,12 +2,14 @@ from typing import Any
 
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models import QuerySet
 from django.forms import BaseInlineFormSet, Form, inlineformset_factory
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.text import Truncator
+from django.views import View
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
@@ -34,6 +36,7 @@ from ddm.questionnaire.models import (
     SingleChoiceQuestion,
     Transition,
 )
+from ddm.questionnaire.services import copy_question
 
 
 class ProjectMixin(DDMContextMixin):
@@ -547,3 +550,32 @@ class FilterEditItems(FilterEditBase):
             "pk": item.pk,
         }
         return reverse("ddm_questionnaire:item_filters", kwargs=success_kwargs)
+
+
+class QuestionCopy(SuccessMessageMixin, DDMAuthMixin, View):
+    http_method_names = ["post"]
+
+    def post(self, request: HttpRequest, pk: int, **kwargs) -> HttpResponseRedirect:
+        question = get_object_or_404(
+            QuestionBase, pk=pk, project__owner__user=request.user
+        )
+        try:
+            new_q = copy_question(question)
+        except IntegrityError:
+            messages.error(
+                request,
+                "Couldn't copy the question — please try again.",
+            )
+            return redirect(self.get_success_url(question))
+
+        messages.success(request, f'Copied as "{new_q.name}".')
+        return redirect(self.get_success_url(new_q))
+
+    @staticmethod
+    def get_success_url(question: QuestionBase) -> str:
+        success_kwargs = {
+            "project_url_id": question.project.url_id,
+            "question_type": question.question_type,
+            "pk": question.pk,
+        }
+        return reverse("ddm_questionnaire:edit", kwargs=success_kwargs)

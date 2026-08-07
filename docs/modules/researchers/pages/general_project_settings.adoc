@@ -107,5 +107,8 @@ information on the variable inclusion.
 You can customize the general appearance of your donation project by providing up to two logos that will be displayed in
 the header of your project.
 
+Show project title:: If enabled, the project title is shown in the header of the
+participation interface.
+
 Header Image Left/Header Image Right:: Upload an image that will be displayed in
 the header of your project (e.g., an institution or project logo).

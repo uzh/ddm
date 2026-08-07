@@ -70,11 +70,16 @@
   {# Advanced Settings #}
   {% include "ddm_datadonation/blueprint/form_sections/advanced_settings.html" %}
 
-  {# Delete Section #}
-  {% include "ddm_datadonation/blueprint/form_sections/delete.html" %}
-
   {{ file_uploader_meta|json_script:'file_uploader_meta' }}
 {% endblock form_content %}
+
+{% block below_form %}
+  {# Copy Section #}
+  {% include "ddm_datadonation/blueprint/form_sections/copy.html" %}
+
+  {# Delete Section #}
+  {% include "ddm_datadonation/blueprint/form_sections/delete.html" %}
+{% endblock below_form %}
 
 {% block scripts %}
   {{ block.super }}

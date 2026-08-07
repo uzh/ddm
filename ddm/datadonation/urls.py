@@ -17,6 +17,7 @@ blueprint_patterns = (
         path(r"create/", views.BlueprintCreate.as_view(), name="create"),
         path(r"<int:pk>/edit/", views.BlueprintEdit.as_view(), name="edit"),
         path(r"<int:pk>/delete/", views.BlueprintDelete.as_view(), name="delete"),
+        path(r"<int:pk>/copy/", views.BlueprintCopyView.as_view(), name="copy"),
     ],
     "blueprints",
 )

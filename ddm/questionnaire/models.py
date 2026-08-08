@@ -93,7 +93,23 @@ class QuestionBase(FilterConditionMixin, PolymorphicModel):
             'This information can be referenced as "{{ participant }}".'
         ),
     )
-    required = models.BooleanField(default=False)
+
+    class RequirementLevel(models.TextChoices):
+        NOT_REQUIRED = "not_required", "Not required"
+        SOFT_REQUIRED = "soft_required", "Soft"
+        HARD_REQUIRED = "hard_required", "Hard"
+
+    requirement_level = models.CharField(
+        max_length=20,
+        blank=False,
+        choices=RequirementLevel.choices,
+        default=RequirementLevel.NOT_REQUIRED,
+        help_text=(
+            "Not required: a response is optional. "
+            "Soft: if missing, a warning is shown once but can be dismissed. "
+            "Hard: a response is required before proceeding."
+        ),
+    )
 
     class Meta:
         ordering = ["page", "index"]

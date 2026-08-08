@@ -315,6 +315,12 @@ function responseChanged(event: Event) {
               {{ t('open-question.hint-invalid-length') }}
             </p>
           </template>
+          <p
+            :id="'required-hint-' + item.id"
+            class="required-hint mb-0"
+          >
+            {{ t('required-but-missing-hint') }}
+          </p>
         </div>
       </div>
     </div>

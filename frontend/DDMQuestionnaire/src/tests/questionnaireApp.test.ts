@@ -1,8 +1,12 @@
 import { mount } from "@vue/test-utils";
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { i18n } from "@questionnaire/tests/testUtils";
+import { REQUIREMENT_LEVELS } from "@questionnaire/types/questionnaire";
 
 import QuestionnaireApp from "../components/QuestionnaireApp.vue";
+
+// jsdom doesn't implement scrollIntoView.
+Element.prototype.scrollIntoView = vi.fn();
 
 const questionnaireConfig = [
     {
@@ -11,7 +15,7 @@ const questionnaireConfig = [
       "page": 1,
       "index": 1,
       "text": "<p>test</p>",
-      "required": false,
+      "requirement_level": REQUIREMENT_LEVELS.NOT_REQUIRED,
       "items": [
         {"id": "item-1", "index": 1, "label": "some label", "label_alt": "", "value": 1, "randomize": false},
         {"id": "item-2", "index": 2, "label": "some label", "label_alt": "", "value": 2, "randomize": false}
@@ -29,7 +33,7 @@ const questionnaireConfig = [
       "page": 1,
       "index": 2,
       "text": "<p>test</p>",
-      "required": false,
+      "requirement_level": REQUIREMENT_LEVELS.NOT_REQUIRED,
       "items": [
         {"id": "item-3", "index": 1, "label": "some label", "label_alt": "", "value": 1, "randomize": false},
         {"id": "item-4", "index": 2, "label": "some label", "label_alt": "", "value": 2, "randomize": false}
@@ -46,7 +50,7 @@ const questionnaireConfig = [
       "page": 2,
       "index": 1,
       "text": "<p>test</p>",
-      "required": false,
+      "requirement_level": REQUIREMENT_LEVELS.NOT_REQUIRED,
       "items": [
         {"id": "item-5", "index": 1, "label": "some label", "label_alt": "", "value": 1, "randomize": false},
         {"id": "item-6", "index": 2, "label": "some label", "label_alt": "", "value": 2, "randomize": false},
@@ -63,7 +67,7 @@ const questionnaireConfig = [
       "page": 3,
       "index": 3,
       "text": "<p>test</p>",
-      "required": false,
+      "requirement_level": REQUIREMENT_LEVELS.NOT_REQUIRED,
       "items": [],
       "scale": [],
       "options": {}

@@ -556,7 +556,7 @@ class QuestionConfigSerializerTest(TestCase):
             "page": question.page,
             "index": question.index,
             "text": question.text,
-            "required": question.required,
+            "requirement_level": question.requirement_level,
             "items": expected_item_config,
             "scale": expected_scale_config,
             "options": {},

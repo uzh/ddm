@@ -53,7 +53,30 @@ export function useScrollHandler() {
     }, 100);
   }
 
+  /**
+   * Smoothly scrolls to the first thing currently blocking navigation -
+   * a missing required field, or an open question whose answer fails its
+   * length/value bounds check - so participants land on the question that's
+   * blocking them instead of always the top of the page.
+   *
+   * Falls back to `scrollToTop` if nothing currently matches.
+   */
+  function scrollToFirstValidationIssue(root: HTMLElement | Document = document): void {
+    const target = root.querySelector<HTMLElement>(
+      '.required-hint.show, .invalid-length, .invalid-value'
+    );
+    if (!target) {
+      scrollToTop();
+      return;
+    }
+
+    setTimeout(() => {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+  }
+
   return {
-    scrollToTop
+    scrollToTop,
+    scrollToFirstValidationIssue
   }
 }

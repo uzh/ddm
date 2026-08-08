@@ -81,7 +81,7 @@ const { currentPage, lastPageSubmitted, next, clearCurrentPage } = usePageNaviga
     MISSING_VALUE,
     questionnaireRoot
 );
-const { scrollToTop } = useScrollHandler()
+const { scrollToTop, scrollToFirstValidationIssue } = useScrollHandler()
 
 watch(lastPageSubmitted, (submitted) => {
   if (submitted) submitData();
@@ -190,8 +190,12 @@ function submitData() {
 function clickOnNextPage() {
   evaluateFilters();
   checkIfAllItemsHidden();   // To make sure filters are evaluated and questions hidden, even when all items are skipped.
-  next();
-  scrollToTop();
+  const advanced = next();
+  if (advanced) {
+    scrollToTop();
+  } else {
+    scrollToFirstValidationIssue(questionnaireRoot.value ?? document);
+  }
 }
 
 // Expose elements for testing.
@@ -241,7 +245,6 @@ const { questionDivs, isSticky } = useStickyQuestions(questionMap, currentPage, 
             :items="question.items"
             :scale="question.scale"
             :options="question.options"
-            :required="question.required"
             :hide-object-dict="hideObjectDict"
             :responses="responses"
             class="question-body"
@@ -286,7 +289,6 @@ const { questionDivs, isSticky } = useStickyQuestions(questionMap, currentPage, 
   padding-bottom: 20px;
   font-size: 1rem;
   border: var(--border-components);
-  border-radius: var(--border-radius-components);
   background: var(--bg-components);
   border-radius: var(--border-radius-components);
 }

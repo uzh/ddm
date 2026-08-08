@@ -27,6 +27,7 @@ class TestOpenQuestionFormMinMaxValidation(TestCase):
             "page": 1,
             "index": 1,
             "text": "Question Text",
+            "requirement_level": OpenQuestion.RequirementLevel.NOT_REQUIRED,
             "input_type": "text",
             "min_input_length": "",
             "max_input_length": "",

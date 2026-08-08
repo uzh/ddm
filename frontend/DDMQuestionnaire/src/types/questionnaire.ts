@@ -26,13 +26,21 @@ export interface QuestionOptions {
   show_scale_headings?: boolean;
 }
 
+export const REQUIREMENT_LEVELS = {
+  NOT_REQUIRED: 'not_required',
+  SOFT: 'soft_required',
+  HARD: 'hard_required',
+}
+
+export type RequirementLevel = typeof REQUIREMENT_LEVELS[keyof typeof REQUIREMENT_LEVELS];
+
 // The configuration for one particular question.
 export interface QuestionConfig {
   question: string;  // Must be of form 'question-<unique-question-id>'
   page: number;
   type: string;
   text: string;
-  required?: boolean;
+  requirement_level: RequirementLevel;
   items?: Item[];
   scale?: ScalePoint[];
   options?: QuestionOptions;

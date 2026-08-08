@@ -44,7 +44,7 @@ _SHARED_FIELDS = [
     "index",
     "text",
     "blueprint",
-    "required",
+    "requirement_level",
 ]
 
 QUESTION_FIELDS = {
@@ -67,18 +67,13 @@ QUESTION_FIELDS = {
 }
 
 EXCLUDED_FIELDS = {
-    "transition": ["required", "variable_name"],
+    "transition": ["requirement_level", "variable_name"],
 }
 
 HELP_TEXTS = {
     "name": "For internal use",
     "variable_name": "Used to identify responses in data exports",
     "text": "",
-    "required": (
-        "If required questions are left unanswered, participants see "
-        'a warning when clicking "Next". '
-        'They can proceed by clicking "Next" again.'
-    ),
     "blueprint": mark_safe(
         "If linked to a Blueprint, the donated data linked to this Blueprint "
         "can be included in the question text. "

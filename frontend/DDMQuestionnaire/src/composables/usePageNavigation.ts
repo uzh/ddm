@@ -1,6 +1,6 @@
 import { onMounted, Ref, ref, watch } from 'vue';
 
-import { QuestionConfig, QuestionnaireConfig } from "@questionnaire/types/questionnaire";
+import { QuestionConfig, QuestionnaireConfig, REQUIREMENT_LEVELS } from "@questionnaire/types/questionnaire";
 import { usePersistedRef } from './usePersistedRef'
 
 /**
@@ -36,11 +36,12 @@ export function usePageNavigation(
   const minPage = ref(1);
   const maxPage = ref(1);
   const lastPageSubmitted = ref(false);
-  const displayedRequiredHint = ref<boolean>(false);
+  const displayedSoftRequiredHint = ref<boolean>(false);
+  const hardRequiredMissing = ref<boolean>(false);
 
   // Reset the soft required-hint on page advance.
   watch(currentPage, () => {
-    displayedRequiredHint.value = false;
+    displayedSoftRequiredHint.value = false;
   });
 
   onMounted(() => {
@@ -80,30 +81,37 @@ export function usePageNavigation(
 
   /**
    * Handles advancing to the next valid page or signalling that the last page has been reached.
+   *
+   * @returns {boolean} True if navigation was allowed to proceed, false if it was blocked.
    */
-  function next() {
-    if (canProceedToNextPage()) {
-      if (currentPage.value === maxPage.value) {
-        lastPageSubmitted.value = true;
-        return;
-      }
-      currentPage.value++;
-      const nextValid = foundNextValidPage();
-      if (!nextValid || currentPage.value > maxPage.value) {
-        lastPageSubmitted.value = true;
-      }
+  function next(): boolean {
+    if (!canProceedToNextPage()) return false;
+
+    if (currentPage.value === maxPage.value) {
+      lastPageSubmitted.value = true;
+      return true;
     }
+    currentPage.value++;
+    const nextValid = foundNextValidPage();
+    if (!nextValid || currentPage.value > maxPage.value) {
+      lastPageSubmitted.value = true;
+    }
+    return true;
   }
 
   /**
    * Determines whether navigation to the next page is allowed.
    *
-   * @returns {boolean} True if all required questions have been answered or hint has already been shown,
-   * and all answered open questions satisfy their configured length/value bounds.
+   * @returns {boolean} True if all required questions have been answered (or,
+   * for soft-required ones, the hint has already been shown once on this
+   * page), and all answered open questions satisfy their configured
+   * length/value bounds.
    */
   function canProceedToNextPage(): boolean {
-    const requiredOk = displayedRequiredHint.value || checkRequired(); // soft required check
-    const responsesOk = validateResponses();  // hard required check
+    const alreadyShownOnThisPage = displayedSoftRequiredHint.value;
+    const requiredCheckPassed = checkRequired();
+    const requiredOk = requiredCheckPassed || (alreadyShownOnThisPage && !hardRequiredMissing.value);
+    const responsesOk = validateResponses();
     return requiredOk && responsesOk;
   }
 
@@ -134,13 +142,14 @@ export function usePageNavigation(
     const missingResponses: string[] = [];
     const missingQuestions = new Set<string>();
     const root = rootElement.value;
+    hardRequiredMissing.value = false;
 
     // Reset existing required hints.
     root.querySelectorAll("div[id*=answer-], tr[id*=answer-]").forEach(el => el.classList.remove("required-but-missing"));
-    root.querySelectorAll("div[class*=required-hint]").forEach(el => el.classList.remove("show"));
+    root.querySelectorAll(".required-hint").forEach(el => el.classList.remove("show"));
 
     getActiveQuestions().forEach(q => {
-      if (!q.required) return;
+      if (q.requirement_level === REQUIREMENT_LEVELS.NOT_REQUIRED) return;
 
       // Check if question is hidden/filtered out
       if (hideObjectDict.value[q.question]) return;
@@ -153,6 +162,9 @@ export function usePageNavigation(
         if (missing && visible) {
           missingResponses.push(q.question);
           missingQuestions.add(q.question);
+          if (!hardRequiredMissing.value) {
+            hardRequiredMissing.value = q.requirement_level === REQUIREMENT_LEVELS.HARD;
+          }
         }
       } else {
         items.forEach((item) => {
@@ -161,6 +173,9 @@ export function usePageNavigation(
           if (missing && visible) {
             missingResponses.push(item);
             missingQuestions.add(q.question);
+            if (!hardRequiredMissing.value) {
+              hardRequiredMissing.value = q.requirement_level === REQUIREMENT_LEVELS.HARD;
+            }
           }
         })
       }
@@ -171,7 +186,7 @@ export function usePageNavigation(
     // Add visual marks to required but missing elements.
     missingResponses.forEach(r => root.querySelector("#answer-" + r)?.classList.add("required-but-missing"));
     missingResponses.forEach(r => root.querySelector("#required-hint-" + r)?.classList.add("show"));
-    displayedRequiredHint.value = true;
+    displayedSoftRequiredHint.value = true;
     return false;
   }
 

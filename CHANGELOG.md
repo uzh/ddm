@@ -40,6 +40,8 @@ This version drops official support for Python versions < 3.12.
 - The questionnaire now caches responses and progress on browser reload for 24 hours or until the questionnaire configuration changes.
 - Open questions can now be configured to enforce `minimum lenght` and `maximum length` restrictions for text inputs
   and `minimum value` and `maximum value` restrictions for number inputs.
+- Questions can now be configured as `not required`, `soft required` (can be skipped by participants after a warning),
+  and `hard required` (cannot be skipped by participants).
 
 ### Changed
 

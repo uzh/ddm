@@ -269,7 +269,7 @@ class QuestionConfigSerializer(serializers.ModelSerializer):
             "page",
             "index",
             "text",
-            "required",
+            "requirement_level",
             "items",
             "scale",
             "options",

@@ -33,7 +33,7 @@ function hashConfig(config: QuestionnaireConfig): string {
       question: q.question,
       page: q.page,
       type: q.type,
-      required: q.required ?? false,
+      requirement_level: q.requirement_level,
       items: q.items
         ? [...q.items].map((i) => i.id).sort()
         : undefined,

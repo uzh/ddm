@@ -72,10 +72,13 @@ be constructed as follows: "question_variable_name-+{item-value+}".
 
 Text:: The question text that is displayed to participants.
 
-Required:: If a question is marked as required, the application will show a
-hint to the participant if they forgot to answer this question.
+Requirement level:: `Not required`: A participant can skip the question.
+`Soft`: the application will show a
+hint to the participant if they forgot to answer the question.
 This hint will only be shown once. This means that if a participant chooses to
 ignore the hint and clicks on 'continue', they are able to skip a required question.
+`Hard`: the application will show a hint and the participant cannot skip the
+question.
 
 Randomize items:: Enable or disable randomization of *all* items.
 

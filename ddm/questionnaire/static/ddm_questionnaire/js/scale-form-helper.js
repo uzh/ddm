@@ -1,7 +1,7 @@
 /**
  * Helper function to add new scale point formsets.
  */
-document.getElementById('add-scale-point-form').addEventListener('click', function() {
+document.getElementById('add-scale-point-form')?.addEventListener('click', function() {
   const container = document.getElementById('scale-point-form-container');
   const emptyForm = document.getElementById('empty-scale-point-form').innerHTML;
   const totalForms = document.getElementById('id_scalepoint_set-TOTAL_FORMS');

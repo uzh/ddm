@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import QApp from './components/QuestionnaireApp.vue'
-import { onlyDigits, validEmail } from './directives/formDirectives';
+import { onlyDigits, validEmail, validLength, validValue } from './directives/formDirectives';
 import { createI18n } from 'vue-i18n'
 
 import en from './locales/en.json';
@@ -99,6 +99,8 @@ function initializeQuestionnaireApp(): void {
 
   app.directive('only-digits', onlyDigits);
   app.directive('valid-email', validEmail);
+  app.directive('valid-length', validLength);
+  app.directive('valid-value', validValue);
 
   app.use(i18n)
   app.mount(selector)

@@ -22,9 +22,55 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
+const getMinLength = computed(() =>
+  props.options.min_input_length !== null ? props.options.min_input_length : undefined
+);
+
 const getMaxLength = computed(() =>
   props.options.max_input_length !== null ? props.options.max_input_length : undefined
 );
+
+const getMinValue = computed(() =>
+  props.options.min_number_value !== null && props.options.min_number_value !== undefined
+    ? props.options.min_number_value
+    : undefined
+);
+
+const getMaxValue = computed(() =>
+  props.options.max_number_value !== null && props.options.max_number_value !== undefined
+    ? props.options.max_number_value
+    : undefined
+);
+
+const lengthHint = computed(() => {
+  const min = getMinLength.value;
+  const max = getMaxLength.value;
+  if (min !== undefined && max === undefined) {
+    return t('open-question.hint-min-length', { min });
+  }
+  if (min !== undefined && max !== undefined) {
+    return t('open-question.hint-min-max-length', { min, max });
+  }
+  if (min === undefined && max !== undefined) {
+    return t('open-question.hint-max-length', { max });
+  }
+  return '';
+});
+
+const valueHint = computed(() => {
+  const min = getMinValue.value;
+  const max = getMaxValue.value;
+  if (min !== undefined && max === undefined) {
+    return t('open-question.hint-min-value', { min });
+  }
+  if (min !== undefined && max !== undefined) {
+    return t('open-question.hint-min-max-value', { min, max });
+  }
+  if (min === undefined && max !== undefined) {
+    return t('open-question.hint-max-value', { max });
+  }
+  return '';
+});
 
 /**
  * Resolves the display value for a given response id, treating the
@@ -61,22 +107,35 @@ function responseChanged(event: Event) {
       <template v-if="props.options.input_type === 'text'">
         <input
           v-if="props.options.display === 'small'"
+          v-valid-length
           class="oq-input"
           type="text"
           :name="props.qid"
+          :minlength="getMinLength"
           :maxlength="getMaxLength"
           :value="displayValue(props.qid)"
           @change="responseChanged"
         >
         <textarea
           v-if="props.options.display === 'large'"
+          v-valid-length
           class="open-question-textarea"
           :name="props.qid"
+          :minlength="getMinLength"
           :maxlength="getMaxLength"
           :value="displayValue(props.qid)"
           placeholder="|"
           @change="responseChanged"
         />
+        <p class="input-hint hint-invalid-input hint-invalid-length pb-0 mb-0">
+          {{ t('open-question.hint-invalid-length') }}
+        </p>
+        <p
+          v-if="lengthHint"
+          class="input-hint"
+        >
+          {{ lengthHint }}
+        </p>
         <p
           :id="'required-hint-' + props.qid"
           class="required-hint mb-0"
@@ -88,15 +147,26 @@ function responseChanged(event: Event) {
       <template v-else-if="props.options.input_type === 'numbers'">
         <input
           v-only-digits
+          v-valid-value
           type="text"
           class="oq-input"
           :name="props.qid"
-          :maxlength="getMaxLength"
+          :min="getMinValue"
+          :max="getMaxValue"
           :value="displayValue(props.qid)"
           @change="responseChanged"
         >
+        <p class="input-hint hint-invalid-input hint-invalid-value pb-0 mb-0">
+          {{ t('open-question.hint-invalid-value') }}
+        </p>
         <p class="input-hint">
-          {{ t('hint-number-input') }}
+          {{ t('open-question.hint-number-input') }}
+        </p>
+        <p
+          v-if="valueHint"
+          class="input-hint"
+        >
+          {{ valueHint }}
         </p>
         <p
           :id="'required-hint-' + props.qid"
@@ -109,18 +179,29 @@ function responseChanged(event: Event) {
       <template v-else-if="props.options.input_type === 'email'">
         <input
           v-valid-email
+          v-valid-length
           type="email"
           class="oq-input"
           :name="props.qid"
+          :minlength="getMinLength"
           :maxlength="getMaxLength"
           :value="displayValue(props.qid)"
           @change="responseChanged"
         >
-        <p class="input-hint hint-invalid-input pb-0 mb-0">
-          {{ t('hint-invalid-email') }}
+        <p class="input-hint hint-invalid-input hint-invalid-email pb-0 mb-0">
+          {{ t('open-question.hint-invalid-email') }}
+        </p>
+        <p class="input-hint hint-invalid-input hint-invalid-length pb-0 mb-0">
+          {{ t('open-question.hint-invalid-length') }}
         </p>
         <p class="input-hint">
-          {{ t('hint-email-input') }}
+          {{ t('open-question.hint-email-input') }}
+        </p>
+        <p
+          v-if="lengthHint"
+          class="input-hint"
+        >
+          {{ lengthHint }}
         </p>
         <p
           :id="'required-hint-' + props.qid"
@@ -136,6 +217,31 @@ function responseChanged(event: Event) {
       :id="'answer-' + props.qid"
       class="response-body"
     >
+      <p
+        v-if="props.options.input_type === 'email'"
+        class="input-hint"
+      >
+        {{ t('open-question.hint-email-input') }}
+      </p>
+      <p
+        v-if="props.options.input_type !== 'numbers' && lengthHint"
+        class="input-hint"
+      >
+        {{ lengthHint }}
+      </p>
+      <p
+        v-if="props.options.input_type === 'numbers'"
+        class="input-hint"
+      >
+        {{ t('open-question.hint-number-input') }}
+      </p>
+      <p
+        v-if="props.options.input_type === 'numbers' && valueHint"
+        class="input-hint"
+      >
+        {{ valueHint }}
+      </p>
+
       <div
         v-for="item in props.items"
         v-show="!props.hideObjectDict[item.id]"
@@ -148,54 +254,65 @@ function responseChanged(event: Event) {
           <template v-if="props.options.input_type === 'text'">
             <input
               v-if="props.options.display === 'small'"
+              v-valid-length
               class="oq-input"
               type="text"
               :name="item.id"
+              :minlength="getMinLength"
               :maxlength="getMaxLength"
               :value="displayValue(item.id)"
               @change="responseChanged"
             >
             <textarea
               v-if="props.options.display === 'large'"
+              v-valid-length
               class="open-question-textarea"
               :name="item.id"
+              :minlength="getMinLength"
               :maxlength="getMaxLength"
               :value="displayValue(item.id)"
               placeholder="|"
               @change="responseChanged"
             />
+            <p class="input-hint hint-invalid-input hint-invalid-length pb-0 mb-0">
+              {{ t('open-question.hint-invalid-length') }}
+            </p>
           </template>
 
           <template v-else-if="props.options.input_type === 'numbers'">
             <input
+              v-only-digits
+              v-valid-value
               type="text"
               class="oq-input"
-              v-only-digits
               :name="item.id"
-              :maxlength="getMaxLength"
+              :min="getMinValue"
+              :max="getMaxValue"
               :value="displayValue(item.id)"
               @change="responseChanged"
             >
-            <p class="input-hint">
-              {{ t('hint-number-input') }}
+            <p class="input-hint hint-invalid-input hint-invalid-value pb-0 mb-0">
+              {{ t('open-question.hint-invalid-value') }}
             </p>
           </template>
 
           <template v-else-if="props.options.input_type === 'email'">
             <input
               v-valid-email
+              v-valid-length
               type="email"
               class="oq-input"
               :name="item.id"
+              :minlength="getMinLength"
               :maxlength="getMaxLength"
               :value="displayValue(item.id)"
               @change="responseChanged"
             >
-            <p class="input-hint hint-invalid-input pb-0 mb-0">
-              {{ t('hint-invalid-email') }}
+            <p class="input-hint hint-invalid-input hint-invalid-email pb-0 mb-0">
+              {{ t('open-question.hint-invalid-email') }}
             </p>
-            <p class="input-hint">
-              {{ t('hint-email-input') }}
+            <p class="input-hint hint-invalid-input hint-invalid-length pb-0 mb-0">
+              {{ t('open-question.hint-invalid-length') }}
             </p>
           </template>
         </div>
@@ -212,7 +329,9 @@ function responseChanged(event: Event) {
 .oq-input {
   width: 80%;
 }
-.invalid-email {
+.invalid-email,
+.invalid-length,
+.invalid-value {
   border: 2px solid var(--ddm-error) !important;
   border-radius: 3px;
 }
@@ -231,10 +350,12 @@ function responseChanged(event: Event) {
 }
 .input-row {
   padding: 15px 10px;
-  border-bottom: 1px solid var(--border-color-components);
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+.response-body .input-row:not(:last-child) {
+  border-bottom: 1px solid var(--border-color-lighter);
 }
 @media (min-width: 769px) {
   .oq-input {

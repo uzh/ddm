@@ -228,7 +228,18 @@ class OpenQuestion(ItemMixin, QuestionBase):
         help_text="Select the type of input allowed.",
     )
 
-    max_input_length = models.IntegerField(
+    min_input_length = models.PositiveIntegerField(
+        verbose_name="Minimum input length",
+        help_text=(
+            "Participants' input must be of at least this length. If empty, "
+            "no minimal input length restriction is enforced."
+        ),
+        blank=True,
+        null=True,
+        default=None,
+    )
+
+    max_input_length = models.PositiveIntegerField(
         verbose_name="Maximum input length",
         help_text=(
             "Participants' input cannot exceed this length. If empty, "
@@ -239,7 +250,58 @@ class OpenQuestion(ItemMixin, QuestionBase):
         default=None,
     )
 
+    min_number_value = models.IntegerField(
+        verbose_name="Minimum input value",
+        help_text=(
+            "Participants must enter a number greater than or equal to this value. "
+            "If empty, no minimum input value restriction is enforced."
+        ),
+        blank=True,
+        null=True,
+        default=None,
+    )
+
+    max_number_value = models.IntegerField(
+        verbose_name="Maximum input value",
+        help_text=(
+            "Participants must enter a number less than or equal to this value. "
+            "If empty, no maximum input value restriction is enforced."
+        ),
+        blank=True,
+        null=True,
+        default=None,
+    )
+
     multi_item_response = models.BooleanField(default=False)
+
+    def clean(self) -> None:
+        super().clean()
+
+        if (
+            self.min_input_length is not None
+            and self.max_input_length is not None
+            and self.min_input_length > self.max_input_length
+        ):
+            e_msg = "Minimum input length cannot be greater than maximum input length."
+            raise ValidationError(
+                {
+                    "min_input_length": e_msg,
+                    "max_input_length": e_msg,
+                }
+            )
+
+        if (
+            self.min_number_value is not None
+            and self.max_number_value is not None
+            and self.min_number_value > self.max_number_value
+        ):
+            e_msg = "Minimum input value cannot be greater than maximum input value."
+            raise ValidationError(
+                {
+                    "min_number_value": e_msg,
+                    "max_number_value": e_msg,
+                }
+            )
 
     def get_response_keys(self) -> list[str]:
         if self.multi_item_response:

@@ -1,3 +1,26 @@
 {% include "ddm_core/form_components/_checkbox_toggle_field.html" with field=form.required %}
 {% include "ddm_core/form_components/_basic_field.html" with field=form.input_type %}
-{% include "ddm_core/form_components/_basic_field.html" with field=form.max_input_length %}
+
+<div
+  id="input-length-settings"
+  class="row"
+>
+  <div class="col-md-3 mt-0">
+    {% include "ddm_core/form_components/_basic_field.html" with field=form.min_input_length %}
+  </div>
+  <div class="col-md-3 mt-0">
+    {% include "ddm_core/form_components/_basic_field.html" with field=form.max_input_length %}
+  </div>
+</div>
+
+<div
+  id="number-value-settings"
+  class="row"
+>
+  <div class="col-md-3 mt-0">
+    {% include "ddm_core/form_components/_basic_field.html" with field=form.min_number_value %}
+  </div>
+  <div class="col-md-3 mt-0">
+    {% include "ddm_core/form_components/_basic_field.html" with field=form.max_number_value %}
+  </div>
+</div>

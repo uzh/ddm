@@ -381,7 +381,10 @@ class QuestionConfigSerializerTest(TestCase):
             text="Type something",
             display="small",
             input_type="text",
+            min_input_length=10,
             max_input_length=100,
+            min_number_value=0,
+            max_number_value=1000,
             multi_item_response=False,
         )
         # Add a "left-over" item to the open question to test filtering.
@@ -490,8 +493,18 @@ class QuestionConfigSerializerTest(TestCase):
         data = QuestionConfigSerializer(self.open_question, context={}).data
         self.assertEqual(data["options"]["display"], "small")
         self.assertEqual(data["options"]["input_type"], "text")
+        self.assertEqual(data["options"]["min_input_length"], 10)
         self.assertEqual(data["options"]["max_input_length"], 100)
+        self.assertEqual(data["options"]["min_number_value"], 0)
+        self.assertEqual(data["options"]["max_number_value"], 1000)
         self.assertFalse(data["options"]["multi_item_response"])
+
+    def test_get_options_for_open_question_with_unset_bounds(self):
+        data = QuestionConfigSerializer(self.open_multi, context={}).data
+        self.assertIsNone(data["options"]["min_input_length"])
+        self.assertIsNone(data["options"]["max_input_length"])
+        self.assertIsNone(data["options"]["min_number_value"])
+        self.assertIsNone(data["options"]["max_number_value"])
 
     def test_get_options_for_matrix_question(self):
         data = QuestionConfigSerializer(self.matrix_question, context={}).data

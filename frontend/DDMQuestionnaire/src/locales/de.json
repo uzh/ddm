@@ -1,7 +1,17 @@
 {
   "next-btn-label": "Weiter",
   "required-but-missing-hint": "Bitte beantworten Sie diese Frage.",
-  "hint-number-input": "Es sind nur Zahlen erlaubt.",
-  "hint-email-input": "E-Mail-Adresse im Format name{'@'}domain.de eingeben.",
-  "hint-invalid-email": "Das scheint keine gültige E-Mail-Adresse zu sein."
+  "open-question": {
+    "hint-min-length": "Die Eingabe muss mindestens {min} Zeichen lang sein.",
+    "hint-max-length": "Die Eingabe darf maximal {max} Zeichen lang sein.",
+    "hint-min-max-length": "Die Eingabe muss zwischen {min} und {max} Zeichen lang sein.",
+    "hint-min-value": "Die niedrigste erlaubte Eingabe ist {min}.",
+    "hint-max-value": "Die höchste erlaube Eingabe ist {max}.",
+    "hint-min-max-value": "Die Eingabe muss zwischen {min} und {max} liegen.",
+    "hint-invalid-email": "Das scheint keine gültige E-Mail-Adresse zu sein.",
+    "hint-invalid-length": "Die Eingabe entspricht nicht der erlaubten Zeichenanzahl.",
+    "hint-invalid-value": "Die Eingabe liegt außerhalb des erlaubten Bereichs.",
+    "hint-email-input": "E-Mail-Adresse im Format name{'@'}domain.de eingeben.",
+    "hint-number-input": "Es sind nur Zahlen erlaubt."
+  }
 }

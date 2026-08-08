@@ -55,7 +55,10 @@ QUESTION_FIELDS = {
     "open": [
         *_SHARED_FIELDS,
         "input_type",
+        "min_input_length",
         "max_input_length",
+        "min_number_value",
+        "max_number_value",
         "display",
         "multi_item_response",
         "randomize_items",

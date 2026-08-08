@@ -1,7 +1,17 @@
 {
   "next-btn-label": "Avanti",
   "required-but-missing-hint": "La preghiamo di rispondere a questa domanda.",
-  "hint-number-input": "Sono consentiti solo numeri.",
-  "hint-email-input": "Inserire l'indirizzo e-mail nel formato nome{'@'}dominio.com.",
-  "hint-invalid-email": "Questo non sembra essere un indirizzo e-mail valido."
+  "open-question": {
+    "hint-min-length": "L'inserimento deve contenere almeno {min} caratteri.",
+    "hint-max-length": "L'inserimento non può superare {max} caratteri.",
+    "hint-min-max-length": "L'inserimento deve contenere tra {min} e {max} caratteri.",
+    "hint-min-value": "Il valore minimo consentito è {min}.",
+    "hint-max-value": "Il valore massimo consentito è {max}.",
+    "hint-min-max-value": "L'inserimento deve essere compreso tra {min} e {max}.",
+    "hint-invalid-email": "Questo non sembra essere un indirizzo e-mail valido.",
+    "hint-invalid-length": "L'inserimento non soddisfa i requisiti di lunghezza.",
+    "hint-invalid-value": "L'inserimento è al di fuori dell'intervallo consentito.",
+    "hint-email-input": "Inserire l'indirizzo e-mail nel formato nome{'@'}dominio.com.",
+    "hint-number-input": "Sono consentiti solo numeri."
+  }
 }

@@ -1,7 +1,17 @@
 {
   "next-btn-label": "Suivant",
   "required-but-missing-hint": "Veuillez répondre à cette question.",
-  "hint-number-input": "Seuls les chiffres sont autorisés.",
-  "hint-email-input": "Saisissez l'adresse e-mail au format nom{'@'}domaine.com.",
-  "hint-invalid-email": "Ceci ne semble pas être une adresse e-mail valide."
+  "open-question": {
+    "hint-min-length": "La saisie doit comporter au moins {min} caractères.",
+    "hint-max-length": "La saisie ne peut pas dépasser {max} caractères.",
+    "hint-min-max-length": "La saisie doit comporter entre {min} et {max} caractères.",
+    "hint-min-value": "La valeur minimale autorisée est {min}.",
+    "hint-max-value": "La valeur maximale autorisée est {max}.",
+    "hint-min-max-value": "La saisie doit être comprise entre {min} et {max}.",
+    "hint-invalid-email": "Ceci ne semble pas être une adresse e-mail valide.",
+    "hint-invalid-length": "La saisie ne respecte pas les exigences de longueur.",
+    "hint-invalid-value": "La saisie est en dehors de la plage autorisée.",
+    "hint-email-input": "Saisissez l'adresse e-mail au format nom{'@'}domaine.com.",
+    "hint-number-input": "Seuls les chiffres sont autorisés."
+  }
 }

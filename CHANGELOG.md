@@ -7,6 +7,13 @@ This version drops official support for Python versions < 3.12.
 
 ### Added
 
+**General**
+
+- Added `show project name` option to Projects to control whether the
+  project name should be displayed in the header of the participation interface.
+
+**Data Donation**
+
 - **TXT file parsing**: Blueprints can now be configured to extract data from plain text
   (`.txt`) files, in addition to the existing JSON and CSV support.
   - New TXT-specific settings in the Blueprint form: record separator, field separator,
@@ -26,10 +33,13 @@ This version drops official support for Python versions < 3.12.
     of its backups succeeds, the successful backup is shown to participants in place of the
     failed primary.
 - **Copying blueprints and questions**: There is now an option to create copies of Blueprints and Questions within a Project.
-- Added `show project name` option to Donation Projects to control whether the
-  project name should be displayed in the header of the participation interface.
 - Added `DataDonation.data_extraction_state` (replaces `DataDonation.status`) and `DataDonation.n_data_entries` to `DataDonation` model.
+
+**Questionnaire**
+
 - The questionnaire now caches responses and progress on browser reload for 24 hours or until the questionnaire configuration changes.
+- Open questions can now be configured to enforce `minimum lenght` and `maximum length` restrictions for text inputs
+  and `minimum value` and `maximum value` restrictions for number inputs.
 
 ### Changed
 

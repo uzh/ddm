@@ -93,10 +93,13 @@ export function usePageNavigation(
   /**
    * Determines whether navigation to the next page is allowed.
    *
-   * @returns {boolean} True if all required questions have been answered or hint has already been shown
+   * @returns {boolean} True if all required questions have been answered or hint has already been shown,
+   * and all answered open questions satisfy their configured length/value bounds.
    */
   function canProceedToNextPage(): boolean {
-    return displayedRequiredHint.value || checkRequired();
+    const requiredOk = displayedRequiredHint.value || checkRequired(); // soft required check
+    const responsesOk = validateResponses();  // hard required check
+    return requiredOk && responsesOk;
   }
 
   /**
@@ -165,6 +168,74 @@ export function usePageNavigation(
     missingResponses.forEach(r => root.querySelector("#required-hint-" + r)?.classList.add("show"));
     displayedRequiredHint.value = true;
     return false;
+  }
+
+  /**
+   * Checks all open questions on the current page against their configured
+   * length (text/email) or value (numbers) bounds, marking any offending
+   * inputs and their dedicated hints, mirroring the `validLength`/`validValue`
+   * directives so the visual state stays in sync regardless of whether the
+   * field was ever blurred.
+   *
+   * Bounds are only enforced when a response has been entered; missing
+   * required responses are handled separately by `checkRequired`.
+   *
+   * @returns {boolean} True if all answered open questions are within bounds.
+   */
+  function validateResponses(): boolean {
+    const root = rootElement.value;
+    if (!root) return true;
+
+    let isValid = true;
+
+    getActiveQuestions().forEach(q => {
+      if (q.type !== 'open') return;
+      if (hideObjectDict.value[q.question]) return;
+
+      const options = q.options;
+      const isNumberInput = options?.input_type === 'numbers';
+      const keys = options?.multi_item_response
+        ? questionItemMap[q.question] ?? []
+        : [q.question];
+
+      keys.forEach((key) => {
+        if (hideObjectDict.value[key]) return;
+
+        const input = root.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name="${key}"]`);
+        if (!input) return;
+
+        const value = responses.value[key];
+        const hasValue = value !== undefined && value !== missingValue && String(value) !== '';
+
+        const invalidClass = isNumberInput ? 'invalid-value' : 'invalid-length';
+        const hintClass = isNumberInput ? 'hint-invalid-value' : 'hint-invalid-length';
+
+        let fieldValid = true;
+        if (hasValue) {
+          if (isNumberInput) {
+            const num = Number(value);
+            const min = options?.min_number_value;
+            const max = options?.max_number_value;
+            fieldValid = (min == null || num >= min) && (max == null || num <= max);
+          } else {
+            const length = String(value).length;
+            const min = options?.min_input_length;
+            const max = options?.max_input_length;
+            fieldValid = (min == null || length >= min) && (max == null || length <= max);
+          }
+        }
+
+        input.classList.toggle(invalidClass, !fieldValid);
+        const hint = input.parentElement?.querySelector(`.${hintClass}`);
+        if (hint instanceof HTMLElement) {
+          hint.style.display = fieldValid ? 'none' : 'block';
+        }
+
+        if (!fieldValid) isValid = false;
+      });
+    });
+
+    return isValid;
   }
 
   /**

@@ -18,7 +18,10 @@ export interface ScalePoint {
 export interface QuestionOptions {
   input_type?: 'text' | 'numbers' | 'email';
   display?: 'small' | 'large';
+  min_input_length?: number | null;
   max_input_length?: number | null;
+  min_number_value?: number | null;
+  max_number_value?: number | null;
   multi_item_response?: boolean;
   show_scale_headings?: boolean;
 }

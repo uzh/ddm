@@ -308,7 +308,10 @@ class QuestionConfigSerializer(serializers.ModelSerializer):
             return {
                 "display": obj.display,
                 "input_type": obj.input_type,
+                "min_input_length": obj.min_input_length,
                 "max_input_length": obj.max_input_length,
+                "min_number_value": obj.min_number_value,
+                "max_number_value": obj.max_number_value,
                 "multi_item_response": obj.multi_item_response,
             }
 

@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from ddm.participation.utils import (
@@ -109,6 +110,38 @@ class TestSemanticDifferentialQuestion(TestQuestionModelsBaseCase):
     def test_get_valid_responses(self):
         valid_values = [1, 6, -99, -77]
         self.assertCountEqual(valid_values, self.question.get_valid_responses())
+
+
+class TestOpenQuestionMinMaxValidation(TestQuestionModelsBaseCase):
+    def test_min_input_length_greater_than_max_raises(self):
+        question = OpenQuestion(
+            **{**self.question_config, "min_input_length": 10, "max_input_length": 5}
+        )
+        with self.assertRaises(ValidationError):
+            question.clean()
+
+    def test_min_number_value_greater_than_max_raises(self):
+        question = OpenQuestion(
+            **{**self.question_config, "min_number_value": 10, "max_number_value": 5}
+        )
+        with self.assertRaises(ValidationError):
+            question.clean()
+
+    def test_valid_bounds_do_not_raise(self):
+        question = OpenQuestion(
+            **{
+                **self.question_config,
+                "min_input_length": 5,
+                "max_input_length": 10,
+                "min_number_value": 1,
+                "max_number_value": 10,
+            }
+        )
+        question.clean()
+
+    def test_empty_bounds_do_not_raise(self):
+        question = OpenQuestion(**self.question_config)
+        question.clean()
 
 
 class FilterConditionModelTest(TestCase):

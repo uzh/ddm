@@ -171,3 +171,72 @@ describe("page navigation with open question length/value bounds", () => {
     expect(wrapper.find("[data-page-index='2']").element.style.display).not.toBe("none");
   });
 });
+
+describe("required-field soft check resets per page", () => {
+  beforeAll(() => {
+    document.documentElement.scrollTo = vi.fn();
+  });
+
+  it("re-checks required fields on each new page instead of only once per session", async () => {
+    const wrapper = mountApp([
+      {
+        question: "question-1",
+        type: "open",
+        page: 1,
+        index: 1,
+        text: "<p>Required on page 1</p>",
+        required: true,
+        items: [],
+        scale: [],
+        options: { input_type: "text", display: "small", multi_item_response: false },
+      },
+      {
+        question: "question-2",
+        type: "open",
+        page: 2,
+        index: 1,
+        text: "<p>Required on page 2</p>",
+        required: true,
+        items: [],
+        scale: [],
+        options: { input_type: "text", display: "small", multi_item_response: false },
+      },
+      {
+        question: "question-3",
+        type: "transition",
+        page: 3,
+        index: 1,
+        text: "<p>done</p>",
+        required: false,
+        items: [],
+        scale: [],
+        options: {},
+      },
+    ]);
+
+    // Page 1, first click: blocked, hint shown for the missing required field.
+    await wrapper.find("#next-page-btn").trigger("click");
+    await wait();
+    expect(wrapper.find("[data-page-index='1']").element.style.display).not.toBe("none");
+    expect(wrapper.find("#required-hint-question-1").classes()).toContain("show");
+
+    // Page 1, second click: soft check already shown once, advances regardless.
+    await wrapper.find("#next-page-btn").trigger("click");
+    await wait();
+    expect(wrapper.find("[data-page-index='1']").element.style.display).toBe("none");
+    expect(wrapper.find("[data-page-index='2']").element.style.display).not.toBe("none");
+
+    // Page 2, first click: must be checked independently of page 1 - blocked.
+    await wrapper.find("#next-page-btn").trigger("click");
+    await wait();
+    expect(wrapper.find("[data-page-index='2']").element.style.display).not.toBe("none");
+    expect(wrapper.find("[data-page-index='3']").element.style.display).toBe("none");
+    expect(wrapper.find("#required-hint-question-2").classes()).toContain("show");
+
+    // Page 2, second click: advances.
+    await wrapper.find("#next-page-btn").trigger("click");
+    await wait();
+    expect(wrapper.find("[data-page-index='2']").element.style.display).toBe("none");
+    expect(wrapper.find("[data-page-index='3']").element.style.display).not.toBe("none");
+  });
+});

@@ -1,4 +1,4 @@
-import { onMounted, Ref, ref } from 'vue';
+import { onMounted, Ref, ref, watch } from 'vue';
 
 import { QuestionConfig, QuestionnaireConfig } from "@questionnaire/types/questionnaire";
 import { usePersistedRef } from './usePersistedRef'
@@ -37,6 +37,11 @@ export function usePageNavigation(
   const maxPage = ref(1);
   const lastPageSubmitted = ref(false);
   const displayedRequiredHint = ref<boolean>(false);
+
+  // Reset the soft required-hint on page advance.
+  watch(currentPage, () => {
+    displayedRequiredHint.value = false;
+  });
 
   onMounted(() => {
     setPageInitials();

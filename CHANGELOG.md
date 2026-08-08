@@ -54,6 +54,9 @@ This version drops official support for Python versions < 3.12.
 - Fixed a bug where questionnaire filter conditions comparing numeric answers
   (e.g. >, <, >=) could produce incorrect results, because it was being compared
   as text rather than as a number (e.g. "9" was evaluated as greater than "10").
+- Fixed a bug where the required-question check for the questionnaire was only ever
+  performed once per session: after the first page with a missing required answer,
+  required questions on all following pages were no longer validated.
 
 ### Deprecated
 

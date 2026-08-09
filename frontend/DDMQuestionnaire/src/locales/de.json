@@ -1,6 +1,8 @@
 {
   "next-btn-label": "Weiter",
   "required-but-missing-hint": "Bitte beantworten Sie diese Frage.",
+  "questionnaire": "Fragebogen",
+  "page": "Seite",
   "open-question": {
     "hint-min-length": "Die Eingabe muss mindestens {min} Zeichen lang sein.",
     "hint-max-length": "Die Eingabe darf maximal {max} Zeichen lang sein.",

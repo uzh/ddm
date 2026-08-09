@@ -35,6 +35,7 @@ export function usePageNavigation(
   )
   const minPage = ref(1);
   const maxPage = ref(1);
+  const pageIndexMap = ref<Map<number, number>>(new Map());
   const lastPageSubmitted = ref(false);
   const displayedSoftRequiredHint = ref<boolean>(false);
   const hardRequiredMissing = ref<boolean>(false);
@@ -56,6 +57,8 @@ export function usePageNavigation(
    */
   function setPageInitials(): void {
     const pages = questionnaireConfig.value.map(q => q.page);
+    const uniquePages = Array.from(new Set(pages)).sort((a, b) => a - b);
+    pageIndexMap.value = new Map(uniquePages.map((page, index) => [page, index + 1]));
     if (pages.length === 0) {
       minPage.value = 0;
       maxPage.value = 0;
@@ -286,5 +289,6 @@ export function usePageNavigation(
     lastPageSubmitted,
     next,
     clearCurrentPage,
+    pageIndexMap,
   };
 }

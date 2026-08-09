@@ -1,6 +1,8 @@
 {
   "next-btn-label": "Suivant",
   "required-but-missing-hint": "Veuillez répondre à cette question.",
+  "questionnaire": "Questionnaire",
+  "page": "page",
   "open-question": {
     "hint-min-length": "La saisie doit comporter au moins {min} caractères.",
     "hint-max-length": "La saisie ne peut pas dépasser {max} caractères.",

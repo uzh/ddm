@@ -1,6 +1,8 @@
 {
   "next-btn-label": "Avanti",
   "required-but-missing-hint": "La preghiamo di rispondere a questa domanda.",
+  "questionnaire": "Questionario",
+  "page": "pagina",
   "open-question": {
     "hint-min-length": "L'inserimento deve contenere almeno {min} caratteri.",
     "hint-max-length": "L'inserimento non può superare {max} caratteri.",

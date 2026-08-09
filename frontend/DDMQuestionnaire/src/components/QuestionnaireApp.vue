@@ -76,7 +76,7 @@ const { evaluateFilters, checkIfAllItemsHidden } = useFilterEngine(
 
 // Page navigation.
 const questionnaireRoot = ref<HTMLElement | null>(null);
-const { currentPage, lastPageSubmitted, next, clearCurrentPage } = usePageNavigation(
+const { currentPage, lastPageSubmitted, next, clearCurrentPage, pageIndexMap } = usePageNavigation(
     questionnaireConfig,
     hideObjectDict,
     responses,
@@ -239,7 +239,8 @@ if (process.env.NODE_ENV === 'test') {
 
 // Manage question stickyness
 import { useStickyQuestions } from '@questionnaire/composables/useStickyQuestions';
-import {initializeQuestionItemMap, initializeResponses} from "@questionnaire/utils/questionnaireInit";
+import { initializeQuestionItemMap, initializeResponses } from "@questionnaire/utils/questionnaireInit";
+import ProgressIndicator from "@questionnaire/components/ProgressIndicator.vue";
 
 const { questionDivs, isSticky } = useStickyQuestions(questionMap, currentPage, hideObjectDict);
 
@@ -251,6 +252,12 @@ const { questionDivs, isSticky } = useStickyQuestions(questionMap, currentPage, 
     ref="questionnaireRoot"
     class="ddm-questionnaire ddm-questionnaire-app"
   >
+
+    <ProgressIndicator
+      :current-page="currentPage"
+      :page-index-map="pageIndexMap"
+    />
+
     <template
       v-for="question in questionnaireConfig"
       :key="question.question"
@@ -349,7 +356,7 @@ const { questionDivs, isSticky } = useStickyQuestions(questionMap, currentPage, 
 
 .question-body.is-sticky .question-text {
   position: sticky;
-  top: 12px;
+  top: 30px;
   border-top: 1px solid var(--border-color-components);
   border-left: 1px solid var(--border-color-components);
   border-right: 1px solid var(--border-color-components);
@@ -361,7 +368,7 @@ const { questionDivs, isSticky } = useStickyQuestions(questionMap, currentPage, 
 .sticky-gap-mask {
   position: sticky;
   top: 0;
-  height: 20px;
+  height: 32px;
   background: var(--ddm-main-bg-color);
   border: 1px solid var(--ddm-main-bg-color);
   z-index: 2;

@@ -48,6 +48,7 @@ This version drops official support for Python versions < 3.12.
   to track questionnaire progress and not loose responses if a participants abandons
   (previously, responses were only stored in the database, once a participant reached
   the end of the questionnaire).
+- The questionnaire now shows a progress bar on top of the screen.
 
 ### Changed
 

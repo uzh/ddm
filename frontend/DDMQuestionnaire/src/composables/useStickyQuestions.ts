@@ -1,7 +1,7 @@
 import { ref, reactive, onMounted, onUnmounted, nextTick, watch, type Ref } from 'vue'
 import type { QuestionConfig } from '@questionnaire/types/questionnaire'
 
-const STICKY_TOP_OFFSET = 12; // keep in sync with the CSS `top` value on .question-body.is-sticky .question-text
+const STICKY_TOP_OFFSET = 30; // keep in sync with the CSS `top` value on .question-body.is-sticky .question-text
 const STICKY_MAX_VIEWPORT_WIDTH = 768;
 const STICKY_TYPES = ['matrix', 'semantic_diff'];
 

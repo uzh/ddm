@@ -1,6 +1,8 @@
 {
   "next-btn-label": "Next",
   "required-but-missing-hint": "Please answer this question.",
+  "questionnaire": "Questionnaire",
+  "page": "page",
   "open-question": {
     "hint-min-length": "The input must be at least {min} characters long.",
     "hint-max-length": "The input cannot exceed {max} characters.",

@@ -53,7 +53,7 @@ export function scrollToNext(event: Event): void {
   if (nextRow) {
     const stickyHeight = getHeightOfLastQuestionTextBefore(currentRow);
     const nextRowTop = nextRow.getBoundingClientRect().top + window.scrollY;
-    const adjustedPosition = nextRowTop - stickyHeight - 12;
+    const adjustedPosition = nextRowTop - stickyHeight - 25;
     window.scrollTo({ top: adjustedPosition, behavior: 'smooth' });
   } else {
     const nextQuestionBody = getNextQuestionBody(currentRow);

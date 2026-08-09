@@ -55,10 +55,16 @@ class ResponseSerializer(SerializerDecryptionMixin, serializers.ModelSerializer)
     participant = serializers.CharField(source="participant.external_id")
     response_data = serializers.SerializerMethodField()
     time_submitted = serializers.DateTimeField(format="iso-8601")
+    questionnaire_complete = serializers.BooleanField(source="is_complete")
 
     class Meta:
         model = QuestionnaireResponse
-        fields = ["participant", "response_data", "time_submitted"]
+        fields = [
+            "participant",
+            "response_data",
+            "time_submitted",
+            "questionnaire_complete",
+        ]
 
     @sensitive_variables()
     def get_response_data(self, obj: QuestionnaireResponse) -> dict:
@@ -139,6 +145,7 @@ class ResponseSerializerWithSnapshot(ResponseSerializer):
             "questionnaire_snapshot",
             "response_data",
             "questionnaire_config",
+            "questionnaire_complete",
         ]
 
     @sensitive_variables()

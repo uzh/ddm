@@ -362,6 +362,45 @@ class TestAPIs(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "text/csv")
 
+    def test_responses_api_json_includes_is_complete(self):
+        token = self.project_base.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+        url = reverse("ddm_apis:responses", args=[self.project_base.url_id])
+        response = client.get(url)
+        self.assertEqual(response.status_code, 200)
+        for entry in response.data["responses"]:
+            self.assertIn("questionnaire_complete", entry)
+
+    def test_responses_api_json_distinguishes_partial_responses(self):
+        self.q_response_b.is_complete = False
+        self.q_response_b.save()
+
+        token = self.project_base.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+        url = reverse("ddm_apis:responses", args=[self.project_base.url_id])
+        response = client.get(url)
+
+        by_participant = {
+            entry["participant"]: entry["questionnaire_complete"]
+            for entry in response.data["responses"]
+        }
+        self.assertTrue(by_participant[self.participant_a.external_id])
+        self.assertFalse(by_participant[self.participant_b.external_id])
+
+        self.q_response_b.is_complete = True
+        self.q_response_b.save()
+
+    def test_responses_api_csv_includes_is_complete_column(self):
+        token = self.project_base.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+        url = reverse("ddm_apis:responses", args=[self.project_base.url_id])
+        response = client.get(url + "?csv=true")
+        header = response.content.decode().splitlines()[0]
+        self.assertIn("questionnaire_complete", header)
+
     def test_participant_deletion_with_regular_login(self):
         self.client.login(**self.base_creds)
 

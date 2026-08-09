@@ -13,7 +13,9 @@
  * - `questionnaireConfig` (String): JSON string of questionnaire configuration.
  * - `filterConfig` (String): JSON string of filter condition configuration.
  * - `staticVariables`: Map of static variables and values passed from backend.
- * - `actionUrl` (String): Backend endpoint to POST responses to.
+ * - `actionUrl` (String): Backend endpoint to POST final responses to.
+ * - `progressUrl` (String): Backend endpoint to POST in-progress responses to
+ *   on every page advance.
  * - `language` (String): Locale code to initialize i18n.
  */
 import { useI18n } from 'vue-i18n';
@@ -40,6 +42,7 @@ const props = defineProps<{
   filterConfig: FilterConfig,
   staticVariables: Record<string, string | number>,
   actionUrl: string,
+  progressUrl?: string,
   language: string
 }>();
 
@@ -151,13 +154,11 @@ function cleanResponses() {
 }
 
 /**
- * Submits the response data to the backend via a POST request using FormData.
- *
- * - Serializes `responses` and `questionnaireConfig` as JSON and sends it in "post_data".
- * - Includes CSRF token from the DOM for security.
- * - If the response triggers a redirect, it navigates to the new URL.
+ * Builds the FormData payload shared by both the final submission and the
+ * in-progress save: `responses`/`questionnaireConfig` as JSON in "post_data",
+ * plus the CSRF token read from the DOM.
  */
-function submitData() {
+function buildPostData(): FormData {
   const form = new FormData();
   cleanResponses();
   form.append(
@@ -171,9 +172,20 @@ function submitData() {
   const csrf = document.querySelector("input[name='csrfmiddlewaretoken']") as HTMLInputElement;
   if (csrf) form.append("csrfmiddlewaretoken", csrf.value);
 
+  return form;
+}
+
+/**
+ * Submits the response data to the backend via a POST request using FormData.
+ *
+ * - If the response triggers a redirect, it navigates to the new URL.
+ * - Clears the locally cached progress, since the backend now holds the
+ *   authoritative final submission.
+ */
+function submitData() {
   fetch(props.actionUrl, {
     method: "POST",
-    body: form
+    body: buildPostData()
   } as RequestInit)
     .then(res => {
       if (res.redirected) {
@@ -182,9 +194,25 @@ function submitData() {
     })
     .catch(err => console.error("Submit error:", err));
 
-  // Clear cached information.^
+  // Clear cached information.
   clearResponses();
   clearCurrentPage();
+}
+
+/**
+ * Silently saves responses so far to the backend on a page advance, so
+ * progress isn't lost if the participant abandons the questionnaire before
+ * reaching the final page. Unlike `submitData()` - it's a background
+ * save, not the participant's actual submission.
+ */
+function submitProgress() {
+  if (!props.progressUrl) return;
+
+  fetch(props.progressUrl, {
+    method: "POST",
+    body: buildPostData()
+  } as RequestInit)
+    .catch(err => console.error("Progress save error:", err));
 }
 
 function clickOnNextPage() {
@@ -192,6 +220,7 @@ function clickOnNextPage() {
   checkIfAllItemsHidden();   // To make sure filters are evaluated and questions hidden, even when all items are skipped.
   const advanced = next();
   if (advanced) {
+    if (!lastPageSubmitted.value) submitProgress();
     scrollToTop();
   } else {
     scrollToFirstValidationIssue(questionnaireRoot.value ?? document);

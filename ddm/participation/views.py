@@ -10,11 +10,13 @@ from django.http import (
     HttpResponse,
     HttpResponseBase,
     HttpResponseRedirect,
+    JsonResponse,
 )
-from django.shortcuts import redirect, reverse
+from django.shortcuts import get_object_or_404, redirect, reverse
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.decorators import method_decorator
+from django.views import View
 from django.views.decorators.cache import cache_page
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
@@ -476,10 +478,13 @@ class QuestionnaireView(ParticipationFlowBaseView):
             )
             log_server_exception(self.object, msg)
             return
-        responses = post_data.get("responses", None)
-        questionnaire_config = post_data.get("questionnaire_config", None)
+
         save_questionnaire_response_to_db(
-            responses, self.object, self.participant, questionnaire_config
+            post_data.get("responses"),
+            self.object,
+            self.participant,
+            post_data.get("questionnaire_config"),
+            is_complete=True,
         )
         return
 
@@ -577,3 +582,43 @@ class ProjectThemeView(DetailView):
         response = super().render_to_response(context, **kwargs)
         response["Cache-Control"] = "public, max-age=31536000, immutable"
         return response
+
+
+class QuestionnaireProgressView(View):
+    """Saves in-progress questionnaire responses on a page advance.
+
+    Unlike QuestionnaireView.post(), this does not go through
+    ParticipationFlowBaseView.post() - it must not advance the participant's
+    macro flow step or redirect, since it can fire many times per
+    questionnaire (once per page turn) while the participant is still on
+    the questionnaire step.
+    """
+
+    def post(self, request: HttpRequest, slug: str) -> JsonResponse:
+        project = get_object_or_404(DonationProject, slug=slug)
+
+        session_id = get_participation_session_id(project)
+        session_data = request.session.get(session_id)
+        if not session_data:
+            return JsonResponse({"error": "No active session."}, status=400)
+
+        try:
+            participant = Participant.objects.get(
+                pk=session_data["participant_id"], project=project
+            )
+        except Participant.DoesNotExist:
+            return JsonResponse({"error": "Participant not found."}, status=400)
+
+        try:
+            post_data = json.loads(request.POST["post_data"])
+        except (MultiValueDictKeyError, JSONDecodeError):
+            return JsonResponse({"error": "Invalid payload."}, status=400)
+
+        save_questionnaire_response_to_db(
+            post_data.get("responses"),
+            project,
+            participant,
+            post_data.get("questionnaire_config"),
+            is_complete=False,
+        )
+        return JsonResponse({"status": "ok"})

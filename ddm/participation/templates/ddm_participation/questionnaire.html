@@ -13,6 +13,7 @@
     <div
       id="qapp"
       data-action-url='{{ request.build_absolute_uri }}'
+      data-progress-url='{% url "ddm_participation:questionnaire_progress" project.slug %}'
       data-language='{{ LANGUAGE_CODE|slice:"0:2" }}'
       class="text-black"
     >

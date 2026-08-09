@@ -84,6 +84,7 @@ function initializeQuestionnaireApp(): void {
     filterConfig: filterConfig,
     staticVariables: staticVariables,
     actionUrl: mountEl.dataset.actionUrl,
+    progressUrl: mountEl.dataset.progressUrl,
     language: mountEl.dataset.language
   });
 

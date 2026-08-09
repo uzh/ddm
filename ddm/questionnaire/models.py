@@ -414,6 +414,18 @@ class QuestionnaireResponse(ModelWithEncryptedData):
     questionnaire_config = models.JSONField(default=list, null=True)
     # Holds the questionnaire configuration at the time of participation.
 
+    is_complete = models.BooleanField(default=True)
+    # False while responses are saved incrementally as the participant
+    # progresses through the questionnaire; set True on final submission.
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "participant"],
+                name="unique_questionnaireresponse_per_participant",
+            ),
+        ]
+
 
 class FilterCondition(models.Model):
     """

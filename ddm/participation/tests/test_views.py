@@ -20,7 +20,7 @@ from ddm.participation.views import (
     QuestionnaireView,
 )
 from ddm.projects.models import DonationProject, ResearchProfile
-from ddm.questionnaire.models import OpenQuestion
+from ddm.questionnaire.models import OpenQuestion, QuestionnaireResponse
 
 User = get_user_model()
 
@@ -70,6 +70,9 @@ class ParticipationFlowBaseTestCase(TestCase):
         cls.briefing_url = reverse("ddm_participation:briefing", args=[slug_base])
         cls.dd_url = reverse("ddm_participation:datadonation", args=[slug_base])
         cls.quest_url = reverse("ddm_participation:questionnaire", args=[slug_base])
+        cls.progress_url = reverse(
+            "ddm_participation:questionnaire_progress", args=[slug_base]
+        )
         cls.debriefing_url = reverse("ddm_participation:debriefing", args=[slug_base])
 
         cls.inactive_info_page = reverse(
@@ -427,6 +430,81 @@ class TestQuestionnaireView(ParticipationFlowBaseTestCase):
 
         self.project_base.active = True
         self.project_base.save()
+
+
+class TestQuestionnaireProgressView(ParticipationFlowBaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.initialize_project_and_session()
+
+        participant_base = self.get_participant(self.project_base.pk)
+        participant_base.current_step = 2
+        participant_base.save()
+
+    def post_data(self, response_value=1):
+        return {
+            "post_data": json.dumps(
+                {
+                    "responses": {"question-1": response_value},
+                    "questionnaire_config": [],
+                }
+            )
+        }
+
+    def test_valid_session_saves_partial_response(self):
+        response = self.client.post(self.progress_url, data=self.post_data())
+        self.assertEqual(response.status_code, 200)
+
+        participant = self.get_participant(self.project_base.pk)
+        saved = QuestionnaireResponse.objects.get(
+            project=self.project_base, participant=participant
+        )
+        self.assertFalse(saved.is_complete)
+
+    def test_no_session_returns_400(self):
+        new_client = Client()
+        response = new_client.post(self.progress_url, data=self.post_data())
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(QuestionnaireResponse.objects.count(), 0)
+
+    def test_invalid_project_slug_returns_404(self):
+        url = reverse("ddm_participation:questionnaire_progress", args=["nope"])
+        response = self.client.post(url, data=self.post_data())
+        self.assertEqual(response.status_code, 404)
+
+    def test_missing_post_data_returns_400(self):
+        response = self.client.post(self.progress_url, data={})
+        self.assertEqual(response.status_code, 400)
+
+    def test_does_not_advance_current_step(self):
+        participant_before = self.get_participant(self.project_base.pk)
+        step_before = participant_before.current_step
+
+        self.client.post(self.progress_url, data=self.post_data())
+
+        participant_after = self.get_participant(self.project_base.pk)
+        self.assertEqual(participant_after.current_step, step_before)
+
+    def test_subsequent_final_submission_updates_same_row(self):
+        self.client.post(self.progress_url, data=self.post_data(response_value=1))
+        participant = self.get_participant(self.project_base.pk)
+        partial = QuestionnaireResponse.objects.get(
+            project=self.project_base, participant=participant
+        )
+
+        self.client.post(self.quest_url, data=self.post_data(response_value=2))
+
+        self.assertEqual(
+            QuestionnaireResponse.objects.filter(
+                project=self.project_base, participant=participant
+            ).count(),
+            1,
+        )
+        final = QuestionnaireResponse.objects.get(
+            project=self.project_base, participant=participant
+        )
+        self.assertEqual(final.pk, partial.pk)
+        self.assertTrue(final.is_complete)
 
 
 class TestDebriefingView(ParticipationFlowBaseTestCase):

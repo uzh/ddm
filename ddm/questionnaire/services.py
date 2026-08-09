@@ -145,6 +145,7 @@ def save_questionnaire_response_to_db(
     project: DonationProject,
     participant: Participant,
     questionnaire_config: list | None = None,
+    is_complete: bool = True,  # noqa: FBT002
 ) -> None:
     """
     Validates and saves questionnaire responses submitted by a participant.
@@ -153,6 +154,11 @@ def save_questionnaire_response_to_db(
     questionnaire configuration, performs validation on responses for both
     question-level and item-level inputs, and stores the validated data
     in the database.
+
+    A participant has at most one QuestionnaireResponse per project: calling
+    this again for the same participant (e.g. an in-progress save on an
+    earlier page, followed by the final submission) updates that same row
+    rather than creating a duplicate.
 
     Args:
         responses (dict): A dictionary of raw responses keyed by either
@@ -165,6 +171,9 @@ def save_questionnaire_response_to_db(
         questionnaire_config (list): The questionnaire configuration as submitted
             by the frontend, describing the structure of the questionnaire at
             submission time.
+        is_complete (bool): Whether this is the participant's final submission
+            (True) or an in-progress save while they're still working through
+            the questionnaire (False).
 
     Raises:
         ValidationError: If any of the question or item responses fail validation.
@@ -174,12 +183,15 @@ def save_questionnaire_response_to_db(
     """
     validate_responses(responses, project)
 
-    QuestionnaireResponse.objects.create(
+    QuestionnaireResponse.objects.update_or_create(
         project=project,
         participant=participant,
-        time_submitted=timezone.now(),
-        data=responses,
-        questionnaire_config=questionnaire_config,
+        defaults={
+            "time_submitted": timezone.now(),
+            "data": responses,
+            "questionnaire_config": questionnaire_config,
+            "is_complete": is_complete,
+        },
     )
 
 

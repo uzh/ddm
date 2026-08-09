@@ -44,6 +44,10 @@ This version drops official support for Python versions < 3.12.
   and `minimum value` and `maximum value` restrictions for number inputs.
 - Questions can now be configured as `not required`, `soft required` (can be skipped by participants after a warning),
   and `hard required` (cannot be skipped by participants).
+- Responses are now saved in the database on every page advancement of a participant
+  to track questionnaire progress and not loose responses if a participants abandons
+  (previously, responses were only stored in the database, once a participant reached
+  the end of the questionnaire).
 
 ### Changed
 

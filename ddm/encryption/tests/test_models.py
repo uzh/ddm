@@ -98,13 +98,15 @@ class TestModelEncryption(TestCase):
                 )
 
     def test_questionnaire_response_encryption_default(self):
+        # A participant has at most one QuestionnaireResponse per project, so
+        # each iteration re-saves the same instance.
+        qr = QuestionnaireResponse(
+            project=self.base_project, participant=self.base_participant
+        )
         for raw_data in [self.raw_data_short, self.raw_data_long]:
             with self.subTest(raw_data=raw_data):
-                qr = QuestionnaireResponse.objects.create(
-                    project=self.base_project,
-                    participant=self.base_participant,
-                    data=raw_data,
-                )
+                qr.data = raw_data
+                qr.save()
                 self.assertNotEqual(raw_data, qr.data)
                 self.assertEqual(
                     raw_data,
@@ -137,13 +139,15 @@ class TestModelEncryption(TestCase):
                 )
 
     def test_questionnaire_response_encryption_super_secret(self):
+        # See test_questionnaire_response_encryption_default: re-save the
+        # same instance rather than creating a new row per raw_data value.
+        qr = QuestionnaireResponse(
+            project=self.alt_project, participant=self.alt_participant
+        )
         for raw_data in [self.raw_data_short, self.raw_data_long]:
             with self.subTest(raw_data=raw_data):
-                qr = QuestionnaireResponse.objects.create(
-                    project=self.alt_project,
-                    participant=self.alt_participant,
-                    data=raw_data,
-                )
+                qr.data = raw_data
+                qr.save()
                 self.assertNotEqual(raw_data, qr.data)
                 with self.assertRaises(ValueError):
                     qr.get_decrypted_data(

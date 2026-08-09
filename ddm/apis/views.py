@@ -327,7 +327,7 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
         Get the ordered list of variable names according to the current order
         of the questionnaire.
         """
-        col_order = ["participant", "time_submitted"]
+        col_order = ["participant", "time_submitted", "is_complete"]
         questions = self.project.questionbase_set.all().order_by("page", "index")
 
         question_types_wo_items = [QuestionType.SINGLE_CHOICE]
@@ -371,12 +371,13 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
         self, responses: QuerySet[QuestionnaireResponse], decryptor: Decryption
     ) -> HttpResponse:
         clean_responses = []
-        col_names = {"participant", "time_submitted"}
+        col_names = {"participant", "time_submitted", "questionnaire_completed"}
         responses = ResponseSerializer(responses, many=True, decryptor=decryptor).data
         for response in responses:
             data = {
                 "participant": response["participant"],
                 "time_submitted": response["time_submitted"],
+                "questionnaire_completed": response["questionnaire_complete"],
             }
             for var, val in response["response_data"].items():
                 col_names.add(var)

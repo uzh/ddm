@@ -101,6 +101,54 @@ class TestQuestionnaireServices(TestCase):
         self.assertEqual(n_responses_before + 1, n_responses_after)
         self.assertEqual(n_logs_before + 1, n_logs_after)
 
+    def test_is_complete_defaults_true(self):
+        responses = {f"question-{self.question.pk}": 1}
+        save_questionnaire_response_to_db(responses, self.project, self.participant)
+        response = QuestionnaireResponse.objects.get(
+            project=self.project, participant=self.participant
+        )
+        self.assertTrue(response.is_complete)
+
+    def test_repeated_save_for_same_participant_updates_same_row(self):
+        responses = {f"question-{self.question.pk}": 1}
+
+        save_questionnaire_response_to_db(responses, self.project, self.participant)
+        save_questionnaire_response_to_db(responses, self.project, self.participant)
+
+        self.assertEqual(
+            QuestionnaireResponse.objects.filter(
+                project=self.project, participant=self.participant
+            ).count(),
+            1,
+        )
+
+    def test_partial_save_then_final_submission_updates_same_row(self):
+        responses = {f"question-{self.question.pk}": 1}
+
+        save_questionnaire_response_to_db(
+            responses, self.project, self.participant, is_complete=False
+        )
+        partial = QuestionnaireResponse.objects.get(
+            project=self.project, participant=self.participant
+        )
+        self.assertFalse(partial.is_complete)
+
+        save_questionnaire_response_to_db(
+            responses, self.project, self.participant, is_complete=True
+        )
+
+        self.assertEqual(
+            QuestionnaireResponse.objects.filter(
+                project=self.project, participant=self.participant
+            ).count(),
+            1,
+        )
+        final = QuestionnaireResponse.objects.get(
+            project=self.project, participant=self.participant
+        )
+        self.assertTrue(final.is_complete)
+        self.assertEqual(final.pk, partial.pk)
+
 
 class TestCopyQuestion(TestCase):
     @classmethod

@@ -11,4 +11,5 @@ urlpatterns = [
     path(r"debriefing/", views.DebriefingView.as_view(), name="debriefing"),
     path(r"continue/", views.ContinuationView.as_view(), name="continuation"),
     path(r"inactive/", views.ProjectInactiveView.as_view(), name="project_inactive"),
+    path(r"theme.css", views.ProjectThemeView.as_view(), name="theme_css"),
 ]

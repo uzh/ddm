@@ -160,6 +160,31 @@ class TestBriefingView(ParticipationFlowBaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, BriefingView.template_name)
 
+    def test_theme_link_absent_with_default_colors(self):
+        response = self.client.get(self.briefing_url)
+        self.assertNotIn("theme.css", response.content.decode())
+
+    def test_theme_link_present_with_custom_colors_and_busts_cache_on_change(self):
+        self.project_base.primary_color = "#aa3377"
+        self.project_base.background_color = "#fdf3e7"
+        self.project_base.save()
+
+        response = self.client.get(self.briefing_url)
+        content = response.content.decode()
+        theme_url = reverse(
+            "ddm_participation:theme_css", args=[self.project_base.slug]
+        )
+        self.assertIn(f"{theme_url}?v=aa3377fdf3e7", content)
+
+        # Changing a color must change the linked URL, so a cached response
+        # at the old URL is never served for the new color.
+        self.project_base.primary_color = "#112233"
+        self.project_base.save()
+        response = self.client.get(self.briefing_url)
+        content = response.content.decode()
+        self.assertIn(f"{theme_url}?v=112233fdf3e7", content)
+        self.assertNotIn(f"{theme_url}?v=aa3377fdf3e7", content)
+
     def test_project_briefing_view_get_invalid_url(self):
         response = self.client.get(self.briefing_url_invalid, follow=True)
         self.assertEqual(response.status_code, 404)
@@ -529,3 +554,45 @@ class TestParticipationRedirectView(ParticipationFlowBaseTestCase):
         new_client = Client()
         response = new_client.get(url_input, follow=True)
         self.assertRedirects(response, url_expected)
+
+
+class TestProjectThemeView(ParticipationFlowBaseTestCase):
+    def test_default_colors_render_empty_stylesheet(self):
+        url = reverse("ddm_participation:theme_css", args=[self.project_base.slug])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "text/css")
+        self.assertNotIn("--bg-color-light", response.content.decode())
+
+    def test_custom_colors_render_overrides(self):
+        self.project_base.primary_color = "#aa3377"
+        self.project_base.background_color = "#fdf3e7"
+        self.project_base.save()
+
+        url = reverse("ddm_participation:theme_css", args=[self.project_base.slug])
+        response = self.client.get(url)
+        content = response.content.decode()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("--bg-color-light: #fdf3e7", content)
+        self.assertIn("--color-main-green-darker: #aa3377", content)
+        self.assertIn("--ddm-primary-accent: #aa3377", content)
+        self.assertIn("--ddm-main-bg-color: #fdf3e7", content)
+
+    def test_response_is_cacheable(self):
+        url = reverse("ddm_participation:theme_css", args=[self.project_base.slug])
+        response = self.client.get(url)
+        self.assertIn("max-age", response["Cache-Control"])
+
+    def test_alpha_channel_passed_through_to_css(self):
+        self.project_base.primary_color = "#aa337780"
+        self.project_base.background_color = "#fdf3e740"
+        self.project_base.save()
+
+        url = reverse("ddm_participation:theme_css", args=[self.project_base.slug])
+        response = self.client.get(url)
+        content = response.content.decode()
+
+        self.assertIn("--bg-color-light: #fdf3e740", content)
+        self.assertIn("--color-main-green-darker: #aa337780", content)
+        self.assertIn("--ddm-primary-accent: #aa337780", content)

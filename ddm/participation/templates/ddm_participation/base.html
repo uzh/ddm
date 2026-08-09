@@ -12,8 +12,11 @@
 
   <link rel="stylesheet" href="{% static 'ddm_core/css/bootstrap/bootstrap.min.css' %}" />
   <link rel="stylesheet" href="{% static 'ddm_core/css/bootstrap/bootstrap-icons.css' %}" />
-  <link href="{% static 'ddm_core/css/fonts.css' %}" rel="stylesheet" />
-  <link href="{% static 'ddm_core/css/research-interface-base.css' %}" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'ddm_core/css/fonts.css' %}" />
+  <link rel="stylesheet" href="{% static 'ddm_core/css/research-interface-base.css' %}" />
+  {% if project.has_custom_theme %}
+    <link rel="stylesheet" href="{% url 'ddm_participation:theme_css' project.slug %}?v={{ project.theme_version }}" />
+  {% endif %}
 
   {% block extrahead %}{% endblock extrahead %}
 

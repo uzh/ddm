@@ -1,12 +1,18 @@
 from django.core.exceptions import ValidationError
+from django.template import Context, Template
 from django.template.exceptions import TemplateSyntaxError
 from django.test import TestCase
 
+from ddm.core.utils.color import adjust_lightness
 from ddm.core.utils.user_content.template import (
     preprocess_user_content,
     render_user_content,
 )
-from ddm.core.utils.validators import validate_regex_pattern, validate_safe_regex
+from ddm.core.utils.validators import (
+    validate_hex_color,
+    validate_regex_pattern,
+    validate_safe_regex,
+)
 
 
 class TestPreprocessUserContent(TestCase):
@@ -183,3 +189,84 @@ class TestValidateSafeRegex(TestCase):
         with self.assertRaises(ValidationError) as ctx:
             validate_safe_regex(r"[unclosed")
         self.assertIn("invalid", str(ctx.exception).lower())
+
+
+class TestValidateHexColor(TestCase):
+    def test_valid_hex_color_accepted(self):
+        validate_hex_color("#007b74")
+        validate_hex_color("#FFFFFF")
+        validate_hex_color("#000000")
+
+    def test_valid_hex_color_with_alpha_accepted(self):
+        validate_hex_color("#007b7480")
+        validate_hex_color("#FFFFFFFF")
+        validate_hex_color("#00000000")
+
+    def test_invalid_hex_color_rejected(self):
+        invalid_values = [
+            "red",
+            "#12345",
+            "#1234567",
+            "007b74",
+            "#gggggg",
+            "#007b74gg",
+            "",
+        ]
+        for value in invalid_values:
+            with self.subTest(value=value):  # noqa: SIM117
+                with self.assertRaises(ValidationError):
+                    validate_hex_color(value)
+
+
+class TestAdjustLightness(TestCase):
+    def test_zero_amount_is_identity(self):
+        self.assertEqual(adjust_lightness("#007b74", 0.0), "#007b74")
+
+    def test_positive_amount_lightens(self):
+        base = "#007b74"
+        lighter = adjust_lightness(base, 0.2)
+        self.assertNotEqual(base, lighter)
+        # Lightening should increase every RGB channel (or leave it maxed).
+        base_rgb = tuple(int(base[i : i + 2], 16) for i in (1, 3, 5))
+        lighter_rgb = tuple(int(lighter[i : i + 2], 16) for i in (1, 3, 5))
+        for base_channel, lighter_channel in zip(base_rgb, lighter_rgb, strict=False):
+            self.assertGreaterEqual(lighter_channel, base_channel)
+
+    def test_negative_amount_darkens(self):
+        base = "#007b74"
+        darker = adjust_lightness(base, -0.2)
+        self.assertNotEqual(base, darker)
+        base_rgb = tuple(int(base[i : i + 2], 16) for i in (1, 3, 5))
+        darker_rgb = tuple(int(darker[i : i + 2], 16) for i in (1, 3, 5))
+        for base_channel, darker_channel in zip(base_rgb, darker_rgb, strict=False):
+            self.assertLessEqual(darker_channel, base_channel)
+
+    def test_clamps_at_white(self):
+        self.assertEqual(adjust_lightness("#ffffff", 0.5), "#ffffff")
+
+    def test_clamps_at_black(self):
+        self.assertEqual(adjust_lightness("#000000", -0.5), "#000000")
+
+    def test_alpha_channel_preserved_unchanged(self):
+        lighter = adjust_lightness("#007b7480", 0.2)
+        darker = adjust_lightness("#007b7480", -0.2)
+        self.assertTrue(lighter.endswith("80"))
+        self.assertTrue(darker.endswith("80"))
+        self.assertEqual(len(lighter), 9)
+        self.assertEqual(len(darker), 9)
+
+    def test_six_digit_input_produces_six_digit_output(self):
+        result = adjust_lightness("#007b74", 0.2)
+        self.assertEqual(len(result), 7)
+
+
+class TestDdmColorsTemplateFilters(TestCase):
+    def test_lighten_filter(self):
+        template = Template("{% load ddm_colors %}{{ color|lighten:20 }}")
+        rendered = template.render(Context({"color": "#007b74"}))
+        self.assertEqual(rendered, adjust_lightness("#007b74", 0.2))
+
+    def test_darken_filter(self):
+        template = Template("{% load ddm_colors %}{{ color|darken:10 }}")
+        rendered = template.render(Context({"color": "#007b74"}))
+        self.assertEqual(rendered, adjust_lightness("#007b74", -0.1))

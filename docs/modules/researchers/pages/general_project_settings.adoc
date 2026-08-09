@@ -110,5 +110,11 @@ the header of your project.
 Show project title:: If enabled, the project title is shown in the header of the
 participation interface.
 
+Primary Color:: Accent color used for buttons and highlights in the participation interface.
+Lighter/darker shades are derived automatically. Use a darker color here.
+
+Background Color:: Background color of the participation interface pages.
+Use a very light color here.
+
 Header Image Left/Header Image Right:: Upload an image that will be displayed in
 the header of your project (e.g., an institution or project logo).

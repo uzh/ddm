@@ -1,0 +1,16 @@
+{% load ddm_colors %}
+{% if project.has_custom_theme %}
+body#ddm-participation-body {
+  --bg-color-light: {{ project.background_color }} !important;
+  --color-main-green: {{ project.primary_color|lighten:8 }} !important;
+  --color-main-green-darker: {{ project.primary_color }} !important;
+  --color-main-green-brighter: {{ project.primary_color|lighten:15 }} !important;
+}
+body#ddm-participation-body .ddm-questionnaire-app,
+body#ddm-participation-body .ddm-uploader-app {
+  --ddm-primary-accent: {{ project.primary_color }} !important;
+  --ddm-primary: {{ project.primary_color }} !important;
+  --ddm-primary-lighter: {{ project.primary_color|lighten:8 }} !important;
+  --ddm-main-bg-color: {{ project.background_color }} !important;
+}
+{% endif %}

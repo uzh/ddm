@@ -15,6 +15,7 @@ from django.views.decorators.debug import sensitive_variables
 
 from ddm.auth.models import ProjectAccessToken
 from ddm.core.utils.misc import create_asciidigits_id
+from ddm.core.utils.validators import validate_hex_color
 from ddm.datadonation.models import DataDonation
 from ddm.encryption.models import Encryption
 from ddm.logging.models import EventLogEntry, ExceptionLogEntry
@@ -37,6 +38,10 @@ class ResearchProfile(models.Model):
 
 def project_header_dir_path(instance: DonationProject, filename: str) -> str:
     return f"project_{instance.pk}/headers/{filename}"
+
+
+DEFAULT_PRIMARY_COLOR = "#007b74"
+DEFAULT_BACKGROUND_COLOR = "#f8fafc"
 
 
 class DonationProject(models.Model):
@@ -132,6 +137,23 @@ class DonationProject(models.Model):
         null=True,
         blank=True,
         verbose_name="Header Image Right",
+    )
+    primary_color = models.CharField(
+        max_length=9,
+        default=DEFAULT_PRIMARY_COLOR,
+        validators=[validate_hex_color],
+        verbose_name="Primary Color",
+        help_text=(
+            "Accent color used for buttons and highlights in the "
+            "participation interface."
+        ),
+    )
+    background_color = models.CharField(
+        max_length=9,
+        default=DEFAULT_BACKGROUND_COLOR,
+        validators=[validate_hex_color],
+        verbose_name="Background Color",
+        help_text="Background color of the participation interface pages.",
     )
 
     # Access settings.
@@ -296,6 +318,28 @@ class DonationProject(models.Model):
 
     def get_expected_url_parameters(self) -> list[str]:
         return self.expected_url_parameters.split(";")
+
+    @property
+    def has_custom_theme(self) -> bool:
+        """Whether either color differs from the built-in default.
+
+        Used to skip rendering the participation interface's CSS color
+        override entirely for un-customized projects.
+        """
+        return (
+            self.primary_color != DEFAULT_PRIMARY_COLOR
+            or self.background_color != DEFAULT_BACKGROUND_COLOR
+        )
+
+    @property
+    def theme_version(self) -> str:
+        """Cache-busting token derived from the current colors.
+
+        Appended as a query parameter to the theme CSS URL so that changing
+        either color changes the URL, forcing browsers/caches to fetch a
+        fresh stylesheet instead of continuing to serve a cached one.
+        """
+        return f"{self.primary_color.lstrip('#')}{self.background_color.lstrip('#')}"
 
     def get_token(self) -> ProjectAccessToken | None:
         return ProjectAccessToken.objects.filter(project=self).first()

@@ -17,6 +17,9 @@
 
       {% include "ddm_core/form_components/_checkbox_toggle_field.html" with field=form.show_project_title %}
 
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.primary_color %}
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.background_color %}
+
       {% for field in form %}
         {% if field.name in "img_header_left,img_header_right" %}
 

@@ -11,6 +11,8 @@ This version drops official support for Python versions < 3.12.
 
 - Added `show project name` option to Projects to control whether the
   project name should be displayed in the header of the participation interface.
+- The primary color (used for buttons, etc.) and background color of the
+  participant interface can now be customized per project.
 
 **Data Donation**
 

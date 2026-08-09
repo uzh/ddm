@@ -1,10 +1,13 @@
+@use 'vendors/coloris.css';
+@use 'vendors/coloris-overrides.css';
+
 @use 'base/base';
 @use 'base/bootstrap-table';
 @use 'base/ckeditor';
 @use 'base/custom-properties';
-@use 'base/ddm-participation';
 @use 'base/fonts';
 @use 'base/typography';
+@use 'base/ddm-participation';
 
 @use 'layout/header';
 @use 'layout/main-container';

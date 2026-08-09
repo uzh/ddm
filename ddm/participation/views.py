@@ -553,3 +553,27 @@ class ContinuationView(DetailView):
 
 class ProjectInactiveView(TemplateView):
     template_name = "ddm_participation/project_inactive.html"
+
+
+class ProjectThemeView(DetailView):
+    """Serves a project's primary/background color overrides as CSS.
+
+    Served as an actual stylesheet response (loaded via <link>) to be compliant
+    with strict Content-Security-Policies.
+
+    The <link> is requested with a `?v=<theme_version>` query parameter
+    (see DonationProject.theme_version) derived from the current colors, so
+    changing a color changes the URL. That lets this response be cached
+    aggressively without going stale: a color change is always served from
+    a new URL rather than an old cached response.
+    """
+
+    model = DonationProject
+    context_object_name = "project"
+    content_type = "text/css"
+    template_name = "ddm_participation/project_theme.css"
+
+    def render_to_response(self, context: dict, **kwargs) -> HttpResponse:
+        response = super().render_to_response(context, **kwargs)
+        response["Cache-Control"] = "public, max-age=31536000, immutable"
+        return response

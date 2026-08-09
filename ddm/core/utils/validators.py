@@ -2,6 +2,19 @@ import re
 
 from django.core.exceptions import ValidationError
 
+HEX_COLOR_PATTERN = re.compile(r"^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$")
+
+
+def validate_hex_color(value: str) -> None:
+    """Validate that a string is a 6- or 8-digit hex color code.
+
+    The optional trailing 2 digits are the alpha channel (e.g. #007b74
+    or #007b7480 for 50% opacity).
+    """
+    if not HEX_COLOR_PATTERN.match(value):
+        msg = "Enter a valid hex color code, e.g. #007b74 or #007b7480."
+        raise ValidationError(msg)
+
 
 def validate_regex_pattern(pattern: str) -> None:
     """Validate that a regex pattern is syntactically correct."""

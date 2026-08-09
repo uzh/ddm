@@ -188,17 +188,38 @@ class EditBrandingForm(forms.ModelForm):
         model = DonationProject
         fields = [
             "show_project_title",
+            "primary_color",
+            "background_color",
             "img_header_left",
             "img_header_right",
         ]
         labels = {
+            "primary_color": "Primary Color",
+            "background_color": "Background Color",
             "img_header_left": "Logo Header Left",
             "img_header_right": "Logo Header Right",
+        }
+        widgets = {
+            "primary_color": forms.TextInput(
+                attrs={"type": "text", "class": "form-control", "data-coloris": ""}
+            ),
+            "background_color": forms.TextInput(
+                attrs={"type": "text", "class": "form-control", "data-coloris": ""}
+            ),
         }
         help_texts = {
             "show_project_title": (
                 "If enabled, the project title is shown in the header of the "
                 "participation interface."
+            ),
+            "primary_color": (
+                "Accent color used for buttons and highlights in the "
+                "participation interface. Lighter/darker shades are derived "
+                "automatically. Recommended to use a dark color."
+            ),
+            "background_color": (
+                "Background color of the participation interface pages. "
+                "Recommended to use a very light color."
             ),
         }
 

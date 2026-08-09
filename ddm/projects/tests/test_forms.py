@@ -3,6 +3,7 @@ from django.test import TestCase
 
 from ddm.projects.forms import (
     BriefingEditForm,
+    EditBrandingForm,
     EditPublicInformationForm,
     EditRedirectConfigurationForm,
     EditUrlParameterExtractionForm,
@@ -158,6 +159,60 @@ class TestEditRedirectConfigurationForm(TestCase):
         }
         form = EditRedirectConfigurationForm(post_data)
         self.assertFalse(form.is_valid())
+
+
+class TestEditBrandingForm(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        user_credentials = {
+            "username": "user",
+            "password": "123",
+            "email": "base@mail.com",
+        }
+        user = User.objects.create_user(**user_credentials)
+        cls.user_profile = ResearchProfile.objects.create(user=user)
+
+        cls.project = DonationProject.objects.create(
+            name="Base Project", slug="base", owner=cls.user_profile
+        )
+
+    def test_form_valid_with_hex_colors(self):
+        post_data = {
+            "show_project_title": False,
+            "primary_color": "#aa3377",
+            "background_color": "#fdf3e7",
+        }
+        form = EditBrandingForm(post_data, instance=self.project)
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_form_valid_with_alpha_hex_colors(self):
+        post_data = {
+            "show_project_title": False,
+            "primary_color": "#aa337780",
+            "background_color": "#fdf3e740",
+        }
+        form = EditBrandingForm(post_data, instance=self.project)
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_form_invalid_with_bad_primary_color(self):
+        post_data = {
+            "show_project_title": False,
+            "primary_color": "not-a-color",
+            "background_color": "#fdf3e7",
+        }
+        form = EditBrandingForm(post_data, instance=self.project)
+        self.assertFalse(form.is_valid())
+        self.assertIn("primary_color", form.errors)
+
+    def test_form_invalid_with_bad_background_color(self):
+        post_data = {
+            "show_project_title": False,
+            "primary_color": "#aa3377",
+            "background_color": "not-a-color",
+        }
+        form = EditBrandingForm(post_data, instance=self.project)
+        self.assertFalse(form.is_valid())
+        self.assertIn("background_color", form.errors)
 
 
 class TestBriefingEditForm(TestCase):

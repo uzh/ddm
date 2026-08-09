@@ -108,6 +108,14 @@
   .step-chevron {
     font-size: 0.8rem;
   }
+
+  a {
+    color: var(--color-main-green-darker);
+  }
+
+  a:hover {
+    color: var(--color-main-green);
+  }
 }
 
 #ddm-participation-footer {

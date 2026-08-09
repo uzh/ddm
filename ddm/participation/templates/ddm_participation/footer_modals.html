@@ -7,7 +7,7 @@
         {% translate "Contact Information" %}
         <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body pb-2 pt-2 overflow-hidden">
+      <div class="modal-body pb-2 pt-2">
         {% autoescape on %}{{ project.contact_information|safe }}{% endautoescape %}
       </div>
     </div>
@@ -21,7 +21,7 @@
         {% translate "Data Protection Statement" %}
         <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body pb-2 pt-2 overflow-hidden">
+      <div class="modal-body pb-2 pt-2">
         {% autoescape on %}{{ project.data_protection_statement|safe }}{% endautoescape %}
       </div>
     </div>

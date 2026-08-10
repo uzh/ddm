@@ -14,7 +14,7 @@
 
 {% block form_content %}
 
-  {% if form.errors or rule_formset.errors or path_formset.errors %}
+  {% if form.errors or rule_formset.errors or path_formset.errors or field_formset.errors %}
     {% include "ddm_core/form_components/_general_form_errors.html" with override_standard_errors=True %}
   {% endif %}
 

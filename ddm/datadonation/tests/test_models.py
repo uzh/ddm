@@ -624,3 +624,162 @@ class TestProcessingRuleRegexValidation(TestCase):
                 with self.assertRaises(ValidationError) as ctx:
                     rule.clean()
                 self.assertIn("comparison_value", ctx.exception.message_dict)
+
+
+class TestNestedExpectedFieldsValidation(TestCase):
+    """Tests for DonationBlueprint.clean_nested_expected_fields()."""
+
+    @classmethod
+    def setUpTestData(cls):
+        user = User.objects.create_user(
+            username="owner3", password="123", email="owner3@mail.com"
+        )
+        profile = ResearchProfile.objects.create(user=user)
+        cls.project = DonationProject.objects.create(
+            name="Base Project 3", slug="base-nested", owner=profile
+        )
+        cls.file_uploader = FileUploader.objects.create(
+            project=cls.project,
+            name="basic file uploader",
+            upload_type=FileUploader.UploadTypes.SINGLE_FILE,
+        )
+
+    def test_nested_expected_fields_without_json_format_raises_error(self):
+        blueprint = DonationBlueprint(
+            project=self.project,
+            name="test blueprint",
+            exp_file_format=DonationBlueprint.FileFormats.CSV_FORMAT,
+            expected_fields='"field"',
+            nested_expected_fields='"nested_field"',
+            file_uploader=self.file_uploader,
+            parser_config={"format": "csv", "delimiter": ""},
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            blueprint.clean()
+        self.assertIn("nested_expected_fields", ctx.exception.message_dict)
+
+    def test_nested_expected_fields_without_nested_loop_path_raises_error(self):
+        blueprint = DonationBlueprint(
+            project=self.project,
+            name="test blueprint",
+            expected_fields='"field"',
+            nested_expected_fields='"nested_field"',
+            file_uploader=self.file_uploader,
+            parser_config=JSONParserConfig().model_dump(),  # nested_loop_path defaults to ""  # noqa: E501
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            blueprint.clean()
+        self.assertIn("nested_expected_fields", ctx.exception.message_dict)
+
+    def test_nested_expected_fields_with_nested_loop_path_passes(self):
+        blueprint = DonationBlueprint(
+            project=self.project,
+            name="test blueprint",
+            expected_fields='"field"',
+            nested_expected_fields='"nested_field"',
+            file_uploader=self.file_uploader,
+            parser_config=JSONParserConfig(nested_loop_path="mapping").model_dump(),
+        )
+        blueprint.clean()  # Should not raise
+
+    def test_nested_expected_fields_regex_invalid_raises_error(self):
+        blueprint = DonationBlueprint(
+            project=self.project,
+            name="test blueprint",
+            expected_fields='"field"',
+            nested_expected_fields=r'"[unclosed"',
+            nested_expected_fields_regex_matching=True,
+            file_uploader=self.file_uploader,
+            parser_config=JSONParserConfig(nested_loop_path="mapping").model_dump(),
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            blueprint.clean()
+        self.assertIn("nested_expected_fields", ctx.exception.message_dict)
+
+    def test_empty_nested_expected_fields_does_not_raise(self):
+        blueprint = DonationBlueprint(
+            project=self.project,
+            name="test blueprint",
+            expected_fields='"field"',
+            nested_expected_fields="",
+            file_uploader=self.file_uploader,
+            parser_config=JSONParserConfig(),
+        )
+        blueprint.clean()  # Should not raise — feature is opt-in
+
+
+class TestExtractionFieldScopeValidation(TestCase):
+    """Tests for ExtractionField.clean()'s scope-consistency check."""
+
+    @classmethod
+    def setUpTestData(cls):
+        user = User.objects.create_user(
+            username="owner4", password="123", email="owner4@mail.com"
+        )
+        profile = ResearchProfile.objects.create(user=user)
+        project = DonationProject.objects.create(
+            name="Base Project 4", slug="base-scope", owner=profile
+        )
+        file_uploader = FileUploader.objects.create(
+            project=project,
+            name="basic file uploader",
+            upload_type=FileUploader.UploadTypes.SINGLE_FILE,
+        )
+        cls.csv_blueprint = DonationBlueprint.objects.create(
+            project=project,
+            name="csv blueprint",
+            expected_fields='"field"',
+            file_uploader=file_uploader,
+            exp_file_format=DonationBlueprint.FileFormats.CSV_FORMAT,
+            parser_config={"format": "csv", "delimiter": ""},
+        )
+        cls.json_blueprint_no_nesting = DonationBlueprint.objects.create(
+            project=project,
+            name="json blueprint no nesting",
+            expected_fields='"field"',
+            file_uploader=file_uploader,
+            parser_config=JSONParserConfig().model_dump(),
+        )
+        cls.json_blueprint_nested = DonationBlueprint.objects.create(
+            project=project,
+            name="json blueprint nested",
+            expected_fields='"field"',
+            file_uploader=file_uploader,
+            parser_config=JSONParserConfig(nested_loop_path="mapping").model_dump(),
+        )
+
+    def test_nested_scope_on_csv_blueprint_raises_error(self):
+        field = ExtractionField(
+            blueprint=self.csv_blueprint,
+            scope=ExtractionField.Scope.NESTED,
+            expected_name="some_field",
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            field.clean()
+        self.assertIn("scope", ctx.exception.message_dict)
+
+    def test_nested_scope_without_nested_loop_path_raises_error(self):
+        field = ExtractionField(
+            blueprint=self.json_blueprint_no_nesting,
+            scope=ExtractionField.Scope.NESTED,
+            expected_name="some_field",
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            field.clean()
+        self.assertIn("scope", ctx.exception.message_dict)
+
+    def test_nested_scope_with_nested_loop_path_passes(self):
+        field = ExtractionField(
+            blueprint=self.json_blueprint_nested,
+            scope=ExtractionField.Scope.NESTED,
+            expected_name="message.author.role",
+        )
+        field.clean()  # Should not raise
+
+    def test_root_scope_default_always_passes(self):
+        field = ExtractionField(
+            blueprint=self.csv_blueprint,
+            expected_name="some_field",
+        )
+        self.assertEqual(field.scope, ExtractionField.Scope.ROOT)
+        field.clean()  # Should not raise regardless of blueprint config

@@ -27,7 +27,9 @@
     "string-conversion-error": "Le contenu du fichier ne peut pas être converti en texte (string)",
     "no-fields-to-extract": "Aucune variable d'extraction n'a été définie comme devant être conservé",
     "parsing-error": "Une erreur s'est produite lors de l’analyse du contenu {contentType} de ce fichier",
+    "parsing-error-detail": "L'erreur suivante s'est produite : {error}",
     "unsupported-bp-format": "Format de fichier non pris en charge : {format}",
+    "nested-path-not-found": "Le chemin de boucle imbriquée configuré '{nestedLoopPath}' n'a pas pu être résolu pour un élément de niveau racine ; aucune ligne imbriquée n'a été extraite pour celui-ci.",
     "more-than-one-key-match": "Plus d'une correspondance pour le champ '{field}' : {keys}. '{defaultKey}' a été utilisé par défaut",
     "no-key-match": "Aucune correspondance pour le champ '{field}' : {keys}",
     "undefined-key": "Nom non défini pour le champ '{field}'"

@@ -27,7 +27,9 @@
     "string-conversion-error": "Il contenuto del file non può essere convertito in testo (string)",
     "no-fields-to-extract": "Non sono state definite variabili da includere nella donazione di dati.",
     "parsing-error": "Si è verificato un errore durante il parsing del contenuto {contentType} di questo file",
+    "parsing-error-detail": "Si è verificato il seguente errore: {error}",
     "unsupported-bp-format": "Formato file non supportato: {format}",
+    "nested-path-not-found": "Il percorso di ciclo annidato configurato '{nestedLoopPath}' non è stato risolto per un elemento di primo livello; non è stata estratta alcuna riga annidata per esso.",
     "more-than-one-key-match": "Più di una corrispondenza per il campo '{field}': {keys}. È stato utilizzato '{defaultKey}' per impostazione predefinita",
     "no-key-match": "Nessuna corrispondenza per il campo '{field}': {keys}",
     "undefined-key": "Nome non definito per il campo '{field}'"

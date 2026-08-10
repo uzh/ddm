@@ -3,7 +3,12 @@ from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
-from ddm.datadonation.models import DataDonation, DonationBlueprint, FileUploader
+from ddm.datadonation.models import (
+    DataDonation,
+    DonationBlueprint,
+    ExtractionField,
+    FileUploader,
+)
 from ddm.datadonation.schemas import JSONParserConfig
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject, ResearchProfile
@@ -44,6 +49,83 @@ class BlueprintEditTestCase(TestCase):
             "ddm_datadonation:blueprints:edit",
             kwargs={"pk": cls.blueprint.pk, "project_url_id": cls.project.url_id},
         )
+
+    def test_get_shows_nested_fields(self):
+        """Nested-loop configuration fields are only meaningful once a
+        Blueprint already exists (ExtractionFields/ProcessingRules can only
+        be added via edit), so they should be present here but absent on
+        the create form (see BlueprintCreateTestCase)."""
+        self.client.login(username="owner", password="123")
+        response = self.client.get(self.url)
+        content = response.content.decode()
+
+        self.assertIn("json_nested_loop_path", content)
+        self.assertIn("json_array_join_separator", content)
+        self.assertIn("nested_expected_fields", content)
+
+    def test_post_clearing_nested_loop_path_with_existing_nested_field_shows_specific_error(  # noqa: E501
+        self,
+    ):
+        """Clearing the Nested loop path while a nested-scope ExtractionField
+        still exists must surface a specific, field-level error message (not
+        just a generic banner) pointing at the offending field."""
+        blueprint = DonationBlueprint.objects.create(
+            project=self.project,
+            name="nested blueprint",
+            display_name="nested blueprint",
+            expected_fields='"conversation_id"',
+            file_uploader=self.file_uploader,
+            parser_config=JSONParserConfig(nested_loop_path="mapping").model_dump(),
+        )
+        nested_field = ExtractionField.objects.create(
+            blueprint=blueprint,
+            scope=ExtractionField.Scope.NESTED,
+            expected_name="message.author.role",
+            keep_in_donation=True,
+        )
+        url = reverse(
+            "ddm_datadonation:blueprints:edit",
+            kwargs={"pk": blueprint.pk, "project_url_id": self.project.url_id},
+        )
+        data = {
+            "name": blueprint.name,
+            "display_name": blueprint.display_name,
+            "description": "",
+            "display_position": 1,
+            "exp_file_format": DonationBlueprint.FileFormats.JSON_FORMAT,
+            "file_uploader": self.file_uploader.pk,
+            "json_extraction_root": "",
+            "json_nested_loop_path": "",  # cleared
+            "json_array_join_separator": "\\n",
+            "expected_fields": '"conversation_id"',
+            "expected_fields_regex_matching": False,
+            "nested_expected_fields": "",
+            "nested_expected_fields_regex_matching": False,
+            "backup_for": "",
+            "backup_priority": 0,
+            "processingrule_set-TOTAL_FORMS": "0",
+            "processingrule_set-INITIAL_FORMS": "0",
+            "blueprintfilepath_set-TOTAL_FORMS": "0",
+            "blueprintfilepath_set-INITIAL_FORMS": "0",
+            "extractionfield_set-TOTAL_FORMS": "1",
+            "extractionfield_set-INITIAL_FORMS": "1",
+            "extractionfield_set-0-id": nested_field.pk,
+            "extractionfield_set-0-scope": "nested",
+            "extractionfield_set-0-expected_name": "message.author.role",
+            "extractionfield_set-0-keep_in_donation": True,
+        }
+
+        self.client.login(username="owner", password="123")
+        response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            "Nested-scope fields require the blueprint to have a Nested loop "
+            "path configured.",
+        )
+        nested_field.refresh_from_db()
+        self.assertEqual(nested_field.scope, "nested")  # unsaved -- rejected
 
     def test_post_valid_data(self):
         valid_data = {
@@ -93,6 +175,62 @@ class BlueprintEditTestCase(TestCase):
         self.assertEqual(response.url, redirect_url)
         self.assertNotEqual(bp_name_before, bp_name_after)
 
+    def test_post_valid_data_with_nested_scope_field(self):
+        """A researcher can add a nested-scope ExtractionField together
+        with a configured nested_loop_path in a single POST."""
+        valid_data = {
+            "name": "some_other_name",
+            "display_name": "some other name",
+            "description": "some other description",
+            "display_position": 1,
+            "exp_file_format": DonationBlueprint.FileFormats.JSON_FORMAT,
+            "file_uploader": self.file_uploader.pk,
+            "json_extraction_root": "",
+            "json_nested_loop_path": "mapping",
+            "json_array_join_separator": "\\n",
+            "expected_fields": '"fieldA"',
+            "expected_fields_regex_matching": False,
+            "nested_expected_fields": '"message"',
+            "nested_expected_fields_regex_matching": False,
+            "backup_for": "",
+            "backup_priority": 0,
+        }
+        rule_formset_data = {
+            "processingrule_set-TOTAL_FORMS": "0",
+            "processingrule_set-INITIAL_FORMS": "0",
+        }
+        field_formset_data = {
+            "extractionfield_set-TOTAL_FORMS": "1",
+            "extractionfield_set-INITIAL_FORMS": "0",
+            "extractionfield_set-0-scope": "nested",
+            "extractionfield_set-0-expected_name": "message.author.role",
+            "extractionfield_set-0-keep_in_donation": True,
+        }
+        path_formset_data = {
+            "blueprintfilepath_set-TOTAL_FORMS": "1",
+            "blueprintfilepath_set-INITIAL_FORMS": "0",
+            "blueprintfilepath_set-0-path": "some/path.json",
+            "blueprintfilepath_set-0-is_regex": False,
+            "blueprintfilepath_set-0-priority": 1,
+        }
+        data = {
+            **valid_data,
+            **rule_formset_data,
+            **path_formset_data,
+            **field_formset_data,
+        }
+
+        self.client.login(username="owner", password="123")
+        response = self.client.post(self.url, data)
+
+        self.assertEqual(response.status_code, 302, getattr(response, "context", None))
+        field = self.blueprint.extractionfield_set.get(
+            expected_name="message.author.role"
+        )
+        self.assertEqual(field.scope, "nested")
+        self.blueprint.refresh_from_db()
+        self.assertEqual(self.blueprint.parser_config["nested_loop_path"], "mapping")
+
     def test_post_invalid_data(self):
         invalid_data = {
             "name": "some_other_name",
@@ -114,6 +252,39 @@ class BlueprintEditTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This field is required.")
         self.assertEqual(bp_name_before, bp_name_after)
+
+
+@override_settings(DDM_SETTINGS={"EMAIL_PERMISSION_CHECK": r".*(\.|@)mail\.com$"})
+class BlueprintCreateTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create_user(
+            username="owner", password="123", email="owner@mail.com"
+        )
+        profile = ResearchProfile.objects.create(user=cls.user)
+
+        cls.project = DonationProject.objects.create(
+            name="Base Project", slug="base", owner=profile
+        )
+
+        cls.url = reverse(
+            "ddm_datadonation:blueprints:create",
+            kwargs={"project_url_id": cls.project.url_id},
+        )
+
+    def test_get_hides_nested_fields(self):
+        """Nested-loop configuration only makes sense once a Blueprint
+        already exists (its ExtractionFields/ProcessingRules can only be
+        added via edit, not at creation time), so these fields should not
+        be shown on the create form (see BlueprintEditTestCase for the
+        edit-form counterpart, where they are shown)."""
+        self.client.login(username="owner", password="123")
+        response = self.client.get(self.url)
+        content = response.content.decode()
+
+        self.assertNotIn("json_nested_loop_path", content)
+        self.assertNotIn("json_array_join_separator", content)
+        self.assertNotIn("nested_expected_fields", content)
 
 
 @override_settings(DDM_SETTINGS={"EMAIL_PERMISSION_CHECK": r".*(\.|@)mail\.com$"})

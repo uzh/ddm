@@ -10,6 +10,8 @@ export type Blueprint = {
   format: string;
   expected_fields: string[];
   exp_fields_regex_matching: boolean;
+  nested_expected_fields: string[];
+  nested_exp_fields_regex_matching: boolean;
   fields_to_extract: string[];
   extraction_fields: ExtractionField[];
   file_paths: BlueprintFilePath[];

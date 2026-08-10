@@ -27,7 +27,9 @@
     "string-conversion-error": "Dateiinhalt kann nicht in einen Text (String) umgewandelt werden",
     "no-fields-to-extract": "Es wurden keine Felder/Variablen definiert, die ausgelesen werden sollen.",
     "parsing-error": "Es trat ein Fehler beim Parsen von {contentType}-Inhalt für diese Datei auf",
+    "parsing-error-detail": "Der folgende Fehler trat auf: {error}",
     "unsupported-bp-format": "Nicht unterstütztes Dateiformat: {format}",
+    "nested-path-not-found": "Der konfigurierte verschachtelte Pfad '{nestedLoopPath}' konnte für ein Element auf oberster Ebene nicht aufgelöst werden; es wurden keine verschachtelten Zeilen dafür extrahiert.",
     "more-than-one-key-match": "Mehr als eine Übereinstimmung für Feld '{field}': {keys}. Es wurde standardmäßig '{defaultKey}' verwendet",
     "no-key-match": "Keine Übereinstimmung für Feld '{field}': {keys}",
     "undefined-key": "Undefinierter Name für Feld '{field}'"

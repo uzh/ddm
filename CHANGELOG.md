@@ -24,6 +24,8 @@ This version drops official support for Python versions < 3.12.
   - TXT files are parsed by splitting content into records (e.g. by blank line), then into
     labeled key-value fields within each record (e.g. `Date: 2026-04-01`), matching the
     same field-extraction and processing-rule pipeline already used for JSON and CSV.
+- **Nested loop parsing**: JSON-Blueprints can now be configured to extract lists
+  contained within a root row. Enables the donation of, e.g., ChatGPT data exports.
 - **Backup blueprints**: Blueprints can now be configured with one or more backup blueprints
   that are used as a fallback when the primary blueprint's parser fails to extract data.
   - New `backup_for` field on `DonationBlueprint` links a blueprint to the primary blueprint
@@ -66,6 +68,8 @@ This version drops official support for Python versions < 3.12.
 - Fixed a bug where the required-question check for the questionnaire was only ever
   performed once per session: after the first page with a missing required answer,
   required questions on all following pages were no longer validated.
+- Data extraction now automatically ignores macOS garbage files
+  (e.g., `__MACOSX/`) folder or `._`-prefixed sibling files.
 
 ### Deprecated
 

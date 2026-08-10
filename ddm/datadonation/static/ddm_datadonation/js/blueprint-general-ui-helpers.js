@@ -36,13 +36,29 @@ function hideOrShowFilePath() {
 function hideOrShowJsonFields() {
   const expFileFormat = document.getElementById("id_exp_file_format").value;
 
-  const jsonExtractionRootParent = document.getElementById("id_json_extraction_root");
+  const jsonParserFields = document.getElementById("json-parser-fields");
 
-  if (jsonExtractionRootParent) {
+  if (jsonParserFields) {
     if (expFileFormat === "json") {
-      jsonExtractionRootParent.parentNode.style.display = "";
+      jsonParserFields.style.display = "";
     } else {
-      jsonExtractionRootParent.parentNode.style.display = "none";
+      jsonParserFields.style.display = "none";
+    }
+  }
+}
+
+function hideOrShowNestedExpectedFields() {
+  const expFileFormat = document.getElementById("id_exp_file_format").value;
+  const nestedLoopPathField = document.getElementById("id_json_nested_loop_path");
+  const nestedLoopPathSet = !!(nestedLoopPathField && nestedLoopPathField.value.trim() !== "");
+
+  const nestedExpectedFields = document.getElementById("nested-expected-fields");
+
+  if (nestedExpectedFields) {
+    if (expFileFormat === "json" && nestedLoopPathSet) {
+      nestedExpectedFields.style.display = "";
+    } else {
+      nestedExpectedFields.style.display = "none";
     }
   }
 }
@@ -66,14 +82,23 @@ document.addEventListener("DOMContentLoaded", function() {
   hideOrShowFilePath();
   hideOrShowJsonFields();
   hideOrShowTxtFields();
+  hideOrShowNestedExpectedFields();
 
   document.getElementById("id_exp_file_format").addEventListener("change", function() {
     hideOrShowCsvFields();
     hideOrShowJsonFields();
     hideOrShowTxtFields();
+    hideOrShowNestedExpectedFields();
   });
 
   document.getElementById("id_file_uploader").addEventListener("change", function() {
     hideOrShowFilePath();
   });
+
+  const nestedLoopPathField = document.getElementById("id_json_nested_loop_path");
+  if (nestedLoopPathField) {
+    nestedLoopPathField.addEventListener("input", function() {
+      hideOrShowNestedExpectedFields();
+    });
+  }
 });

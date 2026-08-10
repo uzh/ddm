@@ -3,13 +3,15 @@ import { useFileProcessor } from '@uploader/composables/useFileProcessor';
 import JSZip from 'jszip';
 import {ERROR_CATALOG} from "@uploader/utils/errorCatalog";
 import { regexDeleteMatch, valueIsEqual } from "@uploader/utils/ExtractionFunctions";
-import { extractData, getFieldKeyMap } from '@uploader/composables/useFileProcessor/extractionEngine';
+import { prepareRowForExtraction, extractData } from '@uploader/composables/useFileProcessor/extractionEngine';
 import {ExtractionRule} from "@uploader/types/ExtractionRule";
 import {CSVParserConfig, JSONParserConfig, TXTParserConfig} from "@uploader/types/ParserConfigs";
 
 const JSONConfig: JSONParserConfig = {
   format: 'json',
   extraction_root: '',
+  nested_loop_path: '',
+  array_join_separator: '\n',
 }
 
 const CSVConfig: CSVParserConfig = {
@@ -37,10 +39,13 @@ const jsonBlueprint = {
   parser_config: JSONConfig,
   expected_fields: ['name'],
   exp_fields_regex_matching: false,
+  nested_expected_fields: [],
+  nested_exp_fields_regex_matching: false,
   fields_to_extract: ['name'],
   extraction_fields: [
     {
       id: 1,
+      scope: 'root',
       expected_name: 'name',
       match_regex: false,
       keep_in_donation: true,
@@ -92,6 +97,7 @@ const txtBlueprint = {
   extraction_fields: [
     {
       id: 1,
+      scope: 'root',
       expected_name: 'Datum',
       match_regex: false,
       keep_in_donation: true,
@@ -99,6 +105,7 @@ const txtBlueprint = {
     },
     {
       id: 2,
+      scope: 'root',
       expected_name: 'Link',
       match_regex: false,
       keep_in_donation: true,
@@ -235,7 +242,7 @@ function createMockOutcome() {
   };
 }
 
-describe('getFieldKeyMap', () => {
+describe('prepareRowForExtraction', () => {
   let outcome;
   let blueprintOutcomeMap;
 
@@ -247,10 +254,10 @@ describe('getFieldKeyMap', () => {
   it('maps a field to its exact matching key', () => {
     const dataRow = { name: 'Alice', number: 1 };
     const extractionFields = [
-      { id: 1, expected_name: 'name', match_regex: false, keep_in_donation: true, alias: null },
+      { id: 1, scope: 'root' as const, expected_name: 'name', match_regex: false, keep_in_donation: true, alias: null },
     ];
 
-    const result = getFieldKeyMap(dataRow, extractionFields, 1, blueprintOutcomeMap);
+    const { fieldKeyMap: result } = prepareRowForExtraction(dataRow, extractionFields, '\n', 1, blueprintOutcomeMap);
 
     expect(result.get('name')).toBe('name');
     expect(outcome.mapExtractedKey).toHaveBeenCalledWith('name', 'name');
@@ -261,10 +268,10 @@ describe('getFieldKeyMap', () => {
   it('uses alias as the resulting map key when provided', () => {
     const dataRow = { raw_name: 'Alice' };
     const extractionFields = [
-      { id: 1, expected_name: 'raw_name', match_regex: false, keep_in_donation: true, alias: 'clean_name' },
+      { id: 1, scope: 'root' as const, expected_name: 'raw_name', match_regex: false, keep_in_donation: true, alias: 'clean_name' },
     ];
 
-    const result = getFieldKeyMap(dataRow, extractionFields, 1, blueprintOutcomeMap);
+    const { fieldKeyMap: result } = prepareRowForExtraction(dataRow, extractionFields, '\n', 1, blueprintOutcomeMap);
 
     expect(result.get('clean_name')).toBe('raw_name');
     expect(result.has('raw_name')).toBe(false);
@@ -273,10 +280,10 @@ describe('getFieldKeyMap', () => {
   it('matches keys via regex when match_regex is true', () => {
     const dataRow = { item_1: 'a', other: 'x' };
     const extractionFields = [
-      { id: 1, expected_name: '^item_1$', match_regex: true, keep_in_donation: true, alias: null },
+      { id: 1, scope: 'root' as const, expected_name: '^item_1$', match_regex: true, keep_in_donation: true, alias: null },
     ];
 
-    const result = getFieldKeyMap(dataRow, extractionFields, 1, blueprintOutcomeMap);
+    const { fieldKeyMap: result } = prepareRowForExtraction(dataRow, extractionFields, '\n', 1, blueprintOutcomeMap);
 
     expect(result.get('^item_1$')).toBe('item_1');
   });
@@ -284,10 +291,10 @@ describe('getFieldKeyMap', () => {
   it('registers no-key-match when nothing in the row matches', () => {
     const dataRow = { unrelated: 'x' };
     const extractionFields = [
-      { id: 1, expected_name: 'missing_field', match_regex: false, keep_in_donation: true, alias: null },
+      { id: 1, scope: 'root' as const, expected_name: 'missing_field', match_regex: false, keep_in_donation: true, alias: null },
     ];
 
-    const result = getFieldKeyMap(dataRow, extractionFields, 1, blueprintOutcomeMap);
+    const { fieldKeyMap: result } = prepareRowForExtraction(dataRow, extractionFields, '\n', 1, blueprintOutcomeMap);
 
     expect(result.has('missing_field')).toBe(false);
     expect(outcome.registerNoKeyMatch).toHaveBeenCalledWith('missing_field', Object.keys(dataRow));
@@ -296,10 +303,10 @@ describe('getFieldKeyMap', () => {
   it('registers an error and falls back to the first match when a regex matches multiple keys', () => {
     const dataRow = { item_1: 'a', item_2: 'b' };
     const extractionFields = [
-      { id: 1, expected_name: '^item_\\d+$', match_regex: true, keep_in_donation: true, alias: null },
+      { id: 1, scope: 'root' as const, expected_name: '^item_\\d+$', match_regex: true, keep_in_donation: true, alias: null },
     ];
 
-    const result = getFieldKeyMap(dataRow, extractionFields, 1, blueprintOutcomeMap);
+    const { fieldKeyMap: result } = prepareRowForExtraction(dataRow, extractionFields, '\n', 1, blueprintOutcomeMap);
 
     expect(result.get('^item_\\d+$')).toBe('item_1');
     expect(outcome.registerError).toHaveBeenCalledWith(
@@ -311,10 +318,10 @@ describe('getFieldKeyMap', () => {
   it('registers an error and skips the field when the regex pattern is invalid', () => {
     const dataRow = { name: 'Alice' };
     const extractionFields = [
-      { id: 1, expected_name: '(unclosed', match_regex: true, keep_in_donation: true, alias: null },
+      { id: 1, scope: 'root' as const, expected_name: '(unclosed', match_regex: true, keep_in_donation: true, alias: null },
     ];
 
-    const result = getFieldKeyMap(dataRow, extractionFields, 1, blueprintOutcomeMap);
+    const { fieldKeyMap: result } = prepareRowForExtraction(dataRow, extractionFields, '\n', 1, blueprintOutcomeMap);
 
     expect(result.has('(unclosed')).toBe(false);
     expect(outcome.registerError).toHaveBeenCalledWith(
@@ -326,19 +333,68 @@ describe('getFieldKeyMap', () => {
   it('keeps the first match when two fields resolve to the same output key', () => {
     const dataRow = { name: 'Alice', alt_name: 'Bob' };
     const extractionFields = [
-      { id: 1, expected_name: 'name', match_regex: false, keep_in_donation: true, alias: 'display_name' },
-      { id: 2, expected_name: 'alt_name', match_regex: false, keep_in_donation: true, alias: 'display_name' },
+      { id: 1, scope: 'root' as const, expected_name: 'name', match_regex: false, keep_in_donation: true, alias: 'display_name' },
+      { id: 2, scope: 'root' as const, expected_name: 'alt_name', match_regex: false, keep_in_donation: true, alias: 'display_name' },
     ];
 
-    const result = getFieldKeyMap(dataRow, extractionFields, 1, blueprintOutcomeMap);
+    const { fieldKeyMap: result } = prepareRowForExtraction(dataRow, extractionFields, '\n', 1, blueprintOutcomeMap);
 
     expect(result.get('display_name')).toBe('name');
     expect(result.size).toBe(1);
   });
 
   it('returns an empty map when there are no extraction fields', () => {
-    const result = getFieldKeyMap({ name: 'Alice' }, [], 1, blueprintOutcomeMap);
+    const { fieldKeyMap: result } = prepareRowForExtraction({ name: 'Alice' }, [], '\n', 1, blueprintOutcomeMap);
     expect(result.size).toBe(0);
+  });
+
+  it('falls back to path resolution for a non-regex field whose name looks like a path', () => {
+    const dataRow = { message: { author: { role: 'user' } } };
+    const extractionFields = [
+      { id: 1, scope: 'nested' as const, expected_name: 'message.author.role', match_regex: false, keep_in_donation: true, alias: null },
+    ];
+
+    const { rowToExtract, fieldKeyMap: result } = prepareRowForExtraction(dataRow, extractionFields, '\n', 1, blueprintOutcomeMap);
+
+    const key = result.get('message.author.role');
+    expect(key).toBeDefined();
+    expect(rowToExtract[key as string]).toBe('user');
+  });
+
+  it('prefers a flat exact match over path resolution when a key literally contains a dot', () => {
+    const dataRow = { 'a.b': 'flat-value' };
+    const extractionFields = [
+      { id: 1, scope: 'root' as const, expected_name: 'a.b', match_regex: false, keep_in_donation: true, alias: null },
+    ];
+
+    const { rowToExtract, fieldKeyMap: result } = prepareRowForExtraction(dataRow, extractionFields, '\n', 1, blueprintOutcomeMap);
+
+    expect(result.get('a.b')).toBe('a.b');
+    expect(rowToExtract['a.b']).toBe('flat-value');
+  });
+
+  it('joins an array-of-primitives leaf using the given separator', () => {
+    const dataRow = { content: { parts: ['Hello', 'world'] } };
+    const extractionFields = [
+      { id: 1, scope: 'nested' as const, expected_name: 'content.parts', match_regex: false, keep_in_donation: true, alias: null },
+    ];
+
+    const { rowToExtract, fieldKeyMap: result } = prepareRowForExtraction(dataRow, extractionFields, ' | ', 1, blueprintOutcomeMap);
+
+    const key = result.get('content.parts');
+    expect(rowToExtract[key as string]).toBe('Hello | world');
+  });
+
+  it('does not attempt path resolution for regex fields even if the name contains a dot', () => {
+    const dataRow = { message: { author: { role: 'user' } } };
+    const extractionFields = [
+      { id: 1, scope: 'nested' as const, expected_name: 'message.author.role', match_regex: true, keep_in_donation: true, alias: null },
+    ];
+
+    const { fieldKeyMap: result } = prepareRowForExtraction(dataRow, extractionFields, '\n', 1, blueprintOutcomeMap);
+
+    expect(result.has('message.author.role')).toBe(false);
+    expect(outcome.registerNoKeyMatch).toHaveBeenCalled();
   });
 });
 

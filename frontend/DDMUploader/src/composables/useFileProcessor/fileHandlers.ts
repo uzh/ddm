@@ -22,6 +22,56 @@ function normalizePath(path: string): string {
 }
 
 /**
+ * Strips a leading UTF-8 byte-order-mark (BOM, U+FEFF) from file content,
+ * if present. Some editors/export tools prepend one when saving text as
+ * UTF-8; left in place, it makes JSON.parse (and PapaParse/plain-text
+ * key/value splitting) fail on the very first character even though the
+ * rest of the content is perfectly valid.
+ */
+function stripBom(content: string): string {
+  return content.charCodeAt(0) === 0xfeff ? content.slice(1) : content;
+}
+
+/**
+ * True if a zip entry path is inside a top-level `__MACOSX/` directory --
+ * added automatically by macOS's Archive Utility/Finder/`zip` to hold
+ * AppleDouble resource-fork sidecar files, and never real user data. Safe
+ * to drop unconditionally: no legitimate export tool uses this exact
+ * directory name.
+ */
+function isInMacosMetadataDir(rawPath: string): boolean {
+  return normalizePath(rawPath).split('/').filter(Boolean)[0] === '__MACOSX';
+}
+
+/**
+ * Removes AppleDouble resource-fork sidecar files (named `._<filename>`)
+ * that macOS's `zip`/Archive Utility can place directly alongside the real
+ * file (i.e. outside `__MACOSX/`, where `isInMacosMetadataDir` alone
+ * wouldn't catch them). Critically, a `._conversations.json` sidecar has
+ * the same suffix as (and can therefore be accidentally matched by a
+ * literal/suffix BlueprintFilePath pattern for) the real `conversations.json`,
+ * while its content is opaque binary metadata that will always fail to parse.
+ *
+ * Only removed when a real sibling file (same directory, same name minus
+ * the `._` prefix) is also present -- that pairing is the actual signature
+ * of an AppleDouble sidecar. A file that happens to be named `._something`
+ * with no such sibling is left alone, since it's then indistinguishable
+ * from a genuine, deliberately-named user file.
+ */
+export function stripAppleDoubleSidecars(entries: ExtractedZipFile[]): ExtractedZipFile[] {
+  const allPaths = new Set(entries.map(e => e.fullPath));
+
+  return entries.filter(({fullPath}) => {
+    const segments = fullPath.split('/');
+    const basename = segments[segments.length - 1];
+    if (!basename.startsWith('._')) return true;
+
+    const siblingPath = [...segments.slice(0, -1), basename.slice(2)].join('/');
+    return !allPaths.has(siblingPath);
+  });
+}
+
+/**
  * Recursively collects all file entries from a ZIP archive, including nested ZIPs.
  *
  * This function traverses a ZIP archive and extracts metadata for all files,
@@ -58,6 +108,10 @@ export async function collectZipEntries(
 
   for (const entry of Object.values(zip.files)) {
     if (entry.dir) {
+      continue;
+    }
+
+    if (isInMacosMetadataDir(entry.name)) {
       continue;
     }
 
@@ -144,7 +198,9 @@ export async function handleZipFile(
     return;
   }
 
-  const extractedFiles = await collectZipEntries(zip, generalErrors, nestedZipExtractionDepth);
+  const extractedFiles = stripAppleDoubleSidecars(
+    await collectZipEntries(zip, generalErrors, nestedZipExtractionDepth)
+  );
   const availableFiles = Array.from(new Set(extractedFiles.map(entry => entry.fullPath)));
 
   const blueprintLookup = new Map(blueprints.map(bp => [bp.id, bp]));
@@ -161,7 +217,7 @@ export async function handleZipFile(
       for (const zipPath of matchedFilePaths) {
         try {
           const zipEntry = extractedFiles.find(f => f.fullPath === zipPath);
-          const content = await zipEntry.entry.async("string");
+          const content = stripBom(await zipEntry.entry.async("string"));
           processContent(content, blueprint, blueprintOutcomeMap);
           succeeded = true;
         } catch (error) {
@@ -271,11 +327,12 @@ export function handleSingleFile(
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = function(event: ProgressEvent<FileReader>) {
-      const content = event.target.result;
-      if (typeof content !== 'string') {
+      const rawContent = event.target.result;
+      if (typeof rawContent !== 'string') {
         registerGeneralError(generalErrors, ERROR_CATALOG.STRING_CONVERSION_ERROR, {});
         return reject('invalid content');
       }
+      const content = stripBom(rawContent);
 
       blueprints.forEach(blueprint => {
         try {

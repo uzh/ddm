@@ -37,8 +37,19 @@
       </div>
     </div>
 
-    {% include "ddm_core/form_components/_basic_field.html" with field=form.expected_fields %}
-    {% include "ddm_core/form_components/_checkbox_toggle_field.html" with field=form.expected_fields_regex_matching %}
+    <div>
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.expected_fields %}
+      {% include "ddm_core/form_components/_checkbox_toggle_field.html" with field=form.expected_fields_regex_matching %}
+    </div>
+
+    {% if form.instance.pk %}
+      {# Nested expected fields depend on a Nested loop path, which can only be configured once the Blueprint exists (see data_extraction.html). #}
+      <div id="nested-expected-fields">
+        <hr class="mb-4 mt-0" />
+        {% include "ddm_core/form_components/_basic_field.html" with field=form.nested_expected_fields %}
+        {% include "ddm_core/form_components/_checkbox_toggle_field.html" with field=form.nested_expected_fields_regex_matching %}
+      </div>
+    {% endif %}
 
     <div>
       {% include "ddm_core/components/info_collapsible.html" with extra_classes="mx-0" element_id="filevalidation" title="How the file validation works" include_path="ddm_datadonation/blueprint/info_collapsibles/block_file_validation.html" body="" %}

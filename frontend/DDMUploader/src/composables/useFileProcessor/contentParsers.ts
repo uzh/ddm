@@ -2,8 +2,9 @@ import Papa from "papaparse";
 import {ERROR_CATALOG} from "@uploader/utils/errorCatalog";
 import {Blueprint} from "@uploader/types/Blueprint";
 import {BlueprintExtractionOutcome} from "@uploader/classes/BlueprintExtractionOutcome";
-import {extractData, getFieldKeyMap, getMissingFields} from "@uploader/composables/useFileProcessor/extractionEngine";
+import {prepareRowForExtraction, extractData, getMissingFields} from "@uploader/composables/useFileProcessor/extractionEngine";
 import {CSVParserConfig, JSONParserConfig, TXTParserConfig} from "@uploader/types/ParserConfigs";
+import {getNestedJsonContent, resolveNestedCollection} from "@uploader/composables/useFileProcessor/jsonPath";
 
 /**
  * Processes a single file's content using a provided blueprint definition.
@@ -13,6 +14,13 @@ import {CSVParserConfig, JSONParserConfig, TXTParserConfig} from "@uploader/type
  * - Validating expected fields
  * - Applying extraction rules (with optional regex matching)
  * - Tracking errors, filtered rows, and stats in a structured result
+ *
+ * If the blueprint is JSON and has a `nested_loop_path` configured (in
+ * `parser_config`), each root-level item additionally has a nested
+ * collection resolved and looped over (see `resolveNestedCollection`),
+ * producing one output row per nested item with the root item's kept
+ * fields merged in. If `nested_loop_path` is empty (the default), this
+ * runs the single-loop pipeline unchanged.
  *
  * @param content - Raw file content as a string.
  * @param blueprint - The blueprint configuration defining format, fields, and extraction rules.
@@ -32,20 +40,31 @@ export function processContent(
   const parsedContentArray = getParsedContentArray(content, blueprint, blueprintOutcomeMap);
 
   if (!parsedContentArray) {
-    blueprintOutcomeMap[blueprint.id].registerError(ERROR_CATALOG.PARSING_ERROR, {contentType: ''});
+    // simply pass - errors are recorded in other locations and must not be registered here.
     return;
   }
   blueprintOutcomeMap[blueprint.id].extractionStats.nRowsTotal = parsedContentArray.length;
 
-  for (const dataRow of parsedContentArray) {
-    // Skipp row if is null/undefined
-    if (dataRow == null) {
+  const isJson = blueprint.parser_config.format === "json";
+  const nestedLoopPath = isJson
+    ? (blueprint.parser_config as JSONParserConfig).nested_loop_path
+    : "";
+  const arrayJoinSeparator = isJson
+    ? ((blueprint.parser_config as JSONParserConfig).array_join_separator || "\n")
+    : "\n";
+
+  const rootFields = blueprint.extraction_fields.filter(f => f.scope !== "nested");
+  const nestedFields = blueprint.extraction_fields.filter(f => f.scope === "nested");
+
+  for (const rootItem of parsedContentArray) {
+    // Skip row if is null/undefined
+    if (rootItem == null) {
       continue
     }
 
-    // Validate fields.
+    // Validate root fields.
     const missingFields = getMissingFields(
-      dataRow,
+      rootItem,
       blueprint.expected_fields,
       blueprint.exp_fields_regex_matching
     );
@@ -55,9 +74,64 @@ export function processContent(
       continue;
     }
 
-    // Construct key map and extract data.
-    const keyMap = getFieldKeyMap(dataRow, blueprint.extraction_fields, blueprint.id, blueprintOutcomeMap);
-    extractData(dataRow, blueprint.fields_to_extract, blueprint.extraction_rules, keyMap, blueprint.id, blueprintOutcomeMap);
+    if (!nestedLoopPath) {
+      // Legacy single-loop pipeline — unchanged behavior.
+      const {rowToExtract, fieldKeyMap} = prepareRowForExtraction(
+        rootItem, rootFields, arrayJoinSeparator, blueprint.id, blueprintOutcomeMap
+      );
+      extractData(
+        rowToExtract, blueprint.fields_to_extract, blueprint.extraction_rules,
+        fieldKeyMap, blueprint.id, blueprintOutcomeMap
+      );
+      continue;
+    }
+
+    // Two-level pipeline: extract root-scope fields first (without pushing),
+    // then loop the nested collection, merging root fields into each row.
+    const {rowToExtract: rootRowToExtract, fieldKeyMap: rootFieldKeyMap} = prepareRowForExtraction(
+      rootItem, rootFields, arrayJoinSeparator, blueprint.id, blueprintOutcomeMap
+    );
+    const rootExtracted = extractData(
+      rootRowToExtract, blueprint.fields_to_extract, blueprint.extraction_rules,
+      rootFieldKeyMap, blueprint.id, blueprintOutcomeMap, {push: false}
+    );
+    if (rootExtracted === null) {
+      // A root-scope rule discarded this root item entirely.
+      continue;
+    }
+
+    const nestedCollection = resolveNestedCollection(rootItem, nestedLoopPath);
+    if (nestedCollection.length === 0) {
+      blueprintOutcomeMap[blueprint.id].registerError(
+        ERROR_CATALOG.NESTED_PATH_NOT_FOUND, {nestedLoopPath: nestedLoopPath}
+      );
+    }
+
+    for (const nestedItem of nestedCollection) {
+      if (nestedItem == null) {
+        continue;
+      }
+      blueprintOutcomeMap[blueprint.id].extractionStats.nNestedRowsTotal += 1;
+
+      const missingNestedFields = getMissingFields(
+        nestedItem,
+        blueprint.nested_expected_fields,
+        blueprint.nested_exp_fields_regex_matching
+      );
+      if (missingNestedFields.length > 0) {
+        blueprintOutcomeMap[blueprint.id].extractionStats.nNestedRowsMissingField += 1;
+        continue;
+      }
+
+      const {rowToExtract: nestedRowToExtract, fieldKeyMap: nestedFieldKeyMap} = prepareRowForExtraction(
+        nestedItem, nestedFields, arrayJoinSeparator, blueprint.id, blueprintOutcomeMap
+      );
+      extractData(
+        nestedRowToExtract, blueprint.fields_to_extract, blueprint.extraction_rules,
+        nestedFieldKeyMap, blueprint.id, blueprintOutcomeMap,
+        {push: true, extraFields: rootExtracted}
+      );
+    }
   }
 }
 
@@ -88,6 +162,7 @@ export function getParsedContentArray(
         blueprintOutcomeMap[blueprint.id].registerError(
           ERROR_CATALOG.PARSING_ERROR, {contentType: 'CSV', error: error}
         );
+        return null;
       }
       break;
     case "json":
@@ -97,6 +172,7 @@ export function getParsedContentArray(
         blueprintOutcomeMap[blueprint.id].registerError(
           ERROR_CATALOG.PARSING_ERROR, {contentType: 'JSON', error: error}
         );
+        return null;
       }
       break;
     case "txt":
@@ -106,6 +182,7 @@ export function getParsedContentArray(
         blueprintOutcomeMap[blueprint.id].registerError(
           ERROR_CATALOG.PARSING_ERROR, {contentType: 'TXT', error: error}
         );
+        return null;
       }
       break;
     default:
@@ -300,36 +377,8 @@ export function parseTxtContent(
   return records;
 }
 
-/**
- * Retrieves a nested value from a JSON-like object using a string path.
- *
- * Supports dot notation (e.g., "user.address.city") and bracket notation
- * (e.g., "user['address']['city']" or "user[0].name") to access deeply nested properties.
- *
- * @param {object} fileContent - The JSON object to extract data from.
- * @param {string} extractionRoot - The path string indicating the nested property to retrieve.
- * @returns {*} - The value at the specified path, or undefined if the path is invalid.
- */
-export function getNestedJsonContent< T = any>(
-  fileContent: unknown,
-  extractionRoot: string
-): T | undefined {
-  if (typeof fileContent !== 'object' || fileContent == null) return;
-
-  const pathParts = extractionRoot
-    .replace(/\[(\w+)]/g, '.$1') // convert brackets to dot notation
-    .replace(/^\./, '') // remove leading dot
-    .split('.');
-
-  let current: any = fileContent;
-
-  for (const key of pathParts) {
-    if (current != null && key in current) {
-      current = current[key];
-    } else {
-      return undefined;
-    }
-  }
-
-  return current as T;
-}
+export {
+  getNestedJsonContent,
+  resolveNestedCollection,
+  joinIfPrimitiveArray,
+} from "@uploader/composables/useFileProcessor/jsonPath";

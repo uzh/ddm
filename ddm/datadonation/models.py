@@ -146,6 +146,23 @@ class DonationBlueprint(models.Model):
         help_text='Select if you use regex expressions in the "Expected fields"',
     )
 
+    nested_expected_fields = models.TextField(
+        blank=True,
+        default="",
+        validators=[COMMA_SEPARATED_STRINGS_VALIDATOR],
+        help_text=(
+            'Comma-separated, in double quotes: <code>"Field A", "Field B"</code>. '
+            "Only used if a Nested loop path is configured (JSON format)."
+        ),
+        verbose_name="Nested expected fields",
+    )
+
+    nested_expected_fields_regex_matching = models.BooleanField(
+        default=False,
+        null=False,
+        help_text='Select if you use regex expressions in the "Nested expected fields"',
+    )
+
     backup_for = models.ForeignKey(
         "self",
         null=True,
@@ -200,6 +217,7 @@ class DonationBlueprint(models.Model):
         self.clean_parser_config(errors)
         self.clean_backup_config(errors)
         self.clean_expected_fields_regex(errors)
+        self.clean_nested_expected_fields(errors)
 
         if errors:
             raise ValidationError(errors)
@@ -237,10 +255,38 @@ class DonationBlueprint(models.Model):
         """Validate expected_fields as regex patterns when regex matching is enabled."""
         if not (self.expected_fields_regex_matching and self.expected_fields):
             return
+        self._validate_regex_patterns(self.expected_fields, "expected_fields", errors)
 
+    def clean_nested_expected_fields(self, errors: dict) -> None:
+        """Validate nested_expected_fields configuration.
+
+        nested_expected_fields is only meaningful when the blueprint is JSON
+        format and has a nested_loop_path configured; also validates its
+        entries as regex patterns when nested regex matching is enabled.
+        """
+        if self.nested_expected_fields:
+            if self.exp_file_format != self.FileFormats.JSON_FORMAT:
+                errors["nested_expected_fields"] = (
+                    "Nested expected fields require the file format to be JSON."
+                )
+            elif not (self.parser_config or {}).get("nested_loop_path", ""):
+                errors["nested_expected_fields"] = (
+                    "Nested expected fields require a Nested loop path to be "
+                    "configured."
+                )
+
+        if self.nested_expected_fields_regex_matching and self.nested_expected_fields:
+            self._validate_regex_patterns(
+                self.nested_expected_fields, "nested_expected_fields", errors
+            )
+
+    @staticmethod
+    def _validate_regex_patterns(raw_value: str, error_key: str, errors: dict) -> None:
+        """Parse a comma-separated quoted-string field and validate each
+        entry as a safe regex pattern."""
         # Parse the comma-separated quoted strings: "pattern1", "pattern2"
         try:
-            patterns = json.loads("[" + self.expected_fields + "]")
+            patterns = json.loads("[" + raw_value + "]")
         except json.JSONDecodeError:
             return  # Existing COMMA_SEPARATED_STRINGS_VALIDATOR handles format errors
 
@@ -248,9 +294,7 @@ class DonationBlueprint(models.Model):
             try:
                 validate_safe_regex(pattern)
             except ValidationError as e:
-                errors["expected_fields"] = (
-                    f"Invalid regex in pattern '{pattern}': {e.message}"
-                )
+                errors[error_key] = f"Invalid regex in pattern '{pattern}': {e.message}"
                 break
 
     def get_parser_config(self) -> CSVParserConfig | JSONParserConfig | TXTParserConfig:
@@ -343,14 +387,33 @@ class BlueprintFilePath(models.Model):
 
 
 class ExtractionField(models.Model):
+    class Scope(models.TextChoices):
+        ROOT = "root", "Root level"
+        NESTED = "nested", "Nested level"
+
     blueprint = models.ForeignKey(
         "DonationBlueprint",
         null=False,
         on_delete=models.CASCADE,
     )
+    scope = models.CharField(
+        max_length=10,
+        choices=Scope.choices,
+        default=Scope.ROOT,
+        help_text=(
+            "Whether this field is extracted from the top-level item, or "
+            "from a nested sub-item (only relevant when a Nested loop path "
+            "is set)."
+        ),
+    )
     expected_name = models.TextField(
         blank=False,
-        help_text="Pattern to match field that needs to be present in file",
+        help_text=(
+            "The name of the field to extract, as it appears in the file. "
+            "To reach a value nested inside another field, separate the "
+            "names with a dot, e.g. <code>message.author.role</code>. This "
+            "only works when Regex is switched off."
+        ),
     )
     match_regex = models.BooleanField(default=False)
     keep_in_donation = models.BooleanField(default=False)
@@ -377,6 +440,19 @@ class ExtractionField(models.Model):
                 validate_safe_regex(self.expected_name)
             except ValidationError as e:
                 errors["expected_name"] = f"Invalid regex: {e.message}"
+
+        if self.scope == self.Scope.NESTED and self.blueprint_id:
+            blueprint = self.blueprint
+            if blueprint.exp_file_format != blueprint.FileFormats.JSON_FORMAT:
+                errors["scope"] = (
+                    "Nested-scope fields require the blueprint's file format "
+                    "to be JSON."
+                )
+            elif not (blueprint.parser_config or {}).get("nested_loop_path", ""):
+                errors["scope"] = (
+                    "Nested-scope fields require the blueprint to have a "
+                    "Nested loop path configured."
+                )
 
         if errors:
             raise ValidationError(errors)

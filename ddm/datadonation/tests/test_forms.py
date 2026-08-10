@@ -306,6 +306,92 @@ class TestBlueprintForm(TestCase):
         form = BlueprintForm(data=data)
         self.assertTrue(form.is_valid(), form.errors)
 
+    def test_valid_json_with_nested_loop_path(self):
+        """JSON-specific nested fields are correctly assembled into
+        parser_config, and nested_expected_fields is accepted alongside a
+        configured nested_loop_path."""
+        data = {
+            "name": "nested json blueprint",
+            "display_name": "some name",
+            "description": "some description",
+            "display_position": 1,
+            "exp_file_format": "json",
+            "json_extraction_root": "",
+            "json_nested_loop_path": "mapping",
+            "json_array_join_separator": "\\n",
+            "file_uploader": self.file_uploader.pk,
+            "expected_fields": '"conversation_id"',
+            "expected_fields_regex_matching": False,
+            "nested_expected_fields": '"message"',
+            "nested_expected_fields_regex_matching": False,
+            "backup_for": None,
+            "backup_priority": 0,
+        }
+        form = BlueprintForm(data=data, project=self.project)
+        self.assertTrue(form.is_valid(), form.errors)
+        bp = form.save()
+
+        self.assertEqual(bp.parser_config["nested_loop_path"], "mapping")
+        # Confirm the literal "\n" typed in the input was unescaped, as it
+        # is for the other JSON/TXT string fields.
+        self.assertEqual(bp.parser_config["array_join_separator"], "\n")
+        self.assertEqual(bp.nested_expected_fields, '"message"')
+
+    def test_json_blank_nested_fields_fall_back_to_schema_defaults(self):
+        """Leaving the nested JSON fields blank should use JSONParserConfig
+        defaults, and should not require nested_expected_fields."""
+        data = {
+            "name": "non-nested json blueprint",
+            "display_name": "some name",
+            "description": "some description",
+            "display_position": 1,
+            "exp_file_format": "json",
+            "json_extraction_root": "",
+            "json_nested_loop_path": "",
+            "json_array_join_separator": "",
+            "file_uploader": self.file_uploader.pk,
+            "expected_fields": '"some field"',
+            "expected_fields_regex_matching": False,
+            "backup_for": None,
+            "backup_priority": 0,
+        }
+        form = BlueprintForm(data=data, project=self.project)
+        self.assertTrue(form.is_valid(), form.errors)
+        bp = form.save()
+
+        defaults = JSONParserConfig()
+        self.assertEqual(
+            bp.parser_config["nested_loop_path"], defaults.nested_loop_path
+        )
+        self.assertEqual(
+            bp.parser_config["array_join_separator"], defaults.array_join_separator
+        )
+
+    def test_nested_expected_fields_without_nested_loop_path_is_invalid(self):
+        """Model-level validation (nested_expected_fields requires a
+        configured nested_loop_path) surfaces through the form's is_valid(),
+        since ModelForm._post_clean() runs the model's full_clean()."""
+        data = {
+            "name": "invalid nested blueprint",
+            "display_name": "some name",
+            "description": "some description",
+            "display_position": 1,
+            "exp_file_format": "json",
+            "json_extraction_root": "",
+            "json_nested_loop_path": "",
+            "json_array_join_separator": "",
+            "file_uploader": self.file_uploader.pk,
+            "expected_fields": '"some field"',
+            "expected_fields_regex_matching": False,
+            "nested_expected_fields": '"message"',
+            "nested_expected_fields_regex_matching": False,
+            "backup_for": None,
+            "backup_priority": 0,
+        }
+        form = BlueprintForm(data=data, project=self.project)
+        self.assertFalse(form.is_valid())
+        self.assertIn("nested_expected_fields", form.errors)
+
 
 class TestGetBackupQueryset(TestCase):
     @classmethod

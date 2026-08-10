@@ -27,7 +27,9 @@
     "string-conversion-error": "File content cannot be converted to string",
     "no-fields-to-extract": "No fields defined that should be kept in the data donation.",
     "parsing-error": "Failed to parse {contentType} content for this file.",
+    "parsing-error-detail": "The following error occurred: {error}",
     "unsupported-bp-format": "Unsupported content format: {format}",
+    "nested-path-not-found": "The field '{nestedLoopPath}' wasn't found in one of the entries, so no additional rows could be extracted for it.",
     "more-than-one-key-match": "More than one key match for field '{field}': {keys}. Defaulted to {defaultKey}",
     "no-key-match": "No key match for field '{field}': {keys}",
     "undefined-key": "Undefined key for field '{field}'"

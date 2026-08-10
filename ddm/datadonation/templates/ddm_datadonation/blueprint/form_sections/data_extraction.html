@@ -5,8 +5,11 @@
       <p>Configure what data will be collected</p>
     </div>
 
-    <div class="mt-1">
+    <div id="json-parser-fields" class="mt-1">
       {% include "ddm_core/form_components/_basic_field.html" with field=form.json_extraction_root %}
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.json_nested_loop_path %}
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.json_array_join_separator %}
+      <hr />
     </div>
 
     <p class="pt-2 fw-600">
@@ -15,7 +18,7 @@
 
     <p>
       Register the fields/variables you expect the uploaded file to contain.
-      List any field you want to (a) keep in the donated data (enable
+      List any field you want to (a) keep in the donated data (mark as
       <code>keep in donation</code>), or (b) reference in an
       <code>Extraction Rule</code>.
     </p>

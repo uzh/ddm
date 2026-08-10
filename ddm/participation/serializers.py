@@ -59,6 +59,7 @@ class ExtractionFieldSerializer(serializers.ModelSerializer):
         model = ExtractionField
         fields = [
             "id",
+            "scope",
             "expected_name",
             "match_regex",
             "keep_in_donation",
@@ -89,6 +90,10 @@ class BlueprintSerializer(serializers.ModelSerializer):
     exp_fields_regex_matching = serializers.BooleanField(
         source="expected_fields_regex_matching"
     )
+    nested_expected_fields = serializers.SerializerMethodField()
+    nested_exp_fields_regex_matching = serializers.BooleanField(
+        source="nested_expected_fields_regex_matching"
+    )
     fields_to_extract = serializers.SerializerMethodField()
     extraction_fields = serializers.SerializerMethodField()
     extraction_rules = serializers.SerializerMethodField()
@@ -105,6 +110,8 @@ class BlueprintSerializer(serializers.ModelSerializer):
             "format",
             "expected_fields",
             "exp_fields_regex_matching",
+            "nested_expected_fields",
+            "nested_exp_fields_regex_matching",
             "parser_config",
             "fields_to_extract",
             "extraction_fields",
@@ -116,6 +123,11 @@ class BlueprintSerializer(serializers.ModelSerializer):
 
     def get_expected_fields(self, obj: DonationBlueprint) -> dict:
         return json.loads("[" + str(obj.expected_fields) + "]")
+
+    def get_nested_expected_fields(self, obj: DonationBlueprint) -> list:
+        if not obj.nested_expected_fields:
+            return []
+        return json.loads("[" + str(obj.nested_expected_fields) + "]")
 
     def get_fields_to_extract(self, obj: DonationBlueprint) -> list:
         fields = set()

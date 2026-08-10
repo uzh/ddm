@@ -1,6 +1,8 @@
 export type JSONParserConfig = {
   format: "json";
   extraction_root: string;
+  nested_loop_path: string;
+  array_join_separator: string;
 }
 
 export type CSVParserConfig = {

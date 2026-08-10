@@ -110,6 +110,17 @@ export const ERROR_CATALOG: Record<string, ProcessingError> = {
       format: '[name of unsupported format]'
     }
   },
+  NESTED_PATH_NOT_FOUND: {
+    type: 'NESTED_PATH_NOT_FOUND',
+    category: ERROR_CATEGORIES.EXTRACTION,
+    scope: ERROR_SCOPES.BLUEPRINT,
+    i18nDetail: 'errors.nested-path-not-found',
+    level: ERROR_LEVELS.WARN,
+    context: {
+      blueprintId: '[blueprint ID]',
+      nestedLoopPath: '[the configured nested loop path]'
+    }
+  },
   MORE_THAN_ONE_KEY_MATCH: {
     type: 'MORE_THAN_ONE_KEY_MATCH',
     category: ERROR_CATEGORIES.EXTRACTION,

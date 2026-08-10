@@ -51,6 +51,9 @@ _Description:_ Indicates that the file type that a blueprint wants to extract is
 _Description:_ Indicates that more than one key (or field/variable) contained in a file matched the field name
 defined in an extraction rule. +
 
+*NESTED_PATH_NOT_FOUND* +
+_Description:_ Indicates that a configured nested path was not found in the uploaded file.
+
 *EXTRACTION_STATS* +
 _Description:_ Contains a summary of the data extraction procedure.
 Includes the _number of rows with a missing field_ (nRowsMissingField),

@@ -1,15 +1,23 @@
 <tr>
   <td>
+    {{ form.scope }}
+    {{ form.scope.errors }}
+  </td>
+  <td>
     {{ form.expected_name }}
+    {{ form.expected_name.errors }}
   </td>
   <td>
     {{ form.match_regex }}
+    {{ form.match_regex.errors }}
   </td>
   <td class="border-start">
     {{ form.alias }}
+    {{ form.alias.errors }}
   </td>
   <td>
     {{ form.keep_in_donation }}
+    {{ form.keep_in_donation.errors }}
   </td>
   <td>
     {{ form.DELETE }}
@@ -18,3 +26,8 @@
     {% endfor %}
   </td>
 </tr>
+{% if form.non_field_errors %}
+  <tr>
+    <td colspan="6">{{ form.non_field_errors }}</td>
+  </tr>
+{% endif %}

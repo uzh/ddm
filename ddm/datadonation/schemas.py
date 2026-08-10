@@ -6,6 +6,8 @@ from pydantic import BaseModel, Field, TypeAdapter
 class JSONParserConfig(BaseModel):
     format: Literal["json"] = "json"
     extraction_root: str = ""
+    nested_loop_path: str = ""
+    array_join_separator: str = "\n"
 
 
 class CSVParserConfig(BaseModel):

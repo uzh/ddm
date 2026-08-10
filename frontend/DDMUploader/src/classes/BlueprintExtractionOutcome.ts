@@ -36,6 +36,8 @@ export class BlueprintExtractionOutcome {
     nRowsFilteredOut: number,
     nRowsTotal: number,
     noKeyMatches: Record<string, Record<string, number>>  // Maps the expected field to a record in which the key is a stringified array of available fields and the value is the count of how many times this was encountered.
+    nNestedRowsTotal: number,  // Total number of nested-loop items encountered across all root items (0 if the blueprint has no nested_loop_path configured).
+    nNestedRowsMissingField: number,  // Number of nested-loop items skipped due to failing the nested_expected_fields check.
   };
   extractionRuleLog: Record<string, number>;  // Record where the key is the rule.id and the value represents how many times the rule was triggered.
   processingErrors: ProcessingError[];
@@ -48,7 +50,9 @@ export class BlueprintExtractionOutcome {
       nRowsMissingField: 0,
       nRowsFilteredOut: 0,
       nRowsTotal: 0,
-      noKeyMatches: {}
+      noKeyMatches: {},
+      nNestedRowsTotal: 0,
+      nNestedRowsMissingField: 0,
     }
     this.extractionRuleLog = this.initializeExtractionRuleLog(blueprint.extraction_rules)
     this.processingErrors = []

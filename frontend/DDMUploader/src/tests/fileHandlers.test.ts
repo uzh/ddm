@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { handleZipFile, handleSingleFile, fileIsZip, collectZipEntries } from '@uploader/composables/useFileProcessor/fileHandlers';
+import { handleZipFile, handleSingleFile, fileIsZip, collectZipEntries, stripAppleDoubleSidecars } from '@uploader/composables/useFileProcessor/fileHandlers';
 import { BlueprintExtractionOutcome } from '@uploader/classes/BlueprintExtractionOutcome';
 import JSZip from 'jszip';
 import {matchFilePaths} from "../composables/useFileProcessor/fileHandlers";
@@ -9,6 +9,8 @@ import {CSVParserConfig, JSONParserConfig} from "@uploader/types/ParserConfigs";
 const JSONConfig: JSONParserConfig = {
   format: 'json',
   extraction_root: '',
+  nested_loop_path: '',
+  array_join_separator: '\n',
 }
 
 const CSVConfig: CSVParserConfig = {
@@ -25,10 +27,13 @@ const jsonBlueprintA = {
   parser_config: JSONConfig,
   expected_fields: ['name'],
   exp_fields_regex_matching: false,
+  nested_expected_fields: [],
+  nested_exp_fields_regex_matching: false,
   fields_to_extract: ['name'],
   extraction_fields: [
     {
       id: 1,
+      scope: 'root' as const,
       expected_name: 'name',
       match_regex: false,
       keep_in_donation: true,
@@ -179,6 +184,38 @@ describe('handleZipFile', () => {
 
     expect(blueprintOutcomeMap[1].extractedData.length).toBe(2);
     expect(blueprintOutcomeMap[1].extractedData).toContainEqual({ name: 'Alice' });
+    expect(generalErrors.length).toBe(0);
+  });
+
+  it('ignores macOS __MACOSX/ AppleDouble sidecar files even when a literal path pattern would otherwise suffix-match them', async () => {
+    // Reproduces a real-world zip created on macOS (e.g. via Finder/Archive
+    // Utility), which adds a `__MACOSX/<dir>/._<name>` binary resource-fork
+    // sidecar next to every real file. A literal (non-regex) BlueprintFilePath
+    // like "conversations.json" matches by right-hand-side suffix, so it would
+    // also match "__MACOSX/export/._conversations.json" -- whose content is
+    // opaque binary metadata, not JSON -- unless these artifacts are filtered
+    // out during zip traversal.
+    const zip = new JSZip();
+    zip.file('export/conversations.json', jsonDataA);
+    // Minimal AppleDouble magic-number header; never valid JSON/text.
+    zip.file('__MACOSX/export/._conversations.json', new Uint8Array([0x00, 0x05, 0x16, 0x07, 0x00, 0x02, 0x00, 0x00]));
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const zipFile = new File([blob], 'export.zip', { type: 'application/zip' });
+
+    const literalMatchBlueprint = {
+      ...jsonBlueprintA,
+      file_paths: [{ path: 'conversations.json', is_regex: false }],
+    };
+    const blueprintOutcomeMap = {
+      1: new BlueprintExtractionOutcome(literalMatchBlueprint)
+    };
+    const generalErrors = [];
+
+    await handleZipFile(zipFile, [literalMatchBlueprint], blueprintOutcomeMap, generalErrors, 1);
+
+    expect(blueprintOutcomeMap[1].extractedData.length).toBe(2);
+    expect(blueprintOutcomeMap[1].extractedData).toContainEqual({ name: 'Alice' });
+    expect(blueprintOutcomeMap[1].processingErrors).toEqual([]);
     expect(generalErrors.length).toBe(0);
   });
 
@@ -464,6 +501,21 @@ describe('collectZipEntries (test in isolation)', () => {
     expect(generalErrors.length).toBe(0);
   });
 
+  it('filters out any entry inside a top-level __MACOSX/ directory', async () => {
+    const zip = new JSZip();
+    zip.file('data_a.json', jsonDataA);
+    zip.file('__MACOSX/data_a.json', new Uint8Array([0x00, 0x05, 0x16, 0x07]));
+    zip.file('__MACOSX/._data_a.json', new Uint8Array([0x00, 0x05, 0x16, 0x07]));
+    const zipFile = await JSZip.loadAsync(await zip.generateAsync({ type: 'blob' }));
+    const generalErrors = [];
+
+    const entries = await collectZipEntries(zipFile, generalErrors, 0);
+    const fullPaths = entries.map(entry => entry.fullPath);
+
+    expect(fullPaths).toEqual(['data_a.json']);
+    expect(generalErrors.length).toBe(0);
+  });
+
   it('creates correct entries from deeply nested ZIP archives', async () => {
     const zip = await createDeeplyNestedZipFile();
     const zipFile = await JSZip.loadAsync(zip);
@@ -496,6 +548,51 @@ describe('collectZipEntries (test in isolation)', () => {
     expect(generalErrors.length).toBe(0);
   });
 
+});
+
+describe('stripAppleDoubleSidecars', () => {
+  it('removes a ._-prefixed file when a real sibling of the same name exists', () => {
+    const entries = [
+      { fullPath: 'subdir/data_a.json', entry: {} as any },
+      { fullPath: 'subdir/._data_a.json', entry: {} as any },
+    ];
+
+    const result = stripAppleDoubleSidecars(entries);
+
+    expect(result.map(e => e.fullPath)).toEqual(['subdir/data_a.json']);
+  });
+
+  it('preserves a genuinely-named ._-prefixed file that has no matching sibling', () => {
+    // A file that happens to be named "._config.json" with no plain
+    // "config.json" alongside it is indistinguishable from real user data
+    // and must not be silently dropped.
+    const entries = [
+      { fullPath: 'subdir/._config.json', entry: {} as any },
+      { fullPath: 'subdir/unrelated.json', entry: {} as any },
+    ];
+
+    const result = stripAppleDoubleSidecars(entries);
+
+    expect(result.map(e => e.fullPath).sort()).toEqual([
+      'subdir/._config.json',
+      'subdir/unrelated.json',
+    ]);
+  });
+
+  it('only matches siblings within the same directory', () => {
+    const entries = [
+      { fullPath: 'dir_a/data.json', entry: {} as any },
+      { fullPath: 'dir_b/._data.json', entry: {} as any },
+    ];
+
+    const result = stripAppleDoubleSidecars(entries);
+
+    // No sibling in dir_b itself, so the ._-prefixed file is kept.
+    expect(result.map(e => e.fullPath).sort()).toEqual([
+      'dir_a/data.json',
+      'dir_b/._data.json',
+    ]);
+  });
 });
 
 describe('matchFilePaths', () => {
@@ -603,6 +700,20 @@ describe('handleSingleFile', () => {
 
     await handleSingleFile(jsonFile, [jsonBlueprintA], blueprintOutcomeMap, generalErrors);
 
+    expect(blueprintOutcomeMap[1].extractedData.length).toBe(2);
+    expect(blueprintOutcomeMap[1].extractedData[0]).toHaveProperty('name', 'Alice');
+  });
+
+  it('strips a leading UTF-8 BOM before parsing, rather than failing on it', async () => {
+    const jsonFileWithBom = new File(['﻿' + jsonDataA], 'test.json', { type: 'application/json' });
+    const blueprintOutcomeMap = {
+      1: new BlueprintExtractionOutcome(jsonBlueprintA)
+    };
+    const generalErrors = [];
+
+    await handleSingleFile(jsonFileWithBom, [jsonBlueprintA], blueprintOutcomeMap, generalErrors);
+
+    expect(blueprintOutcomeMap[1].processingErrors).toEqual([]);
     expect(blueprintOutcomeMap[1].extractedData.length).toBe(2);
     expect(blueprintOutcomeMap[1].extractedData[0]).toHaveProperty('name', 'Alice');
   });

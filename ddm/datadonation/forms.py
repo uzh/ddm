@@ -22,6 +22,8 @@ from ddm.datadonation.schemas import CSVParserConfig, JSONParserConfig, TXTParse
 FIELD_NAME_MAP: dict[str, dict[str, str]] = {
     "json": {
         "json_extraction_root": "extraction_root",
+        "json_nested_loop_path": "nested_loop_path",
+        "json_array_join_separator": "array_join_separator",
     },
     "csv": {
         "csv_delimiter": "delimiter",
@@ -68,10 +70,39 @@ class BlueprintForm(forms.ModelForm):
         required=False,
         label="Extraction Root",
         help_text=mark_safe(
-            "Optional: The root of the data structure from which to extract data. "
-            "Leave empty to extract from the top level. "
-            "To extract from a nested level, specify the path using dot "
-            "notation (e.g., <code>friends.real_friends</code>)."
+            "Optional: if the data you want isn't at the top level of the "
+            "file, enter the field name that contains it here. Leave empty "
+            "to extract straight from the top level. To reach a field "
+            "nested inside another field, separate the names with a dot, "
+            "e.g. <code>friends.real_friends</code>."
+        ),
+    )
+    json_nested_loop_path = forms.CharField(
+        max_length=200,
+        required=False,
+        label="Nested loop path",
+        help_text=mark_safe(
+            "Optional: use this if each item contains a list (or a named "
+            "set) of related sub-items that you also want to extract as "
+            "their own rows &mdash; for example, if each conversation "
+            "contains a set of messages. Enter the field name that holds "
+            "these sub-items (e.g. <code>messages</code>). Each sub-item "
+            "becomes a separate row, and the data extracted from the "
+            "parent item is automatically included in every row. To reach "
+            "a field nested inside another field, separate the names with "
+            "a dot, e.g. <code>data.messages</code>."
+        ),
+    )
+    json_array_join_separator = forms.CharField(
+        max_length=20,
+        required=False,
+        initial="\n",
+        label="Array join separator",
+        help_text=mark_safe(
+            "If an extracted field contains several separate values (e.g. "
+            "multiple lines of a message) instead of a single value, they "
+            "are combined into one text using this separator. Use "
+            "<code>\\n</code> to join them with a line break."
         ),
     )
 
@@ -93,10 +124,10 @@ class BlueprintForm(forms.ModelForm):
         initial="\n\n",
         label="Record/entry separator",
         help_text=mark_safe(
-            "The character sequence that marks the boundary between individual "
-            "records/entries in the file (e.g., a blank line or a single line break). "
-            "Use <code>\\n</code> for a line break or <code>\\n\\n</code> for a blank "
-            "line."
+            "The character(s) that separate one entry from the next in the "
+            "file &mdash; for example, a blank line or a single line "
+            "break. Use <code>\\n</code> for a line break, or "
+            "<code>\\n\\n</code> for a blank line between entries."
         ),
     )
     txt_field_separator = forms.CharField(
@@ -160,15 +191,21 @@ class BlueprintForm(forms.ModelForm):
             "file_uploader",
             "expected_fields",
             "expected_fields_regex_matching",
+            "nested_expected_fields",
+            "nested_expected_fields_regex_matching",
             "backup_for",
             "backup_priority",
         ]
         widgets = {
             "expected_fields": forms.Textarea(attrs={"rows": 1}),
+            "nested_expected_fields": forms.Textarea(attrs={"rows": 1}),
             "description": forms.Textarea(attrs={"rows": 3}),
         }
         labels = {
             "expected_fields_regex_matching": "Expected fields use regex matching",
+            "nested_expected_fields_regex_matching": (
+                "Nested expected fields use regex matching"
+            ),
             "display_position": "Display order",
         }
         help_texts = {
@@ -187,6 +224,11 @@ class BlueprintForm(forms.ModelForm):
                 'Comma-separated, in double quotes: <code>"Field A", "Field B"</code>'
             ),
             "expected_fields_regex_matching": "",
+            "nested_expected_fields": mark_safe(
+                'Comma-separated, in double quotes: <code>"Field A", "Field B"</code>. '
+                "Only used if a Nested loop path is configured (JSON format)."
+            ),
+            "nested_expected_fields_regex_matching": "",
         }
 
     def __init__(self, *args, **kwargs) -> None:
@@ -336,6 +378,7 @@ class ExtractionFieldForm(forms.ModelForm):
     class Meta:
         model = ExtractionField
         fields = [
+            "scope",
             "expected_name",
             "match_regex",
             "keep_in_donation",
@@ -344,7 +387,18 @@ class ExtractionFieldForm(forms.ModelForm):
         widgets = {
             "expected_name": Textarea(attrs={"cols": 60, "rows": 1}),
         }
-        labels = {"alias": "Rename to"}
+        labels = {"alias": "Rename to", "scope": "Scope"}
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        # Don't let the model's non-empty `default` become this field's
+        # form-level `initial`: for an unsaved/"extra" formset row, a
+        # non-empty initial no longer matches the empty submitted data of
+        # an untouched row, which defeats the formset's "skip untouched
+        # extra rows" (has_changed) logic and breaks required-field
+        # validation for every other field on that row.
+        if not self.instance.pk:
+            self.fields["scope"].initial = ""
 
 
 ExtractionFieldInlineFormset = inlineformset_factory(

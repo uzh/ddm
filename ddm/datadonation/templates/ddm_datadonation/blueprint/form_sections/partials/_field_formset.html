@@ -4,6 +4,7 @@
     <table class="table">
       <thead>
       <tr>
+        <th>Scope</th>
         <th>Expected name</th>
         <th>Regex</th>
         <th>Rename to</th>
@@ -17,7 +18,7 @@
         {% include "ddm_datadonation/blueprint/form_sections/partials/_field_form.html" with form=form %}
       {% empty %}
         <tr id="no-field-table-row">
-          <td colspan="4" class="text-muted">No fields defined</td>
+          <td colspan="5" class="text-muted">No fields defined</td>
         </tr>
       {% endfor %}
 

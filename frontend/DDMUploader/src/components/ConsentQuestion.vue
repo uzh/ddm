@@ -7,11 +7,13 @@
  * Features:
  * - Allows user to agree or disagree with data donation.
  * - Supports updating consent individually per blueprint or globally for all blueprints (combinedConsent).
+ * - Shows a "with deletion" question wording if the blueprint allows excluding individual entries.
  * - Emits consent changes to parent via 'consentUpdated' event.
  * - Highlights selected choice visually.
  *
  * Props:
  * - combinedConsent (boolean): If true, sets consent for all blueprints.
+ * - blueprint (Blueprint | null): The blueprint being consented to (null if combined consent).
  * - blueprintId (number | null): Current blueprint ID (null if combined consent).
  *
  * Emits:

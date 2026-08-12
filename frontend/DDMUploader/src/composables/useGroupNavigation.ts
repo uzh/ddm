@@ -1,6 +1,14 @@
 import {computed, Ref, ref, watch} from "vue";
 import {EntryGroup} from "@uploader/utils/entryGroup";
 
+/**
+ * useGroupNavigation
+ *
+ * Tracks the current index into `groups` and steps prev/next through it. If
+ * `isFiltered` is true, stepping instead moves between the indices listed
+ * in `matchingIndices` (skipping non-matching groups in between), and jumps
+ * to the first match if the current index falls out of the match set.
+ */
 export function useGroupNavigation(groups: Ref<EntryGroup[]>, matchingIndices: Ref<number[]>, isFiltered: Ref<boolean>) {
   const currentIndex = ref(0);
   const currentMatchPosition = computed(() => matchingIndices.value.indexOf(currentIndex.value));

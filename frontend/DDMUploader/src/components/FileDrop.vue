@@ -2,20 +2,10 @@
 /**
  * Component: FileDrop
  *
- * This component handles file uploads through both drag-and-drop and file picker inputs.
- * It provides visual feedback for different processing states (idle, processing, done),
- * supports retrying a file upload, and displays errors if extraction fails.
- *
- * Features:
- * - Drag-and-drop file upload area with hover effects.
- * - File picker when clicking the drop zone.
- * - Shows different UI states based on the processor and extraction status:
- *   - Idle: Prompt user to drop/select a file.
- *   - Processing: Display a loading spinner.
- *   - Done: Show success, failure, or no-data messages.
- * - Allows retrying file uploads after failure or success.
- * - Displays localized error messages for general extraction errors.
- * - Adapts accepted file types dynamically (e.g., ZIP files if needed).
+ * Handles file uploads via drag-and-drop or a file picker, showing
+ * different UI per state (idle prompt, processing spinner, success/failure/
+ * no-data result), and lets the user retry with a different file. Accepted
+ * file types adapt based on whether a ZIP is expected.
  *
  * Props:
  * - expectsZip (boolean): Whether the component should only accept .zip files as uploads.
@@ -25,14 +15,6 @@
  *
  * Emits:
  * - fileDropped(file: File): Triggered when the user selects or drops a new file.
- *
- * Internal Utilities:
- * - initialize(): Sets up accepted file input types based on props.
- * - handleDrop(event: DragEvent): Handles files dropped into the area.
- * - handleFileInput(event: Event): Handles file selection via input element.
- *
- * Dependencies:
- * - vue-i18n: For translation and localization of all user-facing text.
  */
 
 

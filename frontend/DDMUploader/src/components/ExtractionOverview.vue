@@ -2,16 +2,12 @@
 /**
  * Component: ExtractionOverview
  *
- * This component coordinates the display of extraction results for multiple blueprints.
- * It manages the state of extraction results and delegates rendering to ExtractionItem components.
- *
- * Features:
- * - Dynamic intro message based on overall extraction state
- * - Processes and prepares extraction data for display
- * - Delegates rendering of individual blueprint results to ExtractionItem components
- * - Handles consent updates from child components
- * - Supports reactivity and updates dynamically with extraction state changes
- * - Internationalization (i18n) support for all user-facing text
+ * Coordinates the display of extraction results for all of an uploader's
+ * (primary, non-backup) blueprints, delegating each one to ExtractionItem.
+ * If a primary blueprint's extraction failed but one of its backups
+ * succeeded, the successful backup is rendered in its place; backups are
+ * otherwise never shown on their own. Successfully-extracted blueprints are
+ * listed first; the rest are grouped in a collapsible section below.
  *
  * Props:
  * - uploaderState (UploaderStates): Current state of the uploader component
@@ -23,20 +19,6 @@
  *
  * Emits:
  * - consentUpdated (consent: boolean, blueprintId: number | null): Forwards consent updates from ExtractionItem components
- *
- * Internal Utilities:
- * - getBlueprintUIMap(): Creates a data structure with UI display information for each blueprint
- * - updateBlueprintUIMap(): Updates the reactive UI map when extraction states change
- * - getErrorDescription(): Formats user-friendly error descriptions
- * - passConsentUpdateToParent(): Forwards consent events to parent components
- *
- * Dependencies:
- * - ExtractionItem.vue: Renders individual blueprint extraction results
- * - vue-i18n: For dynamic translation and localization
- *
- * Architecture:
- * This component follows a container/presentational pattern where ExtractionOverview
- * manages state and coordinates, while ExtractionItem handles presentation details.
  */
 
 import {computed, onMounted, reactive, ref, watch} from 'vue';

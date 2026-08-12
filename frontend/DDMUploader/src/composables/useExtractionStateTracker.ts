@@ -11,15 +11,9 @@ import {ERROR_LEVELS, ProcessingError} from "@uploader/types/ProcessingError";
 /**
  * useExtractionStateTracker
  *
- * A Vue composable that evaluates and tracks the state of data extraction processes.
- * It analyzes the success, failure, or partial completion of extraction operations
- * across multiple blueprints and provides a consolidated view of the extraction status.
- *
- * The composable handles:
- * - Tracking overall extraction state (success, partial, failed, no data)
- * - Monitoring individual blueprint extraction states
- * - Filtering and organizing critical errors for display
- * - Providing reactive state properties for UI components
+ * Evaluates and tracks extraction state across multiple blueprints: the
+ * overall state (success/partial/failed/no data), each blueprint's own
+ * state, and which errors are critical enough to surface in the UI.
  *
  * @param errors - Array of processing errors encountered during extraction
  * @param results - Object mapping blueprint IDs to their extraction outcomes

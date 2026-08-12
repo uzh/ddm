@@ -6,29 +6,15 @@ import {ProcessingError} from "@uploader/types/ProcessingError";
 /**
  * useLogPoster
  *
- * A composable that handles structured logging of blueprint processing events to the backend.
- * It provides a centralized mechanism for recording errors, statistics, and extraction results
- * with consistent timestamps and formatting.
- *
- * Features:
- * - Posts various types of logs with consistent timestamps for correlation
- * - Handles both general and blueprint-specific errors
- * - Records extraction statistics, rule usage, and field mappings
- * - Provides error handling for network failures
+ * Posts structured logs (errors, extraction stats, rule usage, field
+ * mappings) for a processing session to the backend, sharing one timestamp
+ * per batch for correlation. Network failures are logged to the console,
+ * not thrown.
  *
  * @param uploaderId - Unique identifier for the uploader component
  * @param exceptionUrl - Backend endpoint URL for log submission
  *
- * @returns An object containing:
- *   - postLogs: Function to submit all logs for a processing session
- *
- * Usage:
- * ```typescript
- * const { postLogs } = useLogPoster(1, '/api/logs');
- *
- * // After processing is complete, post all logs
- * await postLogs(generalErrors, blueprintOutcomeMap);
- * ```
+ * @returns { postLogs } - Function to submit all logs for a processing session
  */
 export function useLogPoster(
   uploaderId: number,

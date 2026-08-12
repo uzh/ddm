@@ -1,4 +1,19 @@
 <script setup lang="ts">
+/**
+ * Component: ExtractionModal
+ *
+ * The full-detail modal for reviewing a blueprint's extracted data, opened
+ * from ExtractionPreview. In flat mode, shows a single searchable,
+ * paginated table. When group_by_root_item is on, shows one root item
+ * ("element") at a time with prev/next navigation, a root-value summary, a
+ * per-entry search, a cross-entry search that jumps between matches, and
+ * (if allowed) a control to exclude the current entry from the donation.
+ *
+ * Props:
+ * - blueprintOutcome (BlueprintExtractionOutcome): Extraction data for the blueprint.
+ * - blueprint (Blueprint): The blueprint configuration (used for id/name/nested_entry_exclusion_allowed).
+ * - fieldLayout (ExtractionFieldLayout): Grouping/column info computed by ExtractionItem.
+ */
 
 import ExtractionTable from "@uploader/components/ExtractionTable.vue";
 import {BlueprintExtractionOutcome} from "@uploader/classes/BlueprintExtractionOutcome";

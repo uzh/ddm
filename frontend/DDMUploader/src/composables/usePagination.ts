@@ -1,5 +1,12 @@
 import {computed, Ref, ref, watch} from "vue";
 
+/**
+ * usePagination
+ *
+ * Tracks the current page over `itemCount` items at `pageSize` per page,
+ * clamping the page when itemCount shrinks. next/prev also reset
+ * `scrollTarget`'s scroll position, if given.
+ */
 export function usePagination(itemCount: Ref<number>, pageSize = 20, scrollTarget?: Ref<HTMLElement | null>) {
   const currentPage = ref(1);
   const maxPage = computed(() => Math.ceil(itemCount.value / pageSize));

@@ -6,40 +6,20 @@ import {handleSingleFile, handleZipFile} from "@uploader/composables/useFileProc
 /**
  * useFileProcessor
  *
- * A Vue composable that handles file processing and data extraction based on blueprint configurations.
- * It serves as the main entry point for the file processing system, managing state and coordinating
- * specialized processing modules.
- *
- * Features:
- * - Processes both single files (JSON/CSV) and ZIP archives
- * - Tracks extraction results and errors in reactive state objects
- * - Coordinates the complete processing pipeline:
- *   1. File validation and reading
- *   2. Content parsing and structure extraction
- *   3. Rule application and data transformation
- *   4. Result aggregation and error tracking
+ * Main entry point for processing a user-selected file (JSON/CSV/TXT, as a
+ * single file or a ZIP archive) against blueprint configurations. For ZIP
+ * archives, if a blueprint's parser fails to extract data, its backup
+ * blueprints (in priority order) are tried instead. Results and errors are
+ * written into reactive state.
  *
  * @param expectsZip - Whether to process input as a ZIP archive (true) or single file (false)
- * @param nestedZipExtractionDepth - How many levels deep to extract zip files within zip files (0 = no nested extraction)
  * @param blueprints - Array of blueprint configurations defining extraction rules and formats
+ * @param nestedZipExtractionDepth - How many levels deep to extract zip files within zip files (0 = no nested extraction)
  *
- * @returns An object containing:
+ * @returns
  *   - handleSelectedFile: Function to process a user-selected file
  *   - blueprintOutcomeMap: Reactive map of blueprint outcomes indexed by blueprint ID
  *   - generalErrors: Reactive array of general processing errors
- *   - processorStatus: Reactive object tracking the current processing state
- *   - progress: Reactive object tracking processing progress (0-100)
- *
- * Usage:
- * ```typescript
- * const { handleSelectedFile, blueprintOutcomeMap, generalErrors } = useFileProcessor(true, blueprints);
- *
- * // Process a file
- * await handleSelectedFile(fileObject);
- *
- * // Access extraction results
- * console.log(blueprintOutcomeMap[blueprintId].extractedData);
- * ```
  */
 export function useFileProcessor(
   expectsZip: boolean,

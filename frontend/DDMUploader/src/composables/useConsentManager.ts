@@ -4,31 +4,16 @@ import {Blueprint} from "@uploader/types/Blueprint";
 /**
  * Composable: useConsentManager
  *
- * Manages user consent for blueprint data extraction and submission.
- * Handles both individual blueprint consent and combined consent modes.
- *
- * Features:
- * - Initializes consent state for all blueprints
- * - Updates consent for individual blueprints or all blueprints at once
- * - Maintains reactive consent state
+ * Tracks per-blueprint consent (initialized to null/undecided). In combined
+ * mode, updateConsent sets every blueprint's consent at once; otherwise it
+ * updates only the given blueprintId.
  *
  * @param blueprintConfigs - Array of blueprint configurations
  * @param combinedConsent - Whether to use combined consent mode (true) or per-blueprint consent (false)
  *
- * @returns {Object} An object containing:
+ * @returns
  *   - blueprintConsentMap: Reactive map of blueprint IDs to consent status
  *   - updateConsent: Function to update consent state
- *
- * Usage:
- * ```
- * const { blueprintConsentMap, updateConsent } = useConsentManager(blueprints, true);
- *
- * // Update consent for all blueprints in combined mode
- * updateConsent(true, null);
- *
- * // Update consent for a specific blueprint
- * updateConsent(false, 123);
- * ```
  */
 export function useConsentManager(
   blueprintConfigs: Blueprint[],

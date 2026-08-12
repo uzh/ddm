@@ -1,4 +1,29 @@
 <script setup lang="ts">
+/**
+ * Component: UploaderWrapper
+ *
+ * Top-level component for a single Uploader: drives the Instructions ->
+ * Upload -> Review step flow and wires together file processing
+ * (useFileProcessor), extraction-state tracking (useExtractionStateTracker),
+ * consent (useConsentManager), and error logging (useLogPoster). Renders
+ * Instructions, FileDrop, ExtractionOverview and the combined-consent
+ * question depending on the active step, and emits the uploader's status
+ * on every change plus 'proceed' once the user advances past the last step.
+ *
+ * Props:
+ * - blueprintConfigs (Blueprint[]): Blueprints associated with this uploader.
+ * - combinedConsent (boolean): Whether consent is asked once for all blueprints.
+ * - componentId (number): Uploader id, used for DOM scoping and status/log payloads.
+ * - exceptionUrl (string): Backend endpoint for error/stat logging.
+ * - expectsZip (boolean): Whether the uploader accepts a ZIP or a single file.
+ * - nestedZipExtractionDepth (number): How many levels of nested ZIPs to extract.
+ * - instructionConfig (Instruction[]): Instruction pages (step is skipped if empty).
+ * - name (string): Uploader name.
+ *
+ * Emits:
+ * - statusChanged(uploaderId, consentMap, extractionState, blueprintStates, extractedData)
+ * - proceed: Emitted when the user advances past the last step.
+ */
 import { useI18n } from 'vue-i18n';
 import {computed, onMounted, Ref, ref, watch} from "vue";
 
@@ -175,7 +200,6 @@ const nextButtonHighlighted: Ref<boolean> = computed(() => {
 })
 
 const allConsented: Ref<boolean> = computed(() => {
-  console.log(blueprintConsentMap.value)
   for (const blueprint of Object.keys(blueprintConsentMap.value)) {
     if (blueprintConsentMap.value[blueprint] === null &&
         blueprintExtractionStates.value[blueprint].state === EXTRACTION_STATES.DATA_EXTRACTED) {

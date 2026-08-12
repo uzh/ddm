@@ -1,37 +1,17 @@
 <script setup lang="ts">
 /**
- * Component: ExtractionTable
+ * Component: ExtractionPreview
  *
- * Displays extracted blueprint data in a paginated, searchable table that can be expanded/collapsed.
- *
- * Features:
- * - Search/filter extracted data entries across all fields (case-insensitive).
- * - Pagination control (next/previous) with dynamic page indicators and automatic page adjustment.
- * - Expand/collapse table to show more or less data with smooth transition animation.
- * - Dynamic table layout that adapts to the available data fields.
- * - Handles empty data gracefully with appropriate messaging.
+ * A small always-visible preview of a blueprint's extracted data (first 3
+ * rows), shown above the full ExtractionModal. If group_by_root_item is on,
+ * shows the first group's rows under a root-value summary line instead of a
+ * flat table. Links to ExtractionModal for the complete, searchable view
+ * when there are more than 3 entries.
  *
  * Props:
- * - blueprintOutcome (BlueprintExtractionOutcome): Object containing extraction data for a blueprint,
- *   including extracted data rows and field mappings.
- *
- * Computed:
- * - filteredItems: Data entries that match the current search term.
- * - lowerPosition: Index of the first visible item on the current page.
- * - upperPosition: Index of the last visible item on the current page.
- * - maxPage: Maximum number of pages based on filtered data and page size.
- *
- * Internal State:
- * - pageSize: Number of items displayed per page (defaults to 20).
- * - currentPage: Current page being viewed.
- * - showData: Whether the table is expanded (true) or condensed (false).
- * - searchTerm: Current search filter text.
- *
- * Methods:
- * - toggleShowHideData(): Expand or collapse the data table.
- *
- * Dependencies:
- * - vue-i18n for text translations.
+ * - blueprintOutcome (BlueprintExtractionOutcome): Extraction data for the blueprint.
+ * - blueprint (Blueprint): The blueprint configuration (used for id/name).
+ * - fieldLayout (ExtractionFieldLayout): Grouping/column info computed by ExtractionItem.
  */
 
 import ExtractionTable from "@uploader/components/ExtractionTable.vue";

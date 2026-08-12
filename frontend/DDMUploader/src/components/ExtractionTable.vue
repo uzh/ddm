@@ -1,4 +1,11 @@
 <script setup lang="ts">
+/**
+ * Component: ExtractionTable
+ *
+ * Purely presentational table: renders one header per `columns` entry and
+ * one row per `rows` item (missing cells show "–"), or `emptyMessage` if
+ * `rows` is empty. Used by both ExtractionPreview and ExtractionModal.
+ */
 defineProps<{
   columns: Map<string, string>,   // key -> label
   rows: Record<string, unknown>[],

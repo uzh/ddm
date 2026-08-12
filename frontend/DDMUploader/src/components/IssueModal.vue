@@ -2,17 +2,10 @@
 /**
  * Component: IssueModal
  *
- * A modal dialog that displays validation issues before form submission.
- * It alerts users about incomplete actions and provides options to proceed
- * or go back depending on the severity of issues.
- *
- * Features:
- * - Shows different messages based on validation state:
- *   - Unattended uploaders: Displays names of uploaders the user hasn't interacted with
- *   - Missing consent: Displays names of blueprints that lack explicit consent
- * - Conditional action buttons based on validation status
- * - Responsive design for different screen sizes
- * - Internationalized content through vue-i18n
+ * A modal dialog shown before submission when validation finds issues
+ * (uploaders not attempted, failed uploaders, or blueprints missing
+ * consent). If any blueprint lacks consent, "Continue Anyway" is hidden
+ * and the user must go back; otherwise they can dismiss and proceed.
  *
  * Props:
  * - failedUploaderNames: Names of the uploaders that have status "failed"
@@ -26,11 +19,6 @@
  * Emits:
  * - continueAnyway: Emitted when user chooses to continue despite warnings
  * - modalClosed: Emitted when modal is closed via the back button
- *
- * Behavior:
- * - If any blueprints lack consent, the "Continue Anyway" option is hidden
- * - User must go back and provide consent for all blueprints to proceed
- * - If only unattended uploaders exist, user can choose to continue anyway
  */
 
 import { useI18n } from 'vue-i18n';

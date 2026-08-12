@@ -20,34 +20,16 @@ export function applyEntryExclusions(outcome: BlueprintExtractionOutcome): any[]
 /**
  * Composable: useDataSubmitter
  *
- * Handles the preparation and submission of extracted blueprint data to the server.
- * Gathers data from all uploaders, compresses it into a ZIP file, and submits it
- * via a form POST request.
- *
- * Features:
- * - Collects data and consent information from all uploader outcomes
- * - Compresses data into a ZIP archive for efficient transfer
- * - Handles form submission and redirects
+ * Gathers extracted data and consent from all uploader outcomes (applying
+ * any entry exclusions, and blanking data for declined blueprints),
+ * compresses it into a ZIP, and submits it via a form POST to postUrl.
  *
  * @param uploaderOutcomes - Reactive reference to uploader outcomes containing extraction data
  * @param postUrl - Server endpoint URL for data submission
  *
- * @returns {Object} An object containing:
+ * @returns
  *   - submitting: Reactive boolean indicating whether submission is in progress
  *   - submitDonation: Function to trigger the data submission process
- *
- * Usage:
- * ```
- * const { submitting, submitDonation } = useDataSubmitter(uploaderOutcomes, '/api/submit');
- *
- * // Show loading UI when submitting
- * watch(submitting, (value) => {
- *   showLoadingOverlay(value);
- * });
- *
- * // Trigger submission
- * submitDonation();
- * ```
  */
 export function useDataSubmitter(
   uploaderOutcomes: Ref<Record<number, UploaderOutcome>>,

@@ -9,10 +9,10 @@
  * Features:
  * - Displays blueprint name and description
  * - Shows state-specific icons (success checkmark, failure X, etc.)
- * - Renders extracted data tables for successful extractions
+ * - Computes the fieldLayout (grouping, root/nested columns) passed to
+ *   ExtractionPreview/ExtractionModal for rendering extracted data
  * - Displays error messages with expandable technical details
  * - Provides consent controls for successful extractions (when not using combined consent)
- * - Uses computed properties for conditional rendering logic
  *
  * Props:
  * - blueprint (Blueprint): The blueprint configuration object
@@ -29,7 +29,7 @@
  *   from the ConsentQuestion component
  *
  * Dependencies:
- * - ExtractionTable: For displaying extracted data
+ * - ExtractionPreview / ExtractionModal: For displaying extracted data
  * - ConsentQuestion: For handling consent input
  * - vue-i18n: For translation
  *

@@ -1,4 +1,15 @@
 <script setup lang="ts">
+/**
+ * Component: StepIndicator
+ *
+ * Renders the top step tracker (Instructions/Upload/Review) and the
+ * current step's heading. The instructions step is omitted when the
+ * uploader has none.
+ *
+ * Props:
+ * - hasInstructions (boolean): Whether to include the instructions step.
+ * - currentStep (number): Index of the active step, within activeSteps.
+ */
 
 import {computed} from "vue";
 import {useI18n} from "vue-i18n";

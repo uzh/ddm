@@ -30,6 +30,13 @@ export class BlueprintExtractionOutcome {
   blueprintId: number;
   extractedData: any[];  // eslint-disable-line @typescript-eslint/no-explicit-any
     // Usually, this is an array of dictionaries, with each dictionary holding extracted-field:value pairs.
+  rowGroupIds: number[];
+    // Parallel array to extractedData: rowGroupIds[i] is the id of the root
+    // item that produced extractedData[i]. Rows sharing a group id came
+    // from the same root item (e.g. the same conversation). This is
+    // purely a display/UI concern -- it is never part of extractedData
+    // itself, and therefore never sent as part of the donated data.
+    // Populated for every row, not just nested-loop rows.
   extractedFieldsMap: Map<string, string>;  // Used to map the name of extracted fields to the field definition used in extraction rules.
   extractionStats: {
     nRowsMissingField: number,
@@ -41,10 +48,21 @@ export class BlueprintExtractionOutcome {
   };
   extractionRuleLog: Record<string, number>;  // Record where the key is the rule.id and the value represents how many times the rule was triggered.
   processingErrors: ProcessingError[];
+  excludedGroupIds: Set<number>;
+    // Group ids (see rowGroupIds) the participant has chosen to exclude
+    // from their donation, via the "remove this entry" control (only
+    // available when the blueprint.nested_entry_exclusion_allowed
+    // is set). Non-destructive/reversible: extractedData/rowGroupIds are
+    // never mutated here, so toggling exclusion is trivial and the actual
+    // filtering only happens once, at submission time (see useDataSubmitter).
+  private groupIdCounter: number;
 
   constructor(blueprint: Blueprint) {
     this.blueprintId = blueprint.id
     this.extractedData = []
+    this.rowGroupIds = []
+    this.groupIdCounter = 0
+    this.excludedGroupIds = new Set()
     this.extractedFieldsMap = new Map()
     this.extractionStats = {
       nRowsMissingField: 0,
@@ -60,6 +78,28 @@ export class BlueprintExtractionOutcome {
 
   initializeExtractionRuleLog(extractionRules: ExtractionRule[]): Record<string, number> {
     return Object.fromEntries(extractionRules.map(rule => [rule.id, 0]));
+  }
+
+  /**
+   * Returns a new, unique group id, identifying one root item across
+   * however many rows it ends up producing (zero or more). Call once per
+   * root item, regardless of how many rows (if any) it contributes to
+   * extractedData.
+   */
+  nextGroupId(): number {
+    return this.groupIdCounter++;
+  }
+
+  /**
+   * Toggles whether a group (root item) is excluded from the donation.
+   * Reversible -- calling this again on the same group id restores it.
+   */
+  toggleGroupExclusion(groupId: number): void {
+    if (this.excludedGroupIds.has(groupId)) {
+      this.excludedGroupIds.delete(groupId);
+    } else {
+      this.excludedGroupIds.add(groupId);
+    }
   }
 
   /**

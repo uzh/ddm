@@ -17,6 +17,8 @@
   --border-components: 1px solid var(--border-color-components);
   --border-radius-components: 3px;
 
+  --grouped-table-container-bg: #fcfcfc;
+
   --lightgrey: #dee2e6;
   --grey-disabled: #dee2e6;
 

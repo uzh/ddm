@@ -27,6 +27,20 @@ class TestBlueprintForm(TestCase):
             upload_type=FileUploader.UploadTypes.ZIP_FILE,
         )
 
+        cls.base_bp_data = {
+            "name": "blueprint",
+            "display_name": "some name",
+            "description": "some description",
+            "display_position": 1,
+            "exp_file_format": "json",
+            "csv_delimiter": ";",
+            "file_uploader": cls.file_uploader.pk,
+            "expected_fields": '"some field"',
+            "expected_fields_regex_matching": False,
+            "backup_for": None,
+            "backup_priority": 0,
+        }
+
     def test_valid(self):
         bp = DonationBlueprint.objects.create(
             project=self.file_uploader.project,
@@ -109,17 +123,8 @@ class TestBlueprintForm(TestCase):
     def test_valid_csv(self):
         """CSV-specific fields are correctly assembled into parser_config."""
         data = {
-            "name": "csv blueprint",
-            "display_name": "some name",
-            "description": "some description",
-            "display_position": 1,
+            **self.base_bp_data,
             "exp_file_format": "csv",
-            "csv_delimiter": ";",
-            "file_uploader": self.file_uploader.pk,
-            "expected_fields": '"some field"',
-            "expected_fields_regex_matching": False,
-            "backup_for": None,
-            "backup_priority": 0,
         }
         form = BlueprintForm(data=data, project=self.project)
         self.assertTrue(form.is_valid(), form.errors)
@@ -130,10 +135,7 @@ class TestBlueprintForm(TestCase):
         """TXT-specific fields are correctly assembled into parser_config,
         including unescaping of literal \\n typed by the user."""
         data = {
-            "name": "txt blueprint",
-            "display_name": "some name",
-            "description": "some description",
-            "display_position": 1,
+            **self.base_bp_data,
             "exp_file_format": "txt",
             "txt_record_separator": "\\n\\n",
             "txt_field_separator": "\\n",
@@ -142,11 +144,6 @@ class TestBlueprintForm(TestCase):
             "txt_skip_footer_lines": 0,
             "txt_ignore_blank_lines": True,
             "txt_trim_whitespace": True,
-            "file_uploader": self.file_uploader.pk,
-            "expected_fields": '"Datum", "Link"',
-            "expected_fields_regex_matching": False,
-            "backup_for": None,
-            "backup_priority": 0,
         }
         form = BlueprintForm(data=data, project=self.project)
         self.assertTrue(form.is_valid(), form.errors)
@@ -162,10 +159,7 @@ class TestBlueprintForm(TestCase):
         """Leaving TXT fields blank should use TXTParserConfig defaults,
         not None/empty-string, and should not raise a validation error."""
         data = {
-            "name": "txt defaults blueprint",
-            "display_name": "some name",
-            "description": "some description",
-            "display_position": 1,
+            **self.base_bp_data,
             "exp_file_format": "txt",
             "txt_record_separator": "",
             "txt_field_separator": "",
@@ -174,11 +168,6 @@ class TestBlueprintForm(TestCase):
             "txt_skip_footer_lines": "",
             "txt_ignore_blank_lines": False,
             "txt_trim_whitespace": False,
-            "file_uploader": self.file_uploader.pk,
-            "expected_fields": '"some field"',
-            "expected_fields_regex_matching": False,
-            "backup_for": None,
-            "backup_priority": 0,
         }
         form = BlueprintForm(data=data, project=self.project)
         self.assertTrue(form.is_valid(), form.errors)
@@ -196,10 +185,7 @@ class TestBlueprintForm(TestCase):
         """A Pydantic validation error on a TXT schema field is attached to
         the corresponding prefixed form field, not as a generic error."""
         data = {
-            "name": "bad txt blueprint",
-            "display_name": "some name",
-            "description": "some description",
-            "display_position": 1,
+            **self.base_bp_data,
             "exp_file_format": "txt",
             "txt_record_separator": "\\n\\n",
             "txt_field_separator": "\\n",
@@ -208,11 +194,6 @@ class TestBlueprintForm(TestCase):
             "txt_skip_footer_lines": 0,
             "txt_ignore_blank_lines": True,
             "txt_trim_whitespace": True,
-            "file_uploader": self.file_uploader.pk,
-            "expected_fields": '"some field"',
-            "expected_fields_regex_matching": False,
-            "backup_for": None,
-            "backup_priority": 0,
         }
         form = BlueprintForm(data=data, project=self.project)
         self.assertFalse(form.is_valid())
@@ -251,10 +232,7 @@ class TestBlueprintForm(TestCase):
             parser_config=JSONParserConfig(extraction_root="root.path").model_dump(),
         )
         data = {
-            "name": bp.name,
-            "display_name": bp.display_name,
-            "description": bp.description,
-            "display_position": bp.display_position,
+            **self.base_bp_data,
             "exp_file_format": "txt",
             "txt_record_separator": "\\n\\n",
             "txt_field_separator": "\\n",
@@ -263,11 +241,6 @@ class TestBlueprintForm(TestCase):
             "txt_skip_footer_lines": 0,
             "txt_ignore_blank_lines": True,
             "txt_trim_whitespace": True,
-            "file_uploader": bp.file_uploader.pk,
-            "expected_fields": bp.expected_fields,
-            "expected_fields_regex_matching": bp.expected_fields_regex_matching,
-            "backup_for": None,
-            "backup_priority": 0,
         }
         form = BlueprintForm(data=data, instance=bp, project=self.project)
         self.assertTrue(form.is_valid(), form.errors)
@@ -290,17 +263,9 @@ class TestBlueprintForm(TestCase):
             parser_config=JSONParserConfig().model_dump(),
         )
         data = {
+            **self.base_bp_data,
             "name": "shared name",
             "display_name": "another name",
-            "description": "some description",
-            "display_position": 1,
-            "exp_file_format": "json",
-            "json_extraction_root": "",
-            "file_uploader": self.file_uploader.pk,
-            "expected_fields": '"some field"',
-            "expected_fields_regex_matching": False,
-            "backup_for": None,
-            "backup_priority": 0,
         }
         # No `project=` passed -> uniqueness check is skipped by design.
         form = BlueprintForm(data=data)
@@ -311,21 +276,13 @@ class TestBlueprintForm(TestCase):
         parser_config, and nested_expected_fields is accepted alongside a
         configured nested_loop_path."""
         data = {
-            "name": "nested json blueprint",
-            "display_name": "some name",
-            "description": "some description",
-            "display_position": 1,
+            **self.base_bp_data,
             "exp_file_format": "json",
             "json_extraction_root": "",
             "json_nested_loop_path": "mapping",
             "json_array_join_separator": "\\n",
-            "file_uploader": self.file_uploader.pk,
-            "expected_fields": '"conversation_id"',
-            "expected_fields_regex_matching": False,
             "nested_expected_fields": '"message"',
             "nested_expected_fields_regex_matching": False,
-            "backup_for": None,
-            "backup_priority": 0,
         }
         form = BlueprintForm(data=data, project=self.project)
         self.assertTrue(form.is_valid(), form.errors)
@@ -337,23 +294,89 @@ class TestBlueprintForm(TestCase):
         self.assertEqual(bp.parser_config["array_join_separator"], "\n")
         self.assertEqual(bp.nested_expected_fields, '"message"')
 
+    def test_valid_json_with_nested_display_by_root_item(self):
+        """nested_display_by_root_item is allowed with JSON."""
+        data = {
+            **self.base_bp_data,
+            "exp_file_format": "json",
+            "json_extraction_root": "",
+            "json_nested_loop_path": "mapping",
+            "json_array_join_separator": "\\n",
+            "nested_display_by_root_item": True,
+        }
+        form = BlueprintForm(data=data, project=self.project)
+        self.assertTrue(form.is_valid(), form.errors)  # should not raise
+        form.save()
+
+    def test_nested_display_by_root_item_without_nested_loop_path_is_invalid(self):
+        """Model-level validation surfaces through the form's is_valid()."""
+        data = {
+            **self.base_bp_data,
+            "exp_file_format": "json",
+            "json_extraction_root": "",
+            "json_nested_loop_path": "",
+            "json_array_join_separator": "",
+            "nested_display_by_root_item": True,
+        }
+        form = BlueprintForm(data=data, project=self.project)
+        self.assertFalse(form.is_valid())
+        self.assertIn("nested_display_by_root_item", form.errors)
+
+    def test_nested_entry_exclusion_allowed_by_root_item(self):
+        """nested_display_by_root_item is allowed with JSON."""
+        data = {
+            **self.base_bp_data,
+            "exp_file_format": "json",
+            "json_extraction_root": "",
+            "json_nested_loop_path": "mapping",
+            "json_array_join_separator": "\\n",
+            "nested_display_by_root_item": True,
+            "nested_entry_exclusion_allowed": True,
+        }
+        form = BlueprintForm(data=data, project=self.project)
+        self.assertTrue(form.is_valid(), form.errors)  # should not raise
+        form.save()
+
+    def test_nested_entry_exclusion_allowed_without_nested_loop_path_is_invalid(self):
+        """Model-level validation surfaces through the form's is_valid()."""
+        data = {
+            **self.base_bp_data,
+            "exp_file_format": "json",
+            "json_extraction_root": "",
+            "json_nested_loop_path": "",
+            "json_array_join_separator": "\\n",
+            "nested_display_by_root_item": True,
+            "nested_entry_exclusion_allowed": True,
+        }
+        form = BlueprintForm(data=data, project=self.project)
+        self.assertFalse(form.is_valid())
+        self.assertIn("nested_entry_exclusion_allowed", form.errors)
+
+    def test_nested_entry_exclusion_allowed_without_display_by_item_is_invalid(self):
+        """Model-level validation surfaces through the form's is_valid()."""
+        data = {
+            **self.base_bp_data,
+            "exp_file_format": "json",
+            "json_extraction_root": "",
+            "json_nested_loop_path": "root",
+            "json_array_join_separator": "\\n",
+            "nested_display_by_root_item": False,
+            "nested_entry_exclusion_allowed": True,
+        }
+        form = BlueprintForm(data=data, project=self.project)
+        self.assertFalse(form.is_valid())
+        self.assertIn("nested_entry_exclusion_allowed", form.errors)
+
     def test_json_blank_nested_fields_fall_back_to_schema_defaults(self):
         """Leaving the nested JSON fields blank should use JSONParserConfig
         defaults, and should not require nested_expected_fields."""
         data = {
-            "name": "non-nested json blueprint",
-            "display_name": "some name",
-            "description": "some description",
+            **self.base_bp_data,
             "display_position": 1,
             "exp_file_format": "json",
             "json_extraction_root": "",
             "json_nested_loop_path": "",
             "json_array_join_separator": "",
-            "file_uploader": self.file_uploader.pk,
-            "expected_fields": '"some field"',
-            "expected_fields_regex_matching": False,
-            "backup_for": None,
-            "backup_priority": 0,
         }
         form = BlueprintForm(data=data, project=self.project)
         self.assertTrue(form.is_valid(), form.errors)
@@ -372,21 +395,14 @@ class TestBlueprintForm(TestCase):
         configured nested_loop_path) surfaces through the form's is_valid(),
         since ModelForm._post_clean() runs the model's full_clean()."""
         data = {
-            "name": "invalid nested blueprint",
-            "display_name": "some name",
-            "description": "some description",
-            "display_position": 1,
+            **self.base_bp_data,
             "exp_file_format": "json",
             "json_extraction_root": "",
             "json_nested_loop_path": "",
             "json_array_join_separator": "",
             "file_uploader": self.file_uploader.pk,
-            "expected_fields": '"some field"',
-            "expected_fields_regex_matching": False,
             "nested_expected_fields": '"message"',
             "nested_expected_fields_regex_matching": False,
-            "backup_for": None,
-            "backup_priority": 0,
         }
         form = BlueprintForm(data=data, project=self.project)
         self.assertFalse(form.is_valid())

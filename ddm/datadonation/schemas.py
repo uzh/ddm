@@ -8,6 +8,7 @@ class JSONParserConfig(BaseModel):
     extraction_root: str = ""
     nested_loop_path: str = ""
     array_join_separator: str = "\n"
+    max_root_entries: Annotated[int, Field(ge=1)] | None = None
 
 
 class CSVParserConfig(BaseModel):

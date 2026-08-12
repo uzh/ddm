@@ -43,10 +43,13 @@ import {Blueprint} from "@uploader/types/Blueprint";
 import {BlueprintExtractionOutcome} from "@uploader/classes/BlueprintExtractionOutcome";
 import {ProcessingError} from "@uploader/types/ProcessingError";
 import {EXTRACTION_STATES} from "@uploader/utils/stateCatalog";
-import ExtractionTable from "@uploader/components/ExtractionTable.vue";
+import ExtractionPreview from "@uploader/components/ExtractionPreview.vue";
 import ConsentQuestion from "@uploader/components/ConsentQuestion.vue";
-import {computed, ref} from "vue";
+import {computed, ref, watch} from "vue";
 import {useI18n} from "vue-i18n";
+import {EntryGroup, groupEntriesByRowGroupId} from "@uploader/utils/entryGroup";
+import ExtractionModal from "@uploader/components/ExtractionModal.vue";
+import {ExtractionFieldLayout} from "@uploader/types/ExtractionFieldLayout";
 
 const { t, te, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
@@ -101,6 +104,62 @@ const passConsentUpdateToParent = (consent: boolean, blueprintId: number | null)
 }
 
 const detailsExpanded = ref(extractionSuccess.value);
+watch(extractionSuccess, (success) => {
+  if (success) {
+    detailsExpanded.value = true;
+  }
+});
+
+const groups = computed<EntryGroup[]>(() =>
+  groupEntriesByRowGroupId(props.extractionOutcome)
+);
+
+// Utils
+
+/**
+ * Whether extracted rows should be displayed as one table per root item
+ * (e.g. one table per conversation) instead of a single combined table.
+ * Requires both the researcher's display setting and an actually-configured
+ * nested loop (nested_display_by_root_item is only ever true when a
+ * nested_loop_path is set).
+ */
+const isGrouped = computed(() => {
+  const parserConfig = props.blueprint.parser_config as { nested_loop_path?: string };
+  return !!(
+    props.blueprint.nested_display_by_root_item &&
+    parserConfig?.nested_loop_path
+  );
+});
+
+/** Field names (as used as row/extractedFieldsMap keys) that come from the nested loop. */
+const nestedFieldNames = computed(() => new Set(
+  props.blueprint.extraction_fields
+    .filter(f => f.scope === 'nested')
+    .map(f => f.alias || f.expected_name)
+));
+
+/** extractedFieldsMap keys belonging to the nested loop (the group table's own columns). */
+const nestedFieldKeys = computed(() => Array.from(props.extractionOutcome.extractedFieldsMap.keys())
+  .filter(key => nestedFieldNames.value.has(key)));
+
+const rootFieldKeys = computed(() => Array.from(props.extractionOutcome.extractedFieldsMap.keys())
+  .filter(key => !nestedFieldNames.value.has(key)));
+
+const nestedColumns = computed<Map<string, string>>(() => {
+  const map = new Map<string, string>();
+  for (const key of nestedFieldKeys.value) {
+    const label = props.extractionOutcome.extractedFieldsMap.get(key);
+    if (label !== undefined) map.set(key, label);
+  }
+  return map;
+});
+
+const fieldLayout = computed<ExtractionFieldLayout>(() => ({
+  isGrouped: isGrouped.value,
+  groups: groups.value,
+  rootFieldKeys: rootFieldKeys.value,
+  nestedColumns: nestedColumns.value,
+}));
 </script>
 
 <template>
@@ -126,7 +185,8 @@ const detailsExpanded = ref(extractionSuccess.value);
 
           <div class="extraction-header-info">
             <template v-if="extractionSuccess">
-              {{ t('feedback.x-entries-found', { nEntries: extractionOutcome.extractedData.length }) }}
+              <span v-if="!isGrouped">{{ t('feedback.x-elements-found', { nEntries: extractionOutcome.extractedData.length }) }}</span>
+              <span v-else>{{ t('feedback.x-elements-found-nested', { nEntries: extractionOutcome.extractedData.length, nElements: groups.length }) }}</span>
             </template>
             <template v-if="nothingExtracted">
               <div>{{ t(`${extractionMessage}`) }}</div>
@@ -160,10 +220,15 @@ const detailsExpanded = ref(extractionSuccess.value);
         <!-- Success -->
         <template v-if="extractionSuccess">
           <div>
-            <ExtractionTable
-              :blueprint-id="blueprint.id"
-              :blueprint-name="blueprint.name"
+            <ExtractionPreview
               :blueprint-outcome="extractionOutcome"
+              :blueprint="blueprint"
+              :field-layout="fieldLayout"
+            />
+            <ExtractionModal
+              :blueprint-outcome="extractionOutcome"
+              :blueprint="blueprint"
+              :field-layout="fieldLayout"
             />
           </div>
         </template>
@@ -198,6 +263,7 @@ const detailsExpanded = ref(extractionSuccess.value);
         <div>
           <ConsentQuestion
             :combined-consent="combinedConsent"
+            :blueprint="blueprint"
             :blueprint-id="blueprint.id"
             @consent-updated="passConsentUpdateToParent"
           />

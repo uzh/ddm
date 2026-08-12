@@ -56,6 +56,7 @@ function buildNestedBlueprint(): Blueprint {
     extraction_root: '',
     nested_loop_path: 'mapping',
     array_join_separator: '\n',
+      max_root_entries: null,
   };
 
   return {
@@ -68,6 +69,8 @@ function buildNestedBlueprint(): Blueprint {
     exp_fields_regex_matching: false,
     nested_expected_fields: ['message'],
     nested_exp_fields_regex_matching: false,
+    nested_entry_exclusion_allowed: false,
+    nested_display_by_root_item: false,
     fields_to_extract: ['conversation_id', 'title', 'message_id', 'role', 'content'],
     extraction_fields: [
       { id: 1, scope: 'root', expected_name: 'conversation_id', match_regex: false, keep_in_donation: true, alias: null },
@@ -147,6 +150,12 @@ describe('processContent — two-level nested JSON extraction', () => {
     expect(
       outcome.processingErrors.some(e => e.type === 'NESTED_PATH_NOT_FOUND')
     ).toBe(true);
+
+    // All three rows came from the same root item (conv-1), so they must
+    // all share one group id -- this is what lets the review UI group
+    // them into a single per-conversation table.
+    expect(outcome.rowGroupIds.length).toBe(outcome.extractedData.length);
+    expect(new Set(outcome.rowGroupIds).size).toBe(1);
   });
 
   it('produces identical output to the pre-nested pipeline when nested_loop_path is empty', () => {
@@ -172,5 +181,60 @@ describe('processContent — two-level nested JSON extraction', () => {
     ]);
     expect(outcome.extractionStats.nNestedRowsTotal).toBe(0);
     expect(outcome.extractionStats.nNestedRowsMissingField).toBe(0);
+
+    // Without nesting, each row is its own root item, so each gets a
+    // distinct group id.
+    expect(outcome.rowGroupIds.length).toBe(2);
+    expect(new Set(outcome.rowGroupIds).size).toBe(2);
+  });
+
+  it('limits extraction to the last N root-level entries when max_root_entries is configured', () => {
+    const blueprint = buildNestedBlueprint();
+    blueprint.parser_config = {
+      ...(blueprint.parser_config as JSONParserConfig),
+      nested_loop_path: '',
+      max_root_entries: 2,
+    };
+    blueprint.extraction_fields = blueprint.extraction_fields.filter(f => f.scope === 'root');
+    blueprint.fields_to_extract = ['conversation_id', 'title'];
+
+    const content = JSON.stringify([
+      { conversation_id: 'conv-1', title: 'First' },
+      { conversation_id: 'conv-2', title: 'Second' },
+      { conversation_id: 'conv-3', title: 'Third' },
+    ]);
+
+    const outcomeMap = { 1: new BlueprintExtractionOutcome(blueprint) };
+    processContent(content, blueprint, outcomeMap);
+
+    const outcome = outcomeMap[1];
+    // Only the last 2 of the 3 entries are processed -- conv-1 is skipped
+    // entirely (not even counted as "missing field" or filtered out).
+    expect(outcome.extractedData).toEqual([
+      { conversation_id: 'conv-2', title: 'Second' },
+      { conversation_id: 'conv-3', title: 'Third' },
+    ]);
+    expect(outcome.extractionStats.nRowsTotal).toBe(2);
+  });
+
+  it('processes every entry when max_root_entries exceeds the actual count', () => {
+    const blueprint = buildNestedBlueprint();
+    blueprint.parser_config = {
+      ...(blueprint.parser_config as JSONParserConfig),
+      nested_loop_path: '',
+      max_root_entries: 100,
+    };
+    blueprint.extraction_fields = blueprint.extraction_fields.filter(f => f.scope === 'root');
+    blueprint.fields_to_extract = ['conversation_id', 'title'];
+
+    const content = JSON.stringify([
+      { conversation_id: 'conv-1', title: 'First' },
+      { conversation_id: 'conv-2', title: 'Second' },
+    ]);
+
+    const outcomeMap = { 1: new BlueprintExtractionOutcome(blueprint) };
+    processContent(content, blueprint, outcomeMap);
+
+    expect(outcomeMap[1].extractedData.length).toBe(2);
   });
 });

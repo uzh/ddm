@@ -7,8 +7,15 @@
 
     <div id="json-parser-fields" class="mt-1">
       {% include "ddm_core/form_components/_basic_field.html" with field=form.json_extraction_root %}
-      {% include "ddm_core/form_components/_basic_field.html" with field=form.json_nested_loop_path %}
-      {% include "ddm_core/form_components/_basic_field.html" with field=form.json_array_join_separator %}
+
+      <div>
+          {% include "ddm_core/components/info_collapsible.html" with element_id="advanced-bp-settings" extra_classes="white mx-0" title="Advanced Settings" include_path="ddm_datadonation/blueprint/form_sections/partials/_advanced_settings.html" body="" hide_icon="true" %}
+      </div>
+
+      <div>
+          {% include "ddm_core/components/info_collapsible.html" with element_id="nested-settings" extra_classes="white mx-0" title="Nested Extraction Settings" include_path="ddm_datadonation/blueprint/form_sections/partials/_nested_extraction_settings.html" body="" hide_icon="true" %}
+      </div>
+
       <hr />
     </div>
 
@@ -17,7 +24,6 @@
     </p>
 
     <p>
-      Register the fields/variables you expect the uploaded file to contain.
       List any field you want to (a) keep in the donated data (mark as
       <code>keep in donation</code>), or (b) reference in an
       <code>Extraction Rule</code>.

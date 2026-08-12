@@ -22,11 +22,13 @@
  */
 
 import { useI18n } from 'vue-i18n';
-import {Ref, ref} from "vue";
+import {computed, Ref, ref} from "vue";
+import {Blueprint} from "@uploader/types/Blueprint";
 const { t, te, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps<{
   combinedConsent: boolean,
+  blueprint: Blueprint | null,
   blueprintId: number | null;  // Can be null if combinedConsent is true.
 }>();
 
@@ -50,6 +52,18 @@ function updateConsent(consent: boolean): void {
   consented.value = consent;
 }
 
+
+/**
+ * Whether the exclusion of individual entries is allowed and thus the
+ * respective label should be shown.
+ */
+const isExclusionAllowed = computed(() => {
+  if (props.blueprint === null) {
+    return false;
+  }
+  return !!props.blueprint.nested_entry_exclusion_allowed
+});
+
 </script>
 
 <template>
@@ -61,10 +75,12 @@ function updateConsent(consent: boolean): void {
       class="consent-question"
     >
       <template v-if="combinedConsent">
-        {{ t('feedback.donation-question-combined') }}
+        <span v-if="!isExclusionAllowed">{{ t('feedback.donation-question-combined') }}</span>
+        <span v-else>{{ t('feedback.donation-question-with-deletion') }}</span>
       </template>
       <template v-else>
-        {{ t('feedback.donation-question') }}
+        <span v-if="!isExclusionAllowed">{{ t('feedback.donation-question') }}</span>
+        <span v-else>{{ t('feedback.donation-question-with-deletion') }}</span>
       </template>
     </div>
 

@@ -266,7 +266,10 @@ const notSucceededExpanded = ref(false);
     />
   </div>
 
-  <div class="pt-4 extraction-items-secondary-container">
+  <div
+    v-if="visibleBlueprintsBottom.length > 0"
+    class="pt-4 extraction-items-secondary-container"
+  >
     <div
       v-if="extractionState != EXTRACTION_STATES.NOT_ATTEMPTED"
       class="line-to-end"
@@ -340,6 +343,6 @@ const notSucceededExpanded = ref(false);
   content: "";
   flex-grow: 1;
   height: 1px;
-  background-color: var(--font-color-secondary);
+  background-color: #dbdbdb;
 }
 </style>

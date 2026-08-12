@@ -184,6 +184,9 @@ class DataDonationConfigSerializersTest(TestCase):
         self.assertIsInstance(serializer.data["file_paths"], list)
         self.assertEqual(len(serializer.data["file_paths"]), 1)
 
+        self.assertIn("nested_display_by_root_item", serializer.data)
+        self.assertIn("nested_entry_exclusion_allowed", serializer.data)
+
     # Tests for BlueprintFilePathSerializer ------------------------------------
     def test_blueprint_file_path_serializer(self):
         file_path = BlueprintFilePath.objects.create(

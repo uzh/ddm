@@ -113,6 +113,8 @@ class BlueprintSerializer(serializers.ModelSerializer):
             "nested_expected_fields",
             "nested_exp_fields_regex_matching",
             "parser_config",
+            "nested_display_by_root_item",
+            "nested_entry_exclusion_allowed",
             "fields_to_extract",
             "extraction_fields",
             "file_paths",

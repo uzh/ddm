@@ -2,6 +2,20 @@ import JSZip from "jszip";
 import {ref, Ref} from "vue";
 import {UploaderOutcome} from "@uploader/types/UploaderOutcome";
 import {PostData} from "@uploader/types/PostData";
+import {BlueprintExtractionOutcome} from "@uploader/classes/BlueprintExtractionOutcome";
+
+/**
+ * Applies any participant-chosen entry exclusions (see
+ * BlueprintExtractionOutcome.toggleGroupExclusion) to a blueprint's
+ * extractedData. Returns the original array unchanged (no copy) when
+ * nothing is excluded.
+ */
+export function applyEntryExclusions(outcome: BlueprintExtractionOutcome): any[] {  // eslint-disable-line @typescript-eslint/no-explicit-any
+  if (outcome.excludedGroupIds.size === 0) {
+    return outcome.extractedData;
+  }
+  return outcome.extractedData.filter((_, i) => !outcome.excludedGroupIds.has(outcome.rowGroupIds[i]));
+}
 
 /**
  * Composable: useDataSubmitter
@@ -59,7 +73,7 @@ export function useDataSubmitter(
       for (const blueprint of Object.values(uploader.extractionOutcome)) {
         let extractedData: any[] = [];
         if (uploader.consentMap[blueprint.blueprintId] === true) {
-          extractedData = blueprint.extractedData;
+          extractedData = applyEntryExclusions(blueprint);
         }
 
         postData[blueprint.blueprintId] = {

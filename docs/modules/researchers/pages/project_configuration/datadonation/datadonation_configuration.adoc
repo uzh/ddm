@@ -192,6 +192,149 @@ name, 'date to extract': date}], 'fake friends': [{'name': name, 'date': date }]
 and you want to extract the names and dates of real_friends, you would set the
 extraction root to `friends.real_friends`.
 
+==== Advanced Settings
+
+Array join separator:: If an extracted field contains several separate values
+(e.g. multiple lines of a message) instead of a single value, they are combined
+into one text using this separator. Defaults to `\n`, i.e., joining them with a
+line break. E.g., an entry `["A", "B"]`becomes `"A\nB"`.
+
+==== Extracting Nested Loop Settings
+
+Sometimes each item in your data contains a list of related sub-items that
+you also want to extract as their own rows, instead of one row per top-level
+item. For example, a ChatGPT conversation export is roughly structured like
+this: each conversation has a few top-level fields, plus a list of the
+individual messages exchanged in it.
+
+[NOTE]
+====
+*Example*
+
+[source,json]
+----
+[
+  {
+    "conversation_id": "conv-1",
+    "title": "Weekend Trip Ideas",
+    "mapping": [
+      {
+        "message": {
+          "author": "assistant",
+          "content": "some content"
+        }
+      }
+    ]
+  },
+  {
+    "conversation_id": "conv-2",
+    "title": "Restaurant Ideas",
+    "mapping": [
+      {
+        "message": {
+          "author": "assistant",
+          "content": "some content 2"
+        }
+      }
+    ]
+  }
+]
+----
+
+
+    "mapping": {
+      "some-uuid" : {
+        "message": {
+          "author": "assistant",
+          "content": "some content"
+        }
+      }
+
+Without a nested loop configured, DDM only sees the top-level fields
+(`conversation_id`, `title`) — you'd get one row per conversation, with no
+straightforward way to also pull out the individual messages (in the example
+contained in `mapping`).
+
+By setting `Nested loop path` to `mapping`, you tell DDM to also loop over
+each conversation's messages and turn every message into its own row,
+automatically repeating that conversation's fields on each one:
+
+[%header,cols=4*]
+|===
+|conversation_id |title |author |content
+
+|conv-1 |Weekend Trip Ideas |user |Where should we go this weekend?
+|conv-1 |Weekend Trip Ideas |assistant |How about a hike near the lake?
+|conv-2 |Recipe Help |user |How do I make risotto?
+|===
+
+This approach also works if `mapping` in the example is not a list but a
+dictionary-like object. E.g.:
+
+[source,json]
+----
+[
+  {
+    "conversation_id": "conv-1",
+    "title": "Weekend Trip Ideas",
+    "mapping": {
+      "some_uuid": {
+        "message": {
+          "author": "user",
+          "content": "some content"
+        }
+      }
+    }
+  }
+  ...
+]
+----
+
+In this case, DDM just ignores the key of the entries contained in `mapping` and
+iterates over the values (i.e., `"message": { "author": "user" } ...`).
+
+====
+
+Nested loop path:: The field that holds the list of sub-items you want to
+extract as separate rows (e.g. `mapping`). Leave empty if you don't need
+this (the default) — in that case, the settings below have no effect. To
+reach a field nested inside another field, separate the names with a dot,
+e.g. `data.mapping`. To then extract, e.g. in the example above, the message
+contents and authors, you will define `message.author` and `message.content`
+as relevant nested fields (see the section on `Relevant Fields`below).
+
+Nested expected fields:: The fields that a sub-item must contain in order
+to be extracted. Works just like the top-level `Expected fields` setting,
+except it's checked per sub-item rather than per top-level item: a sub-item
+missing any of these fields is skipped, but the rest of its conversation
+(or other top-level item) is still processed normally. +
+Put the field names in double quotes and separate them with commas
+(`"Field A", "Field B"`). Only used if `Nested loop path` is set.
+
+Nested expected fields use regex matching:: Select if you use a regex
+expression in `Nested expected fields`, the same way
+`Expected field regex matching` applies to the top-level `Expected fields`.
+
+Group entries by parent item:: By default, all extracted sub-items (e.g. every
+message from every conversation) are shown to participants combined in one
+long list. Enable this to instead group and display them by their parent
+item — e.g. all of one conversation's messages shown together as a single
+entry, with the conversation's own fields (like `title`) shown once above
+them. Requires `Nested loop path` to be set.
+
+Allow item exclusion:: If enabled, participants can remove
+individual items (e.g. a single conversation) from their donation before
+submitting, instead of only being able to consent or decline for the whole
+Blueprint at once. Requires `Group entries by parent item` to be enabled.
+
+[NOTE]
+====
+All settings in this section only apply to JSON blueprints with a
+`Nested loop path` configured; `Allow item exclusion` additionally
+requires `Group entries by parent item` to be enabled.
+====
+
+
 === CSV specific settings
 
 CSV Delimiter:: This field allows you to specify the character that separates values in the

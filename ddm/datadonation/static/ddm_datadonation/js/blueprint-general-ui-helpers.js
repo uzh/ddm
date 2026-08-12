@@ -47,20 +47,19 @@ function hideOrShowJsonFields() {
   }
 }
 
-function hideOrShowNestedExpectedFields() {
+function hideOrShowNestedLoopDependentFields() {
   const expFileFormat = document.getElementById("id_exp_file_format").value;
   const nestedLoopPathField = document.getElementById("id_json_nested_loop_path");
   const nestedLoopPathSet = !!(nestedLoopPathField && nestedLoopPathField.value.trim() !== "");
+  const shouldShow = expFileFormat === "json" && nestedLoopPathSet;
 
-  const nestedExpectedFields = document.getElementById("nested-expected-fields");
-
-  if (nestedExpectedFields) {
-    if (expFileFormat === "json" && nestedLoopPathSet) {
-      nestedExpectedFields.style.display = "";
-    } else {
-      nestedExpectedFields.style.display = "none";
+  // Fields only meaningful once a Nested loop path is configured.
+  ["nested-expected-fields", "nested-display-settings"].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.display = shouldShow ? "" : "none";
     }
-  }
+  });
 }
 
 function hideOrShowTxtFields() {
@@ -82,13 +81,13 @@ document.addEventListener("DOMContentLoaded", function() {
   hideOrShowFilePath();
   hideOrShowJsonFields();
   hideOrShowTxtFields();
-  hideOrShowNestedExpectedFields();
+  hideOrShowNestedLoopDependentFields();
 
   document.getElementById("id_exp_file_format").addEventListener("change", function() {
     hideOrShowCsvFields();
     hideOrShowJsonFields();
     hideOrShowTxtFields();
-    hideOrShowNestedExpectedFields();
+    hideOrShowNestedLoopDependentFields();
   });
 
   document.getElementById("id_file_uploader").addEventListener("change", function() {
@@ -98,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function() {
   const nestedLoopPathField = document.getElementById("id_json_nested_loop_path");
   if (nestedLoopPathField) {
     nestedLoopPathField.addEventListener("input", function() {
-      hideOrShowNestedExpectedFields();
+      hideOrShowNestedLoopDependentFields();
     });
   }
 });

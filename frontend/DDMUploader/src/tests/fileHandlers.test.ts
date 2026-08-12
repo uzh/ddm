@@ -11,6 +11,7 @@ const JSONConfig: JSONParserConfig = {
   extraction_root: '',
   nested_loop_path: '',
   array_join_separator: '\n',
+      max_root_entries: null,
 }
 
 const CSVConfig: CSVParserConfig = {
@@ -29,6 +30,8 @@ const jsonBlueprintA = {
   exp_fields_regex_matching: false,
   nested_expected_fields: [],
   nested_exp_fields_regex_matching: false,
+  nested_entry_exclusion_allowed: false,
+  nested_display_by_root_item: false,
   fields_to_extract: ['name'],
   extraction_fields: [
     {

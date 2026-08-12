@@ -3,6 +3,7 @@ export type JSONParserConfig = {
   extraction_root: string;
   nested_loop_path: string;
   array_join_separator: string;
+  max_root_entries: number | null;
 }
 
 export type CSVParserConfig = {

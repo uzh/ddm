@@ -1,0 +1,6 @@
+{% include "ddm_core/form_components/_basic_field.html" with field=form.json_nested_loop_path %}
+
+<div id="nested-display-settings">
+  {% include "ddm_core/form_components/_checkbox_toggle_field.html" with field=form.nested_display_by_root_item %}
+  {% include "ddm_core/form_components/_checkbox_toggle_field.html" with field=form.nested_entry_exclusion_allowed %}
+</div>

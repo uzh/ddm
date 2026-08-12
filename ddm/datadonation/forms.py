@@ -16,7 +16,11 @@ from ddm.datadonation.models import (
     FileUploader,
     ProcessingRule,
 )
-from ddm.datadonation.schemas import CSVParserConfig, JSONParserConfig, TXTParserConfig
+from ddm.datadonation.schemas import (
+    CSVParserConfig,
+    JSONParserConfig,
+    TXTParserConfig,
+)
 
 # Maps Django form field names -> Pydantic schema field names, per format.
 FIELD_NAME_MAP: dict[str, dict[str, str]] = {
@@ -77,6 +81,18 @@ class BlueprintForm(forms.ModelForm):
             "e.g. <code>friends.real_friends</code>."
         ),
     )
+    # TODO: Enable later, once it's properly integrated
+    # json_max_root_entries = forms.IntegerField(  # noqa: ERA001
+    #     required=False,  # noqa: ERA001
+    #     min_value=1,  # noqa: ERA001
+    #     label="Limit to last N entries",  # noqa: ERA001
+    #     help_text=(  # noqa: ERA001
+    #         "Optional: only extract data from the last N entries found in a file "  # noqa: E501, ERA001
+    #         "(the N entries at the end of the list), ignoring the rest. "  # noqa: E501, ERA001
+    #         "Leave empty to process all entries."
+    #     ),
+    # )  # noqa: ERA001
+
     json_nested_loop_path = forms.CharField(
         max_length=200,
         required=False,
@@ -193,6 +209,8 @@ class BlueprintForm(forms.ModelForm):
             "expected_fields_regex_matching",
             "nested_expected_fields",
             "nested_expected_fields_regex_matching",
+            "nested_display_by_root_item",
+            "nested_entry_exclusion_allowed",
             "backup_for",
             "backup_priority",
         ]
@@ -207,6 +225,8 @@ class BlueprintForm(forms.ModelForm):
                 "Nested expected fields use regex matching"
             ),
             "display_position": "Display order",
+            "nested_display_by_root_item": "Group entries by parent item",
+            "nested_entry_exclusion_allowed": "Allow item exclusion",
         }
         help_texts = {
             "name": 'For internal use (e.g., "watch_history")',
@@ -229,6 +249,20 @@ class BlueprintForm(forms.ModelForm):
                 "Only used if a Nested loop path is configured (JSON format)."
             ),
             "nested_expected_fields_regex_matching": "",
+            "nested_entry_exclusion_allowed": (
+                "Adds a button to each entry's table (e.g. each conversation) "
+                "letting participants exclude that specific entry from their "
+                "donation, without having to decline the whole donation. "
+                "Requires 'Show one table per nested entry' to be enabled. "
+                "Only available once a Nested loop path is configured."
+            ),
+            "nested_display_by_root_item": (
+                "When reviewing their donation, participants normally see one "
+                "combined table. Enable this to instead show a separate table "
+                "for each top-level item (e.g. one table per conversation), "
+                "with that item's own data shown once above its table. "
+                "Only available once a Nested loop path is configured."
+            ),
         }
 
     def __init__(self, *args, **kwargs) -> None:

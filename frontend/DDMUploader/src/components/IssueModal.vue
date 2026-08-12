@@ -131,6 +131,7 @@ onUnmounted(() => {
         <div class="modal-body">
           <h3
             id="modal-title"
+            class="mb-3"
           >
             {{ t("issue-modal.title") }}
           </h3>

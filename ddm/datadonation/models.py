@@ -146,6 +146,7 @@ class DonationBlueprint(models.Model):
         help_text='Select if you use regex expressions in the "Expected fields"',
     )
 
+    # Nested Loop Extraction
     nested_expected_fields = models.TextField(
         blank=True,
         default="",
@@ -161,6 +162,27 @@ class DonationBlueprint(models.Model):
         default=False,
         null=False,
         help_text='Select if you use regex expressions in the "Nested expected fields"',
+    )
+
+    nested_display_by_root_item = models.BooleanField(
+        verbose_name="Group entries by parent item",
+        default=False,
+        null=False,
+        help_text=(
+            "Select if the extracted entries of a nested extraction should be "
+            "displayed to participants grouped by element. "
+            "Per default, all entries are displayed combined as a long list."
+        ),
+    )
+
+    nested_entry_exclusion_allowed = models.BooleanField(
+        verbose_name="Allow item exclusion",
+        default=False,
+        null=False,
+        help_text=(
+            "Select if participants are allowed to exclude nested entries from "
+            "the donation."
+        ),
     )
 
     backup_for = models.ForeignKey(
@@ -218,6 +240,8 @@ class DonationBlueprint(models.Model):
         self.clean_backup_config(errors)
         self.clean_expected_fields_regex(errors)
         self.clean_nested_expected_fields(errors)
+        self.clean_nested_display_by_root_item(errors)
+        self.clean_nested_entry_exclusion_allowed(errors)
 
         if errors:
             raise ValidationError(errors)
@@ -279,6 +303,41 @@ class DonationBlueprint(models.Model):
             self._validate_regex_patterns(
                 self.nested_expected_fields, "nested_expected_fields", errors
             )
+
+    def clean_nested_display_by_root_item(self, errors: dict) -> None:
+        if self.nested_display_by_root_item:
+            if self.exp_file_format != self.FileFormats.JSON_FORMAT:
+                errors["nested_display_by_root_item"] = (
+                    "Grouping by root item requires the file format to be JSON."
+                )
+                return
+            if not (self.parser_config or {}).get("nested_loop_path", ""):
+                errors["nested_display_by_root_item"] = (
+                    "Grouping by root item requires a Nested loop path to be "
+                    "configured."
+                )
+                return
+
+    def clean_nested_entry_exclusion_allowed(self, errors: dict) -> None:
+        if self.nested_entry_exclusion_allowed:
+            if self.exp_file_format != self.FileFormats.JSON_FORMAT:
+                errors["nested_entry_exclusion_allowed"] = (
+                    "Allowing nested entry exclusion requires the file format "
+                    "to be JSON."
+                )
+                return
+            if not self.nested_display_by_root_item:
+                errors["nested_entry_exclusion_allowed"] = (
+                    "Allowing participants to delete entries requires 'Show one "
+                    "table per nested entry' to also be enabled."
+                )
+                return
+            if not (self.parser_config or {}).get("nested_loop_path", ""):
+                errors["nested_entry_exclusion_allowed"] = (
+                    "Grouping by root item requires a Nested loop path to be "
+                    "configured."
+                )
+                return
 
     @staticmethod
     def _validate_regex_patterns(raw_value: str, error_key: str, errors: dict) -> None:

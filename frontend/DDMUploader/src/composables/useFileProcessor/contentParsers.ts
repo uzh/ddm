@@ -37,13 +37,12 @@ export function processContent(
     blueprintOutcomeMap[blueprint.id].registerError(ERROR_CATALOG.NO_FIELDS_TO_EXTRACT, {});
     return;
   }
-  const parsedContentArray = getParsedContentArray(content, blueprint, blueprintOutcomeMap);
+  let parsedContentArray = getParsedContentArray(content, blueprint, blueprintOutcomeMap);
 
   if (!parsedContentArray) {
     // simply pass - errors are recorded in other locations and must not be registered here.
     return;
   }
-  blueprintOutcomeMap[blueprint.id].extractionStats.nRowsTotal = parsedContentArray.length;
 
   const isJson = blueprint.parser_config.format === "json";
   const nestedLoopPath = isJson
@@ -52,6 +51,17 @@ export function processContent(
   const arrayJoinSeparator = isJson
     ? ((blueprint.parser_config as JSONParserConfig).array_join_separator || "\n")
     : "\n";
+  const maxRootEntries = isJson
+    ? (blueprint.parser_config as JSONParserConfig).max_root_entries
+    : null;
+
+  // Only extract from the last N root-level items, when configured. Applied
+  // to the raw parsed array (by position), before any per-item validation.
+  if (maxRootEntries && maxRootEntries > 0 && parsedContentArray.length > maxRootEntries) {
+    parsedContentArray = parsedContentArray.slice(-maxRootEntries);
+  }
+
+  blueprintOutcomeMap[blueprint.id].extractionStats.nRowsTotal = parsedContentArray.length;
 
   const rootFields = blueprint.extraction_fields.filter(f => f.scope !== "nested");
   const nestedFields = blueprint.extraction_fields.filter(f => f.scope === "nested");
@@ -75,14 +85,20 @@ export function processContent(
     }
 
     if (!nestedLoopPath) {
-      // Legacy single-loop pipeline — unchanged behavior.
+      // Legacy single-loop pipeline — unchanged behavior, plus stamping a
+      // group id (each row is the sole member of its own group here).
       const {rowToExtract, fieldKeyMap} = prepareRowForExtraction(
         rootItem, rootFields, arrayJoinSeparator, blueprint.id, blueprintOutcomeMap
       );
-      extractData(
+      const pushed = extractData(
         rowToExtract, blueprint.fields_to_extract, blueprint.extraction_rules,
         fieldKeyMap, blueprint.id, blueprintOutcomeMap
       );
+      if (pushed !== null) {
+        blueprintOutcomeMap[blueprint.id].rowGroupIds.push(
+          blueprintOutcomeMap[blueprint.id].nextGroupId()
+        );
+      }
       continue;
     }
 
@@ -99,6 +115,11 @@ export function processContent(
       // A root-scope rule discarded this root item entirely.
       continue;
     }
+
+    // One group id per root item, shared by every row it ends up
+    // contributing (used only for display-time grouping; never part of
+    // extractedData/the donated data itself).
+    const rootItemGroupId = blueprintOutcomeMap[blueprint.id].nextGroupId();
 
     const nestedCollection = resolveNestedCollection(rootItem, nestedLoopPath);
     if (nestedCollection.length === 0) {
@@ -126,11 +147,14 @@ export function processContent(
       const {rowToExtract: nestedRowToExtract, fieldKeyMap: nestedFieldKeyMap} = prepareRowForExtraction(
         nestedItem, nestedFields, arrayJoinSeparator, blueprint.id, blueprintOutcomeMap
       );
-      extractData(
+      const pushed = extractData(
         nestedRowToExtract, blueprint.fields_to_extract, blueprint.extraction_rules,
         nestedFieldKeyMap, blueprint.id, blueprintOutcomeMap,
         {push: true, extraFields: rootExtracted}
       );
+      if (pushed !== null) {
+        blueprintOutcomeMap[blueprint.id].rowGroupIds.push(rootItemGroupId);
+      }
     }
   }
 }

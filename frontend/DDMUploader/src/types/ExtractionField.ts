@@ -1,6 +1,6 @@
 export const EXTRACTION_FIELD_SCOPES = {
   ROOT: 'root',
-  NESTED: 'warn',
+  NESTED: 'nested',
 }
 
 export type ExtractionFieldScope = typeof EXTRACTION_FIELD_SCOPES[keyof typeof EXTRACTION_FIELD_SCOPES];

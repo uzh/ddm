@@ -51,7 +51,7 @@ const activeSteps = computed(() => {
           </span>
         </div>
         <div
-          v-if="index < steps.length - 1"
+          v-if="index < activeSteps.length - 1"
           class="step-connector d-none d-sm-block"
         />
       </template>
@@ -63,13 +63,13 @@ const activeSteps = computed(() => {
       {{ t('general.step') }} {{ currentStep + 1 }}
     </div>
     <div class="step-heading">
-      <h2 v-if="steps[currentStep] === INSTRUCTIONS_STEP">
+      <h2 v-if="activeSteps[currentStep] === INSTRUCTIONS_STEP">
         {{ t("instructions.heading") }}
       </h2>
-      <h2 v-else-if="steps[currentStep] === UPLOAD_STEP">
+      <h2 v-else-if="activeSteps[currentStep] === UPLOAD_STEP">
         {{ t("file-drop.heading") }}
       </h2>
-      <h2 v-else-if="steps[currentStep] === REVIEW_STEP">
+      <h2 v-else-if="activeSteps[currentStep] === REVIEW_STEP">
         {{ t('feedback.check-data-heading') }}
       </h2>
     </div>

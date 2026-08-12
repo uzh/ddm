@@ -29,7 +29,7 @@
     "parsing-error": "Es trat ein Fehler beim Parsen von {contentType}-Inhalt für diese Datei auf",
     "parsing-error-detail": "Der folgende Fehler trat auf: {error}",
     "unsupported-bp-format": "Nicht unterstütztes Dateiformat: {format}",
-    "nested-path-not-found": "Der konfigurierte verschachtelte Pfad '{nestedLoopPath}' konnte für ein Element auf oberster Ebene nicht aufgelöst werden; es wurden keine verschachtelten Zeilen dafür extrahiert.",
+    "nested-path-not-found": "Das Feld „{nestedLoopPath}“ wurde in einem Eintrag nicht gefunden. Für diesen Eintrag konnten daher keine weiteren Zeilen extrahiert werden.",
     "more-than-one-key-match": "Mehr als eine Übereinstimmung für Feld '{field}': {keys}. Es wurde standardmäßig '{defaultKey}' verwendet",
     "no-key-match": "Keine Übereinstimmung für Feld '{field}': {keys}",
     "undefined-key": "Undefinierter Name für Feld '{field}'"
@@ -67,24 +67,37 @@
     "intro-nothing-extracted": "Es wurden keine Daten ausgelesen",
     "show-error-details": "Details anzeigen",
     "donation-question": "Diese Daten spenden?",
+    "donation-question-with-deletion": "Die ausgewählten Daten spenden?",
     "donation-question-combined": "Möchten Sie die oben gelisteten Daten spenden?",
+    "donation-question-combined-with-deletion": "Möchten Sie die oben ausgewählten Daten spenden?",
     "donation-agree": "Ja",
     "donation-disagree": "Nein",
     "details": "Details",
-    "x-entries-found": "Es wurden {nEntries} Einträge gefunden",
+    "x-elements-found": "Es wurden {nEntries} Einträge gefunden",
+    "x-elements-found-nested": "Es wurden {nElements} Elemente und insgesamt {nEntries} Einträge gefunden",
+    "element": "Element",
     "nothing-extracted-header": "Datentypen ohne ausgelesene Daten"
   },
   "extraction-table": {
     "entry-info": "Einträge {lower}-{upper} von {total} werden angezeigt",
     "donation-info": "Wenn Sie der Datenspende zustimmen, werden die folgenden Daten übermittelt:",
     "search-entries": "Einträge durchsuchen...",
+    "search-entries-on-element": "Dieses Element durchsuchen...",
+    "search-elements": "Alle Elemente durchsuchen...",
+    "search-elements-info": "Der Begriff wurde in {nElements} von {nTotal} Elementen gefunden",
     "all-filtered": "Keine Einträge gefunden",
     "show-data": "alle Daten anzeigen",
     "hide-data": "weniger anzeigen",
     "page": "Seite",
     "more-entries": "weitere Einträge",
     "show-complete-list": "vollständige Liste anzeigen",
-    "modal-close": "Schliessen"
+    "modal-close": "Schliessen",
+    "group-nav": "Element {current} von {total}",
+    "remove-element": "Dieses Element nicht spenden",
+    "restore-element": "Dieses Element spenden",
+    "element-kept": "Dieses Element wird übermittelt",
+    "element-removed": "Dieses Element wird nicht übermittelt",
+    "total": "total"
   },
   "uploader-app": {
     "next-btn": "Weiter"

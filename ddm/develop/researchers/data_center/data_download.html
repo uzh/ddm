@@ -6,7 +6,7 @@
     <title>DDM | Data Download: Accessing the Collected Data</title>
     <link rel="prev" href="../data_center.html">
     <link rel="next" href="project_logs.html">
-    <meta name="generator" content="Antora 3.1.14">
+    <meta name="generator" content="Antora 3.1.15">
     <link rel="stylesheet" href="../../../../_/css/site.css">
     <script>var uiRootPath = '../../../../_'</script>
     <link rel="icon" href="../../../../_/img/ddl_favicon_black.svg" type="image/x-icon">
@@ -351,22 +351,27 @@ The second one is to download the data through the API.</p>
 (e.g., extracted URL parameters).</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">blueprint_&lt;X&gt;_name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">bp-&lt;X&gt;_name</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The name of the blueprint with ID "X".</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">blueprint_&lt;X&gt;_time_submitted</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">bp-&lt;X&gt;_time_submitted</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Date and time in ISO 8601 format when the participant has submitted their donation for blueprint X.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">blueprint_&lt;X&gt;_consent</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Indicates whether the participant has consented to the donation of their data related to blueprint X.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">bp-&lt;X&gt;_consent</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Indicates whether the participant has consented to the donation of their data related to blueprint X. <code>True</code> = consent, <code>False</code> = no consent.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">blueprint_&lt;X&gt;_status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">bp-&lt;X&gt;_extraction_state</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Indicates the status of the participant&#8217;s donation in relation to blueprint X
-("success" = donation was successful, "pending" = data donation step reached but donation not attempted,
-"failed" = donation attempted but donation failed due to an error, "nothing extracted" = all data filtered out)</p></td>
+("DATA_EXTRACTED" = donation was successful, "NOT_ATTEMPTED" = data donation step reached but donation not attempted,
+"FAILED" = donation attempted but donation failed due to an error, "NO_DATA_EXTRACTED" = all data filtered out)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">bp-&lt;X&gt;_n_data_entries</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The number of entries detected in the donated data (depending on the data structure, this value may underestimate how
+many entries the donation actually contained).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">donation_download_link</p></td>

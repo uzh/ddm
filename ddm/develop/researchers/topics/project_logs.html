@@ -6,7 +6,7 @@
     <title>DDM | Project Logs</title>
     <link rel="prev" href="continuation.html">
     <link rel="next" href="templating_features.html">
-    <meta name="generator" content="Antora 3.1.14">
+    <meta name="generator" content="Antora 3.1.15">
     <link rel="stylesheet" href="../../../../_/css/site.css">
     <script>var uiRootPath = '../../../../_'</script>
     <link rel="icon" href="../../../../_/img/ddl_favicon_black.svg" type="image/x-icon">
@@ -304,8 +304,8 @@ donating data or filling out the questionnaire.</p>
 <em>Description:</em> Indicates that an invalid RegEx was provided as blueprint path.<br></p>
 </div>
 <div class="paragraph">
-<p><strong>INVALID_RULE_REGEX</strong><br>
-<em>Description:</em> Indicates that an invalid RegEx was provided as file rule field name.<br></p>
+<p><strong>INVALID_FIELD_REGEX</strong><br>
+<em>Description:</em> Indicates that an invalid RegEx was provided as field name.<br></p>
 </div>
 <div class="paragraph">
 <p><strong>NO_FILE_MATCH</strong><br>
@@ -320,8 +320,8 @@ donating data or filling out the questionnaire.</p>
 <em>Description:</em> Indicates that a file&#8217;s content could not be converted to a string.<br></p>
 </div>
 <div class="paragraph">
-<p><strong>NO_EXTRACTION_RULES</strong><br>
-<em>Description:</em> Indicates that a blueprint has no extraction rules defined (meaning that nothing will be extracted).<br></p>
+<p><strong>NO_FIELDS_TO_EXTRACT</strong><br>
+<em>Description:</em> Indicates no fields were defined that should be kept in the data donation.<br></p>
 </div>
 <div class="paragraph">
 <p><strong>PARSING_ERROR</strong><br>
@@ -336,6 +336,10 @@ donating data or filling out the questionnaire.</p>
 <p><strong>MORE_THAN_ONE_KEY_MATCH</strong><br>
 <em>Description:</em> Indicates that more than one key (or field/variable) contained in a file matched the field name
 defined in an extraction rule.<br></p>
+</div>
+<div class="paragraph">
+<p><strong>NESTED_PATH_NOT_FOUND</strong><br>
+<em>Description:</em> Indicates that a configured nested path was not found in the uploaded file.</p>
 </div>
 <div class="paragraph">
 <p><strong>EXTRACTION_STATS</strong><br>

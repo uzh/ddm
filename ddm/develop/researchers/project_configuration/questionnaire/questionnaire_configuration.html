@@ -6,7 +6,7 @@
     <title>DDM | Questionnaire Configuration</title>
     <link rel="prev" href="questionnaire_overview.html">
     <link rel="next" href="questionnaire_data_integration.html">
-    <meta name="generator" content="Antora 3.1.14">
+    <meta name="generator" content="Antora 3.1.15">
     <link rel="stylesheet" href="../../../../../_/css/site.css">
     <script>var uiRootPath = '../../../../../_'</script>
     <link rel="icon" href="../../../../../_/img/ddl_favicon_black.svg" type="image/x-icon">
@@ -388,12 +388,15 @@ be constructed as follows: "question_variable_name-{item-value}".</p>
 <dd>
 <p>The question text that is displayed to participants.</p>
 </dd>
-<dt class="hdlist1">Required</dt>
+<dt class="hdlist1">Requirement level</dt>
 <dd>
-<p>If a question is marked as required, the application will show a
-hint to the participant if they forgot to answer this question.
+<p><code>Not required</code>: A participant can skip the question.
+<code>Soft</code>: the application will show a
+hint to the participant if they forgot to answer the question.
 This hint will only be shown once. This means that if a participant chooses to
-ignore the hint and clicks on 'continue', they are able to skip a required question.</p>
+ignore the hint and clicks on 'continue', they are able to skip a required question.
+<code>Hard</code>: the application will show a hint and the participant cannot skip the
+question.</p>
 </dd>
 <dt class="hdlist1">Randomize items</dt>
 <dd>

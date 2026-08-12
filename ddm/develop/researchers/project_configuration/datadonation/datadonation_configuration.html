@@ -6,7 +6,7 @@
     <title>DDM | Data Donation Configuration</title>
     <link rel="prev" href="datadonation_overview.html">
     <link rel="next" href="../questionnaire/questionnaire_overview.html">
-    <meta name="generator" content="Antora 3.1.14">
+    <meta name="generator" content="Antora 3.1.15">
     <link rel="stylesheet" href="../../../../../_/css/site.css">
     <script>var uiRootPath = '../../../../../_'</script>
     <link rel="icon" href="../../../../../_/img/ddl_favicon_black.svg" type="image/x-icon">
@@ -606,6 +606,221 @@ extraction root to <code>friends.real_friends</code>.</p>
 </dd>
 </dl>
 </div>
+<div class="sect3">
+<h4 id="_advanced_settings"><a class="anchor" href="#_advanced_settings"></a>Advanced Settings</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Array join separator</dt>
+<dd>
+<p>If an extracted field contains several separate values
+(e.g. multiple lines of a message) instead of a single value, they are combined
+into one text using this separator. Defaults to <code>\n</code>, i.e., joining them with a
+line break. E.g., an entry <code>["A", "B"]`becomes `"A\nB"</code>.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_extracting_nested_loop_settings"><a class="anchor" href="#_extracting_nested_loop_settings"></a>Extracting Nested Loop Settings</h4>
+<div class="paragraph">
+<p>Sometimes each item in your data contains a list of related sub-items that
+you also want to extract as their own rows, instead of one row per top-level
+item. For example, a ChatGPT conversation export is roughly structured like
+this: each conversation has a few top-level fields, plus a list of the
+individual messages exchanged in it.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">[
+  {
+    "conversation_id": "conv-1",
+    "title": "Weekend Trip Ideas",
+    "mapping": [
+      {
+        "message": {
+          "author": "assistant",
+          "content": "some content"
+        }
+      }
+    ]
+  },
+  {
+    "conversation_id": "conv-2",
+    "title": "Restaurant Ideas",
+    "mapping": [
+      {
+        "message": {
+          "author": "assistant",
+          "content": "some content 2"
+        }
+      }
+    ]
+  }
+]</code></pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>"mapping": {
+  "some-uuid" : {
+    "message": {
+      "author": "assistant",
+      "content": "some content"
+    }
+  }</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Without a nested loop configured, DDM only sees the top-level fields
+(<code>conversation_id</code>, <code>title</code>) — you&#8217;d get one row per conversation, with no
+straightforward way to also pull out the individual messages (in the example
+contained in <code>mapping</code>).</p>
+</div>
+<div class="paragraph">
+<p>By setting <code>Nested loop path</code> to <code>mapping</code>, you tell DDM to also loop over
+each conversation&#8217;s messages and turn every message into its own row,
+automatically repeating that conversation&#8217;s fields on each one:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">conversation_id</th>
+<th class="tableblock halign-left valign-top">title</th>
+<th class="tableblock halign-left valign-top">author</th>
+<th class="tableblock halign-left valign-top">content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">conv-1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Weekend Trip Ideas</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">user</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Where should we go this weekend?</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">conv-1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Weekend Trip Ideas</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">assistant</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">How about a hike near the lake?</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">conv-2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Recipe Help</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">user</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">How do I make risotto?</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>This approach also works if <code>mapping</code> in the example is not a list but a
+dictionary-like object. E.g.:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">[
+  {
+    "conversation_id": "conv-1",
+    "title": "Weekend Trip Ideas",
+    "mapping": {
+      "some_uuid": {
+        "message": {
+          "author": "user",
+          "content": "some content"
+        }
+      }
+    }
+  }
+  ...
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this case, DDM just ignores the key of the entries contained in <code>mapping</code> and
+iterates over the values (i.e., <code>"message": { "author": "user" } &#8230;&#8203;</code>).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Nested loop path</dt>
+<dd>
+<p>The field that holds the list of sub-items you want to
+extract as separate rows (e.g. <code>mapping</code>). Leave empty if you don&#8217;t need
+this (the default) — in that case, the settings below have no effect. To
+reach a field nested inside another field, separate the names with a dot,
+e.g. <code>data.mapping</code>. To then extract, e.g. in the example above, the message
+contents and authors, you will define <code>message.author</code> and <code>message.content</code>
+as relevant nested fields (see the section on `Relevant Fields`below).</p>
+</dd>
+<dt class="hdlist1">Nested expected fields</dt>
+<dd>
+<p>The fields that a sub-item must contain in order
+to be extracted. Works just like the top-level <code>Expected fields</code> setting,
+except it&#8217;s checked per sub-item rather than per top-level item: a sub-item
+missing any of these fields is skipped, but the rest of its conversation
+(or other top-level item) is still processed normally.<br>
+Put the field names in double quotes and separate them with commas
+(<code>"Field A", "Field B"</code>). Only used if <code>Nested loop path</code> is set.</p>
+</dd>
+<dt class="hdlist1">Nested expected fields use regex matching</dt>
+<dd>
+<p>Select if you use a regex
+expression in <code>Nested expected fields</code>, the same way
+<code>Expected field regex matching</code> applies to the top-level <code>Expected fields</code>.</p>
+</dd>
+<dt class="hdlist1">Group entries by parent item</dt>
+<dd>
+<p>By default, all extracted sub-items (e.g. every
+message from every conversation) are shown to participants combined in one
+long list. Enable this to instead group and display them by their parent
+item — e.g. all of one conversation&#8217;s messages shown together as a single
+entry, with the conversation&#8217;s own fields (like <code>title</code>) shown once above
+them. Requires <code>Nested loop path</code> to be set.</p>
+</dd>
+<dt class="hdlist1">Allow item exclusion</dt>
+<dd>
+<p>If enabled, participants can remove
+individual items (e.g. a single conversation) from their donation before
+submitting, instead of only being able to consent or decline for the whole
+Blueprint at once. Requires <code>Group entries by parent item</code> to be enabled.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>All settings in this section only apply to JSON blueprints with a
+<code>Nested loop path</code> configured; <code>Allow item exclusion</code> additionally
+requires <code>Group entries by parent item</code> to be enabled.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_csv_specific_settings"><a class="anchor" href="#_csv_specific_settings"></a>CSV specific settings</h3>
@@ -620,36 +835,162 @@ expected CSV file. (e.g., <code>,</code>, <code>;</code> or <code>\t</code>). If
 </div>
 </div>
 <div class="sect2">
-<h3 id="_extraction_rules"><a class="anchor" href="#_extraction_rules"></a>Extraction Rules</h3>
+<h3 id="_txt_specific_settings"><a class="anchor" href="#_txt_specific_settings"></a>TXT specific settings</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Record separator</dt>
+<dd>
+<p>The character sequence that marks the boundary between
+individual records/entries in the file (e.g., a blank line or a single line
+break). Use <code>\n</code> for a line break or <code>\n\n</code> for a blank line.</p>
+</dd>
+<dt class="hdlist1">Field separator</dt>
+<dd>
+<p>The character sequence that separates individual fields
+within a single record (e.g., a line break if each field is on its own line).
+Use <code>\n</code> for a line break.</p>
+</dd>
+<dt class="hdlist1">Key-value separator</dt>
+<dd>
+<p>The character that separates a field&#8217;s name from its
+value within a line (e.g., <code>:</code> in <code>Name: John</code>, or <code>=</code> in <code>name=John</code>).</p>
+</dd>
+<dt class="hdlist1">Skip header lines</dt>
+<dd>
+<p>The number of lines to skip at the beginning of the TXT
+file before processing begins (e.g., to ignore a title or metadata block).</p>
+</dd>
+<dt class="hdlist1">Skip footer lines</dt>
+<dd>
+<p>The number of lines to skip at the end of the TXT file
+(e.g., to ignore a trailing summary or signature block).</p>
+</dd>
+<dt class="hdlist1">Ignore blank lines</dt>
+<dd>
+<p>If enabled, empty lines within a record are ignored
+rather than treated as part of the field data.</p>
+</dd>
+<dt class="hdlist1">Trim whitespace</dt>
+<dd>
+<p>If enabled, leading and trailing whitespace is removed from
+each record and from each key-value pair before extraction.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>The settings above are used to identify and validate the correct file from which data should be extracted.
-When the file validation is successful, the Blueprint will start to extract information from the file.
-For this, it uses <code>Extraction Rules</code> which will be applied to the file one after another.</p>
+<p><strong>Example</strong></p>
 </div>
 <div class="paragraph">
-<p>The base assumption for the extraction of the data contained in a file is
-that you do not want any data. This means that when you configure your extraction rules,
-you first have to add a "Keep Field"-rule for each field that you want to keep in your data (see the setting
-<code>Extraction Operator</code> below).</p>
+<p>Given a TXT file structured like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Datum: 2026-04-01 14:09:16 UTC
+Link: https://example.com/video/1
+
+Datum: 2026-04-02 15:30:48 UTC
+Link: https://example.com/video/2</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>with <code>Record separator</code> set to <code>\n\n</code> (blank line), <code>Field separator</code> set
+to <code>\n</code> (line break) and <code>Key-value separator</code> set to <code>:</code>, DDM extracts two records,
+each containing a <code>Datum</code> and a <code>Link</code> field.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>When entering <code>Record separator</code> or <code>Field separator</code>, type <code>\n</code> (backslash
+followed by "n") to represent a line break, and <code>\n\n</code> for a blank line — DDM
+automatically converts these into actual line breaks internally. Do not paste
+an actual line break into the field.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_relevant_fields"><a class="anchor" href="#_relevant_fields"></a>Relevant Fields</h3>
+<div class="paragraph">
+<p>The settings above are used to identify and validate the file from which data
+should be extracted. Once file validation succeeds, the blueprint starts
+extracting information from the file.</p>
+</div>
+<div class="paragraph">
+<p>To do this, you need to define which fields to keep in the extracted data.
+Optionally, you can also rename fields during extraction — this is especially
+useful when using regex matching, where you want a clean, predictable field
+name in the exported data rather than the raw matched name.</p>
+</div>
+<div class="paragraph">
+<p>To define a field, provide:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Expected name</dt>
+<dd>
+<p>The field/variable name expected to be contained in the
+uploaded file. This can be an exact name, or a regex pattern (e.g., to match
+across different translations of the same field).</p>
+</dd>
+<dt class="hdlist1">Match regex</dt>
+<dd>
+<p>Enable this if <code>expected name</code> is a regex pattern rather than
+an exact field name.</p>
+</dd>
+<dt class="hdlist1">Rename to</dt>
+<dd>
+<p>Optionally, provide the name the matched field should be renamed
+to in the extracted data. If left empty, the name from <code>expected name</code> is
+used as-is.</p>
+</dd>
+<dt class="hdlist1">Keep in donation</dt>
+<dd>
+<p>Enable this if the field should be included in the
+donation (i.e., submitted to you as part of the participant&#8217;s donation).</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_extraction_rules"><a class="anchor" href="#_extraction_rules"></a>Extraction Rules</h3>
+<div class="paragraph">
+<p>Data extraction is performed using <code>Extraction Rules</code>, which are applied to
+the file one after another, in the order you define.</p>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Execution Order</dt>
 <dd>
-<p>The order in which the extraction rules are applied to a file.</p>
+<p>The order in which the extraction rules are applied to the file.</p>
 </dd>
 <dt class="hdlist1">Name</dt>
 <dd>
-<p>The name of an extraction rule. For internal organisation only.</p>
+<p>The name of the extraction rule. For internal organization only —
+this is not the field name itself.</p>
 </dd>
 <dt class="hdlist1">Field</dt>
 <dd>
-<p>The field to which the rule will be applied. This can either be a "normal" string or a
-regular expression (regex). If the latter is the case, you must also select <code>regex field</code> (below).</p>
-</dd>
-<dt class="hdlist1">Regex field</dt>
-<dd>
-<p>Select if you use a regex expression in the <code>Field</code> setting of this rule.</p>
+<p>The field the rule applies to. This must match either the
+<code>expected name</code> set in the Extraction Fields section, or, if provided, its
+<code>rename to</code> value.</p>
 </dd>
 <dt class="hdlist1">Extraction Operator</dt>
 <dd>
@@ -745,6 +1086,68 @@ to the selected Extraction Operator.</p>
 that will be used as a replacement if the regex pattern matches.</p>
 </dd>
 </dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_backup_blueprints_advanced_settings"><a class="anchor" href="#_backup_blueprints_advanced_settings"></a>Backup blueprints (advanced settings)</h3>
+<div class="paragraph">
+<p>A backup blueprint acts as a fallback: if a blueprint&#8217;s parser fails to
+extract data from a participant&#8217;s file (e.g., because the file cannot be identified,
+or the data extraction produces an error) DDM will try its backup blueprints
+instead. This is useful for handling files whose structure occasionally
+varies (e.g. a platform export format that changes over time), without
+having to guess a single configuration that covers every case.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Backup for</dt>
+<dd>
+<p>Selects the primary blueprint that this blueprint should act as
+a backup for. Leave empty if this blueprint is not a backup. Only blueprints
+using the same File Uploader (and belonging to the same project) are
+available for selection; a blueprint that is itself a backup cannot be
+selected here — backups cannot be chained.</p>
+</dd>
+<dt class="hdlist1">Backup priority</dt>
+<dd>
+<p>If a primary blueprint has more than one backup, this
+number determines the order in which they are tried. Lower values are tried
+first.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>A backup blueprint is only used if the primary blueprint&#8217;s parser fails to
+extract data. If the primary blueprint succeeds, its backups are never
+attempted, even if they are configured.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_example"><a class="anchor" href="#_example"></a>Example</h4>
+<div class="paragraph">
+<p>Suppose <code>Watch History</code> is a primary blueprint expecting a JSON export, and
+the platform occasionally changes its export format in a way that breaks
+extraction. A second blueprint, <code>Watch History (legacy format)</code>, can be
+configured with <code>Backup for</code> set to <code>Watch History</code> and used as a fallback:
+if the primary JSON structure fails to parse, DDM automatically tries the
+legacy-format blueprint instead (e.g., TXT), and participants see the result of
+whichever blueprint succeeded.</p>
+</div>
+<div class="paragraph">
+<p>If multiple backups are configured for the same primary blueprint, set
+<code>Backup priority</code> on each to control the order they are attempted in (e.g.
+<code>0</code> for the first fallback, <code>1</code> for the second).</p>
+</div>
 </div>
 </div>
 </div>

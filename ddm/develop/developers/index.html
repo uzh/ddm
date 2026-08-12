@@ -6,7 +6,7 @@
     <title>DDM | Documentation for Developers</title>
     <link rel="prev" href="../administrators/topics/user_authentication.html">
     <link rel="next" href="topics/documentation.html">
-    <meta name="generator" content="Antora 3.1.14">
+    <meta name="generator" content="Antora 3.1.15">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <script>var uiRootPath = '../../../_'</script>
     <link rel="icon" href="../../../_/img/ddl_favicon_black.svg" type="image/x-icon">
@@ -294,7 +294,17 @@ learn more about its development in general.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">(venv) &lt;...&gt;/ddm&gt; pip install -r requirements/base.txt</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">(venv) &lt;...&gt;/ddm&gt; pip install -r requirements/base.txt
+(venv) &lt;...&gt;/ddm&gt; pip install -r requirements/dev.txt</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_install_pre_commit_hooks"><a class="anchor" href="#_install_pre_commit_hooks"></a>Install pre-commit hooks</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">(venv) &lt;...&gt;/ddm&gt; pre-commit install
+(venv) &lt;...&gt;/ddm&gt; pre-commit install --hook-type pre-push   # enables pip-audit on push</code></pre>
 </div>
 </div>
 </div>

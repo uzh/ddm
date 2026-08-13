@@ -355,6 +355,24 @@ File uploads are controlled by these Django settings:</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_content_security_policy"><a class="anchor" href="#_content_security_policy"></a>Content Security Policy</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The participant-facing frontend (data donation upload and questionnaire) ships as two
+precompiled Vue single-page apps, embedded via
+<a href="https://github.com/django-webpack/django-webpack-loader">django-webpack-loader</a>. Both
+work under a strict CSP with no exceptions needed in either <code>script-src</code> or <code>style-src</code>
+(e.g. <code>default-src 'self'; script-src 'self'; style-src 'self'</code>).</p>
+</div>
+<div class="paragraph">
+<p>To try this yourself: the test project has a <code>DDM_STRICT_CSP=1</code> environment variable
+(see <code>test_project/settings.py</code>) that serves every page with this exact policy via
+<a href="https://github.com/mozilla/django-csp">django-csp</a>, so you can click through the
+participant flow locally and confirm nothing breaks.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_django_rest_framework_configuration"><a class="anchor" href="#_django_rest_framework_configuration"></a>Django REST Framework Configuration</h2>
 <div class="sectionbody">
 <div class="paragraph">

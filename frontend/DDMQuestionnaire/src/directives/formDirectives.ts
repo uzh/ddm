@@ -22,7 +22,7 @@ function findHint(el: HTMLElement, hintClass: string): HTMLElement | null {
 
 function toggleHint(hint: HTMLElement | null, isValid: boolean) {
   if (hint) {
-    hint.style.display = isValid ? 'none' : 'block';
+    hint.classList.toggle('show', !isValid);
   }
 }
 

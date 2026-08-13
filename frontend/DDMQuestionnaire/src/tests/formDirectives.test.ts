@@ -5,7 +5,7 @@ import { describe, it, expect } from "vitest";
 import { validEmail, validLength, validValue } from "@questionnaire/directives/formDirectives";
 
 function hintDisplay(wrapper: ReturnType<typeof mount>, hintClass: string): string {
-  return (wrapper.find(`.${hintClass}`).element as HTMLElement).style.display;
+  return wrapper.find(`.${hintClass}`).classes().includes("show") ? "block" : "none";
 }
 
 function mountLengthInput(attrs: string) {

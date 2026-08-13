@@ -345,6 +345,9 @@ function responseChanged(event: Event) {
   color: var(--ddm-error);
   display: none;
 }
+.hint-invalid-input.show {
+  display: block !important;
+}
 .open-question-textarea {
   resize: none;
   width: 100%;

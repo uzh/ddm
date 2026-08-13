@@ -1,4 +1,5 @@
 const BundleTracker = require('webpack-bundle-tracker');
+const VueI18nPlugin = require('@intlify/unplugin-vue-i18n/webpack');
 const path = require('path');
 
 const pages = {
@@ -11,9 +12,18 @@ const pages = {
 module.exports = {
     pages: pages,
     filenameHashing: false,
-    runtimeCompiler: true,
+    runtimeCompiler: false,
     publicPath: '/static/ddm_core/frontend/questionnaire',
     outputDir: path.resolve('../../ddm/core/static/ddm_core/frontend/questionnaire'),
+
+    configureWebpack: {
+        plugins: [
+            VueI18nPlugin({
+                include: [path.resolve(__dirname, './src/locales/**')],
+                runtimeOnly: true,
+            }),
+        ],
+    },
 
     devServer: {
         hot: false,
@@ -62,16 +72,4 @@ module.exports = {
             .set('@questionnaire', path.resolve(__dirname, './src'))
             .set('__STATIC__', 'static');
     },
-
-    pluginOptions: {
-      i18n: {
-        locale: 'en',
-        fallbackLocale: 'en',
-        localeDir: 'locales',
-        enableLegacy: true,
-        compositionOnly: false,
-        runtimeOnly: false,
-        fullInstall: true,
-      }
-    }
 };

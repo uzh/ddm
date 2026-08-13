@@ -251,7 +251,7 @@ export function usePageNavigation(
         input.classList.toggle(invalidClass, !fieldValid);
         const hint = input.parentElement?.querySelector(`.${hintClass}`);
         if (hint instanceof HTMLElement) {
-          hint.style.display = fieldValid ? 'none' : 'block';
+          hint.classList.toggle('show', !fieldValid);
         }
 
         if (!fieldValid) isValid = false;

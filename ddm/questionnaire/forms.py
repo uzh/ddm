@@ -493,16 +493,14 @@ class FilterConditionForm(forms.ModelForm):
         # Reset all source fields
         instance.source_question = None
         instance.source_item = None
-        instance.source_identifier = None
         instance.source_type = source_type
+        instance.source_identifier = source_id
 
         # Set the appropriate source field
         if source_type == FilterSourceTypes.QUESTION:
             instance.source_question = QuestionBase.objects.get(pk=source_id)
         elif source_type == FilterSourceTypes.QUESTION_ITEM:
             instance.source_item = QuestionItem.objects.get(pk=source_id)
-        else:
-            instance.source_identifier = source_id
 
         if commit:
             instance.save()

@@ -164,3 +164,29 @@ if DEBUG:
         MIDDLEWARE += [
             "debug_toolbar.middleware.DebugToolbarMiddleware",
         ]
+
+# Set DDM_STRICT_CSP=1 (e.g. in .env) to serve every page with the strict CSP
+# documented in docs/modules/administrators/pages/topics/security.adoc, to
+# manually check the participant-facing frontends (data-donation, questionnaire)
+# still work under it. No exceptions in either script-src or style-src — Vue's
+# v-show writes style.display via JS, which CSP's style-src doesn't restrict
+# (only literal style="..." attributes and <style> elements are), and neither
+# app needs 'unsafe-eval'. If anything needs an exception here, something
+# regressed.
+DDM_STRICT_CSP = os.environ.get("DDM_STRICT_CSP", "") == "1"
+
+if DDM_STRICT_CSP:
+    from csp.constants import SELF
+
+    MIDDLEWARE += ["csp.middleware.CSPMiddleware"]
+
+    CONTENT_SECURITY_POLICY = {
+        "DIRECTIVES": {
+            "default-src": [SELF],
+            "script-src": [SELF],
+            "style-src": [SELF],
+            "img-src": [SELF, "data:"],
+            "font-src": [SELF],
+            "connect-src": [SELF],
+        }
+    }

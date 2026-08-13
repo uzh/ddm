@@ -22,7 +22,7 @@
  */
 
 import {computed, onMounted, reactive, ref, watch} from 'vue';
-import { useI18n } from 'vue-i18n';
+import { useTranslation } from '@uploader/composables/useTranslation';
 import {EXTRACTION_STATES} from "@uploader/utils/stateCatalog";
 import {BlueprintExtractionStates, ExtractionStates} from "@uploader/types/ExtractionStates";
 import {BlueprintExtractionOutcome} from "@uploader/classes/BlueprintExtractionOutcome";
@@ -31,7 +31,7 @@ import {Blueprint} from "@uploader/types/Blueprint";
 import {ProcessingError} from "@uploader/types/ProcessingError";
 import ExtractionItem from "@uploader/components/ExtractionItem.vue";
 
-const { t, te, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
+const { t, te, locale } = useTranslation();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps<{
   uploaderState: UploaderStates,

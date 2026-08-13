@@ -19,13 +19,13 @@
 
 
 import {computed, nextTick, onMounted, ref, toRef, useTemplateRef, watch} from 'vue';
-import { useI18n } from 'vue-i18n';
+import { useTranslation } from '@uploader/composables/useTranslation';
 import {ExtractionStates} from '@uploader/types/ExtractionStates';
 import {EXTRACTION_STATES} from '@uploader/utils/stateCatalog';
 import {UPLOADER_STATES, UploaderStates} from '@uploader/types/UploaderState';
 import {ProcessingError} from '@uploader/types/ProcessingError';
 
-const { t, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
+const { t, locale } = useTranslation();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps<{
   expectsZip: boolean,

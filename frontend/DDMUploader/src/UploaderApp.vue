@@ -20,7 +20,7 @@
  * - csrfToken: Token for securing form submission.
  */
 
-import {useI18n} from 'vue-i18n';
+import {useTranslation} from '@uploader/composables/useTranslation';
 import {Ref, ref} from 'vue';
 import UploaderWrapper from "@uploader/components/UploaderWrapper.vue";
 import type {BlueprintExtractionStates, ExtractionStates} from "@uploader/types/ExtractionStates";
@@ -32,7 +32,7 @@ import {UploaderOutcome} from "@uploader/types/UploaderOutcome";
 import SubmittingOverlay from "@uploader/components/SubmittingOverlay.vue";
 import {UploaderConfig} from "@uploader/types/UploaderConfig";
 
-const { t, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
+const { t, locale } = useTranslation();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps<{
   uploaderConfigs: UploaderConfig[];

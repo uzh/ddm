@@ -1,6 +1,7 @@
 build==1.5.1
 coverage==7.15.1  # https://github.com/nedbat/coveragepy
 django-browser-reload==1.21.0  # https://github.com/adamchainz/django-browser-reload
+django-csp==4.0  # https://github.com/mozilla/django-csp
 django-debug-toolbar==7.0.0  # https://github.com/django-commons/django-debug-toolbar
 django-watchfiles==1.4.0  # https://github.com/adamchainz/django-watchfiles
 pandas==3.0.3  # https://github.com/pandas-dev/pandas

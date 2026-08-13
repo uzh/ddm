@@ -53,6 +53,20 @@ If your DDM instance allows registration by untrusted users, consider these prot
 |===
 
 
+== Content Security Policy
+
+The participant-facing frontend (data donation upload and questionnaire) ships as two
+precompiled Vue single-page apps, embedded via
+https://github.com/django-webpack/django-webpack-loader[django-webpack-loader]. Both
+work under a strict CSP with no exceptions needed in either `script-src` or `style-src`
+(e.g. `default-src 'self'; script-src 'self'; style-src 'self'`).
+
+To try this yourself: the test project has a `DDM_STRICT_CSP=1` environment variable
+(see `test_project/settings.py`) that serves every page with this exact policy via
+https://github.com/mozilla/django-csp[django-csp], so you can click through the
+participant flow locally and confirm nothing breaks.
+
+
 == Django REST Framework Configuration
 
 The API endpoints integrated in DDM use the https://www.django-rest-framework.org[Django REST Framework] (DRF)

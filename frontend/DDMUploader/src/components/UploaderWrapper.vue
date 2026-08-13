@@ -24,7 +24,7 @@
  * - statusChanged(uploaderId, consentMap, extractionState, blueprintStates, extractedData)
  * - proceed: Emitted when the user advances past the last step.
  */
-import { useI18n } from 'vue-i18n';
+import { useTranslation } from '@uploader/composables/useTranslation';
 import {computed, onMounted, Ref, ref, watch} from "vue";
 
 import ConsentQuestion from "@uploader/components/ConsentQuestion.vue";
@@ -47,7 +47,7 @@ import {UPLOADER_STATES, UploaderStates} from "@uploader/types/UploaderState";
 import {EXTRACTION_STATES} from "@uploader/utils/stateCatalog";
 import StepIndicator from "@uploader/components/StepIndicator.vue";
 
-const { t, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
+const { t, locale } = useTranslation();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps<{
   blueprintConfigs: Blueprint[],
@@ -172,9 +172,20 @@ const activeStepName = computed(() => {
   return activeSteps.value[activeStep.value];
 })
 
+
+function scrollToTop(smooth = true) {
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: smooth ? 'smooth' : 'auto',
+  });
+}
+
+
 function nextStep(): void {
   if (activeStep.value < (activeSteps.value.length - 1)) {
     activeStep.value = activeStep.value + 1;
+    scrollToTop();
   } else if (activeStep.value === (activeSteps.value.length - 1)) {
     emitProceed();
   }
@@ -183,6 +194,7 @@ function nextStep(): void {
 function prevStep(): void {
   if (activeStep.value > 0) {
     activeStep.value = activeStep.value - 1;
+    scrollToTop();
   }
 }
 
@@ -208,7 +220,6 @@ const allConsented: Ref<boolean> = computed(() => {
   }
   return true;
 })
-
 </script>
 
 <template>
@@ -231,6 +242,7 @@ const allConsented: Ref<boolean> = computed(() => {
       <Instructions
         :instructions="instructionConfig"
         :component-id="componentId"
+        @go-to-upload="nextStep"
       />
     </div>
 
@@ -288,7 +300,7 @@ const allConsented: Ref<boolean> = computed(() => {
       <span class="ps-2">{{ t('step-indicator.button-prev') }}</span>
     </button>
     <button
-      v-show="activeStep <= (activeSteps.length - 1)"
+      v-show="activeStep <= (activeSteps.length - 1) && activeSteps[activeStep] !== INSTRUCTIONS_STEP"
       type="button"
       class="ddm-primary-button-base"
       :class="{'ddm-primary-button': nextButtonHighlighted}"

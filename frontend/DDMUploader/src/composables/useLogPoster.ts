@@ -1,4 +1,4 @@
-import {useI18n} from "vue-i18n";
+import {useTranslation} from "@uploader/composables/useTranslation";
 import {BlueprintExtractionOutcome} from "@uploader/classes/BlueprintExtractionOutcome";
 import {ref, Ref} from "vue";
 import {ProcessingError} from "@uploader/types/ProcessingError";
@@ -20,7 +20,7 @@ export function useLogPoster(
   uploaderId: number,
   exceptionUrl: string
 ) {
-  const { t } = useI18n({locale: 'en'});
+  const { t } = useTranslation({locale: 'en'});
   let logDate: Ref<number> = ref(Date.now());
 
   /**

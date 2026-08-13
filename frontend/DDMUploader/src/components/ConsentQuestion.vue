@@ -23,10 +23,10 @@
  * - vue-i18n for translations.
  */
 
-import { useI18n } from 'vue-i18n';
+import { useTranslation } from '@uploader/composables/useTranslation';
 import {computed, Ref, ref} from "vue";
 import {Blueprint} from "@uploader/types/Blueprint";
-const { t, te, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
+const { t, te, locale } = useTranslation();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps<{
   combinedConsent: boolean,

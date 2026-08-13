@@ -22,11 +22,11 @@ import {useDebouncedSearch} from "@uploader/composables/useDebouncedSearch";
 import {useGroupNavigation} from "@uploader/composables/useGroupNavigation";
 import {computed, ref, Ref, useTemplateRef, watch} from "vue";
 import {usePagination} from "@uploader/composables/usePagination";
-import {useI18n} from "vue-i18n";
+import {useTranslation} from "@uploader/composables/useTranslation";
 import {EntryGroup} from "@uploader/utils/entryGroup";
 import {ExtractionFieldLayout} from "@uploader/types/ExtractionFieldLayout";
 
-const { t, te, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
+const { t, te, locale } = useTranslation();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps<{
   blueprintOutcome: BlueprintExtractionOutcome,

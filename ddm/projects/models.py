@@ -202,7 +202,10 @@ class DonationProject(models.Model):
             "Advanced option to overwrite default phrases and translations used "
             "in the data donation interface. Must be a dictionary with the "
             'locale shortcuts as keys (e.g., "de" or "en") associated to a '
-            "dictionary holding the translations."
+            "dictionary holding the translations. Placeholders in overridden "
+            'phrases must use simple "{param}" substitution, matching the '
+            "defaults being overwritten; other formatting syntax (e.g., "
+            "pluralization or linked messages) is not supported."
         ),
     )
 

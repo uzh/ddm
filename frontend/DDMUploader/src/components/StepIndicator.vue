@@ -12,9 +12,9 @@
  */
 
 import {computed} from "vue";
-import {useI18n} from "vue-i18n";
+import {useTranslation} from "@uploader/composables/useTranslation";
 
-const { t, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
+const { t, locale } = useTranslation();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps({
   hasInstructions: Boolean,

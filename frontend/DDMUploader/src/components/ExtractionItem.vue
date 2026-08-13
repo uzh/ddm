@@ -46,12 +46,12 @@ import {EXTRACTION_STATES} from "@uploader/utils/stateCatalog";
 import ExtractionPreview from "@uploader/components/ExtractionPreview.vue";
 import ConsentQuestion from "@uploader/components/ConsentQuestion.vue";
 import {computed, ref, watch} from "vue";
-import {useI18n} from "vue-i18n";
+import {useTranslation} from "@uploader/composables/useTranslation";
 import {EntryGroup, groupEntriesByRowGroupId} from "@uploader/utils/entryGroup";
 import ExtractionModal from "@uploader/components/ExtractionModal.vue";
 import {ExtractionFieldLayout} from "@uploader/types/ExtractionFieldLayout";
 
-const { t, te, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
+const { t, te, locale } = useTranslation();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps<{
   blueprint: Blueprint,

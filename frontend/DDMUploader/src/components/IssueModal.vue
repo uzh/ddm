@@ -21,9 +21,9 @@
  * - modalClosed: Emitted when modal is closed via the back button
  */
 
-import { useI18n } from 'vue-i18n';
+import { useTranslation } from '@uploader/composables/useTranslation';
 import {computed, onMounted, onUnmounted, ref, Ref, watch} from "vue";
-const { t, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
+const { t, locale } = useTranslation();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps<{
   failedUploaderNames: string[],

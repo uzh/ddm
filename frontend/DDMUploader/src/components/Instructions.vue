@@ -14,15 +14,23 @@
  * - Displays step indicator buttons for navigation.
  */
 import {computed, ref, useTemplateRef} from 'vue';
-import { useI18n } from 'vue-i18n';
+import { useTranslation } from '@uploader/composables/useTranslation';
 import {Instruction} from "@uploader/types/Instruction";
 
-const { t, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
+const { t, locale } = useTranslation();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps<{
   instructions: Instruction[];
   componentId: number;
 }>();
+
+const emit = defineEmits<{
+  (e: 'goToUpload'): void;
+}>();
+
+function goToUpload() {
+  emit('goToUpload');
+}
 
 const tableContainer = useTemplateRef('instruction-heading');
 const currentStep = ref(0);
@@ -97,18 +105,24 @@ const canStepUp = computed(() => currentStep.value < props.instructions.length -
 
       <div class="instruction-nav-next">
         <button
+          v-if="canStepUp"
           class="ddm-secondary-button"
           :class="{ 'btn-disabled': currentStep === props.instructions.length - 1 }"
           :disabled="!canStepUp"
           @click="stepUp"
         >
-          <template v-if="canStepUp">
-            <span class="pe-2">{{ t("instructions.next-page") }}</span>
-            <i class="step-chevron bi bi-chevron-right" />
-          </template>
-          <template v-else>
-            <span>{{ t("instructions.end") }}</span>
-          </template>
+          <span class="pe-2">{{ t("instructions.next-page") }}</span>
+          <i class="step-chevron bi bi-chevron-right" />
+        </button>
+
+        <button
+          v-else
+          type="button"
+          class="ddm-primary-button-base ddm-primary-button"
+          @click="goToUpload"
+        >
+          <span class="pe-2">{{ t('step-indicator.button-next') }}</span>
+          <i class="step-chevron bi bi-chevron-right" />
         </button>
       </div>
     </div>

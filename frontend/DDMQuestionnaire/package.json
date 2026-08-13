@@ -13,7 +13,7 @@
     "jszip": "^3.10.1",
     "luxon": "^3.7.2",
     "papaparse": "^5.5.3",
-    "vue-i18n": "^9.14.1"
+    "vue-i18n": "^11.4.2"
   },
   "devDependencies": {
     "@intlify/unplugin-vue-i18n": "^11.1.2",

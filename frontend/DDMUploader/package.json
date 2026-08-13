@@ -15,6 +15,7 @@
     "papaparse": "^5.5.3"
   },
   "devDependencies": {
+    "@intlify/unplugin-vue-i18n": "^11.1.2",
     "@types/luxon": "^3.7.1",
     "@types/papaparse": "^5.5.2",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
@@ -31,7 +32,7 @@
     "vitest": "^4.0.18",
     "vue": "^3.5.27",
     "vue-eslint-parser": "^10.2.0",
-    "vue-i18n": "^9.14.4",
+    "vue-i18n": "^11.4.2",
     "webpack-bundle-tracker": "^3.2.3"
   },
   "eslintConfig": {

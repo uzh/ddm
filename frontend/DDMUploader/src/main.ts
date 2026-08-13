@@ -1,26 +1,13 @@
 import { createApp } from 'vue'
 import UApp from './UploaderApp.vue'
 import { createI18n } from 'vue-i18n'
+import { setCustomTranslations } from './composables/useTranslation'
 
 import en from './locales/en.json';
 import de from './locales/de.json';
 import it from './locales/it.json';
 import fr from './locales/fr.json';
 import {UploaderConfig} from "@uploader/types/UploaderConfig";
-
-function deepMerge(target, source) {
-  const result = { ...target };
-
-  for (const key in source) {
-    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-      result[key] = deepMerge(result[key] || {}, source[key]);
-    } else {
-      result[key] = source[key];
-    }
-  }
-
-  return result;
-}
 
 /**
  * Entry point for the DDM uploader Vue application.
@@ -83,33 +70,24 @@ function initializeUploaderApp(): void {
     csrfToken: mountEl.dataset.csrfToken,
   });
 
-  // Load and add custom translations, if provided.
-  let messages = {
-    en: en,
-    de: de,
-    it: it,
-    fr: fr,
-  };
-
-  const translationsEl = mountEl.querySelector(APP_CONFIG.customTranslationsId);
-  if (translationsEl?.textContent) {
-    const custom = JSON.parse(translationsEl.textContent);
-    if (custom && Object.keys(custom).length) {
-      messages = {
-        en: deepMerge(en, custom.en || {}),
-        de: deepMerge(de, custom.de || {}),
-        it: deepMerge(it, custom.it || {}),
-        fr: deepMerge(fr, custom.fr || {}),
-      };
-    }
-  }
-
   const i18n = createI18n({
     legacy: false,
     locale: APP_CONFIG.defaultLocale,
     fallbackLocale: APP_CONFIG.fallbackLocale,
-    messages: messages
+    messages: { en, de, it, fr },
   })
+
+  // Load custom translations, if provided. Kept separate from vue-i18n's own
+  // message tree since they arrive at runtime and vue-i18n has no compiler
+  // available to process them (see composables/useTranslation.ts).
+  const translationsEl = mountEl.querySelector(APP_CONFIG.customTranslationsId);
+  if (translationsEl?.textContent) {
+    try {
+      setCustomTranslations(JSON.parse(translationsEl.textContent));
+    } catch (err) {
+      console.error("Failed to parse custom translations:", err);
+    }
+  }
 
   // Set i18n locale based on the data attribute.
   const userLanguage = mountEl.dataset.language || APP_CONFIG.defaultLocale;

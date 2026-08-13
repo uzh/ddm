@@ -16,13 +16,13 @@
 
 import ExtractionTable from "@uploader/components/ExtractionTable.vue";
 
-import { useI18n } from 'vue-i18n';
+import { useTranslation } from '@uploader/composables/useTranslation';
 import {BlueprintExtractionOutcome} from "@uploader/classes/BlueprintExtractionOutcome";
 import {Blueprint} from "@uploader/types/Blueprint";
 import {computed} from "vue";
 import {ExtractionFieldLayout} from "@uploader/types/ExtractionFieldLayout";
 
-const { t, te, locale } = useI18n();  // eslint-disable-line @typescript-eslint/no-unused-vars
+const { t, te, locale } = useTranslation();  // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const props = defineProps<{
   blueprintOutcome: BlueprintExtractionOutcome,

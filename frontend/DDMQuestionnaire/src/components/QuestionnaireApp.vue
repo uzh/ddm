@@ -423,4 +423,15 @@ const { questionDivs, isSticky } = useStickyQuestions(questionMap, currentPage, 
 .required-hint.show {
   display: block !important;
 }
+
+input[type="text"],
+input[type="email"],
+input[type="number"] {
+  display: inline-block;
+}
+
+.scrolling-overlay {
+  filter: grayscale(80%);
+  opacity: 0.4;
+}
 </style>

@@ -43,13 +43,36 @@ export function useScrollHandler() {
    */
   function scrollToTop(): void {
     setTimeout(() => {
-      document.documentElement.scrollTo({
+      const target = document.documentElement;
+      const overlay = document.querySelector('#qapp');
+
+      const cleanup = () => {
+        overlay?.classList.remove('scrolling-overlay');
+        target.removeEventListener('scrollend', cleanup);
+      };
+
+      // Already at top — nothing will scroll, so scrollend won't fire. Skip straight to cleanup.
+      if (target.scrollTop === 0 && document.body.scrollTop === 0) {
+        overlay?.classList.remove('scrolling-overlay');
+        return;
+      }
+
+      overlay?.classList.add('scrolling-overlay');
+
+      if ('onscrollend' in window) {
+        window.addEventListener('scrollend', cleanup);
+      } else {
+        setTimeout(cleanup, 200);
+      }
+
+      target.scrollTo({
         top: 0,
         behavior: 'smooth',
       });
+
       // Fallbacks for compatibility
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
+      // document.documentElement.scrollTop = 0;
+      // document.body.scrollTop = 0;
     }, 100);
   }
 

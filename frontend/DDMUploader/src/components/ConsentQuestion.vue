@@ -87,7 +87,7 @@ const isExclusionAllowed = computed(() => {
     </div>
 
     <div
-      class="btn-group"
+      class="btn-group donation-btn-group"
       role="group"
       aria-label="Consent options"
     >
@@ -148,6 +148,15 @@ const isExclusionAllowed = computed(() => {
   font-weight: 500;
 }
 
+@media (max-width: 575px) {
+  .donation-btn-group {
+    display: inline-block;
+    text-align: end;
+  }
+  .donation-btn-group > .btn {
+    border-radius: var(--border-radius-components) !important;
+  }
+}
 .selected-donate-agree {
   background: var(--ddm-consent-agree) !important;
   color: white !important;

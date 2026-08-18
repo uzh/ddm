@@ -14,6 +14,7 @@
 
   --bg-components: white;
   --border-color-components: #dee2e6;
+  --border-color-components-lighter: color-mix(in oklab, var(--border-color-components), white 60%);
   --border-components: 1px solid var(--border-color-components);
   --border-radius-components: 3px;
 

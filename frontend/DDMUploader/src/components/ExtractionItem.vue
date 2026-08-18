@@ -174,13 +174,29 @@ const fieldLayout = computed<ExtractionFieldLayout>(() => ({
         </div>
 
         <div class="extraction-header-content">
-          <div class="extraction-heading">
-            <template v-if="extractionPending">
-              <span class="fw-bold">{{ blueprint.name }}:</span> {{ blueprint.description }}
-            </template>
-            <template v-else>
-              <span class="fw-bold">{{ blueprint.name }}</span>
-            </template>
+          <div class="extraction-header-top-row">
+            <div class="extraction-heading">
+              <template v-if="extractionPending">
+                <span class="fw-bold">{{ blueprint.name }}:</span> {{ blueprint.description }}
+              </template>
+              <template v-else>
+                <span class="fw-bold">{{ blueprint.name }}</span>
+              </template>
+            </div>
+
+            <div v-if="!extractionPending && !nothingExtracted">
+              <button
+                class="expansion-button"
+                type="button"
+                @click="detailsExpanded = !detailsExpanded"
+              >
+                {{ t('feedback.details') }}
+                <span
+                  class="details-expansion-icon"
+                  :class="{expanded: detailsExpanded}"
+                >▸</span>
+              </button>
+            </div>
           </div>
 
           <div class="extraction-header-info">
@@ -195,20 +211,6 @@ const fieldLayout = computed<ExtractionFieldLayout>(() => ({
               <div>{{ extractionErrorText }}</div>
             </template>
           </div>
-        </div>
-
-        <div v-if="!extractionPending && !nothingExtracted">
-          <button
-            class="expansion-button"
-            type="button"
-            @click="detailsExpanded = !detailsExpanded"
-          >
-            {{ t('feedback.details') }}
-            <span
-              class="details-expansion-icon"
-              :class="{expanded: detailsExpanded}"
-            >▸</span>
-          </button>
         </div>
       </div>
 
@@ -301,10 +303,15 @@ const fieldLayout = computed<ExtractionFieldLayout>(() => ({
 
 .extraction-header {
   background: var(--bg-components);
-  padding: 15px 20px;
+  padding: 15px 20px 15px 5px;
   border-radius: var(--border-radius-components);
   display: flex;
   flex-direction: row;
+}
+
+.extraction-heading {
+  overflow-wrap: anywhere;
+  padding-right: 10px;
 }
 
 .extraction-header-content {
@@ -315,16 +322,24 @@ const fieldLayout = computed<ExtractionFieldLayout>(() => ({
   flex-grow: 1;
 }
 
+.extraction-header-top-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .extraction-header-info {
   font-size: var(--fs-secondary);
   color: var(--font-color-secondary);
 }
 
 .extraction-info {
-  padding: 6px 20px 12px;
+  padding: 6px 10px 12px 10px;
   font-size: 0.8rem !important;
   color: var(--font-color-secondary);
   display: none;
+  border-top: 1px solid var(--border-color-components-lighter);
 }
 
 .extraction-info.expanded {
@@ -347,6 +362,7 @@ const fieldLayout = computed<ExtractionFieldLayout>(() => ({
   padding: 0;
   cursor: pointer;
   color: var(--ddm-primary-accent);
+  min-width: 75px;
 }
 
 details {

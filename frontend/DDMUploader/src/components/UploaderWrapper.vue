@@ -261,7 +261,7 @@ const allConsented: Ref<boolean> = computed(() => {
 
     <div
       v-show="activeStepName === REVIEW_STEP"
-      class="uploader-section pt-3"
+      class="uploader-section pt-1"
     >
       <div class="d-flex flex-column">
         <ExtractionOverview
@@ -335,7 +335,8 @@ const allConsented: Ref<boolean> = computed(() => {
 }
 
 .uploader-section {
-  padding: 30px 20px;
+  padding-top: 30px;
+  padding-bottom: 30px;
 }
 
 @media (min-width: 768px) {
@@ -344,11 +345,13 @@ const allConsented: Ref<boolean> = computed(() => {
   }
 
   .uploader-container .uploader-section:last-child {
-    padding: 40px 20px 30px 20px;
+    padding-top: 40px;
+    padding-bottom: 30px;
   }
 
   .uploader-container .uploader-section:first-child {
-    padding: 30px 20px 40px 20px;
+    padding-top: 30px;
+    padding-bottom: 40px;
   }
 
 }

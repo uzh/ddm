@@ -215,110 +215,53 @@ const toggleCurrentGroupExclusion = (): void => {
           />
         </div>
         <div class="modal-body">
-          <div>
-            {{ t('extraction-table.donation-info') }}
-          </div>
-          <div
-            v-if="fieldLayout.isGrouped"
-          >
-            <div>
-              <div class="page-controls">
+          <div class="modal-body-intro">
+            <div class="modal-body-intro-text">
+              {{ t('extraction-table.donation-info') }}
+            </div>
+
+            <template v-if="fieldLayout.isGrouped">
+              <!-- Grouped top navigation -->
+              <div class="modal-body-intro-controls pt-3 pb-1">
                 <!-- Entry (group) navigation. -->
                 <div
                   v-if="fieldLayout.groups.length > 1 && !noGroupsMatchElementSearch"
-                  class="pt-3 pb-1  text-end text-md-start"
+                  class="page-controls text-end text-md-start"
                 >
-                  <button
-                    class="ddm-secondary-button button-small me-2 py-1 px-2"
-                    :disabled="!canGoPrevGroup"
-                    aria-label="Previous entry"
-                    @click="prevGroup"
-                  >
-                    <i class="bi bi-chevron-left" />
-                  </button>
+                  <div>
+                    <button
+                      class="ddm-secondary-button button-small me-2 py-1 px-2"
+                      :disabled="!canGoPrevGroup"
+                      aria-label="Previous entry"
+                      @click="prevGroup"
+                    >
+                      <i class="bi bi-chevron-left" />
+                    </button>
+                  </div>
 
-                  <span class="navigation-label">{{ t('extraction-table.group-nav', { current: currentMatchPosition + 1 , total: matchingGroupIndices.length }) }}</span>
+                  <div>
+                    <span class="navigation-label">
+                      {{ t('extraction-table.group-nav', { current: currentMatchPosition + 1 , total: matchingGroupIndices.length }) }}
+                    </span>
+                  </div>
 
-                  <button
-                    :disabled="!canGoNextGroup"
-                    class="ddm-secondary-button button-small ms-2 py-1 px-2"
-                    aria-label="Next entry"
-                    @click="nextGroup"
-                  >
-                    <i class="bi bi-chevron-right" />
-                  </button>
+                  <div>
+                    <button
+                      :disabled="!canGoNextGroup"
+                      class="ddm-secondary-button button-small ms-2 py-1 px-2"
+                      aria-label="Next entry"
+                      @click="nextGroup"
+                    >
+                      <i class="bi bi-chevron-right" />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <!-- Grouped view: one table per root item, navigated one at a time. -->
-            <div
-              v-if="noGroupsMatchElementSearch"
-              class="grouped-entry-container mt-2 navigation-label"
-            >
-              {{ t('extraction-table.all-filtered') }}
-            </div>
-            <div
-              v-else
-              class="grouped-entry-container mt-2"
-            >
-              <div
-                v-if="isDeletionAllowed"
-                class="pt-2 pb-3 entry-deletion-control"
-              >
-                <span
-                  v-if="currentGroupExcluded"
-                  class="element-removed-note pe-2"
-                >{{ t('extraction-table.element-removed') }}</span>
-                <span
-                  v-else
-                  class="element-kept-note pe-2"
-                >{{ t('extraction-table.element-kept') }}</span>
-
-                <button
-                  type="button"
-                  class="ddm-secondary-button exclude-button"
-                  :class="{ selected: currentGroupExcluded }"
-                  @click="toggleCurrentGroupExclusion"
-                >
-                  {{ currentGroupExcluded ? t('extraction-table.restore-element') : t('extraction-table.remove-element') }}
-                </button>
-              </div>
-
-              <div
-                class="table-wrapper pt-2"
-                :class="{ 'entry-excluded': currentGroupExcluded }"
-              >
+                <!-- Filter search field, scoped to the currently visible entry. -->
                 <div
-                  v-if="currentGroupRootValues.length > 0"
-                  class="group-root-summary pt-2"
+                  v-if="currentGroup.rows.length > 1"
+                  class="text-end text-md-start group-search-container pt-2 pt-md-0"
                 >
-                  <div class="pb-2 fw-bold">
-                    <h6>{{ t('feedback.element') }} {{ currentGroupIndex + 1 }}</h6>
-                  </div>
-                  <div
-                    v-for="entry in currentGroupRootValues"
-                    :key="entry.label"
-                    class="group-root-summary-item"
-                  >
-                    <span class="variable-label">{{ entry.label }}:</span> {{ entry.value }}
-                  </div>
-                  <hr class="mt-3 mb-2">
-                </div>
-
-                <div class="table-container">
-                  <ExtractionTable
-                    :columns="fieldLayout.nestedColumns"
-                    :rows="filteredGroupRows"
-                    :empty-message="t('extraction-table.all-filtered')"
-                    table-class="review-table"
-                  />
-                </div>
-              </div>
-
-              <!-- Filter search field, scoped to the currently visible entry. -->
-              <div v-if="currentGroup.rows.length > 1">
-                <div class="mb-2 text-end text-md-start pe-2 pt-3 group-search-container">
                   <div>
                     <label
                       :for="searchInputId"
@@ -329,6 +272,7 @@ const toggleCurrentGroupExclusion = (): void => {
                     <input
                       :id="searchInputId"
                       v-model="groupSearchTerm"
+                      class="entry-search-input"
                       type="text"
                       :placeholder="t('extraction-table.search-entries-on-element')"
                       aria-label="Search data entries"
@@ -341,41 +285,94 @@ const toggleCurrentGroupExclusion = (): void => {
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div>
-              <div class="page-controls">
-                <!-- Entry (group) navigation. -->
+              <div class="group-table-top">
                 <div
-                  v-if="fieldLayout.groups.length > 1 && !noGroupsMatchElementSearch"
-                  class="pt-4 text-end text-md-start"
+                  v-if="noGroupsMatchElementSearch"
+                  class="grouped-entry-container grouped-entry-container-top navigation-label"
                 >
-                  <button
-                    class="ddm-secondary-button button-small me-2 py-1 px-2"
-                    :disabled="!canGoPrevGroup"
-                    aria-label="Previous entry"
-                    @click="prevGroup"
-                  >
-                    <i class="bi bi-chevron-left" />
-                  </button>
+                  {{ t('extraction-table.all-filtered') }}
+                </div>
 
-                  <span class="navigation-label">{{ t('extraction-table.group-nav', { current: currentMatchPosition + 1, total: matchingGroupIndices.length }) }}</span>
-
-                  <button
-                    :disabled="!canGoNextGroup"
-                    class="ddm-secondary-button button-small ms-2 py-1 px-2"
-                    aria-label="Next entry"
-                    @click="nextGroup"
+                <div
+                  v-else
+                  class="grouped-entry-container grouped-entry-container-top mt-2"
+                >
+                  <!-- Entry deletion control -->
+                  <div
+                    v-if="isDeletionAllowed"
+                    class="pt-2 pb-3 entry-deletion-control"
                   >
-                    <i class="bi bi-chevron-right" />
-                  </button>
+                    <span
+                      v-if="currentGroupExcluded"
+                      class="element-removed-note"
+                    >{{ t('extraction-table.element-removed') }}</span>
+                    <span
+                      v-else
+                      class="element-kept-note"
+                    >{{ t('extraction-table.element-kept') }}</span>
+
+                    <div class="deletion-switch-container">
+                      <button
+                        type="button"
+                        class="ddm-secondary-button exclude-button"
+                        :class="{ selected: currentGroupExcluded }"
+                        @click="toggleCurrentGroupExclusion"
+                      >
+                        {{ currentGroupExcluded ? t('extraction-table.restore-element') : t('extraction-table.remove-element') }}
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- General element information -->
+                  <div
+                    v-if="currentGroupRootValues.length > 0"
+                    class="group-root-summary pt-2"
+                  >
+                    <div class="pb-2 fw-bold">
+                      <h6>{{ t('feedback.element') }} {{ currentGroupIndex + 1 }}</h6>
+                    </div>
+                    <div
+                      v-for="entry in currentGroupRootValues"
+                      :key="entry.label"
+                      class="group-root-summary-item"
+                    >
+                      <span class="variable-label">{{ entry.label }}:</span> {{ entry.value }}
+                    </div>
+                    <hr class="mt-3 mb-2">
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+
+          <template
+            v-if="fieldLayout.isGrouped"
+          >
+            <!-- Grouped view: one table per root item, navigated one at a time. -->
+            <div class="modal-table-wrapper modal-table-wrapper-grouped table-wrapper grouped-entry-container grouped-entry-container-bottom">
+              <div
+                v-if="!noGroupsMatchElementSearch"
+                class="table-wrapper"
+                :class="{ 'entry-excluded': currentGroupExcluded }"
+              >
+                <div class="table-container">
+                  <ExtractionTable
+                    :columns="fieldLayout.nestedColumns"
+                    :rows="filteredGroupRows"
+                    :empty-message="t('extraction-table.all-filtered')"
+                    table-class="review-table review-table-grouped"
+                  />
                 </div>
               </div>
             </div>
 
             <!-- Filter search field across all elements. -->
-            <div v-if="fieldLayout.groups.length > 1">
-              <div class="mb-2 text-end text-md-start pe-2 pt-3 group-search-container">
+            <div class="modal-body-bottom">
+              <div
+                v-if="fieldLayout.groups.length > 1"
+                class="mb-2 text-end text-md-start pe-2 pt-3 group-search-container"
+              >
                 <div>
                   <label
                     :for="elementSearchInputId"
@@ -398,94 +395,90 @@ const toggleCurrentGroupExclusion = (): void => {
                 </div>
               </div>
             </div>
-          </div>
+          </template>
 
           <!-- Flat view: a single combined table (unchanged default behavior). -->
-          <div v-else>
-            <div>
+          <template v-else>
+            <div class="modal-table-wrapper table-wrapper mt-2">
               <!-- Table of extracted entries. -->
-              <div class="table-wrapper pt-2">
-                <div
-                  ref="table-container"
-                  class="table-container"
-                  :class="{'no-scroll': !showData }"
+              <div
+                ref="table-container"
+                class="table-container"
+                :class="{'no-scroll': !showData }"
+              >
+                <ExtractionTable
+                  :columns="blueprintOutcome.extractedFieldsMap"
+                  :rows="filteredItems.slice(lowerPosition, upperPosition)"
+                  :empty-message="t('extraction-table.all-filtered')"
+                  table-class="review-table"
+                />
+              </div>
+            </div>
+
+            <div class="modal-body-bottom">
+              <!-- Page control buttons -->
+              <div
+                v-if="props.blueprintOutcome.extractedData.length > pageSize"
+                class="page-controls ps-2 pt-2 text-end text-md-start"
+              >
+                <!-- Prev button -->
+                <button
+                  class="ddm-secondary-button button-small me-2 py-1 px-2"
+                  :disabled="currentPage <= 1"
+                  aria-label="Previous page"
+                  @click="prev"
                 >
-                  <ExtractionTable
-                    :columns="blueprintOutcome.extractedFieldsMap"
-                    :rows="filteredItems.slice(lowerPosition, upperPosition)"
-                    :empty-message="t('extraction-table.all-filtered')"
-                    table-class="review-table"
-                  />
-                </div>
-              </div>
-            </div>
+                  <i class="bi bi-chevron-left" />
+                </button>
 
-            <div>
-              <div class="page-controls">
-                <!-- Page control buttons -->
-                <div
-                  v-if="props.blueprintOutcome.extractedData.length > pageSize"
-                  class="ps-2 pt-2 text-end text-md-start"
+                <span class="navigation-label">{{ t('extraction-table.page') }} {{ currentPage }}/{{ Math.max(maxPage, 1) }}</span>
+
+                <!-- Next button -->
+                <button
+                  :disabled="currentPage >= maxPage"
+                  class="ddm-secondary-button button-small ms-2 py-1 px-2"
+                  aria-label="Next page"
+                  @click="next"
                 >
-                  <!-- Prev button -->
-                  <button
-                    class="ddm-secondary-button button-small me-2 py-1 px-2"
-                    :disabled="currentPage <= 1"
-                    aria-label="Previous page"
-                    @click="prev"
-                  >
-                    <i class="bi bi-chevron-left" />
-                  </button>
+                  <i class="bi bi-chevron-right" />
+                </button>
+              </div>
 
-                  <span class="navigation-label">{{ t('extraction-table.page') }} {{ currentPage }}/{{ Math.max(maxPage, 1) }}</span>
+              <!-- Filter search field -->
+              <div v-if="props.blueprintOutcome.extractedData.length > 1">
+                <div class="mb-2 text-end text-md-start pe-2 pt-3">
+                  <div>
+                    <label
+                      :for="searchInputId"
+                      class="visually-hidden"
+                    >
+                      {{ t('extraction-table.search-entries') }}
+                    </label>
+                    <input
+                      :id="searchInputId"
+                      v-model="searchTerm"
+                      type="text"
+                      :placeholder="t('extraction-table.search-entries')"
+                      aria-label="Search data entries"
+                    >
+                  </div>
 
-                  <!-- Next button -->
-                  <button
-                    :disabled="currentPage >= maxPage"
-                    class="ddm-secondary-button button-small ms-2 py-1 px-2"
-                    aria-label="Next page"
-                    @click="next"
-                  >
-                    <i class="bi bi-chevron-right" />
-                  </button>
+                  <div class="ps-1 pt-1 pe-2 group-search-info">
+                    <span v-if="filteredItems.length > 0">{{ t('extraction-table.entry-info', {'lower': lowerPosition + 1, 'upper': upperPosition, 'total': filteredItems.length}) }}</span>
+                    <span v-else>{{ t('extraction-table.all-filtered') }}</span>
+
+                    <span
+                      v-if="filteredItems.length < props.blueprintOutcome.extractedData.length"
+                      class="ps-1 group-search-info"
+                    >
+                      ({{ props.blueprintOutcome.extractedData.length }} {{ t('extraction-table.total') }})
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-
-            <!-- Filter search field -->
-            <div v-if="props.blueprintOutcome.extractedData.length > 1">
-              <div class="mb-2 text-end text-md-start pe-2 pt-3">
-                <div>
-                  <label
-                    :for="searchInputId"
-                    class="visually-hidden"
-                  >
-                    {{ t('extraction-table.search-entries') }}
-                  </label>
-                  <input
-                    :id="searchInputId"
-                    v-model="searchTerm"
-                    type="text"
-                    :placeholder="t('extraction-table.search-entries')"
-                    aria-label="Search data entries"
-                  >
-                </div>
-
-                <div class="ps-1 pt-1 pe-2 group-search-info">
-                  <span v-if="filteredItems.length > 0">{{ t('extraction-table.entry-info', {'lower': lowerPosition + 1, 'upper': upperPosition, 'total': filteredItems.length}) }}</span>
-                  <span v-else>{{ t('extraction-table.all-filtered') }}</span>
-
-                  <span
-                    v-if="filteredItems.length < props.blueprintOutcome.extractedData.length"
-                    class="ps-1 group-search-info"
-                  >
-                    ({{ props.blueprintOutcome.extractedData.length }} {{ t('extraction-table.total') }})
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+          </template>
+        </div> <!-- modal-body -->
 
         <div class="modal-footer">
           <button
@@ -502,10 +495,90 @@ const toggleCurrentGroupExclusion = (): void => {
 </template>
 
 <style scoped>
+.modal-body {
+  overflow: hidden;
+  padding: 1rem;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-body-intro,
+.modal-body-bottom {
+  flex-shrink: 0;
+}
+
+.modal-table-wrapper {
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow: auto;
+  border-bottom: 1px solid var(--border-color-components);
+}
+
+.modal-table-wrapper-grouped {
+  border-bottom: none;
+}
+
+.modal-table-wrapper-grouped {
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color-components, #ccc) transparent;
+}
+
+.modal-table-wrapper-grouped::-webkit-scrollbar {
+  width: 8px;
+}
+.modal-table-wrapper-grouped::-webkit-scrollbar-thumb {
+  background: var(--border-color-components, #ccc);
+  border-radius: 4px;
+}
+
+.modal-body-intro-controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-content: center;
+  align-items: center;
+}
+
+@media (min-width: 576px) {
+  .modal-body-intro-controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.page-controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 300px;
+}
+
+.entry-search-input {
+  margin-top: 0;
+  padding: 3px 10px;
+  border: 1px solid var(--lightgrey);
+  border-radius: var(--border-radius);
+  max-width: 300px;
+  font-size: var(--fs-secondary);
+  display: inline-block;
+}
+
 .entry-deletion-control {
   display: flex;
   align-items: center;
   border-bottom: var(--border-components);
+  font-size: var(--fs-secondary);
+  font-weight: 500;
+}
+
+.deletion-switch-container {
+  padding-left: 10px;
+  margin-left: 10px;
+  border-left: 1px solid var(--border-color-components);
 }
 
 .exclude-button {
@@ -527,10 +600,26 @@ const toggleCurrentGroupExclusion = (): void => {
 
 .grouped-entry-container {
   padding: 10px 20px;
-  border-radius: var(--border-radius-components);
-  border: var(--border-components);
   background-color: var(--grouped-table-container-bg);
 }
+
+.grouped-entry-container-top {
+  border-top-left-radius: var(--border-radius-components);
+  border-top-right-radius: var(--border-radius-components);
+  border-left: var(--border-components);
+  border-top: var(--border-components);
+  border-right: var(--border-components);
+}
+
+.grouped-entry-container-bottom {
+  border-bottom-left-radius: var(--border-radius-components);
+  border-bottom-right-radius: var(--border-radius-components);
+  border-left: var(--border-components);
+  border-bottom: var(--border-components);
+  border-right: var(--border-components);
+  padding-top: 0;
+}
+
 .group-search-info {
   font-size: var(--fs-secondary);
   color: var(--font-color-secondary) !important;
@@ -553,9 +642,10 @@ const toggleCurrentGroupExclusion = (): void => {
   color: var(--font-color-secondary);
 }
 .group-root-summary-item {
-  white-space: nowrap;
   font-family: var(--ff-mono), monospace;
   font-size: var(--fs-primary-mono);
+  word-wrap: anywhere;
+  overflow-wrap: anywhere;
 }
 .table-wrapper.entry-excluded {
   opacity: 0.45;

@@ -51,6 +51,17 @@ defineProps<{
 </template>
 
 <style scoped>
+.review-table thead > tr {
+  background: white;
+  position: sticky;
+  top: 0;
+  box-shadow: 0 1px 0 0 var(--border-color-components);
+}
+
+.review-table-grouped thead > tr {
+  background: var(--grouped-table-container-bg);
+}
+
 .preview-table {
   color: var(--font-color-secondary) !important;
   font-size: 0.75rem !important;

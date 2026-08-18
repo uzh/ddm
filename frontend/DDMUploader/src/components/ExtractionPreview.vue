@@ -100,9 +100,9 @@ const currentGroupRootValues = computed(() => {
 
   <div
     v-if="blueprintOutcome.extractedData.length > 3"
-    class="pt-2"
+    class="pt-3 ps-1"
   >
-    + {{ blueprintOutcome.extractedData.length - 3 }} {{ t('extraction-table.more-entries') }} —
+    + {{ blueprintOutcome.extractedData.length - 3 }} {{ t('extraction-table.more-entries') }}<span class="ps-1 pe-1">|</span>
     <button
       type="button"
       class="modal-button"
@@ -138,6 +138,7 @@ const currentGroupRootValues = computed(() => {
   padding: 0;
   cursor: pointer;
   color: var(--ddm-primary-accent);
+  font-weight: 500;
 }
 
 a:hover {

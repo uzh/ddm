@@ -924,7 +924,9 @@ class BlueprintCopyView(SuccessMessageMixin, DDMAuthMixin, View):
         self, request: HttpRequest, project_url_id: str, pk: int
     ) -> HttpResponseRedirect:
         blueprint = get_object_or_404(
-            DonationBlueprint, pk=pk, project__owner__user=request.user
+            DonationBlueprint,
+            pk=pk,
+            project__url_id=project_url_id,
         )
         try:
             new_bp = copy_blueprint(blueprint)

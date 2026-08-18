@@ -74,10 +74,12 @@ const canStepUp = computed(() => currentStep.value < props.instructions.length -
       />
     </div>
     <div
-      v-if="instructions.length > 1"
       class="instruction-nav"
     >
-      <div class="instruction-nav-prev">
+      <div
+        v-if="instructions.length > 1"
+        class="instruction-nav-prev"
+      >
         <button
           class="ddm-secondary-button"
           :class="{ 'btn-disabled': currentStep === 0 }"
@@ -94,7 +96,10 @@ const canStepUp = computed(() => currentStep.value < props.instructions.length -
         </button>
       </div>
 
-      <div class="instruction-nav-dots">
+      <div
+        v-if="instructions.length > 1"
+        class="instruction-nav-dots"
+      >
         <div
           v-for="(i, index) in props.instructions"
           :key="index"

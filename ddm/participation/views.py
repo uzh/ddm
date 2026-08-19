@@ -311,6 +311,7 @@ class DataDonationView(ParticipationFlowBaseView):
         return UploaderConfigService.create_configs(project_uploaders, self.participant)
 
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        # TODO: Check if calling super().post() before processing uploads is a problem
         super().post(request, **kwargs)
         self.process_uploads(request.FILES)
         return HttpResponseRedirect(self.post_redirect_url())

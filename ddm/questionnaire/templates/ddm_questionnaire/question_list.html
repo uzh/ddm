@@ -52,6 +52,8 @@
           <div><a href="{% url 'ddm_projects:detail' project_url_id %}"><i class="bi bi-arrow-left-short"></i> Back</a></div>
         </div>
         <div class="col-6 justify-content-end text-end">
+          <a class="ddm-btn-base ddm-btn-secondary" href="{% url 'ddm_questionnaire:export' project_url_id %}">Export Questionnaire</a>
+          <a class="ddm-btn-base ddm-btn-secondary" href="{% url 'ddm_questionnaire:import' project_url_id %}">Import Questionnaire</a>
           <button type="button" class="ddm-btn-base ddm-btn-green" data-bs-toggle="modal" data-bs-target="#questionPickerModal">Create new question</button>
         </div>
       </div>

@@ -1,0 +1,22 @@
+{% extends 'ddm_core/page_with_form.html' %}
+
+{% block page_title %}Import Blueprint{% endblock page_title %}
+
+{% block main_heading %}Import Blueprint{% endblock main_heading %}
+
+{% block form_content %}
+
+  <div id="blueprint-import-section" class="ddm-section-container">
+    <div class="row">
+      <p>
+        Upload a blueprint export file (created via "Export" on a blueprint's
+        settings page) to add it to this project.
+      </p>
+
+      {{ form.non_field_errors }}
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.file %}
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.file_uploader %}
+    </div>
+  </div>
+
+{% endblock form_content %}

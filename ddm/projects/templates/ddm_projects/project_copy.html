@@ -1,0 +1,32 @@
+{% extends 'ddm_core/page_with_form.html' %}
+
+{% block page_title %}Copy Project{% endblock page_title %}
+
+{% block main_heading %}Copy Project{% endblock main_heading %}
+
+{% block form_content %}
+
+  <div id="project-copy-section" class="ddm-section-container">
+    <div class="row">
+      <p>
+        This creates a new project with a copy of
+        "{{ source_project.name }}"'s configuration (file uploaders,
+        blueprints, and questionnaire). Collected data is never copied.
+      </p>
+
+      {{ form.non_field_errors }}
+
+      {% if form.owner %}
+        {% include "ddm_core/form_components/_basic_field.html" with field=form.owner %}
+      {% endif %}
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.name %}
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.slug %}
+
+      <p class="helptext fc-muted">
+        The copy always uses standard encryption, even if the source
+        project has enhanced encryption enabled.
+      </p>
+    </div>
+  </div>
+
+{% endblock form_content %}

@@ -20,5 +20,13 @@
       </form>
     </div>
 
+    <div class="col-auto">
+      <a
+        class="ddm-btn-base ddm-btn-secondary"
+        href="{% url 'ddm_datadonation:blueprints:export' object.project.url_id object.pk %}">
+        Export Blueprint
+      </a>
+    </div>
+
   </div>
 </div>

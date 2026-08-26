@@ -1,0 +1,36 @@
+{% extends 'ddm_core/page_with_form.html' %}
+
+{% block page_title %}Import Project{% endblock page_title %}
+
+{% block main_heading %}Import Project{% endblock main_heading %}
+
+{% block form_content %}
+
+  <div id="project-import-section" class="ddm-section-container">
+    <div class="row">
+
+      {{ form.non_field_errors }}
+
+      {% if step == "upload" %}
+        <p>
+          Upload a project export file (created via "Export Project" on
+          another project or DDM instance) to create a new project from it.
+          Collected data is never included in an export/import.
+        </p>
+        {% include "ddm_core/form_components/_basic_field.html" with field=form.file %}
+      {% else %}
+        <p>Review the new project's name and URL identifier before it is created.</p>
+        {% if form.owner %}
+          {% include "ddm_core/form_components/_basic_field.html" with field=form.owner %}
+        {% endif %}
+        {% include "ddm_core/form_components/_basic_field.html" with field=form.name %}
+        {% include "ddm_core/form_components/_basic_field.html" with field=form.slug %}
+        <p class="helptext fc-muted">
+          The imported project always uses standard encryption.
+        </p>
+      {% endif %}
+
+    </div>
+  </div>
+
+{% endblock form_content %}

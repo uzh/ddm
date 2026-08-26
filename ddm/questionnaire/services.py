@@ -1,18 +1,15 @@
-import copy
-from typing import Any
+from __future__ import annotations
 
-from django.db import transaction
+from typing import TYPE_CHECKING, Any
+
 from django.utils import timezone
 
 from ddm.logging.utils import log_server_exception
-from ddm.participation.models import Participant
-from ddm.projects.models import DonationProject
-from ddm.questionnaire.models import (
-    FilterCondition,
-    QuestionBase,
-    QuestionItem,
-    QuestionnaireResponse,
-)
+from ddm.questionnaire.models import QuestionBase, QuestionItem, QuestionnaireResponse
+
+if TYPE_CHECKING:
+    from ddm.participation.models import Participant
+    from ddm.projects.models import DonationProject
 
 
 def get_question_item_response_key_list(project: DonationProject) -> list:
@@ -193,71 +190,3 @@ def save_questionnaire_response_to_db(
             "is_complete": is_complete,
         },
     )
-
-
-def reset_pk(instance) -> None:  # noqa: ANN001
-    """
-    Clear pk for `instance`, including inherited parent-link pks for
-    multi-table-inherited (e.g. django-polymorphic) models.
-
-    A plain `instance.pk = None` only clears the local pk field. For MTI
-    subclasses, ancestor tables have their own separately-stored pk
-    attribute (e.g. `id` inherited from a polymorphic base model) that
-    must also be cleared, or Django will UPDATE the ancestor row instead
-    of inserting a new one.
-    """
-    for parent in instance._meta.get_parent_list():  # noqa: SLF001
-        setattr(instance, parent._meta.pk.attname, None)  # noqa: SLF001
-    instance.pk = None
-
-
-def variable_name_unique(name: str, project: DonationProject) -> bool:
-    return not QuestionBase.objects.filter(variable_name=name, project=project).exists()
-
-
-@transaction.atomic
-def copy_question(question: QuestionBase) -> QuestionBase:
-    new_q = copy.deepcopy(question)
-    reset_pk(new_q)
-
-    base_variable_name = f"{question.variable_name}_copy"
-    new_variable_name = base_variable_name
-    i = 0
-    while not variable_name_unique(new_variable_name, question.project):
-        i += 1
-        new_variable_name = f"{base_variable_name}_{i}"
-    new_q.variable_name = new_variable_name
-    new_q.name = f"{question.name} (copy)"
-    new_q.save(force_insert=True)
-
-    # copy question item
-    for item in question.questionitem_set.all():
-        item_new = copy.deepcopy(item)
-        item_new.pk = None
-        item_new.question = new_q
-        item_new.save(force_insert=True)
-
-        # copy item filter conditions
-        filter_conditions = FilterCondition.objects.filter(target_item=item)
-        for fc in filter_conditions:
-            new_fc = copy.deepcopy(fc)
-            new_fc.pk = None
-            new_fc.target_item = item_new
-            new_fc.save(force_insert=True)
-
-    # copy scale points
-    for sp in question.scalepoint_set.all():
-        sp_new = copy.deepcopy(sp)
-        sp_new.pk = None
-        sp_new.question = new_q
-        sp_new.save(force_insert=True)
-
-    # copy question filter conditions
-    filter_conditions = FilterCondition.objects.filter(target_question=question)
-    for fc in filter_conditions:
-        new_fc = copy.deepcopy(fc)
-        new_fc.pk = None
-        new_fc.target_question = new_q
-        new_fc.save(force_insert=True)
-
-    return new_q

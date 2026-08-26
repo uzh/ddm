@@ -1,0 +1,32 @@
+<div id="project-transfer" class="ddm-section-container">
+  <div>
+    <h2>Export &amp; Copy</h2>
+  </div>
+
+  <div>
+    <p>
+      Export this project's configuration (file uploaders, blueprints, and
+      questionnaire) as a JSON file, to import it into another project or
+      DDM instance. Or create a copy of it directly. Collected data is
+      never included.
+    </p>
+  </div>
+
+  <div class="row">
+    <div class="col-auto">
+      <a
+          class="ddm-btn-base ddm-btn-secondary"
+          href="{% url 'ddm_projects:export' object.url_id %}">
+        Export Project
+      </a>
+    </div>
+
+    <div class="col-auto">
+      <a
+          class="ddm-btn-base ddm-btn-secondary"
+          href="{% url 'ddm_projects:copy' object.url_id %}">
+        Copy Project
+      </a>
+    </div>
+  </div>
+</div>

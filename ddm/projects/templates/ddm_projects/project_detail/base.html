@@ -23,6 +23,9 @@
   {# LOGS #}
   {% include "ddm_projects/project_detail/logs.html" %}
 
+  {# EXPORT & COPY #}
+  {% include "ddm_projects/project_detail/transfer.html" %}
+
   {# Modal for download error #}
   {% include "ddm_core/components/info_modal.html" with modal_id="modal-download-error" body='<p><i class="bi bi-x-octagon-fill text-danger pe-2"></i><b>Download Failed</b></p>The download failed due to the following issue: <span id="download-error-message"></span>' %}
 

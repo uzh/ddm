@@ -42,6 +42,7 @@ class DDMAuthMixin:
             if request.path not in [
                 reverse("ddm_projects:list"),
                 reverse("ddm_projects:create"),
+                reverse("ddm_projects:import"),
             ]:
                 if "project_url_id" in self.kwargs:
                     project_id = self.kwargs["project_url_id"]

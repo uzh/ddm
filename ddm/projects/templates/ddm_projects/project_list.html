@@ -43,5 +43,6 @@
 {% endblock pre_footer_left %}
 
 {% block pre_footer_right %}
+  <a class="ddm-btn-base ddm-btn-secondary" href="{% url 'ddm_projects:import' %}">Import Project</a>
   <a class="ddm-btn-base ddm-btn-green" href="{% url 'ddm_projects:create' %}">Create New Project</a>
 {% endblock pre_footer_right %}

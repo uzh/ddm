@@ -26,6 +26,7 @@
         {% include "ddm_datadonation/overview/uploader_table.html" %}
         <a class="ddm-btn-base ddm-btn-green" href="{% url 'ddm_datadonation:uploaders:create' project.url_id %}">Create Uploader</a>
         <a class="ddm-btn-base ddm-btn-green" href="{% url 'ddm_datadonation:blueprints:create' project.url_id %}">Create Blueprint</a>
+        <a class="ddm-btn-base ddm-btn-secondary" href="{% url 'ddm_datadonation:blueprints:import' project.url_id %}">Import Blueprint</a>
       </div>
 
     </div>

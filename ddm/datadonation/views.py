@@ -6,7 +6,7 @@ from typing import Any
 from django import forms
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db import IntegrityError, transaction
+from django.db import transaction
 from django.db.models import Q, QuerySet
 from django.forms import BaseInlineFormSet, Form
 from django.forms.utils import ErrorList
@@ -17,10 +17,9 @@ from django.http import (
     HttpResponseBase,
     HttpResponseRedirect,
 )
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils.text import Truncator
-from django.views import View
 from django.views.decorators.debug import sensitive_variables
 from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
@@ -44,7 +43,6 @@ from ddm.datadonation.models import (
     DonationInstruction,
     FileUploader,
 )
-from ddm.datadonation.services import copy_blueprint
 from ddm.encryption.models import Decryption, Encryption
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject
@@ -915,31 +913,3 @@ class DonationDownloadView(DDMAuthMixin, DDMAdminMixin, DDMAPIMixin, FormView):
             msg=f"Donation for participant {participant} downloaded.",
         )
         return response
-
-
-class BlueprintCopyView(SuccessMessageMixin, DDMAuthMixin, View):
-    http_method_names = ["post"]
-
-    def post(
-        self, request: HttpRequest, project_url_id: str, pk: int
-    ) -> HttpResponseRedirect:
-        blueprint = get_object_or_404(
-            DonationBlueprint,
-            pk=pk,
-            project__url_id=project_url_id,
-        )
-        try:
-            new_bp = copy_blueprint(blueprint)
-        except IntegrityError:
-            messages.error(
-                request,
-                "Couldn't copy the blueprint — please try again.",
-            )
-            return redirect(self.get_success_url(blueprint))
-
-        messages.success(request, f'Copied as "{new_bp.name}".')
-        return redirect(self.get_success_url(new_bp))
-
-    def get_success_url(self, blueprint: DonationBlueprint) -> str:
-        kwargs = {"project_url_id": blueprint.project.url_id, "pk": blueprint.pk}
-        return reverse("ddm_datadonation:blueprints:edit", kwargs=kwargs)

@@ -1,0 +1,22 @@
+{% extends 'ddm_core/page_with_form.html' %}
+
+{% block page_title %}Import Questionnaire{% endblock page_title %}
+
+{% block main_heading %}Import Questionnaire{% endblock main_heading %}
+
+{% block form_content %}
+
+  <div id="questionnaire-import-section" class="ddm-section-container">
+    <div class="row">
+      <p>
+        Upload a questionnaire export file (created via "Export Questionnaire")
+        to add its questions to this project. Questions whose blueprint link
+        can't be matched by name in this project are imported unlinked.
+      </p>
+
+      {{ form.non_field_errors }}
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.file %}
+    </div>
+  </div>
+
+{% endblock form_content %}

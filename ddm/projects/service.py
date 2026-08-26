@@ -2,9 +2,30 @@ import json
 from itertools import chain
 from typing import Any
 
+from django.utils.text import slugify
+
 from ddm.participation.models import Participant
 from ddm.participation.utils import get_filter_config_id
 from ddm.projects.models import DonationProject
+
+
+def suggest_unique_project_slug(base: str) -> str:
+    """
+    Suggests a unique DonationProject.slug derived from `base` (e.g. a
+    source project's name/slug), for pre-filling the project import/copy
+    review form.
+    """
+    max_length = DonationProject._meta.get_field("slug").max_length  # noqa: SLF001
+    candidate = slugify(base)[:max_length] or "project"
+    if not DonationProject.objects.filter(slug=candidate).exists():
+        return candidate
+
+    suffix = 1
+    while True:
+        suffixed = f"{candidate[: max_length - len(str(suffix)) - 1]}-{suffix}"
+        if not DonationProject.objects.filter(slug=suffixed).exists():
+            return suffixed
+        suffix += 1
 
 
 def get_url_parameters(

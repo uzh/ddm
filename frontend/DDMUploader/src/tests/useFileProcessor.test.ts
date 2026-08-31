@@ -195,6 +195,65 @@ describe('useFileProcessor', () => {
     expect(result.extractedData[0].name).toBe('Alice');
   });
 
+  it('registers EXTRACTION_ROOT_NOT_FOUND (not a generic parsing error) when extraction_root does not exist in the file', async () => {
+    const missingRootBlueprint = {
+      ...jsonBlueprint,
+      id: 5,
+      parser_config: { ...JSONConfig, extraction_root: 'items' },
+    };
+    const processor = useFileProcessor(false, [missingRootBlueprint]);
+    await processor.handleSelectedFile(jsonFile);
+
+    const result = processor.blueprintOutcomeMap[5];
+    expect(result.extractedData).toEqual([]);
+    expect(result.processingErrors).toContainEqual(
+      expect.objectContaining({
+        type: 'EXTRACTION_ROOT_NOT_FOUND',
+        level: 'critical',
+        context: expect.objectContaining({ extractionRoot: 'items' }),
+      })
+    );
+    expect(result.processingErrors.some(e => e.type === 'PARSING_ERROR')).toBe(false);
+  });
+
+  it('treats an empty array found at extraction_root as legitimately empty data, without registering an error', async () => {
+    const emptyRootBlueprint = {
+      ...jsonBlueprint,
+      id: 6,
+      parser_config: { ...JSONConfig, extraction_root: 'items' },
+    };
+    const emptyRootFile = new File([JSON.stringify({ items: [] })], 'empty.json', { type: 'application/json' });
+
+    const processor = useFileProcessor(false, [emptyRootBlueprint]);
+    await processor.handleSelectedFile(emptyRootFile);
+
+    const result = processor.blueprintOutcomeMap[6];
+    expect(result.extractedData).toEqual([]);
+    expect(result.processingErrors).toEqual([]);
+  });
+
+  it('extracts data correctly when extraction_root points to a nested, non-empty array', async () => {
+    const nestedRootBlueprint = {
+      ...jsonBlueprint,
+      id: 7,
+      parser_config: { ...JSONConfig, extraction_root: 'payload.items' },
+    };
+    const nestedRootFile = new File(
+      [JSON.stringify({ payload: { items: [{ name: 'Alice' }, { name: 'Bob' }] } })],
+      'nested.json',
+      { type: 'application/json' }
+    );
+
+    const processor = useFileProcessor(false, [nestedRootBlueprint]);
+    await processor.handleSelectedFile(nestedRootFile);
+
+    const result = processor.blueprintOutcomeMap[7];
+    expect(result.extractedData.length).toBe(2);
+    expect(result.extractedData[0]).toHaveProperty('name', 'Alice');
+    expect(result.extractedData[1]).toHaveProperty('name', 'Bob');
+    expect(result.processingErrors).toEqual([]);
+  });
+
   it('handles unsupported file type gracefully', async () => {
     const badFile = new File(['<html></html>'], 'fake.html', { type: 'text/html' });
     const processor = useFileProcessor(false, [jsonBlueprint]);

@@ -30,6 +30,7 @@
     "parsing-error-detail": "The following error occurred: {error}",
     "unsupported-bp-format": "Unsupported content format: {format}",
     "nested-path-not-found": "The field '{nestedLoopPath}' wasn't found in one of the entries, so no additional rows could be extracted for it.",
+    "extraction-root-not-found": "The extraction root '{extractionRoot}' configured for this blueprint was not found in the file.",
     "more-than-one-key-match": "More than one key match for field '{field}': {keys}. Defaulted to {defaultKey}",
     "no-key-match": "No key match for field '{field}': {keys}",
     "undefined-key": "Undefined key for field '{field}'"

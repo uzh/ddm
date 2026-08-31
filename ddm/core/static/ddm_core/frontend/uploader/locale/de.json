@@ -30,6 +30,7 @@
     "parsing-error-detail": "Der folgende Fehler trat auf: {error}",
     "unsupported-bp-format": "Nicht unterstütztes Dateiformat: {format}",
     "nested-path-not-found": "Das Feld „{nestedLoopPath}“ wurde in einem Eintrag nicht gefunden. Für diesen Eintrag konnten daher keine weiteren Zeilen extrahiert werden.",
+    "extraction-root-not-found": "Der für diesen Datentyp konfigurierte Extraktionspfad „{extractionRoot}“ wurde in der Datei nicht gefunden.",
     "more-than-one-key-match": "Mehr als eine Übereinstimmung für Feld '{field}': {keys}. Es wurde standardmäßig '{defaultKey}' verwendet",
     "no-key-match": "Keine Übereinstimmung für Feld '{field}': {keys}",
     "undefined-key": "Undefinierter Name für Feld '{field}'"

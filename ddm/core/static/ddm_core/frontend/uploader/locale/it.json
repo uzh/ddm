@@ -30,6 +30,7 @@
     "parsing-error-detail": "Si è verificato il seguente errore: {error}",
     "unsupported-bp-format": "Formato file non supportato: {format}",
     "nested-path-not-found": "Il campo «{nestedLoopPath}» non è stato trovato in una voce, quindi non è stato possibile estrarre righe aggiuntive per essa.",
+    "extraction-root-not-found": "La radice di estrazione «{extractionRoot}» configurata per questo tipo di dati non è stata trovata nel file.",
     "more-than-one-key-match": "Più di una corrispondenza per il campo '{field}': {keys}. È stato utilizzato '{defaultKey}' per impostazione predefinita",
     "no-key-match": "Nessuna corrispondenza per il campo '{field}': {keys}",
     "undefined-key": "Nome non definito per il campo '{field}'"

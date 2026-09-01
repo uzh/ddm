@@ -306,6 +306,148 @@ describe('handleZipFile', () => {
     expect(blueprintOutcomeMap[1].extractedData.length).toBe(0);
   });
 
+  it('registers EXTRACTION_ROOT_NOT_FOUND when the configured extraction_root does not exist in the file', async () => {
+    const zipFile = await createZipFile();
+    const missingRootBlueprint = {
+      ...jsonBlueprintA,
+      parser_config: { ...JSONConfig, extraction_root: 'items' },
+    };
+    const blueprintOutcomeMap = {
+      1: new BlueprintExtractionOutcome(missingRootBlueprint)
+    };
+    const generalErrors = [];
+
+    await handleZipFile(zipFile, [missingRootBlueprint], blueprintOutcomeMap, generalErrors, 1);
+
+    expect(blueprintOutcomeMap[1].extractedData).toEqual([]);
+    expect(blueprintOutcomeMap[1].processingErrors).toContainEqual(
+      expect.objectContaining({
+        type: 'EXTRACTION_ROOT_NOT_FOUND',
+        level: 'critical',
+        context: expect.objectContaining({ extractionRoot: 'items' }),
+      })
+    );
+  });
+
+  it('falls back to a backup blueprint when the primary extraction_root is not found', async () => {
+    const zipFile = await createZipFile();
+    const backupBlueprint = {
+      ...jsonBlueprintA,
+      id: 20,
+      is_backup: true,
+    };
+    const primaryBlueprint = {
+      ...jsonBlueprintA,
+      id: 21,
+      parser_config: { ...JSONConfig, extraction_root: 'items' },
+      backup_ids: [20],
+    };
+    const blueprintOutcomeMap = {
+      20: new BlueprintExtractionOutcome(backupBlueprint),
+      21: new BlueprintExtractionOutcome(primaryBlueprint),
+    };
+    const generalErrors = [];
+
+    await handleZipFile(zipFile, [primaryBlueprint, backupBlueprint], blueprintOutcomeMap, generalErrors, 1);
+
+    expect(blueprintOutcomeMap[21].processingErrors).toContainEqual(
+      expect.objectContaining({ type: 'EXTRACTION_ROOT_NOT_FOUND' })
+    );
+    expect(blueprintOutcomeMap[20].extractedData.length).toBe(2);
+    expect(blueprintOutcomeMap[20].extractedData).toContainEqual({ name: 'Alice' });
+  });
+
+  it('falls back to a backup blueprint on a pre-existing PARSING_ERROR', async () => {
+    const zip = new JSZip();
+    zip.file('data_a.json', '{ not valid json ');
+    zip.file('data_b.json', jsonDataB);
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const zipFile = new File([blob], 'test.zip', { type: 'application/zip' });
+
+    const backupBlueprint = {
+      ...jsonBlueprintA,
+      id: 30,
+      is_backup: true,
+      file_paths: [{ path: 'data_b.json', is_regex: false }],
+    };
+    const primaryBlueprint = {
+      ...jsonBlueprintA,
+      id: 31,
+      backup_ids: [30],
+    };
+    const blueprintOutcomeMap = {
+      30: new BlueprintExtractionOutcome(backupBlueprint),
+      31: new BlueprintExtractionOutcome(primaryBlueprint),
+    };
+    const generalErrors = [];
+
+    await handleZipFile(zipFile, [primaryBlueprint, backupBlueprint], blueprintOutcomeMap, generalErrors, 1);
+
+    expect(blueprintOutcomeMap[31].processingErrors).toContainEqual(
+      expect.objectContaining({ type: 'PARSING_ERROR' })
+    );
+    expect(blueprintOutcomeMap[30].extractedData.length).toBe(2);
+    expect(blueprintOutcomeMap[30].extractedData).toContainEqual({ name: 'Chester' });
+  });
+
+  it('treats an empty array found at extraction_root as legitimately empty data: no error and no backup fallback', async () => {
+    const zip = new JSZip();
+    zip.file('data_a.json', JSON.stringify({ items: [] }));
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const zipFile = new File([blob], 'test.zip', { type: 'application/zip' });
+
+    const backupBlueprint = {
+      ...jsonBlueprintA,
+      id: 40,
+      is_backup: true,
+      // Deliberately non-existent: if the backup were ever attempted, this
+      // would register a NO_FILE_MATCH error, which the assertions below rule out.
+      file_paths: [{ path: 'nonexistent.json', is_regex: false }],
+    };
+    const primaryBlueprint = {
+      ...jsonBlueprintA,
+      id: 41,
+      parser_config: { ...JSONConfig, extraction_root: 'items' },
+      backup_ids: [40],
+    };
+    const blueprintOutcomeMap = {
+      40: new BlueprintExtractionOutcome(backupBlueprint),
+      41: new BlueprintExtractionOutcome(primaryBlueprint),
+    };
+    const generalErrors = [];
+
+    await handleZipFile(zipFile, [primaryBlueprint, backupBlueprint], blueprintOutcomeMap, generalErrors, 1);
+
+    expect(blueprintOutcomeMap[41].extractedData).toEqual([]);
+    expect(blueprintOutcomeMap[41].processingErrors).toEqual([]);
+    expect(blueprintOutcomeMap[40].processingErrors).toEqual([]);
+    expect(blueprintOutcomeMap[40].extractedData).toEqual([]);
+  });
+
+  it('extracts data correctly when extraction_root points to a nested, non-empty array', async () => {
+    const zip = new JSZip();
+    zip.file('data_a.json', JSON.stringify({ payload: { items: [{ name: 'Alice' }, { name: 'Bob' }] } }));
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const zipFile = new File([blob], 'test.zip', { type: 'application/zip' });
+
+    const nestedRootBlueprint = {
+      ...jsonBlueprintA,
+      id: 50,
+      parser_config: { ...JSONConfig, extraction_root: 'payload.items' },
+    };
+    const blueprintOutcomeMap = {
+      50: new BlueprintExtractionOutcome(nestedRootBlueprint)
+    };
+    const generalErrors = [];
+
+    await handleZipFile(zipFile, [nestedRootBlueprint], blueprintOutcomeMap, generalErrors, 1);
+
+    expect(blueprintOutcomeMap[50].extractedData.length).toBe(2);
+    expect(blueprintOutcomeMap[50].extractedData).toContainEqual({ name: 'Alice' });
+    expect(blueprintOutcomeMap[50].extractedData).toContainEqual({ name: 'Bob' });
+    expect(blueprintOutcomeMap[50].processingErrors).toEqual([]);
+  });
+
   it('processes multiple blueprints with different patterns', async () => {
     const zip = new JSZip();
     zip.file('data_a.json', jsonDataA);

@@ -4,7 +4,7 @@ import {registerGeneralError} from "@uploader/composables/useFileProcessor/error
 import {Blueprint} from "@uploader/types/Blueprint";
 import {BlueprintExtractionOutcome} from "@uploader/classes/BlueprintExtractionOutcome";
 import {BlueprintFilePath} from "@uploader/types/BlueprintFilePath";
-import {ProcessingError} from "@uploader/types/ProcessingError";
+import {ERROR_LEVELS, ProcessingError} from "@uploader/types/ProcessingError";
 import {processContent} from "@uploader/composables/useFileProcessor/contentParsers";
 
 
@@ -218,8 +218,12 @@ export async function handleZipFile(
         try {
           const zipEntry = extractedFiles.find(f => f.fullPath === zipPath);
           const content = stripBom(await zipEntry.entry.async("string"));
+          const errorsBefore = blueprintOutcomeMap[blueprint.id].processingErrors.length;
           processContent(content, blueprint, blueprintOutcomeMap);
-          succeeded = true;
+          const newErrors = blueprintOutcomeMap[blueprint.id].processingErrors.slice(errorsBefore);
+          if (!newErrors.some(e => e.level === ERROR_LEVELS.CRITICAL)) {
+            succeeded = true;
+          }
         } catch (error) {
           blueprintOutcomeMap[blueprint.id].registerError(ERROR_CATALOG.FILE_PROCESSING_FAIL_GENERAL, {error: error});
         }

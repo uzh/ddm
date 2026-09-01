@@ -75,7 +75,7 @@ class ExceptionAPI(APIView):
 
 
 class EventLogAPIView(ListAPIView):
-    permission_classes = [IsAuthenticated, IsProjectOwner, IsAdminUser]
+    permission_classes = [IsAuthenticated, (IsProjectOwner | IsAdminUser)]
 
     filterset_class = EventLogFilter
     pagination_class = BootstrapTablePagination
@@ -97,7 +97,7 @@ class EventLogAPIView(ListAPIView):
 
 
 class ExceptionLogAPIView(ListAPIView):
-    permission_classes = [IsAuthenticated, IsProjectOwner, IsAdminUser]
+    permission_classes = [IsAuthenticated, (IsProjectOwner | IsAdminUser)]
 
     filterset_class = ExceptionLogFilter
     pagination_class = BootstrapTablePagination

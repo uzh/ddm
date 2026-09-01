@@ -30,6 +30,7 @@
     "parsing-error-detail": "L'erreur suivante s'est produite : {error}",
     "unsupported-bp-format": "Format de fichier non pris en charge : {format}",
     "nested-path-not-found": "Le champ « {nestedLoopPath} » n'a pas été trouvé dans une entrée. Aucune ligne supplémentaire n'a donc pu être extraite pour celle-ci.",
+    "extraction-root-not-found": "La racine d'extraction « {extractionRoot} » configurée pour ce type de données n'a pas été trouvée dans le fichier.",
     "more-than-one-key-match": "Plus d'une correspondance pour le champ '{field}' : {keys}. '{defaultKey}' a été utilisé par défaut",
     "no-key-match": "Aucune correspondance pour le champ '{field}' : {keys}",
     "undefined-key": "Nom non défini pour le champ '{field}'"

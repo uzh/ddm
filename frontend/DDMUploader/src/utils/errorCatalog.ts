@@ -121,6 +121,17 @@ export const ERROR_CATALOG: Record<string, ProcessingError> = {
       nestedLoopPath: '[the configured nested loop path]'
     }
   },
+  EXTRACTION_ROOT_NOT_FOUND: {
+    type: 'EXTRACTION_ROOT_NOT_FOUND',
+    category: ERROR_CATEGORIES.EXTRACTION,
+    scope: ERROR_SCOPES.BLUEPRINT,
+    i18nDetail: 'errors.extraction-root-not-found',
+    level: ERROR_LEVELS.CRITICAL,
+    context: {
+      blueprintId: '[blueprint ID]',
+      extractionRoot: '[the configured extraction root path]'
+    }
+  },
   MORE_THAN_ONE_KEY_MATCH: {
     type: 'MORE_THAN_ONE_KEY_MATCH',
     category: ERROR_CATEGORIES.EXTRACTION,

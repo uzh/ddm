@@ -6,6 +6,13 @@ import {prepareRowForExtraction, extractData, getMissingFields} from "@uploader/
 import {CSVParserConfig, JSONParserConfig, TXTParserConfig} from "@uploader/types/ParserConfigs";
 import {getNestedJsonContent, resolveNestedCollection} from "@uploader/composables/useFileProcessor/jsonPath";
 
+export class ExtractionRootNotFoundError extends Error {
+  constructor(public extractionRoot: string) {
+    super(`Extraction root '${extractionRoot}' not found`);
+    this.name = 'ExtractionRootNotFoundError';
+  }
+}
+
 /**
  * Processes a single file's content using a provided blueprint definition.
  *
@@ -193,9 +200,15 @@ export function getParsedContentArray(
       try {
         parsedContentArray = parseJsonContent(content, blueprint.parser_config);
       } catch (error) {
-        blueprintOutcomeMap[blueprint.id].registerError(
-          ERROR_CATALOG.PARSING_ERROR, {contentType: 'JSON', error: error}
-        );
+        if (error instanceof ExtractionRootNotFoundError) {
+          blueprintOutcomeMap[blueprint.id].registerError(
+            ERROR_CATALOG.EXTRACTION_ROOT_NOT_FOUND, {extractionRoot: error.extractionRoot}
+          );
+        } else {
+          blueprintOutcomeMap[blueprint.id].registerError(
+            ERROR_CATALOG.PARSING_ERROR, {contentType: 'JSON', error: error}
+          );
+        }
         return null;
       }
       break;
@@ -255,10 +268,9 @@ export function parseJsonContent(
   }
 
   if (parserConfig.extraction_root && parserConfig.extraction_root !== '') {
-    try {
-      fileContent = getNestedJsonContent(fileContent, parserConfig.extraction_root)
-    } catch(error) {
-      throw new Error(`Failed to get nested JSON content: ${error}`);
+    fileContent = getNestedJsonContent(fileContent, parserConfig.extraction_root);
+    if (fileContent === undefined) {
+      throw new ExtractionRootNotFoundError(parserConfig.extraction_root);
     }
   }
 

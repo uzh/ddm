@@ -6,7 +6,7 @@
     <title>DDM | Project Logs</title>
     <link rel="prev" href="continuation.html">
     <link rel="next" href="templating_features.html">
-    <meta name="generator" content="Antora 3.1.15">
+    <meta name="generator" content="Antora 3.2.0">
     <link rel="stylesheet" href="../../../../_/css/site.css">
     <script>var uiRootPath = '../../../../_'</script>
     <link rel="icon" href="../../../../_/img/ddl_favicon_black.svg" type="image/x-icon">
@@ -297,7 +297,10 @@ donating data or filling out the questionnaire.</p>
 </div>
 <div class="paragraph">
 <p><strong>ZIP_READ_FAIL</strong><br>
-<em>Description:</em> Indicates that an error occurred trying to read a ZIP-file. <br></p>
+<em>Description:</em> Indicates that an error occurred trying to read a ZIP-file.
+The message contains a JSON object with the underlying reader error (<code>error</code>),
+and, for a failed nested archive, its path within the container (<code>nestedZipPath</code>)
+and nesting depth (<code>depth</code>).<br></p>
 </div>
 <div class="paragraph">
 <p><strong>INVALID_REGEX</strong><br>
@@ -321,7 +324,8 @@ donating data or filling out the questionnaire.</p>
 </div>
 <div class="paragraph">
 <p><strong>NO_FIELDS_TO_EXTRACT</strong><br>
-<em>Description:</em> Indicates no fields were defined that should be kept in the data donation.<br></p>
+<em>Description:</em> Indicates no fields were defined that should be kept in the data donation.
+(In older logs this exception was named <code>NO_EXTRACTION_RULES</code>.)<br></p>
 </div>
 <div class="paragraph">
 <p><strong>PARSING_ERROR</strong><br>
@@ -342,6 +346,24 @@ defined in an extraction rule.<br></p>
 <em>Description:</em> Indicates that a configured nested path was not found in the uploaded file.</p>
 </div>
 <div class="paragraph">
+<p><strong>EXTRACTION_ROOT_NOT_FOUND</strong><br>
+<em>Description:</em> Indicates that the extraction root path configured on the blueprint could not be
+resolved in the uploaded file.<br></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The following three entries are not errors. They are diagnostic summaries written once per
+blueprint on every successful processing run, to help monitor data quality.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
 <p><strong>EXTRACTION_STATS</strong><br>
 <em>Description:</em> Contains a summary of the data extraction procedure.
 Includes the <em>number of rows with a missing field</em> (nRowsMissingField),
@@ -351,8 +373,9 @@ the <em>total number of extracted rows</em> (nRowsTotal), and
 </div>
 <div class="paragraph">
 <p><strong>EXTRACTION_LOG</strong><br>
-<em>Description:</em> Contains a summary of how many times an extraction rule led to the exclusion of a data row
-during the data extraction procedure (is a dictionary where the keys represent the extraction rule IDs and the values the counts).<br></p>
+<em>Description:</em> Contains a summary of how many times each extraction rule was applied to the data
+during the data extraction procedure&#8201;&#8212;&#8201;both row filtering and regex transformations
+(is a dictionary where the keys represent the extraction rule IDs and the values the counts).<br></p>
 </div>
 <div class="paragraph">
 <p><strong>EXTRACTED_FIELDS_MAP</strong><br>

@@ -72,9 +72,8 @@ class BlueprintExportView(DDMAuthMixin, View):
             json.dumps(data, indent=2, ensure_ascii=False),
             content_type="application/json",
         )
-        response["Content-Disposition"] = (
-            f'attachment; filename="{blueprint.name}-blueprint-export.json"'
-        )
+        filename = f"ddm_blueprint-{''.join(blueprint.name.split())}-export.json"
+        response["Content-Disposition"] = f'attachment; filename="{filename}"'
         return response
 
 
@@ -171,9 +170,8 @@ class FileUploaderExportView(DDMAuthMixin, View):
             json.dumps(data, indent=2, ensure_ascii=False),
             content_type="application/json",
         )
-        response["Content-Disposition"] = (
-            f'attachment; filename="{uploader.name}-uploader-export.json"'
-        )
+        filename = f"ddm_uploader-{''.join(uploader.name.split())}-export.json"
+        response["Content-Disposition"] = f'attachment; filename="{filename}"'
         return response
 
 

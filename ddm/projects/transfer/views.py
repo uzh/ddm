@@ -38,9 +38,8 @@ class ProjectExportView(DDMAuthMixin, DetailView):
             json.dumps(data, indent=2, ensure_ascii=False),
             content_type="application/json",
         )
-        response["Content-Disposition"] = (
-            f'attachment; filename="{project.slug}-export.json"'
-        )
+        filename = f"ddm_project-{''.join(project.name.split())}-export.json"
+        response["Content-Disposition"] = f'attachment; filename="{filename}"'
         return response
 
 

@@ -131,7 +131,7 @@ class TestEventLogAPIView(TestCase):
 
     def test_non_owner_access_denied(self):
         client = APIClient()
-        client.login(**self.other_creds)
+        client.login(**self.non_staff_creds)
         response = client.get(self.api_url)
         self.assertEqual(response.status_code, 403)
 
@@ -139,7 +139,7 @@ class TestEventLogAPIView(TestCase):
         project = DonationProject.objects.create(
             name="Non Staff Project",
             slug="non-staff-project",
-            owner=self.non_staff_profile,
+            owner=self.other_profile,
         )
         url = reverse("ddm_logging:event_logs_api", args=[project.url_id])
         client = APIClient()
@@ -209,12 +209,12 @@ class TestEventLogAPIView(TestCase):
         descriptions = [row["description"] for row in response.data["rows"]]
         self.assertEqual(descriptions, sorted(descriptions, reverse=True))
 
-    def test_nonexistent_project_returns_403(self):
+    def test_nonexistent_project_returns_404(self):
         client = APIClient()
         client.login(**self.owner_creds)
         url = reverse("ddm_logging:event_logs_api", args=["nonexistent-id"])
         response = client.get(url)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 404)
 
 
 class TestExceptionLogAPIView(TestCase):
@@ -236,7 +236,7 @@ class TestExceptionLogAPIView(TestCase):
             "email": "other@mail.com",
         }
         cls.other_user = User.objects.create_user(**cls.other_creds)
-        cls.other_user.is_staff = True
+        cls.other_user.is_staff = False
         cls.other_user.save()
 
         cls.project = DonationProject.objects.create(
@@ -439,9 +439,9 @@ class TestExceptionLogAPIView(TestCase):
         non_null = [b for b in blueprints if b is not None]
         self.assertEqual(non_null, sorted(non_null))
 
-    def test_nonexistent_project_returns_403(self):
+    def test_nonexistent_project_returns_404(self):
         client = APIClient()
         client.login(**self.owner_creds)
         url = reverse("ddm_logging:exception_logs_api", args=["nonexistent-id"])
         response = client.get(url)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 404)

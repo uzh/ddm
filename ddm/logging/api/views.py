@@ -3,6 +3,7 @@ from django.http import HttpRequest
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions
+from rest_framework.exceptions import NotFound
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -93,6 +94,9 @@ class EventLogAPIView(ListAPIView):
 
     def get_queryset(self) -> QuerySet[EventLogEntry]:
         project_url_id = self.kwargs["project_url_id"]
+        if not DonationProject.objects.filter(url_id=project_url_id).exists():
+            msg = "Project not found."
+            raise NotFound(msg)
         return EventLogEntry.objects.filter(project__url_id=project_url_id)
 
 
@@ -117,6 +121,9 @@ class ExceptionLogAPIView(ListAPIView):
 
     def get_queryset(self) -> QuerySet[ExceptionLogEntry]:
         project_url_id = self.kwargs["project_url_id"]
+        if not DonationProject.objects.filter(url_id=project_url_id).exists():
+            msg = "Project not found."
+            raise NotFound(msg)
         return ExceptionLogEntry.objects.filter(
             project__url_id=project_url_id
         ).select_related("participant", "blueprint")

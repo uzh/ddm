@@ -143,7 +143,11 @@ export async function collectZipEntries(
         entries.push(...nestedEntries);
         continue;
       } catch (error) {
-        registerGeneralError(generalErrors, ERROR_CATALOG.ZIP_READ_FAIL, { error });
+        registerGeneralError(generalErrors, ERROR_CATALOG.ZIP_READ_FAIL, {
+          error: error instanceof Error ? error.message : String(error),
+          nestedZipPath: entryPath,
+          depth: depth + 1,
+        });
       }
     }
 
@@ -194,7 +198,11 @@ export async function handleZipFile(
   try {
     zip = await JSZip.loadAsync(file);
   } catch (error) {
-    registerGeneralError(generalErrors, ERROR_CATALOG.ZIP_READ_FAIL, {error: error});
+    registerGeneralError(generalErrors, ERROR_CATALOG.ZIP_READ_FAIL, {
+      error: error instanceof Error ? error.message : String(error),
+      nestedZipPath: null,
+      depth: 0,
+    });
     return;
   }
 

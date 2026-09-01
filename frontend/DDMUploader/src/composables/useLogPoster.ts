@@ -48,7 +48,13 @@ export function useLogPoster(
 
     // Log general errors.
     for (const error of generalErrors) {
-      await postLog(null, error.type, t(error.i18nDetail, error.context));
+      if (error.type === 'ZIP_READ_FAIL') {
+        // Post the structured context (underlying reader error, nested-zip
+        // path/depth) rather than the generic participant-facing sentence.
+        await postLog(null, error.type, JSON.stringify(error.context));
+      } else {
+        await postLog(null, error.type, t(error.i18nDetail, error.context));
+      }
     }
 
     // Log blueprint errors.
@@ -64,7 +70,7 @@ export function useLogPoster(
       const logsToPost = {
         'EXTRACTION_STATS': blueprintOutcome.extractionStats,
         'EXTRACTION_LOG': blueprintOutcome.extractionRuleLog,
-        'EXTRACTED_FIELDS_MAP': blueprintOutcome.extractedFieldsMap
+        'EXTRACTED_FIELDS_MAP': Object.fromEntries(blueprintOutcome.extractedFieldsMap)
       };
       for (const [type, data] of Object.entries(logsToPost)) {
         await postLog(blueprintOutcome.blueprintId, type, JSON.stringify(data));

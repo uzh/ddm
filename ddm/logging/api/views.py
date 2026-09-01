@@ -1,6 +1,11 @@
+import logging
+from datetime import datetime
+
 from django.db.models import QuerySet
 from django.http import HttpRequest
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions
 from rest_framework.exceptions import NotFound
@@ -22,6 +27,10 @@ from ddm.logging.models import EventLogEntry, ExceptionLogEntry
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject
 
+logger = logging.getLogger("ddm")
+
+SESSION_LOST_DESCRIPTION = "Client log received without participant session"
+
 
 class ExceptionAPI(APIView):
     """
@@ -42,12 +51,16 @@ class ExceptionAPI(APIView):
         Log exception messages received from client.
         """
         project_url_id = self.kwargs["project_url_id"]
-        project = DonationProject.objects.get(url_id=project_url_id)
+        project = get_object_or_404(DonationProject, url_id=project_url_id)
 
         try:
             participant_id = request.session[f"project-{project.pk}"]["participant_id"]
             participant = Participant.objects.get(pk=participant_id)
-        except KeyError:
+        except (KeyError, TypeError, ValueError, Participant.DoesNotExist):
+            # KeyError: no participation session for this project (cookie not
+            # sent, direct/replayed request). TypeError/ValueError: malformed
+            # session value. DoesNotExist: the participant has since been
+            # deleted (participant FK is SET_NULL, see ExceptionLogEntry).
             participant = None
 
         uploader_id = request.data.get("uploader")
@@ -56,9 +69,12 @@ class ExceptionAPI(APIView):
         blueprint_id = request.data.get("blueprint")
         blueprint = DonationBlueprint.objects.filter(pk=blueprint_id).first()
 
-        if request.data.get("date") is not None:
-            post_date = request.data.get("date")
-        else:
+        raw_date = request.data.get("date")
+        try:
+            post_date = parse_datetime(raw_date) if isinstance(raw_date, str) else None
+        except ValueError:
+            post_date = None
+        if post_date is None:
             post_date = timezone.now()
 
         ExceptionLogEntry.objects.create(
@@ -72,7 +88,55 @@ class ExceptionAPI(APIView):
             uploader=uploader,
         )
 
+        session_lost = (
+            participant is None
+            and uploader is not None
+            and uploader.project_id == project.pk
+        )
+        if session_lost:
+            self.log_missing_participant_session(
+                project, uploader, blueprint, request.data.get("status_code"), post_date
+            )
+
         return Response(None, status=201)
+
+    @staticmethod
+    def log_missing_participant_session(
+        project: DonationProject,
+        uploader: FileUploader,
+        blueprint: DonationBlueprint | None,
+        status_code: str | None,
+        post_date: datetime,
+    ) -> None:
+        """
+        Record that a genuine client log (it carries a known uploader) arrived
+        without a resolvable participant session, so researchers/ops can estimate
+        how often the participant identity is being lost at write time.
+
+        Deduplicated per processing batch: the frontend stamps every log in one
+        batch with the same ``date`` (see useLogPoster), so only the first log
+        of a batch creates an EventLogEntry.
+        """
+        message = (
+            f"A client-side '{status_code}' log was received for uploader "
+            f"{uploader.pk} (blueprint {blueprint.pk if blueprint else None}) "
+            f"but no participant could be resolved from the session. The "
+            f"participant identity for this log is lost."
+        )
+        logger.warning("[project %s] %s", project.pk, message)
+
+        already_logged = EventLogEntry.objects.filter(
+            project=project,
+            description=SESSION_LOST_DESCRIPTION,
+            date=post_date,
+        ).exists()
+        if not already_logged:
+            EventLogEntry.objects.create(
+                project=project,
+                description=SESSION_LOST_DESCRIPTION,
+                message=message,
+                date=post_date,
+            )
 
 
 class EventLogAPIView(ListAPIView):

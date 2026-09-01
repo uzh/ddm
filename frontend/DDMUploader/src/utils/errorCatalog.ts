@@ -24,7 +24,11 @@ export const ERROR_CATALOG: Record<string, ProcessingError> = {
     scope: ERROR_SCOPES.FILE,
     i18nDetail: 'errors.zip-read-fail',
     level: ERROR_LEVELS.CRITICAL,
-    context: {}
+    context: {
+      error: '[underlying reader error message]',
+      nestedZipPath: '[path of the nested zip that failed, or null for the top-level archive]',
+      depth: '[nesting depth of the failed archive, 0 = top level]'
+    }
   },
   INVALID_REGEX: {
     type: 'INVALID_REGEX',

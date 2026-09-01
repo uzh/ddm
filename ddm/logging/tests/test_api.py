@@ -6,6 +6,7 @@ from rest_framework.test import APIClient
 
 from ddm.datadonation.models import DonationBlueprint, FileUploader
 from ddm.datadonation.schemas import JSONParserConfig
+from ddm.logging.api.views import SESSION_LOST_DESCRIPTION
 from ddm.logging.models import EventLogEntry, ExceptionLogEntry, ExceptionRaisers
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject, ResearchProfile
@@ -66,6 +67,91 @@ class TestExceptionAPI(TestCase):
 
         exceptions_count_after = ExceptionLogEntry.objects.count()
         self.assertEqual(exceptions_count_before, (exceptions_count_after - 1))
+
+    def test_post_links_participant_from_session(self):
+        client = Client()
+        client.get(reverse("ddm_participation:briefing", args=[self.project.slug]))
+        session_participant_id = client.session[f"project-{self.project.pk}"][
+            "participant_id"
+        ]
+
+        client.post(self.post_url, self.post_data)
+
+        entry = ExceptionLogEntry.objects.latest("pk")
+        self.assertEqual(entry.participant_id, session_participant_id)
+        self.assertFalse(
+            EventLogEntry.objects.filter(description=SESSION_LOST_DESCRIPTION).exists()
+        )
+
+    def test_post_without_session_but_known_uploader_logs_event(self):
+        client = Client()
+        data = {
+            **self.post_data,
+            "uploader": self.file_uploader.pk,
+            "date": "2026-09-01T10:00:00Z",
+        }
+
+        response = client.post(self.post_url, data)
+
+        self.assertEqual(response.status_code, 201)
+        entry = ExceptionLogEntry.objects.latest("pk")
+        self.assertIsNone(entry.participant)
+        self.assertEqual(
+            EventLogEntry.objects.filter(
+                project=self.project, description=SESSION_LOST_DESCRIPTION
+            ).count(),
+            1,
+        )
+
+    def test_missing_session_event_log_deduplicated_per_batch(self):
+        client = Client()
+        data = {
+            **self.post_data,
+            "uploader": self.file_uploader.pk,
+            "date": "2026-09-01T10:00:00Z",
+        }
+
+        client.post(self.post_url, data)
+        client.post(self.post_url, {**data, "status_code": "EXTRACTION_STATS"})
+
+        self.assertEqual(ExceptionLogEntry.objects.count(), 2)
+        self.assertEqual(
+            EventLogEntry.objects.filter(
+                project=self.project, description=SESSION_LOST_DESCRIPTION
+            ).count(),
+            1,
+        )
+
+    def test_post_without_uploader_does_not_log_event(self):
+        client = Client()
+
+        client.post(self.post_url, self.post_data)
+
+        self.assertFalse(
+            EventLogEntry.objects.filter(description=SESSION_LOST_DESCRIPTION).exists()
+        )
+
+    def test_post_with_deleted_participant_in_session(self):
+        client = Client()
+        client.get(reverse("ddm_participation:briefing", args=[self.project.slug]))
+        Participant.objects.filter(
+            pk=client.session[f"project-{self.project.pk}"]["participant_id"]
+        ).delete()
+
+        exceptions_count_before = ExceptionLogEntry.objects.count()
+        response = client.post(self.post_url, self.post_data)
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(ExceptionLogEntry.objects.count(), exceptions_count_before + 1)
+        self.assertIsNone(ExceptionLogEntry.objects.latest("pk").participant)
+
+    def test_post_to_unknown_project_returns_404(self):
+        client = Client()
+        url = reverse("ddm_logging:exceptions_api", args=["does-not-exist"])
+
+        response = client.post(url, self.post_data)
+
+        self.assertEqual(response.status_code, 404)
 
 
 class TestEventLogAPIView(TestCase):

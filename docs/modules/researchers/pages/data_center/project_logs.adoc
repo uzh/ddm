@@ -36,3 +36,5 @@ The Event Log currently registers the following events:
 3. When a data download attempt was successful, failed or denied.
 4. When a data delete attempt was successful, failed, or denied.
 5. When a participant delete request was successful, failed, or denied.
+6. When a client-side log arrived that could not be attributed to a participant
+   (the participant's session was missing at the time the log was recorded).

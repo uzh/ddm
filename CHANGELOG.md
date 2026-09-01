@@ -73,6 +73,10 @@ This version drops official support for Python versions < 3.12.
   required questions on all following pages were no longer validated.
 - Data extraction now automatically ignores macOS garbage files
   (e.g., `__MACOSX/`) folder or `._`-prefixed sibling files.
+- Client-side `EXTRACTED_FIELDS_MAP` logs are no longer always empty (`{}`); the
+  extracted-field mapping is now serialized correctly.
+- `ZIP_READ_FAIL` logs now carry the underlying reader error (and, for a failed
+  nested archive, its path and nesting depth) instead of only a generic message.
 
 ### Deprecated
 

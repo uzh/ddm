@@ -270,6 +270,12 @@ describe('handleZipFile', () => {
     await handleZipFile(invalidZip, [jsonBlueprintA], blueprintOutcomeMap, generalErrors, 1);
 
     expect(generalErrors.length).toBeGreaterThan(0);
+    const zipReadFail = generalErrors.find(e => e.type === 'ZIP_READ_FAIL');
+    expect(zipReadFail).toBeDefined();
+    expect(typeof zipReadFail.context.error).toBe('string');
+    expect(zipReadFail.context.error.length).toBeGreaterThan(0);
+    expect(zipReadFail.context.depth).toBe(0);
+    expect(zipReadFail.context.nestedZipPath).toBeNull();
   });
 
   it('handles invalid regex pattern in blueprint', async () => {

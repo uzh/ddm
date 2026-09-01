@@ -1,0 +1,22 @@
+{% extends 'ddm_core/page_with_form.html' %}
+
+{% block page_title %}Import File Uploader{% endblock page_title %}
+
+{% block main_heading %}Import File Uploader{% endblock main_heading %}
+
+{% block form_content %}
+
+  <div id="uploader-import-section" class="ddm-section-container">
+    <div class="row">
+      <p>
+        Upload a File Uploader export file (created via "Export" on a File
+        Uploader's settings page) to add it to this project, including any
+        blueprints bundled with it.
+      </p>
+
+      {{ form.non_field_errors }}
+      {% include "ddm_core/form_components/_basic_field.html" with field=form.file %}
+    </div>
+  </div>
+
+{% endblock form_content %}

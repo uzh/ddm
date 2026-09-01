@@ -13,9 +13,9 @@ This version drops official support for Python versions < 3.12.
   project name should be displayed in the header of the participation interface.
 - The primary color (used for buttons, etc.) and background color of the
   participant interface can now be customized per project.
-- **Copying projects, blueprints, and questionnaire**: There is now an option to
+- **Copying projects, file uploaders, blueprints, and questionnaire**: There is now an option to
   create copies of Blueprints and Questions within a Project.
-- **Export/Import function**: Projects, blueprints, and questionnaires can now
+- **Export/Import function**: Projects, file uploaders, blueprints, and questionnaires can now
   be exported and imported again (e.g., to share project configurations).
 
 **Data Donation**

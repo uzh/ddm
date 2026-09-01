@@ -5,9 +5,12 @@ from typing import TYPE_CHECKING
 from django.utils import timezone
 
 from ddm import VERSION as DDM_VERSION
-from ddm.core.utils.transfer.id_mapping import AllocationIDs, LocalIdAllocator
+from ddm.core.utils.transfer.id_mapping import LocalIdAllocator
 from ddm.core.utils.transfer.schema import EXPORT_KIND_PROJECT, SCHEMA_VERSION
-from ddm.datadonation.transfer.services import serialize_blueprint
+from ddm.datadonation.transfer.services import (
+    serialize_blueprint,
+    serialize_file_uploader,
+)
 from ddm.questionnaire.transfer.services import serialize_questions
 
 if TYPE_CHECKING:
@@ -41,33 +44,6 @@ PROJECT_FIELDS = [
 ]
 
 
-def _serialize_file_uploaders(
-    project: DonationProject, allocator: LocalIdAllocator
-) -> list[dict]:
-    uploaders = []
-    for uploader in project.fileuploader_set.all():
-        instructions = [
-            {"index": instr.index, "text": instr.text}
-            for instr in uploader.donationinstruction_set.all()
-        ]
-        uploaders.append(
-            {
-                "local_id": allocator.get_or_create(
-                    AllocationIDs.FILE_UPLOADER, uploader.pk
-                ),
-                "name": uploader.name,
-                "display_name": uploader.display_name,
-                "index": uploader.index,
-                "upload_type": uploader.upload_type,
-                "extract_nested_zips": uploader.extract_nested_zips,
-                "extraction_depth": uploader.extraction_depth,
-                "combined_consent": uploader.combined_consent,
-                "instructions": instructions,
-            }
-        )
-    return uploaders
-
-
 def export_project(project: DonationProject) -> dict:
     """
     Serialize a DonationProject (+ FileUploaders/DonationInstructions,
@@ -78,7 +54,10 @@ def export_project(project: DonationProject) -> dict:
     """
     allocator = LocalIdAllocator()
 
-    file_uploaders = _serialize_file_uploaders(project, allocator)
+    file_uploaders = [
+        serialize_file_uploader(uploader, allocator, include_blueprints=False)
+        for uploader in project.fileuploader_set.all()
+    ]
     blueprints = [
         serialize_blueprint(bp, allocator, include_file_uploader_ref=True)
         for bp in project.donationblueprint_set.all()

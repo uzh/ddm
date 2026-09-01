@@ -8,10 +8,15 @@ from django.utils import timezone
 
 from ddm import VERSION as DDM_VERSION
 from ddm.core.utils.transfer.id_mapping import AllocationIDs, IdMap, LocalIdAllocator
-from ddm.core.utils.transfer.schema import EXPORT_KIND_BLUEPRINT, SCHEMA_VERSION
+from ddm.core.utils.transfer.schema import (
+    EXPORT_KIND_BLUEPRINT,
+    EXPORT_KIND_FILE_UPLOADER,
+    SCHEMA_VERSION,
+)
 from ddm.datadonation.models import (
     BlueprintFilePath,
     DonationBlueprint,
+    DonationInstruction,
     ExtractionField,
     FileUploader,
     ProcessingRule,
@@ -22,8 +27,7 @@ if TYPE_CHECKING:
 
 
 def _blueprint_name_available_in_project(name: str, project: DonationProject) -> bool:
-    # Scoped to the target project: a same-named blueprint in some unrelated
-    # project should never force a suffix here.
+    # Scoped to the target project
     return not DonationBlueprint.objects.filter(project=project, name=name).exists()
 
 
@@ -261,4 +265,127 @@ def export_blueprint(blueprint: DonationBlueprint) -> dict:
         "exported_at": timezone.now().isoformat(),
         "ddm_version": DDM_VERSION,
         "blueprints": [serialize_blueprint(blueprint, LocalIdAllocator())],
+    }
+
+
+def _file_uploader_name_available_in_project(
+    name: str, project: DonationProject
+) -> bool:
+    # Scoped to the target project
+    return not FileUploader.objects.filter(project=project, name=name).exists()
+
+
+def serialize_file_uploader(
+    uploader: FileUploader,
+    allocator: LocalIdAllocator,
+    *,
+    include_blueprints: bool = True,
+) -> dict:
+    """
+    Serialize a FileUploader (+ nested DonationInstruction) into a JSON-safe
+    dict for export.
+
+    `include_blueprints=True` (the default) bundles
+    every blueprint currently attached to this uploader, each serialized
+    via `serialize_blueprint(..., include_file_uploader_ref=True)` so it
+    carries a `file_uploader_local_id` pointing back at this same uploader.
+    A whole-project export passes `include_blueprints=False`, since
+    blueprints are already enumerated once at the project's top level.
+    """
+    local_id = allocator.get_or_create(AllocationIDs.FILE_UPLOADER, uploader.pk)
+
+    instructions = [
+        {"index": instr.index, "text": instr.text}
+        for instr in uploader.donationinstruction_set.all()
+    ]
+
+    data = {
+        "local_id": local_id,
+        "name": uploader.name,
+        "display_name": uploader.display_name,
+        "upload_type": uploader.upload_type,
+        "extract_nested_zips": uploader.extract_nested_zips,
+        "extraction_depth": uploader.extraction_depth,
+        "combined_consent": uploader.combined_consent,
+        "instructions": instructions,
+    }
+
+    if include_blueprints:
+        data["blueprints"] = [
+            serialize_blueprint(bp, allocator, include_file_uploader_ref=True)
+            for bp in uploader.donationblueprint_set.all()
+        ]
+
+    return data
+
+
+@transaction.atomic
+def build_file_uploader(
+    data: dict,
+    project: DonationProject,
+    *,
+    id_map: IdMap | None = None,
+    build_blueprints: bool = True,
+) -> FileUploader:
+    """
+    Create a new FileUploader (+ nested DonationInstruction) in `project`,
+    from a dict produced by `serialize_file_uploader()`.
+
+    `index` is always left unset so `FileUploader.save()` appends it after
+    the target project's existing uploaders, rather than carrying over the
+    source's index value - the source's exact position isn't meaningful in
+    a different (possibly non-empty) target project.
+
+    When `build_blueprints` (the default), also builds every bundled
+    blueprint, attached directly to the newly created uploader - no
+    `file_uploader_local_id` lookup needed, since every bundled blueprint
+    belongs to this one uploader by construction. Called with
+    `build_blueprints=False` from the whole-project path, where blueprints
+    are built separately afterward.
+    """
+    if id_map is None:
+        id_map = IdMap()
+
+    base_name = data["name"]
+    new_name = base_name
+    suffix = 0
+    while not _file_uploader_name_available_in_project(new_name, project):
+        suffix += 1
+        new_name = f"{base_name}_{suffix}"
+
+    new_uploader = FileUploader.objects.create(
+        project=project,
+        name=new_name,
+        display_name=data.get("display_name", ""),
+        upload_type=data.get("upload_type", FileUploader.UploadTypes.SINGLE_FILE),
+        extract_nested_zips=data.get("extract_nested_zips", False),
+        extraction_depth=data.get("extraction_depth", 0),
+        combined_consent=data.get("combined_consent", False),
+    )
+    id_map.register(data.get("local_id"), new_uploader)
+
+    for instr_data in data.get("instructions", []):
+        DonationInstruction.objects.create(
+            file_uploader=new_uploader,
+            index=instr_data.get("index", 1),
+            text=instr_data.get("text", ""),
+        )
+
+    if build_blueprints:
+        for bp_data in data.get("blueprints", []):
+            build_blueprint(bp_data, project, file_uploader=new_uploader, id_map=id_map)
+
+    return new_uploader
+
+
+def export_file_uploader(uploader: FileUploader) -> dict:
+    """Wraps `serialize_file_uploader()` in a standalone export envelope."""
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "export_kind": EXPORT_KIND_FILE_UPLOADER,
+        "exported_at": timezone.now().isoformat(),
+        "ddm_version": DDM_VERSION,
+        "file_uploader": serialize_file_uploader(
+            uploader, LocalIdAllocator(), include_blueprints=True
+        ),
     }

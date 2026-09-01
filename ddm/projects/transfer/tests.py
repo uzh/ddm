@@ -175,6 +175,12 @@ class TestSerializeProject(TestCase):
         self.assertEqual(len(data["blueprints"]), 2)
         self.assertEqual(len(data["questions"]), 2)
 
+    def test_file_uploader_entries_do_not_duplicate_blueprints(self):
+        # serialize_file_uploader() is called with include_blueprints=False
+        # here - blueprints are already enumerated once at the top level.
+        data = export_project(self.project)
+        self.assertNotIn("blueprints", data["file_uploaders"][0])
+
     def test_backup_for_resolves_to_sibling_local_id(self):
         data = export_project(self.project)
         by_name = {bp["name"]: bp for bp in data["blueprints"]}

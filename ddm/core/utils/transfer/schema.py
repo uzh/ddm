@@ -8,10 +8,12 @@ SUPPORTED_SCHEMA_VERSIONS = {1}
 EXPORT_KIND_PROJECT = "project"
 EXPORT_KIND_BLUEPRINT = "blueprint"
 EXPORT_KIND_QUESTIONNAIRE = "questionnaire"
+EXPORT_KIND_FILE_UPLOADER = "file_uploader"
 VALID_EXPORT_KINDS = {
     EXPORT_KIND_PROJECT,
     EXPORT_KIND_BLUEPRINT,
     EXPORT_KIND_QUESTIONNAIRE,
+    EXPORT_KIND_FILE_UPLOADER,
 }
 
 
@@ -66,6 +68,15 @@ def _validate_sections_for_kind(
         data.get("questions"), list
     ):
         errors.append('Missing or invalid "questions" section.')
+
+    if expected_kind == EXPORT_KIND_FILE_UPLOADER:
+        file_uploader = data.get("file_uploader")
+        if not isinstance(file_uploader, dict):
+            errors.append('Missing or invalid "file_uploader" section.')
+        elif "blueprints" in file_uploader and not isinstance(
+            file_uploader["blueprints"], list
+        ):
+            errors.append('Invalid "blueprints" list inside "file_uploader".')
 
 
 def validate_envelope(data: Any, *, expected_kind: str) -> None:  # noqa: ANN401

@@ -22,10 +22,15 @@
   {# Associated Blueprints #}
   {% include "ddm_datadonation/uploader/form_sections/associated_blueprints.html" %}
 
+{% endblock form_content %}
+
+{% block below_form %}
+  {# Copy / Export #}
+  {% include "ddm_datadonation/uploader/form_sections/copy.html" %}
+
   {# Delete #}
   {% include "ddm_datadonation/uploader/form_sections/delete.html" %}
-
-{% endblock form_content %}
+{% endblock below_form %}
 
 {% block scripts %}
   {{ block.super }}

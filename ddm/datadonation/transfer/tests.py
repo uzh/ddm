@@ -9,6 +9,7 @@ from ddm.core.utils.transfer.id_mapping import LocalIdAllocator
 from ddm.datadonation.models import (
     BlueprintFilePath,
     DonationBlueprint,
+    DonationInstruction,
     ExtractionField,
     FileUploader,
     ProcessingRule,
@@ -16,9 +17,12 @@ from ddm.datadonation.models import (
 from ddm.datadonation.schemas import JSONParserConfig
 from ddm.datadonation.transfer.services import (
     build_blueprint,
+    build_file_uploader,
     copy_blueprint,
     export_blueprint,
+    export_file_uploader,
     serialize_blueprint,
+    serialize_file_uploader,
 )
 from ddm.projects.models import DonationProject, ResearchProfile
 
@@ -324,3 +328,204 @@ class TestBlueprintExportImportViews(TestCase):
         self.assertEqual(response.status_code, 302)
         new_bp = self.target_project.donationblueprint_set.get(name="bp")
         self.assertEqual(new_bp.file_uploader, self.target_uploader)
+
+
+class TestSerializeFileUploader(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        user = User.objects.create_user(
+            username="owner", password="123", email="owner@mail.com"
+        )
+        profile = ResearchProfile.objects.create(user=user)
+        cls.project = DonationProject.objects.create(
+            name="Project", slug="project", owner=profile
+        )
+        cls.uploader = FileUploader.objects.create(
+            project=cls.project, name="uploader", upload_type="single file"
+        )
+        DonationInstruction.objects.create(
+            file_uploader=cls.uploader, index=1, text="Step 1"
+        )
+        DonationInstruction.objects.create(
+            file_uploader=cls.uploader, index=2, text="Step 2"
+        )
+        cls.blueprint = DonationBlueprint.objects.create(
+            project=cls.project,
+            file_uploader=cls.uploader,
+            name="bp",
+            expected_fields='"a"',
+            parser_config=JSONParserConfig().model_dump(),
+        )
+
+    def test_bundles_blueprints_by_default(self):
+        data = serialize_file_uploader(self.uploader, LocalIdAllocator())
+        self.assertEqual(len(data["blueprints"]), 1)
+        self.assertEqual(data["blueprints"][0]["name"], "bp")
+
+    def test_excludes_blueprints_when_requested(self):
+        data = serialize_file_uploader(
+            self.uploader, LocalIdAllocator(), include_blueprints=False
+        )
+        self.assertNotIn("blueprints", data)
+
+    def test_instructions_included_in_order(self):
+        data = serialize_file_uploader(self.uploader, LocalIdAllocator())
+        self.assertEqual(
+            [i["text"] for i in data["instructions"]], ["Step 1", "Step 2"]
+        )
+
+    def test_bundled_blueprint_points_back_at_uploader(self):
+        data = serialize_file_uploader(self.uploader, LocalIdAllocator())
+        self.assertEqual(
+            data["blueprints"][0]["file_uploader_local_id"], data["local_id"]
+        )
+
+
+class TestBuildFileUploaderStandalone(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        user = User.objects.create_user(
+            username="owner", password="123", email="owner@mail.com"
+        )
+        profile = ResearchProfile.objects.create(user=user)
+        cls.source_project = DonationProject.objects.create(
+            name="Source", slug="source", owner=profile
+        )
+        cls.target_project = DonationProject.objects.create(
+            name="Target", slug="target", owner=profile
+        )
+        cls.uploader = FileUploader.objects.create(
+            project=cls.source_project,
+            name="shared_name",
+            display_name="Shared Name",
+            upload_type="single file",
+        )
+        DonationInstruction.objects.create(
+            file_uploader=cls.uploader, index=1, text="Step 1"
+        )
+        cls.blueprint = DonationBlueprint.objects.create(
+            project=cls.source_project,
+            file_uploader=cls.uploader,
+            name="bp",
+            display_name="BP",
+            expected_fields='"a"',
+            parser_config=JSONParserConfig().model_dump(),
+        )
+
+    def test_imports_into_different_project(self):
+        data = serialize_file_uploader(self.uploader, LocalIdAllocator())
+        new_uploader = build_file_uploader(data, self.target_project)
+        self.assertEqual(new_uploader.project, self.target_project)
+        self.assertEqual(new_uploader.name, "shared_name")
+        self.assertEqual(new_uploader.donationinstruction_set.count(), 1)
+
+    def test_bundled_blueprint_is_built_and_attached(self):
+        data = serialize_file_uploader(self.uploader, LocalIdAllocator())
+        new_uploader = build_file_uploader(data, self.target_project)
+        new_bp = new_uploader.donationblueprint_set.get(name="bp")
+        self.assertEqual(new_bp.project, self.target_project)
+
+    def test_build_blueprints_false_skips_bundled_blueprints(self):
+        data = serialize_file_uploader(self.uploader, LocalIdAllocator())
+        new_uploader = build_file_uploader(
+            data, self.target_project, build_blueprints=False
+        )
+        self.assertEqual(new_uploader.donationblueprint_set.count(), 0)
+
+    def test_no_collision_across_different_projects(self):
+        # A FileUploader with the same name already exists in the SOURCE
+        # project; importing into a DIFFERENT (empty) target project must
+        # not be suffixed just because that name exists somewhere else.
+        data = serialize_file_uploader(self.uploader, LocalIdAllocator())
+        new_uploader = build_file_uploader(data, self.target_project)
+        self.assertEqual(new_uploader.name, "shared_name")
+
+    def test_collision_within_target_project_is_suffixed(self):
+        FileUploader.objects.create(
+            project=self.target_project, name="shared_name", upload_type="single file"
+        )
+        data = serialize_file_uploader(self.uploader, LocalIdAllocator())
+        new_uploader = build_file_uploader(data, self.target_project)
+        self.assertEqual(new_uploader.name, "shared_name_1")
+
+    def test_index_is_appended_ignoring_source_index(self):
+        FileUploader.objects.create(
+            project=self.target_project, name="other", upload_type="single file"
+        )
+        data = serialize_file_uploader(self.uploader, LocalIdAllocator())
+        new_uploader = build_file_uploader(data, self.target_project)
+        self.assertEqual(new_uploader.index, 2)
+
+
+@override_settings(DDM_SETTINGS={"EMAIL_PERMISSION_CHECK": r".*(\.|@)mail\.com$"})
+class TestFileUploaderExportImportCopyViews(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.owner = User.objects.create_user(
+            username="owner", password="123", email="owner@mail.com"
+        )
+        cls.owner_profile = ResearchProfile.objects.create(user=cls.owner)
+
+        cls.source_project = DonationProject.objects.create(
+            name="Source", slug="source", owner=cls.owner_profile
+        )
+        cls.target_project = DonationProject.objects.create(
+            name="Target", slug="target", owner=cls.owner_profile
+        )
+        cls.uploader = FileUploader.objects.create(
+            project=cls.source_project, name="uploader", upload_type="single file"
+        )
+        cls.blueprint = DonationBlueprint.objects.create(
+            project=cls.source_project,
+            file_uploader=cls.uploader,
+            name="bp",
+            display_name="BP",
+            expected_fields='"a"',
+            parser_config=JSONParserConfig().model_dump(),
+        )
+
+    def test_export_returns_downloadable_json(self):
+        self.client.login(username="owner", password="123")
+        response = self.client.get(
+            reverse(
+                "ddm_datadonation:uploaders:export",
+                args=[self.source_project.url_id, self.uploader.pk],
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("attachment", response["Content-Disposition"])
+        data = json.loads(response.content)
+        self.assertEqual(data["export_kind"], "file_uploader")
+        self.assertEqual(len(data["file_uploader"]["blueprints"]), 1)
+
+    def test_import_into_different_project(self):
+        self.client.login(username="owner", password="123")
+        payload = export_file_uploader(self.uploader)
+        raw = json.dumps(payload).encode("utf-8")
+        upload = SimpleUploadedFile("fu.json", raw, content_type="application/json")
+
+        response = self.client.post(
+            reverse(
+                "ddm_datadonation:uploaders:import", args=[self.target_project.url_id]
+            ),
+            data={"file": upload},
+        )
+        self.assertEqual(response.status_code, 302)
+        new_uploader = self.target_project.fileuploader_set.get(name="uploader")
+        self.assertEqual(new_uploader.donationblueprint_set.count(), 1)
+
+    def test_copy_within_same_project(self):
+        self.client.login(username="owner", password="123")
+        response = self.client.post(
+            reverse(
+                "ddm_datadonation:uploaders:copy",
+                args=[self.source_project.url_id, self.uploader.pk],
+            )
+        )
+        self.assertEqual(response.status_code, 302)
+        new_uploader = self.source_project.fileuploader_set.get(name="uploader_copy")
+        new_bp = new_uploader.donationblueprint_set.get()
+        self.assertEqual(new_bp.file_uploader, new_uploader)
+        # original untouched
+        self.uploader.refresh_from_db()
+        self.assertEqual(self.uploader.donationblueprint_set.get(), self.blueprint)

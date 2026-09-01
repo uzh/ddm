@@ -34,8 +34,21 @@ blueprint_patterns = (
 uploader_patterns = (
     [
         path(r"create/", views.FileUploaderCreate.as_view(), name="create"),
+        path(
+            r"import/", transfer_views.FileUploaderImportView.as_view(), name="import"
+        ),
         path(r"<int:pk>/edit/", views.FileUploaderEdit.as_view(), name="edit"),
         path(r"<int:pk>/delete/", views.FileUploaderDelete.as_view(), name="delete"),
+        path(
+            r"<int:pk>/copy/",
+            transfer_views.FileUploaderCopyView.as_view(),
+            name="copy",
+        ),
+        path(
+            r"<int:pk>/export/",
+            transfer_views.FileUploaderExportView.as_view(),
+            name="export",
+        ),
     ],
     "uploaders",
 )

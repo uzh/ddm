@@ -6,6 +6,7 @@ from django.db.models import QuerySet
 
 from ddm.core.utils.transfer.schema import (
     EXPORT_KIND_BLUEPRINT,
+    EXPORT_KIND_FILE_UPLOADER,
     TransferValidationError,
     validate_envelope,
 )
@@ -50,3 +51,30 @@ class BlueprintImportUploadForm(forms.Form):
             raise ValidationError(e.errors) from e
 
         return data["blueprints"][0]
+
+
+class FileUploaderImportUploadForm(forms.Form):
+    """
+    Uploads and structurally validates a standalone FileUploader export
+    file. `clean_file` returns the parsed payload's `file_uploader` dict
+    (which may itself carry a nested "blueprints" list), ready for
+    `build_file_uploader()`.
+    """
+
+    file = forms.FileField(label="File Uploader export file (.json)")
+
+    def clean_file(self) -> dict:
+        uploaded = self.cleaned_data["file"]
+        try:
+            raw = uploaded.read()
+            data = json.loads(raw)
+        except (ValueError, UnicodeDecodeError) as e:
+            msg = "The uploaded file is not valid JSON."
+            raise ValidationError(msg) from e
+
+        try:
+            validate_envelope(data, expected_kind=EXPORT_KIND_FILE_UPLOADER)
+        except TransferValidationError as e:
+            raise ValidationError(e.errors) from e
+
+        return data["file_uploader"]

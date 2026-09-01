@@ -1,0 +1,32 @@
+<div id="copy-uploader-section" class="ddm-section-container">
+  <div class="row">
+    <div class="form-section-heading">
+      <h2>Copy / Export</h2>
+    </div>
+
+    <div class="col-auto">
+      <form
+        method="post"
+        action="{% url 'ddm_datadonation:uploaders:copy' object.project.url_id object.pk %}"
+        onsubmit="this.querySelector('button').disabled = true;"
+      >
+        {% csrf_token %}
+        <button
+          class="ddm-btn-base ddm-btn-secondary"
+          type="submit"
+        >
+          Create a copy of this Uploader
+        </button>
+      </form>
+    </div>
+
+    <div class="col-auto">
+      <a
+        class="ddm-btn-base ddm-btn-secondary"
+        href="{% url 'ddm_datadonation:uploaders:export' object.project.url_id object.pk %}">
+        Export Uploader
+      </a>
+    </div>
+
+  </div>
+</div>

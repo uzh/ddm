@@ -46,6 +46,7 @@ extend-exclude = [
     "staticfiles/*",
     "docs/*",
     "frontend/*",
+    "tools/screenshots/*",
 ]
 
 [tool.ruff.lint]

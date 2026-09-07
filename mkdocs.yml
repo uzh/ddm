@@ -1,0 +1,126 @@
+site_name: DDM Documentation
+site_description: Documentation for the Data Donation Module (DDM).
+site_url: https://uzh.github.io/ddm/
+repo_url: https://github.com/uzh/ddm
+repo_name: uzh/ddm
+edit_uri: edit/develop/docs/
+copyright: Copyright &copy; Data Donation Lab, University of Zurich
+
+strict: true
+
+theme:
+  name: material
+  language: en
+  custom_dir: overrides
+  logo: assets/DDM_Logo_Weiss.svg
+  favicon: assets/ddl_favicon_black.svg
+  font:
+    text: Inter
+    code: Fira Code
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
+    - navigation.tracking
+    - toc.follow
+    - content.action.edit
+    - content.code.copy
+    - content.tooltips
+    - search.suggest
+    - search.highlight
+    - search.share
+
+extra_css:
+  - assets/extra.css
+
+extra:
+  version:
+    provider: mike
+    default: latest
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - def_list
+  - footnotes
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+plugins:
+  - search
+
+nav:
+  - Home: index.md
+  - For Researchers:
+      - researchers/index.md
+      - Create a Project: researchers/create_project.md
+      - Project Hub: researchers/project_hub.md
+      - General Project Settings: researchers/general_project_settings.md
+      - Data Collection Configuration:
+          - researchers/data_collection_configuration/index.md
+          - Briefing Page: researchers/data_collection_configuration/briefing.md
+          - Data Donation:
+              - Overview: researchers/data_collection_configuration/datadonation/datadonation_overview.md
+              - Configuration: researchers/data_collection_configuration/datadonation/datadonation_configuration.md
+          - Questionnaire:
+              - Overview: researchers/data_collection_configuration/questionnaire/questionnaire_overview.md
+              - Configuration: researchers/data_collection_configuration/questionnaire/questionnaire_configuration.md
+              - Data Integration: researchers/data_collection_configuration/questionnaire/questionnaire_data_integration.md
+          - Debriefing Page: researchers/data_collection_configuration/debriefing.md
+      - Data Center:
+          - researchers/data_center/index.md
+          - Download: researchers/data_center/data_download.md
+          - Project Logs: researchers/data_center/project_logs.md
+          - Statistics: researchers/data_center/participation_statistics.md
+      - Danger Zone: researchers/danger_zone.md
+      - Topics:
+          - researchers/topics/index.md
+          - APIs: researchers/topics/apis.md
+          - Continuation: researchers/topics/continuation.md
+          - Project Logs: researchers/topics/project_logs.md
+          - Template Rendering: researchers/topics/templating_features.md
+  - For Administrators:
+      - administrators/index.md
+      - Installation Guide: administrators/installation.md
+      - Topics:
+          - administrators/topics/index.md
+          - CKEditor Configuration: administrators/topics/customize_ckeditor_configs.md
+          - Template Customization: administrators/topics/customize_admin_templates.md
+          - User Authentication: administrators/topics/user_authentication.md
+          - Security: administrators/topics/security.md
+  - For Developers:
+      - developers/index.md
+      - Topics:
+          - Documentation: developers/topics/documentation.md
+          - Encryption: developers/topics/encryption.md
+          - Internationalization: developers/topics/internationalization.md
+          - Changelog Conventions: developers/topics/changelog.md
+  - Reporting Issues: issues.md
+  - Older Versions: previous-versions.md

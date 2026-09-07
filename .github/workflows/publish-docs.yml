@@ -1,32 +1,77 @@
 name: Publish Docs
 
+# Reusable: builds the MkDocs site and deploys one mike version to the
+# gh-pages branch. mike only touches its own version directories + versions.json
+# + the root index.html redirect, so the archived Antora versions under
+# gh-pages:/ddm/<version>/ are left untouched.
+
 on:
   workflow_call:
+    inputs:
+      version:
+        description: 'mike version identifier ("dev" or a minor like "3.0")'
+        required: true
+        type: string
+      alias:
+        description: 'alias to (re)point at this version, e.g. "latest"'
+        required: false
+        type: string
+        default: ''
+      title:
+        description: 'human-readable label for the version selector'
+        required: false
+        type: string
+        default: ''
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'mike version identifier ("dev" or a minor like "3.0")'
+        required: true
+        type: string
+      alias:
+        description: 'alias to (re)point at this version, e.g. "latest"'
+        required: false
+        type: string
+        default: ''
+      title:
+        description: 'human-readable label for the version selector'
+        required: false
+        type: string
+        default: ''
+
+concurrency:
+  group: docs-gh-pages
+  cancel-in-progress: false
+
+permissions:
+  contents: write
 
 jobs:
   publish-docs:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
         with:
-          node-version: '20'
+          fetch-depth: 0
 
-      - name: Install Antora
-        run: npm i antora
-
-      - name: Install Antora Extensions
-        run: npm i @antora/lunr-extension
-
-      - name: Generate Site
-        run: npx antora docs/antora-playbook.yml
-
-      - name: Publish to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - uses: actions/setup-python@v5
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/build/site
+          python-version: '3.12'
+
+      - name: Install docs dependencies
+        run: pip install -r requirements/docs.txt
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin gh-pages --depth=1 || true
+
+      - name: mike deploy
+        run: |
+          args=(deploy --push --update-aliases)
+          if [ -n "${{ inputs.title }}" ]; then args+=(--title "${{ inputs.title }}"); fi
+          args+=("${{ inputs.version }}")
+          if [ -n "${{ inputs.alias }}" ]; then args+=("${{ inputs.alias }}"); fi
+          echo "mike ${args[*]}"
+          mike "${args[@]}"

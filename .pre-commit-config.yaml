@@ -15,6 +15,7 @@ repos:
       - id: check-toml
       - id: check-xml
       - id: check-yaml
+        exclude: ^mkdocs\.yml$  # Material for MkDocs uses !!python/name: YAML tags
       - id: debug-statements
       - id: check-builtin-literals
       - id: check-case-conflict

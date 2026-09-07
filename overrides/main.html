@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{#
+  Load extra weights of the theme fonts. Material only auto-loads text 300/400/700
+  and code 400/700 (see base.html `fonts` block); {{ super() }} keeps that plus the
+  gstatic preconnect, and the <link> below adds the rest as a parallel request.
+    - Inter        : full 100..900 range + italics
+    - Fira Code    : 300..700 range
+    - Bai Jamjuree : 400/500/600/700 (used for headings in assets/extra.css)
+#}
+{% block fonts %}
+  {{ super() }}
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Fira+Code:wght@300..700&family=Inter:ital,wght@0,100..900;1,100..900&display=fallback"
+  />
+{% endblock fonts %}

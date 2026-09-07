@@ -1,0 +1,33 @@
+# Customizing Templates
+
+The default researcher interface templates include a minimalistic header and footer that do not 
+integrate any actions related to a researchers user account because authentication 
+is handled by the main website (see [User Authentication](user_authentication.md)).
+
+However, for your own project you may wish to replace the default header and/or 
+footer within the researcher interface to include your own branding and provide 
+your users with some account management options such as a logout button.
+This can be done by using Django's template inheritance.
+
+In your application create a new html template `your_application/templates/ddm_core/base.html`. 
+In this file, you can overwrite the header and/or footer as follows:
+
+```
+{% extends "ddm_core/base.html" %}
+
+{% block extrahead %}
+    <!-- If you wish, you can integrate custom css files, favicon etc. here -->
+{% endblock %}
+
+{% block header %}
+<div>
+    <!-- Your Custom Header HTML -->
+</div>
+{% endblock %}
+
+{% block footer %}
+<div>
+    <!-- Your Custom Footer HTML -->
+</div>
+{% endblock %}
+```

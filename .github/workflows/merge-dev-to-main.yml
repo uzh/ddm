@@ -40,10 +40,10 @@ jobs:
           --health-retries=3
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -66,35 +66,34 @@ jobs:
         run: |
           python test_project/manage.py test ddm
 
-  publish-docs:
+  docs-version:
+    needs: build-test
+    if: success()
     runs-on: ubuntu-latest
+    outputs:
+      minor: ${{ steps.v.outputs.minor }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - id: v
+        # v3.0.4 -> 3.0
+        run: |
+          ref="${GITHUB_REF_NAME#v}"
+          echo "minor=${ref%.*}" >> "$GITHUB_OUTPUT"
 
-      - name: Install Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
-      - name: Install Antora
-        run: npm i antora
-
-      - name: Generate Site
-        run: npx antora docs/antora-playbook.yml
-
-      - name: Publish to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/build/site
+  publish-docs:
+    needs: docs-version
+    permissions:
+      contents: write
+    uses: ./.github/workflows/publish-docs.yml
+    with:
+      version: ${{ needs.docs-version.outputs.minor }}
+      alias: latest
 
   merge-dev:
     needs: build-test
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: everlytic/branch-merge@1.1.2
         with:

@@ -68,4 +68,9 @@ jobs:
   trigger-publish-docs:
     needs: build-test
     if: success()
+    permissions:
+      contents: write
     uses: ./.github/workflows/publish-docs.yml
+    with:
+      version: dev
+      title: dev (develop)

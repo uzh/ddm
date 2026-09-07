@@ -1,0 +1,23 @@
+# Changelog
+
+## Changelog Structure
+
+The changelogs of this project should adhere to the following principles (introduced in Feb 2026):
+
+* **Headings**: The headings follow this pattern: `## X.Y.Z - 2026-01-30`
+
+* **Sections:**
+
+** Fixed
+** Added
+** Changed
+** Deprecated
+** Removed
+** Technical
+** Security
+** Documentation
+** Update/Migration Guide
+
+* **Target group**: The sections Fixed, Added, and Changed are directed at a broader user group, the other sections at a more technical audience.
+
+* **Include references to commits**

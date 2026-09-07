@@ -1,6 +1,7 @@
 include LICENSE
 include README.md
-recursive-include docs *
+prune docs
+prune tools
 recursive-include ddm/static *
 recursive-include ddm/templates *
 recursive-include ddm/locale *

@@ -40,10 +40,10 @@ jobs:
           --health-retries=3
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -66,40 +66,17 @@ jobs:
         run: |
           python test_project/manage.py test ddm
 
-  publish-docs:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Install Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
-      - name: Install Antora
-        run: npm i antora
-
-      - name: Install Antora Extensions
-        run: npm i @antora/lunr-extension
-
-      - name: Generate Site
-        run: npx antora docs/antora-playbook.yml
-
-      - name: Publish to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/build/site
+  # Docs for a release are published from the "Merge to Main" workflow when the
+  # v* tag is pushed; nothing to do here.
 
   deploy:
     needs: build-test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.12
 

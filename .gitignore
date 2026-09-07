@@ -317,7 +317,6 @@ yarn-error.log
 # Pycharm
 .idea
 
-docs/*.html
 ddm_test_env*
 test_project/static
 test_project/media
@@ -337,3 +336,4 @@ test_failure_*.png
 # Sass
 .sass-cache/
 *.css.map
+CUTOVER.md

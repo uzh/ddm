@@ -1,0 +1,4564 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Data Donation Module (DDM).">
+      
+      
+      
+        <link rel="canonical" href="https://uzh.github.io/ddm/3.0/researchers/data_collection_configuration/datadonation/datadonation_configuration/">
+      
+      
+        <link rel="prev" href="../datadonation_overview/">
+      
+      
+        <link rel="next" href="../../questionnaire/questionnaire_overview/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../../assets/ddl_favicon_black.svg">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Configuration - DDM Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+  
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CFira+Code:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"Fira Code"}</style>
+      
+    
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Fira+Code:wght@300..700&family=Inter:ital,wght@0,100..900;1,100..900&display=fallback"
+  />
+
+    
+      <link rel="stylesheet" href="../../../../assets/extra.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#data-donation-configuration" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="DDM Documentation" class="md-header__button md-logo" aria-label="DDM Documentation" data-md-component="logo">
+      
+  <img src="../../../../assets/DDM_Logo_Weiss.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            DDM Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Configuration
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/uzh/ddm" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    uzh/ddm
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  For Researchers
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../administrators/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  For Administrators
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../developers/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  For Developers
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../issues/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Reporting Issues
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../previous-versions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Older Versions
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="DDM Documentation" class="md-nav__button md-logo" aria-label="DDM Documentation" data-md-component="logo">
+      
+  <img src="../../../../assets/DDM_Logo_Weiss.svg" alt="logo">
+
+    </a>
+    DDM Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/uzh/ddm" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    uzh/ddm
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    For Researchers
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    For Researchers
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../create_project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Create a Project
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../project_hub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Hub
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../general_project_settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    General Project Settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Collection Configuration
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Data Collection Configuration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../briefing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Briefing Page
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_3" id="__nav_2_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Donation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Data Donation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../datadonation_overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#uploader-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Uploader Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Uploader Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#upload-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upload Type
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extract-nested-zip-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extract nested zip files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extraction-depth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extraction depth
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#display-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Display name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#display-position" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Display position
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#all-in-one-consent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        All-in-one consent
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#instruction-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instruction Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Instruction Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#text" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Text
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#page-number" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Page number
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#blueprint-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blueprint Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Blueprint Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#general-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        General Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="General Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#name_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#associated-uploader" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Associated Uploader
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#display-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Display Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Display Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#display-name_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Display name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#display-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Display order
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-extraction-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Extraction Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Data Extraction Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#file-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File paths
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expected-file-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expected File Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expected-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expected fields
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expected-field-regex-matching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expected field regex matching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#array-join-separator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Array join separator
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#json-specific-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON specific settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="JSON specific settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#extraction-root" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extraction Root
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extracting-nested-loop-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extracting Nested Loop Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nested-loop-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nested loop path
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nested-expected-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nested expected fields
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nested-expected-fields-use-regex-matching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nested expected fields use regex matching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#group-entries-by-parent-item" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Group entries by parent item
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allow-item-exclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Allow item exclusion
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#csv-specific-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CSV specific settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CSV specific settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#csv-delimiter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CSV Delimiter
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#txt-specific-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TXT specific settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TXT specific settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#record-separator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Record separator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-separator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Field separator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-value-separator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key-value separator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skip-header-lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Skip header lines
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skip-footer-lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Skip footer lines
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ignore-blank-lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ignore blank lines
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trim-whitespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trim whitespace
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relevant-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relevant Fields
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Relevant Fields">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#expected-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expected name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#match-regex" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Match regex
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rename-to" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rename to
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keep-in-donation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keep in donation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extraction-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extraction Rules
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Extraction Rules">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#execution-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Execution Order
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#name_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Field
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extraction-operator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extraction Operator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparison-value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison Value
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#replacement-value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Replacement Value
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backup-blueprints-advanced-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backup blueprints (advanced settings)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Backup blueprints (advanced settings)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backup-for" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backup for
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backup-priority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backup priority
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Options
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_4" id="__nav_2_5_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Questionnaire
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Questionnaire
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../questionnaire/questionnaire_overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../questionnaire/questionnaire_configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../questionnaire/questionnaire_data_integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../debriefing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debriefing Page
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../data_center/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Center
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Data Center
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../data_center/data_download/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Download
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../data_center/project_logs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Logs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../data_center/participation_statistics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Statistics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../danger_zone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Danger Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../topics/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Topics
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_8" id="__nav_2_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Topics
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../topics/apis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APIs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../topics/continuation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Continuation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../topics/project_logs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Logs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../topics/templating_features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Template Rendering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../administrators/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    For Administrators
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    For Administrators
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../administrators/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../administrators/topics/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Topics
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Topics
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../administrators/topics/customize_ckeditor_configs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CKEditor Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../administrators/topics/customize_admin_templates/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Template Customization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../administrators/topics/user_authentication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../administrators/topics/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../developers/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    For Developers
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    For Developers
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Topics
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Topics
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developers/topics/documentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developers/topics/encryption/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Encryption
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developers/topics/internationalization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Internationalization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developers/topics/changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog Conventions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../issues/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reporting Issues
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../previous-versions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Older Versions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#uploader-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Uploader Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Uploader Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#upload-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upload Type
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extract-nested-zip-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extract nested zip files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extraction-depth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extraction depth
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#display-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Display name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#display-position" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Display position
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#all-in-one-consent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        All-in-one consent
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#instruction-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instruction Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Instruction Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#text" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Text
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#page-number" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Page number
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#blueprint-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blueprint Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Blueprint Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#general-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        General Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="General Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#name_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#associated-uploader" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Associated Uploader
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#display-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Display Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Display Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#display-name_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Display name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#display-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Display order
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-extraction-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Extraction Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Data Extraction Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#file-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File paths
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expected-file-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expected File Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expected-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expected fields
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expected-field-regex-matching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expected field regex matching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#array-join-separator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Array join separator
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#json-specific-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON specific settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="JSON specific settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#extraction-root" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extraction Root
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extracting-nested-loop-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extracting Nested Loop Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nested-loop-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nested loop path
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nested-expected-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nested expected fields
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nested-expected-fields-use-regex-matching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nested expected fields use regex matching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#group-entries-by-parent-item" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Group entries by parent item
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allow-item-exclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Allow item exclusion
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#csv-specific-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CSV specific settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CSV specific settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#csv-delimiter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CSV Delimiter
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#txt-specific-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TXT specific settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TXT specific settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#record-separator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Record separator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-separator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Field separator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-value-separator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key-value separator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skip-header-lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Skip header lines
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skip-footer-lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Skip footer lines
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ignore-blank-lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ignore blank lines
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trim-whitespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trim whitespace
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relevant-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relevant Fields
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Relevant Fields">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#expected-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expected name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#match-regex" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Match regex
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rename-to" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rename to
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keep-in-donation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keep in donation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extraction-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extraction Rules
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Extraction Rules">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#execution-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Execution Order
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#name_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Field
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extraction-operator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extraction Operator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparison-value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison Value
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#replacement-value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Replacement Value
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backup-blueprints-advanced-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backup blueprints (advanced settings)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Backup blueprints (advanced settings)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backup-for" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backup for
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backup-priority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backup priority
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Options
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/uzh/ddm/edit/develop/docs/researchers/data_collection_configuration/datadonation/datadonation_configuration.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="data-donation-configuration">Data Donation Configuration<a class="headerlink" href="#data-donation-configuration" title="Permanent link">&para;</a></h1>
+<p>The data donation can be configured using so-called <code>Uploaders</code>, <code>Instructions</code>, and <code>Blueprints</code>.</p>
+<p>An <code>Uploader</code> represents an upload form through which one file can be uploaded (either a ZIP container
+or a single file).</p>
+<p>For each Uploader, a set of <code>Instructions</code> for participants can be created that 
+illustrate how they can access and upload the requested file.</p>
+<p>A <code>Blueprint</code> is used to define what data will be extracted from the file
+that participants upload through the Uploader. Each Uploader has one or multiple 
+associated Blueprints.</p>
+<p>To configure the data donation step, go to the <a href="../../../project_hub/">Project Hub</a> and click on
+<em>Data Donation</em> in the Data Collection Configuration section which will bring you
+to the following page:</p>
+<p><img alt="Data Donation Admin Page Screenshot" src="../../../img/datadonation_admin_page.png" width="95%" /></p>
+<h2 id="uploader-configuration">Uploader Configuration<a class="headerlink" href="#uploader-configuration" title="Permanent link">&para;</a></h2>
+<p>When creating an Uploader, you have the following configuration options:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it's for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Upload Type</code></td>
+<td>Whether to accept <code>single file</code> or <code>zip file</code> upload.</td>
+</tr>
+<tr>
+<td><code>Name</code></td>
+<td>Internal name of the uploader.</td>
+</tr>
+<tr>
+<td><code>Extract nested zip files</code></td>
+<td>Whether to extract zip files found inside the uploaded zip.</td>
+</tr>
+<tr>
+<td><code>Extraction depth</code></td>
+<td>How deep to extract nested zip files.</td>
+</tr>
+<tr>
+<td><code>Display name</code></td>
+<td>A short description of the Uploader, displayed to participants (e.g., "YouTube").</td>
+</tr>
+<tr>
+<td><code>Display position</code></td>
+<td>Defines the display order if multiple uploaders are configured.</td>
+</tr>
+<tr>
+<td><code>All-in-one consent</code></td>
+<td>Whether to option consent per Blueprint or for all extracted data at once.</td>
+</tr>
+</tbody>
+</table>
+<details class="setting-details">
+<summary>Setting Details</summary>
+<hr />
+<h4 id="upload-type"><code>Upload Type</code><a class="headerlink" href="#upload-type" title="Permanent link">&para;</a></h4>
+<p>Either "single file" or "zip file" depending on whether your participants are expected to upload
+a single file (e.g., CSV or JSON File) or a ZIP-container.</p>
+<hr />
+<h4 id="name"><code>Name</code><a class="headerlink" href="#name" title="Permanent link">&para;</a></h4>
+<p>Internal name of the Uploader. Must be unique per project.</p>
+<hr />
+<h4 id="extract-nested-zip-files"><code>Extract nested zip files</code><a class="headerlink" href="#extract-nested-zip-files" title="Permanent link">&para;</a></h4>
+<p>Whether to extract zip files found inside the uploaded zip and make their contents available
+to be handled by donation blueprints.</p>
+<hr />
+<h4 id="extraction-depth"><code>Extraction depth</code><a class="headerlink" href="#extraction-depth" title="Permanent link">&para;</a></h4>
+<p>Maximum levels of nested zip files to extract (0 = only extract the top-level zip).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If <code>Extract nested zip file</code> is selected, the File Uploader will look inside any zip files
+contained within the main file that participants upload and make those contents available
+for extraction through a Donation Blueprint too.</p>
+<p>You can control how many levels deep this works—for example, a depth of 1 means it will open any zip inside the main zip, but stop there.</p>
+<p>The paths of the extracted files will reflect the archive structure. For a file inside the main zip,
+the path is simply the filename (e.g., data.json).
+For a file inside a nested zip, the path includes the nested zip's name (e.g., nested.zip/inner.json).</p>
+</div>
+<hr />
+<h4 id="display-name"><code>Display name</code><a class="headerlink" href="#display-name" title="Permanent link">&para;</a></h4>
+<p>Name displayed to participants in the header of the Uploader on the
+data donation page.</p>
+<hr />
+<h4 id="display-position"><code>Display position</code><a class="headerlink" href="#display-position" title="Permanent link">&para;</a></h4>
+<p>The position of the Uploader on the data donation page. Uploaders with a
+lower position will be displayed closer to the top of the page. This setting only has an effect, if you use
+multiple Uploaders in the same project.</p>
+<hr />
+<h4 id="all-in-one-consent"><code>All-in-one consent</code><a class="headerlink" href="#all-in-one-consent" title="Permanent link">&para;</a></h4>
+<p>By default, participants will be asked to consent to the donation of the data associated with each Blueprint.
+If all-in-one consent is enabled, participants will instead be asked to consent to submit
+all uploaded data at once. The all-in-one consent question is displayed at the bottom of the data donation page.</p>
+<div class="grid" markdown>
+<p>All-in-one consent disabled:
+<img alt="Data Donation Page Screenshot Default" src="../../../img/datadonation_after_upload_page.png" width="95%" /></p>
+<p>All-in-one consent enabled:
+<img alt="Data Donation Page Screenshot all-in-one consent" src="../../../img/datadonation_after_upload_page_allinone.png" width="95%" /></p>
+</div>
+</details>
+<h2 id="instruction-configuration">Instruction Configuration<a class="headerlink" href="#instruction-configuration" title="Permanent link">&para;</a></h2>
+<p>Once an Uploader is created, you can add Instructions to it.
+Donation Instructions consist of one or multiple instruction pages.
+Instruction pages are displayed page-by-page and participants navigate them 
+with "next"/"back" buttons.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If no instructions are defined for an Uploader, the instruction step will
+be hidden in the participation view.</p>
+</div>
+<p>For each instruction page, you have the following configuration options:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it's for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Text</code></td>
+<td>The instruction text displayed to the participants.</td>
+</tr>
+<tr>
+<td><code>Page number</code></td>
+<td>The order of the page in the slideshow.</td>
+</tr>
+</tbody>
+</table>
+<details class="setting-details">
+<summary>Setting Details</summary>
+<hr />
+<h4 id="text"><code>Text</code><a class="headerlink" href="#text" title="Permanent link">&para;</a></h4>
+<p>The instruction text displayed to the participants.
+Can also upload and include images or gifs to guide
+participants through the data donation process in this field.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The participant's external ID is available as a template variable to be included
+in the instruction text as follows: <code>{{ participant_id }}</code> which will be displayed
+to the participant as something like <code>IPI2wHDWrHODDRKuo8zo101S</code>. This is
+helpful to enable participants to continue the data donation at a later point in time
+(e.g., because it can take some time between requesting data takeout and being
+able to download it); read <a href="../../../topics/continuation/">this section of the documentation</a> to find out how
+this can be done.</p>
+</div>
+<hr />
+<h4 id="page-number"><code>Page number</code><a class="headerlink" href="#page-number" title="Permanent link">&para;</a></h4>
+<p>The order of the page in the slideshow.</p>
+</details>
+<h2 id="blueprint-configuration">Blueprint Configuration<a class="headerlink" href="#blueprint-configuration" title="Permanent link">&para;</a></h2>
+<p>When creating a Blueprint, you have the following configuration options:</p>
+<h3 id="general-settings">General Settings<a class="headerlink" href="#general-settings" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it's for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Name</code></td>
+<td>Internal name of the Blueprint.</td>
+</tr>
+<tr>
+<td><code>Associated Uploader</code></td>
+<td>The <code>Uploader</code> to which the Blueprint is associated.</td>
+</tr>
+</tbody>
+</table>
+<details class="setting-details">
+<summary>Setting Details</summary>
+<hr />
+<h4 id="name_1"><code>Name</code><a class="headerlink" href="#name_1" title="Permanent link">&para;</a></h4>
+<p>Internal name of the Blueprint. Will not be publicly visible to participants.</p>
+<hr />
+<h4 id="associated-uploader"><code>Associated Uploader</code><a class="headerlink" href="#associated-uploader" title="Permanent link">&para;</a></h4>
+<p>The <code>Uploader</code> to which the Blueprint is associated.</p>
+</details>
+<h3 id="display-settings">Display Settings<a class="headerlink" href="#display-settings" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it's for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Display name</code></td>
+<td>Name displayed to participants on the data donation page.</td>
+</tr>
+<tr>
+<td><code>Description</code></td>
+<td>Description of what information the Blueprint will extract from the uploaded file.</td>
+</tr>
+<tr>
+<td><code>Display order</code></td>
+<td>Sets the display order for this Blueprint in the participation interface.</td>
+</tr>
+</tbody>
+</table>
+<details class="setting-details">
+<summary>Setting Details</summary>
+<hr />
+<h4 id="display-name_1"><code>Display name</code><a class="headerlink" href="#display-name_1" title="Permanent link">&para;</a></h4>
+<p>Name displayed to participants on the data donation page. Will be publicly visible to participants.
+Therefore, it is important to define a meaningful name (e.g., "Watch History", "Liked Posts" or similar).</p>
+<hr />
+<h4 id="description"><code>Description</code><a class="headerlink" href="#description" title="Permanent link">&para;</a></h4>
+<p>Description of what information the Blueprint will extract from the uploaded file
+(e.g., <em>"Date when you watched a video and the link to the video"</em>).
+If defined, the description will be visible for participants in the data donation step.</p>
+<hr />
+<h4 id="display-order"><code>Display order</code><a class="headerlink" href="#display-order" title="Permanent link">&para;</a></h4>
+<p>Sets the display order for this Blueprint in the participation interface.
+Blueprints are shown in ascending order by this value.
+If multiple Blueprints have the same order value, they will be ordered by creation date (oldest first).</p>
+</details>
+<h3 id="data-extraction-configuration">Data Extraction Configuration<a class="headerlink" href="#data-extraction-configuration" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it's for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>File paths</code></td>
+<td>Specify the path to the file you want to extract from the uploaded zip.</td>
+</tr>
+<tr>
+<td><code>Expected File Format</code></td>
+<td>The file format of the file from which information should be extracted.</td>
+</tr>
+<tr>
+<td><code>Expected fields</code></td>
+<td>The fields that must be contained in the file from which information should be extracted.</td>
+</tr>
+<tr>
+<td><code>Expected field regex matching</code></td>
+<td>Select if you use a regex expression in the <code>Expected fields</code> setting.</td>
+</tr>
+<tr>
+<td><code>Array join separator</code></td>
+<td>The separator used to combine multiple values of a field into one text.</td>
+</tr>
+</tbody>
+</table>
+<details class="setting-details">
+<summary>Setting Details</summary>
+<hr />
+<h4 id="file-paths"><code>File paths</code><a class="headerlink" href="#file-paths" title="Permanent link">&para;</a></h4>
+<p>Specify the path to the file you want to extract from the uploaded zip
+(Only necessary, if the Blueprint is associated to an Uploader that expects a ZIP file).
+For example, if the file is <code>some_data.json</code> at the root of the zip, enter <code>some_data.json</code>.
+Matching works from the right: <code>data.json</code> will match both
+<code>root/data.json</code> and <code>root/some-folder/data.json</code>, selecting the first match.
+Be specific enough to avoid unintended matches.
+You can also use regex patterns or define multiple paths, which are tried in priority order (lower numbers first; useful if the filename may not always be the same).
+If a path matches more than one file, DDM processes and extracts the data of all matched files consecutively.
+Therefore, we recommend to be as specific as possible when setting the file path.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><strong>Examples for regex paths to match files</strong></p>
+<table>
+<thead>
+<tr>
+<th>Regex</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>^MyActivities\.json</code></td>
+<td>Matches a file named <code>MyActivities.json</code> that is located at the root of the ZIP file.</td>
+</tr>
+<tr>
+<td><code>^SpecificFolder/MyActivities\.json</code></td>
+<td>Matches a file named <code>MyActivities.json</code> that is located in a folder named <code>SpecificFolder</code> in the root of the ZIP file.</td>
+</tr>
+<tr>
+<td><code>.*/MyActivities\.json</code></td>
+<td>Matches the first file with the name <code>MyActivities.json</code> that can be located anywhere in the ZIP file.</td>
+</tr>
+<tr>
+<td><code>(\^MyActivities\.json\|^MeineAktivitäten\.json\|^MieAttivita\.json)</code></td>
+<td>Matches a file that is located at the root of the ZIP file and either named <code>MyActivities.json</code>, <code>MeineAktivitäten.json</code>, or <code>MieAttivita.json</code>. Can be helpful to match the same file in different languages.</td>
+</tr>
+</tbody>
+</table>
+<p>You can find about more about regex <a href="https://developer.mozilla.org/en-US/docs/Glossary/Regular_expression">here</a>.
+On this website, you will <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#tools">also find some Tools</a>
+that can help you test regex patterns.</p>
+<p>If you have the extraction of nested zip-files enabled, see the File Uploader settings above for how to define paths to nested zip-files.</p>
+</div>
+<hr />
+<h4 id="expected-file-format"><code>Expected File Format</code><a class="headerlink" href="#expected-file-format" title="Permanent link">&para;</a></h4>
+<p>The file format of the file from which information should be extracted.
+Currently, only JSON and CSV is implemented.</p>
+<hr />
+<h4 id="expected-fields"><code>Expected fields</code><a class="headerlink" href="#expected-fields" title="Permanent link">&para;</a></h4>
+<p>The fields that must be contained in the file from which information should be extracted.
+If a file does not contain <strong>all</strong> fields defined here, No Information will be extracted.
+Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").
+You can also use regular expressions (regex) to match expected fields - for this, you
+must enable the <code>expected field regex matching</code> option (see below).</p>
+<hr />
+<h4 id="expected-field-regex-matching"><code>Expected field regex matching</code><a class="headerlink" href="#expected-field-regex-matching" title="Permanent link">&para;</a></h4>
+<p>Select if you use a regex expression in the <code>Expected fields</code>
+setting.</p>
+<hr />
+<h4 id="array-join-separator"><code>Array join separator</code><a class="headerlink" href="#array-join-separator" title="Permanent link">&para;</a></h4>
+<p>If an extracted field contains several separate values
+(e.g. multiple lines of a message) instead of a single value, they are combined
+into one text using this separator. Defaults to <code>\n</code>, i.e., joining them with a
+line break. E.g., an entry <code>["A", "B"]</code> becomes <code>"A\nB"</code>.</p>
+</details>
+<h3 id="json-specific-settings">JSON specific settings<a class="headerlink" href="#json-specific-settings" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it's for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Extraction Root</code></td>
+<td>Indicates on which level of the file's data structure information should be extracted.</td>
+</tr>
+</tbody>
+</table>
+<details class="setting-details">
+<summary>Setting Details</summary>
+<hr />
+<h4 id="extraction-root"><code>Extraction Root</code><a class="headerlink" href="#extraction-root" title="Permanent link">&para;</a></h4>
+<p>Indicates on which level of the files' data structure information
+should be extracted. If you want to extract information contained on the first
+level (e.g., <code>{'field to be extracted': value}</code>, you can leave this field empty.
+If you want to extract data located on a higher level, then you would provide
+the path to the parent field of the data you want to extract (e.g., if your json
+file is structured like this <code>{'friends': {'real_friends': [{'name to extract':
+name, 'date to extract': date}], 'fake friends': [{'name': name, 'date': date }]}}</code>
+and you want to extract the names and dates of real_friends, you would set the
+extraction root to <code>friends.real_friends</code>.</p>
+</details>
+<h4 id="extracting-nested-loop-settings">Extracting Nested Loop Settings<a class="headerlink" href="#extracting-nested-loop-settings" title="Permanent link">&para;</a></h4>
+<p>Sometimes each item in your data contains a list of related sub-items that
+you also want to extract as their own rows, instead of one row per top-level
+item. For example, a ChatGPT conversation export is roughly structured like
+this: each conversation has a few top-level fields, plus a list of the
+individual messages exchanged in it.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Example</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="w">    </span><span class="p">[</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">      </span><span class="p">{</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">        </span><span class="nt">&quot;conversation_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;conv-1&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">        </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Weekend Trip Ideas&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">        </span><span class="nt">&quot;mapping&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">          </span><span class="p">{</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">            </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">              </span><span class="nt">&quot;author&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">              </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Where should we go this weekend?&quot;</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">          </span><span class="p">},</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">          </span><span class="p">{</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">            </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">              </span><span class="nt">&quot;author&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">              </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;How about a hike near the lake?&quot;</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">          </span><span class="p">}</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">        </span><span class="p">]</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">      </span><span class="p">},</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">      </span><span class="p">{</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">        </span><span class="nt">&quot;conversation_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;conv-2&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">        </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Restaurant Ideas&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="w">        </span><span class="nt">&quot;mapping&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">          </span><span class="p">{</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="w">            </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">              </span><span class="nt">&quot;author&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="w">              </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;some content 2&quot;</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="w">          </span><span class="p">}</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="w">        </span><span class="p">]</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="w">      </span><span class="p">}</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="w">    </span><span class="p">]</span>
+</code></pre></div>
+<p>Without a nested loop configured, DDM only sees the top-level fields
+(<code>conversation_id</code>, <code>title</code>) — you'd get one row per conversation, with no
+straightforward way to also pull out the individual messages (in the example
+contained in <code>mapping</code>).</p>
+<p>By setting <code>Nested loop path</code> to <code>mapping</code>, you tell DDM to also loop over
+each conversation's messages and turn every message into its own row,
+automatically repeating that conversation's fields on each one:</p>
+<table>
+<thead>
+<tr>
+<th>conversation_id</th>
+<th>title</th>
+<th>author</th>
+<th>content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>conv-1</td>
+<td>Weekend Trip Ideas</td>
+<td>user</td>
+<td>Where should we go this weekend?</td>
+</tr>
+<tr>
+<td>conv-1</td>
+<td>Weekend Trip Ideas</td>
+<td>assistant</td>
+<td>How about a hike near the lake?</td>
+</tr>
+<tr>
+<td>conv-2</td>
+<td>Restaurant Ideas</td>
+<td>assistant</td>
+<td>some content 2</td>
+</tr>
+</tbody>
+</table>
+<p>This approach also works if <code>mapping</code> in the example is not a list but a
+dictionary-like object. E.g.:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="w">    </span><span class="p">[</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">      </span><span class="p">{</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="nt">&quot;conversation_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;conv-1&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Weekend Trip Ideas&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="nt">&quot;mapping&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">          </span><span class="nt">&quot;some_uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">            </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">              </span><span class="nt">&quot;author&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">              </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;some content&quot;</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">            </span><span class="p">}</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">          </span><span class="p">}</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">      </span><span class="p">}</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">      </span><span class="err">...</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">    </span><span class="p">]</span>
+</code></pre></div>
+<p>In this case, DDM just ignores the key of the entries contained in <code>mapping</code> and
+iterates over the values (i.e., <code>"message": { "author": "user" } ...</code>).</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it's for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Nested loop path</code></td>
+<td>The field that holds the list of sub-items you want to extract as separate rows.</td>
+</tr>
+<tr>
+<td><code>Nested expected fields</code></td>
+<td>The fields that a sub-item must contain in order to be extracted.</td>
+</tr>
+<tr>
+<td><code>Nested expected fields use regex matching</code></td>
+<td>Select if you use a regex expression in <code>Nested expected fields</code>.</td>
+</tr>
+<tr>
+<td><code>Group entries by parent item</code></td>
+<td>Whether to group and display extracted sub-items by their parent item.</td>
+</tr>
+<tr>
+<td><code>Allow item exclusion</code></td>
+<td>Whether participants can remove individual items from their donation.</td>
+</tr>
+</tbody>
+</table>
+<details class="setting-details">
+<summary>Setting Details</summary>
+<hr />
+<h4 id="nested-loop-path"><code>Nested loop path</code><a class="headerlink" href="#nested-loop-path" title="Permanent link">&para;</a></h4>
+<p>The field that holds the list of sub-items you want to
+extract as separate rows (e.g. <code>mapping</code>). Leave empty if you don't need
+this (the default) — in that case, the settings below have no effect. To
+reach a field nested inside another field, separate the names with a dot,
+e.g. <code>data.mapping</code>. To then extract, e.g. in the example above, the message
+contents and authors, you will define <code>message.author</code> and <code>message.content</code>
+as relevant nested fields (see the section on <code>Relevant Fields</code> below).</p>
+<hr />
+<h4 id="nested-expected-fields"><code>Nested expected fields</code><a class="headerlink" href="#nested-expected-fields" title="Permanent link">&para;</a></h4>
+<p>The fields that a sub-item must contain in order
+to be extracted. Works just like the top-level <code>Expected fields</code> setting,
+except it's checked per sub-item rather than per top-level item: a sub-item
+missing any of these fields is skipped, but the rest of its conversation
+(or other top-level item) is still processed normally.
+Put the field names in double quotes and separate them with commas
+(<code>"Field A", "Field B"</code>). Only used if <code>Nested loop path</code> is set.</p>
+<hr />
+<h4 id="nested-expected-fields-use-regex-matching"><code>Nested expected fields use regex matching</code><a class="headerlink" href="#nested-expected-fields-use-regex-matching" title="Permanent link">&para;</a></h4>
+<p>Select if you use a regex
+expression in <code>Nested expected fields</code>, the same way
+<code>Expected field regex matching</code> applies to the top-level <code>Expected fields</code>.</p>
+<hr />
+<h4 id="group-entries-by-parent-item"><code>Group entries by parent item</code><a class="headerlink" href="#group-entries-by-parent-item" title="Permanent link">&para;</a></h4>
+<p>By default, all extracted sub-items (e.g. every
+message from every conversation) are shown to participants combined in one
+long list. Enable this to instead group and display them by their parent
+item — e.g. all of one conversation's messages shown together as a single
+entry, with the conversation's own fields (like <code>title</code>) shown once above
+them. Requires <code>Nested loop path</code> to be set.</p>
+<hr />
+<h4 id="allow-item-exclusion"><code>Allow item exclusion</code><a class="headerlink" href="#allow-item-exclusion" title="Permanent link">&para;</a></h4>
+<p>If enabled, participants can remove
+individual items (e.g. a single conversation) from their donation before
+submitting, instead of only being able to consent or decline for the whole
+Blueprint at once. Requires <code>Group entries by parent item</code> to be enabled.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All settings in this section only apply to JSON blueprints with a
+<code>Nested loop path</code> configured; <code>Allow item exclusion</code> additionally
+requires <code>Group entries by parent item</code> to be enabled.</p>
+</div>
+</details>
+<h3 id="csv-specific-settings">CSV specific settings<a class="headerlink" href="#csv-specific-settings" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it's for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSV Delimiter</code></td>
+<td>The character that separates values in the expected CSV file.</td>
+</tr>
+</tbody>
+</table>
+<details class="setting-details">
+<summary>Setting Details</summary>
+<hr />
+<h4 id="csv-delimiter"><code>CSV Delimiter</code><a class="headerlink" href="#csv-delimiter" title="Permanent link">&para;</a></h4>
+<p>This field allows you to specify the character that separates values in the
+expected CSV file (e.g., <code>,</code>, <code>;</code> or <code>\t</code>). If left empty, DDM will try to infer the delimiter from the file structure.</p>
+</details>
+<h3 id="txt-specific-settings">TXT specific settings<a class="headerlink" href="#txt-specific-settings" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it's for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Record separator</code></td>
+<td>The character sequence that marks the boundary between individual records.</td>
+</tr>
+<tr>
+<td><code>Field separator</code></td>
+<td>The character sequence that separates individual fields within a record.</td>
+</tr>
+<tr>
+<td><code>Key-value separator</code></td>
+<td>The character that separates a field's name from its value within a line.</td>
+</tr>
+<tr>
+<td><code>Skip header lines</code></td>
+<td>The number of lines to skip at the beginning of the file.</td>
+</tr>
+<tr>
+<td><code>Skip footer lines</code></td>
+<td>The number of lines to skip at the end of the file.</td>
+</tr>
+<tr>
+<td><code>Ignore blank lines</code></td>
+<td>Whether empty lines within a record are ignored.</td>
+</tr>
+<tr>
+<td><code>Trim whitespace</code></td>
+<td>Whether leading/trailing whitespace is removed from records and key-value pairs.</td>
+</tr>
+</tbody>
+</table>
+<details class="setting-details">
+<summary>Setting Details</summary>
+<hr />
+<h4 id="record-separator"><code>Record separator</code><a class="headerlink" href="#record-separator" title="Permanent link">&para;</a></h4>
+<p>The character sequence that marks the boundary between
+individual records/entries in the file (e.g., a blank line or a single line
+break). Use <code>\n</code> for a line break or <code>\n\n</code> for a blank line.</p>
+<hr />
+<h4 id="field-separator"><code>Field separator</code><a class="headerlink" href="#field-separator" title="Permanent link">&para;</a></h4>
+<p>The character sequence that separates individual fields
+within a single record (e.g., a line break if each field is on its own line).
+Use <code>\n</code> for a line break.</p>
+<hr />
+<h4 id="key-value-separator"><code>Key-value separator</code><a class="headerlink" href="#key-value-separator" title="Permanent link">&para;</a></h4>
+<p>The character that separates a field's name from its
+value within a line (e.g., <code>:</code> in <code>Name: John</code>, or <code>=</code> in <code>name=John</code>).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Example</strong></p>
+<p>Given a TXT file structured like this:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Datum: 2026-04-01 14:09:16 UTC
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Link: https://example.com/video/1
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Datum: 2026-04-02 15:30:48 UTC
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>Link: https://example.com/video/2
+</code></pre></div>
+<p>with <code>Record separator</code> set to <code>\n\n</code> (blank line), <code>Field separator</code> set
+to <code>\n</code> (line break) and <code>Key-value separator</code> set to <code>:</code>, DDM extracts two records,
+each containing a <code>Datum</code> and a <code>Link</code> field.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When entering <code>Record separator</code> or <code>Field separator</code>, type <code>\n</code> (backslash
+followed by "n") to represent a line break, and <code>\n\n</code> for a blank line — DDM
+automatically converts these into actual line breaks internally. Do not paste
+an actual line break into the field.</p>
+</div>
+<hr />
+<h4 id="skip-header-lines"><code>Skip header lines</code><a class="headerlink" href="#skip-header-lines" title="Permanent link">&para;</a></h4>
+<p>The number of lines to skip at the beginning of the TXT
+file before processing begins (e.g., to ignore a title or metadata block).</p>
+<hr />
+<h4 id="skip-footer-lines"><code>Skip footer lines</code><a class="headerlink" href="#skip-footer-lines" title="Permanent link">&para;</a></h4>
+<p>The number of lines to skip at the end of the TXT file
+(e.g., to ignore a trailing summary or signature block).</p>
+<hr />
+<h4 id="ignore-blank-lines"><code>Ignore blank lines</code><a class="headerlink" href="#ignore-blank-lines" title="Permanent link">&para;</a></h4>
+<p>If enabled, empty lines within a record are ignored
+rather than treated as part of the field data.</p>
+<hr />
+<h4 id="trim-whitespace"><code>Trim whitespace</code><a class="headerlink" href="#trim-whitespace" title="Permanent link">&para;</a></h4>
+<p>If enabled, leading and trailing whitespace is removed from
+each record and from each key-value pair before extraction.</p>
+</details>
+<h3 id="relevant-fields">Relevant Fields<a class="headerlink" href="#relevant-fields" title="Permanent link">&para;</a></h3>
+<p>The settings above are used to identify and validate the file from which data
+should be extracted. Once file validation succeeds, the blueprint starts
+extracting information from the file.</p>
+<p>To do this, you need to define which fields to keep in the extracted data.
+Optionally, you can also rename fields during extraction — this is especially
+useful when using regex matching, where you want a clean, predictable field
+name in the exported data rather than the raw matched name.</p>
+<p>To define a field, provide:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it's for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Expected name</code></td>
+<td>The field/variable name expected to be contained in the uploaded file.</td>
+</tr>
+<tr>
+<td><code>Match regex</code></td>
+<td>Enable this if <code>expected name</code> is a regex pattern rather than an exact field name.</td>
+</tr>
+<tr>
+<td><code>Rename to</code></td>
+<td>Optionally, the name the matched field should be renamed to in the extracted data.</td>
+</tr>
+<tr>
+<td><code>Keep in donation</code></td>
+<td>Whether the field should be included in the donation.</td>
+</tr>
+</tbody>
+</table>
+<details class="setting-details">
+<summary>Setting Details</summary>
+<hr />
+<h4 id="expected-name"><code>Expected name</code><a class="headerlink" href="#expected-name" title="Permanent link">&para;</a></h4>
+<p>The field/variable name expected to be contained in the
+uploaded file. This can be an exact name, or a regex pattern (e.g., to match
+across different translations of the same field).</p>
+<hr />
+<h4 id="match-regex"><code>Match regex</code><a class="headerlink" href="#match-regex" title="Permanent link">&para;</a></h4>
+<p>Enable this if <code>expected name</code> is a regex pattern rather than
+an exact field name.</p>
+<hr />
+<h4 id="rename-to"><code>Rename to</code><a class="headerlink" href="#rename-to" title="Permanent link">&para;</a></h4>
+<p>Optionally, provide the name the matched field should be renamed
+to in the extracted data. If left empty, the name from <code>expected name</code> is
+used as-is.</p>
+<hr />
+<h4 id="keep-in-donation"><code>Keep in donation</code><a class="headerlink" href="#keep-in-donation" title="Permanent link">&para;</a></h4>
+<p>Enable this if the field should be included in the
+donation (i.e., submitted to you as part of the participant's donation).</p>
+</details>
+<h3 id="extraction-rules">Extraction Rules<a class="headerlink" href="#extraction-rules" title="Permanent link">&para;</a></h3>
+<p>Data extraction is performed using <code>Extraction Rules</code>, which are applied to
+the file one after another, in the order you define.</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it's for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Execution Order</code></td>
+<td>The order in which the extraction rules are applied to the file.</td>
+</tr>
+<tr>
+<td><code>Name</code></td>
+<td>The name of the extraction rule, for internal organization only.</td>
+</tr>
+<tr>
+<td><code>Field</code></td>
+<td>The field the rule applies to.</td>
+</tr>
+<tr>
+<td><code>Extraction Operator</code></td>
+<td>Defines the main logic of the extraction step.</td>
+</tr>
+<tr>
+<td><code>Comparison Value</code></td>
+<td>The value against which the field's data is compared, according to the selected Extraction Operator.</td>
+</tr>
+<tr>
+<td><code>Replacement Value</code></td>
+<td>Only required for "Replace match (regex)": the value used as a replacement when the pattern matches.</td>
+</tr>
+</tbody>
+</table>
+<details class="setting-details">
+<summary>Setting Details</summary>
+<hr />
+<h4 id="execution-order"><code>Execution Order</code><a class="headerlink" href="#execution-order" title="Permanent link">&para;</a></h4>
+<p>The order in which the extraction rules are applied to the file.</p>
+<hr />
+<h4 id="name_2"><code>Name</code><a class="headerlink" href="#name_2" title="Permanent link">&para;</a></h4>
+<p>The name of the extraction rule. For internal organization only —
+this is not the field name itself.</p>
+<hr />
+<h4 id="field"><code>Field</code><a class="headerlink" href="#field" title="Permanent link">&para;</a></h4>
+<p>The field the rule applies to. This must match either the
+<code>expected name</code> set in the Extraction Fields section, or, if provided, its
+<code>rename to</code> value.</p>
+<hr />
+<h4 id="extraction-operator"><code>Extraction Operator</code><a class="headerlink" href="#extraction-operator" title="Permanent link">&para;</a></h4>
+<p>Defines the main logic of the extraction step. Below, you see the list of available extraction
+operators:</p>
+<table>
+<thead>
+<tr>
+<th>Extraction Operator</th>
+<th>Description</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Keep Field</td>
+<td>Keep this field in the uploaded data.</td>
+<td>–</td>
+</tr>
+<tr>
+<td>Equal (==)</td>
+<td>Delete row/entry if the value contained in the given <code>field</code> equals the <code>comparison value</code>.</td>
+<td>Works for strings, integers, and dates^1^.</td>
+</tr>
+<tr>
+<td>Not Equal (!=)</td>
+<td>Delete row/entry if the value contained in the given <code>field</code> does not equal the <code>comparison value</code>.</td>
+<td>Works for strings, integers, and dates^1^.</td>
+</tr>
+<tr>
+<td>Greater than (&gt;)</td>
+<td>Delete row/entry if the value contained in the given <code>field</code> is greater than the <code>comparison value</code>.</td>
+<td>Works for integers and dates^1^. String values are skipped and the row will be kept in the data.</td>
+</tr>
+<tr>
+<td>Smaller than (&lt;)</td>
+<td>Delete row/entry if the value contained in the given <code>field</code> is smaller than the <code>comparison value</code>.</td>
+<td>Works for integers and dates^1^. String values are skipped and the row will be kept in the data.</td>
+</tr>
+<tr>
+<td>Greater than or equal (&gt;=)</td>
+<td>Delete row/entry if the value contained in the given <code>field</code> is greater than or equal to the <code>comparison value</code>.</td>
+<td>Works for integers and dates^1^. String values are skipped and the row will be kept in the data.</td>
+</tr>
+<tr>
+<td>Smaller than or equal (&lt;=)</td>
+<td>Delete row/entry if the value contained in the given <code>field</code> is smaller than or equal to the <code>comparison value</code>.</td>
+<td>Works for integers and dates^1^. String values are skipped and the row will be kept in the data.</td>
+</tr>
+<tr>
+<td>Delete match (regex)</td>
+<td>Delete parts of the value contained in the given <code>field</code> that match the given <code>regular expression (regex)</code> (e.g., if the <code>regular expression (regex)</code> = "^Watched " and a field contains the value "Watched video XY" the following value will be kept in the uploaded data: "video XY").</td>
+<td>All field values are converted to strings before this operation is applied.</td>
+</tr>
+<tr>
+<td>Replace match (regex)</td>
+<td>Replace parts of the value contained in the given <code>field</code> that match the given <code>regular expression (regex)</code> (e.g., if the <code>regular expression (regex)</code> = "[\w-.]+@([\w-]+.)+[\w-]{2,4}" and the <code>replacement value</code> = "<em>anonymized</em>" and a field contains the value "some text email@address.com" the following value will be kept in the uploaded data: "some text <em>anonymized</em>").</td>
+<td>All field values are converted to strings before this operation is applied.</td>
+</tr>
+<tr>
+<td>Delete row when match (regex)</td>
+<td>Delete row/entry if the value contained in the given <code>field</code> matches the given <code>regular expression (regex)</code> (e.g., if <code>regular expression (regex)</code> = "^Watched " and a field contains the value "Watched video XY" the row/entry will be deleted from the uploaded data).</td>
+<td>All field values are converted to strings before this operation is applied.</td>
+</tr>
+</tbody>
+</table>
+<p>[small]#^1^ Dates are inferred from string values if they are formatted according to ISO, RFC2822, or HTTP standards,
+and only if both the field value and the comparison value follow the same format.
+Otherwise, the entry will be treated as a regular string.#</p>
+<hr />
+<h4 id="comparison-value"><code>Comparison Value</code><a class="headerlink" href="#comparison-value" title="Permanent link">&para;</a></h4>
+<p>The value against which the data contained in the indicated field will be compared according
+to the selected Extraction Operator.</p>
+<hr />
+<h4 id="replacement-value"><code>Replacement Value</code><a class="headerlink" href="#replacement-value" title="Permanent link">&para;</a></h4>
+<p>Only required for operation "Replace match (regex)". The value
+that will be used as a replacement if the regex pattern matches.</p>
+</details>
+<h3 id="backup-blueprints-advanced-settings">Backup blueprints (advanced settings)<a class="headerlink" href="#backup-blueprints-advanced-settings" title="Permanent link">&para;</a></h3>
+<p>A backup blueprint acts as a fallback: if a blueprint's parser fails to
+extract data from a participant's file (e.g., because the file cannot be identified,
+or the data extraction produces an error) DDM will try its backup blueprints
+instead. This is useful for handling files whose structure occasionally
+varies (e.g. a platform export format that changes over time), without
+having to guess a single configuration that covers every case.</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it's for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Backup for</code></td>
+<td>The primary blueprint that this blueprint should act as a backup for.</td>
+</tr>
+<tr>
+<td><code>Backup priority</code></td>
+<td>If a primary blueprint has more than one backup, the order in which they are tried.</td>
+</tr>
+</tbody>
+</table>
+<details class="setting-details">
+<summary>Setting Details</summary>
+<hr />
+<h4 id="backup-for"><code>Backup for</code><a class="headerlink" href="#backup-for" title="Permanent link">&para;</a></h4>
+<p>Selects the primary blueprint that this blueprint should act as
+a backup for. Leave empty if this blueprint is not a backup. Only blueprints
+using the same File Uploader (and belonging to the same project) are
+available for selection; a blueprint that is itself a backup cannot be
+selected here — backups cannot be chained.</p>
+<hr />
+<h4 id="backup-priority"><code>Backup priority</code><a class="headerlink" href="#backup-priority" title="Permanent link">&para;</a></h4>
+<p>If a primary blueprint has more than one backup, this
+number determines the order in which they are tried. Lower values are tried
+first.</p>
+</details>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A backup blueprint is only used if the primary blueprint's parser fails to
+extract data. If the primary blueprint succeeds, its backups are never
+attempted, even if they are configured.</p>
+</div>
+<h4 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h4>
+<p>Suppose <code>Watch History</code> is a primary blueprint expecting a JSON export, and
+the platform occasionally changes its export format in a way that breaks
+extraction. A second blueprint, <code>Watch History (legacy format)</code>, can be
+configured with <code>Backup for</code> set to <code>Watch History</code> and used as a fallback:
+if the primary JSON structure fails to parse, DDM automatically tries the
+legacy-format blueprint instead (e.g., TXT), and participants see the result of
+whichever blueprint succeeded.</p>
+<p>If multiple backups are configured for the same primary blueprint, set
+<code>Backup priority</code> on each to control the order they are attempted in (e.g.
+<code>0</code> for the first fallback, <code>1</code> for the second).</p>
+<h2 id="advanced-options">Advanced Options<a class="headerlink" href="#advanced-options" title="Permanent link">&para;</a></h2>
+<p>Under advanced options, the Uploader translations can be edited. This gives you control over the text labels
+of the Uploaders displayed in the participant interface. If there are multiple Uploaders configured for one project,
+this will affect all Uploaders.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../datadonation_overview/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Overview">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Overview
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../questionnaire/questionnaire_overview/" class="md-footer__link md-footer__link--next" aria-label="Next: Overview">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Overview
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; Data Donation Lab, University of Zurich
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "navigation.top", "navigation.footer", "navigation.tracking", "toc.follow", "content.action.edit", "content.code.copy", "content.tooltips", "search.suggest", "search.highlight", "search.share"], "search": "../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

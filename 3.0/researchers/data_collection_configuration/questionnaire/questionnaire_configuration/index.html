@@ -1,0 +1,3534 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Data Donation Module (DDM).">
+      
+      
+      
+        <link rel="canonical" href="https://uzh.github.io/ddm/3.0/researchers/data_collection_configuration/questionnaire/questionnaire_configuration/">
+      
+      
+        <link rel="prev" href="../questionnaire_overview/">
+      
+      
+        <link rel="next" href="../questionnaire_data_integration/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../../assets/ddl_favicon_black.svg">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Configuration - DDM Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+  
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CFira+Code:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"Fira Code"}</style>
+      
+    
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Fira+Code:wght@300..700&family=Inter:ital,wght@0,100..900;1,100..900&display=fallback"
+  />
+
+    
+      <link rel="stylesheet" href="../../../../assets/extra.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#questionnaire-configuration" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="DDM Documentation" class="md-header__button md-logo" aria-label="DDM Documentation" data-md-component="logo">
+      
+  <img src="../../../../assets/DDM_Logo_Weiss.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            DDM Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Configuration
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/uzh/ddm" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    uzh/ddm
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  For Researchers
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../administrators/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  For Administrators
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../developers/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  For Developers
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../issues/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Reporting Issues
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../previous-versions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Older Versions
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="DDM Documentation" class="md-nav__button md-logo" aria-label="DDM Documentation" data-md-component="logo">
+      
+  <img src="../../../../assets/DDM_Logo_Weiss.svg" alt="logo">
+
+    </a>
+    DDM Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/uzh/ddm" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    uzh/ddm
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    For Researchers
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    For Researchers
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../create_project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Create a Project
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../project_hub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Hub
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../general_project_settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    General Project Settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Collection Configuration
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Data Collection Configuration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../briefing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Briefing Page
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_3" id="__nav_2_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Donation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Data Donation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../datadonation/datadonation_overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../datadonation/datadonation_configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_4" id="__nav_2_5_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Questionnaire
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Questionnaire
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../questionnaire_overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#general-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        General Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="General Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blueprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blueprint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Page
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Index
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variable Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#text" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Text
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirement-level" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirement level
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#randomize-items" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Randomize items
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#specific-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Specific Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Specific Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#open-question" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open Question
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Open Question">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#input-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input type
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#maximum-input-length" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Maximum input length
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#display" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Display
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-item-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi item response
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matrix-question" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Matrix Question
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Matrix Question">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#show-scale-headings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Show scale headings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#question-items" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Question Items
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Question Items">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#index_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Index
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#label" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Label
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#label-right" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Label Right
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Value
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#randomize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Randomize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Delete
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scale-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scale Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scale Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#index_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Index
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#input-label" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input label
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#heading-label" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Heading label
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#value_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Value
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#secondary-point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secondary point
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Delete
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filter-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filter Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filter Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#index_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Index
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#combinator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Combinator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparison-questionitem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison Question/Item
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparison-operator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison Operator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparison-value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison Value
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Delete
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../questionnaire_data_integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../debriefing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debriefing Page
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../data_center/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Center
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Data Center
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../data_center/data_download/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Download
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../data_center/project_logs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Logs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../data_center/participation_statistics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Statistics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../danger_zone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Danger Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../topics/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Topics
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_8" id="__nav_2_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Topics
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../topics/apis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APIs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../topics/continuation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Continuation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../topics/project_logs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Logs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../topics/templating_features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Template Rendering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../administrators/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    For Administrators
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    For Administrators
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../administrators/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../administrators/topics/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Topics
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Topics
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../administrators/topics/customize_ckeditor_configs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CKEditor Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../administrators/topics/customize_admin_templates/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Template Customization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../administrators/topics/user_authentication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../administrators/topics/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../developers/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    For Developers
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    For Developers
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Topics
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Topics
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developers/topics/documentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developers/topics/encryption/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Encryption
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developers/topics/internationalization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Internationalization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developers/topics/changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog Conventions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../issues/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reporting Issues
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../previous-versions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Older Versions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#general-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        General Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="General Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blueprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blueprint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Page
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Index
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variable Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#text" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Text
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirement-level" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirement level
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#randomize-items" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Randomize items
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#specific-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Specific Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Specific Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#open-question" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open Question
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Open Question">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#input-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input type
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#maximum-input-length" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Maximum input length
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#display" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Display
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-item-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi item response
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matrix-question" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Matrix Question
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Matrix Question">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#show-scale-headings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Show scale headings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#question-items" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Question Items
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Question Items">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#index_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Index
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#label" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Label
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#label-right" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Label Right
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Value
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#randomize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Randomize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Delete
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scale-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scale Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scale Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#index_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Index
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#input-label" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input label
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#heading-label" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Heading label
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#value_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Value
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#secondary-point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secondary point
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Delete
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filter-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filter Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filter Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#index_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Index
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#combinator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Combinator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparison-questionitem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison Question/Item
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparison-operator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison Operator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparison-value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison Value
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Delete
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/uzh/ddm/edit/develop/docs/researchers/data_collection_configuration/questionnaire/questionnaire_configuration.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="questionnaire-configuration">Questionnaire Configuration<a class="headerlink" href="#questionnaire-configuration" title="Permanent link">&para;</a></h1>
+<p>This page explains the settings related to the configuration of the questionnaire and its questions.
+As shown before, the following question types are implemented:</p>
+<ul>
+<li>Single Choice Question:</li>
+</ul>
+<p><img alt="Single Choice Question Screenshot" src="../../../img/questionnaire_singlechoice.png" width="80%" /></p>
+<ul>
+<li>Multi Choice Question</li>
+</ul>
+<p><img alt="Multi Choice Question Screenshot" src="../../../img/questionnaire_multichoice.png" width="80%" /></p>
+<ul>
+<li>Matrix Question</li>
+</ul>
+<p><img alt="Matrix Question Screenshot" src="../../../img/questionnaire_matrix.png" width="80%" /></p>
+<ul>
+<li>Semantic Differential</li>
+</ul>
+<p><img alt="Semantic Differential Screenshot" src="../../../img/questionnaire_semanticdifferential.png" width="80%" /></p>
+<ul>
+<li>Open Question</li>
+</ul>
+<p><img alt="Open Question Screenshot" src="../../../img/questionnaire_open.png" width="80%" /></p>
+<ul>
+<li>Text Block (plain text, without any response options for the participant)</li>
+</ul>
+<p><img alt="Text Block Screenshot" src="../../../img/questionnaire_textblock.png" width="80%" /></p>
+<p>Depending on the question type, different configuration options are available.</p>
+<h2 id="general-settings">General Settings<a class="headerlink" href="#general-settings" title="Permanent link">&para;</a></h2>
+<p>The following configuration settings are available for all question types:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it's for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Name</code></td>
+<td>A question name, used for internal organisation only.</td>
+</tr>
+<tr>
+<td><code>Blueprint</code></td>
+<td>Whether the question is general or related to a Blueprint.</td>
+</tr>
+<tr>
+<td><code>Page</code></td>
+<td>Number of the page on which the question will be displayed.</td>
+</tr>
+<tr>
+<td><code>Index</code></td>
+<td>Order in which questions on the same page will be displayed.</td>
+</tr>
+<tr>
+<td><code>Variable Name</code></td>
+<td>The variable name associated to a question, included in the data export.</td>
+</tr>
+<tr>
+<td><code>Text</code></td>
+<td>The question text that is displayed to participants.</td>
+</tr>
+<tr>
+<td><code>Requirement level</code></td>
+<td>Whether and how strictly a participant must answer the question.</td>
+</tr>
+<tr>
+<td><code>Randomize items</code></td>
+<td>Enable or disable randomization of all items.</td>
+</tr>
+</tbody>
+</table>
+<details class="setting-details">
+<summary>Setting Details</summary>
+<hr />
+<h4 id="name"><code>Name</code><a class="headerlink" href="#name" title="Permanent link">&para;</a></h4>
+<p>A question name. This name is only used for internal organisation and is not visible to participants.</p>
+<hr />
+<h4 id="blueprint"><code>Blueprint</code><a class="headerlink" href="#blueprint" title="Permanent link">&para;</a></h4>
+<p>A question can either be <em>general</em> or related to a
+<a href="../../datadonation/datadonation_configuration/"><em>Blueprint</em></a>.
+<strong>General questions</strong> are displayed to all participants, regardless if they successfully
+donated any data.
+<strong>Questions related to a Blueprint</strong> are only displayed to those participants
+that successfully uploaded some data to the related file blueprint.
+This means that if no donated data were extracted by the related Blueprint (either because the
+extraction <em>failed</em>, <em>was not attempted</em> or <em>all entries were filtered out by the extraction rules</em>),
+the question will not be displayed.
+Consult the section on <a href="../questionnaire_data_integration/">integrating donated data in the questionnaire</a> for more information.</p>
+<hr />
+<h4 id="page"><code>Page</code><a class="headerlink" href="#page" title="Permanent link">&para;</a></h4>
+<p>Number of the page on which the question will be displayed.</p>
+<hr />
+<h4 id="index"><code>Index</code><a class="headerlink" href="#index" title="Permanent link">&para;</a></h4>
+<p>Order in which questions on the same page will be displayed.</p>
+<hr />
+<h4 id="variable-name"><code>Variable Name</code><a class="headerlink" href="#variable-name" title="Permanent link">&para;</a></h4>
+<p>The variable name associated to a question. This name will be included
+in the data export. For items belonging to a question, the variable name will
+be constructed as follows: "question_variable_name-+{item-value+}".</p>
+<hr />
+<h4 id="text"><code>Text</code><a class="headerlink" href="#text" title="Permanent link">&para;</a></h4>
+<p>The question text that is displayed to participants.</p>
+<hr />
+<h4 id="requirement-level"><code>Requirement level</code><a class="headerlink" href="#requirement-level" title="Permanent link">&para;</a></h4>
+<p><code>Not required</code>: A participant can skip the question.
+<code>Soft</code>: the application will show a
+hint to the participant if they forgot to answer the question.
+This hint will only be shown once. This means that if a participant chooses to
+ignore the hint and clicks on 'continue', they are able to skip a required question.
+<code>Hard</code>: the application will show a hint and the participant cannot skip the
+question.</p>
+<hr />
+<h4 id="randomize-items"><code>Randomize items</code><a class="headerlink" href="#randomize-items" title="Permanent link">&para;</a></h4>
+<p>Enable or disable randomization of <strong>all</strong> items.</p>
+</details>
+<h2 id="specific-settings">Specific Settings<a class="headerlink" href="#specific-settings" title="Permanent link">&para;</a></h2>
+<h3 id="open-question">Open Question<a class="headerlink" href="#open-question" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it's for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Input type</code></td>
+<td>Whether to restrict input to text, number, or a valid email address.</td>
+</tr>
+<tr>
+<td><code>Maximum input length</code></td>
+<td>Restricts the input to a certain number of characters.</td>
+</tr>
+<tr>
+<td><code>Display</code></td>
+<td>Whether to show a small one-line input field or a larger multi-line text-box.</td>
+</tr>
+<tr>
+<td><code>Multi item response</code></td>
+<td>Whether to define items each requiring a separate text input.</td>
+</tr>
+</tbody>
+</table>
+<details class="setting-details">
+<summary>Setting Details</summary>
+<hr />
+<h4 id="input-type"><code>Input type</code><a class="headerlink" href="#input-type" title="Permanent link">&para;</a></h4>
+<p>Define whether to apply restrictions for the input to
+this field. Can be 'text' to allow any kind of text, 'number' to
+only allow numerical characters, or 'email' to only allow valid
+email addresses. Default is 'text'.</p>
+<hr />
+<h4 id="maximum-input-length"><code>Maximum input length</code><a class="headerlink" href="#maximum-input-length" title="Permanent link">&para;</a></h4>
+<p>Restricts the input to a certain number of characters.
+If this option is left empty, no input length restriction is enforced.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code>input type</code> and <code>maximum input length</code> options are only "softly" enforced
+in the participant's browser by hinting at and highlighting non-compliant input.
+This means that these restrictions are not enforced on the server-side if
+participants choose to ignore the input hint.</p>
+</div>
+<hr />
+<h4 id="display"><code>Display</code><a class="headerlink" href="#display" title="Permanent link">&para;</a></h4>
+<p>Define whether to show a 'small' one-line input field or
+a larger multi-line text-box. Defaults to "small" and only
+applies when the chosen input type is "Text".</p>
+<hr />
+<h4 id="multi-item-response"><code>Multi item response</code><a class="headerlink" href="#multi-item-response" title="Permanent link">&para;</a></h4>
+<p>If this is selected, you can define items for each of which the participants
+will be asked to provide a text input. If not selected, the question will be rendered with just one
+input field below the question text.</p>
+</details>
+<h3 id="matrix-question">Matrix Question<a class="headerlink" href="#matrix-question" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it's for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Show scale headings</code></td>
+<td>Option to show/hide scale headings.</td>
+</tr>
+</tbody>
+</table>
+<details class="setting-details">
+<summary>Setting Details</summary>
+<hr />
+<h4 id="show-scale-headings"><code>Show scale headings</code><a class="headerlink" href="#show-scale-headings" title="Permanent link">&para;</a></h4>
+<p>Option to show/hide scale headings.</p>
+</details>
+<h3 id="question-items">Question Items<a class="headerlink" href="#question-items" title="Permanent link">&para;</a></h3>
+<p>For Single Choice Questions, Multiple Choice Questions, Matrix Questions and Semantic Differentials,
+participants answer in relation to question items. To configure question items, the following
+settings are available:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it's for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Index</code></td>
+<td>Defines the order in which the items are displayed.</td>
+</tr>
+<tr>
+<td><code>Label</code></td>
+<td>The label/text of the item that is displayed to participants related to an item.</td>
+</tr>
+<tr>
+<td><code>Label Right</code></td>
+<td>Only for semantic differential questions: the label on the right-hand side of the scale.</td>
+</tr>
+<tr>
+<td><code>Value</code></td>
+<td>The identifier of an item, used to indicate selected item(s) in the data export.</td>
+</tr>
+<tr>
+<td><code>Randomize</code></td>
+<td>Allows randomizing only certain items while others stay in place.</td>
+</tr>
+<tr>
+<td><code>Delete</code></td>
+<td>Check this box to delete the item.</td>
+</tr>
+</tbody>
+</table>
+<details class="setting-details">
+<summary>Setting Details</summary>
+<hr />
+<h4 id="index_1"><code>Index</code><a class="headerlink" href="#index_1" title="Permanent link">&para;</a></h4>
+<p>Defines the order in which the items are displayed.</p>
+<hr />
+<h4 id="label"><code>Label</code><a class="headerlink" href="#label" title="Permanent link">&para;</a></h4>
+<p>The label/text of the item that is displayed to participants related to an item.
+For semantic differential questions, this is the label displayed on the left-hand side of the scale.</p>
+<hr />
+<h4 id="label-right"><code>Label Right</code><a class="headerlink" href="#label-right" title="Permanent link">&para;</a></h4>
+<p>Only for semantic differential questions. The label displayed on the
+right-hand side of the scale.</p>
+<hr />
+<h4 id="value"><code>Value</code><a class="headerlink" href="#value" title="Permanent link">&para;</a></h4>
+<p>Is (<em>a</em>) the identifier of an item and (<em>b</em>) used to indicate which
+item(s) has or have been selected in the data export (only for Single and Multi
+Choice Questions).</p>
+<hr />
+<h4 id="randomize"><code>Randomize</code><a class="headerlink" href="#randomize" title="Permanent link">&para;</a></h4>
+<p>Instead of randomizing the order of all items with the <em>randomize</em> setting
+on the question level, this setting allows randomizing only certain items while
+those for which this option is not ticked stay in their place (i.e., according to
+their index).</p>
+<hr />
+<h4 id="delete"><code>Delete</code><a class="headerlink" href="#delete" title="Permanent link">&para;</a></h4>
+<p>Check this box to delete the item. It will be deleted when you click <em>Save</em>.</p>
+</details>
+<h3 id="scale-configuration">Scale Configuration<a class="headerlink" href="#scale-configuration" title="Permanent link">&para;</a></h3>
+<p>For Matrix Questions and Semantic Differentials, participants give their answers (or in other words: rate
+the question items) with the configured question scale.</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it's for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Index</code></td>
+<td>Defines the order in which the items are displayed.</td>
+</tr>
+<tr>
+<td><code>Input label</code></td>
+<td>The text that is displayed within the scale-points/input-buttons.</td>
+</tr>
+<tr>
+<td><code>Heading label</code></td>
+<td>The text displayed above the scale-points/input-buttons (Matrix Questions only).</td>
+</tr>
+<tr>
+<td><code>Value</code></td>
+<td>Used to indicate which scale point has been selected in the data export.</td>
+</tr>
+<tr>
+<td><code>Secondary point</code></td>
+<td>Marks a scale point to be rendered differently than the 'regular' scale points.</td>
+</tr>
+<tr>
+<td><code>Delete</code></td>
+<td>Check this box to delete the scale point.</td>
+</tr>
+</tbody>
+</table>
+<details class="setting-details">
+<summary>Setting Details</summary>
+<hr />
+<h4 id="index_2"><code>Index</code><a class="headerlink" href="#index_2" title="Permanent link">&para;</a></h4>
+<p>Defines the order in which the items are displayed.</p>
+<hr />
+<h4 id="input-label"><code>Input label</code><a class="headerlink" href="#input-label" title="Permanent link">&para;</a></h4>
+<p>The text that is displayed within the scale-points/input-buttons.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>When you have long labels on Question Items or Scale Points, or you have many scale points, it is a good practice to
+define optional word-breaks in your labels. To do so, you can use the html code <code>&amp;shy;</code>, which will break the word
+in this position with a hyphen if there is not enough space to render the complete word. E.g., "un&shy;decided" will
+be rendered as "un- decided" if the whole word does not fit on one line.</p>
+</div>
+<hr />
+<h4 id="heading-label"><code>Heading label</code><a class="headerlink" href="#heading-label" title="Permanent link">&para;</a></h4>
+<p>The text that is displayed above the scale-points/input-buttons (currently, only possible for
+Matrix Questions).</p>
+<hr />
+<h4 id="value_1"><code>Value</code><a class="headerlink" href="#value_1" title="Permanent link">&para;</a></h4>
+<p>Used to indicate which scale point has been selected in the data export.</p>
+<hr />
+<h4 id="secondary-point"><code>Secondary point</code><a class="headerlink" href="#secondary-point" title="Permanent link">&para;</a></h4>
+<p>If a scale point is marked as 'secondary point' it will be rendered differently than the 'regular' scale points.
+This is useful to, e.g., offer a "Don't know" option to participants that is visually seperated from the main scale.</p>
+<hr />
+<h4 id="delete_1"><code>Delete</code><a class="headerlink" href="#delete_1" title="Permanent link">&para;</a></h4>
+<p>Check this box to delete the scale point. It will be deleted when you click <em>Save</em>.</p>
+</details>
+<h3 id="filter-configuration">Filter Configuration<a class="headerlink" href="#filter-configuration" title="Permanent link">&para;</a></h3>
+<p>You can conditionally hide questions or items based on answers to previous questions using filter conditions.</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it's for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Index</code></td>
+<td>Sets the order in which filter conditions are applied.</td>
+</tr>
+<tr>
+<td><code>Combinator</code></td>
+<td>Defines how multiple filter conditions are combined (<code>AND</code> / <code>OR</code>).</td>
+</tr>
+<tr>
+<td><code>Comparison Question/Item</code></td>
+<td>The question or item whose answer is used in the comparison.</td>
+</tr>
+<tr>
+<td><code>Comparison Operator</code></td>
+<td>Specifies how the answer should be compared to the value.</td>
+</tr>
+<tr>
+<td><code>Comparison Value</code></td>
+<td>The value to compare against.</td>
+</tr>
+<tr>
+<td><code>Delete</code></td>
+<td>Check this box to remove the condition.</td>
+</tr>
+</tbody>
+</table>
+<details class="setting-details">
+<summary>Setting Details</summary>
+<hr />
+<h4 id="index_3"><code>Index</code><a class="headerlink" href="#index_3" title="Permanent link">&para;</a></h4>
+<p>Sets the order in which filter conditions are applied.</p>
+<hr />
+<h4 id="combinator"><code>Combinator</code><a class="headerlink" href="#combinator" title="Permanent link">&para;</a></h4>
+<p>Defines how multiple filter conditions are combined: <code>AND</code> = all conditions must be met,
+<code>OR</code> = any condition must be met for the filter to be applied (ignored for the first (lowest index) condition, so can
+be set to any value for the first condition).</p>
+<p><strong>Note:</strong> Conditions are evaluated as a chain, with AND having higher priority than OR. For example:
+<code>Condition1 OR Condition2 AND Condition3 OR Condition4</code> will be evaluated as
+<code>Condition1 OR (Condition2 AND Condition3) OR Condition4</code>).</p>
+<p>Options: <code>AND</code>, <code>OR</code>.</p>
+<hr />
+<h4 id="comparison-questionitem"><code>Comparison Question/Item</code><a class="headerlink" href="#comparison-questionitem" title="Permanent link">&para;</a></h4>
+<p>The question or item whose answer is used in the comparison (the <em>left side</em> of the condition).</p>
+<hr />
+<h4 id="comparison-operator"><code>Comparison Operator</code><a class="headerlink" href="#comparison-operator" title="Permanent link">&para;</a></h4>
+<p>Specifies how the answer should be compared to the value.
+Options: <code>Equal (==)</code>, <code>Not Equal (!=)</code>, <code>Greater than (&gt;)</code>, <code>Smaller than (&lt;)</code>,
+<code>Greater than or equal (&gt;=)</code>, <code>Smaller than or equal (&lt;=)</code>, <code>Contains</code>, <code>Does not Contain</code>.</p>
+<hr />
+<h4 id="comparison-value"><code>Comparison Value</code><a class="headerlink" href="#comparison-value" title="Permanent link">&para;</a></h4>
+<p>The value to compare against (the <em>right side</em> of the condition).</p>
+<hr />
+<h4 id="delete_2"><code>Delete</code><a class="headerlink" href="#delete_2" title="Permanent link">&para;</a></h4>
+<p>Check this box to remove the condition. It will be deleted when you click <em>Save</em>.</p>
+</details>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Behavior when all items of a question are filtered out:</strong> When all items of a question are filtered out, the entire
+question will not be displayed. If the filtered question is the only question on a page, the entire page will be skipped
+and the user will proceed to the next available page.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../questionnaire_overview/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Overview">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Overview
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../questionnaire_data_integration/" class="md-footer__link md-footer__link--next" aria-label="Next: Data Integration">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Data Integration
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; Data Donation Lab, University of Zurich
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "navigation.top", "navigation.footer", "navigation.tracking", "toc.follow", "content.action.edit", "content.code.copy", "content.tooltips", "search.suggest", "search.highlight", "search.share"], "search": "../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

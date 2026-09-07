@@ -8,10 +8,15 @@ copyright: Copyright &copy; Data Donation Lab, University of Zurich
 
 strict: true
 
+# theme.custom_dir lives inside docs/ (docs/overrides/) so it stays with the
+# rest of the docs; exclude it from the built site.
+exclude_docs: |
+  overrides/
+
 theme:
   name: material
   language: en
-  custom_dir: overrides
+  custom_dir: docs/overrides
   logo: assets/DDM_Logo_Weiss.svg
   favicon: assets/ddl_favicon_black.svg
   font:

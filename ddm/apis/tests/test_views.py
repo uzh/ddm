@@ -1,5 +1,6 @@
 import csv
 import io
+import json
 
 from django.contrib.auth import get_user_model
 from django.db import connection
@@ -21,7 +22,12 @@ from ddm.datadonation.schemas import JSONParserConfig
 from ddm.participation.models import Participant
 from ddm.participation.serializers import BlueprintSerializer
 from ddm.projects.models import DonationProject, ResearchProfile
-from ddm.questionnaire.models import OpenQuestion, QuestionnaireResponse
+from ddm.questionnaire.models import (
+    MultiChoiceQuestion,
+    OpenQuestion,
+    QuestionItem,
+    QuestionnaireResponse,
+)
 
 User = get_user_model()
 
@@ -133,13 +139,14 @@ class TestAPIs(TestCase):
             data=["data1_pB_bpB", "data2_pB_bpB"],
         )
 
-        q = OpenQuestion.objects.create(
+        cls.question_open = OpenQuestion.objects.create(
             project=cls.project_base,
             name="open question",
             page=1,
             index=1,
             variable_name="open",
         )
+        q = cls.question_open
         cls.q_response_a = QuestionnaireResponse.objects.create(
             project=cls.project_base,
             participant=cls.participant_a,
@@ -308,15 +315,24 @@ class TestAPIs(TestCase):
         response = client.get(url)
         self.assertEqual(response.status_code, 405)
 
+    def _get_response_variable_name_context(self):
+        return {
+            "question_variable_names": {
+                self.question_open.pk: self.question_open.variable_name
+            },
+            "item_variable_names": {},
+        }
+
     def test_responses_api_get_with_valid_api_credentials(self):
         token = self.project_base.create_token()
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
 
+        context = self._get_response_variable_name_context()
         expected_response = {
             "responses": [
-                ResponseSerializer(self.q_response_a).data,
-                ResponseSerializer(self.q_response_b).data,
+                ResponseSerializer(self.q_response_a, context=context).data,
+                ResponseSerializer(self.q_response_b, context=context).data,
             ],
             "metadata": {
                 "n_responses": len(self.project_base.questionnaireresponse_set.all())
@@ -332,10 +348,11 @@ class TestAPIs(TestCase):
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
 
+        context = self._get_response_variable_name_context()
         expected_response = {
             "responses": [
-                ResponseSerializerWithSnapshot(self.q_response_a).data,
-                ResponseSerializerWithSnapshot(self.q_response_b).data,
+                ResponseSerializerWithSnapshot(self.q_response_a, context=context).data,
+                ResponseSerializerWithSnapshot(self.q_response_b, context=context).data,
             ],
             "metadata": {
                 "n_responses": len(self.project_base.questionnaireresponse_set.all())
@@ -403,7 +420,8 @@ class TestAPIs(TestCase):
         client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
         url = reverse("ddm_apis:responses", args=[self.project_base.url_id])
         response = client.get(url + "?csv=true")
-        header = response.content.decode().splitlines()[0]
+        content = b"".join(response.streaming_content).decode()
+        header = content.splitlines()[0]
         self.assertIn("questionnaire_complete", header)
 
     def test_participant_deletion_with_regular_login(self):
@@ -674,3 +692,133 @@ class TestAPIs(TestCase):
         small_count = len(small_ctx.captured_queries)
         large_count = len(large_ctx.captured_queries)
         self.assertLess(large_count, small_count + 5)
+
+    def test_responses_api_resolves_new_format_response_data(self):
+        """
+        Regression test for the get_response_data N+1 fix: responses saved in
+        the current ("question-<id>"/"item-<id>" prefixed) format must still
+        resolve to the correct variable names via the context-based lookup.
+        """
+        question = MultiChoiceQuestion.objects.create(
+            project=self.project_base,
+            name="multi question",
+            page=1,
+            index=2,
+            variable_name="multi",
+        )
+        item_1 = QuestionItem.objects.create(question=question, index=1, value=1)
+        item_2 = QuestionItem.objects.create(question=question, index=2, value=2)
+
+        participant = Participant.objects.create(
+            project=self.project_base, start_time=timezone.now()
+        )
+        response_data = {
+            f"question-{question.pk}": "not applicable",
+            f"item-{item_1.pk}": 1,
+            f"item-{item_2.pk}": 0,
+        }
+        QuestionnaireResponse.objects.create(
+            project=self.project_base,
+            participant=participant,
+            time_submitted=timezone.now(),
+            data=json.dumps(response_data),
+        )
+
+        token = self.project_base.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+        url = reverse("ddm_apis:responses", args=[self.project_base.url_id])
+        response = client.get(url + f"?participants={participant.external_id}")
+
+        self.assertEqual(response.status_code, 200)
+        resolved = response.data["responses"][0]["response_data"]
+        self.assertEqual(resolved["multi-1"], 1)
+        self.assertEqual(resolved["multi-2"], 0)
+        self.assertNotIn(f"question-{question.pk}", resolved)
+        self.assertNotIn(f"item-{item_1.pk}", resolved)
+
+    def test_responses_api_query_count_is_constant(self):
+        """
+        Regression test: neither the JSON nor the CSV response export should
+        issue more queries as the number of responses/questions/items grows.
+        """
+        token = self.project_base.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+        url = reverse("ddm_apis:responses", args=[self.project_base.url_id])
+
+        with CaptureQueriesContext(connection) as small_json_ctx:
+            self.assertEqual(client.get(url).status_code, 200)
+        with CaptureQueriesContext(connection) as small_csv_ctx:
+            response = client.get(url + "?csv=true")
+            b"".join(response.streaming_content)
+
+        for i in range(10):
+            question = MultiChoiceQuestion.objects.create(
+                project=self.project_base,
+                name=f"multi question {i}",
+                page=1,
+                index=10 + i,
+                variable_name=f"multi_{i}",
+            )
+            item = QuestionItem.objects.create(question=question, index=1, value=1)
+            participant = Participant.objects.create(
+                project=self.project_base, start_time=timezone.now()
+            )
+            QuestionnaireResponse.objects.create(
+                project=self.project_base,
+                participant=participant,
+                time_submitted=timezone.now(),
+                data=json.dumps(
+                    {f"question-{question.pk}": "value", f"item-{item.pk}": 1}
+                ),
+            )
+
+        with CaptureQueriesContext(connection) as large_json_ctx:
+            self.assertEqual(client.get(url).status_code, 200)
+        with CaptureQueriesContext(connection) as large_csv_ctx:
+            response = client.get(url + "?csv=true")
+            self.assertEqual(response.status_code, 200)
+            b"".join(response.streaming_content)
+
+        self.assertLess(
+            len(large_json_ctx.captured_queries),
+            len(small_json_ctx.captured_queries) + 5,
+        )
+        self.assertLess(
+            len(large_csv_ctx.captured_queries),
+            len(small_csv_ctx.captured_queries) + 5,
+        )
+
+    def test_responses_api_snapshot_and_response_data_both_correct(self):
+        """
+        Regression test for the decrypted-data caching fix: requesting both
+        response_data and questionnaire_snapshot (via include_snapshot=true)
+        for the same response must not corrupt or drop either field.
+        """
+        token = self.project_base.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+        url = reverse("ddm_apis:responses", args=[self.project_base.url_id])
+        response = client.get(
+            url
+            + f"?participants={self.participant_a.external_id}&include_snapshot=true"
+        )
+        self.assertEqual(response.status_code, 200)
+        entry = response.data["responses"][0]
+        self.assertIn("questionnaire_snapshot", entry)
+        self.assertEqual(entry["response_data"]["open"], "response_data")
+
+    def test_responses_api_csv_uses_resolved_variable_names(self):
+        token = self.project_base.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+        url = reverse("ddm_apis:responses", args=[self.project_base.url_id])
+        response = client.get(url + "?csv=true")
+        content = b"".join(response.streaming_content).decode()
+        rows = list(csv.reader(io.StringIO(content)))
+        header = rows[0]
+        self.assertIn("open", header)
+        self.assertNotIn(str(self.question_open.pk), header)
+        for row in rows[1:]:
+            self.assertEqual(len(row), len(header))

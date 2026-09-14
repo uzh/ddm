@@ -1,14 +1,12 @@
 import csv
-import io
 from collections.abc import Generator
 from typing import Any
 
 from django.core.exceptions import BadRequest, ObjectDoesNotExist
-from django.db.models import QuerySet
+from django.db.models import Prefetch, QuerySet
 from django.http import (
     Http404,
     HttpRequest,
-    HttpResponse,
     HttpResponseBase,
     StreamingHttpResponse,
 )
@@ -37,7 +35,17 @@ from ddm.participation.models import Participant
 from ddm.participation.serializers import BlueprintSerializer
 from ddm.projects.models import DonationProject
 from ddm.questionnaire.constants import QuestionType
-from ddm.questionnaire.models import QuestionnaireResponse
+from ddm.questionnaire.models import QuestionBase, QuestionItem, QuestionnaireResponse
+
+
+class Echo:
+    """
+    Write-only pseudo-buffer so csv.writer can be used to build rows for
+    a StreamingHttpResponse without buffering the whole file in memory.
+    """
+
+    def write(self, value: str) -> str:
+        return value
 
 
 class DDMAPIMixin:
@@ -199,7 +207,9 @@ class ProjectDonationsListView(ListAPIView, DDMAPIMixin):
         blueprint: DonationBlueprint,
         participants: QuerySet[Participant],
     ) -> QuerySet[DataDonation]:
-        return blueprint.datadonation_set.filter(participant__in=participants)
+        return blueprint.datadonation_set.filter(
+            participant__in=participants
+        ).select_related("project", "participant")
 
     def get_metadata(self, project: DonationProject) -> None:
         return
@@ -290,7 +300,26 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
     ) -> QuerySet[QuestionnaireResponse]:
         return QuestionnaireResponse.objects.filter(
             project=self.project, participant__in=participants
+        ).select_related("project", "participant")
+
+    def get_variable_name_lookups(self) -> tuple[dict[int, str], dict[int, str]]:
+        """
+        Resolves QuestionBase/QuestionItem variable names for the whole
+        project in two queries, to be used as a lookup when parsing response
+        data instead of querying per response field.
+        """
+        question_names = dict(
+            QuestionBase.objects.filter(project=self.project).values_list(
+                "id", "variable_name"
+            )
         )
+        item_names = {
+            row["id"]: f"{row['question__variable_name']}-{row['value']}"
+            for row in QuestionItem.objects.filter(
+                question__project=self.project
+            ).values("id", "value", "question__variable_name")
+        }
+        return question_names, item_names
 
     def get_serializer(
         self,
@@ -312,8 +341,15 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
         self, responses: QuerySet[QuestionnaireResponse], decryptor: Decryption
     ) -> Response:
         serializer = self.get_serializer()
+        question_names, item_names = self.get_variable_name_lookups()
+        context = {
+            "question_variable_names": question_names,
+            "item_variable_names": item_names,
+        }
         response = {
-            "responses": serializer(responses, many=True, decryptor=decryptor).data,
+            "responses": serializer(
+                responses, many=True, decryptor=decryptor, context=context
+            ).data,
             "metadata": self.get_metadata(responses),
         }
         self.create_event_log(
@@ -328,7 +364,15 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
         of the questionnaire.
         """
         col_order = ["participant", "time_submitted", "is_complete"]
-        questions = self.project.questionbase_set.all().order_by("page", "index")
+        questions = (
+            self.project.questionbase_set.all()
+            .order_by("page", "index")
+            .prefetch_related(
+                Prefetch(
+                    "questionitem_set", queryset=QuestionItem.objects.order_by("index")
+                )
+            )
+        )
 
         question_types_wo_items = [QuestionType.SINGLE_CHOICE]
         question_types_with_items = [
@@ -342,14 +386,16 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
                 col_order.append(question.variable_name)
             elif question.question_type in question_types_with_items:
                 var_name = question.variable_name
-                items = question.questionitem_set.all().order_by("index")
+                # .all() (no further chaining) to use the prefetched, already
+                # index-ordered items instead of issuing a query per question.
+                items = question.questionitem_set.all()
                 col_order.extend([f"{var_name}-{item.value}" for item in items])
             elif question.question_type == QuestionType.OPEN:
                 var_name = question.variable_name
                 if not question.multi_item_response:
                     col_order.append(var_name)
                     continue
-                items = question.questionitem_set.all().order_by("index")
+                items = question.questionitem_set.all()
                 col_order.extend([f"{var_name}-{item.value}" for item in items])
 
         return col_order
@@ -369,10 +415,18 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
 
     def create_csv_response(
         self, responses: QuerySet[QuestionnaireResponse], decryptor: Decryption
-    ) -> HttpResponse:
+    ) -> StreamingHttpResponse:
+        question_names, item_names = self.get_variable_name_lookups()
+        context = {
+            "question_variable_names": question_names,
+            "item_variable_names": item_names,
+        }
+
         clean_responses = []
         col_names = {"participant", "time_submitted", "questionnaire_completed"}
-        responses = ResponseSerializer(responses, many=True, decryptor=decryptor).data
+        responses = ResponseSerializer(
+            responses, many=True, decryptor=decryptor, context=context
+        ).data
         for response in responses:
             data = {
                 "participant": response["participant"],
@@ -386,16 +440,14 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
 
         sorted_header = self.sort_headers(list(col_names))
 
-        csv_output = io.StringIO()
-        writer = csv.DictWriter(csv_output, fieldnames=sorted_header)
-        writer.writeheader()
-        writer.writerows(clean_responses)
-
-        csv_content = csv_output.getvalue()
-        csv_output.close()
+        def generate() -> Generator[str, Any, None]:
+            writer = csv.DictWriter(Echo(), fieldnames=sorted_header)
+            yield writer.writeheader()
+            for row in clean_responses:
+                yield writer.writerow(row)
 
         filename = self.get_filename()
-        response = HttpResponse(csv_content, content_type="text/csv")
+        response = StreamingHttpResponse(generate(), content_type="text/csv")
         response["Content-Disposition"] = f'attachment; filename="{filename}"'
         return response
 
@@ -405,7 +457,7 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
         format: str | None = None,  # noqa: A002
         *args,
         **kwargs,
-    ) -> HttpResponse | Response:
+    ) -> StreamingHttpResponse | Response:
         participants = self.get_participants()
         responses = self.get_responses(participants)
         decryptor = Decryption(self.project.secret_key, self.project.get_salt())
@@ -547,16 +599,6 @@ class DeleteProjectData(APIView, DDMAPIMixin):
             f"{n_del_responses} questionnaire responses."
         )
         return Response(status=status.HTTP_200_OK, data={"message": msg})
-
-
-class Echo:
-    """
-    Write-only pseudo-buffer so csv.writer can be used to build rows for
-    a StreamingHttpResponse without buffering the whole file in memory.
-    """
-
-    def write(self, value: str) -> str:
-        return value
 
 
 class DownloadProjectDetailsView(APIView, DDMAPIMixin):

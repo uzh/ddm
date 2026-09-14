@@ -34,6 +34,18 @@ class SerializerDecryptionMixin:
     def get_data(self, obj: Any) -> Any:  # noqa: ANN401
         if not self.secret:
             self.secret = obj.project.secret_key
-        return obj.get_decrypted_data(
+
+        # Single-slot cache: avoids decrypting the same object's data twice
+        # when a subclass calls get_data() from more than one field (e.g.
+        # ResponseSerializerWithSnapshot uses it for both response_data and
+        # questionnaire_snapshot). Only needs to survive across the field
+        # evaluations for one object, so it's not a growing/unbounded cache.
+        cached = getattr(self, "_decrypted_cache", None)
+        if cached is not None and cached[0] == obj.pk:
+            return cached[1]
+
+        value = obj.get_decrypted_data(
             self.secret, obj.project.get_salt(), self.decryptor
         )
+        self._decrypted_cache = (obj.pk, value)
+        return value

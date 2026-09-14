@@ -77,8 +77,9 @@ This version drops official support for Python versions < 3.12.
   extracted-field mapping is now serialized correctly.
 - `ZIP_READ_FAIL` logs now carry the underlying reader error (and, for a failed
   nested archive, its path and nesting depth) instead of only a generic message.
-- Fixed a database query inefficiency bug in the `Participation Overview` download that
-  could lead to server timeouts for projects with many donations/participants.
+- Fixed several database query inefficiencies in the API views (fixes
+  `Participation Overview` download that could lead to server timeouts for
+  projects with many donations/participants).
 
 ### Deprecated
 

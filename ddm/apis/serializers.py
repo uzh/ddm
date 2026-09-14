@@ -8,7 +8,7 @@ from ddm.datadonation.models import DataDonation
 from ddm.encryption.serializers import SerializerDecryptionMixin
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject
-from ddm.questionnaire.models import QuestionBase, QuestionItem, QuestionnaireResponse
+from ddm.questionnaire.models import QuestionnaireResponse
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -70,6 +70,11 @@ class ResponseSerializer(SerializerDecryptionMixin, serializers.ModelSerializer)
     def get_response_data(self, obj: QuestionnaireResponse) -> dict:
         """
         Creates a dictionary that only holds 'variable_name: response' pairs.
+
+        Note: Question/item variable names are resolved from
+        `self.context["question_variable_names"]`/`["item_variable_names"]`
+        (built once per request by the view) rather than queried per field,
+        to avoid an O(responses x fields) query blowup.
         """
         data = super().get_data(obj)
         with contextlib.suppress(TypeError):
@@ -80,55 +85,52 @@ class ResponseSerializer(SerializerDecryptionMixin, serializers.ModelSerializer)
         if not is_flat_dict(data):
             return self.legacy_get_response_data(data)
 
+        question_names = self.context.get("question_variable_names", {})
+        item_names = self.context.get("item_variable_names", {})
+
         responses = {}
         for response_id in data:
             if response_id.startswith("question-"):
                 question_id = response_id.removeprefix("question-")
-                try:
-                    question = QuestionBase.objects.all().get(id=question_id)
-                except QuestionBase.DoesNotExist:
+                var_name = question_names.get(int(question_id))
+                if var_name is None:
                     # Question has been deleted.
                     continue
-                var_name = question.variable_name
                 responses[var_name] = data[response_id]
 
             if response_id.startswith("item-"):
                 item_id = response_id.removeprefix("item-")
-                try:
-                    item = QuestionItem.objects.all().get(id=item_id)
-                except QuestionItem.DoesNotExist:
+                var_name = item_names.get(int(item_id))
+                if var_name is None:
                     # Item has been deleted.
                     continue
-                var_name = item.variable_name
                 responses[var_name] = data[response_id]
 
         return responses
 
-    @staticmethod
-    def legacy_get_response_data(data: dict) -> dict:
+    def legacy_get_response_data(self, data: dict) -> dict:
         """
         Used to support extracting response data that has been saved in the old
         response structure (DDM <= v2.0.2).
         """
+        question_names = self.context.get("question_variable_names", {})
+        item_names = self.context.get("item_variable_names", {})
+
         responses = {}
         for question_id in data:
-            try:
-                question = QuestionBase.objects.all().get(id=question_id)
-                var_name = question.variable_name
-            except QuestionBase.DoesNotExist:
+            var_name = question_names.get(int(question_id))
+            if var_name is None:
                 # Question has been deleted.
                 continue
 
             if isinstance(data[question_id]["response"], dict):
                 item_answers = data[question_id]["response"]
                 for item_id in item_answers:
-                    try:
-                        item = QuestionItem.objects.all().get(id=int(item_id))
-                    except QuestionItem.DoesNotExist:
+                    item_var_name = item_names.get(int(item_id))
+                    if item_var_name is None:
                         # Item has been deleted.
                         continue
-                    var_name = item.variable_name
-                    responses[var_name] = item_answers[item_id]
+                    responses[item_var_name] = item_answers[item_id]
             else:
                 responses[var_name] = data[question_id]["response"]
         return responses

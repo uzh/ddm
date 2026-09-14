@@ -549,6 +549,16 @@ class DeleteProjectData(APIView, DDMAPIMixin):
         return Response(status=status.HTTP_200_OK, data={"message": msg})
 
 
+class Echo:
+    """
+    Write-only pseudo-buffer so csv.writer can be used to build rows for
+    a StreamingHttpResponse without buffering the whole file in memory.
+    """
+
+    def write(self, value: str) -> str:
+        return value
+
+
 class DownloadProjectDetailsView(APIView, DDMAPIMixin):
     """
     Returns a CSV file containing high level participation information for a
@@ -589,78 +599,107 @@ class DownloadProjectDetailsView(APIView, DDMAPIMixin):
     def get_blueprints(self) -> QuerySet[DonationBlueprint]:
         return self.project.donationblueprint_set.all()
 
-    @staticmethod
-    def get_donations(participant: Participant) -> QuerySet[DataDonation]:
-        return participant.datadonation_set.all()
+    def get_donations_lookup(
+        self, blueprints: QuerySet[DonationBlueprint]
+    ) -> dict[tuple[int, int], DataDonation]:
+        """
+        Fetches all donations for the given blueprints in a single query
+        (excluding the encrypted payload, which isn't needed here) and
+        returns them as a {(participant_id, blueprint_id): donation} lookup,
+        avoiding a per-participant-per-blueprint query.
+        """
+        donations = DataDonation.objects.filter(
+            project=self.project, blueprint__in=blueprints
+        ).only(
+            "id",
+            "participant_id",
+            "blueprint_id",
+            "time_submitted",
+            "consent",
+            "data_extraction_state",
+            "n_data_entries",
+        )
+        return {
+            (donation.participant_id, donation.blueprint_id): donation
+            for donation in donations.iterator(chunk_size=2000)
+        }
 
-    def get_csv_header(self, blueprints: QuerySet[DonationBlueprint]) -> str:
+    def get_csv_header(self, blueprints: QuerySet[DonationBlueprint]) -> list[str]:
         participant_header = self.get_participant_header()
         blueprint_header = self.get_blueprint_header(blueprints)
-        return participant_header + blueprint_header + "donation_download_link\n"
+        return [*participant_header, *blueprint_header, "donation_download_link"]
 
     def get_filename(self) -> str:
         date = timezone.now().strftime("%Y-%m-%d-%H-%M")
         return f"ddm_{self.project.url_id}_participation-overview_{date}.csv"
 
     @staticmethod
-    def get_participant_header() -> str:
-        return (
-            "participant_id,start_time,end_time,"
-            "current_step,completed,url_parameter,extra_data,"
-        )
+    def get_participant_header() -> list[str]:
+        return [
+            "participant_id",
+            "start_time",
+            "end_time",
+            "current_step",
+            "completed",
+            "url_parameter",
+            "extra_data",
+        ]
 
     @staticmethod
-    def get_participant_data(participant: Participant) -> str:
-        return (
-            f'"{participant.external_id}",'
-            f'"{participant.start_time}",'
-            f'"{participant.end_time}",'
-            f'"{participant.current_step}",'
-            f'"{participant.completed}",'
-            f'"{participant.url_parameter}",'
-            f'"{participant.extra_data}",'
-        )
+    def get_participant_data(participant: Participant) -> list:
+        return [
+            participant.external_id,
+            participant.start_time,
+            participant.end_time,
+            participant.current_step,
+            participant.completed,
+            participant.url_parameter,
+            participant.extra_data,
+        ]
 
     @staticmethod
-    def get_blueprint_header(blueprints: QuerySet[DonationBlueprint]) -> str:
-        header = ""
+    def get_blueprint_header(blueprints: QuerySet[DonationBlueprint]) -> list[str]:
+        header = []
         for blueprint in blueprints:
             pk = blueprint.pk
-            blueprint_header = (
-                f"bp-{pk}_name,"
-                f"bp-{pk}_time_submitted,"
-                f"bp-{pk}_consent,"
-                f"bp-{pk}_extraction_state,"
-                f"bp-{pk}_n_data_entries,"
+            header.extend(
+                [
+                    f"bp-{pk}_name",
+                    f"bp-{pk}_time_submitted",
+                    f"bp-{pk}_consent",
+                    f"bp-{pk}_extraction_state",
+                    f"bp-{pk}_n_data_entries",
+                ]
             )
-            header += blueprint_header
         return header
 
     def get_blueprint_donation_data(
-        self, blueprints: list[DonationBlueprint], participant: Participant
-    ) -> str:
-        blueprint_data = ""
+        self,
+        blueprints: QuerySet[DonationBlueprint],
+        participant: Participant,
+        donations_lookup: dict[tuple[int, int], DataDonation],
+    ) -> list:
+        blueprint_data = []
         n_donations = 0
-        donations = self.get_donations(participant)
         for blueprint in blueprints:
-            donation = donations.filter(blueprint=blueprint).first()
+            donation = donations_lookup.get((participant.pk, blueprint.pk))
             if donation:
-                data = (
-                    f'"{blueprint.name}",'
-                    f'"{donation.time_submitted}",'
-                    f'"{donation.consent}",'
-                    f'"{donation.data_extraction_state}",'
-                    f'"{donation.n_data_entries}",'
+                blueprint_data.extend(
+                    [
+                        blueprint.name,
+                        donation.time_submitted,
+                        donation.consent,
+                        donation.data_extraction_state,
+                        donation.n_data_entries,
+                    ]
                 )
                 n_donations += 1
             else:
-                data = f"{None},{None},{None},{None},"
-            blueprint_data += data
+                blueprint_data.extend([None, None, None, None, None])
 
-        if n_donations > 0:
-            blueprint_data += self.get_download_link(participant)
-        else:
-            blueprint_data += f"{None}"
+        blueprint_data.append(
+            self.get_download_link(participant) if n_donations > 0 else None
+        )
         return blueprint_data
 
     def get_download_link(self, participant: Participant) -> str:
@@ -672,20 +711,17 @@ class DownloadProjectDetailsView(APIView, DDMAPIMixin):
 
     def generate_csv(self) -> Generator[str, Any, None]:
         blueprints = self.get_blueprints()
-        header = self.get_csv_header(blueprints)
-        yield header
+        donations_lookup = self.get_donations_lookup(blueprints)
 
-        # Loop through participants
-        participants = self.get_participants()
-        data = ""
-        for row, participant in enumerate(participants):
+        writer = csv.writer(Echo())
+        yield writer.writerow(self.get_csv_header(blueprints))
+
+        for participant in self.get_participants().iterator(chunk_size=2000):
             participant_data = self.get_participant_data(participant)
-            blueprint_data = self.get_blueprint_donation_data(blueprints, participant)
-            data += participant_data + blueprint_data + "\n"
-            if row % 10 == 0:
-                yield data
-                data = ""
-        yield data
+            blueprint_data = self.get_blueprint_donation_data(
+                blueprints, participant, donations_lookup
+            )
+            yield writer.writerow(participant_data + blueprint_data)
 
     def get(self, request: HttpRequest, *args, **kwargs) -> StreamingHttpResponse:
         """

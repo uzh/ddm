@@ -1,5 +1,10 @@
+import csv
+import io
+
 from django.contrib.auth import get_user_model
+from django.db import connection
 from django.test import Client, TestCase, override_settings
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.timezone import localtime
@@ -549,3 +554,123 @@ class TestAPIs(TestCase):
         )
         response = client.get(url, follow=True)
         self.assertEqual(response.status_code, 403)
+
+    def test_download_project_detail_view_csv_rows_match_header_length(self):
+        """
+        Regression test: participants that are missing a donation for a
+        blueprint must still produce a row with the same number of columns
+        as the header (previously, missing-donation blueprints emitted one
+        fewer field than present ones, shifting all following columns).
+        """
+        participant_partial = Participant.objects.create(
+            project=self.project_base, start_time=timezone.now()
+        )
+        DataDonation.objects.create(
+            project=self.project_base,
+            blueprint=self.blueprint_a,
+            participant=participant_partial,
+            time_submitted=timezone.now(),
+            consent=True,
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
+            n_data_entries=1,
+            data=["data1_partial"],
+        )
+        # No donation created for blueprint_b for this participant.
+
+        participant_none = Participant.objects.create(
+            project=self.project_base, start_time=timezone.now()
+        )
+        # No donations at all for this participant.
+
+        self.client.login(**self.base_creds)
+        url = reverse(
+            "ddm_apis:download_project_details", args=[self.project_base.url_id]
+        )
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+
+        content = b"".join(response.streaming_content).decode()
+        rows = list(csv.reader(io.StringIO(content)))
+        header = rows[0]
+        self.assertGreater(len(rows), 1)
+        for row in rows[1:]:
+            self.assertEqual(
+                len(row),
+                len(header),
+                f"row {row!r} does not match header length {len(header)}",
+            )
+
+        by_participant = {row[0]: row for row in rows[1:]}
+        partial_row = by_participant[participant_partial.external_id]
+        # bp-<a>_name is populated, bp-<b>_name should be empty (no donation).
+        bp_a_name_idx = header.index(f"bp-{self.blueprint_a.pk}_name")
+        bp_b_name_idx = header.index(f"bp-{self.blueprint_b.pk}_name")
+        self.assertEqual(partial_row[bp_a_name_idx], self.blueprint_a.name)
+        self.assertEqual(partial_row[bp_b_name_idx], "")
+
+        none_row = by_participant[participant_none.external_id]
+        self.assertEqual(none_row[bp_a_name_idx], "")
+        self.assertEqual(none_row[header.index("donation_download_link")], "")
+
+    def test_download_project_detail_view_csv_escapes_special_characters(self):
+        """A participant whose extra_data contains a comma/quote must not
+        corrupt the CSV structure."""
+        tricky_participant = Participant.objects.create(
+            project=self.project_base,
+            start_time=timezone.now(),
+            extra_data={"note": 'contains, a comma and "quotes"'},
+        )
+
+        self.client.login(**self.base_creds)
+        url = reverse(
+            "ddm_apis:download_project_details", args=[self.project_base.url_id]
+        )
+        response = self.client.get(url, follow=True)
+        content = b"".join(response.streaming_content).decode()
+        rows = list(csv.reader(io.StringIO(content)))
+        header = rows[0]
+
+        by_participant = {row[0]: row for row in rows[1:]}
+        row = by_participant[tricky_participant.external_id]
+        self.assertEqual(len(row), len(header))
+        self.assertIn("contains, a comma", row[header.index("extra_data")])
+
+    def test_download_project_detail_view_query_count_is_constant(self):
+        """
+        The number of queries used to build the CSV should not scale with
+        the number of participants/blueprints (regression test for the
+        N+1 query bug in get_blueprint_donation_data).
+        """
+        self.client.login(**self.base_creds)
+        url = reverse(
+            "ddm_apis:download_project_details", args=[self.project_base.url_id]
+        )
+
+        with CaptureQueriesContext(connection) as small_ctx:
+            response = self.client.get(url, follow=True)
+            b"".join(response.streaming_content)
+
+        for _ in range(20):
+            participant = Participant.objects.create(
+                project=self.project_base, start_time=timezone.now()
+            )
+            DataDonation.objects.create(
+                project=self.project_base,
+                blueprint=self.blueprint_a,
+                participant=participant,
+                time_submitted=timezone.now(),
+                consent=True,
+                data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
+                n_data_entries=1,
+                data=["extra"],
+            )
+
+        with CaptureQueriesContext(connection) as large_ctx:
+            response = self.client.get(url, follow=True)
+            b"".join(response.streaming_content)
+
+        # Query count should stay (roughly) flat, not grow with the number
+        # of newly added participants/donations.
+        small_count = len(small_ctx.captured_queries)
+        large_count = len(large_ctx.captured_queries)
+        self.assertLess(large_count, small_count + 5)

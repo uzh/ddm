@@ -6,6 +6,91 @@ import {BlueprintExtractionOutcome} from "@uploader/classes/BlueprintExtractionO
 import {ProcessingError} from "@uploader/types/ProcessingError";
 import {processContent} from "@uploader/composables/useFileProcessor/contentParsers";
 
+
+/* Currently, the file extraction logic will match file names using regex patterns.
+   If there are multiple files matching a pattern, all will be processed and the extracted
+   fields will be aggregated in the blueprint outcome. For example, for the following file
+   strucutre:
+    - archive.zip
+      - data1.json
+      - folder1/
+        - data1.json
+
+    if the given file path is "data1.json", both files will be processed and their extracted
+    fields combined in the blueprint outcome.
+
+    This behavior is perserved for the nested zip files as well. For example:
+    - archive.zip
+      - data1.json
+      - folder1/
+        - data1.json
+      - nested.zip
+        - data1.json
+
+    In this case, all three data1.json files will be processed.
+   */
+
+/* max depth of nested ZIP files we will process. */
+const MAX_NESTED_ZIP_DEPTH = 3;
+
+type ExtractedZipFile = {
+  fullPath: string;
+  entry: JSZip.JSZipObject;
+};
+
+function normalizePath(path: string): string {
+  return path.replace(/^\.\/+/, '').replace(/\\/g, '/');
+}
+
+async function collectZipEntries(
+  zip: JSZip,
+  generalErrors: ProcessingError[],
+  depth = 0,
+  parentPath = ''
+): Promise<ExtractedZipFile[]> {
+  const entries: ExtractedZipFile[] = [];
+
+  for (const entry of Object.values(zip.files)) {
+    if (entry.dir) {
+      continue;
+    }
+
+    const normalizedName = normalizePath(entry.name);
+    const parentBase = parentPath.split('/').filter(Boolean).pop();
+    const entryPath = parentPath
+      ? `${parentPath}/${normalizedName}`
+      : normalizedName;
+
+      if (entry.name.toLowerCase().endsWith('.zip') && depth < MAX_NESTED_ZIP_DEPTH) {
+        try {
+          const nestedBuffer = await entry.async('arraybuffer');
+          const nestedZip = await JSZip.loadAsync(nestedBuffer);
+
+          // Use the ZIP's actual filename as the prefix
+          const nestedParent = parentPath
+            ? `${parentPath}/${normalizedName}`
+            : normalizedName;
+
+          const nestedEntries = await collectZipEntries(
+            nestedZip,
+            generalErrors,
+            depth + 1,
+            nestedParent.replace(/\.zip$/i, '.zip')
+          );
+
+          entries.push(...nestedEntries);
+          continue;
+        } catch (error) {
+          registerGeneralError(generalErrors, ERROR_CATALOG.ZIP_READ_FAIL, { error });
+        }
+      }
+
+    entries.push({ fullPath: entryPath, entry });
+  }
+
+  return entries;
+}
+
 /**
  * Processes a ZIP archive by extracting and processing matching files.
  *
@@ -49,6 +134,9 @@ export async function handleZipFile(
     return;
   }
 
+  const extractedFiles = await collectZipEntries(zip, generalErrors);
+  const availableFiles = Array.from(new Set(extractedFiles.map(entry => entry.fullPath)));
+
   for (const blueprint of blueprints) {
     let re: RegExp;
     try {
@@ -58,9 +146,8 @@ export async function handleZipFile(
       continue;
     }
 
-    const matchingFiles = zip.file(re);
+    const matchingFiles = extractedFiles.filter(entry => re.test(entry.fullPath));
     if (matchingFiles.length === 0) {
-      const availableFiles = Object.keys(zip.files);
       const errorContext = { regexPath: blueprint.regex_path, availableFiles: availableFiles }
       blueprintOutcomeMap[blueprint.id].registerError(ERROR_CATALOG.NO_FILE_MATCH, errorContext);
       continue;
@@ -68,7 +155,7 @@ export async function handleZipFile(
 
     for (const zipEntry of matchingFiles) {
       try {
-        const content = await zipEntry.async("string");
+        const content = await zipEntry.entry.async("string");
         processContent(content, blueprint, blueprintOutcomeMap);
       } catch (error) {
         blueprintOutcomeMap[blueprint.id].registerError(ERROR_CATALOG.FILE_PROCESSING_FAIL_GENERAL, {error: error});

@@ -157,7 +157,7 @@ export function extractData(
         break;
 
       case 'regex-delete-match':
-        if (key in extractedRowData) {
+        if (rule.field in extractedRowData) {
           try {
             let newValue = regexDeleteMatch(dataRow[key], rule.comparison_value);
             extractedRowData[rule.field] = newValue;
@@ -171,7 +171,7 @@ export function extractData(
         break;
 
       case 'regex-replace-match':
-        if (key in extractedRowData) {
+        if (rule.field in extractedRowData) {
           try {
             let newValue = regexReplaceMatch(dataRow[key], rule.comparison_value, rule.replacement_value);
             extractedRowData[rule.field] = newValue;

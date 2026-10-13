@@ -1,0 +1,45 @@
+{
+  "test:chat:792179ee83d1" : {
+    "members" : [ "userB", "userA" ],
+    "messages" : [ {
+      "time" : "2026-05-14T12:31:41.515Z",
+      "from" : "userB",
+      "message" : "Hi",
+      "uri" : "test:chat-message:6bd9b26bc4d0"
+    }, {
+      "time" : "2026-05-14T12:35:21.227Z",
+      "from" : "userA",
+      "message" : "test:playlist:8f7da08c5f1a",
+      "uri" : "test:chat-message:e48071779b84"
+    }, {
+      "time" : "2026-05-14T12:35:21.228Z",
+      "from" : "userA",
+      "message" : "Hi",
+      "uri" : "test:chat-message:6884c4df2a9c"
+    }, {
+      "time" : "2026-05-14T12:38:01.792Z",
+      "from" : "userA",
+      "message" : "test:track:9d0f947aed4b",
+      "uri" : "test:chat-message:cbb84aea43f5"
+    }, {
+      "time" : "2026-05-14T14:31:41.515Z",
+      "from" : "userA",
+      "message" : "Test sharing",
+      "uri" : "test:chat-message:2e0e1a56803b"
+    } ]
+  },
+  "test:chat:123PFFwj1W2Z11" : {
+    "members" : [ "userC", "userD" ],
+    "messages" : [ {
+      "time" : "2026-05-14T12:34:36.515Z",
+      "from" : "userD",
+      "message" : "Hi",
+      "uri" : "test:chat-message:e91d80e72a24"
+    }, {
+      "time" : "2026-05-14T13:35:21.227Z",
+      "from" : "userC",
+      "message" : "test:playlist:c2f07acbff2e",
+      "uri" : "test:chat-message:9b8ab5e22830"
+    } ]
+  }
+}

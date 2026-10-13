@@ -230,3 +230,180 @@ class GetFilterConfigTest(TestCase):
         result = self.item.get_filter_config()
         self.assertEqual(result[0]['target'], f'item-{self.item.pk}')
         self.assertEqual(result[0]['source'], f'question-{self.question.pk}')
+
+
+class FilterConditionModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        user = User.objects.create_user(**{
+            'username': 'owner', 'password': '123', 'email': 'owner@mail.com'
+        })
+        profile = ResearchProfile.objects.create(user=user)
+
+        cls.project = DonationProject.objects.create(
+            name='Base Project',
+            slug='base',
+            owner=profile,
+            expected_url_parameters="url-param-a"
+        )
+
+        cls.question = OpenQuestion.objects.create(
+            project=cls.project,
+            name='open question',
+            variable_name='open_question'
+        )
+        cls.question_alt = OpenQuestion.objects.create(
+            project=cls.project,
+            name='open question 2',
+            variable_name='open_question_alt'
+        )
+        cls.item = QuestionItem.objects.create(
+            question=cls.question_alt,
+            index=1,
+            value=1
+        )
+
+        cls.filter_target_question = FilterCondition.objects.create(
+            index=1,
+            combinator='AND',
+            condition_operator='==',
+            condition_value='some_value',
+            target_question=cls.question,
+            source_type=FilterSourceTypes.QUESTION_ITEM,
+            source_item=cls.item
+        )
+
+        cls.filter_target_item = FilterCondition.objects.create(
+            index=1,
+            combinator='OR',
+            condition_operator='!=',
+            condition_value='another_value',
+            target_item=cls.item,
+            source_type=FilterSourceTypes.QUESTION,
+            source_question=cls.question
+        )
+
+    def test_get_target_question(self):
+        target = self.filter_target_question.get_target()
+        self.assertEqual(target, self.question)
+
+    def test_get_target_item(self):
+        target = self.filter_target_item.get_target()
+        self.assertEqual(target, self.item)
+
+    def test_get_related_project_question(self):
+        related_project = self.filter_target_question.get_related_project()
+        self.assertEqual(related_project, self.project)
+
+    def test_get_related_project_item(self):
+        related_project = self.filter_target_item.get_related_project()
+        self.assertEqual(related_project, self.project)
+
+    def test_get_source_question(self):
+        source = self.filter_target_item.get_source()
+        expected_source = self.question
+        self.assertEqual(source, expected_source)
+
+    def test_get_source_item(self):
+        source = self.filter_target_question.get_source()
+        expected_source = self.item
+        self.assertEqual(source, expected_source)
+
+    def test_get_source_url_parameter(self):
+        filter_condition = FilterCondition.objects.create(
+            index=1,
+            combinator='AND',
+            condition_operator='==',
+            condition_value='some_value',
+            target_question=self.question,
+            source_type=FilterSourceTypes.URL_PARAMETER,
+            source_identifier='_url_url-param-a'
+        )
+        source = filter_condition.get_source()
+        expected_source = filter_condition.source_identifier
+        self.assertEqual(source, expected_source)
+
+        filter_condition.source_identifier = 'non_existing_identifier'
+        source_non_existent = filter_condition.get_source()
+        self.assertIsNone(source_non_existent)
+
+    def test_get_source_system_variable(self):
+        filter_condition = FilterCondition.objects.create(
+            index=1,
+            combinator='AND',
+            condition_operator='==',
+            condition_value='some_value',
+            target_question=self.question,
+            source_type=FilterSourceTypes.SYSTEM,
+            source_identifier='_url_url-param-a'
+        )
+        source = filter_condition.get_source()
+        expected_source = filter_condition.source_identifier
+        self.assertEqual(source, expected_source)
+
+    def test_get_source_participant_variable(self):
+        filter_condition = FilterCondition.objects.create(
+            index=1,
+            combinator='AND',
+            condition_operator='==',
+            condition_value='some_value',
+            target_question=self.question,
+            source_type=FilterSourceTypes.PARTICIPANT,
+            source_identifier='_participant_id'
+        )
+        source = filter_condition.get_source()
+        expected_source = filter_condition.source_identifier
+        self.assertEqual(source, expected_source)
+
+        filter_condition.source_identifier = 'non_existing_identifier'
+        source_non_existent = filter_condition.get_source()
+        self.assertIsNone(source_non_existent)
+
+    def test_get_source_donation(self):
+        filter_condition = FilterCondition.objects.create(
+            index=1,
+            combinator='AND',
+            condition_operator='==',
+            condition_value='some_value',
+            target_question=self.question,
+            source_type=FilterSourceTypes.DONATION,
+            source_identifier='_donation_n_success'
+        )
+        source = filter_condition.get_source()
+        expected_source = filter_condition.source_identifier
+        self.assertEqual(source, expected_source)
+
+    def test_get_source_config_id_question(self):
+        config_id = self.filter_target_item.get_source_config_id()
+        expected_id = f'{FilterSourceTypes.QUESTION}-{self.question.pk}'
+        self.assertEqual(config_id, expected_id)
+
+    def test_get_source_config_id_item(self):
+        config_id = self.filter_target_question.get_source_config_id()
+        expected_id = f'{FilterSourceTypes.QUESTION_ITEM}-{self.item.pk}'
+        self.assertEqual(config_id, expected_id)
+
+    def test_get_source_config_id_other(self):
+        filter_condition = FilterCondition.objects.create(
+            index=1,
+            combinator='AND',
+            condition_operator='==',
+            condition_value='some_value',
+            target_question=self.question,
+            source_type=FilterSourceTypes.SYSTEM,
+            source_identifier='some_identifier'
+        )
+
+        config_id = filter_condition.get_source_config_id()
+        expected_id = filter_condition.source_identifier
+        self.assertEqual(config_id, expected_id)
+
+    def test_get_target_config_id_question(self):
+        config_id = self.filter_target_question.get_target_config_id()
+        expected_id = f'{FilterSourceTypes.QUESTION}-{self.question.pk}'
+        self.assertEqual(config_id, expected_id)
+
+    def test_get_target_config_id_item(self):
+        config_id = self.filter_target_item.get_target_config_id()
+        expected_id = f'{FilterSourceTypes.QUESTION_ITEM}-{self.item.pk}'
+        self.assertEqual(config_id, expected_id)

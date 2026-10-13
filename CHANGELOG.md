@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.7 - 2025-11-27
+
+### Fixed
+
+- **Filter condition configuration error**: Fixed crash when using participant-level variable as filter source ([`b6669c6`](https://github.com/uzh/ddm/commit/b6669c6)).
+
+
 ## 2.1.6 - 2025-11-19
 
 ### Fixed

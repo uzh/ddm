@@ -83,6 +83,9 @@ This version drops official support for Python versions < 3.12.
 - Fixed `DDMAuthMixin` skipping authentication/authorization checks for any
   request method other than GET/POST, which allowed an unauthenticated
   `DELETE` request to bypass login/ownership checks.
+- Fixed `ResponsesApiView` missing a project-ownership check, which allowed
+  any logged-in researcher to read and decrypt another project's
+  questionnaire responses.
 
 ### Deprecated
 

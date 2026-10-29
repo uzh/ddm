@@ -19,6 +19,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from ddm.apis.permissions import IsProjectOwner
 from ddm.apis.serializers import (
     DataDonationSerializer,
     ParticipantSerializer,
@@ -278,7 +279,10 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
         authentication.SessionAuthentication,
         ProjectTokenAuthenticator,
     ]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        (IsProjectOwner | permissions.IsAdminUser),
+    ]
 
     def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponseBase:
         try:

@@ -364,6 +364,14 @@ class TestAPIs(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertDictEqual(response.data, expected_response)
 
+    def test_responses_api_fails_for_user_without_permission(self):
+        """A researcher logged in via their own session must not be able to
+        read another project's responses (regression test for C2)."""
+        self.client.login(**self.no_perm_creds)
+        url = reverse("ddm_apis:responses", args=[self.project_base.url_id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+
     def test_responses_api_get_csv_with_valid_api_credentials(self):
         token = self.project_base.create_token()
         client = APIClient()

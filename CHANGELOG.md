@@ -80,6 +80,9 @@ This version drops official support for Python versions < 3.12.
 - Fixed several database query inefficiencies in the API views (fixes
   `Participation Overview` download that could lead to server timeouts for
   projects with many donations/participants).
+- Fixed `DDMAuthMixin` skipping authentication/authorization checks for any
+  request method other than GET/POST, which allowed an unauthenticated
+  `DELETE` request to bypass login/ownership checks.
 
 ### Deprecated
 

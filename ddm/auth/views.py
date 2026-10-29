@@ -29,36 +29,39 @@ class DDMAuthMixin:
     """
 
     def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponseBase:
-        if request.method in ["GET", "POST"]:
-            if not request.user.is_authenticated:
+        if not request.user.is_authenticated:
+            if request.method in ("GET", "POST"):
                 return redirect("ddm_login")
+            raise Http404
 
-            if not ResearchProfile.objects.filter(user=request.user).exists():
-                ResearchProfile.objects.create(user=request.user)
+        if not ResearchProfile.objects.filter(user=request.user).exists():
+            ResearchProfile.objects.create(user=request.user)
 
-            if not user_is_permitted(request.user):
+        if not user_is_permitted(request.user):
+            if request.method in ("GET", "POST"):
                 return redirect("ddm_auth:no_permission")
+            raise Http404
 
-            if request.path not in [
-                reverse("ddm_projects:list"),
-                reverse("ddm_projects:create"),
-                reverse("ddm_projects:import"),
-            ]:
-                if "project_url_id" in self.kwargs:
-                    project_id = self.kwargs["project_url_id"]
-                else:
-                    raise Http404
+        if request.path not in [
+            reverse("ddm_projects:list"),
+            reverse("ddm_projects:create"),
+            reverse("ddm_projects:import"),
+        ]:
+            if "project_url_id" in self.kwargs:
+                project_id = self.kwargs["project_url_id"]
+            else:
+                raise Http404
 
-                try:
-                    project = DonationProject.objects.get(url_id=project_id)
-                except DonationProject.DoesNotExist as e:
-                    raise Http404 from e
+            try:
+                project = DonationProject.objects.get(url_id=project_id)
+            except DonationProject.DoesNotExist as e:
+                raise Http404 from e
 
-                if (
-                    not user_has_project_access(request.user, project)
-                    and not request.user.is_superuser
-                ):
-                    raise Http404
+            if (
+                not user_has_project_access(request.user, project)
+                and not request.user.is_superuser
+            ):
+                raise Http404
         return super().dispatch(request, *args, **kwargs)
 
 

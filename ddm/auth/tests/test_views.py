@@ -173,3 +173,51 @@ class TestDDMAuthMixin(TestCase):
         request.user = self.valid_user
         response = self.view(request, project_url_id=self.project.url_id)
         self.assertEqual(response.status_code, 200)
+
+    def test_dispatch_anonymous_user_post(self):
+        """POST should be redirected to login the same way GET is."""
+        anonymous_user = auth.get_user(self.client)
+        request = self.factory.post("/test-url/")
+        request.user = anonymous_user
+        response = self.view(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(reverse("ddm_login")))
+
+    def test_dispatch_non_permitted_user_post(self):
+        """POST should be redirected to the no-permission page the same way GET is."""
+        request = self.factory.post("/test-url/")
+        request.user = self.not_permitted_user
+        response = self.view(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(reverse("ddm_auth:no_permission")))
+
+    def test_dispatch_anonymous_user_delete(self):
+        """A non-GET/POST method must not bypass the authentication check."""
+        anonymous_user = auth.get_user(self.client)
+        request = self.factory.delete("/test-url/")
+        request.user = anonymous_user
+        with self.assertRaises(Http404):
+            self.view(request)
+
+    def test_dispatch_non_permitted_user_delete(self):
+        """A non-GET/POST method must not bypass the permission check."""
+        request = self.factory.delete("/test-url/")
+        request.user = self.not_permitted_user
+        with self.assertRaises(Http404):
+            self.view(request)
+
+    def test_dispatch_not_owner_user_delete(self):
+        """A non-GET/POST method must not bypass the project-ownership check."""
+        request = self.factory.delete("/test-url/")
+        request.user = self.not_owner
+        with self.assertRaises(Http404):
+            self.view(request, project_url_id=self.project.url_id)
+
+    def test_dispatch_valid_user_delete(self):
+        """A DELETE from the project's owner passes the mixin's checks and
+        reaches the underlying view, which returns 405 since TestView (a
+        plain TemplateView) implements no delete() handler of its own."""
+        request = self.factory.delete("/test-url/")
+        request.user = self.valid_user
+        response = self.view(request, project_url_id=self.project.url_id)
+        self.assertEqual(response.status_code, 405)

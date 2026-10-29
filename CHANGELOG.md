@@ -62,6 +62,7 @@ This version drops official support for Python versions < 3.12.
 - Removed `null=True` from DonationBlueprint.regex_path, DonationBlueprint.description, ProcessingRule.comparison_operator
   ExceptionLogEntry.exception_type, ScalePoint.heading_label, ScalePoint.input_label, QuestionItem.label, QuestionItem.label_alt, and FilterCondition.source_identifier.
 - Moved URL parameters extracted for a participant from `Particiapnt.extra_data["url_param"]` to dedicated `Participant.url_parameters` attribute.
+- `DownloadProjectDetailsView`, `DeleteParticipantAPI`, and `DeleteProjectData` now declare their project-ownership check via DRF `permission_classes` (consistent with the other API views) instead of an inline check in the view method; the 403 response body changed from `{"message": ...}` to DRF's standard `{"detail": ...}`.
 
 ### Fixed
 
@@ -86,6 +87,9 @@ This version drops official support for Python versions < 3.12.
 - Fixed `ResponsesApiView` missing a project-ownership check, which allowed
   any logged-in researcher to read and decrypt another project's
   questionnaire responses.
+- Fixed `DownloadProjectDetailsView`/`DeleteParticipantAPI`/`DeleteProjectData`
+  not creating an event-log entry for a forbidden request due to an
+  inherited logging override shadowing it.
 
 ### Deprecated
 

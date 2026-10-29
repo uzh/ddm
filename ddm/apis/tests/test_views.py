@@ -19,6 +19,7 @@ from ddm.apis.serializers import (
 )
 from ddm.datadonation.models import DataDonation, DonationBlueprint
 from ddm.datadonation.schemas import JSONParserConfig
+from ddm.logging.models import EventLogEntry
 from ddm.participation.models import Participant
 from ddm.participation.serializers import BlueprintSerializer
 from ddm.projects.models import DonationProject, ResearchProfile
@@ -470,6 +471,11 @@ class TestAPIs(TestCase):
         self.assertIsNotNone(
             Participant.objects.filter(external_id=external_id).first()
         )
+        self.assertTrue(
+            EventLogEntry.objects.filter(
+                project=self.project_base, description__icontains="Forbidden"
+            ).exists()
+        )
 
     def test_participant_deletion_with_token(self):
         token = self.project_base.create_token()
@@ -529,6 +535,11 @@ class TestAPIs(TestCase):
         url = reverse("ddm_apis:project_data_delete", args=[self.project_base.url_id])
         response = self.client.delete(url, follow=True)
         self.assertEqual(response.status_code, 403)
+        self.assertTrue(
+            EventLogEntry.objects.filter(
+                project=self.project_base, description__icontains="Forbidden"
+            ).exists()
+        )
 
     def test_delete_project_data_fails_with_valid_api_credentials(self):
         token = self.project_base.create_token()
@@ -572,6 +583,11 @@ class TestAPIs(TestCase):
         )
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 403)
+        self.assertTrue(
+            EventLogEntry.objects.filter(
+                project=self.project_base, description__icontains="Forbidden"
+            ).exists()
+        )
 
     def test_download_project_detail_view_not_logged_in(self):
         client = Client()

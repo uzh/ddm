@@ -28,7 +28,6 @@ from ddm.apis.serializers import (
     ResponseSerializerWithSnapshot,
 )
 from ddm.auth.models import ProjectTokenAuthenticator
-from ddm.auth.utils import user_has_project_access
 from ddm.datadonation.models import DataDonation, DonationBlueprint
 from ddm.encryption.models import Decryption
 from ddm.logging.models import EventLogEntry
@@ -493,7 +492,17 @@ class DeleteParticipantAPI(APIView, DDMAPIMixin):
         ProjectTokenAuthenticator,
         authentication.SessionAuthentication,
     ]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsProjectOwner]
+
+    def permission_denied(
+        self, request: HttpRequest, message: str | None = None, code: str | None = None
+    ) -> None:
+        if request.authenticators and request.successful_authenticator:
+            self.create_event_log(
+                descr="Forbidden Deletion Request",
+                msg="Request user is not permitted to delete the project data.",
+            )
+        super().permission_denied(request, message=message, code=code)
 
     def delete(
         self,
@@ -506,14 +515,6 @@ class DeleteParticipantAPI(APIView, DDMAPIMixin):
         Delete participant related to current project by providing external_id.
         """
         project = self.get_project()
-        if not user_has_project_access(request.user, project):
-            self.create_event_log(
-                descr="Forbidden Deletion Request",
-                msg="Request user is not permitted to delete the project data.",
-            )
-            msg = "User does not have access."
-            return Response(status=status.HTTP_403_FORBIDDEN, data={"message": msg})
-
         external_id = self.kwargs["participant_id"]
         try:
             participant = Participant.objects.get(
@@ -566,7 +567,17 @@ class DeleteProjectData(APIView, DDMAPIMixin):
     """
 
     authentication_classes = [authentication.SessionAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsProjectOwner]
+
+    def permission_denied(
+        self, request: HttpRequest, message: str | None = None, code: str | None = None
+    ) -> None:
+        if request.authenticators and request.successful_authenticator:
+            self.create_event_log(
+                descr="Forbidden Deletion Request",
+                msg="Request user is not permitted to delete the project data.",
+            )
+        super().permission_denied(request, message=message, code=code)
 
     def delete(
         self,
@@ -579,13 +590,6 @@ class DeleteProjectData(APIView, DDMAPIMixin):
         Delete data donations and questionnaire requests associated with project.
         """
         project = self.get_project()
-        if not user_has_project_access(request.user, project):
-            self.create_event_log(
-                descr="Forbidden Deletion Request",
-                msg="Request user is not permitted to delete the project data.",
-            )
-            msg = "User does not have access."
-            return Response(status=status.HTTP_403_FORBIDDEN, data={"message": msg})
 
         # Delete all related objects.
         n_del_donations = DataDonation.objects.filter(project=project).delete()[0]
@@ -630,7 +634,20 @@ class DownloadProjectDetailsView(APIView, DDMAPIMixin):
     """
 
     authentication_classes = [authentication.SessionAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        (IsProjectOwner | permissions.IsAdminUser),
+    ]
+
+    def permission_denied(
+        self, request: HttpRequest, message: str | None = None, code: str | None = None
+    ) -> None:
+        if request.authenticators and request.successful_authenticator:
+            self.create_event_log(
+                descr="Forbidden Data Overview Request",
+                msg="Request user is not permitted to get the project data.",
+            )
+        super().permission_denied(request, message=message, code=code)
 
     def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponseBase:
         try:
@@ -773,17 +790,6 @@ class DownloadProjectDetailsView(APIView, DDMAPIMixin):
         """
         Handle GET request to stream JSON response.
         """
-        if (
-            not user_has_project_access(request.user, self.project)
-            and not request.user.is_superuser
-        ):
-            self.create_event_log(
-                descr="Forbidden Data Overview Request",
-                msg="Request user is not permitted to get the project data.",
-            )
-            msg = "User does not have access."
-            raise exceptions.PermissionDenied(msg)
-
         response = StreamingHttpResponse(self.generate_csv(), content_type="text/csv")
         filename = self.get_filename()
         response["Content-Disposition"] = f'attachment; filename="{filename}"'

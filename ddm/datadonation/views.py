@@ -843,7 +843,7 @@ class DonationDownloadView(DDMAuthMixin, DDMAdminMixin, DDMAPIMixin, FormView):
     @sensitive_variables()
     def get_decryptor(self, secret: str | None = None) -> Decryption:
         secret_key = secret if secret else self.project.secret_key
-        decryptor = Decryption(secret_key, self.project.get_salt())
+        decryptor = self.project.get_decryptor(secret=secret)
         try:
             self.test_secret(secret_key, decryptor)
         except ValueError as e:

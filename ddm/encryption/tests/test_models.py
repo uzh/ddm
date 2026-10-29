@@ -1,10 +1,16 @@
+from Crypto.PublicKey import RSA
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.utils import timezone
 
 from ddm.datadonation.models import DataDonation, DonationBlueprint
 from ddm.datadonation.schemas import JSONParserConfig
-from ddm.encryption.models import Decryption, Encryption
+from ddm.encryption.models import (
+    Decryption,
+    Encryption,
+    unwrap_private_key,
+    wrap_private_key,
+)
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject, ResearchProfile
 from ddm.questionnaire.models import QuestionnaireResponse
@@ -27,6 +33,33 @@ class TestEncryptedFieldIsolated(TestCase):
         pub = Encryption.get_public_key(secret="foo", salt="bar")
         enc_text = Encryption(public=pub).encrypt(text)
         self.assertNotEqual(text, enc_text)
+        self.assertEqual(text, dec.decrypt(enc_text))
+
+    def test_wrap_unwrap_private_key_round_trip(self):
+        key = RSA.generate(2048)
+        private_key_der = key.export_key(format="DER")
+        wrapped = wrap_private_key("some secret", private_key_der)
+        self.assertNotEqual(wrapped, private_key_der)
+        self.assertEqual(unwrap_private_key("some secret", wrapped), private_key_der)
+
+    def test_unwrap_private_key_wrong_secret_raises(self):
+        key = RSA.generate(2048)
+        wrapped = wrap_private_key("correct secret", key.export_key(format="DER"))
+        with self.assertRaises(ValueError):
+            unwrap_private_key("wrong secret", wrapped)
+
+    def test_unwrap_private_key_tampered_ciphertext_raises(self):
+        key = RSA.generate(2048)
+        wrapped = wrap_private_key("some secret", key.export_key(format="DER"))
+        tampered = wrapped[:-1] + bytes([wrapped[-1] ^ 0xFF])
+        with self.assertRaises(ValueError):
+            unwrap_private_key("some secret", tampered)
+
+    def test_decryption_private_key_bypass(self):
+        key = RSA.generate(2048)
+        text = "test_string"
+        enc_text = Encryption(public=key.publickey().export_key()).encrypt(text)
+        dec = Decryption(private_key=key.export_key(format="DER"))
         self.assertEqual(text, dec.decrypt(enc_text))
 
 
@@ -161,9 +194,13 @@ class TestModelEncryption(TestCase):
                 )
 
     def test_data_donation_encryption_with_provided_encryptor(self):
-        encryptor = Encryption(
-            secret=self.base_project.secret_key, salt=self.base_project.get_salt()
-        )
+        # Built from an explicit (secret, salt) pair, independently of
+        # whatever key material base_project itself actually uses - this
+        # test is about save(encryptor=...) honoring a caller-supplied
+        # Encryption instance, not about the project's own default key.
+        secret, salt = self.base_project.secret_key, self.base_project.get_salt()
+        encryptor = Encryption(secret=secret, salt=salt)
+        decryptor = Decryption(secret=secret, salt=salt)
         for raw_data in [self.raw_data_short, self.raw_data_long]:
             with self.subTest(raw_data=raw_data):
                 dd = DataDonation(
@@ -178,15 +215,11 @@ class TestModelEncryption(TestCase):
                 self.assertNotEqual(raw_data, dd.data)
                 self.assertEqual(
                     raw_data,
-                    dd.get_decrypted_data(
-                        secret=dd.project.secret_key, salt=dd.project.get_salt()
-                    ),
+                    dd.get_decrypted_data(secret=None, salt=None, decryptor=decryptor),
                 )
 
     def test_data_donation_decryption_with_provided_decryptor(self):
-        decryptor = Decryption(
-            secret=self.base_project.secret_key, salt=self.base_project.get_salt()
-        )
+        decryptor = self.base_project.get_decryptor()
         for raw_data in [self.raw_data_short, self.raw_data_long]:
             with self.subTest(raw_data=raw_data):
                 dd = DataDonation.objects.create(

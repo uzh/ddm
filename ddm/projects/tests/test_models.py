@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
+from ddm.encryption.models import Encryption
 from ddm.projects.models import (
     DEFAULT_BACKGROUND_COLOR,
     DEFAULT_PRIMARY_COLOR,
@@ -78,3 +79,94 @@ class TestDonationProject(TestCase):
         version_before = self.project.theme_version
         self.project.primary_color = "#aa3377"
         self.assertNotEqual(self.project.theme_version, version_before)
+
+
+@override_settings(DDM_SETTINGS={"EMAIL_PERMISSION_CHECK": r".*(\.|@)mail\.com$"})
+class TestDonationProjectEncryption(TestCase):
+    """
+    Covers the per-project key material introduced in v3:
+    a standard project created from now on gets its own randomly generated
+    RSA key (wrapped at rest with a SECRET_KEY-derived key), while
+    super_secret projects and any project that predates this field keep
+    using the legacy on-the-fly derivation.
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        credentials = {
+            "username": "enc_owner",
+            "password": "123",
+            "email": "enc_owner@mail.com",
+        }
+        cls.user = User.objects.create_user(**credentials)
+        cls.user_profile = ResearchProfile.objects.create(user=cls.user)
+
+    def test_standard_project_gets_wrapped_private_key_on_create(self):
+        project = DonationProject.objects.create(
+            name="Standard", slug="standard-enc", owner=self.user_profile
+        )
+        self.assertIsNotNone(project.wrapped_private_key)
+        self.assertTrue(bytes(project.wrapped_private_key))
+
+    def test_super_secret_project_never_gets_wrapped_private_key(self):
+        project = DonationProject.objects.create(
+            name="Secret",
+            slug="secret-enc",
+            owner=self.user_profile,
+            super_secret=True,
+            secret_key="a real secret",
+        )
+        self.assertFalse(project.wrapped_private_key)
+
+    def test_wrapped_private_key_unchanged_on_second_save(self):
+        project = DonationProject.objects.create(
+            name="Standard2", slug="standard-enc-2", owner=self.user_profile
+        )
+        first = bytes(project.wrapped_private_key)
+        project.name = "Standard2 renamed"
+        project.save()
+        self.assertEqual(bytes(project.wrapped_private_key), first)
+
+    def test_get_decryptor_round_trips_for_new_standard_project(self):
+        project = DonationProject.objects.create(
+            name="Standard3", slug="standard-enc-3", owner=self.user_profile
+        )
+        encryptor = Encryption(public=project.public_key)
+        ciphertext = encryptor.encrypt("hello")
+        self.assertEqual(project.get_decryptor().decrypt(ciphertext), "hello")
+
+    def test_get_decryptor_round_trips_for_super_secret_project(self):
+        project = DonationProject.objects.create(
+            name="Secret2",
+            slug="secret-enc-2",
+            owner=self.user_profile,
+            super_secret=True,
+            secret_key="correct secret",
+        )
+        encryptor = Encryption(public=project.public_key)
+        ciphertext = encryptor.encrypt("hello")
+        self.assertEqual(
+            project.get_decryptor(secret="correct secret").decrypt(ciphertext),
+            "hello",
+        )
+        with self.assertRaises(ValueError):
+            project.get_decryptor(secret="wrong secret").decrypt(ciphertext)
+
+    def test_get_decryptor_falls_back_to_legacy_derivation_for_pre_existing_project(
+        self,
+    ):
+        """Simulates a project created before `wrapped_private_key` existed."""
+        project = DonationProject.objects.create(
+            name="Legacy", slug="legacy-enc", owner=self.user_profile
+        )
+        # Reproduce what a pre-migration row looked like: public_key derived
+        # from (secret, date_created), wrapped_private_key empty.
+        project.wrapped_private_key = None
+        project.public_key = Encryption.get_public_key(
+            project.secret, str(project.date_created)
+        )
+        project.save()
+
+        encryptor = Encryption(public=project.public_key)
+        ciphertext = encryptor.encrypt("hello")
+        self.assertEqual(project.get_decryptor().decrypt(ciphertext), "hello")

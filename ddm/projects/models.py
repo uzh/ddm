@@ -4,6 +4,7 @@ import datetime
 from pathlib import Path
 from typing import Any
 
+from Crypto.PublicKey import RSA
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -17,7 +18,12 @@ from ddm.auth.models import ProjectAccessToken
 from ddm.core.utils.misc import create_asciidigits_id
 from ddm.core.utils.validators import validate_hex_color
 from ddm.datadonation.models import DataDonation
-from ddm.encryption.models import Encryption
+from ddm.encryption.models import (
+    Decryption,
+    Encryption,
+    unwrap_private_key,
+    wrap_private_key,
+)
 from ddm.logging.models import EventLogEntry, ExceptionLogEntry
 from ddm.participation.models import Participant
 
@@ -159,6 +165,14 @@ class DonationProject(models.Model):
     # Access settings.
     public_key = models.BinaryField()
     super_secret = models.BooleanField(default=False)
+    # Only ever set for standard (non-super_secret) projects created after
+    # this field was introduced in v3 - holds that project's own randomly
+    # generated RSA private key, encrypted at rest with a key derived from
+    # settings.SECRET_KEY (see get_decryptor()). Always None for
+    # super_secret projects (their key is never persisted, by design) and
+    # for any project created before this field existed - those keep using
+    # the legacy on-the-fly derivation from (secret, date_created).
+    wrapped_private_key = models.BinaryField(null=True, blank=True, editable=False)
 
     # Redirect settings.
     redirect_enabled = models.BooleanField(
@@ -230,9 +244,12 @@ class DonationProject(models.Model):
             self.clean_file_on_reupload()
 
         if not self.public_key:
-            self.public_key = Encryption.get_public_key(
-                self.secret, str(self.date_created)
-            )
+            if self.super_secret:
+                self.public_key = Encryption.get_public_key(
+                    self.secret, str(self.date_created)
+                )
+            else:
+                self._generate_and_store_keypair()
 
         if not self.url_id:
             self.url_id = create_asciidigits_id(8)
@@ -246,6 +263,47 @@ class DonationProject(models.Model):
 
     def get_salt(self) -> str:
         return str(self.date_created)
+
+    @sensitive_variables()
+    def _generate_and_store_keypair(self) -> None:
+        """
+        Generates a fresh, independently random RSA keypair for this
+        (standard, non-super_secret) project using pycryptodome's own
+        secure default randomness, and stores the public key as-is
+        plus the private key wrapped at rest with a key derived from
+        settings.SECRET_KEY. Only ever called once, from save()'s
+        "not self.public_key yet" branch.
+        """
+        key = RSA.generate(2048)
+        self.public_key = key.publickey().export_key()
+        self.wrapped_private_key = wrap_private_key(
+            self.secret, key.export_key(format="DER")
+        )
+
+    @sensitive_variables()
+    def get_decryptor(self, secret: str | None = None) -> Decryption:
+        """
+        Returns a Decryption instance for this project's data.
+
+        - super_secret projects: derives the
+          keypair on the fly from the given/default secret and this
+          project's salt; nothing is ever persisted for these.
+        - standard projects created after `wrapped_private_key` was
+          introduced: unwraps the stored, randomly-generated private key
+          using settings.SECRET_KEY - `secret` is ignored, there's nothing
+          to re-derive from.
+        - standard projects created before `wrapped_private_key` existed
+          (it's still None/empty): falls back to the same legacy
+          derivation as super_secret, keeping these projects' existing
+          encrypted data decryptable exactly as before.
+        """
+        if not self.super_secret and self.wrapped_private_key:
+            private_key_der = unwrap_private_key(
+                self.secret_key, bytes(self.wrapped_private_key)
+            )
+            return Decryption(private_key=private_key_der)
+        secret_key = secret if secret else self.secret_key
+        return Decryption(secret_key, self.get_salt())
 
     def clean_file_on_reupload(self) -> None:
         """

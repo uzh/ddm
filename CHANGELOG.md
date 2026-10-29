@@ -63,6 +63,10 @@ This version drops official support for Python versions < 3.12.
   ExceptionLogEntry.exception_type, ScalePoint.heading_label, ScalePoint.input_label, QuestionItem.label, QuestionItem.label_alt, and FilterCondition.source_identifier.
 - Moved URL parameters extracted for a participant from `Particiapnt.extra_data["url_param"]` to dedicated `Participant.url_parameters` attribute.
 - `DownloadProjectDetailsView`, `DeleteParticipantAPI`, and `DeleteProjectData` now declare their project-ownership check via DRF `permission_classes` (consistent with the other API views) instead of an inline check in the view method; the 403 response body changed from `{"message": ...}` to DRF's standard `{"detail": ...}`.
+- Standard (non-"super secret") projects created from now on get their own
+  randomly generated encryption key (wrapped at rest, never derivable from
+  `SECRET_KEY` and a public timestamp alone); projects created before this
+  change, and "super secret" projects, are unaffected.
 
 ### Fixed
 

@@ -162,7 +162,15 @@ class TestSerializeProject(TestCase):
 
     def test_excludes_identity_and_secret_fields(self):
         data = export_project(self.project)
-        for key in ("id", "url_id", "slug", "owner", "public_key", "date_created"):
+        for key in (
+            "id",
+            "url_id",
+            "slug",
+            "owner",
+            "public_key",
+            "wrapped_private_key",
+            "date_created",
+        ):
             self.assertNotIn(key, data["project"])
         self.assertNotIn("img_header_left", data["project"])
         self.assertNotIn("img_header_right", data["project"])
@@ -262,6 +270,11 @@ class TestBuildProject(TestCase):
             bytes(new_project.public_key), bytes(self.source_project.public_key)
         )
         self.assertNotEqual(new_project.url_id, self.source_project.url_id)
+        self.assertIsNotNone(new_project.wrapped_private_key)
+        self.assertNotEqual(
+            bytes(new_project.wrapped_private_key),
+            bytes(self.source_project.wrapped_private_key),
+        )
 
     def test_super_secret_always_false_regardless_of_source(self):
         self.source_project.secret_key = "a very very secret password"

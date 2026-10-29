@@ -30,10 +30,11 @@ def build_project(
     `owner`, `name`, `slug` are supplied by the caller (already reviewed/
     validated via the import or copy form) rather than read from `data` -
     a project's identity fields are never carried over as-is (see
-    `ddm.projects.transfer.serialize.PROJECT_FIELDS`). `public_key` and
-    `url_id` are left unset so `DonationProject.save()` generates fresh
-    ones; the new project always starts with standard (non-"super secret")
-    encryption, since the source's encryption password isn't retrievable.
+    `ddm.projects.transfer.serialize.PROJECT_FIELDS`). `public_key`,
+    `wrapped_private_key`, and `url_id` are left unset so
+    `DonationProject.save()` generates fresh ones; the new project always
+    starts with standard (non-"super secret") encryption, since the
+    source's encryption password isn't retrievable.
 
     Returns (new_project, warnings) - warnings are the same non-fatal
     issues `build_questions()` can produce (e.g. an unresolved blueprint
@@ -48,10 +49,13 @@ def build_project(
         owner=owner,
         **project_fields,
     )
-    # url_id and public_key are populated inside save() itself (see
-    # DonationProject.save()), so they're still blank at this point and
-    # must be excluded from validation here.
-    new_project.full_clean(exclude=["url_id", "public_key"], validate_unique=False)
+    # url_id, public_key, and wrapped_private_key are populated inside
+    # save() itself (see DonationProject.save()), so they're still blank
+    # at this point and must be excluded from validation here.
+    new_project.full_clean(
+        exclude=["url_id", "public_key", "wrapped_private_key"],
+        validate_unique=False,
+    )
     new_project.save(force_insert=True)
 
     for fu_data in data.get("file_uploaders", []):

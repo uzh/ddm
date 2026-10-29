@@ -17,8 +17,9 @@ if TYPE_CHECKING:
     from ddm.projects.models import DonationProject
 
 # DonationProject fields carried over on export/copy. Deliberately excludes:
-# - id, url_id, slug, date_created, owner, public_key: identity/access
-#   fields, resolved fresh at import/copy time (see build_project()).
+# - id, url_id, slug, date_created, owner, public_key, wrapped_private_key:
+#   identity/access fields, resolved fresh at import/copy time (see
+#   build_project()).
 # - img_header_left, img_header_right: skipped in v1.
 # - super_secret: can never be carried over - the source's encryption
 #   password isn't retrievable (see build_project()), so a new project

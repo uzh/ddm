@@ -233,7 +233,7 @@ class ProjectDonationsListView(ListAPIView, DDMAPIMixin):
 
         response = {"blueprints": {}, "metadata": {"n_blueprints": len(blueprints)}}
 
-        decryptor = Decryption(self.project.secret_key, self.project.get_salt())
+        decryptor = self.project.get_decryptor()
         for blueprint in blueprints:
             donations = self.get_donations(blueprint, participants)
             response["blueprints"][f"{blueprint.pk}"] = {
@@ -463,7 +463,7 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
     ) -> StreamingHttpResponse | Response:
         participants = self.get_participants()
         responses = self.get_responses(participants)
-        decryptor = Decryption(self.project.secret_key, self.project.get_salt())
+        decryptor = self.project.get_decryptor()
 
         if self.request.query_params.get("csv") == "true":
             return self.create_csv_response(responses, decryptor)

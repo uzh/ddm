@@ -111,6 +111,10 @@ This version drops official support for Python versions < 3.12.
   project's secret via a new `X-Project-Secret` request header instead
   (`ProjectDonationsListView` previously hard-disabled "super secret"
   projects entirely).
+- Fixed a race where a delayed in-progress autosave could land after a
+  participant's final questionnaire submission and silently revert it
+  back to "incomplete" with stale data; a late autosave can no longer
+  overwrite an already-completed response.
 
 ### Deprecated
 

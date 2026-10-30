@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
+from django.db import transaction
 from django.utils import timezone
 
 from ddm.logging.utils import log_server_exception
@@ -177,16 +178,33 @@ def save_questionnaire_response_to_db(
 
     Returns:
         None
+
+    Note:
+        If a response for this participant already exists and is marked
+        complete, a write with ``is_complete=False`` is ignored rather than
+        applied. This guards against a delayed in-progress autosave (fired
+        on an earlier page, but arriving after the final submission due to
+        ordinary network jitter) silently reverting a completed response
+        back to incomplete with stale data.
     """
     validate_responses(responses, project)
 
-    QuestionnaireResponse.objects.update_or_create(
-        project=project,
-        participant=participant,
-        defaults={
-            "time_submitted": timezone.now(),
-            "data": responses,
-            "questionnaire_config": questionnaire_config,
-            "is_complete": is_complete,
-        },
-    )
+    with transaction.atomic():
+        existing = (
+            QuestionnaireResponse.objects.select_for_update()
+            .filter(project=project, participant=participant)
+            .first()
+        )
+        if existing is not None and existing.is_complete and not is_complete:
+            return
+
+        QuestionnaireResponse.objects.update_or_create(
+            project=project,
+            participant=participant,
+            defaults={
+                "time_submitted": timezone.now(),
+                "data": responses,
+                "questionnaire_config": questionnaire_config,
+                "is_complete": is_complete,
+            },
+        )

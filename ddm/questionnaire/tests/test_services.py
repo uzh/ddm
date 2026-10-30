@@ -141,3 +141,55 @@ class TestQuestionnaireServices(TestCase):
         )
         self.assertTrue(final.is_complete)
         self.assertEqual(final.pk, partial.pk)
+
+    def test_late_arriving_autosave_does_not_revert_a_completed_response(self):
+        final_responses = {f"question-{self.question.pk}": 1}
+        save_questionnaire_response_to_db(
+            final_responses, self.project, self.participant, is_complete=True
+        )
+
+        stale_responses = {f"question-{self.question.pk}": 8}
+        save_questionnaire_response_to_db(
+            stale_responses, self.project, self.participant, is_complete=False
+        )
+
+        response = QuestionnaireResponse.objects.get(
+            project=self.project, participant=self.participant
+        )
+        self.assertTrue(response.is_complete)
+        self.assertEqual(
+            response.get_decrypted_data(
+                secret=self.project.secret_key, salt=self.project.get_salt()
+            ),
+            final_responses,
+        )
+
+    def test_in_progress_autosave_after_another_in_progress_autosave_still_updates(
+        self,
+    ):
+        """A later is_complete=False save should still update an existing
+        is_complete=False row - only downgrading a *completed* response is
+        guarded against."""
+        save_questionnaire_response_to_db(
+            {f"question-{self.question.pk}": 1},
+            self.project,
+            self.participant,
+            is_complete=False,
+        )
+        save_questionnaire_response_to_db(
+            {f"question-{self.question.pk}": 8},
+            self.project,
+            self.participant,
+            is_complete=False,
+        )
+
+        response = QuestionnaireResponse.objects.get(
+            project=self.project, participant=self.participant
+        )
+        self.assertFalse(response.is_complete)
+        self.assertEqual(
+            response.get_decrypted_data(
+                secret=self.project.secret_key, salt=self.project.get_salt()
+            ),
+            {f"question-{self.question.pk}": 8},
+        )

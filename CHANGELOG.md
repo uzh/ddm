@@ -106,6 +106,11 @@ This version drops official support for Python versions < 3.12.
   `Heading label`) are now sanitized on save: only a small set of formatting
   tags and the `class` attribute are kept, closing a stored-XSS path while
   still letting researchers do basic styling of labels.
+- Fixed `ResponsesApiView` crashing for every "super secret" project; both
+  `ResponsesApiView` and `ProjectDonationsListView` now accept that
+  project's secret via a new `X-Project-Secret` request header instead
+  (`ProjectDonationsListView` previously hard-disabled "super secret"
+  projects entirely).
 
 ### Deprecated
 

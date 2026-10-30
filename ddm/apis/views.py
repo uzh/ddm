@@ -53,6 +53,8 @@ class DDMAPIMixin:
     Mixin containing ddm-specific methods to be combined with DRF-views.
     """
 
+    project: DonationProject
+
     def permission_denied(
         self, request: HttpRequest, message: str | None = None, code: str | None = None
     ) -> None:
@@ -81,6 +83,23 @@ class DDMAPIMixin:
         return EventLogEntry.objects.create(
             project=self.get_project(), description=f"{prefix}{descr}", message=msg
         )
+
+    @sensitive_variables()
+    def get_authorized_decryptor(self) -> Decryption:
+        """
+        Returns a Decryption for self.project. For super_secret projects,
+        the request's secret (read from the X-Project-Secret header) is
+        required and validated against the project's public key before
+        returning. Raises ValueError if the project is super_secret and
+        the header is missing or incorrect.
+        """
+        secret = self.request.headers.get("X-Project-Secret")
+        if self.project.super_secret and not (
+            secret and self.project.verify_secret(secret)
+        ):
+            msg = "Missing or incorrect secret for super secret project."
+            raise ValueError(msg)
+        return self.project.get_decryptor(secret=secret)
 
 
 class ProjectDetailApiView(ListAPIView, DDMAPIMixin):
@@ -165,14 +184,15 @@ class ProjectDonationsListView(ListAPIView, DDMAPIMixin):
         If not specified, donations for all blueprints associated with the
         project are returned.
 
+    For a "super secret" project, the project's secret must be supplied via
+    the `X-Project-Secret` request header - it is never derived or stored
+    server-side for these projects, so every request must provide it.
+
     Error Responses:
     - 400 Bad Request: If there's an issue with the input data.
     - 401 Unauthorized: If authentication fails.
-    - 405 Method Not Allowed: If resources belonging to a super secret project
-        are requested.
-
-    Note:
-    Please note that this endpoint cannot be used for secret projects.
+    - 422 Unprocessable Entity: If the project is "super secret" and the
+        `X-Project-Secret` header is missing or incorrect.
     """
 
     authentication_classes = [ProjectTokenAuthenticator]
@@ -222,18 +242,20 @@ class ProjectDonationsListView(ListAPIView, DDMAPIMixin):
         *args,
         **kwargs,
     ) -> Response:
-        if self.project.super_secret:
-            raise exceptions.MethodNotAllowed(
-                "GET",  # noqa: EM101
-                detail="Endpoint disabled for super secret projects.",
+        try:
+            decryptor = self.get_authorized_decryptor()
+        except ValueError:
+            self.create_event_log(
+                descr="Forbidden Donations Request",
+                msg="Request for super secret project with missing/incorrect secret.",
             )
+            return Response(status=422, data={"detail": "Missing or incorrect secret."})
 
         participants = self.get_participants(self.project)
         blueprints = self.get_blueprints(self.project)
 
         response = {"blueprints": {}, "metadata": {"n_blueprints": len(blueprints)}}
 
-        decryptor = self.project.get_decryptor()
         for blueprint in blueprints:
             donations = self.get_donations(blueprint, participants)
             response["blueprints"][f"{blueprint.pk}"] = {
@@ -268,9 +290,15 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
     - csv (optional): If csv is 'true', the response will be provided
         as a csv file.
 
+    For a "super secret" project, the project's secret must be supplied via
+    the `X-Project-Secret` request header - it is never derived or stored
+    server-side for these projects, so every request must provide it.
+
     Error Responses:
     - 400 Bad Request: If there's an issue with the input data.
     - 403 Unauthorized: If authentication fails.
+    - 422 Unprocessable Entity: If the project is "super secret" and the
+        `X-Project-Secret` header is missing or incorrect.
     """
 
     project = None
@@ -461,9 +489,17 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
         *args,
         **kwargs,
     ) -> StreamingHttpResponse | Response:
+        try:
+            decryptor = self.get_authorized_decryptor()
+        except ValueError:
+            self.create_event_log(
+                descr="Forbidden Responses Request",
+                msg="Request for super secret project with missing/incorrect secret.",
+            )
+            return Response(status=422, data={"detail": "Missing or incorrect secret."})
+
         participants = self.get_participants()
         responses = self.get_responses(participants)
-        decryptor = self.project.get_decryptor()
 
         if self.request.query_params.get("csv") == "true":
             return self.create_csv_response(responses, decryptor)

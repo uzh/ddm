@@ -305,6 +305,23 @@ class DonationProject(models.Model):
         secret_key = secret if secret else self.secret_key
         return Decryption(secret_key, self.get_salt())
 
+    @sensitive_variables()
+    def verify_secret(self, secret: str) -> bool:
+        """
+        For super_secret projects: checks whether `secret` is able to
+        correctly decrypt this project's data, without needing any
+        already-encrypted data to test against (round-trips a known
+        string through the project's own public key instead). Returns
+        False on a wrong secret or any decryption error; never raises.
+        """
+        test_string = "Teststring"
+        encrypted = Encryption(public=self.public_key).encrypt(test_string)
+        try:
+            decrypted = self.get_decryptor(secret=secret).decrypt(encrypted)
+        except ValueError:
+            return False
+        return decrypted == test_string
+
     def clean_file_on_reupload(self) -> None:
         """
         Deletes previous file on model FileFields or ImageFields if a file

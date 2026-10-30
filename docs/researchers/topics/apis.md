@@ -17,6 +17,24 @@ The APIs use Token-based authentication, with each token linked to a specific pr
 Tokens must be generated via the web application (navigate to the _Project Hub > Data Center > Manage Access Token_).
 Tokens expire after a maximum of 90 days and must be renewed as needed.
 
+## "Super Secret" Projects
+
+For a project configured as "super secret", the encryption secret is a password only you know -
+it is never stored on the server. Because of this, the Donations API and the Responses API
+(the two endpoints that return encrypted data) require that secret to be supplied on every
+request, via the `X-Project-Secret` header. Requests to these two endpoints for a super secret
+project that omit this header, or supply the wrong secret, receive a `422` response instead of
+data.
+
+!!! warning
+
+    Technical note: Treat the value of `X-Project-Secret` like a password: avoid logging it, and avoid passing
+    it through any proxy, gateway, or monitoring tool that records request headers, unless you've
+    configured that tool to redact it (the same way you would for an `Authorization` header).
+
+The other two endpoints (Project Overview API, Delete Participant API) never touch encrypted
+donation/response data, so this header does not apply to them.
+
 ## Available Endpoints
 
 Currently, three API-endpoints are available for researchers: the Project Overview API, the Donations API,
@@ -34,9 +52,9 @@ the Responses API, and the Delete Participant API.
 
 **Headers:**
 
-| Header | Required | Description |
-|---|---|---|
-| `Authorization` | Yes | Bearer token for authentication (supplied as `Token <project API token>`. |
+| Header          | Required | Description                                                               |
+|-----------------|----------|---------------------------------------------------------------------------|
+| `Authorization` | Yes      | Bearer token for authentication (supplied as `Token <project API token>`. |
 
 **Response**
 
@@ -95,12 +113,11 @@ the Responses API, and the Delete Participant API.
 
 **Error Responses:**
 
-| Status Code | Error Message | Description |
-|---|---|---|
-| 401 | Authentication failed. | The authentication token is missing or invalid. |
-| 403 | Permission Denied. | The authentication failed. |
-| 404 | Project not found. | No project could be found for the provided project URL ID. |
-| 405 | Endpoint disabled for super secret projects. | This endpoint is currently not available for super secret projects. |
+| Status Code | Error Message          | Description                                                |
+|-------------|------------------------|------------------------------------------------------------|
+| 401         | Authentication failed. | The authentication token is missing or invalid.            |
+| 403         | Permission Denied.     | The authentication failed.                                 |
+| 404         | Project not found.     | No project could be found for the provided project URL ID. |
 
 **Example**
 
@@ -177,16 +194,17 @@ Host: <hostname>
 
 **URL Parameters:**
 
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `participants` | string | Yes | A comma-separated list of _external participant IDs_ for which the donations should be returned (e.g., "id1,id2,id3"). |
-| `blueprints` | string | No | A comma-separated list of _Blueprint IDs_ for which the donations should be returned. If not specified, donations for all blueprints associated with the project are returned. |
+| Parameter      | Type   | Required | Description                                                                                                                                                                    |
+|----------------|--------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `participants` | string | Yes      | A comma-separated list of _external participant IDs_ for which the donations should be returned (e.g., "id1,id2,id3").                                                         |
+| `blueprints`   | string | No       | A comma-separated list of _Blueprint IDs_ for which the donations should be returned. If not specified, donations for all blueprints associated with the project are returned. |
 
 **Headers:**
 
-| Header | Required | Description |
-|---|---|---|
-| `Authorization` | Yes | Bearer token for authentication (supplied as `Token <project API token>`. |
+| Header             | Required                         | Description                                                                                                                                |
+|--------------------|----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| `Authorization`    | Yes                              | Bearer token for authentication (supplied as `Token <project API token>`.                                                                  |
+| `X-Project-Secret` | Only for "super secret" projects | The project's secret (see [above](#super-secret-projects)). Omitted or incorrect for a "super secret" project results in a `422` response. |
 
 **Response**
 
@@ -220,18 +238,27 @@ Host: <hostname>
 
 **Error Responses:**
 
-| Status Code | Error Message | Description |
-|---|---|---|
-| 401 | Authentication failed. | The authentication token is missing or invalid. |
-| 403 | Permission Denied. | The authentication failed. |
-| 404 | Project not found. | No project could be found for the provided project URL ID. |
-| 405 | Endpoint disabled for super secret projects. | This endpoint is currently not available for super secret projects. |
+| Status Code | Error Message                | Description                                                                               |
+|-------------|------------------------------|-------------------------------------------------------------------------------------------|
+| 401         | Authentication failed.       | The authentication token is missing or invalid.                                           |
+| 403         | Permission Denied.           | The authentication failed.                                                                |
+| 404         | Project not found.           | No project could be found for the provided project URL ID.                                |
+| 422         | Missing or incorrect secret. | The project is "super secret" and the `X-Project-Secret` header was omitted or incorrect. |
 
 **Example**
 
 ```
 GET /api/project/KPHn7aw7/donations HTTPS
 Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+Host: <hostname>
+```
+
+For a "super secret" project, include the `X-Project-Secret` header:
+
+```
+GET /api/project/KPHn7aw7/donations HTTPS
+Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+X-Project-Secret: your-project-secret
 Host: <hostname>
 ```
 
@@ -330,16 +357,17 @@ Host: <hostname>
 
 **URL Parameters:**
 
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `participants` | string | No | A comma-separated list of _external participant IDs_ for which the donations should be returned. If not specified, donations for all participants associated with a project will be returned. |
-| `include_snapshot` | string | No | If include_snapshot is 'true', the API response will include a snapshot of the questionnaire configuration at the time the questionnaire was completed for each participant. Otherwise, the snapshot will be omitted. |
+| Parameter          | Type   | Required | Description                                                                                                                                                                                                           |
+|--------------------|--------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `participants`     | string | No       | A comma-separated list of _external participant IDs_ for which the donations should be returned. If not specified, donations for all participants associated with a project will be returned.                         |
+| `include_snapshot` | string | No       | If include_snapshot is 'true', the API response will include a snapshot of the questionnaire configuration at the time the questionnaire was completed for each participant. Otherwise, the snapshot will be omitted. |
 
 **Headers:**
 
-| Header | Required | Description |
-|---|---|---|
-| `Authorization` | Yes | Bearer token for authentication (supplied as `Token <project API token>`. |
+| Header             | Required                         | Description                                                                                                                                |
+|--------------------|----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| `Authorization`    | Yes                              | Bearer token for authentication (supplied as `Token <project API token>`.                                                                  |
+| `X-Project-Secret` | Only for "super secret" projects | The project's secret (see [above](#super-secret-projects)). Omitted or incorrect for a "super secret" project results in a `422` response. |
 
 **Response**
 
@@ -363,18 +391,27 @@ Host: <hostname>
 
 **Error Responses:**
 
-| Status Code | Error Message | Description |
-|---|---|---|
-| 401 | Authentication failed. | The authentication token is missing or invalid. |
-| 403 | Permission Denied. | The authentication failed. |
-| 404 | Project not found. | No project could be found for the provided project URL ID. |
-| 405 | Endpoint disabled for super secret projects. | This endpoint is currently not available for super secret projects. |
+| Status Code | Error Message                | Description                                                                               |
+|-------------|------------------------------|-------------------------------------------------------------------------------------------|
+| 401         | Authentication failed.       | The authentication token is missing or invalid.                                           |
+| 403         | Permission Denied.           | The authentication failed.                                                                |
+| 404         | Project not found.           | No project could be found for the provided project URL ID.                                |
+| 422         | Missing or incorrect secret. | The project is "super secret" and the `X-Project-Secret` header was omitted or incorrect. |
 
 **Example**
 
 ```
 GET /api/project/KPHn7aw7/responses HTTPS
 Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+Host: <hostname>
+```
+
+For a "super secret" project, include the `X-Project-Secret` header:
+
+```
+GET /api/project/KPHn7aw7/responses HTTPS
+Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+X-Project-Secret: your-project-secret
 Host: <hostname>
 ```
 
@@ -428,9 +465,9 @@ Host: <hostname>
 
 **URL Parameters:** No parameters supported for this endpoint. **Headers:**
 
-| Header | Required | Description |
-|---|---|---|
-| `Authorization` | Yes | Bearer token for authentication (supplied as `Token <project API token>`. |
+| Header          | Required | Description                                                               |
+|-----------------|----------|---------------------------------------------------------------------------|
+| `Authorization` | Yes      | Bearer token for authentication (supplied as `Token <project API token>`. |
 
 **Response**
 
@@ -444,11 +481,11 @@ Host: <hostname>
 
 **Error Responses:**
 
-| Status Code | Error Message | Description |
-|---|---|---|
-| 401 | Authentication failed. | The authentication token is missing or invalid. |
-| 403 | Permission Denied. | The authentication failed. |
-| 404 | Project not found. | No participant could be found for the provided ID. |
+| Status Code | Error Message          | Description                                        |
+|-------------|------------------------|----------------------------------------------------|
+| 401         | Authentication failed. | The authentication token is missing or invalid.    |
+| 403         | Permission Denied.     | The authentication failed.                         |
+| 404         | Project not found.     | No participant could be found for the provided ID. |
 
 **Example**
 

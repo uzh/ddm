@@ -43,7 +43,7 @@ from ddm.datadonation.models import (
     DonationInstruction,
     FileUploader,
 )
-from ddm.encryption.models import Decryption, Encryption
+from ddm.encryption.models import Decryption
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject
 from ddm.projects.views import DDMAuthMixin
@@ -845,27 +845,10 @@ class DonationDownloadView(DDMAuthMixin, DDMAdminMixin, DDMAPIMixin, FormView):
     @sensitive_variables()
     def get_decryptor(self, secret: str | None = None) -> Decryption:
         secret_key = secret if secret else self.project.secret_key
-        decryptor = self.project.get_decryptor(secret=secret)
-        try:
-            self.test_secret(secret_key, decryptor)
-        except ValueError as e:
-            raise ValueError from e
-        return decryptor
-
-    @sensitive_variables()
-    def test_secret(self, secret: str, decryptor: Decryption) -> None:
-        test_string = "Teststring"
-        encrypted_string = Encryption(public=self.project.public_key).encrypt(
-            test_string
-        )
-
-        try:
-            decrypted_string = decryptor.decrypt(encrypted_string)
-        except ValueError as e:
-            raise ValueError from e
-
-        if decrypted_string != test_string:
-            raise ValueError
+        if not self.project.verify_secret(secret_key):
+            msg = "Incorrect secret."
+            raise ValueError(msg)
+        return self.project.get_decryptor(secret=secret)
 
     def get_filename(self, participant_id: str, file_type: str) -> str:
         return f"ddm_{self.project.url_id}_donations_{participant_id}.{file_type}"

@@ -420,12 +420,12 @@ class DataDonationView(ParticipationFlowBaseView):
                 blueprint = DonationBlueprint.objects.get(
                     pk=blueprint_id, project=self.object
                 )
-            except DonationBlueprint.DoesNotExist:
+            except (DonationBlueprint.DoesNotExist, ValueError):
                 self._log_error(
-                    f"Referenced blueprint with id={blueprint_id} does not exist "
-                    "for this project."
+                    f"Referenced blueprint with id={blueprint_id} could not be "
+                    "resolved for this project (not found or not a valid id)."
                 )
-                return
+                continue
             blueprint.process_donation(blueprint_data, self.participant)
 
 

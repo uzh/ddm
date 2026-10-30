@@ -118,6 +118,9 @@ This version drops official support for Python versions < 3.12.
 - Fixed questionnaire submission and autosave crashing (500) when the
   posted data omitted the `"responses"` key; it's now treated as an
   empty response set instead.
+- Fixed data donation processing crashing on a non-numeric blueprint id,
+  and silently dropping every blueprint after an unresolvable one in the
+  same upload; each blueprint is now processed independently.
 
 ### Deprecated
 

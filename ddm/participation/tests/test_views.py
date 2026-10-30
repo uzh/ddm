@@ -359,6 +359,48 @@ class TestDonationView(ParticipationFlowBaseTestCase):
         self.assertEqual(exceptions_count_before, (exceptions_count_after - 1))
         self.assertIn("blueprint with id=", last_exception.message)
 
+    def test_process_uploads_non_numeric_blueprint_id_does_not_crash(self):
+        view = self.initialize_view()
+        zip_buffer = self.get_zip_file("data_donation.json", '{"abc": "some data"}')
+        files = {"post_data": zip_buffer}
+        exceptions_count_before = ExceptionLogEntry.objects.count()
+        view.process_uploads(files)
+        exceptions_count_after = ExceptionLogEntry.objects.count()
+        last_exception = ExceptionLogEntry.objects.order_by("date").last()
+        self.assertEqual(exceptions_count_before, (exceptions_count_after - 1))
+        self.assertIn("blueprint with id=", last_exception.message)
+
+    def test_process_uploads_continues_after_unresolvable_blueprint(self):
+        other_blueprint = DonationBlueprint.objects.create(
+            project=self.project_base,
+            name="other_donation_blueprint",
+            display_name="other donation blueprint",
+            expected_fields='"a", "b"',
+            file_uploader=None,
+            parser_config=JSONParserConfig().model_dump(),
+        )
+        view = self.initialize_view()
+        file_data = {
+            "999999": "unresolvable",
+            f"{other_blueprint.pk}": {
+                "consent": True,
+                "extractedData": [],
+                "status": "DATA_EXTRACTED",
+            },
+        }
+        zip_buffer = self.get_zip_file("data_donation.json", json.dumps(file_data))
+        files = {"post_data": zip_buffer}
+        donation_count_before = DataDonation.objects.count()
+
+        view.process_uploads(files)
+
+        self.assertEqual(DataDonation.objects.count(), donation_count_before + 1)
+        self.assertTrue(
+            DataDonation.objects.filter(
+                blueprint=other_blueprint, participant=view.participant
+            ).exists()
+        )
+
     @override_settings(DDM_SETTINGS={"MAX_DONATION_UPLOAD_SIZE": 10})
     def test_process_uploads_oversized_data_donation_json_is_rejected(self):
         view = self.initialize_view()

@@ -359,6 +359,28 @@ class TestDonationView(ParticipationFlowBaseTestCase):
         self.assertEqual(exceptions_count_before, (exceptions_count_after - 1))
         self.assertIn("blueprint with id=", last_exception.message)
 
+    @override_settings(DDM_SETTINGS={"MAX_DONATION_UPLOAD_SIZE": 10})
+    def test_process_uploads_oversized_data_donation_json_is_rejected(self):
+        view = self.initialize_view()
+        valid_data = {
+            f"{self.blueprint.pk}": {
+                "consent": True,
+                "extractedData": [],
+                "status": "DATA_EXTRACTED",
+            }
+        }
+        zip_buffer = self.get_zip_file("data_donation.json", json.dumps(valid_data))
+        files = {"post_data": zip_buffer}
+        exceptions_count_before = ExceptionLogEntry.objects.count()
+        donation_count_before = DataDonation.objects.count()
+        view.process_uploads(files)
+        exceptions_count_after = ExceptionLogEntry.objects.count()
+        donation_count_after = DataDonation.objects.count()
+        last_exception = ExceptionLogEntry.objects.order_by("date").last()
+        self.assertEqual(exceptions_count_before, (exceptions_count_after - 1))
+        self.assertEqual(donation_count_before, donation_count_after)
+        self.assertIn("exceeds the maximum allowed size", last_exception.message)
+
     def test_process_uploads_valid_post_data(self):
         view = self.initialize_view()
         valid_data = {

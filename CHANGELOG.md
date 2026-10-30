@@ -97,6 +97,9 @@ This version drops official support for Python versions < 3.12.
 - Fixed `DonationDownloadView` not scoping a requested participant to the
   authorized project, which theoretically allowed a project owner to download another
   project's participant data by guessing its external ID.
+- The public data-donation upload now rejects a ZIP whose `data_donation.json`
+  member decompresses past a configurable size cap (100 MB by default)
+  before reading it into memory, instead of decompressing it unconditionally.
 
 ### Deprecated
 

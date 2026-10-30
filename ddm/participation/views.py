@@ -37,6 +37,11 @@ from ddm.projects.service import (
 )
 from ddm.questionnaire.services import save_questionnaire_response_to_db
 
+# Default ceiling (in bytes) for the decompressed 'data_donation.json'
+# member read out of a participant's uploaded ZIP. Overridable via
+# DDM_SETTINGS['MAX_DONATION_UPLOAD_SIZE'].
+DEFAULT_MAX_DONATION_UPLOAD_SIZE = 100 * 1024 * 1024  # 100 MB
+
 
 def get_participation_session_id(project: DonationProject) -> str:
     """
@@ -363,6 +368,17 @@ class DataDonationView(ParticipationFlowBaseView):
         if "data_donation.json" not in unzipped_file.namelist():
             self._log_error(
                 "ZIP file does not contain expected 'data_donation.json' file."
+            )
+            return None
+
+        max_size = getattr(settings, "DDM_SETTINGS", {}).get(
+            "MAX_DONATION_UPLOAD_SIZE", DEFAULT_MAX_DONATION_UPLOAD_SIZE
+        )
+        decompressed_size = unzipped_file.getinfo("data_donation.json").file_size
+        if decompressed_size > max_size:
+            self._log_error(
+                f"'data_donation.json' decompressed size ({decompressed_size} "
+                f"bytes) exceeds the maximum allowed size ({max_size} bytes)."
             )
             return None
 

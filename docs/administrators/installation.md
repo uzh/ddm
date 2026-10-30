@@ -26,6 +26,7 @@ DDM has the following dependencies which will be installed when installing djang
 - [django-polymorphic](https://pypi.org/project/django-polymorphic/)
 - [django-webpack-loader](https://pypi.org/project/django-webpack-loader/)
 - [djangorestframework](https://pypi.org/project/djangorestframework/)
+- [nh3](https://pypi.org/project/nh3/)
 - [pycryptodome](https://pypi.org/project/pycryptodome/)
 - [pydantic](https://pypi.org/project/pydantic/) (2.x)
 - [sqlparse](https://pypi.org/project/sqlparse/)

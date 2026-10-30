@@ -179,6 +179,19 @@ The following configuration settings are available for all question types:
 
     Option to show/hide scale headings.
 
+!!! note "HTML in labels"
+
+    `Label`, `Label Right`, `Input label`, and `Heading label` (described below and under
+    [Scale Configuration](#scale-configuration)) support a small set of HTML for basic
+    formatting and styling:
+
+    - Formatting tags: `<b>`, `<strong>`, `<i>`, `<em>`, `<u>`, `<sub>`, `<sup>`, `<br>`, and `<span>`.
+    - The `class` attribute on any of the above, e.g. `<span class="class-name">text</span>`,
+      to apply one of the available bootstrap CSS classes for custom styling.
+
+    Any other tag or attribute (including `style`) is automatically removed when 
+    you save (no error is raised).
+
 ### Question Items
 
 For Single Choice Questions, Multiple Choice Questions, Matrix Questions and Semantic Differentials,
@@ -208,13 +221,14 @@ settings are available:
 
     The label/text of the item that is displayed to participants related to an item.
     For semantic differential questions, this is the label displayed on the left-hand side of the scale.
+    See the [HTML in labels](#question-items) note above for what formatting is supported.
 
     ---
 
     #### `Label Right`
 
     Only for semantic differential questions. The label displayed on the
-    right-hand side of the scale.
+    right-hand side of the scale. Supports the same HTML as `Label` above.
 
     ---
 
@@ -265,7 +279,8 @@ the question items) with the configured question scale.
 
     #### `Input label`
 
-    The text that is displayed within the scale-points/input-buttons.
+    The text that is displayed within the scale-points/input-buttons. Supports the same
+    [HTML](#question-items) as Question Items' `Label`.
 
     !!! tip
     
@@ -279,7 +294,7 @@ the question items) with the configured question scale.
     #### `Heading label`
 
     The text that is displayed above the scale-points/input-buttons (currently, only possible for
-    Matrix Questions).
+    Matrix Questions). Supports the same [HTML](#question-items) as Question Items' `Label`.
 
     ---
 

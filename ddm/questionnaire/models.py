@@ -7,6 +7,7 @@ from django.db import models
 from django.utils import timezone
 from polymorphic.models import PolymorphicModel
 
+from ddm.core.utils.sanitize import sanitize_label_html
 from ddm.encryption.models import ModelWithEncryptedData
 from ddm.projects.service import get_participant_variables, get_url_parameters
 from ddm.questionnaire.constants import FilterSourceTypes
@@ -373,6 +374,13 @@ class QuestionItem(FilterConditionMixin, models.Model):
     def __str__(self) -> str:
         return f"Question Item '{self.label}' (question: {self.question.pk})"
 
+    def save(self, *args, **kwargs) -> None:
+        """Sanitize label/label_alt before saving (rendered as raw
+        HTML in the frontend)."""
+        self.label = sanitize_label_html(self.label)
+        self.label_alt = sanitize_label_html(self.label_alt)
+        super().save(*args, **kwargs)
+
     @property
     def variable_name(self) -> str:
         return f"{self.question.variable_name}-{self.value}"
@@ -399,6 +407,13 @@ class ScalePoint(models.Model):
 
     def __str__(self) -> str:
         return f"Scale Point {self.pk}"
+
+    def save(self, *args, **kwargs) -> None:
+        """Sanitize input_label/heading_label before saving (rendered as
+        raw HTML in the frontend)."""
+        self.input_label = sanitize_label_html(self.input_label)
+        self.heading_label = sanitize_label_html(self.heading_label)
+        super().save(*args, **kwargs)
 
 
 class QuestionnaireResponse(ModelWithEncryptedData):

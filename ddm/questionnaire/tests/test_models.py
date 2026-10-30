@@ -44,6 +44,59 @@ class TestQuestionModelsBaseCase(TestCase):
         }
 
 
+class TestLabelSanitization(TestQuestionModelsBaseCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.question = SingleChoiceQuestion.objects.create(**cls.question_config)
+
+    def test_question_item_label_class_is_kept(self):
+        item = QuestionItem.objects.create(
+            question=self.question,
+            index=1,
+            value=1,
+            label='<span class="highlight">styled</span>',
+        )
+        self.assertEqual(item.label, '<span class="highlight">styled</span>')
+
+    def test_question_item_label_style_is_stripped(self):
+        item = QuestionItem.objects.create(
+            question=self.question,
+            index=1,
+            value=1,
+            label='<span style="color:red">text</span>',
+        )
+        self.assertEqual(item.label, "<span>text</span>")
+
+    def test_question_item_label_script_is_removed_with_content(self):
+        item = QuestionItem.objects.create(
+            question=self.question,
+            index=1,
+            value=1,
+            label="<script>alert(1)</script>safe",
+            label_alt='<img src=x onerror="alert(1)">evil',
+        )
+        self.assertEqual(item.label, "safe")
+        self.assertEqual(item.label_alt, "evil")
+
+    def test_question_item_label_plain_text_unchanged(self):
+        item = QuestionItem.objects.create(
+            question=self.question, index=1, value=1, label="Plain text"
+        )
+        self.assertEqual(item.label, "Plain text")
+
+    def test_scale_point_labels_are_sanitized(self):
+        scale = ScalePoint.objects.create(
+            question=self.question,
+            index=1,
+            value=1,
+            input_label='<b onclick="evil()">bold</b>',
+            heading_label='<span style="position:fixed">heading</span>',
+        )
+        self.assertEqual(scale.input_label, "<b>bold</b>")
+        self.assertEqual(scale.heading_label, "<span>heading</span>")
+
+
 class TestSingleChoiceQuestion(TestQuestionModelsBaseCase):
     @classmethod
     def setUpTestData(cls):

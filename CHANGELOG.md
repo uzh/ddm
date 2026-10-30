@@ -67,6 +67,8 @@ This version drops official support for Python versions < 3.12.
   randomly generated encryption key (wrapped at rest, never derivable from
   `SECRET_KEY` and a public timestamp alone); projects created before this
   change, and "super secret" projects, are unaffected.
+- Added `nh3` as a new dependency, used to sanitize question item/scale
+  point labels on save.
 
 ### Fixed
 
@@ -100,6 +102,10 @@ This version drops official support for Python versions < 3.12.
 - The public data-donation upload now rejects a ZIP whose `data_donation.json`
   member decompresses past a configurable size cap (100 MB by default)
   before reading it into memory, instead of decompressing it unconditionally.
+- Question item and scale point labels (`Label`, `Label Right`, `Input label`,
+  `Heading label`) are now sanitized on save: only a small set of formatting
+  tags and the `class` attribute are kept, closing a stored-XSS path while
+  still letting researchers do basic styling of labels.
 
 ### Deprecated
 

@@ -1,7 +1,7 @@
 # Installation Guide
 
 DDM is a web application that builds on [Django](https://www.djangoproject.com/), a Python web framework.
-Therefore, to run DDM you first need to install Python (3.8 or newer) and Django 4.2.
+Therefore, to run DDM you first need to install Python (3.12 or newer) and Django 5.2.
 
 For the installation of Python, please go to the official Python website: [python.org](https://www.python.org/)
 
@@ -20,12 +20,14 @@ Setting up DDM includes the following steps:
 DDM has the following dependencies which will be installed when installing django-ddm through pip:
 
 - [asgiref](https://pypi.org/project/asgiref/)
-- [Django 4.2](https://www.djangoproject.com/)
+- [Django](https://www.djangoproject.com/) (5.2 or newer, below 6)
 - [django-ckeditor-5](https://pypi.org/project/django-ckeditor-5/)
+- [django-filter](https://pypi.org/project/django-filter/)
 - [django-polymorphic](https://pypi.org/project/django-polymorphic/)
 - [django-webpack-loader](https://pypi.org/project/django-webpack-loader/)
 - [djangorestframework](https://pypi.org/project/djangorestframework/)
 - [pycryptodome](https://pypi.org/project/pycryptodome/)
+- [pydantic](https://pypi.org/project/pydantic/) (2.x)
 - [sqlparse](https://pypi.org/project/sqlparse/)
 
 ## Create Django Application
@@ -48,7 +50,7 @@ ProjectPath> source /path/to/venv/bin/activate
 Next, install Django in your virtual environment:
 
 ```
-(venv) ProjectPath> pip install Django==4.2.*
+(venv) ProjectPath> pip install "Django>=5.2,<6"
 ```
 
 Now that Django is installed, start a new project and access it:
@@ -284,7 +286,7 @@ The Python installation includes SQLite which is configured to be used as a data
 backend in the standard `settings.py` created by Django.
 For a development environment, this SQLite is totally fine, however for a production
 deployment you should consider configuring a more robust and efficient database such as
-PostgreSQL or MariaDB (see the [Django Documentation](https://docs.djangoproject.com/en/3.2/topics/install/#get-your-database-running) for further information).
+PostgreSQL or MariaDB (see the [Django Documentation](https://docs.djangoproject.com/en/stable/topics/install/#get-your-database-running) for further information).
 
 Once you have configured a database, run `python manage.py migrate` to create the ddm models in your database.
 
@@ -343,7 +345,7 @@ that can optionally be customized ([find out more](topics/customize_ckeditor_con
 
 ## Further Resources
 
-- [Official Django Documentation](https://docs.djangoproject.com/en/3.2/)
+- [Official Django Documentation](https://docs.djangoproject.com/en/stable/)
 - [Official Python Documentation](https://www.python.org/doc/)
 - Django Tutorials on [W3Schools](https://www.w3schools.com/django/index.php) or
 [Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-install-django-and-set-up-a-development-environment-on-ubuntu-20-04)

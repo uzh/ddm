@@ -531,6 +531,17 @@ class TestAPIs(TestCase):
         post_response = self.client.post(url, {"secret": "secret_key"})
         self.assertEqual(post_response.status_code, 404)
 
+    def test_donation_download_view_cannot_access_participant_from_another_project(
+        self,
+    ):
+        self.client.login(**self.no_perm_creds)  # owns project_alt.
+        url = reverse(
+            "ddm_datadonation:download_donation",
+            args=[self.project_alt.url_id, self.participant_regular.external_id],
+        )
+        post_response = self.client.post(url, {})
+        self.assertEqual(post_response.status_code, 404)
+
     def test_donation_download_view_not_logged_in_regular_project(self):
         client = Client()
         url = reverse(

@@ -94,6 +94,9 @@ This version drops official support for Python versions < 3.12.
 - Fixed `DownloadProjectDetailsView`/`DeleteParticipantAPI`/`DeleteProjectData`
   not creating an event-log entry for a forbidden request due to an
   inherited logging override shadowing it.
+- Fixed `DonationDownloadView` not scoping a requested participant to the
+  authorized project, which theoretically allowed a project owner to download another
+  project's participant data by guessing its external ID.
 
 ### Deprecated
 

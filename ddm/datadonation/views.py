@@ -821,7 +821,9 @@ class DonationDownloadView(DDMAuthMixin, DDMAdminMixin, DDMAPIMixin, FormView):
     def get_participant(self) -> Participant:
         """Returns participant instance."""
         participant_id = self.kwargs.get("participant_id")
-        return get_object_or_404(Participant, external_id=participant_id)
+        return get_object_or_404(
+            Participant, external_id=participant_id, project=self.project
+        )
 
     def get_donations(self, participant: Participant) -> QuerySet[DataDonation]:
         return participant.datadonation_set.all()

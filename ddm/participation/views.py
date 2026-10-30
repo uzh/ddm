@@ -497,7 +497,7 @@ class QuestionnaireView(ParticipationFlowBaseView):
             return
 
         save_questionnaire_response_to_db(
-            post_data.get("responses"),
+            post_data.get("responses") or {},
             self.object,
             self.participant,
             post_data.get("questionnaire_config"),
@@ -632,7 +632,7 @@ class QuestionnaireProgressView(View):
             return JsonResponse({"error": "Invalid payload."}, status=400)
 
         save_questionnaire_response_to_db(
-            post_data.get("responses"),
+            post_data.get("responses") or {},
             project,
             participant,
             post_data.get("questionnaire_config"),

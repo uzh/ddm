@@ -115,6 +115,9 @@ This version drops official support for Python versions < 3.12.
   participant's final questionnaire submission and silently revert it
   back to "incomplete" with stale data; a late autosave can no longer
   overwrite an already-completed response.
+- Fixed questionnaire submission and autosave crashing (500) when the
+  posted data omitted the `"responses"` key; it's now treated as an
+  empty response set instead.
 
 ### Deprecated
 

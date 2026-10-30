@@ -443,6 +443,25 @@ class TestQuestionnaireView(ParticipationFlowBaseTestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.debriefing_url)
 
+    def test_questionnaire_post_missing_responses_key_does_not_crash(self):
+        post_data = {"post_data": json.dumps({"questionnaire_config": []})}
+        response = self.client.post(self.quest_url, data=post_data)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, self.debriefing_url)
+
+        participant = self.get_participant(self.project_base.pk)
+        saved = QuestionnaireResponse.objects.get(
+            project=self.project_base, participant=participant
+        )
+        self.assertTrue(saved.is_complete)
+        self.assertEqual(
+            saved.get_decrypted_data(
+                secret=self.project_base.secret_key,
+                salt=self.project_base.get_salt(),
+            ),
+            {},
+        )
+
     def test_project_inactive_redirects_to_info_page(self):
         self.project_base.active = False
         self.project_base.save()
@@ -497,6 +516,17 @@ class TestQuestionnaireProgressView(ParticipationFlowBaseTestCase):
     def test_missing_post_data_returns_400(self):
         response = self.client.post(self.progress_url, data={})
         self.assertEqual(response.status_code, 400)
+
+    def test_missing_responses_key_does_not_crash(self):
+        post_data = {"post_data": json.dumps({"questionnaire_config": []})}
+        response = self.client.post(self.progress_url, data=post_data)
+        self.assertEqual(response.status_code, 200)
+
+        participant = self.get_participant(self.project_base.pk)
+        saved = QuestionnaireResponse.objects.get(
+            project=self.project_base, participant=participant
+        )
+        self.assertFalse(saved.is_complete)
 
     def test_does_not_advance_current_step(self):
         participant_before = self.get_participant(self.project_base.pk)

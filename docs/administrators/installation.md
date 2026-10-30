@@ -288,6 +288,26 @@ PostgreSQL or MariaDB (see the [Django Documentation](https://docs.djangoproject
 
 Once you have configured a database, run `python manage.py migrate` to create the ddm models in your database.
 
+### Before Going to Production
+
+The `settings.py` that `django-admin startproject` generates for you (see
+[Create Django Application](#create-django-application) above) defaults to
+`DEBUG = True` and does not configure any of Django's other
+production-hardening settings (secure cookies, SSL redirect, HSTS, etc.) -
+none of this is specific to DDM, but it's easy to miss. Before exposing your 
+installation to the public internet, set `DEBUG = False` and run Django's own
+deployment checklist:
+
+```
+(venv) ProjectPath/yourproject> python manage.py check --deploy
+```
+
+This checks `DEBUG`, `SECRET_KEY` strength, cookie security, HSTS, and
+more in one command, and is kept up to date with Django's own
+recommendations - see the
+[Django deployment checklist](https://docs.djangoproject.com/en/stable/howto/deployment/checklist/)
+for what it covers and why each item matters.
+
 ### Test Installation
 
 To test if your installation was successful, run `python manage.py test ddm`.

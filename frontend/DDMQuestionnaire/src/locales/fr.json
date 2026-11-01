@@ -1,5 +1,7 @@
 {
   "next-btn-label": "Suivant",
+  "retry-btn-label": "Réessayer",
+  "submit-failed-hint": "L'envoi de vos réponses a échoué. Veuillez vérifier votre connexion internet et réessayer.",
   "required-but-missing-hint": "Veuillez répondre à cette question.",
   "questionnaire": "Questionnaire",
   "page": "page",

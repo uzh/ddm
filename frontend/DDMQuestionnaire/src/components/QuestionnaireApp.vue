@@ -86,6 +86,10 @@ const { currentPage, lastPageSubmitted, next, clearCurrentPage, pageIndexMap } =
 );
 const { scrollToTop, scrollToFirstValidationIssue } = useScrollHandler()
 
+// Tracks whether the final submission failed, so a visible error can be
+// shown and the participant can retry.
+const submitFailed = ref(false);
+
 watch(lastPageSubmitted, (submitted) => {
   if (submitted) submitData();
 });
@@ -178,25 +182,33 @@ function buildPostData(): FormData {
 /**
  * Submits the response data to the backend via a POST request using FormData.
  *
- * - If the response triggers a redirect, it navigates to the new URL.
- * - Clears the locally cached progress, since the backend now holds the
- *   authoritative final submission.
+ * - Only clears the locally cached progress once the backend has confirmed
+ *   the submission (a redirect, per the backend's own success response),
+ *   so a failed attempt doesn't lose the participant's responses.
+ * - On failure, resets `lastPageSubmitted` so the watcher above can fire
+ *   again, allowing the participant to retry via the existing next/submit
+ *   button.
  */
 function submitData() {
+  submitFailed.value = false;
+
   fetch(props.actionUrl, {
     method: "POST",
     body: buildPostData()
   } as RequestInit)
     .then(res => {
-      if (res.redirected) {
-        window.location.href = res.url;
+      if (!res.redirected) {
+        throw new Error(`Unexpected response status: ${res.status}`);
       }
+      clearResponses();
+      clearCurrentPage();
+      window.location.href = res.url;
     })
-    .catch(err => console.error("Submit error:", err));
-
-  // Clear cached information.
-  clearResponses();
-  clearCurrentPage();
+    .catch(err => {
+      console.error("Submit error:", err);
+      submitFailed.value = true;
+      lastPageSubmitted.value = false;
+    });
 }
 
 /**
@@ -296,6 +308,14 @@ const { questionDivs, isSticky } = useStickyQuestions(questionMap, currentPage, 
       </div>
     </template>
 
+    <div
+      v-if="submitFailed"
+      id="submit-failed-hint"
+      class="submit-failed-hint"
+    >
+      {{ t('submit-failed-hint') }}
+    </div>
+
     <div class="row flow-navigation">
       <div class="col">
         <button
@@ -304,7 +324,7 @@ const { questionDivs, isSticky } = useStickyQuestions(questionMap, currentPage, 
           type="button"
           @click="() => { clickOnNextPage(); }"
         >
-          <span class="pe-2">{{ t('next-btn-label') }}</span>
+          <span class="pe-2">{{ t(submitFailed ? 'retry-btn-label' : 'next-btn-label') }}</span>
           <i class="step-chevron bi bi-chevron-right"></i>
         </button>
       </div>
@@ -422,6 +442,11 @@ const { questionDivs, isSticky } = useStickyQuestions(questionMap, currentPage, 
 
 .required-hint.show {
   display: block !important;
+}
+
+.submit-failed-hint {
+  color: var(--ddm-error);
+  margin-bottom: 10px;
 }
 
 input[type="text"],

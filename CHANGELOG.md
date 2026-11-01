@@ -121,6 +121,10 @@ This version drops official support for Python versions < 3.12.
 - Fixed data donation processing crashing on a non-numeric blueprint id,
   and silently dropping every blueprint after an unresolvable one in the
   same upload; each blueprint is now processed independently.
+- Improved reliability of the final questionnaire submission: the locally
+  cached progress is now only cleared once the backend has confirmed the
+  submission, and if a submission can't go through (e.g. a brief connection
+  issue), the participant now sees an error message and can simply retry.
 
 ### Deprecated
 

@@ -1,5 +1,7 @@
 {
   "next-btn-label": "Next",
+  "retry-btn-label": "Retry",
+  "submit-failed-hint": "Submitting your responses failed. Please check your internet connection and try again.",
   "required-but-missing-hint": "Please answer this question.",
   "questionnaire": "Questionnaire",
   "page": "page",

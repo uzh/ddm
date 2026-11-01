@@ -1,5 +1,7 @@
 {
   "next-btn-label": "Weiter",
+  "retry-btn-label": "Erneut versuchen",
+  "submit-failed-hint": "Bei der Übertragung Ihrer Antworten ist ein Fehler aufgetreten. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
   "required-but-missing-hint": "Bitte beantworten Sie diese Frage.",
   "questionnaire": "Fragebogen",
   "page": "Seite",

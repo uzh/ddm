@@ -446,10 +446,17 @@ describe("scrolling on next-page click", () => {
 
     const topScroll = vi.spyOn(document.documentElement, "scrollTo");
 
+    // scrollToTop() skips the actual scrollTo() call when already at the
+    // top of the page - simulate having scrolled down while answering the
+    // page, since jsdom otherwise always reports scrollTop as 0.
+    document.documentElement.scrollTop = 500;
+
     await wrapper.find("#next-page-btn").trigger("click");
     await wait();
 
     expect(topScroll).toHaveBeenCalled();
+
+    document.documentElement.scrollTop = 0;
   });
 
   it("scrolls to the first invalid length/value field when blocked by bounds alone (no missing required field)", async () => {

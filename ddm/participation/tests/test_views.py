@@ -472,6 +472,15 @@ class TestQuestionnaireView(ParticipationFlowBaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, QuestionnaireView.template_name)
 
+    def test_questionnaire_exposes_participant_id_for_cache_scoping(self):
+        participant = self.get_participant(self.project_base.pk)
+
+        response = self.client.get(self.quest_url)
+
+        self.assertContains(
+            response, f"data-participant-id='{participant.external_id}'"
+        )
+
     def test_questionnaire_get_invalid_url(self):
         response = self.client.get(self.quest_url_invalid, follow=True)
         self.assertEqual(response.status_code, 404)

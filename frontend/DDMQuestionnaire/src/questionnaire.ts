@@ -22,6 +22,7 @@ import type {FilterConfig, QuestionnaireConfig} from "@questionnaire/types/quest
  * Expected `data-*` attributes on the mount element:
  * - data-action-url
  * - data-language
+ * - data-participant-id
  *
  * Expected JSON script blocks located within the mount element:
  *  - #q-config-data: Contains the questionnaire configuration
@@ -85,7 +86,8 @@ function initializeQuestionnaireApp(): void {
     staticVariables: staticVariables,
     actionUrl: mountEl.dataset.actionUrl,
     progressUrl: mountEl.dataset.progressUrl,
-    language: mountEl.dataset.language
+    language: mountEl.dataset.language,
+    participantId: mountEl.dataset.participantId
   });
 
   // Set i18n locale based on the data attribute.

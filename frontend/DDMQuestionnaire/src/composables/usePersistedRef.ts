@@ -52,24 +52,33 @@ function hashConfig(config: QuestionnaireConfig): string {
   return hash.toString(36)
 }
 
+/**
+ * @param key - Base storage key, e.g. `'questionnaire-responses'`.
+ * @param participantId - The current participant's external id, if any.
+ *   Folded into the storage key so two different participants (even on a
+ *   shared browser) never read or overwrite each other's cached draft - see
+ *   H11. Callers that persist per-participant data should always pass this.
+ */
 export function usePersistedRef<T>(
   key: string,
   defaultValue: T,
   ttlMs: number,
-  versionSource?: QuestionnaireConfig
+  versionSource?: QuestionnaireConfig,
+  participantId?: string
 ) {
+  const storageKey = participantId ? `${key}:${participantId}` : key;
   const currentVersion = versionSource !== undefined ? hashConfig(versionSource) : '1'
 
   function load(): T {
     try {
-      const raw = localStorage.getItem(key);
+      const raw = localStorage.getItem(storageKey);
       if (!raw) throw new Error('empty');
       const parsed = JSON.parse(raw);
       if (parsed.version !== currentVersion) throw new Error('stale version');
       if (Date.now() > parsed.expiresAt) throw new Error('expired');
       return parsed.value;
     } catch {
-      localStorage.removeItem(key)
+      localStorage.removeItem(storageKey)
       return defaultValue;
     }
   }
@@ -77,7 +86,7 @@ export function usePersistedRef<T>(
   const state = ref<T>(load());
 
   watch(state, (value) => {
-    localStorage.setItem(key, JSON.stringify({
+    localStorage.setItem(storageKey, JSON.stringify({
       version: currentVersion,
       expiresAt: Date.now() + ttlMs,
       value,
@@ -85,7 +94,7 @@ export function usePersistedRef<T>(
   }, { deep: true })
 
   function clearProgress() {
-    localStorage.removeItem(key);
+    localStorage.removeItem(storageKey);
   }
 
   return { state, clearProgress }

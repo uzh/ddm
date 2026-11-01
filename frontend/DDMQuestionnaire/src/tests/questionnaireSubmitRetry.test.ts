@@ -11,6 +11,8 @@ const wait = () => new Promise(resolve => setTimeout(resolve, 1000));
 Element.prototype.scrollIntoView = vi.fn();
 
 const actionUrl = "https://some.url/questionnaire/";
+const participantId = "participant-aaa";
+const cacheKey = `questionnaire-responses:${participantId}`;
 
 const questionnaireConfig = [
   {
@@ -35,6 +37,7 @@ function mountApp() {
       staticVariables: [],
       actionUrl,
       language: "en",
+      participantId,
     },
   });
 }
@@ -51,7 +54,7 @@ describe("final questionnaire submission: cache clearing and retry", () => {
   // Seeds the persisted response cache *after* mount (component-initiated
   // loads already happened), so we can tell whether submitData() cleared it.
   function seedCache() {
-    localStorage.setItem("questionnaire-responses", JSON.stringify({
+    localStorage.setItem(cacheKey, JSON.stringify({
       version: "irrelevant-for-this-test",
       expiresAt: Date.now() + 1000,
       value: { "question-1": "some response" },
@@ -69,7 +72,7 @@ describe("final questionnaire submission: cache clearing and retry", () => {
     await wait();
 
     expect(fetch).toHaveBeenCalledTimes(1);
-    expect(localStorage.getItem("questionnaire-responses")).toBeNull();
+    expect(localStorage.getItem(cacheKey)).toBeNull();
   });
 
   it("does not clear the local cache and shows a retry hint when the submission fails", async () => {
@@ -81,7 +84,7 @@ describe("final questionnaire submission: cache clearing and retry", () => {
     await wait();
 
     expect(fetch).toHaveBeenCalledTimes(1);
-    expect(localStorage.getItem("questionnaire-responses")).not.toBeNull();
+    expect(localStorage.getItem(cacheKey)).not.toBeNull();
     expect(wrapper.find("#submit-failed-hint").exists()).toBe(true);
   });
 
@@ -96,7 +99,7 @@ describe("final questionnaire submission: cache clearing and retry", () => {
     await wait();
 
     expect(fetch).toHaveBeenCalledTimes(1);
-    expect(localStorage.getItem("questionnaire-responses")).not.toBeNull();
+    expect(localStorage.getItem(cacheKey)).not.toBeNull();
     expect(wrapper.find("#submit-failed-hint").exists()).toBe(true);
   });
 
@@ -114,13 +117,13 @@ describe("final questionnaire submission: cache clearing and retry", () => {
     await wrapper.find("#next-page-btn").trigger("click");
     await wait();
     expect(fetch).toHaveBeenCalledTimes(1);
-    expect(localStorage.getItem("questionnaire-responses")).not.toBeNull();
+    expect(localStorage.getItem(cacheKey)).not.toBeNull();
 
     // Retry via the same button.
     await wrapper.find("#next-page-btn").trigger("click");
     await wait();
 
     expect(fetch).toHaveBeenCalledTimes(2);
-    expect(localStorage.getItem("questionnaire-responses")).toBeNull();
+    expect(localStorage.getItem(cacheKey)).toBeNull();
   });
 });

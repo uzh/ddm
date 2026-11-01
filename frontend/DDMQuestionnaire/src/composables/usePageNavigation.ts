@@ -18,6 +18,9 @@ import { usePersistedRef } from './usePersistedRef'
  * @param questionItemMap - A map of question IDs to arrays of their corresponding item IDs.
  * @param missingValue - The questionnaire's default missing value.
  * @param rootElement - The root element where the questions are rendered.
+ * @param participantId - The current participant's external id, scoping the
+ *   persisted current-page cache the same way `usePersistedRef` scopes the
+ *   persisted responses cache in `QuestionnaireApp.vue`.
  */
 export function usePageNavigation(
   questionnaireConfig: Ref<QuestionnaireConfig>,
@@ -25,13 +28,15 @@ export function usePageNavigation(
   responses: Ref<Record<string, any>>,
   questionItemMap: Record<string, string[]>,
   missingValue: string,
-  rootElement: Ref<HTMLElement | null>
+  rootElement: Ref<HTMLElement | null>,
+  participantId?: string
 ) {
   const { state: currentPage, clearProgress: clearCurrentPage } = usePersistedRef(
     'questionnaire-current-page',
     1,
     24 * 60 * 60 * 1000,
-    questionnaireConfig.value
+    questionnaireConfig.value,
+    participantId
   )
   const minPage = ref(1);
   const maxPage = ref(1);

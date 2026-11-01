@@ -17,6 +17,9 @@
  * - `progressUrl` (String): Backend endpoint to POST in-progress responses to
  *   on every page advance.
  * - `language` (String): Locale code to initialize i18n.
+ * - `participantId` (String): The current participant's external id, used to
+ *   scope the locally cached draft (see `usePersistedRef`) so it can't be
+ *   inherited by a different participant sharing the same browser.
  */
 import { useI18n } from 'vue-i18n';
 const { t, locale } = useI18n();
@@ -43,7 +46,8 @@ const props = defineProps<{
   staticVariables: Record<string, string | number>,
   actionUrl: string,
   progressUrl?: string,
-  language: string
+  language: string,
+  participantId?: string
 }>();
 
 // Constants
@@ -60,6 +64,7 @@ const { state: responses, clearProgress: clearResponses } = usePersistedRef(
   initializeResponses(questionnaireConfig.value),
   24 * 60 * 60 * 1000,
   questionnaireConfig.value,
+  props.participantId,
 )
 
 // Initialize filtering functionality.
@@ -82,7 +87,8 @@ const { currentPage, lastPageSubmitted, next, clearCurrentPage, pageIndexMap } =
     responses,
     questionItemMap,
     MISSING_VALUE,
-    questionnaireRoot
+    questionnaireRoot,
+    props.participantId
 );
 const { scrollToTop, scrollToFirstValidationIssue } = useScrollHandler()
 

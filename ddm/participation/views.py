@@ -471,6 +471,7 @@ class QuestionnaireView(ParticipationFlowBaseView):
                 "filter_config": config_service.create_filter_config(),
                 "extra_scripts": set(self.extra_scripts),
                 "extra_variables": self.get_extra_variables(),
+                "participant_id": self.participant.external_id,
             }
         )
         return context

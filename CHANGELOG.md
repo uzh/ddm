@@ -125,6 +125,9 @@ This version drops official support for Python versions < 3.12.
   cached progress is now only cleared once the backend has confirmed the
   submission, and if a submission can't go through (e.g. a brief connection
   issue), the participant now sees an error message and can simply retry.
+- The questionnaire's locally cached draft is now scoped to the individual
+  participant, so a shared or reused browser can never show one
+  participant another's in-progress answers.
 
 ### Deprecated
 

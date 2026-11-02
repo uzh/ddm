@@ -282,6 +282,7 @@ const allConsented: Ref<boolean> = computed(() => {
             :combined-consent="combinedConsent"
             :blueprint="null"
             :blueprint-id="null"
+            :component-id="componentId"
             @consent-updated="updateConsent"
           />
         </div>

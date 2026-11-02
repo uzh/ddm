@@ -145,6 +145,10 @@ This version drops official support for Python versions < 3.12.
 - The token-authenticated project API endpoints (project overview,
   donations, responses, participant deletion) are now rate-limited per
   access token, configurable via `DDM_SETTINGS["PROJECT_API_THROTTLE_RATE"]`.
+- Fixed "all-in-one consent" being unusable for every File Uploader after
+  the first, whenever a project had more than one Uploader: clicking
+  "Yes"/"No" on any Uploader but the first always re-selected the first
+  Uploader's consent instead of its own.
 
 ### Deprecated
 

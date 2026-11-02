@@ -15,6 +15,8 @@
  * - combinedConsent (boolean): If true, sets consent for all blueprints.
  * - blueprint (Blueprint | null): The blueprint being consented to (null if combined consent).
  * - blueprintId (number | null): Current blueprint ID (null if combined consent).
+ * - componentId (number | null): The owning Uploader's id. Only used to scope
+ *   this question's DOM ids when blueprintId is null (combined consent).
  *
  * Emits:
  * - consentUpdated (consent: boolean, blueprintId: number | null): Emits updated consent and blueprint context.
@@ -32,7 +34,14 @@ const props = defineProps<{
   combinedConsent: boolean,
   blueprint: Blueprint | null,
   blueprintId: number | null;  // Can be null if combinedConsent is true.
+  componentId?: number | null;
 }>();
+
+// Real blueprint ids are already DB-unique, so they're used as-is. Only
+// when there is none (combined consent) do we fall back to the owning
+// Uploader's componentId, so two Uploaders' combined-consent questions on
+// the same page don't collide.
+const domIdSuffix = computed(() => props.blueprintId ?? `combined-${props.componentId}`);
 
 const consented: Ref<boolean | null> = ref(null);
 
@@ -92,10 +101,10 @@ const isExclusionAllowed = computed(() => {
       aria-label="Consent options"
     >
       <input
-        :id="'donate-agree-' + blueprintId"
+        :id="'donate-agree-' + domIdSuffix"
         type="radio"
         class="btn-check"
-        :name="'agreement-' + blueprintId"
+        :name="'agreement-' + domIdSuffix"
         :value="true"
         :aria-checked="consented === true"
         autocomplete="off"
@@ -104,17 +113,17 @@ const isExclusionAllowed = computed(() => {
       >
       <label
         :class="{ 'selected-donate-agree': consented === true }"
-        :for="'donate-agree-' + blueprintId"
+        :for="'donate-agree-' + domIdSuffix"
         class="btn button grey-button donation-btn shadow-none"
       >
         {{ t('feedback.donation-agree') }}
       </label>
 
       <input
-        :id="'donate-disagree-' + blueprintId"
+        :id="'donate-disagree-' + domIdSuffix"
         type="radio"
         class="btn-check"
-        :name="'agreement-' + blueprintId"
+        :name="'agreement-' + domIdSuffix"
         :value="false"
         :aria-checked="consented === false"
         autocomplete="off"
@@ -122,7 +131,7 @@ const isExclusionAllowed = computed(() => {
       >
       <label
         :class="{ 'selected-donate-disagree': consented === false }"
-        :for="'donate-disagree-' + blueprintId"
+        :for="'donate-disagree-' + domIdSuffix"
         class="btn button grey-button donation-btn shadow-none"
       >
         {{ t('feedback.donation-disagree') }}

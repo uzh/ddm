@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 
+from django.conf import settings
 from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.shortcuts import get_object_or_404
@@ -33,16 +34,22 @@ logger = logging.getLogger("ddm")
 
 SESSION_LOST_DESCRIPTION = "Client log received without participant session"
 
+DEFAULT_EXCEPTION_LOG_THROTTLE_RATE = "20/min"
+
 
 class ExceptionLogThrottle(AnonRateThrottle):
     """Per-IP rate limit for the public, unauthenticated ExceptionAPI.
 
-    Set directly on `rate` (bypassing DEFAULT_THROTTLE_RATES) so this needs
-    no new project setting.
+    Rate is read from DDM_SETTINGS falling back to DEFAULT_EXCEPTION_LOG_THROTTLE_RATE.
     """
 
     scope = "exception_log"
-    rate = "20/min"
+
+    def __init__(self) -> None:
+        self.rate = getattr(settings, "DDM_SETTINGS", {}).get(
+            "EXCEPTION_LOG_THROTTLE_RATE", DEFAULT_EXCEPTION_LOG_THROTTLE_RATE
+        )
+        self.num_requests, self.duration = self.parse_rate(self.rate)
 
 
 class ExceptionAPI(APIView):

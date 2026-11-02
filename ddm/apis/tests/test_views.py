@@ -3,6 +3,7 @@ import io
 import json
 
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.db import connection
 from django.test import Client, TestCase, override_settings
 from django.test.utils import CaptureQueriesContext
@@ -878,3 +879,62 @@ class TestAPIs(TestCase):
         self.assertNotIn(str(self.question_open.pk), header)
         for row in rows[1:]:
             self.assertEqual(len(row), len(header))
+
+
+class TestProjectTokenRateThrottle(TestCase):
+    """The project-token-authenticated API endpoints are rate-limited per token,
+    not globally or per-user."""
+
+    def setUp(self):
+        # The throttle's hit count lives in Django's cache, not the DB, so
+        # it isn't reset by TestCase's per-test transaction rollback.
+        cache.clear()
+
+    @classmethod
+    def setUpTestData(cls):
+        user = User.objects.create_user(
+            username="owner", password="123", email="owner@mail.com"
+        )
+        profile = ResearchProfile.objects.create(user=user)
+
+        cls.project_a = DonationProject.objects.create(
+            name="Project A", slug="throttle-proj-a", owner=profile
+        )
+        cls.project_b = DonationProject.objects.create(
+            name="Project B", slug="throttle-proj-b", owner=profile
+        )
+        cls.url_a = reverse("ddm_apis:project_overview", args=[cls.project_a.url_id])
+        cls.url_b = reverse("ddm_apis:project_overview", args=[cls.project_b.url_id])
+
+    def test_rate_limit_is_scoped_per_token_not_globally(self):
+        token_a = self.project_a.create_token()
+        token_b = self.project_b.create_token()
+        client_a = APIClient()
+        client_a.credentials(HTTP_AUTHORIZATION="Token " + token_a.key)
+        client_b = APIClient()
+        client_b.credentials(HTTP_AUTHORIZATION="Token " + token_b.key)
+
+        for _ in range(100):
+            response = client_a.get(self.url_a)
+            self.assertEqual(response.status_code, 200)
+
+        response = client_a.get(self.url_a)
+        self.assertEqual(response.status_code, 429)
+
+        # Project B's token - owned by the same researcher - is unaffected
+        # by project A's token being throttled.
+        response = client_b.get(self.url_b)
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(DDM_SETTINGS={"PROJECT_API_THROTTLE_RATE": "2/min"})
+    def test_rate_is_read_from_ddm_settings(self):
+        token = self.project_a.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+
+        for _ in range(2):
+            response = client.get(self.url_a)
+            self.assertEqual(response.status_code, 200)
+
+        response = client.get(self.url_a)
+        self.assertEqual(response.status_code, 429)

@@ -311,6 +311,18 @@ recommendations - see the
 [Django deployment checklist](https://docs.djangoproject.com/en/stable/howto/deployment/checklist/)
 for what it covers and why each item matters.
 
+Django's own login view, which you wired up yourself in
+[Update urls.py](#update-urlspy) above, has no brute-force protection -
+nothing in Django or DDM throttles or locks out repeated failed login
+attempts against it. If your installation keeps Django's local-password
+login (rather than relying entirely on
+[OIDC-based login](topics/user_authentication.md), where local password
+auth isn't exposed at all), add login-attempt throttling/lockout yourself,
+for example with [django-axes](https://github.com/jazzband/django-axes) -
+this needs to be configured in your own project's `settings.py`
+(`INSTALLED_APPS`, `AUTHENTICATION_BACKENDS`, `MIDDLEWARE`), the same way
+OIDC is.
+
 ### Test Installation
 
 To test if your installation was successful, run `python manage.py test ddm`.

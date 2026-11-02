@@ -2,7 +2,7 @@ import json
 
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
-from django.test import Client, TestCase
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework.test import APIClient
@@ -326,6 +326,17 @@ class TestExceptionAPI(TestCase):
     def test_exceeding_rate_limit_returns_429(self):
         client = Client()
         for _ in range(20):
+            response = self._post(client, self._bundle(self.log_item))
+            self.assertEqual(response.status_code, 201)
+
+        response = self._post(client, self._bundle(self.log_item))
+
+        self.assertEqual(response.status_code, 429)
+
+    @override_settings(DDM_SETTINGS={"EXCEPTION_LOG_THROTTLE_RATE": "2/min"})
+    def test_rate_is_read_from_ddm_settings(self):
+        client = Client()
+        for _ in range(2):
             response = self._post(client, self._bundle(self.log_item))
             self.assertEqual(response.status_code, 201)
 

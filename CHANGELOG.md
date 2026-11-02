@@ -142,6 +142,9 @@ This version drops official support for Python versions < 3.12.
   request per upload instead of one request per log entry, reducing
   network overhead for uploads matched against many blueprints and
   retrying automatically on a dropped connection.
+- The token-authenticated project API endpoints (project overview,
+  donations, responses, participant deletion) are now rate-limited per
+  access token, configurable via `DDM_SETTINGS["PROJECT_API_THROTTLE_RATE"]`.
 
 ### Deprecated
 

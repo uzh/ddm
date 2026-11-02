@@ -27,6 +27,7 @@ from ddm.apis.serializers import (
     ResponseSerializer,
     ResponseSerializerWithSnapshot,
 )
+from ddm.apis.throttling import ProjectTokenRateThrottle
 from ddm.auth.models import ProjectTokenAuthenticator
 from ddm.datadonation.models import DataDonation, DonationBlueprint
 from ddm.encryption.models import Decryption
@@ -121,6 +122,7 @@ class ProjectDetailApiView(ListAPIView, DDMAPIMixin):
     project = None
     authentication_classes = [ProjectTokenAuthenticator]
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = [ProjectTokenRateThrottle]
 
     def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponseBase:
         try:
@@ -197,6 +199,7 @@ class ProjectDonationsListView(ListAPIView, DDMAPIMixin):
 
     authentication_classes = [ProjectTokenAuthenticator]
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = [ProjectTokenRateThrottle]
 
     def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponseBase:
         try:
@@ -310,6 +313,7 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
         permissions.IsAuthenticated,
         (IsProjectOwner | permissions.IsAdminUser),
     ]
+    throttle_classes = [ProjectTokenRateThrottle]
 
     def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponseBase:
         try:
@@ -529,6 +533,7 @@ class DeleteParticipantAPI(APIView, DDMAPIMixin):
         authentication.SessionAuthentication,
     ]
     permission_classes = [permissions.IsAuthenticated, IsProjectOwner]
+    throttle_classes = [ProjectTokenRateThrottle]
 
     def permission_denied(
         self, request: HttpRequest, message: str | None = None, code: str | None = None

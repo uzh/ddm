@@ -87,15 +87,18 @@ class QuestionnaireOverview(ProjectMixin, DDMAuthMixin, ListView):
         )
         return context
 
-    def get_questions_per_page(self) -> dict[int, QuerySet[QuestionBase]] | None:
-        questions = self.get_all_questions()
+    def get_questions_per_page(self) -> dict[int, list[QuestionBase]] | None:
+        questions = list(
+            self.get_all_questions()
+            .select_related("blueprint")
+            .order_by("page", "index")
+        )
         if not questions:
             return None
 
-        pages = questions.values_list("page", flat=True).order_by("page")
-        q_per_page = {}
-        for page in set(pages):
-            q_per_page[page] = questions.filter(page=page)
+        q_per_page: dict[int, list[QuestionBase]] = {}
+        for question in questions:
+            q_per_page.setdefault(question.page, []).append(question)
         return q_per_page
 
     def get_all_questions(self) -> QuerySet[QuestionBase]:

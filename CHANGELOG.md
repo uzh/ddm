@@ -131,6 +131,8 @@ This version drops official support for Python versions < 3.12.
 - Fixed a double-click or a retried POST on a data donation submission
   creating a duplicate donation record for the same participant; a
   resubmission now updates the existing record instead.
+- The database queries on the questionnaire overview page were optimized,
+  noticeably speeding up this page for larger questionnaires.
 
 ### Deprecated
 

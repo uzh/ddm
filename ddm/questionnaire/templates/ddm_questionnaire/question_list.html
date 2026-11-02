@@ -22,7 +22,7 @@
     {% for page, page_questions in pages.items %}
       <div class="ddm-section-container ddm-section-collapsible">
 
-        {% with page_number=page|stringformat:"s" n_questions=page_questions.count|stringformat:"s" %}
+        {% with page_number=page|stringformat:"s" n_questions=page_questions|length|stringformat:"s" %}
           {% with accordion_description="Questions: "|add:n_questions %}
             {% with content_include_path="ddm_questionnaire/_question_table.html" accordion_id="Page"|add:page_number title="Page "|add:page_number %}
               {% include "ddm_core/components/accordion_card.html" with questions=page_questions extra_classes="narrow-accordion" accordion_id=accordion_id accordion_title=title is_expanded=True %}

@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
+from django.db import connection
 from django.test import Client, TestCase, override_settings
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from django.utils import timezone
 
@@ -399,6 +401,98 @@ class FileUploaderEditTestCase(TestCase):
         )
         self.assertEqual(bp_a_uploader_before, bp_a_uploader_after)
         self.assertEqual(bp_b_uploader_before, bp_b_uploader_after)
+
+
+@override_settings(DDM_SETTINGS={"EMAIL_PERMISSION_CHECK": r".*(\.|@)mail\.com$"})
+class TestDataDonationOverview(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create_user(
+            username="owner", password="123", email="owner@mail.com"
+        )
+        profile = ResearchProfile.objects.create(user=cls.user)
+
+        cls.project = DonationProject.objects.create(
+            name="Base Project", slug="base", owner=profile
+        )
+
+        cls.file_uploader = FileUploader.objects.create(
+            project=cls.project,
+            name="uploader",
+            upload_type=FileUploader.UploadTypes.ZIP_FILE,
+        )
+
+        cls.blueprint = DonationBlueprint.objects.create(
+            project=cls.project,
+            name="blueprint",
+            display_name="blueprint",
+            description="some description",
+            expected_fields='"some field"',
+            file_uploader=cls.file_uploader,
+            parser_config=JSONParserConfig().model_dump(),
+        )
+        cls.backup = DonationBlueprint.objects.create(
+            project=cls.project,
+            name="blueprint backup",
+            display_name="blueprint backup",
+            description="some description",
+            expected_fields='"some field"',
+            file_uploader=cls.file_uploader,
+            backup_for=cls.blueprint,
+            parser_config=JSONParserConfig().model_dump(),
+        )
+
+        cls.url = reverse(
+            "ddm_datadonation:overview", kwargs={"project_url_id": cls.project.url_id}
+        )
+
+    def test_shows_blueprints_and_their_backups(self):
+        self.client.login(username="owner", password="123")
+        response = self.client.get(self.url)
+        content = response.content.decode()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.blueprint.name, content)
+        self.assertIn(self.backup.name, content)
+
+    def test_query_count_is_constant_regardless_of_uploader_count(self):
+        self.client.login(username="owner", password="123")
+
+        with CaptureQueriesContext(connection) as small_ctx:
+            self.client.get(self.url)
+
+        for i in range(10):
+            uploader = FileUploader.objects.create(
+                project=self.project,
+                name=f"uploader {i}",
+                upload_type=FileUploader.UploadTypes.ZIP_FILE,
+            )
+            blueprint = DonationBlueprint.objects.create(
+                project=self.project,
+                name=f"blueprint {i}",
+                display_name=f"blueprint {i}",
+                description="some description",
+                expected_fields='"some field"',
+                file_uploader=uploader,
+                parser_config=JSONParserConfig().model_dump(),
+            )
+            DonationBlueprint.objects.create(
+                project=self.project,
+                name=f"blueprint {i} backup",
+                display_name=f"blueprint {i} backup",
+                description="some description",
+                expected_fields='"some field"',
+                file_uploader=uploader,
+                backup_for=blueprint,
+                parser_config=JSONParserConfig().model_dump(),
+            )
+
+        with CaptureQueriesContext(connection) as large_ctx:
+            self.client.get(self.url)
+
+        small_count = len(small_ctx.captured_queries)
+        large_count = len(large_ctx.captured_queries)
+        self.assertLess(large_count, small_count + 5)
 
 
 @override_settings(DDM_SETTINGS={"EMAIL_PERMISSION_CHECK": r".*(\.|@)mail\.com$"})

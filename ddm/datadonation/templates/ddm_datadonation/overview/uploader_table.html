@@ -18,43 +18,45 @@
         <td><span class="badge-grey">{{ uploader.upload_type }}</span></td>
         <td><a href="{% url 'ddm_datadonation:instructions:overview' project.url_id uploader.pk %}">Instructions</a></td>
 
-        {% if uploader.donationblueprint_set.all %}
-          <td>
+        {% with blueprints=uploader.donationblueprint_set.all %}
+          {% if blueprints %}
+            <td>
 
-            {% for blueprint in uploader.donationblueprint_set.all %}
+              {% for blueprint in blueprints %}
 
-              {% if not blueprint.is_backup %}
-                <div>
-                  <a href="{{ blueprint.get_absolute_url }}">
-                    <div class="blueprint-card">
-                      {{ blueprint.name }}
-                    </div>
-                  </a>
-                </div>
-              {% endif %}
+                {% if not blueprint.is_backup %}
+                  <div>
+                    <a href="{{ blueprint.get_absolute_url }}">
+                      <div class="blueprint-card">
+                        {{ blueprint.name }}
+                      </div>
+                    </a>
+                  </div>
+                {% endif %}
 
-              {% for backup in blueprint.backups.all %}
-                <div class="backup-blueprint-card-container">
-                  <a href="{{ backup.get_absolute_url }}">
-                    <div class="blueprint-card">
-                      <p class="mb-0">
-                        {{ backup.name }} <span class="badge bg-secondary ms-2">backup</span>
-                      </p>
-                    </div>
-                  </a>
-                </div>
+                {% for backup in blueprint.backups.all %}
+                  <div class="backup-blueprint-card-container">
+                    <a href="{{ backup.get_absolute_url }}">
+                      <div class="blueprint-card">
+                        <p class="mb-0">
+                          {{ backup.name }} <span class="badge bg-secondary ms-2">backup</span>
+                        </p>
+                      </div>
+                    </a>
+                  </div>
+                {% endfor %}
+
               {% endfor %}
 
-            {% endfor %}
+            </td>
 
-          </td>
+          {% else %}
+            <td>
+              <span class="text-muted">No associated Blueprints</span>
+            </td>
 
-        {% else %}
-          <td>
-            <span class="text-muted">No associated Blueprints</span>
-          </td>
-
-        {% endif %}
+          {% endif %}
+        {% endwith %}
 
       </tr>
 

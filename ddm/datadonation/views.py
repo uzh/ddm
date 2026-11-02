@@ -7,7 +7,7 @@ from django import forms
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import transaction
-from django.db.models import Q, QuerySet
+from django.db.models import Prefetch, Q, QuerySet
 from django.forms import BaseInlineFormSet, Form
 from django.forms.utils import ErrorList
 from django.http import (
@@ -124,7 +124,19 @@ class DataDonationOverview(DDMAuthMixin, DDMAdminMixin, ListView):
         return context
 
     def get_queryset(self) -> QuerySet:
-        return super().get_queryset().filter(project__url_id=self.get_project_url_id())
+        # select_related("project") on both levels: the template calls
+        # blueprint.get_absolute_url()/backup.get_absolute_url() for every
+        # row, which reads blueprint.project.
+        backups = DonationBlueprint.objects.select_related("project")
+        blueprints = DonationBlueprint.objects.select_related(
+            "project"
+        ).prefetch_related(Prefetch("backups", queryset=backups))
+        return (
+            super()
+            .get_queryset()
+            .filter(project__url_id=self.get_project_url_id())
+            .prefetch_related(Prefetch("donationblueprint_set", queryset=blueprints))
+        )
 
 
 class FileUploaderCreate(SuccessMessageMixin, DDMAuthMixin, DDMAdminMixin, CreateView):

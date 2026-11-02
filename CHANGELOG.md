@@ -133,6 +133,8 @@ This version drops official support for Python versions < 3.12.
   resubmission now updates the existing record instead.
 - The database queries on the questionnaire overview page were optimized,
   noticeably speeding up this page for larger questionnaires.
+- The database queries on the data donation overview page were optimized,
+  speeding up the page for projects with many uploaders, blueprints, or backup blueprints.
 
 ### Deprecated
 

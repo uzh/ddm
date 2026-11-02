@@ -149,6 +149,11 @@ This version drops official support for Python versions < 3.12.
   the first, whenever a project had more than one Uploader: clicking
   "Yes"/"No" on any Uploader but the first always re-selected the first
   Uploader's consent instead of its own.
+- The data donation uploader now shows a visible error message and lets
+  the participant retry if their final submission fails (e.g. a dropped
+  connection), instead of failing silently with no feedback. Also fixed a
+  related case where the "submitting" overlay could get stuck on screen
+  indefinitely if there was no data to submit.
 
 ### Deprecated
 

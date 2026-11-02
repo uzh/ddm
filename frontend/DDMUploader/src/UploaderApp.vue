@@ -55,6 +55,7 @@ const {
 
 const {
   submitting,
+  submitFailed,
   submitDonation } = useDataSubmitter(uploaderOutcomes, props.actionUrl);
 
 /**
@@ -178,6 +179,14 @@ function initializeUploaderOutcomes(): Record<number, UploaderOutcome> {
 
     <SubmittingOverlay v-if="submitting" />
 
+    <div
+      v-if="submitFailed"
+      id="submit-failed-hint"
+      class="submit-failed-hint"
+    >
+      {{ t('uploader-app.submit-failed-hint') }}
+    </div>
+
     <form
       v-show="false"
       id="uploader-form"
@@ -211,6 +220,11 @@ function initializeUploaderOutcomes(): Record<number, UploaderOutcome> {
 
 .color-red {
   color: var(--ddm-error) !important;
+}
+
+.submit-failed-hint {
+  color: var(--ddm-error);
+  margin-bottom: 10px;
 }
 
 .step-heading-eyebrow {

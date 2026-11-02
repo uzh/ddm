@@ -29,6 +29,8 @@ export function applyEntryExclusions(outcome: BlueprintExtractionOutcome): any[]
  *
  * @returns
  *   - submitting: Reactive boolean indicating whether submission is in progress
+ *   - submitFailed: Reactive boolean indicating whether the last attempt
+ *     failed, so a visible error can be shown and the participant can retry.
  *   - submitDonation: Function to trigger the data submission process
  */
 export function useDataSubmitter(
@@ -36,6 +38,7 @@ export function useDataSubmitter(
   postUrl: string
 ) {
   const submitting: Ref<boolean> = ref(false);
+  const submitFailed: Ref<boolean> = ref(false);
 
   /**
    * Gathers and formats data from all uploader outcomes for submission.
@@ -95,18 +98,23 @@ export function useDataSubmitter(
    * 3. Compresses the data into a ZIP file
    * 4. Appends the data to a form
    * 5. Submits the form to the server
-   * 6. Handles redirects from the server response
+   * 6. Navigates to the redirect the server responds with on success; any
+   *    other outcome (network failure, or a response that didn't redirect)
+   *    sets submitFailed instead of failing silently
    *
    * @returns A promise that resolves to true if submission was successful, false otherwise
    */
   async function submitDonation(): Promise<boolean> {
     // Show submission overlay.
     submitting.value = true;
+    submitFailed.value = false;
 
     // Get data.
     const postData: PostData = gatherPostData();
     if (Object.keys(postData).length === 0) {
       console.warn("No data to submit");
+      submitting.value = false;
+      submitFailed.value = true;
       return false;
     }
 
@@ -116,6 +124,8 @@ export function useDataSubmitter(
     const formElement = document.getElementById("uploader-form") as HTMLFormElement | null;
     if (!formElement) {
       console.error("Form element not found");
+      submitting.value = false;
+      submitFailed.value = true;
       return false;
     }
     const formData = new FormData(formElement);
@@ -128,12 +138,16 @@ export function useDataSubmitter(
         body: formData,
       });
 
-      if (response.redirected) {
-        window.location.href = response.url;
+      if (!response.redirected) {
+        throw new Error(`Unexpected response status: ${response.status}`);
       }
+
+      window.location.href = response.url;
       return true
     } catch (error) {
       console.error("Error during data submission to server:", error);
+      submitFailed.value = true;
+      return false;
     } finally {
       submitting.value = false;
     }
@@ -141,6 +155,7 @@ export function useDataSubmitter(
 
   return {
     submitting,
+    submitFailed,
     submitDonation
   }
 }

@@ -101,7 +101,8 @@
     "total": "total"
   },
   "uploader-app": {
-    "next-btn": "Next"
+    "next-btn": "Next",
+    "submit-failed-hint": "Submitting your data failed. Please check your internet connection and try again."
   },
   "issue-modal": {
     "title": "Data donation not complete",

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, RegexValidator
-from django.db import models
+from django.db import models, transaction
 from django.urls import reverse
 from django.utils import timezone
 from pydantic import ValidationError as PydanticValidationError
@@ -399,15 +399,19 @@ class DonationBlueprint(models.Model):
         return True
 
     def create_donation(self, data: dict, participant: Participant) -> None:
-        DataDonation.objects.create(
-            project=self.project,
-            blueprint=self,
-            participant=participant,
-            consent=data["consent"],
-            data_extraction_state=data["status"],
-            data=data["extractedData"],
-            n_data_entries=count_data_entries(data["extractedData"]),
-        )
+        with transaction.atomic():
+            DataDonation.objects.update_or_create(
+                blueprint=self,
+                participant=participant,
+                defaults={
+                    "project": self.project,
+                    "time_submitted": timezone.now(),
+                    "consent": data["consent"],
+                    "data_extraction_state": data["status"],
+                    "data": data["extractedData"],
+                    "n_data_entries": count_data_entries(data["extractedData"]),
+                },
+            )
 
 
 class BlueprintFilePath(models.Model):

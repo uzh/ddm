@@ -128,6 +128,9 @@ This version drops official support for Python versions < 3.12.
 - The questionnaire's locally cached draft is now scoped to the individual
   participant, so a shared or reused browser can never show one
   participant another's in-progress answers.
+- Fixed a double-click or a retried POST on a data donation submission
+  creating a duplicate donation record for the same participant; a
+  resubmission now updates the existing record instead.
 
 ### Deprecated
 

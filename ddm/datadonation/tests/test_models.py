@@ -13,6 +13,7 @@ from ddm.datadonation.models import (
     ProcessingRule,
 )
 from ddm.datadonation.schemas import JSONParserConfig, TXTParserConfig
+from ddm.datadonation.utils import count_data_entries
 from ddm.logging.models import ExceptionLogEntry
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject, ResearchProfile
@@ -215,6 +216,34 @@ class TestDonationBlueprintModel(TestCase):
 
         self.assertEqual(n_donations_post - n_donations_pre, 0)
         self.assertEqual(n_exceptions_post - n_exceptions_pre, 2)
+
+    def test_process_donation_resubmission_updates_existing_donation(self):
+        """A resubmission for the same participant+blueprint (e.g. a
+        double-click or a retried POST) must update the existing
+        DataDonation rather than create a duplicate row."""
+        first_data = {
+            "consent": True,
+            "extractedData": ["some data"],
+            "status": "DATA_EXTRACTED",
+        }
+        self.blueprint.process_donation(first_data, self.participant)
+
+        second_data = {
+            "consent": True,
+            "extractedData": ["some other data", "more data"],
+            "status": "DATA_EXTRACTED",
+        }
+        n_donations_pre = DataDonation.objects.count()
+        self.blueprint.process_donation(second_data, self.participant)
+        n_donations_post = DataDonation.objects.count()
+
+        self.assertEqual(n_donations_post, n_donations_pre)
+        donation = DataDonation.objects.get(
+            blueprint=self.blueprint, participant=self.participant
+        )
+        self.assertEqual(
+            donation.n_data_entries, count_data_entries(second_data["extractedData"])
+        )
 
     def test_get_parser_config_returns_typed_json_config(self):
         config = self.blueprint.get_parser_config()

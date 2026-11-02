@@ -112,16 +112,19 @@ class TestModelEncryption(TestCase):
         cls.raw_data_long = "{" + 100 * '"some_data": "some_value",' + "}"
 
     def test_data_donation_encryption_default(self):
+        # A participant has at most one DataDonation per blueprint, so each
+        # iteration re-saves the same instance.
+        dd = DataDonation(
+            project=self.base_project,
+            blueprint=self.base_blueprint,
+            participant=self.base_participant,
+            consent=True,
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
+        )
         for raw_data in [self.raw_data_short, self.raw_data_long]:
             with self.subTest(raw_data=raw_data):
-                dd = DataDonation.objects.create(
-                    project=self.base_project,
-                    blueprint=self.base_blueprint,
-                    participant=self.base_participant,
-                    consent=True,
-                    data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
-                    data=raw_data,
-                )
+                dd.data = raw_data
+                dd.save()
                 self.assertNotEqual(raw_data, dd.data)
                 self.assertEqual(
                     raw_data,
@@ -149,16 +152,19 @@ class TestModelEncryption(TestCase):
                 )
 
     def test_data_donation_encryption_super_secret(self):
+        # A participant has at most one DataDonation per blueprint, so each
+        # iteration re-saves the same instance.
+        dd = DataDonation(
+            project=self.alt_project,
+            blueprint=self.alt_blueprint,
+            participant=self.alt_participant,
+            consent=True,
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
+        )
         for raw_data in [self.raw_data_short, self.raw_data_long]:
             with self.subTest(raw_data=raw_data):
-                dd = DataDonation.objects.create(
-                    project=self.alt_project,
-                    blueprint=self.alt_blueprint,
-                    participant=self.alt_participant,
-                    consent=True,
-                    data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
-                    data=raw_data,
-                )
+                dd.data = raw_data
+                dd.save()
                 self.assertNotEqual(raw_data, dd.data)
                 with self.assertRaises(ValueError):
                     dd.get_decrypted_data(
@@ -201,16 +207,18 @@ class TestModelEncryption(TestCase):
         secret, salt = self.base_project.secret_key, self.base_project.get_salt()
         encryptor = Encryption(secret=secret, salt=salt)
         decryptor = Decryption(secret=secret, salt=salt)
+        # A participant has at most one DataDonation per blueprint, so each
+        # iteration re-saves the same instance.
+        dd = DataDonation(
+            project=self.base_project,
+            blueprint=self.base_blueprint,
+            participant=self.base_participant,
+            consent=True,
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
+        )
         for raw_data in [self.raw_data_short, self.raw_data_long]:
             with self.subTest(raw_data=raw_data):
-                dd = DataDonation(
-                    project=self.base_project,
-                    blueprint=self.base_blueprint,
-                    participant=self.base_participant,
-                    consent=True,
-                    data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
-                    data=raw_data,
-                )
+                dd.data = raw_data
                 dd.save(encryptor=encryptor)
                 self.assertNotEqual(raw_data, dd.data)
                 self.assertEqual(
@@ -220,16 +228,19 @@ class TestModelEncryption(TestCase):
 
     def test_data_donation_decryption_with_provided_decryptor(self):
         decryptor = self.base_project.get_decryptor()
+        # A participant has at most one DataDonation per blueprint, so each
+        # iteration re-saves the same instance.
+        dd = DataDonation(
+            project=self.base_project,
+            blueprint=self.base_blueprint,
+            participant=self.base_participant,
+            consent=True,
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
+        )
         for raw_data in [self.raw_data_short, self.raw_data_long]:
             with self.subTest(raw_data=raw_data):
-                dd = DataDonation.objects.create(
-                    project=self.base_project,
-                    blueprint=self.base_blueprint,
-                    participant=self.base_participant,
-                    consent=True,
-                    data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
-                    data=raw_data,
-                )
+                dd.data = raw_data
+                dd.save()
                 self.assertNotEqual(raw_data, dd.data)
                 self.assertEqual(
                     raw_data,

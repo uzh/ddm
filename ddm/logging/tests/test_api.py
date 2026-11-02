@@ -1,4 +1,7 @@
+import json
+
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.test import Client, TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -6,6 +9,7 @@ from rest_framework.test import APIClient
 
 from ddm.datadonation.models import DonationBlueprint, FileUploader
 from ddm.datadonation.schemas import JSONParserConfig
+from ddm.logging.api.serializers import MAX_LOGS_PER_REQUEST
 from ddm.logging.api.views import SESSION_LOST_DESCRIPTION
 from ddm.logging.models import EventLogEntry, ExceptionLogEntry, ExceptionRaisers
 from ddm.participation.models import Participant
@@ -15,6 +19,12 @@ User = get_user_model()
 
 
 class TestExceptionAPI(TestCase):
+    def setUp(self):
+        # The throttle's hit count lives in Django's cache, not the DB, so
+        # it isn't reset by TestCase's per-test transaction rollback - clear
+        # it explicitly or tests leak throttle state into each other.
+        cache.clear()
+
     @classmethod
     def setUpTestData(cls):
         user = User.objects.create_user(
@@ -42,18 +52,26 @@ class TestExceptionAPI(TestCase):
         )
 
         cls.post_url = reverse("ddm_logging:exceptions_api", args=[cls.project.url_id])
-        cls.post_data = {
+        cls.log_item = {
             "blueprint": cls.blueprint.pk,
             "status_code": 1,
-            "raised_by": ExceptionRaisers.SERVER,
             "message": "Some message.",
         }
+
+    @staticmethod
+    def _bundle(*logs, date=None):
+        return {"date": date, "logs": list(logs)}
+
+    def _post(self, client, payload):
+        return client.post(
+            self.post_url, data=json.dumps(payload), content_type="application/json"
+        )
 
     def test_post_without_participant(self):
         client = Client()
 
         exceptions_count_before = ExceptionLogEntry.objects.count()
-        client.post(self.post_url, self.post_data)
+        self._post(client, self._bundle(self.log_item))
 
         exceptions_count_after = ExceptionLogEntry.objects.count()
         self.assertEqual(exceptions_count_before, (exceptions_count_after - 1))
@@ -63,10 +81,24 @@ class TestExceptionAPI(TestCase):
         client.get(reverse("ddm_participation:briefing", args=[self.project.slug]))
 
         exceptions_count_before = ExceptionLogEntry.objects.count()
-        client.post(self.post_url, self.post_data)
+        self._post(client, self._bundle(self.log_item))
 
         exceptions_count_after = ExceptionLogEntry.objects.count()
         self.assertEqual(exceptions_count_before, (exceptions_count_after - 1))
+
+    def test_created_entries_are_always_raised_by_client(self):
+        """This endpoint is only ever called by the uploader frontend, so
+        raised_by isn't accepted as client input - it's hardcoded server
+        side, even if the client tries to send something else."""
+        client = Client()
+        item = {**self.log_item, "raised_by": "server"}
+
+        response = self._post(client, self._bundle(item))
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(
+            ExceptionLogEntry.objects.latest("pk").raised_by, ExceptionRaisers.CLIENT
+        )
 
     def test_post_links_participant_from_session(self):
         client = Client()
@@ -75,7 +107,7 @@ class TestExceptionAPI(TestCase):
             "participant_id"
         ]
 
-        client.post(self.post_url, self.post_data)
+        self._post(client, self._bundle(self.log_item))
 
         entry = ExceptionLogEntry.objects.latest("pk")
         self.assertEqual(entry.participant_id, session_participant_id)
@@ -85,13 +117,9 @@ class TestExceptionAPI(TestCase):
 
     def test_post_without_session_but_known_uploader_logs_event(self):
         client = Client()
-        data = {
-            **self.post_data,
-            "uploader": self.file_uploader.pk,
-            "date": "2026-09-01T10:00:00Z",
-        }
+        item = {**self.log_item, "uploader": self.file_uploader.pk}
 
-        response = client.post(self.post_url, data)
+        response = self._post(client, self._bundle(item, date="2026-09-01T10:00:00Z"))
 
         self.assertEqual(response.status_code, 201)
         entry = ExceptionLogEntry.objects.latest("pk")
@@ -103,16 +131,39 @@ class TestExceptionAPI(TestCase):
             1,
         )
 
-    def test_missing_session_event_log_deduplicated_per_batch(self):
+    def test_missing_session_event_log_deduplicated_within_one_bundle(self):
         client = Client()
-        data = {
-            **self.post_data,
-            "uploader": self.file_uploader.pk,
-            "date": "2026-09-01T10:00:00Z",
-        }
+        item = {**self.log_item, "uploader": self.file_uploader.pk}
 
-        client.post(self.post_url, data)
-        client.post(self.post_url, {**data, "status_code": "EXTRACTION_STATS"})
+        response = self._post(
+            client,
+            self._bundle(
+                item,
+                {**item, "status_code": "EXTRACTION_STATS"},
+                date="2026-09-01T10:00:00Z",
+            ),
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(ExceptionLogEntry.objects.count(), 2)
+        self.assertEqual(
+            EventLogEntry.objects.filter(
+                project=self.project, description=SESSION_LOST_DESCRIPTION
+            ).count(),
+            1,
+        )
+
+    def test_missing_session_event_log_deduplicated_across_a_retried_bundle(self):
+        """If a bundle's response is lost in transit, the frontend retries
+        the identical bundle (same date). The EventLogEntry must still be
+        created at most once - ExceptionLogEntry rows from the retried
+        bundle ARE duplicated, which is accepted (see views.py)."""
+        client = Client()
+        item = {**self.log_item, "uploader": self.file_uploader.pk}
+        bundle = self._bundle(item, date="2026-09-01T10:00:00Z")
+
+        self._post(client, bundle)
+        self._post(client, bundle)
 
         self.assertEqual(ExceptionLogEntry.objects.count(), 2)
         self.assertEqual(
@@ -125,7 +176,7 @@ class TestExceptionAPI(TestCase):
     def test_post_without_uploader_does_not_log_event(self):
         client = Client()
 
-        client.post(self.post_url, self.post_data)
+        self._post(client, self._bundle(self.log_item))
 
         self.assertFalse(
             EventLogEntry.objects.filter(description=SESSION_LOST_DESCRIPTION).exists()
@@ -139,19 +190,148 @@ class TestExceptionAPI(TestCase):
         ).delete()
 
         exceptions_count_before = ExceptionLogEntry.objects.count()
-        response = client.post(self.post_url, self.post_data)
+        response = self._post(client, self._bundle(self.log_item))
 
         self.assertEqual(response.status_code, 201)
         self.assertEqual(ExceptionLogEntry.objects.count(), exceptions_count_before + 1)
         self.assertIsNone(ExceptionLogEntry.objects.latest("pk").participant)
 
     def test_post_to_unknown_project_returns_404(self):
+        """404 on an unknown project must win even when the body is also
+        invalid - project resolution happens before body validation."""
         client = Client()
         url = reverse("ddm_logging:exceptions_api", args=["does-not-exist"])
 
-        response = client.post(url, self.post_data)
+        response = client.post(
+            url,
+            data=json.dumps({"not": "a valid bundle"}),
+            content_type="application/json",
+        )
 
         self.assertEqual(response.status_code, 404)
+
+    def test_post_with_foreign_uploader_is_not_linked(self):
+        """Regression test for M5: an uploader id from a different project
+        must not be attributed to this project's ExceptionLogEntry."""
+        other_project = DonationProject.objects.create(
+            name="Other Project", slug="other", owner=self.project.owner
+        )
+        foreign_uploader = FileUploader.objects.create(
+            project=other_project,
+            name="foreign uploader",
+            upload_type=FileUploader.UploadTypes.ZIP_FILE,
+        )
+        client = Client()
+        item = {**self.log_item, "uploader": foreign_uploader.pk}
+
+        response = self._post(client, self._bundle(item))
+
+        self.assertEqual(response.status_code, 201)
+        self.assertIsNone(ExceptionLogEntry.objects.latest("pk").uploader)
+
+    def test_post_with_foreign_blueprint_is_not_linked(self):
+        """Regression test for M5: a blueprint id from a different project
+        must not be attributed to this project's ExceptionLogEntry."""
+        other_project = DonationProject.objects.create(
+            name="Other Project", slug="other", owner=self.project.owner
+        )
+        foreign_blueprint = DonationBlueprint.objects.create(
+            project=other_project,
+            name="foreign blueprint",
+            description="some description",
+            expected_fields='"some field"',
+            file_uploader=None,
+            parser_config=JSONParserConfig().model_dump(),
+        )
+        client = Client()
+        item = {**self.log_item, "blueprint": foreign_blueprint.pk}
+
+        response = self._post(client, self._bundle(item))
+
+        self.assertEqual(response.status_code, 201)
+        self.assertIsNone(ExceptionLogEntry.objects.latest("pk").blueprint)
+
+    def test_bundle_creates_one_row_per_log_item(self):
+        """Regression test for bundling: several log items in ONE request
+        must all be persisted, not just the first/last."""
+        client = Client()
+        items = [{**self.log_item, "status_code": f"TYPE_{i}"} for i in range(5)]
+
+        exceptions_count_before = ExceptionLogEntry.objects.count()
+        response = self._post(client, self._bundle(*items))
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(ExceptionLogEntry.objects.count() - exceptions_count_before, 5)
+        created = ExceptionLogEntry.objects.order_by("-pk")[:5]
+        self.assertEqual(
+            {entry.exception_type for entry in created},
+            {f"TYPE_{i}" for i in range(5)},
+        )
+        for entry in created:
+            self.assertEqual(entry.blueprint_id, self.blueprint.pk)
+
+    def test_bundle_with_foreign_uploader_and_blueprint_per_item_not_linked(self):
+        """Extends the M5 regression coverage to the per-item/bulk path:
+        one bad item in a bundle must not affect the other, valid item."""
+        other_project = DonationProject.objects.create(
+            name="Other Project 2", slug="other-2", owner=self.project.owner
+        )
+        foreign_uploader = FileUploader.objects.create(
+            project=other_project,
+            name="foreign uploader 2",
+            upload_type=FileUploader.UploadTypes.ZIP_FILE,
+        )
+        valid_item = {**self.log_item, "status_code": "VALID"}
+        foreign_item = {
+            **self.log_item,
+            "status_code": "FOREIGN",
+            "uploader": foreign_uploader.pk,
+        }
+        client = Client()
+
+        response = self._post(client, self._bundle(valid_item, foreign_item))
+
+        self.assertEqual(response.status_code, 201)
+        valid_entry = ExceptionLogEntry.objects.get(exception_type="VALID")
+        foreign_entry = ExceptionLogEntry.objects.get(exception_type="FOREIGN")
+        self.assertEqual(valid_entry.blueprint_id, self.blueprint.pk)
+        self.assertIsNone(foreign_entry.uploader)
+
+    def test_missing_logs_key_returns_400(self):
+        client = Client()
+        response = self._post(client, {"date": "2026-09-01T10:00:00Z"})
+        self.assertEqual(response.status_code, 400)
+
+    def test_logs_not_a_list_returns_400(self):
+        client = Client()
+        response = self._post(client, {"logs": "not-a-list"})
+        self.assertEqual(response.status_code, 400)
+
+    def test_logs_contains_non_dict_item_returns_400(self):
+        client = Client()
+        response = self._post(client, {"logs": ["not-a-dict"]})
+        self.assertEqual(response.status_code, 400)
+
+    def test_empty_logs_list_returns_400(self):
+        client = Client()
+        response = self._post(client, self._bundle())
+        self.assertEqual(response.status_code, 400)
+
+    def test_logs_over_max_batch_size_returns_400(self):
+        client = Client()
+        items = [self.log_item] * (MAX_LOGS_PER_REQUEST + 1)
+        response = self._post(client, self._bundle(*items))
+        self.assertEqual(response.status_code, 400)
+
+    def test_exceeding_rate_limit_returns_429(self):
+        client = Client()
+        for _ in range(20):
+            response = self._post(client, self._bundle(self.log_item))
+            self.assertEqual(response.status_code, 201)
+
+        response = self._post(client, self._bundle(self.log_item))
+
+        self.assertEqual(response.status_code, 429)
 
 
 class TestEventLogAPIView(TestCase):

@@ -13,6 +13,7 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
 from rest_framework.views import APIView
 
 from ddm.apis.pagination import BootstrapTablePagination
@@ -21,15 +22,27 @@ from ddm.datadonation.models import DonationBlueprint, FileUploader
 from ddm.logging.api.filters import EventLogFilter, ExceptionLogFilter
 from ddm.logging.api.serializers import (
     EventLogEntrySerializer,
+    ExceptionLogBundleSerializer,
     ExceptionLogEntrySerializer,
 )
-from ddm.logging.models import EventLogEntry, ExceptionLogEntry
+from ddm.logging.models import EventLogEntry, ExceptionLogEntry, ExceptionRaisers
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject
 
 logger = logging.getLogger("ddm")
 
 SESSION_LOST_DESCRIPTION = "Client log received without participant session"
+
+
+class ExceptionLogThrottle(AnonRateThrottle):
+    """Per-IP rate limit for the public, unauthenticated ExceptionAPI.
+
+    Set directly on `rate` (bypassing DEFAULT_THROTTLE_RATES) so this needs
+    no new project setting.
+    """
+
+    scope = "exception_log"
+    rate = "20/min"
 
 
 class ExceptionAPI(APIView):
@@ -39,6 +52,7 @@ class ExceptionAPI(APIView):
     """
 
     permission_classes = [permissions.AllowAny]
+    throttle_classes = [ExceptionLogThrottle]
 
     def post(
         self,
@@ -48,10 +62,17 @@ class ExceptionAPI(APIView):
         **kwargs,
     ) -> Response:
         """
-        Log exception messages received from client.
+        Log a bundle of exception/stat messages received from the client in
+        one request (see useLogPoster.ts: one processing session's logs are
+        sent together).
         """
         project_url_id = self.kwargs["project_url_id"]
         project = get_object_or_404(DonationProject, url_id=project_url_id)
+
+        # 404 on an unknown project takes priority over a 400 on a malformed body
+        serializer = ExceptionLogBundleSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
 
         try:
             participant_id = request.session[f"project-{project.pk}"]["participant_id"]
@@ -63,13 +84,7 @@ class ExceptionAPI(APIView):
             # deleted (participant FK is SET_NULL, see ExceptionLogEntry).
             participant = None
 
-        uploader_id = request.data.get("uploader")
-        uploader = FileUploader.objects.filter(pk=uploader_id).first()
-
-        blueprint_id = request.data.get("blueprint")
-        blueprint = DonationBlueprint.objects.filter(pk=blueprint_id).first()
-
-        raw_date = request.data.get("date")
+        raw_date = validated_data.get("date")
         try:
             post_date = parse_datetime(raw_date) if isinstance(raw_date, str) else None
         except ValueError:
@@ -77,33 +92,63 @@ class ExceptionAPI(APIView):
         if post_date is None:
             post_date = timezone.now()
 
-        ExceptionLogEntry.objects.create(
-            date=post_date,
-            project=project,
-            participant=participant,
-            exception_type=request.data.get("status_code"),
-            message=request.data.get("message"),
-            raised_by=request.data.get("raised_by"),
-            blueprint=blueprint,
-            uploader=uploader,
-        )
+        # A log bundle typically repeats an uploader and blueprints across
+        # many entries, so we cache resolved FKs instead of re-querying per entry.
+        uploader_cache: dict[int | None, FileUploader | None] = {}
+        blueprint_cache: dict[int | None, DonationBlueprint | None] = {}
 
-        session_lost = (
-            participant is None
-            and uploader is not None
-            and uploader.project_id == project.pk
-        )
-        if session_lost:
-            self.log_missing_participant_session(
-                project, uploader, blueprint, request.data.get("status_code"), post_date
+        # At most one EventLogEntry is logged per bundle (see
+        # log_missing_participant_session), so only the first such entry is kept.
+        session_lost_entry_logged: bool = False
+
+        entries = []
+        for item in validated_data["logs"]:
+            uploader_id = item["uploader"]
+            if uploader_id not in uploader_cache:
+                uploader_cache[uploader_id] = FileUploader.objects.filter(
+                    pk=uploader_id, project=project
+                ).first()
+            uploader = uploader_cache[uploader_id]
+
+            blueprint_id = item["blueprint"]
+            if blueprint_id not in blueprint_cache:
+                blueprint_cache[blueprint_id] = DonationBlueprint.objects.filter(
+                    pk=blueprint_id, project=project
+                ).first()
+            blueprint = blueprint_cache[blueprint_id]
+
+            entries.append(
+                ExceptionLogEntry(
+                    date=post_date,
+                    project=project,
+                    participant=participant,
+                    exception_type=item["status_code"],
+                    message=item["message"],
+                    raised_by=ExceptionRaisers.CLIENT,
+                    blueprint=blueprint,
+                    uploader=uploader,
+                )
             )
+
+            entry_is_session_lost = participant is None and uploader is not None
+            if not session_lost_entry_logged and entry_is_session_lost:
+                self.log_missing_participant_session(
+                    project,
+                    uploader,
+                    blueprint,
+                    item["status_code"],
+                    post_date,
+                )
+                session_lost_entry_logged = True
+
+        ExceptionLogEntry.objects.bulk_create(entries)
 
         return Response(None, status=201)
 
     @staticmethod
     def log_missing_participant_session(
         project: DonationProject,
-        uploader: FileUploader,
+        uploader: FileUploader | None,
         blueprint: DonationBlueprint | None,
         status_code: str | None,
         post_date: datetime,
@@ -113,13 +158,12 @@ class ExceptionAPI(APIView):
         without a resolvable participant session, so researchers/ops can estimate
         how often the participant identity is being lost at write time.
 
-        Deduplicated per processing batch: the frontend stamps every log in one
-        batch with the same ``date`` (see useLogPoster), so only the first log
-        of a batch creates an EventLogEntry.
+        Logged at most once per bundle and request.
         """
         message = (
             f"A client-side '{status_code}' log was received for uploader "
-            f"{uploader.pk} (blueprint {blueprint.pk if blueprint else None}) "
+            f"{uploader.pk if uploader else None} "
+            f"(blueprint {blueprint.pk if blueprint else None}) "
             f"but no participant could be resolved from the session. The "
             f"participant identity for this log is lost."
         )

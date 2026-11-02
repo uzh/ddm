@@ -135,6 +135,13 @@ This version drops official support for Python versions < 3.12.
   noticeably speeding up this page for larger questionnaires.
 - The database queries on the data donation overview page were optimized,
   speeding up the page for projects with many uploaders, blueprints, or backup blueprints.
+- The client-side error-reporting endpoint can no longer attribute an
+  uploader or blueprint from another project to a log entry, and is now
+  rate-limited per IP address.
+- The data donation uploader now reports its processing logs in a single
+  request per upload instead of one request per log entry, reducing
+  network overhead for uploads matched against many blueprints and
+  retrying automatically on a dropped connection.
 
 ### Deprecated
 

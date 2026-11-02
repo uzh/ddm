@@ -496,6 +496,13 @@ class QuestionnaireView(ParticipationFlowBaseView):
             )
             log_server_exception(self.object, msg)
             return
+        except JSONDecodeError:
+            msg = (
+                "Questionnaire Post Exception: POST data for key "
+                '"post_data" was not valid JSON.'
+            )
+            log_server_exception(self.object, msg)
+            return
 
         save_questionnaire_response_to_db(
             post_data.get("responses") or {},

@@ -478,7 +478,7 @@ class TestQuestionnaireView(ParticipationFlowBaseTestCase):
         response = self.client.get(self.quest_url)
 
         self.assertContains(
-            response, f"data-participant-id='{participant.external_id}'"
+            response, f'data-participant-id="{participant.external_id}"'
         )
 
     def test_questionnaire_get_invalid_url(self):
@@ -511,6 +511,26 @@ class TestQuestionnaireView(ParticipationFlowBaseTestCase):
                 salt=self.project_base.get_salt(),
             ),
             {},
+        )
+
+    def test_questionnaire_post_invalid_json_does_not_crash(self):
+        post_data = {"post_data": "not valid json"}
+
+        exceptions_count_before = ExceptionLogEntry.objects.count()
+        response = self.client.post(self.quest_url, data=post_data)
+        exceptions_count_after = ExceptionLogEntry.objects.count()
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, self.debriefing_url)
+        self.assertEqual(exceptions_count_before, (exceptions_count_after - 1))
+        last_exception = ExceptionLogEntry.objects.order_by("date").last()
+        self.assertIn("was not valid JSON", last_exception.message)
+
+        participant = self.get_participant(self.project_base.pk)
+        self.assertFalse(
+            QuestionnaireResponse.objects.filter(
+                project=self.project_base, participant=participant
+            ).exists()
         )
 
     def test_project_inactive_redirects_to_info_page(self):

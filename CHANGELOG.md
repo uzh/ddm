@@ -17,6 +17,8 @@ This version drops official support for Python versions < 3.12.
   create copies of Blueprints and Questions within a Project.
 - **Export/Import function**: Projects, file uploaders, blueprints, and questionnaires can now
   be exported and imported again (e.g., to share project configurations).
+- **Test mode**: A test mode to easily test a project from the participant's
+  perspective without having to use the participation link in an incognito mode.
 
 **Data Donation**
 

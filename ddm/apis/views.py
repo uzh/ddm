@@ -39,6 +39,18 @@ from ddm.questionnaire.constants import QuestionType
 from ddm.questionnaire.models import QuestionBase, QuestionItem, QuestionnaireResponse
 
 
+def exclude_flow_broken_test_runs(
+    participants: QuerySet[Participant], request: HttpRequest
+) -> QuerySet[Participant]:
+    """Excludes test runs that used the step-jump shortcut from a
+    participants queryset (participant.test_flow_broken=True),
+    unless explicitly opted back in.
+    """
+    if request.query_params.get("include_broken_test_runs") == "true":
+        return participants
+    return participants.exclude(test_flow_broken=True)
+
+
 class Echo:
     """
     Write-only pseudo-buffer so csv.writer can be used to build rows for
@@ -215,7 +227,8 @@ class ProjectDonationsListView(ListAPIView, DDMAPIMixin):
             msg = "Required parameter 'participants' is missing."
             raise BadRequest(msg)
         participant_ids = participant_param.split(",")
-        return participants.filter(external_id__in=participant_ids)
+        participants = participants.filter(external_id__in=participant_ids)
+        return exclude_flow_broken_test_runs(participants, self.request)
 
     def get_blueprints(self, project: DonationProject) -> QuerySet[DonationBlueprint]:
         blueprints = project.donationblueprint_set.all()
@@ -325,10 +338,10 @@ class ResponsesApiView(ListAPIView, DDMAPIMixin):
     def get_participants(self) -> QuerySet[Participant]:
         participants = self.project.participant_set.all()
         participant_param = self.request.query_params.get("participants")
-        if participant_param is None:
-            return participants
-        participant_ids = participant_param.split(",")
-        return participants.filter(external_id__in=participant_ids)
+        if participant_param is not None:
+            participant_ids = participant_param.split(",")
+            participants = participants.filter(external_id__in=participant_ids)
+        return exclude_flow_broken_test_runs(participants, self.request)
 
     def get_responses(
         self, participants: QuerySet[Participant]
@@ -698,7 +711,9 @@ class DownloadProjectDetailsView(APIView, DDMAPIMixin):
         return super().dispatch(request, *args, **kwargs)
 
     def get_participants(self) -> QuerySet[Participant]:
-        return self.project.participant_set.all()
+        return exclude_flow_broken_test_runs(
+            self.project.participant_set.all(), self.request
+        )
 
     def get_blueprints(self) -> QuerySet[DonationBlueprint]:
         return self.project.donationblueprint_set.all()
@@ -741,6 +756,7 @@ class DownloadProjectDetailsView(APIView, DDMAPIMixin):
     def get_participant_header() -> list[str]:
         return [
             "participant_id",
+            "is_test_case",
             "start_time",
             "end_time",
             "current_step",
@@ -753,6 +769,7 @@ class DownloadProjectDetailsView(APIView, DDMAPIMixin):
     def get_participant_data(participant: Participant) -> list:
         return [
             participant.external_id,
+            participant.is_test,
             participant.start_time,
             participant.end_time,
             participant.current_step,

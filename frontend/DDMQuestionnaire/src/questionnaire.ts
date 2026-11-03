@@ -23,6 +23,8 @@ import type {FilterConfig, QuestionnaireConfig} from "@questionnaire/types/quest
  * - data-action-url
  * - data-language
  * - data-participant-id
+ * - data-test-initial-page (optional): in test mode, the page number to
+ *   land on initially instead of the questionnaire's first page.
  *
  * Expected JSON script blocks located within the mount element:
  *  - #q-config-data: Contains the questionnaire configuration
@@ -80,6 +82,10 @@ function initializeQuestionnaireApp(): void {
     console.error("Failed to parse static variables", err);
   }
 
+  const initialPage = mountEl.dataset.testInitialPage
+    ? Number.parseInt(mountEl.dataset.testInitialPage, 10)
+    : undefined;
+
   const app = createApp(QApp, {
     questionnaireConfig: questionnaireConfig,
     filterConfig: filterConfig,
@@ -87,7 +93,8 @@ function initializeQuestionnaireApp(): void {
     actionUrl: mountEl.dataset.actionUrl,
     progressUrl: mountEl.dataset.progressUrl,
     language: mountEl.dataset.language,
-    participantId: mountEl.dataset.participantId
+    participantId: mountEl.dataset.participantId,
+    initialPage: Number.isNaN(initialPage) ? undefined : initialPage
   });
 
   // Set i18n locale based on the data attribute.

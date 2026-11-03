@@ -36,6 +36,10 @@ class Participant(models.Model):
     extra_data = models.JSONField(default=get_extra_data_default)
     url_parameter = models.JSONField(default=dict)
 
+    # Test mode (see ddm.participation.views.create_participation_session).
+    is_test = models.BooleanField(default=False)
+    test_flow_broken = models.BooleanField(default=False)
+
     def __str__(self) -> str:
         return self.external_id
 

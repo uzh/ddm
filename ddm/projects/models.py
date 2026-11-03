@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import binascii
 import datetime
+import os
+from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
@@ -8,7 +11,7 @@ from Crypto.PublicKey import RSA
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Avg, F, ImageField, QuerySet
+from django.db.models import Avg, Count, F, ImageField, QuerySet
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.safestring import mark_safe
@@ -44,6 +47,16 @@ class ResearchProfile(models.Model):
 
 def project_header_dir_path(instance: DonationProject, filename: str) -> str:
     return f"project_{instance.pk}/headers/{filename}"
+
+
+def generate_test_token() -> str:
+    """Generates an unguessable test-mode token.
+
+    Same mechanism as ProjectAccessToken.generate_key() (see
+    ddm.auth.models) - a plain hex string rather than a UUID, for
+    consistent, backend-portable storage.
+    """
+    return binascii.hexlify(os.urandom(20)).decode()
 
 
 DEFAULT_PRIMARY_COLOR = "#007b74"
@@ -208,6 +221,11 @@ class DonationProject(models.Model):
         help_text="Participants can only take part in a project if it is active.",
     )
 
+    # Test mode. Project-scoped token that grants only "start a flagged test run
+    # of this project" when passed as a `?test=` URL parameter on the
+    # participation link.
+    test_token = models.CharField(max_length=40, unique=True, editable=False)
+
     custom_uploader_translations = models.JSONField(
         blank=True,
         null=False,
@@ -255,6 +273,9 @@ class DonationProject(models.Model):
             self.url_id = create_asciidigits_id(8)
             while DonationProject.objects.filter(url_id=self.url_id).exists():
                 self.url_id = create_asciidigits_id(8)
+
+        if not self.test_token:
+            self.test_token = generate_test_token()
 
         super().save(*args, **kwargs)
 
@@ -361,24 +382,76 @@ class DonationProject(models.Model):
         return super().delete(using, keep_parents)
 
     def get_statistics(self) -> dict[str, Any]:
-        participants = Participant.objects.filter(project=self)
+        participants = Participant.objects.filter(project=self, is_test=False)
+        donation_counts = DataDonation.objects.filter(
+            project=self,
+            participant__is_test=False,
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
+        ).aggregate(
+            n_donated_files=Count("id"),
+            n_donations=Count("participant_id", distinct=True),
+        )
         return {
             "n_started": participants.count(),
             "n_completed": participants.filter(completed=True).count(),
             "completion_rate": self.get_completion_rate(participants),
-            "n_donations": DataDonation.objects.filter(
-                project=self,
-                data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
-            ).count(),
-            "n_errors": ExceptionLogEntry.objects.filter(project=self).count(),
+            "n_donations": donation_counts["n_donations"],
+            "n_donated_files": donation_counts["n_donated_files"],
+            "n_errors": ExceptionLogEntry.objects.filter(project=self)
+            .exclude(participant__is_test=True)
+            .count(),
             "average_time": self.get_average_completion_time(participants),
         }
+
+    def get_blueprint_donation_status_counts(self) -> list[dict[str, Any]]:
+        states = DataDonation.DataExtractionState
+        tracked_states = [
+            states.DATA_EXTRACTED,
+            states.NO_DATA_EXTRACTED,
+            states.NOT_ATTEMPTED,
+            states.FAILED,
+        ]
+        rows = (
+            DataDonation.objects.filter(project=self, participant__is_test=False)
+            .values("blueprint_id", "data_extraction_state")
+            .annotate(n=Count("id"))
+        )
+        by_blueprint: dict[int | None, dict[str, int]] = defaultdict(dict)
+        for row in rows:
+            by_blueprint[row["blueprint_id"]][row["data_extraction_state"]] = row["n"]
+
+        results = []
+        for blueprint in self.donationblueprint_set.all():
+            state_counts = by_blueprint.get(blueprint.pk, {})
+            results.append(
+                {
+                    "blueprint": blueprint,
+                    "counts": [state_counts.get(s, 0) for s in tracked_states],
+                    "n_other": sum(
+                        v for k, v in state_counts.items() if k not in tracked_states
+                    ),
+                }
+            )
+
+        # Donations whose blueprint was deleted (DataDonation.blueprint is SET_NULL).
+        orphaned = by_blueprint.get(None, {})
+        if orphaned:
+            results.append(
+                {
+                    "blueprint": None,
+                    "counts": [orphaned.get(s, 0) for s in tracked_states],
+                    "n_other": sum(
+                        v for k, v in orphaned.items() if k not in tracked_states
+                    ),
+                }
+            )
+        return results
 
     def get_completion_rate(
         self, participants: QuerySet[Participant] | None = None
     ) -> float:
         if participants is None:
-            participants = Participant.objects.filter(project=self)
+            participants = Participant.objects.filter(project=self, is_test=False)
         if participants.count() > 0:
             return participants.filter(completed=True).count() / participants.count()
         return 0
@@ -387,7 +460,7 @@ class DonationProject(models.Model):
         self, participants: QuerySet[Participant] | None = None
     ) -> str:
         if participants is None:
-            participants = Participant.objects.filter(project=self)
+            participants = Participant.objects.filter(project=self, is_test=False)
         return str(
             participants.filter(completed=True).aggregate(
                 v=Avg(F("end_time") - F("start_time"))
@@ -418,6 +491,18 @@ class DonationProject(models.Model):
         fresh stylesheet instead of continuing to serve a cached one.
         """
         return f"{self.primary_color.lstrip('#')}{self.background_color.lstrip('#')}"
+
+    def regenerate_test_token(self) -> None:
+        """Rotates the test-mode token, cutting off anyone using the old link.
+
+        Does not touch previously created test Participant rows - they
+        remain in the database under the old (now unreachable) token.
+        """
+        self.test_token = generate_test_token()
+        self.save(update_fields=["test_token"])
+        EventLogEntry.objects.create(
+            project=self, description="Test Link Token Regenerated"
+        )
 
     def get_token(self) -> ProjectAccessToken | None:
         return ProjectAccessToken.objects.filter(project=self).first()

@@ -114,19 +114,20 @@
   flex-direction: row;
   flex-wrap: wrap;
   overflow: clip;
+
+  > :not(:last-child) {
+    border-right: 1px solid var(--border-color-lightgrey);
+  }
 }
 
 .stats-card {
   text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: 5px 10px;
   color: var(--font-color-grey);
-  border-right: 1px solid var(--border-color-lightgrey);
-  border-left: 1px solid var(--border-color-lightgrey);
-  border-bottom: 1px solid var(--border-color-lightgrey);
   height: 100%;
 
   h3,
@@ -137,7 +138,6 @@
   }
 
   &:hover {
-    border: none;
     box-shadow: none;
   }
 

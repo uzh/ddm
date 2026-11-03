@@ -109,6 +109,7 @@ nav:
           - researchers/topics/index.md
           - APIs: researchers/topics/apis.md
           - Continuation: researchers/topics/continuation.md
+          - Test Mode: researchers/topics/test_mode.md
           - Project Logs: researchers/topics/project_logs.md
           - Template Rendering: researchers/topics/templating_features.md
   - For Administrators:

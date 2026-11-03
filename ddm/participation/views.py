@@ -1,7 +1,7 @@
 import json
 import zipfile
 from json import JSONDecodeError
-from typing import Any
+from typing import Any, TypedDict
 
 from django.conf import settings
 from django.core.files.uploadedfile import UploadedFile
@@ -12,7 +12,7 @@ from django.http import (
     HttpResponseRedirect,
     JsonResponse,
 )
-from django.shortcuts import get_object_or_404, redirect, reverse
+from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.decorators import method_decorator
@@ -51,11 +51,109 @@ def get_participation_session_id(project: DonationProject) -> str:
     return f"project-{project.pk}"
 
 
-def create_participation_session(
-    request: HttpRequest, project: DonationProject
+# Step slugs accepted by a test link's `step=` parameter, in flow order.
+# Kept in sync with ParticipationFlowBaseView.steps below.
+TEST_STEP_SLUGS = ["briefing", "datadonation", "questionnaire", "debriefing"]
+
+
+def apply_test_jump(
+    participant: Participant, step: str | None, page: str | None
 ) -> None:
-    """Creates a new participation session if none does yet exist."""
+    """Applies a test link's `step=`/`page=` deep-link request to a fresh
+    test participant.
+
+    `step` moves the participant's server-tracked `current_step` directly to
+    the requested step, skipping the ones in between - this is the only way
+    a participant's flow can be out of order, so it also flags
+    `test_flow_broken`, which excludes this run from data exports by default.
+
+    `page` is only relevant to the questionnaire step; it is stashed on
+    `extra_data` (rather than passed as a URL parameter) because it has to
+    survive the server-side redirect to the questionnaire step, which drops
+    any query string.
+    """
+    changed = False
+
+    if step:
+        try:
+            target_index = TEST_STEP_SLUGS.index(step)
+        except ValueError:
+            target_index = None
+        if target_index is not None:
+            participant.current_step = target_index
+            if target_index > 0:
+                participant.test_flow_broken = True
+            changed = True
+
+    if page:
+        participant.extra_data["test_initial_page"] = page
+        changed = True
+
+    if changed:
+        participant.save()
+
+
+def get_test_questionnaire_pages(project: DonationProject) -> list[int]:
+    """Returns the distinct page numbers defined in a project's
+    questionnaire, for the test-mode banner's step/page navigation."""
+    return list(
+        project.questionbase_set.order_by("page")
+        .values_list("page", flat=True)
+        .distinct()
+    )
+
+
+class TestRequest(TypedDict):
+    step: str | None  # request.GET.get("step")
+    page: str | None  # request.GET.get("page")
+
+
+def create_participation_session(
+    request: HttpRequest,
+    project: DonationProject,
+    test_request: TestRequest | None = None,
+) -> None:
+    """Creates a new participation session if none does yet exist.
+
+    If `test_request` is given (a valid test-mode GET request, see
+    ParticipationFlowBaseView._handle_test_token), two cases are
+    distinguished:
+
+    - A *bare* test link (no `step`/`page`) always starts a brand-new
+      participant, regardless of whatever participant the session
+      previously pointed to - this is the "fresh run" entry point.
+    - A test link carrying `step`/`page` is treated as refining the
+      *current* test run rather than starting a new one: if the session
+      already points at a test participant, that same participant is
+      reused and just jumped to the new step/page, instead of being
+      replaced.
+    """
     session_id = get_participation_session_id(project)
+
+    if test_request is not None:
+        is_refinement = bool(test_request.get("step") or test_request.get("page"))
+        existing_id = (request.session.get(session_id) or {}).get("participant_id")
+        existing_test_participant = None
+        if is_refinement and existing_id is not None:
+            existing_test_participant = Participant.objects.filter(
+                pk=existing_id, project=project, is_test=True
+            ).first()
+
+        if existing_test_participant is not None:
+            apply_test_jump(
+                existing_test_participant,
+                test_request.get("step"),
+                test_request.get("page"),
+            )
+            return
+
+        participant = Participant.objects.create(
+            project=project, start_time=timezone.now(), is_test=True
+        )
+        request.session[session_id] = {"participant_id": participant.id}
+        request.session.modified = True
+        apply_test_jump(participant, test_request.get("step"), test_request.get("page"))
+        return
 
     if not request.session.get(session_id):
         participant = Participant.objects.create(
@@ -101,6 +199,7 @@ class ParticipationFlowBaseView(DetailView):
     participant = None
     current_step = None
     step_name = None
+    test_token_inactive_response: None | HttpResponse = None
 
     def setup(self, request: HttpRequest, *args, **kwargs) -> None:
         """Initialize attributes shared by all participation steps."""
@@ -108,6 +207,12 @@ class ParticipationFlowBaseView(DetailView):
         self._initialize_values(request)
 
     def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponseBase:
+        # A `test=` parameter was present but did not match this project's
+        # current test_token (e.g. a stale link from before a regeneration).
+        # Redirect to static disabled page.
+        if self.test_token_inactive_response is not None:
+            return self.test_token_inactive_response
+
         if not self.object.active:
             return redirect(self.inactive_url())
 
@@ -116,6 +221,35 @@ class ParticipationFlowBaseView(DetailView):
             return redirect(self.current_step_url())
 
         return super().dispatch(request, *args, **kwargs)
+
+    def _handle_test_token(self, request: HttpRequest) -> TestRequest | None:
+        """Validates a `?test=` URL parameter against the project's token.
+
+        Returns a `test_request` dict for `create_participation_session()`
+        if there is no `test` parameter or if it's valid; returns None otherwise,
+        after setting `self.test_token_inactive_response` to the "disabled" page that
+        `dispatch()` then short-circuits to.
+        """
+        test_param = request.GET.get("test")
+        if test_param is None:
+            return None
+
+        if test_param != str(self.object.test_token):
+            self.test_token_inactive_response = render(
+                request,
+                "ddm_participation/test_link_disabled.html",
+                {"project": self.object},
+                status=403,
+            )
+            return None
+
+        # Only a GET establishes/restarts a test run. A POST on the same
+        # URL (e.g. submitting the briefing form) must not be treated as a
+        # fresh test-link visit.
+        if request.method != "GET":
+            return None
+
+        return TestRequest(step=request.GET.get("step"), page=request.GET.get("page"))
 
     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         context = self.get_context_data(object=self.object)
@@ -157,7 +291,22 @@ class ParticipationFlowBaseView(DetailView):
                 ),
             }
         )
+
+        is_test_participant = getattr(self.participant, "is_test", False)
+        if is_test_participant:
+            self.add_test_context(context)
+
         return context
+
+    def add_test_context(self, context: dict[str, Any]) -> None:
+        context.update(
+            {
+                "is_test_participant": True,
+                "test_step_slugs": TEST_STEP_SLUGS,
+                "test_current_step_slug": TEST_STEP_SLUGS[self.current_step],
+                "test_questionnaire_pages": get_test_questionnaire_pages(self.object),
+            }
+        )
 
     def get_participant_from_session(self, request: HttpRequest) -> Participant:
         """Gets participant from session.
@@ -205,7 +354,12 @@ class ParticipationFlowBaseView(DetailView):
 
     def _initialize_values(self, request: HttpRequest) -> None:
         self.object = self.get_object()
-        create_participation_session(request, self.object)
+
+        test_request = self._handle_test_token(request)
+        if self.test_token_inactive_response is not None:
+            return
+
+        create_participation_session(request, self.object, test_request=test_request)
         self.participant = self.get_participant_from_session(request)
         self.current_step = self.get_current_step_from_participant(self.participant)
 
@@ -475,6 +629,16 @@ class QuestionnaireView(ParticipationFlowBaseView):
             }
         )
         return context
+
+    def add_test_context(self, context: dict[str, Any]) -> None:
+        super().add_test_context(context)
+        context.update(
+            {
+                "test_initial_page": self.participant.extra_data.get(
+                    "test_initial_page"
+                ),
+            }
+        )
 
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         super().post(request, **kwargs)

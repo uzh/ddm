@@ -198,6 +198,7 @@ Host: <hostname>
 |----------------|--------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `participants` | string | Yes      | A comma-separated list of _external participant IDs_ for which the donations should be returned (e.g., "id1,id2,id3").                                                         |
 | `blueprints`   | string | No       | A comma-separated list of _Blueprint IDs_ for which the donations should be returned. If not specified, donations for all blueprints associated with the project are returned. |
+| `include_broken_test_runs` | string | No | If `true`, [test runs](test_mode.md) where steps were jumped are included too. Omitted or any other value excludes them (the default). |
 
 **Headers:**
 
@@ -361,6 +362,7 @@ Host: <hostname>
 |--------------------|--------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `participants`     | string | No       | A comma-separated list of _external participant IDs_ for which the donations should be returned. If not specified, donations for all participants associated with a project will be returned.                         |
 | `include_snapshot` | string | No       | If include_snapshot is 'true', the API response will include a snapshot of the questionnaire configuration at the time the questionnaire was completed for each participant. Otherwise, the snapshot will be omitted. |
+| `include_broken_test_runs` | string | No | If `true`, [test runs](test_mode.md) where steps were jumped are included too. Omitted or any other value excludes them (the default). |
 
 **Headers:**
 

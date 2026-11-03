@@ -1222,6 +1222,8 @@
       
         
       
+        
+      
     
     
     
@@ -1469,6 +1471,34 @@
     
   
     Continuation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../test_mode/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Test Mode
   
 
     
@@ -2533,6 +2563,12 @@ the Responses API, and the Delete Participant API.</p>
 <td>No</td>
 <td>A comma-separated list of <em>Blueprint IDs</em> for which the donations should be returned. If not specified, donations for all blueprints associated with the project are returned.</td>
 </tr>
+<tr>
+<td><code>include_broken_test_runs</code></td>
+<td>string</td>
+<td>No</td>
+<td>If <code>true</code>, <a href="../test_mode/">test runs</a> where steps were jumped are included too. Omitted or any other value excludes them (the default).</td>
+</tr>
 </tbody>
 </table>
 <p><strong>Headers:</strong></p>
@@ -2729,6 +2765,12 @@ the Responses API, and the Delete Participant API.</p>
 <td>string</td>
 <td>No</td>
 <td>If include_snapshot is 'true', the API response will include a snapshot of the questionnaire configuration at the time the questionnaire was completed for each participant. Otherwise, the snapshot will be omitted.</td>
+</tr>
+<tr>
+<td><code>include_broken_test_runs</code></td>
+<td>string</td>
+<td>No</td>
+<td>If <code>true</code>, <a href="../test_mode/">test runs</a> where steps were jumped are included too. Omitted or any other value excludes them (the default).</td>
 </tr>
 </tbody>
 </table>

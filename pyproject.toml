@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "django-ddm"
-version = "3.0.0.dev0"
+version = "3.0.0b5"
 description = "A Django app to set up data donation projects."
 readme = "README.md"
 license = { text = "GPLv3" }

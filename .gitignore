@@ -337,3 +337,5 @@ test_failure_*.png
 .sass-cache/
 *.css.map
 CUTOVER.md
+
+.local-documents/

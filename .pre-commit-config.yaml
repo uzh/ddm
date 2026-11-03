@@ -36,7 +36,13 @@ repos:
         language: system
         files: ^(pyproject\.toml|uv\.lock)$
         pass_filenames: false
-        entry: bash -c 'uv export --no-hashes --no-emit-project --group dev | uv run pip-audit -r -'
+        entry: >-
+          bash -c '
+          f=$(mktemp) &&
+          trap "rm -f \"$f\"" EXIT &&
+          uv export --no-hashes --no-emit-project --group dev -o "$f" &&
+          uv run pip-audit -r "$f"
+          '
 
   # Run the Ruff linter.
   - repo: https://github.com/astral-sh/ruff-pre-commit

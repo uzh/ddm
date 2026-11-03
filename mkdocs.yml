@@ -112,19 +112,21 @@ nav:
           - Test Mode: researchers/topics/test_mode.md
           - Project Logs: researchers/topics/project_logs.md
           - Template Rendering: researchers/topics/templating_features.md
-  - For Administrators:
+  - For System Administrators:
       - administrators/index.md
       - Installation Guide: administrators/installation.md
-      - Topics:
-          - administrators/topics/index.md
-          - CKEditor Configuration: administrators/topics/customize_ckeditor_configs.md
-          - Template Customization: administrators/topics/customize_admin_templates.md
-          - User Authentication: administrators/topics/user_authentication.md
-          - Security: administrators/topics/security.md
+      - Configuration:
+          - administrators/configuration/index.md
+          - User Authentication: administrators/configuration/user_authentication.md
+          - Template Customization: administrators/configuration/customize_templates.md
+          - CKEditor Configuration: administrators/configuration/customize_ckeditor_configs.md
+      - Settings Reference: administrators/settings_reference.md
+      - Security: administrators/security.md
   - For Developers:
       - developers/index.md
       - Topics:
           - Documentation: developers/topics/documentation.md
+          - Release Process: developers/topics/release_process.md
           - Encryption: developers/topics/encryption.md
           - Internationalization: developers/topics/internationalization.md
           - Changelog Conventions: developers/topics/changelog.md

@@ -382,9 +382,10 @@ class DonationProject(models.Model):
         return super().delete(using, keep_parents)
 
     def get_statistics(self) -> dict[str, Any]:
-        participants = Participant.objects.filter(project=self)
+        participants = Participant.objects.filter(project=self, is_test=False)
         donation_counts = DataDonation.objects.filter(
             project=self,
+            participant__is_test=False,
             data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
         ).aggregate(
             n_donated_files=Count("id"),
@@ -396,7 +397,9 @@ class DonationProject(models.Model):
             "completion_rate": self.get_completion_rate(participants),
             "n_donations": donation_counts["n_donations"],
             "n_donated_files": donation_counts["n_donated_files"],
-            "n_errors": ExceptionLogEntry.objects.filter(project=self).count(),
+            "n_errors": ExceptionLogEntry.objects.filter(project=self)
+            .exclude(participant__is_test=True)
+            .count(),
             "average_time": self.get_average_completion_time(participants),
         }
 
@@ -409,7 +412,7 @@ class DonationProject(models.Model):
             states.FAILED,
         ]
         rows = (
-            DataDonation.objects.filter(project=self)
+            DataDonation.objects.filter(project=self, participant__is_test=False)
             .values("blueprint_id", "data_extraction_state")
             .annotate(n=Count("id"))
         )
@@ -448,7 +451,7 @@ class DonationProject(models.Model):
         self, participants: QuerySet[Participant] | None = None
     ) -> float:
         if participants is None:
-            participants = Participant.objects.filter(project=self)
+            participants = Participant.objects.filter(project=self, is_test=False)
         if participants.count() > 0:
             return participants.filter(completed=True).count() / participants.count()
         return 0
@@ -457,7 +460,7 @@ class DonationProject(models.Model):
         self, participants: QuerySet[Participant] | None = None
     ) -> str:
         if participants is None:
-            participants = Participant.objects.filter(project=self)
+            participants = Participant.objects.filter(project=self, is_test=False)
         return str(
             participants.filter(completed=True).aggregate(
                 v=Avg(F("end_time") - F("start_time"))

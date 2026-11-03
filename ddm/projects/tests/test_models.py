@@ -6,6 +6,7 @@ from django.utils import timezone
 from ddm.datadonation.models import DataDonation, DonationBlueprint
 from ddm.datadonation.schemas import JSONParserConfig
 from ddm.encryption.models import Encryption
+from ddm.logging.models import ExceptionLogEntry
 from ddm.participation.models import Participant
 from ddm.projects.models import (
     DEFAULT_BACKGROUND_COLOR,
@@ -106,6 +107,61 @@ class TestDonationProject(TestCase):
         statistics = self.project.get_statistics()
         self.assertEqual(statistics["n_donations"], 2)
         self.assertEqual(statistics["n_donated_files"], 3)
+
+    def test_get_statistics_excludes_test_participants(self):
+        real_participant = Participant.objects.create(
+            project=self.project, start_time=timezone.now(), completed=True
+        )
+        test_participant = Participant.objects.create(
+            project=self.project,
+            start_time=timezone.now(),
+            completed=True,
+            is_test=True,
+        )
+        blueprint = DonationBlueprint.objects.create(
+            project=self.project,
+            name="blueprint_a",
+            display_name="Blueprint A",
+            expected_fields='"a"',
+            file_uploader=None,
+            parser_config=JSONParserConfig().model_dump(),
+        )
+        DataDonation.objects.create(
+            project=self.project,
+            blueprint=blueprint,
+            participant=real_participant,
+            time_submitted=timezone.now(),
+            consent=True,
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
+            n_data_entries=1,
+            data=["entry"],
+        )
+        DataDonation.objects.create(
+            project=self.project,
+            blueprint=blueprint,
+            participant=test_participant,
+            time_submitted=timezone.now(),
+            consent=True,
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
+            n_data_entries=1,
+            data=["entry"],
+        )
+        ExceptionLogEntry.objects.create(
+            project=self.project,
+            participant=test_participant,
+            exception_type="TestError",
+            message="raised by a test run",
+        )
+
+        statistics = self.project.get_statistics()
+        self.assertEqual(statistics["n_started"], 1)
+        self.assertEqual(statistics["n_completed"], 1)
+        self.assertEqual(statistics["n_donations"], 1)
+        self.assertEqual(statistics["n_donated_files"], 1)
+        self.assertEqual(statistics["n_errors"], 0)
+
+        status_counts = self.project.get_blueprint_donation_status_counts()
+        self.assertEqual(status_counts[0]["counts"], [1, 0, 0, 0])
 
     def test_get_blueprint_donation_status_counts(self):
         blueprint_a = DonationBlueprint.objects.create(

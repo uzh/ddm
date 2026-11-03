@@ -3221,6 +3221,19 @@ input field below the question text.</p>
 <h4 id="show-scale-headings"><code>Show scale headings</code><a class="headerlink" href="#show-scale-headings" title="Permanent link">&para;</a></h4>
 <p>Option to show/hide scale headings.</p>
 </details>
+<div class="admonition note">
+<p class="admonition-title">HTML in labels</p>
+<p><code>Label</code>, <code>Label Right</code>, <code>Input label</code>, and <code>Heading label</code> (described below and under
+<a href="#scale-configuration">Scale Configuration</a>) support a small set of HTML for basic
+formatting and styling:</p>
+<ul>
+<li>Formatting tags: <code>&lt;b&gt;</code>, <code>&lt;strong&gt;</code>, <code>&lt;i&gt;</code>, <code>&lt;em&gt;</code>, <code>&lt;u&gt;</code>, <code>&lt;sub&gt;</code>, <code>&lt;sup&gt;</code>, <code>&lt;br&gt;</code>, and <code>&lt;span&gt;</code>.</li>
+<li>The <code>class</code> attribute on any of the above, e.g. <code>&lt;span class="class-name"&gt;text&lt;/span&gt;</code>,
+  to apply one of the available bootstrap CSS classes for custom styling.</li>
+</ul>
+<p>Any other tag or attribute (including <code>style</code>) is automatically removed when 
+you save (no error is raised).</p>
+</div>
 <h3 id="question-items">Question Items<a class="headerlink" href="#question-items" title="Permanent link">&para;</a></h3>
 <p>For Single Choice Questions, Multiple Choice Questions, Matrix Questions and Semantic Differentials,
 participants answer in relation to question items. To configure question items, the following
@@ -3267,11 +3280,12 @@ settings are available:</p>
 <hr />
 <h4 id="label"><code>Label</code><a class="headerlink" href="#label" title="Permanent link">&para;</a></h4>
 <p>The label/text of the item that is displayed to participants related to an item.
-For semantic differential questions, this is the label displayed on the left-hand side of the scale.</p>
+For semantic differential questions, this is the label displayed on the left-hand side of the scale.
+See the <a href="#question-items">HTML in labels</a> note above for what formatting is supported.</p>
 <hr />
 <h4 id="label-right"><code>Label Right</code><a class="headerlink" href="#label-right" title="Permanent link">&para;</a></h4>
 <p>Only for semantic differential questions. The label displayed on the
-right-hand side of the scale.</p>
+right-hand side of the scale. Supports the same HTML as <code>Label</code> above.</p>
 <hr />
 <h4 id="value"><code>Value</code><a class="headerlink" href="#value" title="Permanent link">&para;</a></h4>
 <p>Is (<em>a</em>) the identifier of an item and (<em>b</em>) used to indicate which
@@ -3331,7 +3345,8 @@ the question items) with the configured question scale.</p>
 <p>Defines the order in which the items are displayed.</p>
 <hr />
 <h4 id="input-label"><code>Input label</code><a class="headerlink" href="#input-label" title="Permanent link">&para;</a></h4>
-<p>The text that is displayed within the scale-points/input-buttons.</p>
+<p>The text that is displayed within the scale-points/input-buttons. Supports the same
+<a href="#question-items">HTML</a> as Question Items' <code>Label</code>.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>When you have long labels on Question Items or Scale Points, or you have many scale points, it is a good practice to
@@ -3342,7 +3357,7 @@ be rendered as "un- decided" if the whole word does not fit on one line.</p>
 <hr />
 <h4 id="heading-label"><code>Heading label</code><a class="headerlink" href="#heading-label" title="Permanent link">&para;</a></h4>
 <p>The text that is displayed above the scale-points/input-buttons (currently, only possible for
-Matrix Questions).</p>
+Matrix Questions). Supports the same <a href="#question-items">HTML</a> as Question Items' <code>Label</code>.</p>
 <hr />
 <h4 id="value_1"><code>Value</code><a class="headerlink" href="#value_1" title="Permanent link">&para;</a></h4>
 <p>Used to indicate which scale point has been selected in the data export.</p>

@@ -1602,6 +1602,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#before-going-to-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before Going to Production
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#test-installation" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2278,6 +2289,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#before-going-to-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before Going to Production
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#test-installation" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2370,7 +2392,7 @@
 
 <h1 id="installation-guide">Installation Guide<a class="headerlink" href="#installation-guide" title="Permanent link">&para;</a></h1>
 <p>DDM is a web application that builds on <a href="https://www.djangoproject.com/">Django</a>, a Python web framework.
-Therefore, to run DDM you first need to install Python (3.8 or newer) and Django 4.2.</p>
+Therefore, to run DDM you first need to install Python (3.12 or newer) and Django 5.2.</p>
 <p>For the installation of Python, please go to the official Python website: <a href="https://www.python.org/">python.org</a></p>
 <p>The installation of Django is described in the next section. If you are planning
 to install DDM for production use, we advise to follow a comprehensive tutorial
@@ -2385,12 +2407,15 @@ such as the one provided by <a href="https://www.digitalocean.com/community/tuto
 <p>DDM has the following dependencies which will be installed when installing django-ddm through pip:</p>
 <ul>
 <li><a href="https://pypi.org/project/asgiref/">asgiref</a></li>
-<li><a href="https://www.djangoproject.com/">Django 4.2</a></li>
+<li><a href="https://www.djangoproject.com/">Django</a> (5.2 or newer, below 6)</li>
 <li><a href="https://pypi.org/project/django-ckeditor-5/">django-ckeditor-5</a></li>
+<li><a href="https://pypi.org/project/django-filter/">django-filter</a></li>
 <li><a href="https://pypi.org/project/django-polymorphic/">django-polymorphic</a></li>
 <li><a href="https://pypi.org/project/django-webpack-loader/">django-webpack-loader</a></li>
 <li><a href="https://pypi.org/project/djangorestframework/">djangorestframework</a></li>
+<li><a href="https://pypi.org/project/nh3/">nh3</a></li>
 <li><a href="https://pypi.org/project/pycryptodome/">pycryptodome</a></li>
+<li><a href="https://pypi.org/project/pydantic/">pydantic</a> (2.x)</li>
 <li><a href="https://pypi.org/project/sqlparse/">sqlparse</a></li>
 </ul>
 <h2 id="create-django-application">Create Django Application<a class="headerlink" href="#create-django-application" title="Permanent link">&para;</a></h2>
@@ -2404,7 +2429,7 @@ To create a new venv, run the following command in the folder where you want you
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>(venv) ProjectPath&gt;
 </code></pre></div>
 <p>Next, install Django in your virtual environment:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>(venv) ProjectPath&gt; pip install Django==4.2.*
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>(venv) ProjectPath&gt; pip install "Django&gt;=5.2,&lt;6"
 </code></pre></div>
 <p>Now that Django is installed, start a new project and access it:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>(venv) ProjectPath&gt; django-admin startproject yourproject
@@ -2593,8 +2618,34 @@ unexpected behaviour cannot be ruled out at this point. This will be fixed in a 
 backend in the standard <code>settings.py</code> created by Django.
 For a development environment, this SQLite is totally fine, however for a production
 deployment you should consider configuring a more robust and efficient database such as
-PostgreSQL or MariaDB (see the <a href="https://docs.djangoproject.com/en/3.2/topics/install/#get-your-database-running">Django Documentation</a> for further information).</p>
+PostgreSQL or MariaDB (see the <a href="https://docs.djangoproject.com/en/stable/topics/install/#get-your-database-running">Django Documentation</a> for further information).</p>
 <p>Once you have configured a database, run <code>python manage.py migrate</code> to create the ddm models in your database.</p>
+<h3 id="before-going-to-production">Before Going to Production<a class="headerlink" href="#before-going-to-production" title="Permanent link">&para;</a></h3>
+<p>The <code>settings.py</code> that <code>django-admin startproject</code> generates for you (see
+<a href="#create-django-application">Create Django Application</a> above) defaults to
+<code>DEBUG = True</code> and does not configure any of Django's other
+production-hardening settings (secure cookies, SSL redirect, HSTS, etc.) -
+none of this is specific to DDM, but it's easy to miss. Before exposing your 
+installation to the public internet, set <code>DEBUG = False</code> and run Django's own
+deployment checklist:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>(venv) ProjectPath/yourproject&gt; python manage.py check --deploy
+</code></pre></div>
+<p>This checks <code>DEBUG</code>, <code>SECRET_KEY</code> strength, cookie security, HSTS, and
+more in one command, and is kept up to date with Django's own
+recommendations - see the
+<a href="https://docs.djangoproject.com/en/stable/howto/deployment/checklist/">Django deployment checklist</a>
+for what it covers and why each item matters.</p>
+<p>Django's own login view, which you wired up yourself in
+<a href="#update-urlspy">Update urls.py</a> above, has no brute-force protection -
+nothing in Django or DDM throttles or locks out repeated failed login
+attempts against it. If your installation keeps Django's local-password
+login (rather than relying entirely on
+<a href="../topics/user_authentication/">OIDC-based login</a>, where local password
+auth isn't exposed at all), add login-attempt throttling/lockout yourself,
+for example with <a href="https://github.com/jazzband/django-axes">django-axes</a> -
+this needs to be configured in your own project's <code>settings.py</code>
+(<code>INSTALLED_APPS</code>, <code>AUTHENTICATION_BACKENDS</code>, <code>MIDDLEWARE</code>), the same way
+OIDC is.</p>
 <h3 id="test-installation">Test Installation<a class="headerlink" href="#test-installation" title="Permanent link">&para;</a></h3>
 <p>To test if your installation was successful, run <code>python manage.py test ddm</code>.
 Next, run <code>python manage.py runserver</code> to start the server locally.
@@ -2609,17 +2660,17 @@ These images will be displayed by default, but can be overwritten on a project-b
 by researchers in the project settings.</p>
 <p>To enable default images, provide the paths to the images that you want to display
 in the left and/or right part of the public header in your settings.py as follows:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># settings.py</span>
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
-<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="n">DDM_DEFAULT_HEADER_IMG_LEFT</span> <span class="o">=</span> <span class="s1">'/path/to/logo_left.png'</span>
-<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="n">DDM_DEFAULT_HEADER_IMG_RIGHT</span> <span class="o">=</span> <span class="s1">'/path/to/logo_right.png'</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># settings.py</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="n">DDM_DEFAULT_HEADER_IMG_LEFT</span> <span class="o">=</span> <span class="s1">'/path/to/logo_left.png'</span>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="n">DDM_DEFAULT_HEADER_IMG_RIGHT</span> <span class="o">=</span> <span class="s1">'/path/to/logo_right.png'</span>
 </code></pre></div>
 <h3 id="customizing-ckeditor">Customizing CKEditor<a class="headerlink" href="#customizing-ckeditor" title="Permanent link">&para;</a></h3>
 <p>DDM uses a custom CKEditor toolbar for instruction and question text definitions
 that can optionally be customized (<a href="../topics/customize_ckeditor_configs/">find out more</a>)</p>
 <h2 id="further-resources">Further Resources<a class="headerlink" href="#further-resources" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="https://docs.djangoproject.com/en/3.2/">Official Django Documentation</a></li>
+<li><a href="https://docs.djangoproject.com/en/stable/">Official Django Documentation</a></li>
 <li><a href="https://www.python.org/doc/">Official Python Documentation</a></li>
 <li>Django Tutorials on <a href="https://www.w3schools.com/django/index.php">W3Schools</a> or
 <a href="https://www.digitalocean.com/community/tutorials/how-to-install-django-and-set-up-a-development-environment-on-ubuntu-20-04">Digital Ocean</a></li>

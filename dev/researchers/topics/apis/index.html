@@ -1352,6 +1352,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#super-secret-projects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "Super Secret" Projects
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#available-endpoints" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2185,6 +2196,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#super-secret-projects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "Super Secret" Projects
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#available-endpoints" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2307,6 +2329,21 @@ serve as an incentive for participation.</li>
 <p>The APIs use Token-based authentication, with each token linked to a specific project.
 Tokens must be generated via the web application (navigate to the <em>Project Hub &gt; Data Center &gt; Manage Access Token</em>).
 Tokens expire after a maximum of 90 days and must be renewed as needed.</p>
+<h2 id="super-secret-projects">"Super Secret" Projects<a class="headerlink" href="#super-secret-projects" title="Permanent link">&para;</a></h2>
+<p>For a project configured as "super secret", the encryption secret is a password only you know -
+it is never stored on the server. Because of this, the Donations API and the Responses API
+(the two endpoints that return encrypted data) require that secret to be supplied on every
+request, via the <code>X-Project-Secret</code> header. Requests to these two endpoints for a super secret
+project that omit this header, or supply the wrong secret, receive a <code>422</code> response instead of
+data.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Technical note: Treat the value of <code>X-Project-Secret</code> like a password: avoid logging it, and avoid passing
+it through any proxy, gateway, or monitoring tool that records request headers, unless you've
+configured that tool to redact it (the same way you would for an <code>Authorization</code> header).</p>
+</div>
+<p>The other two endpoints (Project Overview API, Delete Participant API) never touch encrypted
+donation/response data, so this header does not apply to them.</p>
 <h2 id="available-endpoints">Available Endpoints<a class="headerlink" href="#available-endpoints" title="Permanent link">&para;</a></h2>
 <p>Currently, three API-endpoints are available for researchers: the Project Overview API, the Donations API,
 the Responses API, and the Delete Participant API.</p>
@@ -2407,11 +2444,6 @@ the Responses API, and the Delete Participant API.</p>
 <td>404</td>
 <td>Project not found.</td>
 <td>No project could be found for the provided project URL ID.</td>
-</tr>
-<tr>
-<td>405</td>
-<td>Endpoint disabled for super secret projects.</td>
-<td>This endpoint is currently not available for super secret projects.</td>
 </tr>
 </tbody>
 </table>
@@ -2518,6 +2550,11 @@ the Responses API, and the Delete Participant API.</p>
 <td>Yes</td>
 <td>Bearer token for authentication (supplied as <code>Token &lt;project API token&gt;</code>.</td>
 </tr>
+<tr>
+<td><code>X-Project-Secret</code></td>
+<td>Only for "super secret" projects</td>
+<td>The project's secret (see <a href="#super-secret-projects">above</a>). Omitted or incorrect for a "super secret" project results in a <code>422</code> response.</td>
+</tr>
 </tbody>
 </table>
 <p><strong>Response</strong></p>
@@ -2572,9 +2609,9 @@ the Responses API, and the Delete Participant API.</p>
 <td>No project could be found for the provided project URL ID.</td>
 </tr>
 <tr>
-<td>405</td>
-<td>Endpoint disabled for super secret projects.</td>
-<td>This endpoint is currently not available for super secret projects.</td>
+<td>422</td>
+<td>Missing or incorrect secret.</td>
+<td>The project is "super secret" and the <code>X-Project-Secret</code> header was omitted or incorrect.</td>
 </tr>
 </tbody>
 </table>
@@ -2583,81 +2620,87 @@ the Responses API, and the Delete Participant API.</p>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Host: &lt;hostname&gt;
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="nt">"blueprints"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">        </span><span class="nt">"1"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">            </span><span class="nt">"blueprint_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"donation blueprint"</span><span class="p">,</span>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">            </span><span class="nt">"donations"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">                </span><span class="p">{</span>
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">                    </span><span class="nt">"participant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"riZVabtDI5jCpO6tvQQOTG6A"</span><span class="p">,</span>
-<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">                    </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"data1_pA_bpA"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data2_pA_bpA"</span><span class="p">],</span>
-<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">                    </span><span class="nt">"time_submitted"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-15T09:16:36.453322+01:00"</span><span class="p">,</span>
-<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">                    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"{}"</span><span class="p">,</span>
-<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">                    </span><span class="nt">"consent"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
-<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">                </span><span class="p">},</span>
-<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">                </span><span class="p">{</span>
-<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="w">                    </span><span class="nt">"participant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wm2tpQIFFIWaqYbgizwTif8S"</span><span class="p">,</span>
-<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">                    </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"data1_pB_bpA"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data2_pB_bpA"</span><span class="p">],</span>
-<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="w">                    </span><span class="nt">"time_submitted"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-15T09:16:36.456329+01:00"</span><span class="p">,</span>
-<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="w">                    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"{}"</span><span class="p">,</span>
-<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="w">                    </span><span class="nt">"consent"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">}]</span>
-<a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="w">                </span><span class="p">}</span>
-<a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="w">        </span><span class="p">},</span>
-<a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="w">        </span><span class="nt">"2"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="w">            </span><span class="nt">"blueprint_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"donation blueprint"</span><span class="p">,</span>
-<a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="w">            </span><span class="nt">"donations"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="w">                </span><span class="p">{</span>
-<a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="w">                    </span><span class="nt">"participant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"4CovG8u7QWZyQGJ5UX5zfzUV"</span><span class="p">,</span>
-<a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a><span class="w">                    </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"data1_pA_bpB"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data2_pA_bpB"</span><span class="p">],</span>
-<a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a><span class="w">                    </span><span class="nt">"time_submitted"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-15T09:19:55.397809+01:00"</span><span class="p">,</span>
-<a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a><span class="w">                    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"{}"</span><span class="p">,</span>
-<a id="__codelineno-5-29" name="__codelineno-5-29" href="#__codelineno-5-29"></a><span class="w">                    </span><span class="nt">"consent"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
-<a id="__codelineno-5-30" name="__codelineno-5-30" href="#__codelineno-5-30"></a><span class="w">                </span><span class="p">},</span>
-<a id="__codelineno-5-31" name="__codelineno-5-31" href="#__codelineno-5-31"></a><span class="w">                </span><span class="p">{</span>
-<a id="__codelineno-5-32" name="__codelineno-5-32" href="#__codelineno-5-32"></a><span class="w">                    </span><span class="nt">"participant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wm2tpQIFFIWaqYbgizwTif8S"</span><span class="p">,</span>
-<a id="__codelineno-5-33" name="__codelineno-5-33" href="#__codelineno-5-33"></a><span class="w">                    </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"data1_pB_bpB"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data2_pB_bpB"</span><span class="p">],</span>
-<a id="__codelineno-5-34" name="__codelineno-5-34" href="#__codelineno-5-34"></a><span class="w">                    </span><span class="nt">"time_submitted"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-15T09:16:36.456329+01:00"</span><span class="p">,</span>
-<a id="__codelineno-5-35" name="__codelineno-5-35" href="#__codelineno-5-35"></a><span class="w">                    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"{}"</span><span class="p">,</span>
-<a id="__codelineno-5-36" name="__codelineno-5-36" href="#__codelineno-5-36"></a><span class="w">                    </span><span class="nt">"consent"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">}]</span>
-<a id="__codelineno-5-37" name="__codelineno-5-37" href="#__codelineno-5-37"></a><span class="w">                </span><span class="p">}</span>
-<a id="__codelineno-5-38" name="__codelineno-5-38" href="#__codelineno-5-38"></a><span class="w">            </span><span class="p">]</span>
-<a id="__codelineno-5-39" name="__codelineno-5-39" href="#__codelineno-5-39"></a><span class="w">        </span><span class="p">}</span>
-<a id="__codelineno-5-40" name="__codelineno-5-40" href="#__codelineno-5-40"></a><span class="w">    </span><span class="p">},</span>
-<a id="__codelineno-5-41" name="__codelineno-5-41" href="#__codelineno-5-41"></a><span class="w">    </span><span class="nt">"metadata"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-5-42" name="__codelineno-5-42" href="#__codelineno-5-42"></a><span class="w">        </span><span class="nt">"n_blueprints"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span>
-<a id="__codelineno-5-43" name="__codelineno-5-43" href="#__codelineno-5-43"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-5-44" name="__codelineno-5-44" href="#__codelineno-5-44"></a><span class="p">}</span>
+<p>For a "super secret" project, include the <code>X-Project-Secret</code> header:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>GET /api/project/KPHn7aw7/donations HTTPS
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>X-Project-Secret: your-project-secret
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>Host: &lt;hostname&gt;
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>GET /api/project/KPHn7aw7/donations?participants=1,2&amp;blueprints=1 HTTPS
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>Host: &lt;hostname&gt;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="nt">"blueprints"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">        </span><span class="nt">"1"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">            </span><span class="nt">"blueprint_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"donation blueprint"</span><span class="p">,</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">            </span><span class="nt">"donations"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">                </span><span class="p">{</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">                    </span><span class="nt">"participant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"riZVabtDI5jCpO6tvQQOTG6A"</span><span class="p">,</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">                    </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"data1_pA_bpA"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data2_pA_bpA"</span><span class="p">],</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">                    </span><span class="nt">"time_submitted"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-15T09:16:36.453322+01:00"</span><span class="p">,</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">                    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"{}"</span><span class="p">,</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">                    </span><span class="nt">"consent"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">                </span><span class="p">},</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">                </span><span class="p">{</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">                    </span><span class="nt">"participant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wm2tpQIFFIWaqYbgizwTif8S"</span><span class="p">,</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="w">                    </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"data1_pB_bpA"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data2_pB_bpA"</span><span class="p">],</span>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="w">                    </span><span class="nt">"time_submitted"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-15T09:16:36.456329+01:00"</span><span class="p">,</span>
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="w">                    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"{}"</span><span class="p">,</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="w">                    </span><span class="nt">"consent"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">}]</span>
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="w">                </span><span class="p">}</span>
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="w">        </span><span class="p">},</span>
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a><span class="w">        </span><span class="nt">"2"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a><span class="w">            </span><span class="nt">"blueprint_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"donation blueprint"</span><span class="p">,</span>
+<a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a><span class="w">            </span><span class="nt">"donations"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a><span class="w">                </span><span class="p">{</span>
+<a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a><span class="w">                    </span><span class="nt">"participant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"4CovG8u7QWZyQGJ5UX5zfzUV"</span><span class="p">,</span>
+<a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a><span class="w">                    </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"data1_pA_bpB"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data2_pA_bpB"</span><span class="p">],</span>
+<a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a><span class="w">                    </span><span class="nt">"time_submitted"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-15T09:19:55.397809+01:00"</span><span class="p">,</span>
+<a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a><span class="w">                    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"{}"</span><span class="p">,</span>
+<a id="__codelineno-6-29" name="__codelineno-6-29" href="#__codelineno-6-29"></a><span class="w">                    </span><span class="nt">"consent"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<a id="__codelineno-6-30" name="__codelineno-6-30" href="#__codelineno-6-30"></a><span class="w">                </span><span class="p">},</span>
+<a id="__codelineno-6-31" name="__codelineno-6-31" href="#__codelineno-6-31"></a><span class="w">                </span><span class="p">{</span>
+<a id="__codelineno-6-32" name="__codelineno-6-32" href="#__codelineno-6-32"></a><span class="w">                    </span><span class="nt">"participant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wm2tpQIFFIWaqYbgizwTif8S"</span><span class="p">,</span>
+<a id="__codelineno-6-33" name="__codelineno-6-33" href="#__codelineno-6-33"></a><span class="w">                    </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"data1_pB_bpB"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data2_pB_bpB"</span><span class="p">],</span>
+<a id="__codelineno-6-34" name="__codelineno-6-34" href="#__codelineno-6-34"></a><span class="w">                    </span><span class="nt">"time_submitted"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-15T09:16:36.456329+01:00"</span><span class="p">,</span>
+<a id="__codelineno-6-35" name="__codelineno-6-35" href="#__codelineno-6-35"></a><span class="w">                    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"{}"</span><span class="p">,</span>
+<a id="__codelineno-6-36" name="__codelineno-6-36" href="#__codelineno-6-36"></a><span class="w">                    </span><span class="nt">"consent"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">}]</span>
+<a id="__codelineno-6-37" name="__codelineno-6-37" href="#__codelineno-6-37"></a><span class="w">                </span><span class="p">}</span>
+<a id="__codelineno-6-38" name="__codelineno-6-38" href="#__codelineno-6-38"></a><span class="w">            </span><span class="p">]</span>
+<a id="__codelineno-6-39" name="__codelineno-6-39" href="#__codelineno-6-39"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-6-40" name="__codelineno-6-40" href="#__codelineno-6-40"></a><span class="w">    </span><span class="p">},</span>
+<a id="__codelineno-6-41" name="__codelineno-6-41" href="#__codelineno-6-41"></a><span class="w">    </span><span class="nt">"metadata"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-42" name="__codelineno-6-42" href="#__codelineno-6-42"></a><span class="w">        </span><span class="nt">"n_blueprints"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span>
+<a id="__codelineno-6-43" name="__codelineno-6-43" href="#__codelineno-6-43"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-6-44" name="__codelineno-6-44" href="#__codelineno-6-44"></a><span class="p">}</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="nt">"blueprints"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">        </span><span class="nt">"1"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">            </span><span class="nt">"blueprint_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"donation blueprint"</span><span class="p">,</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">            </span><span class="nt">"donations"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">                </span><span class="p">{</span>
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">                    </span><span class="nt">"participant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"riZVabtDI5jCpO6tvQQOTG6A"</span><span class="p">,</span>
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">                    </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"data1_pA_bpA"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data2_pA_bpA"</span><span class="p">],</span>
-<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">                    </span><span class="nt">"time_submitted"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-15T09:16:36.453322+01:00"</span><span class="p">,</span>
-<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">                    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"{}"</span><span class="p">,</span>
-<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">                    </span><span class="nt">"consent"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
-<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">                </span><span class="p">},</span>
-<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">                </span><span class="p">{</span>
-<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="w">                    </span><span class="nt">"participant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wm2tpQIFFIWaqYbgizwTif8S"</span><span class="p">,</span>
-<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">                    </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"data1_pB_bpA"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data2_pB_bpA"</span><span class="p">],</span>
-<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">                    </span><span class="nt">"time_submitted"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-15T09:16:36.456329+01:00"</span><span class="p">,</span>
-<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w">                    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"{}"</span><span class="p">,</span>
-<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="w">                    </span><span class="nt">"consent"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
-<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="w">                </span><span class="p">}</span>
-<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="w">            </span><span class="p">]</span>
-<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="w">        </span><span class="p">}</span>
-<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a><span class="w">    </span><span class="p">},</span>
-<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a><span class="w">    </span><span class="nt">"metadata"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a><span class="w">        </span><span class="nt">"n_blueprints"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
-<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>GET /api/project/KPHn7aw7/donations?participants=1,2&amp;blueprints=1 HTTPS
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>Host: &lt;hostname&gt;
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="nt">"blueprints"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">        </span><span class="nt">"1"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">            </span><span class="nt">"blueprint_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"donation blueprint"</span><span class="p">,</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">            </span><span class="nt">"donations"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">                </span><span class="p">{</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">                    </span><span class="nt">"participant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"riZVabtDI5jCpO6tvQQOTG6A"</span><span class="p">,</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">                    </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"data1_pA_bpA"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data2_pA_bpA"</span><span class="p">],</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">                    </span><span class="nt">"time_submitted"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-15T09:16:36.453322+01:00"</span><span class="p">,</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">                    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"{}"</span><span class="p">,</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">                    </span><span class="nt">"consent"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">                </span><span class="p">},</span>
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="w">                </span><span class="p">{</span>
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="w">                    </span><span class="nt">"participant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wm2tpQIFFIWaqYbgizwTif8S"</span><span class="p">,</span>
+<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="w">                    </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"data1_pB_bpA"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data2_pB_bpA"</span><span class="p">],</span>
+<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="w">                    </span><span class="nt">"time_submitted"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-15T09:16:36.456329+01:00"</span><span class="p">,</span>
+<a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a><span class="w">                    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"{}"</span><span class="p">,</span>
+<a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a><span class="w">                    </span><span class="nt">"consent"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a><span class="w">                </span><span class="p">}</span>
+<a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a><span class="w">            </span><span class="p">]</span>
+<a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a><span class="w">    </span><span class="p">},</span>
+<a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a><span class="w">    </span><span class="nt">"metadata"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a><span class="w">        </span><span class="nt">"n_blueprints"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a><span class="p">}</span>
 </code></pre></div>
 <h3 id="responses-api">Responses API<a class="headerlink" href="#responses-api" title="Permanent link">&para;</a></h3>
 <p><strong>Description:</strong> Retrieve questionnaire responses collected in a given donation project.</p>
@@ -2704,23 +2747,28 @@ the Responses API, and the Delete Participant API.</p>
 <td>Yes</td>
 <td>Bearer token for authentication (supplied as <code>Token &lt;project API token&gt;</code>.</td>
 </tr>
+<tr>
+<td><code>X-Project-Secret</code></td>
+<td>Only for "super secret" projects</td>
+<td>The project's secret (see <a href="#super-secret-projects">above</a>). Omitted or incorrect for a "super secret" project results in a <code>422</code> response.</td>
+</tr>
 </tbody>
 </table>
 <p><strong>Response</strong></p>
 <p><strong>Success Response (200)</strong>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">"responses"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="p">{</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">      </span><span class="nt">"participant"</span><span class="p">:</span><span class="w"> </span><span class="err">&lt;s</span><span class="kc">tr</span><span class="err">i</span><span class="kc">n</span><span class="err">g</span><span class="w"> </span><span class="mi">-</span><span class="w"> </span><span class="err">id</span><span class="w"> </span><span class="err">o</span><span class="kc">f</span><span class="w"> </span><span class="err">par</span><span class="kc">t</span><span class="err">icipa</span><span class="kc">nt</span><span class="err">&gt;</span><span class="p">,</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">      </span><span class="nt">"response_data"</span><span class="p">:</span><span class="w"> </span><span class="err">&lt;dic</span><span class="kc">t</span><span class="err">io</span><span class="kc">nar</span><span class="err">y</span><span class="w"> </span><span class="mi">-</span><span class="w"> </span><span class="err">co</span><span class="kc">ns</span><span class="err">is</span><span class="kc">t</span><span class="err">i</span><span class="kc">n</span><span class="err">g</span><span class="w"> </span><span class="err">o</span><span class="kc">f</span><span class="w"> </span><span class="err">variable_</span><span class="kc">na</span><span class="err">me</span><span class="p">:</span><span class="err">a</span><span class="kc">ns</span><span class="err">wer_value</span><span class="w"> </span><span class="err">pairs&gt;</span><span class="p">,</span>
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">      </span><span class="nt">"time_submitted"</span><span class="p">:</span><span class="w"> </span><span class="err">&lt;s</span><span class="kc">tr</span><span class="err">i</span><span class="kc">n</span><span class="err">g</span><span class="w"> </span><span class="mi">-</span><span class="w"> </span><span class="err">da</span><span class="kc">tet</span><span class="err">ime</span><span class="w"> </span><span class="err">as</span><span class="w"> </span><span class="err">iso</span><span class="w"> </span><span class="err">s</span><span class="kc">tr</span><span class="err">i</span><span class="kc">n</span><span class="err">g&gt;</span><span class="p">,</span>
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">      </span><span class="nt">"questionnaire_snapshot"</span><span class="p">:</span><span class="w"> </span><span class="err">&lt;dic</span><span class="kc">t</span><span class="err">io</span><span class="kc">nar</span><span class="err">y</span><span class="w"> </span><span class="mi">-</span><span class="w"> </span><span class="err">holdi</span><span class="kc">n</span><span class="err">g</span><span class="w"> </span><span class="err">i</span><span class="kc">nf</span><span class="err">orma</span><span class="kc">t</span><span class="err">io</span><span class="kc">n</span><span class="w"> </span><span class="err">o</span><span class="kc">n</span><span class="w"> </span><span class="kc">t</span><span class="err">he</span><span class="w"> </span><span class="err">ques</span><span class="kc">t</span><span class="err">io</span><span class="kc">nna</span><span class="err">ire</span><span class="w"> </span><span class="err">co</span><span class="kc">nf</span><span class="err">igura</span><span class="kc">t</span><span class="err">io</span><span class="kc">n</span><span class="w"> </span><span class="err">a</span><span class="kc">t</span><span class="w"> </span><span class="kc">t</span><span class="err">ime_submi</span><span class="kc">tte</span><span class="err">d&gt;</span><span class="p">,</span>
-<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">  </span><span class="p">],</span>
-<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">  </span><span class="nt">"metadata"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">    </span><span class="nt">"n_responses"</span><span class="p">:</span><span class="w"> </span><span class="err">&lt;i</span><span class="kc">nt</span><span class="w"> </span><span class="mi">-</span><span class="w"> </span><span class="kc">nu</span><span class="err">mber</span><span class="w"> </span><span class="err">o</span><span class="kc">f</span><span class="w"> </span><span class="err">respo</span><span class="kc">nses</span><span class="err">&gt;</span>
-<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">"responses"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="p">{</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">      </span><span class="nt">"participant"</span><span class="p">:</span><span class="w"> </span><span class="err">&lt;s</span><span class="kc">tr</span><span class="err">i</span><span class="kc">n</span><span class="err">g</span><span class="w"> </span><span class="mi">-</span><span class="w"> </span><span class="err">id</span><span class="w"> </span><span class="err">o</span><span class="kc">f</span><span class="w"> </span><span class="err">par</span><span class="kc">t</span><span class="err">icipa</span><span class="kc">nt</span><span class="err">&gt;</span><span class="p">,</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">      </span><span class="nt">"response_data"</span><span class="p">:</span><span class="w"> </span><span class="err">&lt;dic</span><span class="kc">t</span><span class="err">io</span><span class="kc">nar</span><span class="err">y</span><span class="w"> </span><span class="mi">-</span><span class="w"> </span><span class="err">co</span><span class="kc">ns</span><span class="err">is</span><span class="kc">t</span><span class="err">i</span><span class="kc">n</span><span class="err">g</span><span class="w"> </span><span class="err">o</span><span class="kc">f</span><span class="w"> </span><span class="err">variable_</span><span class="kc">na</span><span class="err">me</span><span class="p">:</span><span class="err">a</span><span class="kc">ns</span><span class="err">wer_value</span><span class="w"> </span><span class="err">pairs&gt;</span><span class="p">,</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">      </span><span class="nt">"time_submitted"</span><span class="p">:</span><span class="w"> </span><span class="err">&lt;s</span><span class="kc">tr</span><span class="err">i</span><span class="kc">n</span><span class="err">g</span><span class="w"> </span><span class="mi">-</span><span class="w"> </span><span class="err">da</span><span class="kc">tet</span><span class="err">ime</span><span class="w"> </span><span class="err">as</span><span class="w"> </span><span class="err">iso</span><span class="w"> </span><span class="err">s</span><span class="kc">tr</span><span class="err">i</span><span class="kc">n</span><span class="err">g&gt;</span><span class="p">,</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">      </span><span class="nt">"questionnaire_snapshot"</span><span class="p">:</span><span class="w"> </span><span class="err">&lt;dic</span><span class="kc">t</span><span class="err">io</span><span class="kc">nar</span><span class="err">y</span><span class="w"> </span><span class="mi">-</span><span class="w"> </span><span class="err">holdi</span><span class="kc">n</span><span class="err">g</span><span class="w"> </span><span class="err">i</span><span class="kc">nf</span><span class="err">orma</span><span class="kc">t</span><span class="err">io</span><span class="kc">n</span><span class="w"> </span><span class="err">o</span><span class="kc">n</span><span class="w"> </span><span class="kc">t</span><span class="err">he</span><span class="w"> </span><span class="err">ques</span><span class="kc">t</span><span class="err">io</span><span class="kc">nna</span><span class="err">ire</span><span class="w"> </span><span class="err">co</span><span class="kc">nf</span><span class="err">igura</span><span class="kc">t</span><span class="err">io</span><span class="kc">n</span><span class="w"> </span><span class="err">a</span><span class="kc">t</span><span class="w"> </span><span class="kc">t</span><span class="err">ime_submi</span><span class="kc">tte</span><span class="err">d&gt;</span><span class="p">,</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">  </span><span class="p">],</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">  </span><span class="nt">"metadata"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">    </span><span class="nt">"n_responses"</span><span class="p">:</span><span class="w"> </span><span class="err">&lt;i</span><span class="kc">nt</span><span class="w"> </span><span class="mi">-</span><span class="w"> </span><span class="kc">nu</span><span class="err">mber</span><span class="w"> </span><span class="err">o</span><span class="kc">f</span><span class="w"> </span><span class="err">respo</span><span class="kc">nses</span><span class="err">&gt;</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="p">}</span>
 </code></pre></div>
 <p><strong>Error Responses:</strong></p>
 <table>
@@ -2748,48 +2796,54 @@ the Responses API, and the Delete Participant API.</p>
 <td>No project could be found for the provided project URL ID.</td>
 </tr>
 <tr>
-<td>405</td>
-<td>Endpoint disabled for super secret projects.</td>
-<td>This endpoint is currently not available for super secret projects.</td>
+<td>422</td>
+<td>Missing or incorrect secret.</td>
+<td>The project is "super secret" and the <code>X-Project-Secret</code> header was omitted or incorrect.</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Example</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>GET /api/project/KPHn7aw7/responses HTTPS
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>Host: &lt;hostname&gt;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>GET /api/project/KPHn7aw7/responses HTTPS
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>Host: &lt;hostname&gt;
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="p">{</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span><span class="nt">"responses"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">        </span><span class="p">{</span>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">            </span><span class="nt">"participant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"T1qPRp6oOuyYkptNODlegD3h"</span><span class="p">,</span>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">            </span><span class="nt">"response_data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"varname_question_a"</span><span class="p">:</span><span class="w"> </span><span class="s2">"response_data"</span><span class="p">},</span>
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">            </span><span class="nt">"time_submitted"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-14T13:19:21.998413+01:00"</span>
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">        </span><span class="p">},</span>
-<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">        </span><span class="p">{</span>
-<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">            </span><span class="nt">"participant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cSCslglsu2Mv0j0ryz8lGrcA"</span><span class="p">,</span>
-<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">            </span><span class="nt">"responses"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"varname_question_a"</span><span class="p">:</span><span class="w"> </span><span class="s2">"response_data2"</span><span class="p">},</span>
-<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">            </span><span class="nt">"time_submitted"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-14T13:19:21.998413+01:00"</span>
-<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">        </span><span class="p">}</span>
-<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">    </span><span class="p">],</span>
-<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="w">    </span><span class="nt">"metadata"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"n_responses"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">}</span>
-<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="p">}</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>GET /api/project/KPHn7aw7/responses?participants=cSCslglsu2Mv0j0ryz8lGrcA&amp;include_snapshot=true HTTPS
+<p>For a "super secret" project, include the <code>X-Project-Secret</code> header:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>GET /api/project/KPHn7aw7/responses HTTPS
 <a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>Host: &lt;hostname&gt;
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>X-Project-Secret: your-project-secret
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>Host: &lt;hostname&gt;
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="p">{</span>
 <a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">    </span><span class="nt">"responses"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">        </span><span class="p">{</span>
-<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">            </span><span class="nt">"participant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cSCslglsu2Mv0j0ryz8lGrcA"</span><span class="p">,</span>
-<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">            </span><span class="nt">"responses"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"varname_question_a"</span><span class="p">:</span><span class="w"> </span><span class="s2">"response_data2"</span><span class="p">},</span>
-<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">            </span><span class="nt">"time_submitted"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-14T13:19:21.998413+01:00"</span><span class="p">,</span>
-<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">            </span><span class="nt">"questionnaire_snapshot"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"1"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"response"</span><span class="p">:</span><span class="w"> </span><span class="s2">"response_data2"</span><span class="p">,</span><span class="w"> </span><span class="nt">"question"</span><span class="p">:</span><span class="w"> </span><span class="s2">"question text"</span><span class="p">,</span><span class="w"> </span><span class="nt">"items"</span><span class="p">:</span><span class="w"> </span><span class="p">[]}}</span>
-<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">        </span><span class="p">}</span>
-<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="w">    </span><span class="p">],</span>
-<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="w">    </span><span class="nt">"metadata"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"n_responses"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span>
-<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="p">}</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">            </span><span class="nt">"participant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"T1qPRp6oOuyYkptNODlegD3h"</span><span class="p">,</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">            </span><span class="nt">"response_data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"varname_question_a"</span><span class="p">:</span><span class="w"> </span><span class="s2">"response_data"</span><span class="p">},</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">            </span><span class="nt">"time_submitted"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-14T13:19:21.998413+01:00"</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">        </span><span class="p">},</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">        </span><span class="p">{</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="w">            </span><span class="nt">"participant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cSCslglsu2Mv0j0ryz8lGrcA"</span><span class="p">,</span>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="w">            </span><span class="nt">"responses"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"varname_question_a"</span><span class="p">:</span><span class="w"> </span><span class="s2">"response_data2"</span><span class="p">},</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="w">            </span><span class="nt">"time_submitted"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-14T13:19:21.998413+01:00"</span>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="w">    </span><span class="p">],</span>
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="w">    </span><span class="nt">"metadata"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"n_responses"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">}</span>
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>GET /api/project/KPHn7aw7/responses?participants=cSCslglsu2Mv0j0ryz8lGrcA&amp;include_snapshot=true HTTPS
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>Host: &lt;hostname&gt;
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="p">{</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">    </span><span class="nt">"responses"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">        </span><span class="p">{</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">            </span><span class="nt">"participant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cSCslglsu2Mv0j0ryz8lGrcA"</span><span class="p">,</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">            </span><span class="nt">"responses"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"varname_question_a"</span><span class="p">:</span><span class="w"> </span><span class="s2">"response_data2"</span><span class="p">},</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="w">            </span><span class="nt">"time_submitted"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-14T13:19:21.998413+01:00"</span><span class="p">,</span>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="w">            </span><span class="nt">"questionnaire_snapshot"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"1"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"response"</span><span class="p">:</span><span class="w"> </span><span class="s2">"response_data2"</span><span class="p">,</span><span class="w"> </span><span class="nt">"question"</span><span class="p">:</span><span class="w"> </span><span class="s2">"question text"</span><span class="p">,</span><span class="w"> </span><span class="nt">"items"</span><span class="p">:</span><span class="w"> </span><span class="p">[]}}</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="w">    </span><span class="p">],</span>
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="w">    </span><span class="nt">"metadata"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"n_responses"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span>
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="p">}</span>
 </code></pre></div>
 <h3 id="delete-participant-api">Delete Participant API<a class="headerlink" href="#delete-participant-api" title="Permanent link">&para;</a></h3>
 <p><strong>Description:</strong> Delete a specific participant including the related responses and donations from the database.</p>
@@ -2815,9 +2869,9 @@ the Responses API, and the Delete Participant API.</p>
 </table>
 <p><strong>Response</strong></p>
 <p><strong>Success Response (200)</strong>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="p">{</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span><span class="nt">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Participant with external id '&lt;participant ID&gt;' successfully deleted."</span>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="p">{</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">  </span><span class="nt">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Participant with external id '&lt;participant ID&gt;' successfully deleted."</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="p">}</span>
 </code></pre></div>
 <p><strong>Error Responses:</strong></p>
 <table>
@@ -2847,13 +2901,13 @@ the Responses API, and the Delete Participant API.</p>
 </tbody>
 </table>
 <p><strong>Example</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>DELETE /api/project/KPHn7aw7/participant/I8RohmYJrcaCLxHP1bnEuuHn/delete HTTPS
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>Host: &lt;hostname&gt;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>DELETE /api/project/KPHn7aw7/participant/I8RohmYJrcaCLxHP1bnEuuHn/delete HTTPS
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>Authorization: Token 1176fcf7d0203db1e097861ef7442b328f1bb7f1
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>Host: &lt;hostname&gt;
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="p">{</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">  </span><span class="nt">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Participant with external id 'I8RohmYJrcaCLxHP1bnEuuHn' successfully deleted."</span>
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="p">{</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="w">  </span><span class="nt">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Participant with external id 'I8RohmYJrcaCLxHP1bnEuuHn' successfully deleted."</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="p">}</span>
 </code></pre></div>
 <h2 id="python-example">Python Example<a class="headerlink" href="#python-example" title="Permanent link">&para;</a></h2>
 <div class="admonition note">

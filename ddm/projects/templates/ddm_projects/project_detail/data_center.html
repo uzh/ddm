@@ -3,15 +3,27 @@
     <h2>Data Center</h2>
   </div>
 
-  {% with stats=object.get_statistics %}
+  {% with stats=object.get_statistics status_counts=object.get_blueprint_donation_status_counts %}
     <div class="row pb-0">
       <div class="col">
         <div class="stats-wrapper">
 
           <div class="col">
             <div class="stats-card">
-              <div><h4>Donated Files</h4></div>
+              <div><h4>At least one donated file</h4></div>
               <div class="statistic">{{ stats.n_donations }}</div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="stats-card">
+              <div><h4>Donated Files</h4></div>
+              <div class="statistic">{{ stats.n_donated_files }}</div>
+              <div>
+                <a href="" data-bs-toggle="modal" data-bs-target="#blueprint-donation-status-modal" class="fs-08">
+                  <i class="bi bi-info-circle-fill ddm-info-collapsible-icon"></i> status by blueprint
+                </a>
+              </div>
             </div>
           </div>
 
@@ -45,6 +57,8 @@
         </div>
       </div>
     </div>
+
+    {% include "ddm_projects/project_detail/_blueprint_donation_status_modal.html" %}
   {% endwith %}
 
   <div class="row">

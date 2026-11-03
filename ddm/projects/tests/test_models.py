@@ -1,8 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
+from django.utils import timezone
 
+from ddm.datadonation.models import DataDonation, DonationBlueprint
+from ddm.datadonation.schemas import JSONParserConfig
 from ddm.encryption.models import Encryption
+from ddm.participation.models import Participant
 from ddm.projects.models import (
     DEFAULT_BACKGROUND_COLOR,
     DEFAULT_PRIMARY_COLOR,
@@ -34,11 +38,150 @@ class TestDonationProject(TestCase):
             "n_completed",
             "completion_rate",
             "n_donations",
+            "n_donated_files",
             "n_errors",
             "average_time",
         ]
         for key in statistics_keys:
             self.assertIn(key, self.project.get_statistics())
+
+    def test_get_statistics_distinguishes_donations_from_donated_files(self):
+        participant_a = Participant.objects.create(
+            project=self.project, start_time=timezone.now()
+        )
+        participant_b = Participant.objects.create(
+            project=self.project, start_time=timezone.now()
+        )
+        blueprint_a = DonationBlueprint.objects.create(
+            project=self.project,
+            name="blueprint_a",
+            display_name="Blueprint A",
+            expected_fields='"a"',
+            file_uploader=None,
+            parser_config=JSONParserConfig().model_dump(),
+        )
+        blueprint_b = DonationBlueprint.objects.create(
+            project=self.project,
+            name="blueprint_b",
+            display_name="Blueprint B",
+            expected_fields='"a"',
+            file_uploader=None,
+            parser_config=JSONParserConfig().model_dump(),
+        )
+
+        # participant_a donates to both blueprints, participant_b to one.
+        for blueprint in (blueprint_a, blueprint_b):
+            DataDonation.objects.create(
+                project=self.project,
+                blueprint=blueprint,
+                participant=participant_a,
+                time_submitted=timezone.now(),
+                consent=True,
+                data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
+                n_data_entries=1,
+                data=["entry"],
+            )
+        DataDonation.objects.create(
+            project=self.project,
+            blueprint=blueprint_a,
+            participant=participant_b,
+            time_submitted=timezone.now(),
+            consent=True,
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
+            n_data_entries=1,
+            data=["entry"],
+        )
+        # A non-extracted donation must not count toward either number.
+        DataDonation.objects.create(
+            project=self.project,
+            blueprint=blueprint_a,
+            participant=participant_b,
+            time_submitted=timezone.now(),
+            consent=True,
+            data_extraction_state=DataDonation.DataExtractionState.FAILED,
+            n_data_entries=0,
+            data=[],
+        )
+
+        statistics = self.project.get_statistics()
+        self.assertEqual(statistics["n_donations"], 2)
+        self.assertEqual(statistics["n_donated_files"], 3)
+
+    def test_get_blueprint_donation_status_counts(self):
+        blueprint_a = DonationBlueprint.objects.create(
+            project=self.project,
+            name="blueprint_a",
+            display_name="Blueprint A",
+            display_position=1,
+            expected_fields='"a"',
+            file_uploader=None,
+            parser_config=JSONParserConfig().model_dump(),
+        )
+        _ = DonationBlueprint.objects.create(
+            project=self.project,
+            name="blueprint_b",
+            display_name="Blueprint B",
+            display_position=2,
+            expected_fields='"a"',
+            file_uploader=None,
+            parser_config=JSONParserConfig().model_dump(),
+        )
+        participant = Participant.objects.create(
+            project=self.project, start_time=timezone.now()
+        )
+
+        DataDonation.objects.create(
+            project=self.project,
+            blueprint=blueprint_a,
+            participant=participant,
+            time_submitted=timezone.now(),
+            consent=True,
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
+            n_data_entries=1,
+            data=["entry"],
+        )
+        DataDonation.objects.create(
+            project=self.project,
+            blueprint=blueprint_a,
+            participant=participant,
+            time_submitted=timezone.now(),
+            consent=True,
+            data_extraction_state=DataDonation.DataExtractionState.FAILED,
+            n_data_entries=0,
+            data=[],
+        )
+        # blueprint_b has no donations at all.
+        # An orphaned donation (blueprint deleted) must surface in its own row.
+        orphaned = DataDonation.objects.create(
+            project=self.project,
+            blueprint=blueprint_a,
+            participant=participant,
+            time_submitted=timezone.now(),
+            consent=True,
+            data_extraction_state=DataDonation.DataExtractionState.NOT_ATTEMPTED,
+            n_data_entries=0,
+            data=[],
+        )
+        orphaned.blueprint = None
+        orphaned.save(update_fields=["blueprint"])
+
+        results = self.project.get_blueprint_donation_status_counts()
+
+        by_blueprint_name = {
+            row["blueprint"].name if row["blueprint"] else None: row["counts"]
+            for row in results
+        }
+        # counts order: [DATA_EXTRACTED, NO_DATA_EXTRACTED, NOT_ATTEMPTED, FAILED]
+        self.assertEqual(by_blueprint_name["blueprint_a"], [1, 0, 0, 1])
+        self.assertEqual(by_blueprint_name["blueprint_b"], [0, 0, 0, 0])
+        self.assertEqual(by_blueprint_name[None], [0, 0, 1, 0])
+
+        # blueprint_a appears before blueprint_b (display_position order),
+        # and the orphaned row comes last.
+        ordered_names = [
+            row["blueprint"].name if row["blueprint"] else None for row in results
+        ]
+        self.assertEqual(ordered_names, ["blueprint_a", "blueprint_b", None])
 
     def test_create_url_id(self):
         new_project = DonationProject.objects.create(

@@ -1,0 +1,42 @@
+<div class="modal" id="blueprint-donation-status-modal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h4>Donation Status by Blueprint</h4>
+        <div class="table-responsive">
+          <table class="table blueprint-overview-table">
+            <thead>
+            <tr>
+              <th>Blueprint</th>
+              <th>Data Extracted</th>
+              <th>No Data Extracted</th>
+              <th>Not Attempted</th>
+              <th>Failed</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in status_counts %}
+              <tr>
+                <td>{{ row.blueprint.name|default:"(deleted blueprint)" }}</td>
+                {% for c in row.counts %}<td>{{ c }}</td>{% endfor %}
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="5">No donations recorded for this project yet.</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+            type="button"
+            class="ddm-btn-base ddm-btn-secondary"
+            data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

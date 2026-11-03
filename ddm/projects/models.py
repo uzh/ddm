@@ -3,6 +3,7 @@ from __future__ import annotations
 import binascii
 import datetime
 import os
+from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
@@ -10,7 +11,7 @@ from Crypto.PublicKey import RSA
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Avg, F, ImageField, QuerySet
+from django.db.models import Avg, Count, F, ImageField, QuerySet
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.safestring import mark_safe
@@ -382,17 +383,66 @@ class DonationProject(models.Model):
 
     def get_statistics(self) -> dict[str, Any]:
         participants = Participant.objects.filter(project=self)
+        donation_counts = DataDonation.objects.filter(
+            project=self,
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
+        ).aggregate(
+            n_donated_files=Count("id"),
+            n_donations=Count("participant_id", distinct=True),
+        )
         return {
             "n_started": participants.count(),
             "n_completed": participants.filter(completed=True).count(),
             "completion_rate": self.get_completion_rate(participants),
-            "n_donations": DataDonation.objects.filter(
-                project=self,
-                data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
-            ).count(),
+            "n_donations": donation_counts["n_donations"],
+            "n_donated_files": donation_counts["n_donated_files"],
             "n_errors": ExceptionLogEntry.objects.filter(project=self).count(),
             "average_time": self.get_average_completion_time(participants),
         }
+
+    def get_blueprint_donation_status_counts(self) -> list[dict[str, Any]]:
+        states = DataDonation.DataExtractionState
+        tracked_states = [
+            states.DATA_EXTRACTED,
+            states.NO_DATA_EXTRACTED,
+            states.NOT_ATTEMPTED,
+            states.FAILED,
+        ]
+        rows = (
+            DataDonation.objects.filter(project=self)
+            .values("blueprint_id", "data_extraction_state")
+            .annotate(n=Count("id"))
+        )
+        by_blueprint: dict[int | None, dict[str, int]] = defaultdict(dict)
+        for row in rows:
+            by_blueprint[row["blueprint_id"]][row["data_extraction_state"]] = row["n"]
+
+        results = []
+        for blueprint in self.donationblueprint_set.all():
+            state_counts = by_blueprint.get(blueprint.pk, {})
+            results.append(
+                {
+                    "blueprint": blueprint,
+                    "counts": [state_counts.get(s, 0) for s in tracked_states],
+                    "n_other": sum(
+                        v for k, v in state_counts.items() if k not in tracked_states
+                    ),
+                }
+            )
+
+        # Donations whose blueprint was deleted (DataDonation.blueprint is SET_NULL).
+        orphaned = by_blueprint.get(None, {})
+        if orphaned:
+            results.append(
+                {
+                    "blueprint": None,
+                    "counts": [orphaned.get(s, 0) for s in tracked_states],
+                    "n_other": sum(
+                        v for k, v in orphaned.items() if k not in tracked_states
+                    ),
+                }
+            )
+        return results
 
     def get_completion_rate(
         self, participants: QuerySet[Participant] | None = None

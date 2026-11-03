@@ -154,6 +154,9 @@ This version drops official support for Python versions < 3.12.
   connection), instead of failing silently with no feedback. Also fixed a
   related case where the "submitting" overlay could get stuck on screen
   indefinitely if there was no data to submit.
+- Fixed a rare server error that could occur the very first time a new
+  researcher account logged in, if two requests (e.g. two browser tabs)
+  arrived at almost the same moment.
 
 ### Deprecated
 

@@ -34,8 +34,7 @@ class DDMAuthMixin:
                 return redirect("ddm_login")
             raise Http404
 
-        if not ResearchProfile.objects.filter(user=request.user).exists():
-            ResearchProfile.objects.create(user=request.user)
+        ResearchProfile.objects.get_or_create(user=request.user)
 
         if not user_is_permitted(request.user):
             if request.method in ("GET", "POST"):

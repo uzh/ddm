@@ -1,167 +1,88 @@
 # Changelog
 
-# 3.0.0
+## 3.0.0
 
-This version drops official support for Python versions < 3.12.
+Drops official support for Python < 3.12.
 
+### Highlights
+
+v3.0.0 is a big release for both researchers and participants:
+
+- **Faster project setup** — duplicate, export, and import Projects, Blueprints, and Questions, and preview any project as a participant with the new Test Mode.
+- **More flexible data extraction** — Blueprints can now parse plain-text files, extract nested JSON (e.g. ChatGPT exports), and fall back to backup blueprints when extraction fails.
+- **More resilient questionnaires** — granular required/soft-required rules, input validation, a progress bar, and much sturdier autosaving, so participants no longer lose progress to a dropped connection or an abandoned session.
+- **Redesigned donation flow** — the donation interface now walks participants through Instructions → Upload → Review & Submit instead of one long page.
+- **Stronger security** — per-project encryption keys, several authorization and data-isolation fixes, zip-bomb protection, and new API rate limits.
 
 ### Added
 
-**General**
+#### General
 
-- Added `show project name` option to Projects to control whether the
-  project name should be displayed in the header of the participation interface.
-- The primary color (used for buttons, etc.) and background color of the
-  participant interface can now be customized per project.
-- **Copying projects, file uploaders, blueprints, and questionnaire**: There is now an option to
-  create copies of Blueprints and Questions within a Project.
-- **Export/Import function**: Projects, file uploaders, blueprints, and questionnaires can now
-  be exported and imported again (e.g., to share project configurations).
-- **Test mode**: A test mode to easily test a project from the participant's
-  perspective without having to use the participation link in an incognito mode.
+- **Copying Project Parts**: Projects, File Uploaders, Blueprints, and Questions can now be duplicated.
+- **Export/Import Project Parts**: Projects, File Uploaders, Blueprints, and Questionnaires can now be exported and re-imported (e.g. to share project configurations).
+- **Test mode**: Lets researchers preview a project as a participant without needing an incognito window.
+- **Participation interface customization**:
+  - The participant interface's primary (button) and background colors can now be customized per project.
+  - Added an option to show/hide the project name in the participation interface header.
 
-**Data Donation**
+#### Data Donation
 
-- **TXT file parsing**: Blueprints can now be configured to extract data from plain text
-  (`.txt`) files, in addition to the existing JSON and CSV support.
-  - New TXT-specific settings in the Blueprint form: record separator, field separator,
-    key-value separator, header/footer line skipping, blank-line ignoring, and whitespace
-    trimming — see the documentation for details and an example.
-  - TXT files are parsed by splitting content into records (e.g. by blank line), then into
-    labeled key-value fields within each record (e.g. `Date: 2026-04-01`), matching the
-    same field-extraction and processing-rule pipeline already used for JSON and CSV.
-- **Nested loop parsing**: JSON-Blueprints can now be configured to extract lists
-  contained within a root row. Enables the donation of, e.g., ChatGPT data exports.
-- **Backup blueprints**: Blueprints can now be configured with one or more backup blueprints
-  that are used as a fallback when the primary blueprint's parser fails to extract data.
-  - New `backup_for` field on `DonationBlueprint` links a blueprint to the primary blueprint
-    it backs up. Backup blueprints must use the same `FileUploader` and belong to the same
-    project as their primary; chained backups (a backup of a backup) are not permitted.
-  - New `backup_priority` field controls the order in which backups are attempted when
-    multiple are configured (lower values are tried first).
-  - In the data donation interface, if a primary blueprint's extraction fails but one
-    of its backups succeeds, the successful backup is shown to participants in place of the
-    failed primary.
-- Added `DataDonation.data_extraction_state` (replaces `DataDonation.status`) and `DataDonation.n_data_entries` to `DataDonation` model.
+- **TXT file parsing**: Blueprints can now extract data from plain text (`.txt`) files, in addition to JSON and CSV. New settings control record/field/key-value separators, header/footer skipping, blank-line handling, and whitespace trimming — see the documentation for details.
+- **Nested loop parsing**: JSON Blueprints can now extract lists nested within a root row, enabling donation of data such as ChatGPT exports.
+- **Backup blueprints**: A Blueprint can now define one or more backups (`backup_for`, `backup_priority`) used when its primary parser fails to extract data; backups must share the primary's `FileUploader` and project, and cannot be chained. If a primary fails but a backup succeeds, participants see the backup's result.
 
-**Questionnaire**
+#### Questionnaire
 
-- The questionnaire now caches responses and progress on browser reload for 24 hours or until the questionnaire configuration changes.
-- Open questions can now be configured to enforce `minimum lenght` and `maximum length` restrictions for text inputs
-  and `minimum value` and `maximum value` restrictions for number inputs.
-- Questions can now be configured as `not required`, `soft required` (can be skipped by participants after a warning),
-  and `hard required` (cannot be skipped by participants).
-- Responses are now saved in the database on every page advancement of a participant
-  to track questionnaire progress and not loose responses if a participants abandons
-  (previously, responses were only stored in the database, once a participant reached
-  the end of the questionnaire).
-- The questionnaire now shows a progress bar on top of the screen.
+- **Extended "Required" options**: Questions can now be configured as `not required`, `soft required` (skippable after a warning), or `hard required` (cannot be skipped).
+- **Input validation**: Open questions can now enforce minimum/maximum length (text) and minimum/maximum value (number) restrictions.
+- **Response caching**: Responses and progress are now cached in the browser for 24 hours or until the questionnaire configuration changes.
+- **Continuous progress saving**: Responses are now saved to the database on every page advancement, so progress isn't lost if a participant abandons partway through.
+- **Progress bar**: Added a progress bar to the top of the questionnaire.
 
 ### Changed
 
-- Donation interface now follows a three-step flow (Instructions → Upload → Review & Submit) instead of displaying all steps on one page.
-- Introduced ruff and refactored codebase to align.
-- Removed `null=True` from DonationBlueprint.regex_path, DonationBlueprint.description, ProcessingRule.comparison_operator
-  ExceptionLogEntry.exception_type, ScalePoint.heading_label, ScalePoint.input_label, QuestionItem.label, QuestionItem.label_alt, and FilterCondition.source_identifier.
-- Moved URL parameters extracted for a participant from `Particiapnt.extra_data["url_param"]` to dedicated `Participant.url_parameters` attribute.
-- `DownloadProjectDetailsView`, `DeleteParticipantAPI`, and `DeleteProjectData` now declare their project-ownership check via DRF `permission_classes` (consistent with the other API views) instead of an inline check in the view method; the 403 response body changed from `{"message": ...}` to DRF's standard `{"detail": ...}`.
-- Standard (non-"super secret") projects created from now on get their own
-  randomly generated encryption key (wrapped at rest, never derivable from
-  `SECRET_KEY` and a public timestamp alone); projects created before this
-  change, and "super secret" projects, are unaffected.
-- Added `nh3` as a new dependency, used to sanitize question item/scale
-  point labels on save.
+- **Redesigned donation interface**: Donation interface now uses a three-step flow (Instructions → Upload → Review & Submit) instead of a single page.
+
+### Security
+
+#### Vulnerabilities fixed
+
+- Fixed `DDMAuthMixin` skipping auth checks for non-GET/POST requests, which let unauthenticated `DELETE` requests bypass login/ownership checks.
+- Fixed `ResponsesApiView` missing a project-ownership check, which let any logged-in researcher read and decrypt another project's questionnaire responses.
+- Fixed `DonationDownloadView` not scoping a requested participant to the authorized project, which could let a project owner download another project's data by guessing its external ID.
+- Label sanitization: Question item and scale point labels are now sanitized on save (only a small set of formatting tags and the `class` attribute are kept), closing a stored-XSS path.
+- Participant data isolation: The questionnaire's locally cached draft is now scoped per participant, so a shared browser can no longer show one participant another's in-progress answers.
+
+#### Hardening
+
+- **Per-project encryption keys**: Standard (non-"super secret") projects now get their own randomly generated encryption key, wrapped at rest and never derivable from `SECRET_KEY` alone. Projects created before this change, and "super secret" projects, are unaffected.
+- **Zip-bomb protection**: The public data-donation upload now rejects a ZIP whose `data_donation.json` member decompresses past a configurable size cap (100 MB by default), instead of decompressing it unconditionally.
+- **API rate limiting**: Token-authenticated project API endpoints (overview, donations, responses, participant deletion) are now rate-limited per access token, configurable via `DDM_SETTINGS["PROJECT_API_THROTTLE_RATE"]`. The client-side error-reporting endpoint is now also rate-limited per IP, and can no longer attribute an uploader/blueprint from another project to a log entry.
+- `DownloadProjectDetailsView`, `DeleteParticipantAPI`, and `DeleteProjectData` now enforce their project-ownership check via DRF `permission_classes`, consistent with other API views, and now correctly log forbidden requests (previously skipped due to an inherited logging override). The 403 response body also changed from `{"message": ...}` to DRF's standard `{"detail": ...}`.
 
 ### Fixed
 
-- Fixed a bug where questionnaire filter conditions comparing numeric answers
-  (e.g. >, <, >=) could produce incorrect results, because it was being compared
-  as text rather than as a number (e.g. "9" was evaluated as greater than "10").
-- Fixed a bug where the required-question check for the questionnaire was only ever
-  performed once per session: after the first page with a missing required answer,
-  required questions on all following pages were no longer validated.
-- Data extraction now automatically ignores macOS garbage files
-  (e.g., `__MACOSX/`) folder or `._`-prefixed sibling files.
-- Client-side `EXTRACTED_FIELDS_MAP` logs are no longer always empty (`{}`); the
-  extracted-field mapping is now serialized correctly.
-- `ZIP_READ_FAIL` logs now carry the underlying reader error (and, for a failed
-  nested archive, its path and nesting depth) instead of only a generic message.
-- Fixed several database query inefficiencies in the API views (fixes
-  `Participation Overview` download that could lead to server timeouts for
-  projects with many donations/participants).
-- Fixed `DDMAuthMixin` skipping authentication/authorization checks for any
-  request method other than GET/POST, which allowed an unauthenticated
-  `DELETE` request to bypass login/ownership checks.
-- Fixed `ResponsesApiView` missing a project-ownership check, which allowed
-  any logged-in researcher to read and decrypt another project's
-  questionnaire responses.
-- Fixed `DownloadProjectDetailsView`/`DeleteParticipantAPI`/`DeleteProjectData`
-  not creating an event-log entry for a forbidden request due to an
-  inherited logging override shadowing it.
-- Fixed `DonationDownloadView` not scoping a requested participant to the
-  authorized project, which theoretically allowed a project owner to download another
-  project's participant data by guessing its external ID.
-- The public data-donation upload now rejects a ZIP whose `data_donation.json`
-  member decompresses past a configurable size cap (100 MB by default)
-  before reading it into memory, instead of decompressing it unconditionally.
-- Question item and scale point labels (`Label`, `Label Right`, `Input label`,
-  `Heading label`) are now sanitized on save: only a small set of formatting
-  tags and the `class` attribute are kept, closing a stored-XSS path while
-  still letting researchers do basic styling of labels.
-- Fixed `ResponsesApiView` crashing for every "super secret" project; both
-  `ResponsesApiView` and `ProjectDonationsListView` now accept that
-  project's secret via a new `X-Project-Secret` request header instead
-  (`ProjectDonationsListView` previously hard-disabled "super secret"
-  projects entirely).
-- Fixed a race where a delayed in-progress autosave could land after a
-  participant's final questionnaire submission and silently revert it
-  back to "incomplete" with stale data; a late autosave can no longer
-  overwrite an already-completed response.
-- Fixed questionnaire submission and autosave crashing (500) when the
-  posted data omitted the `"responses"` key; it's now treated as an
-  empty response set instead.
-- Fixed data donation processing crashing on a non-numeric blueprint id,
-  and silently dropping every blueprint after an unresolvable one in the
-  same upload; each blueprint is now processed independently.
-- Improved reliability of the final questionnaire submission: the locally
-  cached progress is now only cleared once the backend has confirmed the
-  submission, and if a submission can't go through (e.g. a brief connection
-  issue), the participant now sees an error message and can simply retry.
-- The questionnaire's locally cached draft is now scoped to the individual
-  participant, so a shared or reused browser can never show one
-  participant another's in-progress answers.
-- Fixed a double-click or a retried POST on a data donation submission
-  creating a duplicate donation record for the same participant; a
-  resubmission now updates the existing record instead.
-- The database queries on the questionnaire overview page were optimized,
-  noticeably speeding up this page for larger questionnaires.
-- The database queries on the data donation overview page were optimized,
-  speeding up the page for projects with many uploaders, blueprints, or backup blueprints.
-- The client-side error-reporting endpoint can no longer attribute an
-  uploader or blueprint from another project to a log entry, and is now
-  rate-limited per IP address.
-- The data donation uploader now reports its processing logs in a single
-  request per upload instead of one request per log entry, reducing
-  network overhead for uploads matched against many blueprints and
-  retrying automatically on a dropped connection.
-- The token-authenticated project API endpoints (project overview,
-  donations, responses, participant deletion) are now rate-limited per
-  access token, configurable via `DDM_SETTINGS["PROJECT_API_THROTTLE_RATE"]`.
-- Fixed "all-in-one consent" being unusable for every File Uploader after
-  the first, whenever a project had more than one Uploader: clicking
-  "Yes"/"No" on any Uploader but the first always re-selected the first
-  Uploader's consent instead of its own.
-- The data donation uploader now shows a visible error message and lets
-  the participant retry if their final submission fails (e.g. a dropped
-  connection), instead of failing silently with no feedback. Also fixed a
-  related case where the "submitting" overlay could get stuck on screen
-  indefinitely if there was no data to submit.
-- Fixed a rare server error that could occur the very first time a new
-  researcher account logged in, if two requests (e.g. two browser tabs)
-  arrived at almost the same moment.
-- Fixed the questionnaire's window resize listener never actually being
-  removed when its component unmounts, due to a cleanup bug (no observable
-  effect today, since the component is only ever mounted once per page).
+- **Filter conditions**: Fixed numeric filter-condition comparisons (`>`, `<`, `>=`) being evaluated as text, so e.g. "9" was treated as greater than "10".
+- **Required-question validation**: Fixed the required-question check only running once per session, so missing-answer validation stopped working on later pages after the first catch.
+- **Multi-uploader consent**: Fixed "all-in-one consent" for any File Uploader after the first: clicking "Yes"/"No" always applied to the first Uploader's consent instead of its own.
+- **Performance**: Fixed several inefficient database queries in the API views, including one that could time out the `Participation Overview` download for projects with many donations/participants; also optimized queries on the questionnaire and data donation overview pages for larger projects.
+- **In-progress autosave reliability**: Fixed a race where a delayed autosave could land after a participant's final submission and revert it to "incomplete" with stale data, and a crash (500) when posted data omitted the `"responses"` key (now treated as empty). Locally cached progress is now only cleared once the backend confirms submission, and a failed submission shows an error instead of failing silently.
+- **Data donation processing**: Fixed processing crashing on a non-numeric blueprint id and silently dropping subsequent blueprints in the same upload; each is now processed independently.
+- **Duplicate submissions**: Fixed a double-click or retried POST creating duplicate donation records; a resubmission now updates the existing record.
+- **Upload submission UX**: The data donation uploader now shows an error and lets participants retry a failed final submission, instead of failing silently; also fixed the "submitting" overlay getting stuck when there was no data to submit. Processing logs are now sent in a single request per upload (instead of one per log entry) and retried automatically on a dropped connection.
+- Fixed `ResponsesApiView` crashing for "super secret" projects; it and `ProjectDonationsListView` now accept that project's secret via a new `X-Project-Secret` header (previously disabled for `ProjectDonationsListView` entirely).
+- Fixed a rare server error on a new researcher's first login if two requests arrived nearly simultaneously.
+- Fixed client-side `EXTRACTED_FIELDS_MAP` logs always showing empty (`{}`).
+- Data extraction now ignores macOS garbage files (`__MACOSX/` folders, `._`-prefixed files).
+- `ZIP_READ_FAIL` logs now include the underlying reader error, and the path/nesting depth for a failed nested archive.
+
+### Technical
+
+- Added `DataDonation.data_extraction_state` (replaces `DataDonation.status`) and `DataDonation.n_data_entries`.
+- Introduced ruff and refactored the codebase to comply.
+- Removed `null=True` from several model fields (`DonationBlueprint.regex_path`/`.description`, `ProcessingRule.comparison_operator`, `ExceptionLogEntry.exception_type`, `ScalePoint.heading_label`/`.input_label`, `QuestionItem.label`/`.label_alt`, `FilterCondition.source_identifier`).
+- Moved a participant's URL parameters from `Participant.extra_data["url_param"]` to a dedicated `Participant.url_parameters` field.
+- Added `nh3` as a new dependency, used by the label-sanitization fix (see Security).
 
 ### Deprecated
 

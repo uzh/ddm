@@ -1,3 +1,77 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "django-ddm"
+version = "3.0.0.dev0"
+description = "A Django app to set up data donation projects."
+readme = "README.md"
+license = { text = "GPLv3" }
+authors = [
+    { name = "Nico Pfiffner", email = "n.pfiffner@ikmz.uzh.ch" },
+]
+requires-python = ">=3.12"
+classifiers = [
+    "Environment :: Web Environment",
+    "Framework :: Django",
+    "Framework :: Django :: 5.2",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "Django>=5.2,<6",
+    "pycryptodome",
+    "pydantic>=2,<3",
+    "django-ckeditor-5",
+    "django-filter",
+    "django-polymorphic",
+    "django-webpack-loader",
+    "djangorestframework",
+    "nh3",
+    "sqlparse",
+    "asgiref",
+]
+
+[project.urls]
+Homepage = "https://github.com/uzh/ddm"
+Documentation = "https://uzh.github.io/ddm/"
+Website = "https://datadonation.uzh.ch"
+
+[dependency-groups]
+dev = [
+    "coverage",
+    "django-browser-reload",
+    "django-csp",
+    "django-debug-toolbar",
+    "django-watchfiles",
+    "pandas",
+    "pip-audit",
+    "pre-commit",
+    "python-dotenv",
+    "ruff",
+    "selenium",
+    "webdriver_manager",
+]
+docs = [
+    "mkdocs-material",
+    "mike",
+    "mkdocs-redirects",
+]
+db-drivers = [
+    "psycopg2-binary",
+    "mysqlclient",
+]
+
+[tool.setuptools.packages.find]
+include = ["ddm*"]
+
+[tool.setuptools]
+include-package-data = true
+
 # ==== Coverage ====
 [tool.coverage.run]
 include = ["ddm/**"]

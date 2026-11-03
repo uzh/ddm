@@ -28,13 +28,15 @@ repos:
       - id: django-upgrade
         args: ['--target-version', '5.2']
 
-  - repo: https://github.com/pypa/pip-audit
-    rev: v2.10.0
+  - repo: local
     hooks:
-      -   id: pip-audit
-          stages: [pre-push]
-          files: ^requirements/.*\.txt$
-          args: ["-r", "requirements/base.txt", "-r", "requirements/dev.txt"]
+      - id: pip-audit
+        name: pip-audit
+        stages: [pre-push]
+        language: system
+        files: ^(pyproject\.toml|uv\.lock)$
+        pass_filenames: false
+        entry: bash -c 'uv export --no-hashes --no-emit-project --group dev | uv run pip-audit -r -'
 
   # Run the Ruff linter.
   - repo: https://github.com/astral-sh/ruff-pre-commit

@@ -9,22 +9,34 @@ learn more about its development in general.
 
 The repository includes a django test project that can be used for local development and testing.
 
+#### Prerequisites
+
+Development uses [uv](https://docs.astral.sh/uv/) to manage the Python interpreter, virtual
+environment, and dependencies. Install it first — see the
+[official installation instructions](https://docs.astral.sh/uv/getting-started/installation/).
+uv itself picks up the Python version from the repository's `.python-version` file (currently
+`3.12`); it will download that interpreter automatically if you don't already have it.
+
 #### Setup
 
 ##### Install required packages
 
-Once you have cloned or forked the GitHub repository, activate your local virtual environment and install the following requirements:
+Once you have cloned or forked the GitHub repository, run:
 
 ```
-(venv) <...>/ddm> pip install -r requirements/base.txt
-(venv) <...>/ddm> pip install -r requirements/dev.txt
+<...>/ddm> uv sync --group dev
 ```
+
+This creates (or updates) a `.venv` in the repository root and installs the base runtime
+dependencies plus the `dev` dependency group (test/lint tooling) as pinned in `uv.lock`. There's
+no separate `python -m venv` step — `uv sync` manages the virtual environment for you. If you
+also want to build the documentation locally, add the `docs` group: `uv sync --group dev --group docs`.
 
 ##### Install pre-commit hooks
 
 ```
-(venv) <...>/ddm> pre-commit install
-(venv) <...>/ddm> pre-commit install --hook-type pre-push   # enables pip-audit on push
+<...>/ddm> uv run pre-commit install
+<...>/ddm> uv run pre-commit install --hook-type pre-push   # enables pip-audit on push
 ```
 
 ##### Adjust Test Configuration
@@ -39,14 +51,15 @@ shared repository.
 
 #### Commands
 
-Through the setup described above, the regular django commands are now available:
+Prefix the regular django commands with `uv run` so they execute inside the project's managed
+virtual environment:
 
 ##### Run Development Server
 
 To start the development server use the following commands:
 
 ```
-(venv) <...>/ddm/test_project> python manage.py runserver
+<...>/ddm> uv run python test_project/manage.py runserver
 ```
 
 ##### Create Database Migrations
@@ -54,7 +67,7 @@ To start the development server use the following commands:
 To create new migrations based on the changes made to the models, run:
 
 ```
-(venv) <...>/ddm/test_project> python manage.py makemigrations
+<...>/ddm> uv run python test_project/manage.py makemigrations
 ```
 
 ##### Apply migrations
@@ -62,7 +75,7 @@ To create new migrations based on the changes made to the models, run:
 To apply existing migrations to your local database, run: (If you are running a version of Python < 3.9, you might have to manually enable the JSON1 extension on SQLite for the migration to work properly. For an explanation on how to do this visit https://code.djangoproject.com/wiki/JSON1Extension.)
 
 ```
-(venv) <...>/ddm/test_project> python manage.py migrate
+<...>/ddm> uv run python test_project/manage.py migrate
 ```
 
 ##### Run Unit Tests
@@ -70,17 +83,27 @@ To apply existing migrations to your local database, run: (If you are running a 
 To run unit tests, use:
 
 ```
-(venv) <...>/ddm/test_project> python manage.py test ddm
+<...>/ddm> uv run python test_project/manage.py test ddm
+```
+
+##### Lint and Format
+
+Ruff and djLint are run automatically by pre-commit, but can also be run directly:
+
+```
+<...>/ddm> uv run ruff check .
+<...>/ddm> uv run djlint .
 ```
 
 ##### Sass Compilation
 
-To compile the scss file, sass is used.
+To compile the scss file, sass is used. This is a separate, Node-based toolchain —
+independent of the Python/uv setup above.
 
 ```
-(venv) <...>/ddm/> npm install
-(venv) <...>/ddm/> npm run sass:watch  # To run watcher during development
-(venv) <...>/ddm/> npm run sass:build  # To build file for distribution
+<...>/ddm/> npm install
+<...>/ddm/> npm run sass:watch  # To run watcher during development
+<...>/ddm/> npm run sass:build  # To build file for distribution
 ```
 
 ### Vue Integration (Frontend)
@@ -151,9 +174,12 @@ This project uses _GitHub actions_ for automated testing and CI tasks.
 
 #### GitHub Actions
 
+All workflows install dependencies with `uv sync` from the committed `uv.lock`, so CI uses
+exactly the same resolved dependency versions as local development.
+
 A **push to develop** triggers build tests for the following configurations:
 
-- Python: [3.8, 3.10.4]
+- Python: [3.12, 3.14]
 - Database: [sqlite, mysql]
 
 A **tag (vX.X.X) push to develop** triggers build tests (see above). If the tests are successful
@@ -161,12 +187,14 @@ develop is automatically merged into main.
 
 !!! info
 
-    Please make sure that pushed tags are in sync with package versions on PyPi.
+    Please make sure that pushed tags are in sync with the version in `pyproject.toml` (see
+    [Release](#release) below).
 
     If the build-tests of a pushed tag fail, delete the tag (To delete a tag, first run `git tag -d tagname` then `git push --delete origin tagname`.) and push the fixed version again with the same tag until the tests run through.
 
-A **push to main** triggers build tests and if the tests are successful, automatically
-bumps the version number (patch number) and builds a new PyPi package.
+A **push to main** triggers build tests and, if the tests are successful, builds and publishes
+a new PyPI package using the version already set in `pyproject.toml` (see
+[Release](#release) — there is no automatic version bump; the version must be set beforehand).
 The tests have the same configurations as on develop.
 
 A **pull request to main created by dependabot** will automatically update the
@@ -196,11 +224,21 @@ A **pull request to main created by dependabot** triggers the following pipeline
 
 #### Release
 
-A new **release** is created manually and includes:
+Releases are versioned statically in `pyproject.toml` — there is no tag-driven or
+automatic version bumping. A new **release** is created manually:
 
-- Bumping the minor or major part of the version.
-- Updating setup.cfg.
-- Ideally, add a changelog.
+1. Bump the version: `uv run uv version X.Y.Z` (or `uv version X.Y.Z` if `uv` is on your
+   `PATH` directly). This updates the `version` field in `pyproject.toml`.
+2. Commit the bump and, ideally, add a changelog entry.
+3. Tag the commit `vX.Y.Z` and push the tag — this is what triggers the build/test/merge
+   pipeline described above, and ultimately the PyPI publish.
+
+Pre-releases follow the same flow with a [PEP 440](https://peps.python.org/pep-0440/)
+pre-release version (e.g. `uv version 3.0.0b5`), tagged `preX.Y.Zb<n>`.
+
+Publishing itself uses `uv build` + `uv publish` with
+[PyPI Trusted Publishing](https://docs.pypi.org/trusted-publishers/) (OIDC) — there is no
+`PYPI_API_TOKEN` secret or `sed`-based version-stamping step involved anymore.
 
 ### Documentation
 

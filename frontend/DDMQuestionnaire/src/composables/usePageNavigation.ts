@@ -21,6 +21,8 @@ import { usePersistedRef } from './usePersistedRef'
  * @param participantId - The current participant's external id, scoping the
  *   persisted current-page cache the same way `usePersistedRef` scopes the
  *   persisted responses cache in `QuestionnaireApp.vue`.
+ * @param initialPage - In test mode, a page to land on initially instead of
+ *   `minPage`, overriding it on every mount (including a reload).
  */
 export function usePageNavigation(
   questionnaireConfig: Ref<QuestionnaireConfig>,
@@ -29,7 +31,8 @@ export function usePageNavigation(
   questionItemMap: Record<string, string[]>,
   missingValue: string,
   rootElement: Ref<HTMLElement | null>,
-  participantId?: string
+  participantId?: string,
+  initialPage?: number
 ) {
   const { state: currentPage, clearProgress: clearCurrentPage } = usePersistedRef(
     'questionnaire-current-page',
@@ -70,6 +73,10 @@ export function usePageNavigation(
     } else {
       minPage.value = Math.min(...pages);
       maxPage.value = Math.max(...pages);
+    }
+    if (initialPage !== undefined && initialPage >= minPage.value && initialPage <= maxPage.value) {
+      currentPage.value = initialPage;
+      return;
     }
     // Only default currentPage to minPage if it wasn't already restored
     // from persisted state (i.e. it's still at usePersistedRef's default).

@@ -12,6 +12,12 @@ Downloading the data through the Project Hub is a two-step process.
 
 First, go to the Project Hub, scroll down to the section "Data Center" and download the Participation Overview:
 
+!!! note "Test runs"
+
+    Test runs made through the project's [Test Link](../topics/test_mode.md) are included here, unless you
+    used that link to jump between steps - see [Test Mode](../topics/test_mode.md#test-runs-in-your-data-and-exports)
+    for details. They are marked as `is_test_case`.
+
 <!-- TODO: screenshot missing in the old docs too — capture "Participation Overview Download" and add as download_participation_overview.png -->
 This will download a CSV file containing one row for every participant that has started participation in the project
 (i.e., this also contains participants that have not completed the donation). The file includes the following variables:

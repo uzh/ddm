@@ -6,6 +6,7 @@ This section contains further information on a range of specific topics. These t
 project's data.
 - [Continuation](continuation.md): A description on how you can implement a participation flow that allows
 your participants to continue their donation at a later point in time or on a different device.
+- [Test Mode](test_mode.md): How to use the project's Test Link to try out your project.
 - [Project Logs](project_logs.md): A description of the events that are logged as part of the
 [Project Logs](../data_center/project_logs.md).
 - [Template Rendering](templating_features.md): A complete description of all the options available in DDM

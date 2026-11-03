@@ -80,6 +80,18 @@ class TestDonationProject(TestCase):
         self.project.primary_color = "#aa3377"
         self.assertNotEqual(self.project.theme_version, version_before)
 
+    def test_regenerate_test_token_changes_token(self):
+        old_token = self.project.test_token
+        self.project.regenerate_test_token()
+        self.project.refresh_from_db()
+        self.assertNotEqual(self.project.test_token, old_token)
+
+    def test_two_projects_get_distinct_test_tokens(self):
+        other = DonationProject.objects.create(
+            name="Other Project", slug="other", owner=self.user_profile
+        )
+        self.assertNotEqual(self.project.test_token, other.test_token)
+
 
 @override_settings(DDM_SETTINGS={"EMAIL_PERMISSION_CHECK": r".*(\.|@)mail\.com$"})
 class TestDonationProjectEncryption(TestCase):

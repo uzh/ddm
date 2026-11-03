@@ -16,6 +16,7 @@
       data-progress-url='{% url "ddm_participation:questionnaire_progress" project.slug %}'
       data-language='{{ LANGUAGE_CODE|slice:"0:2" }}'
       data-participant-id="{{ participant_id }}"
+      data-test-initial-page="{{ test_initial_page|default:'' }}"
       class="text-black"
     >
       {{ q_config|json_script:"q-config-data" }}
@@ -31,6 +32,7 @@
 {% endblock content %}
 
 {% block extrascripts %}
+  {{ block.super }}
   {% for script in extra_scripts %}
   {{ script|safe }}
   {% endfor %}

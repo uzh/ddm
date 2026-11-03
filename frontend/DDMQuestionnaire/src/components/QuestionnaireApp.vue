@@ -20,6 +20,8 @@
  * - `participantId` (String): The current participant's external id, used to
  *   scope the locally cached draft (see `usePersistedRef`) so it can't be
  *   inherited by a different participant sharing the same browser.
+ * - `initialPage` (Number): In test mode, the page to land on initially
+ *   instead of the questionnaire's first page.
  */
 import { useI18n } from 'vue-i18n';
 const { t, locale } = useI18n();
@@ -47,7 +49,8 @@ const props = defineProps<{
   actionUrl: string,
   progressUrl?: string,
   language: string,
-  participantId?: string
+  participantId?: string,
+  initialPage?: number
 }>();
 
 // Constants
@@ -88,7 +91,8 @@ const { currentPage, lastPageSubmitted, next, clearCurrentPage, pageIndexMap } =
     questionItemMap,
     MISSING_VALUE,
     questionnaireRoot,
-    props.participantId
+    props.participantId,
+    props.initialPage
 );
 const { scrollToTop, scrollToFirstValidationIssue } = useScrollHandler()
 

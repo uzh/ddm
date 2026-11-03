@@ -797,3 +797,186 @@ class TestProjectThemeView(ParticipationFlowBaseTestCase):
         self.assertIn("--bg-color-light: #fdf3e740", content)
         self.assertIn("--color-main-green-darker: #aa337780", content)
         self.assertIn("--ddm-primary-accent: #aa337780", content)
+
+
+class TestTestMode(ParticipationFlowBaseTestCase):
+    def test_valid_token_creates_fresh_flagged_participant(self):
+        token = self.project_base.test_token
+        n_before = Participant.objects.count()
+
+        response = self.client.get(self.briefing_url + f"?test={token}")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Participant.objects.count(), n_before + 1)
+
+        participant = self.get_participant(self.project_base.pk)
+        self.assertTrue(participant.is_test)
+        self.assertFalse(participant.test_flow_broken)
+
+    def test_revisiting_bare_test_link_starts_a_new_participant_each_time(self):
+        token = self.project_base.test_token
+
+        self.client.get(self.briefing_url + f"?test={token}")
+        first = self.get_participant(self.project_base.pk)
+
+        self.client.get(self.briefing_url + f"?test={token}")
+        second = self.get_participant(self.project_base.pk)
+
+        self.assertNotEqual(first.pk, second.pk)
+        self.assertTrue(second.is_test)
+
+    def test_step_and_page_requests_reuse_the_active_test_participant(self):
+        # Using step=/page= to move to different parts of one ongoing test
+        # run should not spawn a new participant each time - only a *bare*
+        # test link (no step/page) is a deliberate "start over".
+        token = self.project_base.test_token
+
+        self.client.get(self.briefing_url + f"?test={token}&step=questionnaire")
+        first = self.get_participant(self.project_base.pk)
+
+        self.client.get(self.briefing_url + f"?test={token}&step=questionnaire&page=4")
+        second = self.get_participant(self.project_base.pk)
+        self.assertEqual(first.pk, second.pk)
+        self.assertEqual(second.extra_data["test_initial_page"], "4")
+
+        self.client.get(self.briefing_url + f"?test={token}&step=questionnaire&page=2")
+        third = self.get_participant(self.project_base.pk)
+        self.assertEqual(first.pk, third.pk)
+        self.assertEqual(third.extra_data["test_initial_page"], "2")
+
+    def test_banner_includes_step_and_page_navigation(self):
+        token = self.project_base.test_token
+        response = self.client.get(self.briefing_url + f"?test={token}")
+
+        self.assertContains(response, 'id="test-nav-step"')
+        self.assertContains(response, 'value="questionnaire"')
+        self.assertContains(response, 'id="test-nav-page"')
+        # The fixture's single question defaults to page 1.
+        self.assertContains(response, '<option value="1">')
+
+    def test_test_mode_helper_script_loads_on_questionnaire_page(self):
+        token = self.project_base.test_token
+        self.client.get(self.briefing_url + f"?test={token}&step=questionnaire")
+
+        self.create_data_donation()
+        response = self.client.get(self.quest_url)
+        self.assertContains(response, "test-mode-helper.js")
+
+    def test_bare_test_link_after_step_jump_still_starts_a_new_participant(self):
+        token = self.project_base.test_token
+
+        self.client.get(self.briefing_url + f"?test={token}&step=questionnaire")
+        jumped = self.get_participant(self.project_base.pk)
+
+        self.client.get(self.briefing_url + f"?test={token}")
+        restarted = self.get_participant(self.project_base.pk)
+
+        self.assertNotEqual(jumped.pk, restarted.pk)
+        self.assertFalse(restarted.test_flow_broken)
+
+    def test_mismatched_token_shows_disabled_page_without_creating_participant(self):
+        n_before = Participant.objects.count()
+
+        response = self.client.get(self.briefing_url + "?test=not-the-real-token")
+
+        self.assertEqual(response.status_code, 403)
+        self.assertTemplateUsed(response, "ddm_participation/test_link_disabled.html")
+        self.assertEqual(Participant.objects.count(), n_before)
+        self.assertNotIn(f"project-{self.project_base.pk}", self.client.session)
+
+    def test_regenerated_token_disables_old_link_but_keeps_old_participants(self):
+        old_token = self.project_base.test_token
+        self.client.get(self.briefing_url + f"?test={old_token}")
+        old_test_participant = self.get_participant(self.project_base.pk)
+
+        self.project_base.regenerate_test_token()
+
+        response = self.client.get(self.briefing_url + f"?test={old_token}")
+        self.assertEqual(response.status_code, 403)
+
+        old_test_participant.refresh_from_db()
+        self.assertTrue(Participant.objects.filter(pk=old_test_participant.pk).exists())
+
+    def test_step_jump_sets_current_step_and_flags_flow_broken(self):
+        # Note: Checked without `follow`: the open question in the fixture is
+        # tied to a blueprint, so a jumped participant with no donation
+        # would have its (now-empty) questionnaire auto-skipped to
+        # debriefing by QuestionnaireView's own, unrelated logic, which
+        # would otherwise be mistaken for the jump itself misbehaving.
+        token = self.project_base.test_token
+        response = self.client.get(
+            self.briefing_url + f"?test={token}&step=questionnaire"
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, self.quest_url)
+
+        participant = self.get_participant(self.project_base.pk)
+        self.assertEqual(participant.current_step, 2)
+        self.assertTrue(participant.test_flow_broken)
+        self.assertTrue(participant.is_test)
+
+    def test_step_jump_to_briefing_itself_does_not_flag_flow_broken(self):
+        token = self.project_base.test_token
+        self.client.get(self.briefing_url + f"?test={token}&step=briefing")
+
+        participant = self.get_participant(self.project_base.pk)
+        self.assertEqual(participant.current_step, 0)
+        self.assertFalse(participant.test_flow_broken)
+
+    def test_plain_test_link_without_step_does_not_flag_flow_broken(self):
+        token = self.project_base.test_token
+        self.client.get(self.briefing_url + f"?test={token}")
+
+        participant = self.get_participant(self.project_base.pk)
+        self.assertFalse(participant.test_flow_broken)
+
+    def test_page_param_is_stashed_on_participant_and_passed_to_questionnaire(self):
+        token = self.project_base.test_token
+        self.client.get(self.briefing_url + f"?test={token}&step=questionnaire&page=3")
+
+        participant = self.get_participant(self.project_base.pk)
+        self.assertEqual(participant.extra_data["test_initial_page"], "3")
+
+        # Give the jumped participant a donation so the blueprint-linked
+        # open question isn't filtered out of q_config as "nothing to ask
+        # about" - otherwise QuestionnaireView.get() would auto-skip to
+        # debriefing.
+        self.create_data_donation()
+
+        response = self.client.get(self.quest_url)
+        self.assertContains(response, 'data-test-initial-page="3"')
+
+    def test_briefing_post_with_lingering_test_param_does_not_restart_participant(self):
+        """A POST to the same URL (e.g. the briefing form) must not be
+        treated as a fresh test-link visit, even if `test=` is still on
+        the URL - otherwise every form submission would wipe progress."""
+        token = self.project_base.test_token
+        self.client.get(self.briefing_url + f"?test={token}")
+        participant_before = self.get_participant(self.project_base.pk)
+
+        response = self.client.post(self.briefing_url + f"?test={token}")
+
+        participant_after = self.get_participant(self.project_base.pk)
+        self.assertEqual(participant_before.pk, participant_after.pk)
+        self.assertEqual(participant_after.current_step, 1)
+        self.assertRedirects(response, self.dd_url)
+
+    def test_normal_participation_link_is_unaffected(self):
+        response = self.client.get(self.briefing_url)
+        self.assertEqual(response.status_code, 200)
+
+        participant = self.get_participant(self.project_base.pk)
+        self.assertFalse(participant.is_test)
+        self.assertFalse(participant.test_flow_broken)
+
+    def test_test_mode_banner_shown_only_for_test_participant(self):
+        normal_response = self.client.get(self.briefing_url)
+        self.assertNotContains(normal_response, "Test Mode")
+
+        token = self.project_base.test_token
+        test_response = self.client.get(self.briefing_url + f"?test={token}")
+        self.assertContains(test_response, "Test Mode")
+
+    def test_banner_restart_link_points_to_current_test_token(self):
+        token = self.project_base.test_token
+        response = self.client.get(self.briefing_url + f"?test={token}")
+        self.assertContains(response, f"{self.briefing_url}?test={token}")

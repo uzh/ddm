@@ -2,13 +2,16 @@ import json
 from pathlib import Path
 from typing import Any
 
+from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.staticfiles import finders
 from django.db.models import QuerySet
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.text import Truncator
-from django.views.generic.detail import DetailView
+from django.views import View
+from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
@@ -87,6 +90,22 @@ class ProjectDetail(BaseProjectMixin, DetailView):
         crumbs = super().get_breadcrumbs()
         crumbs.append(self._project_crumb(is_linked=False))
         return crumbs
+
+
+class ProjectRegenerateTestToken(BaseProjectMixin, SingleObjectMixin, View):
+    """Rotates a project's test-mode token, invalidating its old test link."""
+
+    model = DonationProject
+    slug_url_kwarg = "project_url_id"
+    slug_field = "url_id"
+
+    def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        project = self.get_object()
+        project.regenerate_test_token()
+        messages.success(request, "Test link regenerated.")
+        return redirect(
+            reverse("ddm_projects:detail", kwargs={"project_url_id": project.url_id})
+        )
 
 
 class ProjectEditBase(BaseProjectMixin, UpdateView):

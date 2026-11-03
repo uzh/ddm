@@ -28,7 +28,28 @@
             {{ request.scheme }}://{{ request.get_host }}{% url 'ddm_participation:briefing' object.slug %}
           </a>
         </p>
-        <p class="m-0 helptext fc-muted">Test it by opening this link in a private window</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-sm-3 col-lg-2">
+        <span class="property-name">Test Link</span>
+      </div>
+      <div class="col-12 col-sm-9">
+        <p class="m-0">
+          <a href="{% url 'ddm_participation:briefing' object.slug %}?test={{ object.test_token }}" target="_blank">
+            {{ request.scheme }}://{{ request.get_host }}{% url 'ddm_participation:briefing' object.slug %}?test={{ object.test_token }}
+          </a>
+        </p>
+        <p class="m-0 helptext fc-muted mb-2">
+          Starts a new test run each time. Runs appear in exports flagged as tests,
+          unless you jumped between steps. Regenerating disables old links;
+          collected data is kept.
+        </p>
+        <form method="post" action="{% url 'ddm_projects:regenerate_test_token' object.url_id %}" class="d-inline mt-2">
+          {% csrf_token %}
+          <button type="submit" class="ddm-btn-base ddm-btn-secondary fs-08">Regenerate Test Link</button>
+        </form>
       </div>
     </div>
 

@@ -1,0 +1,36 @@
+<div class="fs-08 alert alert-dark text-center mb-0 rounded-0 py-2 d-flex justify-content-center align-items-center gap-2" role="status">
+  <span>
+    Test Mode -
+    this run is marked as test data.
+  </span>
+  <form method="get" action="{% url 'ddm_participation:briefing' project.slug %}"
+        class="d-inline-flex align-items-center gap-1 m-0 ps-2 pe-2 border-start border-end" id="test-nav-form">
+    <p>Navigate to: </p>
+    <input type="hidden" name="test" value="{{ project.test_token }}" />
+    <select name="step" id="test-nav-step" class="form-select form-select-sm w-auto mt-0 fs-08">
+      <option value="briefing" {% if test_current_step_slug == "briefing" %}selected{% endif %}>
+        Briefing
+      </option>
+      <option value="datadonation" {% if test_current_step_slug == "datadonation" %}selected{% endif %}>
+        Data Donation
+      </option>
+      <option value="questionnaire" {% if test_current_step_slug == "questionnaire" %}selected{% endif %}>
+        Questionnaire
+      </option>
+      <option value="debriefing" {% if test_current_step_slug == "debriefing" %}selected{% endif %}>
+        Debriefing
+      </option>
+    </select>
+    <select name="page" id="test-nav-page" class="form-select form-select-sm w-auto d-none mt-0 fs-08">
+      <option value="">Continue</option>
+      {% for page_number in test_questionnaire_pages %}
+        <option value="{{ page_number }}">
+          Page {{ page_number }}
+        </option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="ddm-btn-dark ddm-btn-small fs-08 fw-normal ms-2 rounded-1">Go</button>
+  </form>
+  <a href="{% url 'ddm_participation:briefing' project.slug %}?test={{ project.test_token }}"
+     class="ddm-btn-base ddm-btn-dark ddm-btn-small fs-08 fw-normal border-start rounded-1">Start new test run</a>
+</div>

@@ -44,6 +44,11 @@ urlpatterns = [
         r"<slug:project_url_id>/delete/", views.ProjectDelete.as_view(), name="delete"
     ),
     path(
+        r"<slug:project_url_id>/regenerate-test-token/",
+        views.ProjectRegenerateTestToken.as_view(),
+        name="regenerate_test_token",
+    ),
+    path(
         r"<slug:project_url_id>/briefing/",
         views.BriefingEdit.as_view(),
         name="briefing_edit",

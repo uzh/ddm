@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import binascii
 import datetime
+import os
 from pathlib import Path
 from typing import Any
 
@@ -44,6 +46,16 @@ class ResearchProfile(models.Model):
 
 def project_header_dir_path(instance: DonationProject, filename: str) -> str:
     return f"project_{instance.pk}/headers/{filename}"
+
+
+def generate_test_token() -> str:
+    """Generates an unguessable test-mode token.
+
+    Same mechanism as ProjectAccessToken.generate_key() (see
+    ddm.auth.models) - a plain hex string rather than a UUID, for
+    consistent, backend-portable storage.
+    """
+    return binascii.hexlify(os.urandom(20)).decode()
 
 
 DEFAULT_PRIMARY_COLOR = "#007b74"
@@ -208,6 +220,11 @@ class DonationProject(models.Model):
         help_text="Participants can only take part in a project if it is active.",
     )
 
+    # Test mode. Project-scoped token that grants only "start a flagged test run
+    # of this project" when passed as a `?test=` URL parameter on the
+    # participation link.
+    test_token = models.CharField(max_length=40, unique=True, editable=False)
+
     custom_uploader_translations = models.JSONField(
         blank=True,
         null=False,
@@ -255,6 +272,9 @@ class DonationProject(models.Model):
             self.url_id = create_asciidigits_id(8)
             while DonationProject.objects.filter(url_id=self.url_id).exists():
                 self.url_id = create_asciidigits_id(8)
+
+        if not self.test_token:
+            self.test_token = generate_test_token()
 
         super().save(*args, **kwargs)
 
@@ -418,6 +438,18 @@ class DonationProject(models.Model):
         fresh stylesheet instead of continuing to serve a cached one.
         """
         return f"{self.primary_color.lstrip('#')}{self.background_color.lstrip('#')}"
+
+    def regenerate_test_token(self) -> None:
+        """Rotates the test-mode token, cutting off anyone using the old link.
+
+        Does not touch previously created test Participant rows - they
+        remain in the database under the old (now unreachable) token.
+        """
+        self.test_token = generate_test_token()
+        self.save(update_fields=["test_token"])
+        EventLogEntry.objects.create(
+            project=self, description="Test Link Token Regenerated"
+        )
 
     def get_token(self) -> ProjectAccessToken | None:
         return ProjectAccessToken.objects.filter(project=self).first()

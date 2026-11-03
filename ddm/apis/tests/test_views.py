@@ -272,6 +272,41 @@ class TestAPIs(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertDictEqual(response.data, expected_response)
 
+    def test_donations_api_excludes_flow_broken_test_runs_by_default(self):
+        broken_participant = Participant.objects.create(
+            project=self.project_base,
+            start_time=timezone.now(),
+            is_test=True,
+            test_flow_broken=True,
+        )
+        DataDonation.objects.create(
+            project=self.project_base,
+            blueprint=self.blueprint_a,
+            participant=broken_participant,
+            time_submitted=timezone.now(),
+            consent=True,
+            data_extraction_state=DataDonation.DataExtractionState.DATA_EXTRACTED,
+            n_data_entries=1,
+            data=["broken run data"],
+        )
+
+        token = self.project_base.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+        url = reverse("ddm_apis:donations", args=[self.project_base.url_id])
+        query_string = (
+            f"?participants={self.participant_a.external_id},"
+            f"{broken_participant.external_id}"
+        )
+
+        response = client.get(url + query_string)
+        donations = response.data["blueprints"][f"{self.blueprint_a.pk}"]["donations"]
+        self.assertEqual(len(donations), 1)
+
+        response = client.get(url + query_string + "&include_broken_test_runs=true")
+        donations = response.data["blueprints"][f"{self.blueprint_a.pk}"]["donations"]
+        self.assertEqual(len(donations), 2)
+
     def test_donations_api_get_with_valid_api_credentials_no_participants_404(self):
         token = self.project_base.create_token()
         client = APIClient()
@@ -379,6 +414,35 @@ class TestAPIs(TestCase):
         response = client.get(url + query_string)
         self.assertEqual(response.status_code, 200)
         self.assertDictEqual(response.data, expected_response)
+
+    def test_responses_api_excludes_flow_broken_test_runs_by_default(self):
+        broken_participant = Participant.objects.create(
+            project=self.project_base,
+            start_time=timezone.now(),
+            is_test=True,
+            test_flow_broken=True,
+        )
+        QuestionnaireResponse.objects.create(
+            project=self.project_base,
+            participant=broken_participant,
+            time_submitted=timezone.now(),
+            data=(
+                f'{{"{self.question_open.pk}": '
+                '{"response": "broken run", "question": "question text", '
+                '"items": []}}'
+            ),
+        )
+
+        token = self.project_base.create_token()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+        url = reverse("ddm_apis:responses", args=[self.project_base.url_id])
+
+        response = client.get(url)
+        self.assertEqual(len(response.data["responses"]), 2)
+
+        response = client.get(url + "?include_broken_test_runs=true")
+        self.assertEqual(len(response.data["responses"]), 3)
 
     def test_responses_api_fails_for_user_without_permission(self):
         """A researcher logged in via their own session must not be able to
@@ -629,6 +693,29 @@ class TestAPIs(TestCase):
         )
         response = client.get(url, follow=True)
         self.assertEqual(response.status_code, 403)
+
+    def test_download_project_detail_view_excludes_flow_broken_test_runs_by_default(
+        self,
+    ):
+        broken_participant = Participant.objects.create(
+            project=self.project_base,
+            start_time=timezone.now(),
+            is_test=True,
+            test_flow_broken=True,
+        )
+
+        self.client.login(**self.base_creds)
+        url = reverse(
+            "ddm_apis:download_project_details", args=[self.project_base.url_id]
+        )
+
+        response = self.client.get(url, follow=True)
+        content = b"".join(response.streaming_content).decode()
+        self.assertNotIn(broken_participant.external_id, content)
+
+        response = self.client.get(url + "?include_broken_test_runs=true", follow=True)
+        content = b"".join(response.streaming_content).decode()
+        self.assertIn(broken_participant.external_id, content)
 
     def test_download_project_detail_view_csv_rows_match_header_length(self):
         """

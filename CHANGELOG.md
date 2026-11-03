@@ -157,6 +157,9 @@ This version drops official support for Python versions < 3.12.
 - Fixed a rare server error that could occur the very first time a new
   researcher account logged in, if two requests (e.g. two browser tabs)
   arrived at almost the same moment.
+- Fixed the questionnaire's window resize listener never actually being
+  removed when its component unmounts, due to a cleanup bug (no observable
+  effect today, since the component is only ever mounted once per page).
 
 ### Deprecated
 

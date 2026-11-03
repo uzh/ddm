@@ -27,7 +27,7 @@ export function useScrollHandler() {
    * Cleans up scroll-related event listeners.
    */
   function removeScrollEvents(): void {
-    window.removeEventListener('resize', () => {});
+    window.removeEventListener('resize', updateShouldHighlightOnScroll);
   }
 
   /**

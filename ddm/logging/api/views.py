@@ -96,7 +96,8 @@ class ExceptionAPI(APIView):
             post_date = parse_datetime(raw_date) if isinstance(raw_date, str) else None
         except ValueError:
             post_date = None
-        if post_date is None:
+        if post_date is None or timezone.is_naive(post_date):
+            # Note: conservative fallback - the current frontend include tz aware date
             post_date = timezone.now()
 
         # A log bundle typically repeats an uploader and blueprints across

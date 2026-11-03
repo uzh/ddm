@@ -86,6 +86,17 @@ class TestExceptionAPI(TestCase):
         exceptions_count_after = ExceptionLogEntry.objects.count()
         self.assertEqual(exceptions_count_before, (exceptions_count_after - 1))
 
+    def test_offset_less_date_falls_back_to_now(self):
+        client = Client()
+
+        before = timezone.now()
+        self._post(client, self._bundle(self.log_item, date="2026-09-01T10:00:00"))
+        after = timezone.now()
+
+        entry = ExceptionLogEntry.objects.latest("pk")
+        self.assertTrue(timezone.is_aware(entry.date))
+        self.assertTrue(before <= entry.date <= after)
+
     def test_created_entries_are_always_raised_by_client(self):
         """This endpoint is only ever called by the uploader frontend, so
         raised_by isn't accepted as client input - it's hardcoded server

@@ -102,7 +102,7 @@
   },
   "uploader-app": {
     "next-btn": "Avanti",
-    "submit-failed-hint": "Invio della donazione dei dati non riuscito. Controlla la tua connessione internet e riprova."
+    "submit-failed-hint": "Invio della dati non riuscito. Controlla la tua connessione internet e riprova."
   },
   "issue-modal": {
     "title": "Donazione dei dati non completata",

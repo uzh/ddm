@@ -102,7 +102,7 @@
   },
   "uploader-app": {
     "next-btn": "Next",
-    "submit-failed-hint": "Submitting your data donation failed. Please check your internet connection and try again."
+    "submit-failed-hint": "Submitting your data failed. Please check your internet connection and try again."
   },
   "issue-modal": {
     "title": "Data donation not complete",

@@ -102,7 +102,7 @@
   },
   "uploader-app": {
     "next-btn": "Suivant",
-    "submit-failed-hint": "L'envoi de votre don de données a échoué. Veuillez vérifier votre connexion internet et réessayer."
+    "submit-failed-hint": "L'envoi de votre données a échoué. Veuillez vérifier votre connexion internet et réessayer."
   },
   "issue-modal": {
     "title": "Le don de données n'a pas été finalisé",

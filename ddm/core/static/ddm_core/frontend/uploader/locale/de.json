@@ -102,7 +102,7 @@
   },
   "uploader-app": {
     "next-btn": "Weiter",
-    "submit-failed-hint": "Die Übertragung Ihrer Datenspende ist fehlgeschlagen. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut."
+    "submit-failed-hint": "Die Übertragung Ihrer Daten ist fehlgeschlagen. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut."
   },
   "issue-modal": {
     "title": "Datenspende wurde nicht abgeschlossen",

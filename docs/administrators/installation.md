@@ -1,104 +1,91 @@
 # Installation Guide
+ 
+DDM is a [Django](https://www.djangoproject.com/) app. To run it, you need Python 3.12 or
+newer ([download](https://www.python.org/downloads/)) and a Django 5.2 project to install
+DDM into. This guide walks you through creating that project and adding DDM to it:
+ 
+1. [Create a Django project](#create-a-django-project).
+2. [Configure the database](#configure-the-database).
+3. [Install DDM](#install-ddm) and configure your project for it.
+4. [Set up the database tables](#set-up-the-database-tables).
+5. [Test the installation](#test-the-installation).
+6. [Prepare for production](#prepare-for-production).
 
-DDM is a web application that builds on [Django](https://www.djangoproject.com/), a Python web framework.
-Therefore, to run DDM you first need to install Python (3.12 or newer) and Django 5.2.
-
-For the installation of Python, please go to the official Python website: [python.org](https://www.python.org/)
-
-The installation of Django is described in the next section. If you are planning
-to install DDM for production use, we advise to follow a comprehensive tutorial
-such as the one provided by [Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-22-04).
-
-Setting up DDM includes the following steps:
-
-1. Create Django application.
-2. Install DDM.
-3. Customize installation.
-
-## Requirements
-
-DDM has the following dependencies which will be installed when installing django-ddm through pip:
-
-- [asgiref](https://pypi.org/project/asgiref/)
-- [Django](https://www.djangoproject.com/) (5.2 or newer, below 6)
-- [django-ckeditor-5](https://pypi.org/project/django-ckeditor-5/)
-- [django-filter](https://pypi.org/project/django-filter/)
-- [django-polymorphic](https://pypi.org/project/django-polymorphic/)
-- [django-webpack-loader](https://pypi.org/project/django-webpack-loader/)
-- [djangorestframework](https://pypi.org/project/djangorestframework/)
-- [nh3](https://pypi.org/project/nh3/)
-- [pycryptodome](https://pypi.org/project/pycryptodome/)
-- [pydantic](https://pypi.org/project/pydantic/) (2.x)
-- [sqlparse](https://pypi.org/project/sqlparse/)
-
-## Create Django Application
-
-To install Django and DDM, we strongly advise to use a new virtual environment (venv) for the installation.
-To create a new venv, run the following command in the folder where you want your installation to be located
-(the commands listed here should work for Linux and macOS; for other setups see [here](https://www.w3schools.com/django/django_create_virtual_environment.php)).
-
+For a production deployment (for example, with PostgreSQL, Nginx, and Gunicorn), follow a
+comprehensive guide such as
+[How To Set Up Django with Postgres, Nginx, and Gunicorn](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-22-04)
+alongside this one.
+ 
+## Create a Django Project
+ 
+Create a virtual environment and install Django into it. The commands below use `venv` and
+`pip` on Linux or macOS. For Windows, see the
+[Python venv documentation](https://docs.python.org/3/library/venv.html).
+ 
+```bash
+python -m venv /path/to/venv
+source /path/to/venv/bin/activate
+pip install "Django>=5.2,<6"
 ```
-ProjectPath> python -m venv /path/to/venv
+ 
+!!! tip "Using uv instead"
+ 
+    [uv](https://docs.astral.sh/uv/) is faster and manages the virtual environment for you:
+ 
+    ```bash
+        uv init --app
+        uv add "Django>=5.2,<6"
+    ```
+ 
+    For the rest of this guide, prefix commands with `uv run` instead of activating the
+    environment (for example, `uv run django-admin startproject yourproject` or
+    `uv run python manage.py migrate`), and install DDM with `uv add django-ddm` instead of
+    `pip install django-ddm`.
+ 
+Create a new project and change into its folder:
+ 
+```bash
+django-admin startproject yourproject
+cd yourproject
 ```
-
-Then you can activate the environment as follows:
-
+ 
+The `yourproject` folder contains `manage.py` and a subfolder, also named `yourproject`, that
+holds `settings.py` and `urls.py`.
+ 
+To check that Django works, start the development server and open <http://127.0.0.1:8000>:
+ 
+```bash
+python manage.py runserver
 ```
-ProjectPath> source /path/to/venv/bin/activate
-(venv) ProjectPath>
-```
-
-Next, install Django in your virtual environment:
-
-```
-(venv) ProjectPath> pip install "Django>=5.2,<6"
-```
-
-Now that Django is installed, start a new project and access it:
-
-```
-(venv) ProjectPath> django-admin startproject yourproject
-(venv) ProjectPath> cd yourproject
-```
-
-This will create a new folder `yourproject` that contains a file called `manage.py`
-and a folder that is also called `yourproject`. In this subfolder you will find, among others,
-the `settings.py` and the `urls.py` file.
-
-Next, create a superuser account with your Django project:
-
-```
-(venv) ProjectPath/yourproject> python manage.py createsuperuser
-```
-
-You will be asked to provide a username and a password.
-
-To see whether the installation of Django worked run the following command and
-see whether the base site loads:
-
-```
-(venv) ProjectPath/yourproject> python manage.py runserver
-```
-
+ 
+## Configure the Database
+ 
+New Django projects use SQLite, which is fine for development. For production, use PostgreSQL
+or MariaDB: install the database server and its Python driver, then update `DATABASES` in
+`settings.py`. See
+[Get your database running](https://docs.djangoproject.com/en/stable/topics/install/#get-your-database-running)
+and the [`DATABASES` reference](https://docs.djangoproject.com/en/stable/ref/settings/#databases).
+ 
 ## Install DDM
-
-Install the Django DDM package:
-
+ 
+Install the DDM package. pip installs its
+[dependencies](https://pypi.org/project/django-ddm/) automatically.
+ 
+```bash
+pip install django-ddm
 ```
-(venv) ProjectPath/yourproject> pip install django-ddm
-```
-
-Next, you will have to adjust several sections of your `settings.py` and `urls.py` files.
-
-### Update Settings.py
-
-First, add the necessary entries to INSTALLED_APPS in your settings.py:
-
+ 
+Then update your project's `settings.py` and `urls.py` as described below.
+ 
+### Update settings.py
+ 
+**Installed apps.** Add DDM and its dependencies to `INSTALLED_APPS`:
+ 
 ```python
 # settings.py
-
+ 
 INSTALLED_APPS = [
-    # ...,
+    # ...
     'ddm',
     'ddm.auth',
     'ddm.logging',
@@ -113,18 +100,34 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
 ]
 ```
-
-Add the following configuration for webpack-loader to your settings.py:
-
+ 
+!!! tip "App order matters if you customize templates"
+ 
+    If you override DDM templates (see
+    [Template Customization](configuration/customize_templates.md)), list the app that
+    contains your overrides **before** `ddm.core`. Django's template loader searches
+    `INSTALLED_APPS` in order and uses the first match.
+ 
+**Static files and webpack-loader.** DDM's frontend ships as pre-built bundles that
+`collectstatic` copies into `STATIC_ROOT`. If your settings don't define `STATIC_ROOT` yet, add
+it:
+ 
 ```python
 # settings.py
-
-# For production use:
+ 
+STATIC_ROOT = BASE_DIR / 'static'
+```
+ 
+Then add the webpack-loader configuration as-is:
+ 
+```python
+# settings.py
 import os
+ 
 WEBPACK_LOADER = {
     'DDM_UPLOADER': {
         'CACHE': True,
-        'BUNDLE_DIR_NAME': 'ddm_core/frontent/uploader/',
+        'BUNDLE_DIR_NAME': 'ddm_core/frontend/uploader/',
         'STATS_FILE': os.path.join(STATIC_ROOT, 'ddm_core/frontend/uploader/webpack-stats.json'),
         'POLL_INTERVAL': 0.1,
         'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
@@ -135,231 +138,200 @@ WEBPACK_LOADER = {
         'STATS_FILE': os.path.join(STATIC_ROOT, 'ddm_core/frontend/questionnaire/webpack-stats.json'),
         'POLL_INTERVAL': 0.1,
         'TIMEOUT': None,
-        'IGNORE': [r'.+\.hot-update.js', r'.+\.map']
-    }
-}
-
-# For development use:
-import os
-import ddm.core
-WEBPACK_LOADER = {
-    'DDM_UPLOADER': {
-        'CACHE': False,
-        'BUNDLE_DIR_NAME': 'core/frontend/uploader/',
-        'STATS_FILE': os.path.join(
-            os.path.dirname(ddm.core.__file__),
-            'static/ddm_core/frontend/uploader/webpack-stats.json'
-        ),
-        'POLL_INTERVAL': 0.1,  # Adjust as needed
         'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
     },
-    'DDM_QUESTIONNAIRE': {
-        'CACHE': False,
-        'BUNDLE_DIR_NAME': 'core/frontend/questionnaire/',
-        'STATS_FILE': os.path.join(
-            os.path.dirname(ddm.core.__file__),
-            'static/ddm_core/frontend/questionnaire/webpack-stats.json'
-        ),
-        'POLL_INTERVAL': 0.1,  # Adjust as needed
-        'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
-    }
 }
 ```
-
-Add the DDM context processor to your template context processors.
-This will enable the version indicator of the currently used DDM distribution
-below the header in the researcher interface.
-
+ 
+**Context processor.** Add the DDM context processor. It shows the installed DDM version below
+the header of the researcher interface:
+ 
 ```python
 # settings.py
-
+ 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
-        'APP_DIRS': True,
+        # ...
         'OPTIONS': {
             'context_processors': [
                 # ...
-                'ddm.core.context_processors.add_ddm_version'  # Add this.
+                'ddm.core.context_processors.add_ddm_version',
             ],
         },
     },
 ]
 ```
 
-Configure CKEditor settings in your settings.py to allow your users to upload
-images, videos and PDFs in instructions and question texts (see https://github.com/hvlads/django-ckeditor-5 for
-further information):
+**Login redirects.** Set where users go after logging in and out. Without
+`LOGIN_REDIRECT_URL`, Django sends users to `/accounts/profile/`, which doesn't exist:
 
 ```python
 # settings.py
-CKEDITOR_5_FILE_UPLOAD_PERMISSION = 'authenticated'
-CKEDITOR_5_ALLOW_ALL_FILE_TYPES = True
-CKEDITOR_5_UPLOAD_FILE_TYPES = ['jpeg', 'pdf', 'png', 'mp4']
+
+LOGIN_REDIRECT_URL = '/ddm/projects/'
+LOGOUT_REDIRECT_URL = '/login/'
 ```
 
-!!! danger
-
-    This configuration may introduce a security risk if you don't restrict account creation to trusted users (e.g.,
-    university members) - see [the respective section in the security notices](topics/security.md).
-
-Add time zone support to your settings.py:
+**CKEditor uploads.** Allow researchers to upload images in instructions and question texts,
+and limit the file size:
 
 ```python
 # settings.py
 
+CKEDITOR_5_FILE_UPLOAD_PERMISSION = 'authenticated'
+CKEDITOR_5_MAX_FILE_SIZE = 10  # In MB. The default, 0, means unlimited.
+```
+
+!!! danger "Allowing PDFs and videos"
+
+    To also allow other file types, set `CKEDITOR_5_ALLOW_ALL_FILE_TYPES = True` and list them
+    in `CKEDITOR_5_UPLOAD_FILE_TYPES` (for example, `['jpeg', 'png', 'pdf', 'mp4']`). DDM then
+    checks only the file extension, not the content, and any logged-in user can upload. Read
+    [Security → CKEditor File Upload Security](security.md#ckeditor-file-upload-security)
+    first.
+
+For all CKEditor options, see the
+[django-ckeditor-5 documentation](https://github.com/hvlads/django-ckeditor-5).
+
+**Media files.** CKEditor stores uploaded files in Django's media storage. Set where to store
+them and the URL to serve them from:
+
+```python
+# settings.py
+
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'
+```
+
+**Time zone support.** DDM requires `USE_TZ = True`. New Django projects set this by default;
+if you're adding DDM to an existing project, check it:
+ 
+```python
+# settings.py
+ 
 USE_TZ = True
 ```
-
-Optionally, an e-mail address restriction can be defined in settings.py. Only users whose e-mail address matches the defined regex pattern will be allowed to set up data donation projects:
-
+ 
+**DDM settings (optional).** Use `DDM_SETTINGS` to restrict who can create projects by email
+pattern, or to adjust upload size and API rate limits:
+ 
 ```python
 # settings.py
-
+ 
 DDM_SETTINGS = {
-    'EMAIL_PERMISSION_CHECK':  r'.*(\.|@)somedomain\.com$',
-},
+    'EMAIL_PERMISSION_CHECK': r'.*(\.|@)somedomain\.com$',
+}
 ```
-
+ 
+For all DDM settings and their defaults, see [Settings Reference](settings_reference.md).
+ 
 ### Update urls.py
-
-Include the DDM urls in your projects urls.py:
-
-```python
-# urls.py
-from django.urls import path, include
-# ...
-
-urlpatterns = [
-    # ...
-    path('ddm/', include('ddm.core.urls')),
-]
-```
-
-Configure login and logout endpoints for DDM in urls.py:
-
+ 
+Add the DDM, login, logout, and CKEditor upload endpoints to your project's `urls.py`:
+ 
 ```python
 # urls.py
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
-# ...
-
+ 
 urlpatterns = [
     # ...
     path('ddm/', include('ddm.core.urls')),
-    path('login/', auth_views.LoginView.as_view(template_name='ddm_auth/login.html'), name='ddm_login'),  # You can choose whatever path and template you like
-    path('logout/', auth_views.LogoutView.as_view(), name='ddm_logout'),  # You can choose whatever path and template you like
-    path('ckeditor5/', include('django_ckeditor_5.urls')),  # This is the endpoint that handles file uploads through the CKEditor.
+    path('login/', auth_views.LoginView.as_view(template_name='ddm_auth/login.html'), name='ddm_login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='ddm_logout'),
+    path('ckeditor5/', include('django_ckeditor_5.urls')),
 ]
 ```
+ 
+The `ddm_auth/login.html` template shows a password login form. To let researchers log in
+through your institution instead, see [User Authentication](configuration/user_authentication.md).
 
-!!! danger
-
-    If you use DDM on a Django site together with [wagtail](https://wagtail.org/), and you
-    have internationalization enabled for your wagtail urls, we recommend to use the
-    `prefix_default_language=False` for the i18n_patterns:
-
-    ```python
-    # urls.py
-    from django.conf.urls.i18n import i18n_patterns
-    from django.urls import path, include
-    from wagtail import urls as wagtail_urls
-    # ...
-
-    urlpatterns = [
-        # ...
-    ]
-
-    urlpatterns += i18n_patterns(
-        path('', include(wagtail_urls)),
-        prefix_default_language=False
-    )
-    ```
-
-    Not doing this will cause ddm.tests.test_apis.test_participant_deletion_with_regular_login to fail.
-    In practice, the participant API still seems to work properly despite the test failing, however,
-    unexpected behaviour cannot be ruled out at this point. This will be fixed in a future version.
-
-### Apply Database Migrations
-
-The Python installation includes SQLite which is configured to be used as a database
-backend in the standard `settings.py` created by Django.
-For a development environment, this SQLite is totally fine, however for a production
-deployment you should consider configuring a more robust and efficient database such as
-PostgreSQL or MariaDB (see the [Django Documentation](https://docs.djangoproject.com/en/stable/topics/install/#get-your-database-running) for further information).
-
-Once you have configured a database, run `python manage.py migrate` to create the ddm models in your database.
-
-### Before Going to Production
-
-The `settings.py` that `django-admin startproject` generates for you (see
-[Create Django Application](#create-django-application) above) defaults to
-`DEBUG = True` and does not configure any of Django's other
-production-hardening settings (secure cookies, SSL redirect, HSTS, etc.) -
-none of this is specific to DDM, but it's easy to miss. Before exposing your 
-installation to the public internet, set `DEBUG = False` and run Django's own
-deployment checklist:
-
-```
-(venv) ProjectPath/yourproject> python manage.py check --deploy
-```
-
-This checks `DEBUG`, `SECRET_KEY` strength, cookie security, HSTS, and
-more in one command, and is kept up to date with Django's own
-recommendations - see the
-[Django deployment checklist](https://docs.djangoproject.com/en/stable/howto/deployment/checklist/)
-for what it covers and why each item matters.
-
-Django's own login view, which you wired up yourself in
-[Update urls.py](#update-urlspy) above, has no brute-force protection -
-nothing in Django or DDM throttles or locks out repeated failed login
-attempts against it. If your installation keeps Django's local-password
-login (rather than relying entirely on
-[OIDC-based login](topics/user_authentication.md), where local password
-auth isn't exposed at all), add login-attempt throttling/lockout yourself,
-for example with [django-axes](https://github.com/jazzband/django-axes) -
-this needs to be configured in your own project's `settings.py`
-(`INSTALLED_APPS`, `AUTHENTICATION_BACKENDS`, `MIDDLEWARE`), the same way
-OIDC is.
-
-### Test Installation
-
-To test if your installation was successful, run `python manage.py test ddm`.
-Next, run `python manage.py runserver` to start the server locally.
-Visit http://127.0.0.1:8000/admin to ensure that the Data Donation Module is listed
-as a subsection in the administration interface.
-
-Visit http://127.0.0.1:8000/ddm/projects to see whether you can access the ddm
-project overview site and try to create a new project.
-
-## Optional Settings
-
-### Default Header Images
-
-You can provide default images to be included in the header of the participation views.
-These images will be displayed by default, but can be overwritten on a project-basis
-by researchers in the project settings.
-
-To enable default images, provide the paths to the images that you want to display
-in the left and/or right part of the public header in your settings.py as follows:
+To serve uploaded files during development, also add:
 
 ```python
-# settings.py
+# urls.py
+from django.conf import settings
+from django.conf.urls.static import static
 
-DDM_DEFAULT_HEADER_IMG_LEFT = '/path/to/logo_left.png'
-DDM_DEFAULT_HEADER_IMG_RIGHT = '/path/to/logo_right.png'
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 ```
 
-### Customizing CKEditor
+!!! warning "Using DDM alongside Wagtail"
+ 
+    If your site also runs [Wagtail](https://wagtail.org/) with internationalized URLs, set
+    `prefix_default_language=False` in `i18n_patterns`. Otherwise, Wagtail's URL patterns can
+    shadow DDM's:
+ 
+    ```python
+        # urls.py
+        from django.conf.urls.i18n import i18n_patterns
+        from django.urls import path, include
+        from wagtail import urls as wagtail_urls
+     
+        urlpatterns += i18n_patterns(
+            path('', include(wagtail_urls)),
+            prefix_default_language=False,
+        )
+    ```
+ 
+## Set Up the Database Tables
+ 
+Create the database tables and a superuser account:
+ 
+```bash
+python manage.py migrate
+python manage.py createsuperuser
+```
+ 
+## Test the Installation
+ 
+Collect static files (required for the webpack-loader configuration) and start the server:
+ 
+```bash
+python manage.py collectstatic
+python manage.py runserver
+```
+ 
+Then check both interfaces:
+ 
+- <http://127.0.0.1:8000/admin>: Log in as the superuser and confirm that DDM appears in the
+  Django admin site.
+- <http://127.0.0.1:8000/ddm/projects>: Confirm that the project overview loads and that you
+  can create a project.
 
-DDM uses a custom CKEditor toolbar for instruction and question text definitions
-that can optionally be customized ([find out more](topics/customize_ckeditor_configs.md))
+## Prepare for Production
+ 
+Before you expose your installation to the internet:
+ 
+- **Harden Django.** New projects default to `DEBUG = True` and leave Django's other
+  production settings (secure cookies, SSL redirect, HSTS) unset. Set `DEBUG = False` and run
+  Django's deployment check:
 
-## Further Resources
+```bash
+    python manage.py check --deploy
+```
+ 
+    See the
+    [Django deployment checklist](https://docs.djangoproject.com/en/stable/howto/deployment/checklist/)
+    for what each check covers.
+ 
+- **Serve static and media files.** With `DEBUG = False`, Django no longer serves static or
+  uploaded files. Configure your web server (for example, Nginx) to serve `STATIC_ROOT` at
+  `STATIC_URL` and `MEDIA_ROOT` at `MEDIA_URL`. See
+  [Deploying static files](https://docs.djangoproject.com/en/stable/howto/static-files/deployment/).
+- **Work through the DDM security checklist.** DDM uses `SECRET_KEY` to encrypt donated data,
+  so losing or leaking it has consequences beyond a typical Django site. See the
+  [Security checklist](security.md#checklist) before you generate and store it.
+- **Throttle login attempts.** Django's login view has no brute-force protection. If you keep
+  local password login (instead of only
+  [OIDC login](configuration/user_authentication.md)), add throttling yourself, for example
+  with [django-axes](https://github.com/jazzband/django-axes).
 
-- [Official Django Documentation](https://docs.djangoproject.com/en/stable/)
-- [Official Python Documentation](https://www.python.org/doc/)
-- Django Tutorials on [W3Schools](https://www.w3schools.com/django/index.php) or
-[Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-install-django-and-set-up-a-development-environment-on-ubuntu-20-04)
-- **[Information for developers](../developers/index.md)** in this documentation
+## Next Steps
+ 
+- [Configuration](configuration/index.md): Set up institutional login, customize templates,
+  and adjust the CKEditor toolbar.
+- [Settings Reference](settings_reference.md): Look up all DDM settings, for example default
+  header images for participation pages.
+- [Security](security.md): Review security considerations for running DDM.

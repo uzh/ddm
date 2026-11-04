@@ -79,7 +79,7 @@ class Participant(models.Model):
                 data_extraction_state=ExtractionState.DATA_EXTRACTED
             ).count(),
             "n_pending": donations.filter(
-                data_extraction_state=ExtractionState.NO_DATA_EXTRACTED
+                data_extraction_state=ExtractionState.NOT_ATTEMPTED
             ).count(),
             "n_failed": donations.filter(
                 data_extraction_state=ExtractionState.FAILED

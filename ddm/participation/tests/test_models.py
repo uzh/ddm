@@ -5,6 +5,8 @@ from django.db import IntegrityError, models
 from django.test import TestCase
 from django.utils import timezone
 
+from ddm.datadonation.models import DataDonation, DonationBlueprint
+from ddm.datadonation.schemas import JSONParserConfig
 from ddm.participation.models import Participant
 from ddm.projects.models import DonationProject, ResearchProfile
 
@@ -49,3 +51,57 @@ class TestParticipantExternalIdGeneration(TestCase):
 
         self.assertEqual(call_count, 3)
         self.assertEqual(len(participant.external_id), 24)
+
+
+class TestGetDonationInfo(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        user = User.objects.create_user(
+            username="owner", password="123", email="owner@mail.com"
+        )
+        profile = ResearchProfile.objects.create(user=user)
+        cls.project = DonationProject.objects.create(
+            name="Project", slug="donation-info", owner=profile
+        )
+        cls.blueprint = DonationBlueprint.objects.create(
+            project=cls.project,
+            name="blueprint",
+            display_name="Blueprint",
+            expected_fields='"a"',
+            display_position=1,
+            file_uploader=None,
+            parser_config=JSONParserConfig().model_dump(),
+        )
+        cls.participant = Participant.objects.create(
+            project=cls.project, start_time=timezone.now()
+        )
+
+        states_and_consent = [
+            (DataDonation.DataExtractionState.DATA_EXTRACTED, True),
+            (DataDonation.DataExtractionState.DATA_EXTRACTED, False),
+            (DataDonation.DataExtractionState.NOT_ATTEMPTED, False),
+            (DataDonation.DataExtractionState.NO_DATA_EXTRACTED, False),
+            (DataDonation.DataExtractionState.FAILED, False),
+        ]
+        for state, consent in states_and_consent:
+            DataDonation.objects.create(
+                project=cls.project,
+                blueprint=cls.blueprint,
+                participant=cls.participant,
+                time_submitted=timezone.now(),
+                consent=consent,
+                data_extraction_state=state,
+                n_data_entries=0,
+                data=[],
+            )
+
+    def test_donation_info_distinguishes_not_attempted_from_no_data_extracted(self):
+        """n_pending and n_no_data_extracted must count distinct states."""
+        info = self.participant.get_donation_info()
+
+        self.assertEqual(info["n_success"], 2)
+        self.assertEqual(info["n_pending"], 1)
+        self.assertEqual(info["n_failed"], 1)
+        self.assertEqual(info["n_consent"], 1)
+        self.assertEqual(info["n_no_consent"], 1)
+        self.assertEqual(info["n_no_data_extracted"], 1)

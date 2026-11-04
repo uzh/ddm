@@ -1,384 +1,357 @@
 # Questionnaire Configuration
 
-This page explains the settings related to the configuration of the questionnaire and its questions.
-As shown before, the following question types are implemented:
+This page describes the settings for questions and their items, scales, and filters. To
+configure the questionnaire, open the [Project Hub](../../project_hub.md) and, under
+**Data Collection Configuration**, click **Questionnaire**.
 
-* Single Choice Question:
+## Question Types
 
-![Single Choice Question Screenshot](../../img/questionnaire_singlechoice.png){ width="80%" }
+- **Single Choice Question**: Participants choose one answer.
 
-* Multi Choice Question
+    ![Single choice question](../../img/questionnaire_singlechoice.png){ width="80%" }
 
-![Multi Choice Question Screenshot](../../img/questionnaire_multichoice.png){ width="80%" }
+- **Multi Choice Question**: Participants choose one or more answers.
 
-* Matrix Question
+    ![Multi choice question](../../img/questionnaire_multichoice.png){ width="80%" }
 
-![Matrix Question Screenshot](../../img/questionnaire_matrix.png){ width="80%" }
+- **Matrix Question**: Several items rated on the same scale.
 
-* Semantic Differential
+    ![Matrix question](../../img/questionnaire_matrix.png){ width="80%" }
 
-![Semantic Differential Screenshot](../../img/questionnaire_semanticdifferential.png){ width="80%" }
+- **Semantic Differential**: Several items rated on a scale between two opposite terms.
 
-* Open Question
+    ![Semantic differential](../../img/questionnaire_semanticdifferential.png){ width="80%" }
 
-![Open Question Screenshot](../../img/questionnaire_open.png){ width="80%" }
+- **Open Question**: Participants answer in their own words.
 
-* Text Block (plain text, without any response options for the participant)
+    ![Open question](../../img/questionnaire_open.png){ width="80%" }
 
-![Text Block Screenshot](../../img/questionnaire_textblock.png){ width="80%" }
+- **Text Block**: Text without a question, for example an introduction to the next page.
 
-Depending on the question type, different configuration options are available.
-
+    ![Text block](../../img/questionnaire_textblock.png){ width="80%" }
 
 ## General Settings
 
-The following configuration settings are available for all question types:
+These settings are available for all question types.
 
-| Setting             | What it's for                                                            |
-|---------------------|--------------------------------------------------------------------------|
-| `Name`              | A question name, used for internal organisation only.                    |
-| `Blueprint`         | Whether the question is general or related to a Blueprint.               |
-| `Page`              | Number of the page on which the question will be displayed.              |
-| `Index`             | Order in which questions on the same page will be displayed.             |
-| `Variable Name`     | The variable name associated to a question, included in the data export. |
-| `Text`              | The question text that is displayed to participants.                     |
-| `Requirement level` | Whether and how strictly a participant must answer the question.         |
-| `Randomize items`   | Enable or disable randomization of all items.                            |
-
-??? setting-details "Setting Details"
+!!! setting-details "Settings"
 
     ---
 
-    #### `Name`
+    **Name**
 
-    A question name. This name is only used for internal organisation and is not visible to participants.
-
-    ---
-
-    #### `Blueprint`
-
-    A question can either be _general_ or related to a
-    [_Blueprint_](../datadonation/datadonation_configuration.md).
-    **General questions** are displayed to all participants, regardless if they successfully
-    donated any data.
-    **Questions related to a Blueprint** are only displayed to those participants
-    that successfully uploaded some data to the related file blueprint.
-    This means that if no donated data were extracted by the related Blueprint (either because the
-    extraction _failed_, _was not attempted_ or _all entries were filtered out by the extraction rules_),
-    the question will not be displayed.
-    Consult the section on [integrating donated data in the questionnaire](questionnaire_data_integration.md) for more information.
+    Internal name of the question. Participants don't see it.
 
     ---
 
-    #### `Page`
+    **Blueprint**
 
-    Number of the page on which the question will be displayed.
+    Whether the question is shown to everyone or depends on a
+    [Blueprint](../datadonation/datadonation_configuration.md#blueprint-configuration):
 
-    ---
+    - **General questions** are shown to all participants, whether or not they donated data.
+    - **Questions linked to a Blueprint** are shown only to participants for whom that
+      Blueprint extracted data. If no data was extracted, because the extraction failed,
+      wasn't attempted, or the Extraction Rules removed all entries, the question isn't
+      shown.
 
-    #### `Index`
-
-    Order in which questions on the same page will be displayed.
-
-    ---
-
-    #### `Variable Name`
-
-    The variable name associated to a question. This name will be included
-    in the data export. For items belonging to a question, the variable name will
-    be constructed as follows: "question_variable_name-+{item-value+}".
+    Questions linked to a Blueprint can refer to the donated data. See
+    [Data Integration](questionnaire_data_integration.md).
 
     ---
 
-    #### `Text`
+    **Page**
 
-    The question text that is displayed to participants.
-
-    ---
-
-    #### `Requirement level`
-
-    `Not required`: A participant can skip the question.
-    `Soft`: the application will show a
-    hint to the participant if they forgot to answer the question.
-    This hint will only be shown once. This means that if a participant chooses to
-    ignore the hint and clicks on 'continue', they are able to skip a required question.
-    `Hard`: the application will show a hint and the participant cannot skip the
-    question.
+    The number of the page the question is shown on.
 
     ---
 
-    #### `Randomize items`
+    **Index**
 
-    Enable or disable randomization of **all** items.
+    The order of the questions on the same page. Questions with a lower number are shown
+    first.
 
-## Specific Settings
+    ---
+
+    **Variable Name**
+
+    The question's column name in the data download. For questions with items, each item
+    gets its own column, named `<variable name>-<item value>`. For example, the item with the
+    value `2` in the question `media_use` becomes `media_use-2`.
+
+    ---
+
+    **Text**
+
+    The question text that participants see.
+
+    ---
+
+    **Requirement level**
+
+    Whether participants must answer the question:
+
+    - **Not required**: Participants can skip the question.
+    - **Soft**: If participants skip the question, they see a reminder once. They can then
+      continue without answering.
+    - **Hard**: Participants can't continue without answering.
+
+    ---
+
+    **Randomize items**
+
+    If enabled, the items of the question are shown in random order. To randomize only some
+    items, use **Randomize** on the [items](#question-items) instead.
+
+## Settings for Specific Question Types
 
 ### Open Question
 
-| Setting                | What it's for                                                                 |
-|------------------------|-------------------------------------------------------------------------------|
-| `Input type`           | Whether to restrict input to text, number, or a valid email address.          |
-| `Maximum input length` | Restricts the input to a certain number of characters.                        |
-| `Display`              | Whether to show a small one-line input field or a larger multi-line text-box. |
-| `Multi item response`  | Whether to define items each requiring a separate text input.                 |
-
-??? setting-details "Setting Details"
+!!! setting-details "Settings"
 
     ---
 
-    #### `Input type`
+    **Input type**
 
-    Define whether to apply restrictions for the input to
-    this field. Can be 'text' to allow any kind of text, 'number' to
-    only allow numerical characters, or 'email' to only allow valid
-    email addresses. Default is 'text'.
+    What participants can enter: **text** (anything, the default), **number** (only
+    numbers), or **email** (only valid email addresses).
 
     ---
 
-    #### `Maximum input length`
+    **Minimum input length**
 
-    Restricts the input to a certain number of characters.
-    If this option is left empty, no input length restriction is enforced.
-
-    !!! note
-    
-        The `input type` and `maximum input length` options are only "softly" enforced
-        in the participant's browser by hinting at and highlighting non-compliant input.
-        This means that these restrictions are not enforced on the server-side if
-        participants choose to ignore the input hint.
+    The minimum number of characters. If empty, there's no minimum.
 
     ---
 
-    #### `Display`
+    **Maximum input length**
 
-    Define whether to show a 'small' one-line input field or
-    a larger multi-line text-box. Defaults to "small" and only
-    applies when the chosen input type is "Text".
+    The maximum number of characters. If empty, there's no maximum.
 
     ---
 
-    #### `Multi item response`
+    **Minimum input value**
 
-    If this is selected, you can define items for each of which the participants
-    will be asked to provide a text input. If not selected, the question will be rendered with just one
-    input field below the question text.
+    Only for the input type **number**: the smallest number allowed. If empty, there's no
+    minimum.
 
+    ---
+
+    **Maximum input value**
+
+    Only for the input type **number**: the largest number allowed. If empty, there's no
+    maximum.
+
+    !!! warning "Restrictions are only hints"
+
+        If participants enter something that doesn't meet the input type or limits, they see
+        a hint, but they can still continue. Your data can therefore contain values outside
+        these limits, so check them when you analyze the data.
+
+    ---
+
+    **Display**
+
+    Only for the input type **text**: **small** (a one-line field, the default) or a larger
+    field with several lines.
+
+    ---
+
+    **Multi item response**
+
+    If enabled, you can add [items](#question-items), and participants answer each item in
+    its own field. If disabled, the question has one field below the question text.
 
 ### Matrix Question
 
-| Setting               | What it's for                       |
-|-----------------------|-------------------------------------|
-| `Show scale headings` | Option to show/hide scale headings. |
-
-??? setting-details "Setting Details"
+!!! setting-details "Settings"
 
     ---
 
-    #### `Show scale headings`
+    **Show scale headings**
 
-    Option to show/hide scale headings.
+    Whether the **Heading label** of each [scale point](#scale-configuration) is shown above
+    the scale.
 
-!!! note "HTML in labels"
+## Question Items
 
-    `Label`, `Label Right`, `Input label`, and `Heading label` (described below and under
-    [Scale Configuration](#scale-configuration)) support a small set of HTML for basic
-    formatting and styling:
+Single Choice Questions, Multi Choice Questions, Matrix Questions, and Semantic
+Differentials consist of items: the answer options or the statements that participants rate.
 
-    - Formatting tags: `<b>`, `<strong>`, `<i>`, `<em>`, `<u>`, `<sub>`, `<sup>`, `<br>`, and `<span>`.
-    - The `class` attribute on any of the above, e.g. `<span class="class-name">text</span>`,
-      to apply one of the available bootstrap CSS classes for custom styling.
-
-    Any other tag or attribute (including `style`) is automatically removed when 
-    you save (no error is raised).
-
-### Question Items
-
-For Single Choice Questions, Multiple Choice Questions, Matrix Questions and Semantic Differentials,
-participants answer in relation to question items. To configure question items, the following
-settings are available:
-
-| Setting           | What it's for                                                                            |
-|-------------------|------------------------------------------------------------------------------------------|
-| `Index`           | Defines the order in which the items are displayed.                                      |
-| `Label`           | The label/text of the item that is displayed to participants related to an item.         |
-| `Label Right`     | Only for semantic differential questions: the label on the right-hand side of the scale. |
-| `Value`           | The identifier of an item, used to indicate selected item(s) in the data export.         |
-| `Randomize`       | Allows randomizing only certain items while others stay in place.                        |
-| `Delete`          | Check this box to delete the item.                                                       |
-
-??? setting-details "Setting Details"
+!!! setting-details "Settings"
 
     ---
 
-    #### `Index`
+    **Index**
 
-    Defines the order in which the items are displayed.
-
-    ---
-
-    #### `Label`
-
-    The label/text of the item that is displayed to participants related to an item.
-    For semantic differential questions, this is the label displayed on the left-hand side of the scale.
-    See the [HTML in labels](#question-items) note above for what formatting is supported.
+    The order of the items. Items with a lower number are shown first.
 
     ---
 
-    #### `Label Right`
+    **Label**
 
-    Only for semantic differential questions. The label displayed on the
-    right-hand side of the scale. Supports the same HTML as `Label` above.
-
-    ---
-
-    #### `Value`
-
-    Is (_a_) the identifier of an item and (_b_) used to indicate which
-    item(s) has or have been selected in the data export (only for Single and Multi
-    Choice Questions).
+    The item's text. For Semantic Differentials, the term on the left side of the scale.
+    Supports [basic formatting](#formatting-labels).
 
     ---
 
-    #### `Randomize`
+    **Label Right**
 
-    Instead of randomizing the order of all items with the _randomize_ setting
-    on the question level, this setting allows randomizing only certain items while
-    those for which this option is not ticked stay in their place (i.e., according to
-    their index).
+    Only for Semantic Differentials: the term on the right side of the scale. Supports
+    [basic formatting](#formatting-labels).
 
     ---
 
-    #### `Delete`
+    **Value**
 
-    Check this box to delete the item. It will be deleted when you click _Save_.
-
-### Scale Configuration
-
-For Matrix Questions and Semantic Differentials, participants give their answers (or in other words: rate
-the question items) with the configured question scale.
-
-| Setting           | What it's for                                                                    |
-|-------------------|----------------------------------------------------------------------------------|
-| `Index`           | Defines the order in which the items are displayed.                              |
-| `Input label`     | The text that is displayed within the scale-points/input-buttons.                |
-| `Heading label`   | The text displayed above the scale-points/input-buttons (Matrix Questions only). |
-| `Value`           | Used to indicate which scale point has been selected in the data export.         |
-| `Secondary point` | Marks a scale point to be rendered differently than the 'regular' scale points.  |
-| `Delete`          | Check this box to delete the scale point.                                        |
-
-??? setting-details "Setting Details"
+    Identifies the item in the data download. For Single Choice Questions, the value of the
+    selected item is saved. For the other question types, the value is part of the item's
+    column name (see **Variable Name** under [General Settings](#general-settings)).
 
     ---
 
-    #### `Index`
+    **Randomize**
 
-    Defines the order in which the items are displayed.
-
-    ---
-
-    #### `Input label`
-
-    The text that is displayed within the scale-points/input-buttons. Supports the same
-    [HTML](#question-items) as Question Items' `Label`.
-
-    !!! tip
-    
-        When you have long labels on Question Items or Scale Points, or you have many scale points, it is a good practice to
-        define optional word-breaks in your labels. To do so, you can use the html code `&shy;`, which will break the word
-        in this position with a hyphen if there is not enough space to render the complete word. E.g., "un&shy;decided" will
-        be rendered as "un- decided" if the whole word does not fit on one line.
+    If enabled for some items, only those items swap places randomly. The others stay in the
+    position set by their **Index**.
 
     ---
 
-    #### `Heading label`
+    **Delete**
 
-    The text that is displayed above the scale-points/input-buttons (currently, only possible for
-    Matrix Questions). Supports the same [HTML](#question-items) as Question Items' `Label`.
+    Deletes the item when you click **Save**.
 
-    ---
+## Scale Configuration
 
-    #### `Value`
+For Matrix Questions and Semantic Differentials, participants rate each item on a scale.
 
-    Used to indicate which scale point has been selected in the data export.
-
-    ---
-
-    #### `Secondary point`
-
-    If a scale point is marked as 'secondary point' it will be rendered differently than the 'regular' scale points.
-    This is useful to, e.g., offer a "Don't know" option to participants that is visually seperated from the main scale.
+!!! setting-details "Settings"
 
     ---
 
-    #### `Delete`
+    **Index**
 
-    Check this box to delete the scale point. It will be deleted when you click _Save_.
-
-
-### Filter Configuration
-
-You can conditionally hide questions or items based on answers to previous questions using filter conditions.
-
-| Setting                    | What it's for                                                       |
-|----------------------------|---------------------------------------------------------------------|
-| `Index`                    | Sets the order in which filter conditions are applied.              |
-| `Combinator`               | Defines how multiple filter conditions are combined (`AND` / `OR`). |
-| `Comparison Question/Item` | The question or item whose answer is used in the comparison.        |
-| `Comparison Operator`      | Specifies how the answer should be compared to the value.           |
-| `Comparison Value`         | The value to compare against.                                       |
-| `Delete`                   | Check this box to remove the condition.                             |
-
-??? setting-details "Setting Details"
+    The order of the scale points. Scale points with a lower number are shown first.
 
     ---
 
-    #### `Index`
+    **Input label**
 
-    Sets the order in which filter conditions are applied.
+    The text in the scale point's button. Supports [basic formatting](#formatting-labels).
 
-    ---
+    !!! tip "Long labels"
 
-    #### `Combinator`
-
-    Defines how multiple filter conditions are combined: `AND` = all conditions must be met,
-    `OR` = any condition must be met for the filter to be applied (ignored for the first (lowest index) condition, so can
-    be set to any value for the first condition).
-
-    **Note:** Conditions are evaluated as a chain, with AND having higher priority than OR. For example:
-    `Condition1 OR Condition2 AND Condition3 OR Condition4` will be evaluated as
-    `Condition1 OR (Condition2 AND Condition3) OR Condition4`).
-
-    Options: `AND`, `OR`.
+        If labels are long or the scale has many points, mark where a word may break with
+        `&shy;`. For example, `un&shy;decided` is shown as "undecided" if it fits, and
+        otherwise as "un-" at the end of one line and "decided" on the next.
 
     ---
 
-    #### `Comparison Question/Item`
+    **Heading label**
 
-    The question or item whose answer is used in the comparison (the _left side_ of the condition).
-
-    ---
-
-    #### `Comparison Operator`
-
-    Specifies how the answer should be compared to the value.
-    Options: `Equal (==)`, `Not Equal (!=)`, `Greater than (>)`, `Smaller than (<)`,
-    `Greater than or equal (>=)`, `Smaller than or equal (<=)`, `Contains`, `Does not Contain`.
+    Only for Matrix Questions: the text above the scale point. Supports
+    [basic formatting](#formatting-labels).
 
     ---
 
-    #### `Comparison Value`
+    **Value**
 
-    The value to compare against (the _right side_ of the condition).
+    The value saved in the data download when a participant selects this scale point.
 
     ---
 
-    #### `Delete`
+    **Secondary point**
 
-    Check this box to remove the condition. It will be deleted when you click _Save_.
+    If enabled, the scale point is shown separately from the main scale, for example for a
+    "Don't know" option.
 
-!!! note
+    ---
 
-    **Behavior when all items of a question are filtered out:** When all items of a question are filtered out, the entire
-    question will not be displayed. If the filtered question is the only question on a page, the entire page will be skipped
-    and the user will proceed to the next available page.
+    **Delete**
+
+    Deletes the scale point when you click **Save**.
+
+## Formatting Labels
+
+**Label**, **Label Right**, **Input label**, and **Heading label** support basic HTML
+formatting:
+
+- `<b>` or `<strong>` for **bold**, `<i>` or `<em>` for *italics*, and `<u>` for underlined
+  text.
+- `<sub>` and `<sup>` for subscript and superscript.
+- `<br>` for a line break.
+- `<span class="…">` to apply one of the available Bootstrap CSS classes, for example
+  `<span class="text-muted">`.
+
+DDM removes all other HTML, including `style` attributes, when you save. You don't get an
+error message.
+
+## Filter Configuration
+
+Filters hide questions or items depending on earlier answers, URL parameters, participant
+information, or the donation. For example, you can ask a follow-up question only to
+participants who answered "Yes" to a previous question.
+
+DDM hides the question or item if the filter conditions are met.
+Hidden questions and items are coded as `-77` in the data download.
+
+If all items of a question are hidden, the question is hidden. If all questions on a page
+are hidden, participants skip the page.
+
+!!! setting-details "Settings"
+
+    ---
+
+    **Index**
+
+    The order of the conditions. Conditions with a lower number come first.
+
+    ---
+
+    **Combinator**
+
+    How a condition combines with the previous one: **AND** (both must be met) or **OR**
+    (at least one must be met). The first condition's combinator is ignored.
+
+    **AND** takes precedence over **OR**. For example, `A OR B AND C OR D` means
+    `A OR (B AND C) OR D`.
+
+    ---
+
+    **Comparison Source**
+
+    What the condition checks:
+
+    - **An earlier answer.** For Single Choice Questions and Open Questions, the whole
+      question. For Multi Choice Questions, Matrix Questions, Semantic Differentials, and
+      Open Questions with **Multi item response**, the individual items. Text Blocks can't be
+      used, and a question can't refer to itself.
+    - **A URL parameter**, if [URL Parameter Extraction](../../general_project_settings.md#url-parameter-extraction)
+      is enabled.
+    - **Participant information**: participant ID, start time, end time, whether the
+      participant completed the study, and briefing consent (if enabled).
+    - **Donation information**: for example, the number of successful or failed donations.
+      See [Template Rendering → Available Variables](../../topics/templating_features.md#available-variables).
+
+    ---
+
+    **Comparison Operator**
+
+    How the source is compared with the **Comparison Value**: `Equal (==)`,
+    `Not Equal (!=)`, `Greater than (>)`, `Smaller than (<)`, `Greater than or equal (>=)`,
+    `Smaller than or equal (<=)`, `Contains`, or `Does not Contain`.
+
+    For Open Questions with an input type other than **number**, only `Equal (==)`,
+    `Not Equal (!=)`, `Contains`, and `Does not Contain` are available.
+
+    ---
+
+    **Comparison Value**
+
+    The value the source is compared with.
+
+    ---
+
+    **Delete**
+
+    Deletes the condition when you click **Save**.

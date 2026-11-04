@@ -1,754 +1,599 @@
 # Data Donation Configuration
 
-The data donation can be configured using so-called `Uploaders`, `Instructions`, and `Blueprints`.
+You configure the data donation step with three building blocks:
 
-An `Uploader` represents an upload form through which one file can be uploaded (either a ZIP container
-or a single file).
+- **Uploaders**: An Uploader is an upload form for one file, either a single file or a ZIP
+  file. If participants should donate data from several platforms, create one Uploader per
+  platform.
+- **Instructions**: Each Uploader can have instructions that show participants how to
+  request and download the file from the platform.
+- **Blueprints**: A Blueprint defines which data DDM extracts from the uploaded file. Each
+  Uploader has one or more Blueprints, for example one for the watch history and one for the
+  search history in the same YouTube export.
 
-For each Uploader, a set of `Instructions` for participants can be created that 
-illustrate how they can access and upload the requested file.
+To configure the data donation step, open the [Project Hub](../../project_hub.md) and, under
+**Data Collection Configuration**, click **Data Donation**:
 
-A `Blueprint` is used to define what data will be extracted from the file
-that participants upload through the Uploader. Each Uploader has one or multiple 
-associated Blueprints.
-
-To configure the data donation step, go to the [Project Hub](../../project_hub.md) and click on
-_Data Donation_ in the Data Collection Configuration section which will bring you
-to the following page:
-
-![Data Donation Admin Page Screenshot](../../img/datadonation_admin_page.png){ width="95%" }
+![Data donation configuration page](../../img/datadonation_admin_page.png){ width="95%" }
 
 ## Uploader Configuration
 
-When creating an Uploader, you have the following configuration options:
-
-| Setting                    | What it's for                                                                     |
-|----------------------------|-----------------------------------------------------------------------------------|
-| `Upload Type`              | Whether to accept `single file` or `zip file` upload.                             |
-| `Name`                     | Internal name of the uploader.                                                    |
-| `Extract nested zip files` | Whether to extract zip files found inside the uploaded zip.                       |
-| `Extraction depth`         | How deep to extract nested zip files.                                             |
-| `Display name`             | A short description of the Uploader, displayed to participants (e.g., "YouTube"). |
-| `Display position`         | Defines the display order if multiple uploaders are configured.                   |
-| `All-in-one consent`       | Whether to option consent per Blueprint or for all extracted data at once.        |
-
-??? setting-details "Setting Details"
+!!! setting-details "Settings"
 
     ---
 
-    #### `Upload Type`
+    **Upload Type**
 
-    Either "single file" or "zip file" depending on whether your participants are expected to upload
-    a single file (e.g., CSV or JSON File) or a ZIP-container.
-
-    ---
-
-    #### `Name`
-
-    Internal name of the Uploader. Must be unique per project.
+    **Single file** if participants upload one file, such as a CSV or JSON file. 
+    **Zip file** if they upload a ZIP file, as most platforms provide.
 
     ---
 
-    #### `Extract nested zip files`
+    **Name**
 
-    Whether to extract zip files found inside the uploaded zip and make their contents available
-    to be handled by donation blueprints.
-
-    ---
-
-    #### `Extraction depth`
-
-    Maximum levels of nested zip files to extract (0 = only extract the top-level zip).
-    
-    !!! note
-    
-        If `Extract nested zip file` is selected, the File Uploader will look inside any zip files
-        contained within the main file that participants upload and make those contents available
-        for extraction through a Donation Blueprint too.
-    
-        You can control how many levels deep this works—for example, a depth of 1 means it will open any zip inside the main zip, but stop there.
-    
-        The paths of the extracted files will reflect the archive structure. For a file inside the main zip,
-        the path is simply the filename (e.g., data.json).
-        For a file inside a nested zip, the path includes the nested zip's name (e.g., nested.zip/inner.json).
+    Internal name of the Uploader. Participants don't see it. Must be unique within the
+    project.
 
     ---
 
-    #### `Display name`
+    **Extract nested zip files**
 
-    Name displayed to participants in the header of the Uploader on the
-    data donation page.
+    If enabled, DDM also opens ZIP files inside the uploaded ZIP file, so that Blueprints can
+    extract data from the files they contain.
 
-    ---
-
-    #### `Display position`
-
-    The position of the Uploader on the data donation page. Uploaders with a
-    lower position will be displayed closer to the top of the page. This setting only has an effect, if you use
-    multiple Uploaders in the same project.
+    In the file paths of a Blueprint, files inside a nested ZIP file include the ZIP file's
+    name. For example, `inner.json` inside `nested.zip` has the path `nested.zip/inner.json`.
 
     ---
 
-    #### `All-in-one consent`
+    **Extraction depth**
 
-    By default, participants will be asked to consent to the donation of the data associated with each Blueprint.
-    If all-in-one consent is enabled, participants will instead be asked to consent to submit
-    all uploaded data at once. The all-in-one consent question is displayed at the bottom of the data donation page.
+    How many levels of nested ZIP files DDM opens. With `1`, DDM opens ZIP files inside the
+    uploaded ZIP file, but not ZIP files inside those. With `0`, DDM opens only the uploaded
+    ZIP file.
+
+    ---
+
+    **Display name**
+
+    The Uploader's name in the header of the upload form, as participants see it, for
+    example "YouTube".
+
+    ---
+
+    **Display position**
+
+    If you use several Uploaders, the order in which they're shown. Uploaders with a lower
+    number are shown first.
+
+    ---
+
+    **All-in-one consent**
+
+    By default, participants consent separately to the data of each Blueprint. With
+    all-in-one consent, they consent once to all extracted data, at the bottom of the page.
 
     <div class="grid" markdown>
-    
+
     All-in-one consent disabled:
-    ![Data Donation Page Screenshot Default](../../img/datadonation_after_upload_page.png){ width="95%" }
+    ![Data donation page with consent per Blueprint](../../img/datadonation_after_upload_page.png){ width="95%" }
 
     All-in-one consent enabled:
-    ![Data Donation Page Screenshot all-in-one consent](../../img/datadonation_after_upload_page_allinone.png){ width="95%" }
-    
-    </div>
+    ![Data donation page with one consent for all data](../../img/datadonation_after_upload_page_allinone.png){ width="95%" }
 
+    </div>
 
 ## Instruction Configuration
 
-Once an Uploader is created, you can add Instructions to it.
-Donation Instructions consist of one or multiple instruction pages.
-Instruction pages are displayed page-by-page and participants navigate them 
-with "next"/"back" buttons.
+After you create an Uploader, you can add instructions to it. Instructions consist of one
+or more pages, which participants go through with **Next** and **Back** buttons. If an
+Uploader has no instructions, participants go straight to the upload form.
 
-!!! note
-
-    If no instructions are defined for an Uploader, the instruction step will
-    be hidden in the participation view.
-
-For each instruction page, you have the following configuration options:
-
-| Setting       | What it's for                                         |
-|---------------|-------------------------------------------------------|
-| `Text`        | The instruction text displayed to the participants.   |
-| `Page number` | The order of the page in the slideshow.               |
-
-??? setting-details "Setting Details"
+!!! setting-details "Settings"
 
     ---
 
-    #### `Text`
+    **Text**
 
-    The instruction text displayed to the participants.
-    Can also upload and include images or gifs to guide
-    participants through the data donation process in this field.
+    The text of the instruction page. You can also upload and add images or GIFs, for
+    example screenshots that show where to request the data on the platform.
 
-    !!! tip
+    !!! tip "Let participants continue later"
 
-        The participant's external ID is available as a template variable to be included
-        in the instruction text as follows: `{{ participant_id }}` which will be displayed
-        to the participant as something like `IPI2wHDWrHODDRKuo8zo101S`. This is
-        helpful to enable participants to continue the data donation at a later point in time
-        (e.g., because it can take some time between requesting data takeout and being
-        able to download it); read [this section of the documentation](../../topics/continuation.md) to find out how
-        this can be done.
+        Requesting data from a platform can take hours or days. To let participants return
+        later, show them their participant ID with the variable `{{ participant_id }}`. It
+        appears as a code like `IPI2wHDWrHODDRKuo8zo101S`. See
+        [Continuation](../../topics/continuation.md).
 
     ---
 
-    #### `Page number`
+    **Page number**
 
-    The order of the page in the slideshow.
+    The position of the page in the instructions.
 
 ## Blueprint Configuration
 
-When creating a Blueprint, you have the following configuration options:
+A Blueprint processes the uploaded file in these steps:
+
+1. **Find the file:** In a ZIP file, find the file that matches the **File paths**.
+2. **Check the file:** Check that it has the expected format and contains the
+   **Expected fields**.
+3. **Select the fields:** Keep only the [Relevant Fields](#relevant-fields).
+4. **Filter and clean:** Apply the [Extraction Rules](#extraction-rules), for example to
+   remove entries before a certain date or to anonymize email addresses.
+
+Participants then review the result before they donate it.
+
 
 ### General Settings
 
-| Setting                | What it's for                                        |
-|------------------------|------------------------------------------------------|
-| `Name`                 | Internal name of the Blueprint.                      |
-| `Associated Uploader`  | The `Uploader` to which the Blueprint is associated. |
-
-??? setting-details "Setting Details"
+!!! setting-details "Settings"
 
     ---
 
-    #### `Name`
+    **Name**
 
-    Internal name of the Blueprint. Will not be publicly visible to participants.
+    Internal name of the Blueprint. Participants don't see it.
 
     ---
 
-    #### `Associated Uploader`
+    **Associated Uploader**
 
-    The `Uploader` to which the Blueprint is associated.
+    The Uploader whose file this Blueprint processes.
 
 ### Display Settings
 
-| Setting           | What it's for                                                                      |
-|-------------------|------------------------------------------------------------------------------------|
-| `Display name`    | Name displayed to participants on the data donation page.                          |
-| `Description`     | Description of what information the Blueprint will extract from the uploaded file. |
-| `Display order`   | Sets the display order for this Blueprint in the participation interface.          |
-
-??? setting-details "Setting Details"
+!!! setting-details "Settings"
 
     ---
 
-    #### `Display name`
+    **Display name**
 
-    Name displayed to participants on the data donation page. Will be publicly visible to participants.
-    Therefore, it is important to define a meaningful name (e.g., "Watch History", "Liked Posts" or similar).
-
-    ---
-
-    #### `Description`
-
-    Description of what information the Blueprint will extract from the uploaded file
-    (e.g., *"Date when you watched a video and the link to the video"*).
-    If defined, the description will be visible for participants in the data donation step.
+    The name participants see above the extracted data. Choose a name that describes the
+    data, for example "Watch History" or "Liked Posts".
 
     ---
 
-    #### `Display order`
+    **Description**
 
-    Sets the display order for this Blueprint in the participation interface.
-    Blueprints are shown in ascending order by this value.
-    If multiple Blueprints have the same order value, they will be ordered by creation date (oldest first).
+    Optional. Describes the extracted data for participants, for example *"The date you
+    watched each video and the link to the video"*.
+
+    ---
+
+    **Display order**
+
+    The order of the Blueprints on the page. Blueprints with a lower number are shown first.
+    Blueprints with the same number are shown in the order they were created.
 
 ### Data Extraction Configuration
 
-| Setting                         | What it's for                                                                             |
-|---------------------------------|-------------------------------------------------------------------------------------------|
-| `File paths`                    | Specify the path to the file you want to extract from the uploaded zip.                   |
-| `Expected File Format`          | The file format of the file from which information should be extracted.                   |
-| `Expected fields`               | The fields that must be contained in the file from which information should be extracted. |
-| `Expected field regex matching` | Select if you use a regex expression in the `Expected fields` setting.                    |
-| `Array join separator`          | The separator used to combine multiple values of a field into one text.                   |
-
-??? setting-details "Setting Details"
+!!! setting-details "Settings"
 
     ---
 
-    #### `File paths`
+    **File paths**
 
-    Specify the path to the file you want to extract from the uploaded zip
-    (Only necessary, if the Blueprint is associated to an Uploader that expects a ZIP file).
-    For example, if the file is `some_data.json` at the root of the zip, enter `some_data.json`.
-    Matching works from the right: `data.json` will match both
-    `root/data.json` and `root/some-folder/data.json`, selecting the first match.
-    Be specific enough to avoid unintended matches.
-    You can also use regex patterns or define multiple paths, which are tried in priority order (lower numbers first; useful if the filename may not always be the same).
-    If a path matches more than one file, DDM processes and extracts the data of all matched files consecutively.
-    Therefore, we recommend to be as specific as possible when setting the file path.
+    Only needed if the Uploader expects a ZIP file. The path of the file inside the ZIP
+    file. For example, if `some_data.json` is at the top level of the ZIP file, enter
+    `some_data.json`.
 
-    !!! tip
+    Paths are matched from the end: `data.json` matches both `root/data.json` and
+    `root/some-folder/data.json`. If a path matches more than one file, DDM extracts data
+    from all of them, so make the path as specific as possible.
 
-        **Examples for regex paths to match files**
+    You can add several paths, for example if the file name differs between platform
+    languages. DDM tries them in order, lowest number first: the first path with at least
+    one match is used (and all files matching it are extracted), and any later paths are
+    ignored.
 
-        | Regex | Description |
-        |---|---|
-        | `^MyActivities\.json` | Matches a file named `MyActivities.json` that is located at the root of the ZIP file. |
-        | `^SpecificFolder/MyActivities\.json` | Matches a file named `MyActivities.json` that is located in a folder named `SpecificFolder` in the root of the ZIP file. |
-        | `.*/MyActivities\.json` | Matches the first file with the name `MyActivities.json` that can be located anywhere in the ZIP file. |
-        | `(\^MyActivities\.json\|^MeineAktivitäten\.json\|^MieAttivita\.json)` | Matches a file that is located at the root of the ZIP file and either named `MyActivities.json`, `MeineAktivitäten.json`, or `MieAttivita.json`. Can be helpful to match the same file in different languages. |
+    !!! tip "Using regular expressions in file paths"
 
-        You can find about more about regex [here](https://developer.mozilla.org/en-US/docs/Glossary/Regular_expression).
-        On this website, you will [also find some Tools](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#tools)
-        that can help you test regex patterns.
+        A *regular expression* (regex) is a pattern that matches several possible texts.
+        For an introduction, see
+        [Regular expressions on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions).
+        To test a pattern, use [regex101](https://regex101.com/) with the "ECMAScript
+        (JavaScript)" flavor.
 
-        If you have the extraction of nested zip-files enabled, see the File Uploader settings above for how to define paths to nested zip-files.
+        Examples:
 
-    ---
+        - `^MyActivities\.json$`: A file named `MyActivities.json` at the top level of the
+          ZIP file.
+        - `^SpecificFolder/MyActivities\.json$`: A file named `MyActivities.json` in the
+          folder `SpecificFolder` at the top level.
+        - `.*/MyActivities\.json$`: A file named `MyActivities.json` in any folder.
+        - `^(MyActivities|MeineAktivitäten|MieAttivita)\.json$`: A file at the top level
+          named `MyActivities.json`, `MeineAktivitäten.json`, or `MieAttivita.json`, for
+          example the same file in different platform languages.
 
-    #### `Expected File Format`
+        Patterns are case-sensitive: `myactivities\.json` doesn't match `MyActivities.json`.
+        To allow both spellings, list them in the pattern, for example
+        `[Mm]y[Aa]ctivities\.json`.
 
-    The file format of the file from which information should be extracted.
-    Currently, only JSON and CSV is implemented.
-
-    ---
-
-    #### `Expected fields`
-
-    The fields that must be contained in the file from which information should be extracted.
-    If a file does not contain **all** fields defined here, No Information will be extracted.
-    Put the field names in double quotes (") and separate them with commas ("Field A", "Field B").
-    You can also use regular expressions (regex) to match expected fields - for this, you
-    must enable the `expected field regex matching` option (see below).
+        For files inside nested ZIP files, see
+        [Extract nested zip files](#uploader-configuration).
 
     ---
 
-    #### `Expected field regex matching`
+    **Expected File Format**
 
-    Select if you use a regex expression in the `Expected fields`
-    setting.
-
-    ---
-
-    #### `Array join separator`
-
-    If an extracted field contains several separate values
-    (e.g. multiple lines of a message) instead of a single value, they are combined
-    into one text using this separator. Defaults to `\n`, i.e., joining them with a
-    line break. E.g., an entry `["A", "B"]` becomes `"A\nB"`.
-
-### JSON specific settings
-
-| Setting           | What it's for                                                                          |
-|-------------------|----------------------------------------------------------------------------------------|
-| `Extraction Root` | Indicates on which level of the file's data structure information should be extracted. |
-
-??? setting-details "Setting Details"
+    The format of the file: JSON, CSV, or TXT.
 
     ---
 
-    #### `Extraction Root`
+    **Expected fields**
 
-    Indicates on which level of the files' data structure information
-    should be extracted. If you want to extract information contained on the first
-    level (e.g., `{'field to be extracted': value}`, you can leave this field empty.
-    If you want to extract data located on a higher level, then you would provide
-    the path to the parent field of the data you want to extract (e.g., if your json
-    file is structured like this `{'friends': {'real_friends': [{'name to extract':
-    name, 'date to extract': date}], 'fake friends': [{'name': name, 'date': date }]}}`
-    and you want to extract the names and dates of real_friends, you would set the
-    extraction root to `friends.real_friends`.
+    The fields the file must contain. If the file doesn't contain **all** of them, DDM
+    extracts nothing from it. Put each field name in double quotes and separate them with
+    commas, for example `"Field A", "Field B"`.
 
-#### Extracting Nested Loop Settings
+    ---
 
-Sometimes each item in your data contains a list of related sub-items that
-you also want to extract as their own rows, instead of one row per top-level
-item. For example, a ChatGPT conversation export is roughly structured like
-this: each conversation has a few top-level fields, plus a list of the
-individual messages exchanged in it.
+    **Expected fields use regex matching**
 
-!!! note
+    Enable this if **Expected fields** contains regular expressions instead of exact field
+    names. Like all regular expressions in DDM, they're case-sensitive.
 
-    **Example**
-    
-    ```json
-        [
-          {
-            "conversation_id": "conv-1",
-            "title": "Weekend Trip Ideas",
-            "mapping": [
-              {
-                "message": {
-                  "author": "user",
-                  "content": "Where should we go this weekend?"
-                }
-              },
-              {
-                "message": {
-                  "author": "assistant",
-                  "content": "How about a hike near the lake?"
-                }
-              }
-            ]
-          },
-          {
-            "conversation_id": "conv-2",
-            "title": "Restaurant Ideas",
-            "mapping": [
-              {
-                "message": {
-                  "author": "assistant",
-                  "content": "some content 2"
-                }
-              }
-            ]
-          }
-        ]
-    ```
+    ---
 
-    Without a nested loop configured, DDM only sees the top-level fields
-    (`conversation_id`, `title`) — you'd get one row per conversation, with no
-    straightforward way to also pull out the individual messages (in the example
-    contained in `mapping`).
+    **Array join separator**
 
-    By setting `Nested loop path` to `mapping`, you tell DDM to also loop over
-    each conversation's messages and turn every message into its own row,
-    automatically repeating that conversation's fields on each one:
+    Some fields contain several values, for example the lines of a message. DDM combines
+    them into one text, separated by this character. The default, `\n`, puts each value on
+    its own line: `["A", "B"]` becomes `A` and `B` on two lines.
 
-    | conversation_id | title | author | content |
-    |---|---|---|---|
-    | conv-1 | Weekend Trip Ideas | user | Where should we go this weekend? |
-    | conv-1 | Weekend Trip Ideas | assistant | How about a hike near the lake? |
-    | conv-2 | Restaurant Ideas | assistant | some content 2 |
+### JSON-Specific Settings
 
-    This approach also works if `mapping` in the example is not a list but a
-    dictionary-like object. E.g.:
+!!! setting-details "Settings"
+
+    ---
+
+    **Extraction Root**
+
+    Where in the file the data to extract is. Leave it empty if the data is at the top
+    level of the file. If the data is nested inside other fields, enter the path to it, with
+    field names separated by dots.
+
+    For example, to extract the names and dates of `real_friends` from this file, enter
+    `friends.real_friends`:
 
     ```json
-        [
-          {
-            "conversation_id": "conv-1",
-            "title": "Weekend Trip Ideas",
-            "mapping": {
-              "some_uuid": {
-                "message": {
-                  "author": "user",
-                  "content": "some content"
-                }
-              }
-            }
-          }
-          ...
-        ]
+    {
+      "friends": {
+        "real_friends": [{"name": "Alice", "date": "2024-01-01"}],
+        "fake_friends": [{"name": "Bob", "date": "2024-02-01"}]
+      }
+    }
     ```
 
-    In this case, DDM just ignores the key of the entries contained in `mapping` and
-    iterates over the values (i.e., `"message": { "author": "user" } ...`).
+#### Nested Loop Settings
 
-| Setting                                     | What it's for                                                                    |
-|---------------------------------------------|----------------------------------------------------------------------------------|
-| `Nested loop path`                          | The field that holds the list of sub-items you want to extract as separate rows. |
-| `Nested expected fields`                    | The fields that a sub-item must contain in order to be extracted.                |
-| `Nested expected fields use regex matching` | Select if you use a regex expression in `Nested expected fields`.                |
-| `Group entries by parent item`              | Whether to group and display extracted sub-items by their parent item.           |
-| `Allow item exclusion`                      | Whether participants can remove individual items from their donation.            |
+Sometimes each entry in a file contains a list of sub-entries that you want as separate
+rows. For example, a ChatGPT export has one entry per conversation, and each conversation
+contains a list of messages:
 
-??? setting-details "Setting Details"
+```json
+[
+  {
+    "conversation_id": "conv-1",
+    "title": "Weekend Trip Ideas",
+    "mapping": [
+      {"message": {"author": "user", "content": "Where should we go this weekend?"}},
+      {"message": {"author": "assistant", "content": "How about a hike near the lake?"}}
+    ]
+  },
+  {
+    "conversation_id": "conv-2",
+    "title": "Restaurant Ideas",
+    "mapping": [
+      {"message": {"author": "assistant", "content": "some content 2"}}
+    ]
+  }
+]
+```
 
-    ---
+By default, DDM extracts one row per conversation and can't reach the individual messages.
+With **Nested loop path** set to `mapping`, DDM creates one row per message and repeats the
+conversation's fields in each row:
 
-    #### `Nested loop path`
+| conversation_id | title              | author    | content                          |
+|-----------------|--------------------|-----------|----------------------------------|
+| conv-1          | Weekend Trip Ideas | user      | Where should we go this weekend? |
+| conv-1          | Weekend Trip Ideas | assistant | How about a hike near the lake?  |
+| conv-2          | Restaurant Ideas   | assistant | some content 2                   |
 
-    The field that holds the list of sub-items you want to
-    extract as separate rows (e.g. `mapping`). Leave empty if you don't need
-    this (the default) — in that case, the settings below have no effect. To
-    reach a field nested inside another field, separate the names with a dot,
-    e.g. `data.mapping`. To then extract, e.g. in the example above, the message
-    contents and authors, you will define `message.author` and `message.content`
-    as relevant nested fields (see the section on `Relevant Fields` below).
+This also works if `mapping` is an object instead of a list, for example
+`"mapping": {"some_uuid": {"message": {...}}}`. DDM then ignores the keys (`some_uuid`) and
+uses the values.
 
-    ---
+All settings in this section apply only to JSON Blueprints with a **Nested loop path**.
 
-    #### `Nested expected fields`
-
-    The fields that a sub-item must contain in order
-    to be extracted. Works just like the top-level `Expected fields` setting,
-    except it's checked per sub-item rather than per top-level item: a sub-item
-    missing any of these fields is skipped, but the rest of its conversation
-    (or other top-level item) is still processed normally.
-    Put the field names in double quotes and separate them with commas
-    (`"Field A", "Field B"`). Only used if `Nested loop path` is set.
-
-    ---
-
-    #### `Nested expected fields use regex matching`
-
-    Select if you use a regex
-    expression in `Nested expected fields`, the same way
-    `Expected field regex matching` applies to the top-level `Expected fields`.
-
-    ---
-
-    #### `Group entries by parent item`
-
-    By default, all extracted sub-items (e.g. every
-    message from every conversation) are shown to participants combined in one
-    long list. Enable this to instead group and display them by their parent
-    item — e.g. all of one conversation's messages shown together as a single
-    entry, with the conversation's own fields (like `title`) shown once above
-    them. Requires `Nested loop path` to be set.
+!!! setting-details "Settings"
 
     ---
 
-    #### `Allow item exclusion`
+    **Nested loop path**
 
-    If enabled, participants can remove
-    individual items (e.g. a single conversation) from their donation before
-    submitting, instead of only being able to consent or decline for the whole
-    Blueprint at once. Requires `Group entries by parent item` to be enabled.
+    The field that contains the sub-entries, for example `mapping`. For a field inside
+    another field, separate the names with dots, for example `data.mapping`. Leave it empty
+    if you don't need it.
 
-    !!! note
-    
-        All settings in this section only apply to JSON blueprints with a
-        `Nested loop path` configured; `Allow item exclusion` additionally
-        requires `Group entries by parent item` to be enabled.
-
-### CSV specific settings
-
-| Setting         | What it's for                                                 |
-|-----------------|---------------------------------------------------------------|
-| `CSV Delimiter` | The character that separates values in the expected CSV file. |
-
-??? setting-details "Setting Details"
+    To extract fields of the sub-entries, add them as [Relevant Fields](#relevant-fields)
+    with the scope **Nested level**, for example `message.author` and `message.content`.
 
     ---
 
-    #### `CSV Delimiter`
+    **Nested expected fields**
 
-    This field allows you to specify the character that separates values in the
-    expected CSV file (e.g., `,`, `;` or `\t`). If left empty, DDM will try to infer the delimiter from the file structure.
-
-### TXT specific settings
-
-| Setting               | What it's for                                                                    |
-|-----------------------|----------------------------------------------------------------------------------|
-| `Record separator`    | The character sequence that marks the boundary between individual records.       |
-| `Field separator`     | The character sequence that separates individual fields within a record.         |
-| `Key-value separator` | The character that separates a field's name from its value within a line.        |
-| `Skip header lines`   | The number of lines to skip at the beginning of the file.                        |
-| `Skip footer lines`   | The number of lines to skip at the end of the file.                              |
-| `Ignore blank lines`  | Whether empty lines within a record are ignored.                                 |
-| `Trim whitespace`     | Whether leading/trailing whitespace is removed from records and key-value pairs. |
-
-??? setting-details "Setting Details"
+    Like **Expected fields**, but checked for each sub-entry. DDM skips sub-entries that
+    don't contain all of these fields and still processes the rest of the entry. Put each
+    field name in double quotes and separate them with commas, for example
+    `"Field A", "Field B"`.
 
     ---
 
-    #### `Record separator`
+    **Nested expected fields use regex matching**
 
-    The character sequence that marks the boundary between
-    individual records/entries in the file (e.g., a blank line or a single line
-    break). Use `\n` for a line break or `\n\n` for a blank line.
+    Enable this if **Nested expected fields** contains regular expressions.
 
     ---
 
-    #### `Field separator`
+    **Group entries by parent item**
 
-    The character sequence that separates individual fields
-    within a single record (e.g., a line break if each field is on its own line).
-    Use `\n` for a line break.
-
-    ---
-
-    #### `Key-value separator`
-
-    The character that separates a field's name from its
-    value within a line (e.g., `:` in `Name: John`, or `=` in `name=John`).
-
-    !!! note
-    
-        **Example**
-    
-        Given a TXT file structured like this:
-    
-        ```txt
-        Datum: 2026-04-01 14:09:16 UTC
-        Link: https://example.com/video/1
-        
-        Datum: 2026-04-02 15:30:48 UTC
-        Link: https://example.com/video/2
-        ```
-    
-        with `Record separator` set to `\n\n` (blank line), `Field separator` set
-        to `\n` (line break) and `Key-value separator` set to `:`, DDM extracts two records,
-        each containing a `Datum` and a `Link` field.
-
-    !!! note
-    
-        When entering `Record separator` or `Field separator`, type `\n` (backslash
-        followed by "n") to represent a line break, and `\n\n` for a blank line — DDM
-        automatically converts these into actual line breaks internally. Do not paste
-        an actual line break into the field.
+    By default, participants see all sub-entries (for example, all messages from all
+    conversations) in one list. If enabled, they see them grouped by entry, for example all
+    messages of a conversation together, with the conversation's title shown once above
+    them.
 
     ---
 
-    #### `Skip header lines`
+    **Allow item exclusion**
 
-    The number of lines to skip at the beginning of the TXT
-    file before processing begins (e.g., to ignore a title or metadata block).
+    If enabled, participants can remove individual entries, for example a single
+    conversation, before they donate. Otherwise, they can only donate or decline all data
+    of the Blueprint. Requires **Group entries by parent item**.
 
-    ---
+### CSV-Specific Settings
 
-    #### `Skip footer lines`
-
-    The number of lines to skip at the end of the TXT file
-    (e.g., to ignore a trailing summary or signature block).
+!!! setting-details "Settings"
 
     ---
 
-    #### `Ignore blank lines`
+    **CSV Delimiter**
 
-    If enabled, empty lines within a record are ignored
-    rather than treated as part of the field data.
+    The character that separates values in the file, for example `,`, `;`, or `\t` (tab).
+    If you leave it empty, DDM detects it from the file.
+
+### TXT-Specific Settings
+
+For example, for this file:
+
+```txt
+Datum: 2026-04-01 14:09:16 UTC
+Link: https://example.com/video/1
+
+Datum: 2026-04-02 15:30:48 UTC
+Link: https://example.com/video/2
+```
+
+set **Record/entry separator** to `\n\n` (blank line), **Field separator** to `\n` (line
+break), and **Key-value separator** to `:`. DDM extracts two entries, each with the fields
+`Datum` and `Link`.
+
+!!! note "Entering line breaks"
+
+    In the separator settings, type `\n` (a backslash followed by "n") for a line break and
+    `\n\n` for a blank line. Don't paste an actual line break into the field.
+
+!!! setting-details "Settings"
 
     ---
 
-    #### `Trim whitespace`
+    **Record/entry separator**
 
-    If enabled, leading and trailing whitespace is removed from
-    each record and from each key-value pair before extraction.
+    What separates one entry from the next, for example `\n\n` for a blank line or `\n` for
+    a line break.
+
+    ---
+
+    **Field separator**
+
+    What separates the fields within an entry, for example `\n` if each field is on its own
+    line.
+
+    ---
+
+    **Key-value separator**
+
+    What separates a field's name from its value, for example `:` in `Name: John` or `=` in
+    `name=John`.
+
+    ---
+
+    **Skip header lines**
+
+    How many lines to skip at the start of the file, for example a title or metadata.
+
+    ---
+
+    **Skip footer lines**
+
+    How many lines to skip at the end of the file, for example a summary.
+
+    ---
+
+    **Ignore blank lines**
+
+    If enabled, DDM ignores empty lines within an entry instead of treating them as part of
+    a field.
+
+    ---
+
+    **Trim whitespace**
+
+    If enabled, DDM removes spaces at the start and end of each entry and each field.
 
 ### Relevant Fields
 
-The settings above are used to identify and validate the file from which data
-should be extracted. Once file validation succeeds, the blueprint starts
-extracting information from the file.
+Once DDM has found and checked the file, it extracts only the fields you define here. You
+can also rename fields, for example to get the same column name for files in different
+platform languages.
 
-To do this, you need to define which fields to keep in the extracted data.
-Optionally, you can also rename fields during extraction — this is especially
-useful when using regex matching, where you want a clean, predictable field
-name in the exported data rather than the raw matched name.
-
-To define a field, provide:
-
-| Setting            | What it's for                                                                      |
-|--------------------|------------------------------------------------------------------------------------|
-| `Expected name`    | The field/variable name expected to be contained in the uploaded file.             |
-| `Match regex`      | Enable this if `expected name` is a regex pattern rather than an exact field name. |
-| `Rename to`        | Optionally, the name the matched field should be renamed to in the extracted data. |
-| `Keep in donation` | Whether the field should be included in the donation.                              |
-
-??? setting-details "Setting Details"
+!!! setting-details "Settings"
 
     ---
 
-    #### `Expected name`
+    **Scope**
 
-    The field/variable name expected to be contained in the
-    uploaded file. This can be an exact name, or a regex pattern (e.g., to match
-    across different translations of the same field).
-
-    ---
-
-    #### `Match regex`
-
-    Enable this if `expected name` is a regex pattern rather than
-    an exact field name.
+    **Root level** (the default) reads the field from the entry. **Nested level** reads it
+    from a sub-entry (see [Nested Loop Settings](#nested-loop-settings)), for example
+    `message.author` in the ChatGPT example. **Nested level** is only available for JSON
+    Blueprints with a **Nested loop path**.
 
     ---
 
-    #### `Rename to`
+    **Expected name**
 
-    Optionally, provide the name the matched field should be renamed
-    to in the extracted data. If left empty, the name from `expected name` is
-    used as-is.
+    The field's name in the file, or a regular expression if **Match regex** is enabled,
+    for example to match the same field in different platform languages. Without regex, you
+    can reach a field inside another field with dots, for example `message.author.role`.
 
     ---
 
-    #### `Keep in donation`
+    **Match regex**
 
-    Enable this if the field should be included in the
-    donation (i.e., submitted to you as part of the participant's donation).
+    Enable this if **Expected name** is a regular expression instead of an exact name.
+
+    ---
+
+    **Rename to**
+
+    Optional. The field's name in the extracted data. If empty, DDM uses the
+    **Expected name**. Useful with regular expressions, so the column has a predictable
+    name.
+
+    ---
+
+    **Keep in donation**
+
+    If enabled, the field is part of the donated data. If disabled, you can still use the
+    field in Extraction Rules (for example, to filter by date) without collecting it.
 
 ### Extraction Rules
 
-Data extraction is performed using `Extraction Rules`, which are applied to
-the file one after another, in the order you define.
+Extraction Rules filter and clean the extracted data. DDM applies them one after another,
+in the order you define. Each rule either **removes entries** that meet a condition or
+**changes the text** of a field.
 
-| Setting               | What it's for                                                                                        |
-|-----------------------|------------------------------------------------------------------------------------------------------|
-| `Execution Order`     | The order in which the extraction rules are applied to the file.                                     |
-| `Name`                | The name of the extraction rule, for internal organization only.                                     |
-| `Field`               | The field the rule applies to.                                                                       |
-| `Extraction Operator` | Defines the main logic of the extraction step.                                                       |
-| `Comparison Value`    | The value against which the field's data is compared, according to the selected Extraction Operator. |
-| `Replacement Value`   | Only required for "Replace match (regex)": the value used as a replacement when the pattern matches. |
+!!! info
 
-??? setting-details "Setting Details"
+    Rules don't decide which fields are kept; **Keep in donation** does (see
+    [Relevant Fields](#relevant-fields)). You only need rules to filter or change data.
+
+!!! setting-details "Settings"
 
     ---
 
-    #### `Execution Order`
+    **Execution Order**
 
-    The order in which the extraction rules are applied to the file.
-
-    ---
-
-    #### `Name`
-
-    The name of the extraction rule. For internal organization only —
-    this is not the field name itself.
+    The order in which the rules are applied. Rules with a lower number are applied first.
 
     ---
 
-    #### `Field`
+    **Name**
 
-    The field the rule applies to. This must match either the
-    `expected name` set in the Extraction Fields section, or, if provided, its
-    `rename to` value.
+    Internal name of the rule. It's not the name of the field.
 
     ---
 
-    #### `Extraction Operator`
+    **Field**
 
-    Defines the main logic of the extraction step. Below, you see the list of available extraction
-    operators:
-
-    | Extraction Operator           | Description                                                                                                                                                                                                                                                                                                                                                                           | Note                                                                                             |
-    |-------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
-    | Keep Field                    | Keep this field in the uploaded data.                                                                                                                                                                                                                                                                                                                                                 | –                                                                                                |
-    | Equal (==)                    | Delete row/entry if the value contained in the given `field` equals the `comparison value`.                                                                                                                                                                                                                                                                                           | Works for strings, integers, and dates^1^.                                                       |
-    | Not Equal (!=)                | Delete row/entry if the value contained in the given `field` does not equal the `comparison value`.                                                                                                                                                                                                                                                                                   | Works for strings, integers, and dates^1^.                                                       |
-    | Greater than (>)              | Delete row/entry if the value contained in the given `field` is greater than the `comparison value`.                                                                                                                                                                                                                                                                                  | Works for integers and dates^1^. String values are skipped and the row will be kept in the data. |
-    | Smaller than (<)              | Delete row/entry if the value contained in the given `field` is smaller than the `comparison value`.                                                                                                                                                                                                                                                                                  | Works for integers and dates^1^. String values are skipped and the row will be kept in the data. |
-    | Greater than or equal (>=)    | Delete row/entry if the value contained in the given `field` is greater than or equal to the `comparison value`.                                                                                                                                                                                                                                                                      | Works for integers and dates^1^. String values are skipped and the row will be kept in the data. |
-    | Smaller than or equal (<=)    | Delete row/entry if the value contained in the given `field` is smaller than or equal to the `comparison value`.                                                                                                                                                                                                                                                                      | Works for integers and dates^1^. String values are skipped and the row will be kept in the data. |
-    | Delete match (regex)          | Delete parts of the value contained in the given `field` that match the given `regular expression (regex)` (e.g., if the `regular expression (regex)` = "^Watched " and a field contains the value "Watched video XY" the following value will be kept in the uploaded data: "video XY").                                                                                             | All field values are converted to strings before this operation is applied.                      |
-    | Replace match (regex)         | Replace parts of the value contained in the given `field` that match the given `regular expression (regex)` (e.g., if the `regular expression (regex)` = "[\w-\.]+@([\w-]+\.)+[\w-]{2,4}" and the `replacement value` = "_anonymized_" and a field contains the value "some text email@address.com" the following value will be kept in the uploaded data: "some text _anonymized_"). | All field values are converted to strings before this operation is applied.                      |
-    | Delete row when match (regex) | Delete row/entry if the value contained in the given `field` matches the given `regular expression (regex)` (e.g., if `regular expression (regex)` = "^Watched " and a field contains the value "Watched video XY" the row/entry will be deleted from the uploaded data).                                                                                                             | All field values are converted to strings before this operation is applied.                      |
-
-    [small]#^1^ Dates are inferred from string values if they are formatted according to ISO, RFC2822, or HTTP standards,
-    and only if both the field value and the comparison value follow the same format.
-    Otherwise, the entry will be treated as a regular string.#
+    The field the rule checks or changes. Must match the field's **Expected name** or, if
+    set, its **Rename to** value.
 
     ---
 
-    #### `Comparison Value`
+    **Extraction Operator**
 
-    The value against which the data contained in the indicated field will be compared according
-    to the selected Extraction Operator.
-
-    ---
-
-    #### `Replacement Value`
-
-    Only required for operation "Replace match (regex)". The value
-    that will be used as a replacement if the regex pattern matches.
-
-### Backup blueprints (advanced settings)
-
-A backup blueprint acts as a fallback: if a blueprint's parser fails to
-extract data from a participant's file (e.g., because the file cannot be identified,
-or the data extraction produces an error) DDM will try its backup blueprints
-instead. This is useful for handling files whose structure occasionally
-varies (e.g. a platform export format that changes over time), without
-having to guess a single configuration that covers every case.
-
-| Setting            | What it's for                                                                       |
-|--------------------|-------------------------------------------------------------------------------------|
-| `Backup for`       | The primary blueprint that this blueprint should act as a backup for.               |
-| `Backup priority`  | If a primary blueprint has more than one backup, the order in which they are tried. |
-
-??? setting-details "Setting Details"
+    What the rule does. See [Operators](#operators).
 
     ---
 
-    #### `Backup for`
+    **Comparison Value**
 
-    Selects the primary blueprint that this blueprint should act as
-    a backup for. Leave empty if this blueprint is not a backup. Only blueprints
-    using the same File Uploader (and belonging to the same project) are
-    available for selection; a blueprint that is itself a backup cannot be
-    selected here — backups cannot be chained.
+    The value or regular expression the field is compared with.
 
     ---
 
-    #### `Backup priority`
+    **Replacement Value**
 
-    If a primary blueprint has more than one backup, this
-    number determines the order in which they are tried. Lower values are tried
-    first.
+    Only for **Replace match (regex)**: the text that replaces the matching parts.
 
-!!! note
+#### Operators
 
-    A backup blueprint is only used if the primary blueprint's parser fails to
-    extract data. If the primary blueprint succeeds, its backups are never
-    attempted, even if they are configured.
+**Operators that remove entries.** Each of these operators **removes** every entry for which
+the condition is true.
 
-#### Example
+| Extraction Operator           | Removes an entry if the field…                    | Works with                  |
+|-------------------------------|---------------------------------------------------|-----------------------------|
+| Equal (==)                    | equals the comparison value.                      | Text, numbers, dates[^1]    |
+| Not Equal (!=)                | doesn't equal the comparison value.               | Text, numbers, dates[^1]    |
+| Greater than (>)              | is greater than the comparison value.             | Numbers, dates[^1]          |
+| Smaller than (<)              | is smaller than the comparison value.             | Numbers, dates[^1]          |
+| Greater than or equal (>=)    | is greater than or equal to the comparison value. | Numbers, dates[^1]          |
+| Smaller than or equal (<=)    | is smaller than or equal to the comparison value. | Numbers, dates[^1]          |
+| Delete row when match (regex) | matches the regular expression.                   | Any value (treated as text) |
 
-Suppose `Watch History` is a primary blueprint expecting a JSON export, and
-the platform occasionally changes its export format in a way that breaks
-extraction. A second blueprint, `Watch History (legacy format)`, can be
-configured with `Backup for` set to `Watch History` and used as a fallback:
-if the primary JSON structure fails to parse, DDM automatically tries the
-legacy-format blueprint instead (e.g., TXT), and participants see the result of
-whichever blueprint succeeded.
+For the greater/smaller operators, entries whose field contains text are kept.
 
-If multiple backups are configured for the same primary blueprint, set
-`Backup priority` on each to control the order they are attempted in (e.g.
-`0` for the first fallback, `1` for the second).
+**Operators that change text.**
+
+| Extraction Operator   | What it does                                                                                      | Works with                  |
+|-----------------------|---------------------------------------------------------------------------------------------------|-----------------------------|
+| Delete match (regex)  | Deletes the parts of the field that match the regular expression.                                 | Any value (treated as text) |
+| Replace match (regex) | Replaces the parts of the field that match the regular expression with the **Replacement Value**. | Any value (treated as text) |
+
+Examples:
+
+- **Delete match (regex)** with `^Watched ` turns `Watched video XY` into `video XY`.
+- **Replace match (regex)** with `[\w.-]+@([\w-]+\.)+[\w-]{2,}` and the replacement value
+  `_anonymized_` turns `some text email@address.com` into `some text _anonymized_`.
+- **Delete row when match (regex)** with `^Watched ` removes every entry whose field starts
+  with `Watched `.
+
+[^1]: DDM recognizes dates in ISO, RFC 2822, or HTTP format, for example
+    `2026-04-01T14:09:16Z`, but only if the field and the comparison value use the same
+    format. Otherwise, it compares them as text.
+
+### Backup Blueprints (Advanced)
+
+A backup Blueprint is a fallback: if a Blueprint can't extract data from a participant's
+file, for example because the platform changed its export format, DDM tries the backup
+instead. Participants see the result of whichever Blueprint succeeds. If the main Blueprint
+succeeds, DDM doesn't use the backups.
+
+For example, `Watch History` expects the current JSON export. A second Blueprint,
+`Watch History (old format)`, expects the TXT export that the platform used before, with
+**Backup for** set to `Watch History`. If a participant uploads an old export, DDM uses the
+backup.
+
+!!! setting-details "Settings"
+
+    ---
+
+    **Backup for**
+
+    The Blueprint that this Blueprint is a backup for. Leave it empty if this isn't a
+    backup. You can only choose Blueprints of the same Uploader. A backup can't have its own
+    backup.
+
+    ---
+
+    **Backup priority**
+
+    If a Blueprint has several backups, DDM tries the one with the lowest number first.
 
 ## Advanced Options
 
-Under advanced options, the Uploader translations can be edited. This gives you control over the text labels
-of the Uploaders displayed in the participant interface. If there are multiple Uploaders configured for one project,
-this will affect all Uploaders.
+Under **Advanced Options**, you can edit the texts of the upload form, such as button labels
+and messages, for all Uploaders of the project.

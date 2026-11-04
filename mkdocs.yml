@@ -8,6 +8,9 @@ copyright: Copyright &copy; Data Donation Lab, University of Zurich
 
 strict: true
 
+validation:
+  anchors: warn
+
 # theme.custom_dir lives inside docs/ (docs/overrides/) so it stays with the
 # rest of the docs; exclude it from the built site.
 exclude_docs: |
@@ -77,41 +80,47 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.tabbed:
+      alternate_style: true
 
 plugins:
   - search
+  - redirects:
+      redirect_maps:
+        'researchers/topics/test_mode.md': 'researchers/test_and_launch.md'
+        'researchers/topics/project_logs.md': 'researchers/data_center/project_logs.md'
+        'researchers/topics/index.md': 'researchers/index.md'
 
 nav:
   - Home: index.md
   - For Researchers:
       - researchers/index.md
-      - Create a Project: researchers/create_project.md
       - Project Hub: researchers/project_hub.md
-      - General Project Settings: researchers/general_project_settings.md
-      - Data Collection Configuration:
+      - Set Up a Project:
+          - Create a Project: researchers/create_project.md
+          - General Project Settings: researchers/general_project_settings.md
+          - Export & Copy: researchers/export_copy.md
+      - Configure Data Collection:
           - researchers/data_collection_configuration/index.md
           - Briefing Page: researchers/data_collection_configuration/briefing.md
           - Data Donation:
               - Overview: researchers/data_collection_configuration/datadonation/datadonation_overview.md
               - Configuration: researchers/data_collection_configuration/datadonation/datadonation_configuration.md
+              - Continuation: researchers/topics/continuation.md
           - Questionnaire:
               - Overview: researchers/data_collection_configuration/questionnaire/questionnaire_overview.md
               - Configuration: researchers/data_collection_configuration/questionnaire/questionnaire_configuration.md
               - Data Integration: researchers/data_collection_configuration/questionnaire/questionnaire_data_integration.md
           - Debriefing Page: researchers/data_collection_configuration/debriefing.md
-      - Data Center:
+          - Dynamic Content: researchers/topics/templating_features.md
+      - Test and Launch: researchers/test_and_launch.md
+      - Collect Data:
           - researchers/data_center/index.md
           - Download: researchers/data_center/data_download.md
-          - Project Logs: researchers/data_center/project_logs.md
           - Statistics: researchers/data_center/participation_statistics.md
-      - Danger Zone: researchers/danger_zone.md
-      - Topics:
-          - researchers/topics/index.md
+          - Project Logs: researchers/data_center/project_logs.md
           - APIs: researchers/topics/apis.md
-          - Continuation: researchers/topics/continuation.md
-          - Test Mode: researchers/topics/test_mode.md
-          - Project Logs: researchers/topics/project_logs.md
-          - Template Rendering: researchers/topics/templating_features.md
+      - Delete a Project or Data: researchers/danger_zone.md
   - For System Administrators:
       - administrators/index.md
       - Installation Guide: administrators/installation.md

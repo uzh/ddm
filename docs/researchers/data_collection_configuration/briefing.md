@@ -18,23 +18,36 @@ You can access the configuration options for the briefing page in
 _Project Hub > Data Collection Configuration > Briefing_.
 To configure the briefing page, you have the following options.
 
-#### `Briefing Text`
-: Text displayed to participants on the briefing page.
+!!! setting-details "Settings"
 
-!!! tip
+    ---
 
-    In the briefing text, you can make use of dynamic template functionalities.
-    You can read more about how to use dynamic templates
-    [here](../topics/templating_features.md).
+    **Briefing Text**
 
-#### `Briefing Consent Mandatory`
-: If briefing consent is enabled, participants will
-have to explicitly indicate their consent at the bottom of the briefing page before
-they can continue. If a participant does indicate that they to do not consent,
-they will be redirected to the debriefing page.
+    Text displayed to participants on the briefing page.
 
-#### `Briefing consent label yes`
-: The label displayed to participants to indicate consent.
+    !!! tip
 
-#### `Briefing consent label no`
-: The label displayed to participants to reject consent.
+        In the briefing text, you can make use of dynamic template functionalities.
+        You can read more about how to use dynamic templates
+        [here](../topics/templating_features.md).
+
+    ---
+
+    **Briefing Consent Mandatory**
+
+    If enabled, participants will have to provide explicit participation consent
+    before they can advance to the data donation. If a participant does indicate that they
+    do not consent, they will be redirected to the debriefing page.
+
+    ---
+
+    **Response Consent**
+
+    The label displayed to participants to indicate consent.
+
+    ---
+
+    **Response Non-Consent**
+
+    The label displayed to participants to reject consent.

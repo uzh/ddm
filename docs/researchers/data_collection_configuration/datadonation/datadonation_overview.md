@@ -1,35 +1,41 @@
-# Data Donation Overview
+# Data Donation
 
-The data donation page will be displayed to participants after the
-[briefing page](../briefing.md).
+On the data donation page, participants upload their data, review it, and decide whether to
+donate it. The page follows the [briefing page](../briefing.md).
 
-Before providing more information on the configuration options of the data donation page, it is helpful to get a
-first overview from both the participants' and the researchers' perspectives.
+!!! info "Donated data stays on the participant's device until they consent"
+
+    DDM checks, extracts, and filters the uploaded data in the participant's browser.
+    The content of the donation is sent to your server only after the participant reviews
+    it and clicks **Transmit data**.
+
+    Before consent, DDM may send technical information about the uploaded file, such as
+    its file structure, to help you diagnose problems (see [Project Logs](../../data_center/project_logs.md)).
 
 ## Participants' Perspective
 
-From the **participants' perspective**, this page includes three steps:
+Participants go through three steps:
 
-1. The donation instructions.
-![Data Donation Page Screenshot](../../img/datadonation_page.png){ width="95%" }
+1. **Instructions:** Participants read how to request and download their data from the
+   platform.
 
-2. An upload form through which participants can upload their data donation.
-3. An overview of the extracted data to review the data before giving explicit consent to submit 
-them to the research project.
-![Data Donation Page After Upload Screenshot](../../img/datadonation_after_upload_page.png){ width="95%" }
+    ![Data donation page with instructions](../../img/datadonation_page.png){ width="95%" }
+
+2. **Upload:** Participants upload the file they received from the platform.
+3. **Review and consent:** Participants see the data that DDM extracted from their file and
+   decide whether to donate it.
+
+    ![Data donation page after upload, showing the extracted data for review](../../img/datadonation_after_upload_page.png){ width="95%" }
 
 ## Researchers' Perspective
 
-From **the researchers' perspective**, the purpose of the data donation page is to:
+Between upload and review, DDM processes the file according to the rules you define:
 
-1. Providing participants with instructions.
-2. Providing participants the possibility to upload their donation.
-3. Verify that the participant uploads the correct data.
-4. Clean and filter the data that participants upload according to pre-defined extraction rules.
-5. Provide the participant the possibility to review the cleansed and filtered data before data transmission.
-6. Obtain informed consent from participants.
+1. **Check the file:** DDM verifies that the participant uploaded the expected file.
+2. **Extract and filter:** DDM keeps only the data your extraction rules ask for and removes
+   everything else.
 
-These steps take all place on the participants devices and no personal data leave the participants' devices before they
-provide their consent and click on "transmit data".
+Participants then review only this extracted data, so they know exactly what they donate.
 
-The next pages will guide you through how you can configure the data donation step.
+To set up the instructions and extraction rules, see
+[Data Donation Configuration](datadonation_configuration.md).

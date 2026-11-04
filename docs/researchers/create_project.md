@@ -1,54 +1,47 @@
-# Creating a Data Donation Project
+# Create a Project
 
 ## Project List
 
-When you access DDM, you will see a list of all your Donation Projects:
+When you open DDM, you see a list of all your projects:
 
-![Project List Screenshot](img/project_list.png){ width="90%" }
+![Project list](img/project_list.png){ width="90%" }
 
-To create a new data donation project, click on `Create New Project`.
+To create a project, click **Create New Project**.
 
-## Set up a New Project
+## Set Up a New Project
 
-When creating a new project, you will see this page:
+![Form for creating a project](img/project_create.png){ width="90%" }
 
-![Project Create Form Screenshot](img/project_create.png){ width="90%" }
+Enter the project's name, URL identifier, contact information, and data protection
+statement. For what each field means, see
+[General Project Settings → Public Information](general_project_settings.md#public-information).
+You can change all of these later.
 
-On this page, you define the following settings (you can
-also modify most of the settings once the project has been created):
+### Advanced Options: Enhanced Encryption
 
-#### `Project Name`
-: Name of the project. Visible to participants in the browser's title bar or a page's tab.
+DDM encrypts all collected data. By default, DDM can decrypt the data itself, so you can view
+and download it without extra steps.
 
-#### `URL Identifier`
-: Identifier that is included in the URL through which participants can access the project
-(e.g, https://root.url/**my-url-identifier**). Can only contain letters, hyphens, numbers or underscores.
+With **Enable enhanced encryption**, you set a project password when you create the project.
+Donations and questionnaire responses can only be decrypted with this password. DDM doesn't
+store it, so nobody without the password can read the data, including the administrators of
+your DDM server. You'll need to enter the password whenever you download data, both in the
+[Data Center](data_center/data_download.md) and through the [API](topics/apis.md).
 
-#### `Contact Information`
-: Contact information of the researcher responsible for the project.
-Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.
+Consider enhanced encryption if your data protection requirements say that only your research
+team may be able to read the data.
 
-#### `Data Protection Statement`
-: Data protection statement that describes how the data is processed.
-Is linked in the footer of the donation interface and can be viewed by data donors at any stage of the data donation process.
+!!! danger "Before you enable enhanced encryption"
 
-### Advanced Options
+    - **You can't change it later.** Enhanced encryption can't be turned on or off after you
+      create the project.
+    - **If you lose the password, you lose the data.** The password can't be recovered or
+      reset. Store it in a password manager and share it with your team.
+    - **Some features aren't available.** You can't refer to donated data in your
+      questionnaire (see [Data Integration](data_collection_configuration/questionnaire/questionnaire_data_integration.md)).
 
-#### `Enable enhanced encryption`
-: When creating a project with enhanced encryption, you will have to provide
-a project password, which will be used to encrypt all collected data donations and survey responses
-(for more information on how collected data is encrypted, see [here](../developers/topics/encryption.md)).
-This password will not be saved by the application, and the data collected for
-this project can only be encrypted by entering the password that was provided when the project was created.
+For technical details, see [Developers → Encryption](../developers/topics/encryption.md).
 
-!!! note
+## After Creating the Project
 
-    Some words of caution:
-
-    - After a project has been created, it enhanced encryption cannot be enabled/disabled.
-    - There is no way to recover or reset the password used to initialize the project should you loose it.
-    - Enabling enhanced encryption will limit the functionality: it won’t be possible to reference data points from
-    a data donation in a question.
-
-Once you click on `Create Project` you will be redirected to the
-Project Hub of your newly created project.
+Click **Create Project**. DDM opens the [Project Hub](project_hub.md) of your new project.

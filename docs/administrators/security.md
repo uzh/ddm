@@ -123,9 +123,9 @@ your web server.
 DDM limits the request rate on the two endpoints that clients can reach without a researcher
 login. For the settings and their format, see [Settings Reference](settings_reference.md).
  
-| Endpoint                                                                                                    | Default limit                     |
-|-------------------------------------------------------------------------------------------------------------|-----------------------------------|
-| Project API (token-authenticated; see [Researchers → APIs](../researchers/topics/apis.md))                  | 100 requests/minute per token     |
-| Client-side exception log (public; see [Researchers → Project Logs](../researchers/topics/project_logs.md)) | 20 requests/minute per IP address |
+| Endpoint                                                                                                         | Default limit                     |
+|------------------------------------------------------------------------------------------------------------------|-----------------------------------|
+| Project API (token-authenticated; see [Researchers → APIs](../researchers/topics/apis.md))                       | 100 requests/minute per token     |
+| Client-side exception log (public; see [Researchers → Project Logs](../researchers/data_center/project_logs.md)) | 20 requests/minute per IP address |
  
 Researchers who are logged in to the researcher interface aren't rate-limited.

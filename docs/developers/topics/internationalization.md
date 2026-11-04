@@ -1,35 +1,80 @@
 # Internationalization
 
-The administration interface for researchers currently only supports English.
-The participation interface currently supports English and German.
+The researcher-facing Project Hub interface currently only supports English.
+
+The participant-facing interface (briefing/donation/questionnaire/debriefing) currently supports
+**English, German, Italian, and French**.
 
 ## Language Detection
 
-The language in which the interface for participants is displayed is determined
-by the default language of the participant's browser.
-If a language is not implemented for the participant interface, it is displayed
-in English.
+The language in which the interface for participants is displayed is determined by the default
+language of the participant's browser. If a language is not implemented for the participant
+interface, it falls back to English.
 
-## Adding Support for new Languages
+## Adding Support for a New Language
 
-To add support for a new language, new locales must be added at two locations:
+Supporting a new language means adding translations in two separate places: the Django-rendered
+parts of the participant flow, and the two Vue applications.
 
 ### Django Components
 
-Translations for the Django part of DDM are located at `/ddm/locale/`.
+Only `ddm.participation` currently ships translations, at `ddm/participation/locale/`:
 
-An extensive description of how translation is handled by Django can be found here:
-https://docs.djangoproject.com/en/3.2/topics/i18n/translation/
+```text
+ddm/participation/locale/
+├── de/LC_MESSAGES/django.po
+├── fr/LC_MESSAGES/django.po
+└── it/LC_MESSAGES/django.po
+```
 
-To create the translation files, first run `django-admin makemessages -l de` in
-the respective `ddm` sub-app directory, where `de` is the locale name that you want to create.
-This command creates or updates a file located at `ddm/locale/de/LC_MESSAGES/django.po`.
-In this file, you can add your translations. Afterward, run `django-admin compilemessages`
-to create a `django.mo` file, which will be used by gettext for translation.
+(There is no `en/` directory — English is `LANGUAGE_CODE` in `test_project/settings.py`, so it's
+the fallback/source language rather than a translated catalog.)
+
+See the [Django i18n docs](https://docs.djangoproject.com/en/5.2/topics/i18n/translation/) for
+the full picture. To add or update a locale:
+
+```console
+cd ddm/participation
+uv run --project ../.. django-admin makemessages -l de
+```
+
+`-l de` is the locale you want to create or update (`de`, `fr`, `it`, or a new one). This
+creates/updates `ddm/participation/locale/<locale>/LC_MESSAGES/django.po` — add or edit
+translations there. Then compile it to the `.mo` file gettext actually reads at runtime:
+
+```console
+uv run --project ../.. django-admin compilemessages
+```
+
+The other `ddm.*` sub-apps (`ddm.apis`, `ddm.auth`, `ddm.core`, `ddm.datadonation`, `ddm.logging`,
+`ddm.projects`, `ddm.questionnaire`) each already wrap their `AppConfig.verbose_name` in
+`gettext_lazy` (`_()`), but none of them ship a `locale/` directory yet — translating the
+researcher-facing admin interface would mean adding one per app and marking up the rest of each
+app's user-facing strings.
 
 ### Vue Components
 
-The translation files for the vue components are located at `/frontend/src/translations/`.
+Each Vue app manages its own translations with [vue-i18n](https://vue-i18n.intlify.dev/), as
+plain JSON files under its own `src/locales/`:
 
-Here, support for a new language can be added by appending the respective locale name
-as a first-level key to the json files and adding corresponding translations for all translation blocks.
+```text
+frontend/DDMUploader/src/locales/{en,de,fr,it}.json
+frontend/DDMQuestionnaire/src/locales/{en,de,fr,it}.json
+```
+
+To add a new language, add the locale as a new top-level key to **both** apps' JSON files (the
+Uploader and the Questionnaire are independent projects with independent translation files — see
+[For Developers → Vue Integration](../index.md#vue-integration-frontend)) and fill in a
+translation for every key already present for the other locales.
+
+!!! warning "Don't edit the built copy"
+
+    `ddm/core/static/ddm_core/frontend/uploader/locale/*.json` looks identical to
+    `frontend/DDMUploader/src/locales/*.json`, but it's a **build artifact** — webpack copies it
+    there from the source files whenever you run `npm run build` (see
+    [Vue Integration](../index.md#vue-integration-frontend)). Edit the source files under
+    `frontend/*/src/locales/`, never the copy under `ddm/core/static/`; your changes will be
+    overwritten by the next build otherwise.
+
+New translation keys only reach the served frontend after a rebuild (`npm run build`, or while
+`npm run serve` is running during development).

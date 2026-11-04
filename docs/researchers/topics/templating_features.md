@@ -1,197 +1,150 @@
-# Templating Features
+# Dynamic Content
 
-Certain text fields in DDM provide researchers with templating features that enhance the flexibility and control in
-displaying specific information to participants. These templating features are available in the briefing text,
-the debriefing text, instruction texts, as well as in question texts and item texts for questions that are connected to
-a [Blueprint](../data_collection_configuration/datadonation/datadonation_overview.md). In these fields, you can
-tailor which and how data is shown to participants based on certain
-conditions, such as whether a participant has successfully donated their data or has skipped the donation step.
-By using so-called _template tags_, _template filters_, and _template variables_, you can create dynamic and personalized
-content that adapts to different scenarios, ensuring the information presented is both relevant and clear.
+Some texts in DDM can change depending on the participant: for example, show the
+participant's ID, thank only participants who donated data, or refer to the donated data in
+a question. You do this with *template code* in the text.
 
-!!! warning
+Template code works in these texts:
 
-    This is an advanced feature. Use the templating features with caution. Misspecifications of tags and filters
+- The briefing text.
+- The donation instructions.
+- The debriefing text and the [redirect address](../general_project_settings.md#redirect-configuration).
+- Question and item texts. In questions linked to a
+  [Blueprint](../data_collection_configuration/datadonation/datadonation_overview.md), you
+  can also include the participant's donated data (see
+  [Data Integration](../data_collection_configuration/questionnaire/questionnaire_data_integration.md)).
 
-can lead to errors that will interrupt the flow for participants and can even break the application by causing a server
-error (502). We therefore advise to always thoroughly test templates including any tags, filters, or variables.
+Template code has three parts:
+
+- **Variables** insert a value: `{{ participant_id }}`.
+- **Tags** add logic, such as conditions: `{% if … %} … {% endif %}`.
+- **Filters** change a value: `{{ participant_id|truncatechars:5 }}`.
+
+!!! warning "Always test your template code"
+
+    A mistake in template code, such as a missing `{% endif %}` or an unsupported tag, can
+    stop the page from loading for participants. After every change, check the page with
+    the [test link](../test_and_launch.md).
 
 ## Available Tags and Filters
 
-Below, you find information on which variables, tags, and filters are available.
+DDM supports only the variables, tags, and filters listed below. They work like in Django's
+template language, which the links describe in more detail.
 
 ### Available Variables
 
-In all fields where the template features are available, the following variables can be used:
+Write variables in double curly braces. For example, the text
 
-- `participant_id`: The external ID of the participant.
-- `url_parameter`: A dictionary containing the URL parameters extracted from the initial URL. For example,
-this variable could look like `{'url_param_a': <value A>, 'url_param_b': <value B>}` and you would access a specific
-value by including `{{ url_parameter.url_param_a }}` in your text field.
-- `briefing_consent`: If you
-[enable the briefing consent on the Briefing page](../data_collection_configuration/briefing.md#configuration-options),
-this variable will be `1` if participant has
-consented to participation and `0` otherwise. If you have not enabled briefing consent, then
-this will be `None`.
-- `donation_info`: A dictionary containing information on the status of a participant's donation. Contains the following
-information which can be included in a text field as `{{ donation_info.n_success }}`:
-
-```
-"donation_info": {
-    "n_success": 1,           # number of successfully uploaded blueprints by this participant (regardless of consent).
-    "n_pending": 1,           # number of pending (i.e., not attempted) blueprint uploads.
-    "n_failed": 0,            # number of blueprints where an upload was attempted but failed.
-    "n_consent": 1,           # number of successful uploads to which donation consent was given.
-    "n_no_consent": 0,        # number of successful uploads to which no donation consent was given.
-    "n_no_data_extracted": 0  # number of donations by this participant where all entries were filtered out
-}
+```django
+Your participation ID is {{ participant_id }}.
 ```
 
-Additionally, in questions related to a specific Donation Blueprint, you can access the data that a participant has
-uploaded for this specific Blueprint in the question text and item texts:
+is shown to participants as "Your participation ID is xHQVbrYUYXn5lklW3RGSeouX."
 
-- `donated_data`: The data uploaded by the participant for a specific Blueprint.
+**`participant_id`**
 
-#### Usage
+The participant's ID.
 
-Variables can be used by including them in double curly brackets in the text field. For example, in the debriefing text
-you could write: `This is your personal participation ID: {{ participant_id }}.` which would then be presented to a
-participant as "This is your personal participation ID: 123456789."
+**`url_parameter`**
+
+The values of the [extracted URL parameters](../general_project_settings.md#url-parameter-extraction).
+Add the parameter's name after a dot. For example, if the link contained
+`?channel=email`, `{{ url_parameter.channel }}` shows `email`.
+
+**`briefing_consent`**
+
+Only if you [ask for consent on the briefing page](../data_collection_configuration/briefing.md#configuration-options):
+`"1"` if the participant consented and `"0"` if not. These are texts, so compare them
+with quotes: `{% if briefing_consent == "1" %}`.
+
+**`donation_info`**
+
+Counts that describe the participant's donations. Add the count's name after a dot, for
+example `{{ donation_info.n_consent }}`:
+
+| Name                  | Number of Blueprints…                                                                                |
+|-----------------------|------------------------------------------------------------------------------------------------------|
+| `n_success`           | from which data was extracted successfully, whether or not the participant consented.                |
+| `n_pending`           | for which no extraction was attempted yet, for example because the participant didn't upload a file. |
+| `n_failed`            | for which an upload was attempted but failed.                                                        |
+| `n_consent`           | from which data was extracted and the participant consented to donate it.                            |
+| `n_no_consent`        | from which data was extracted but the participant declined to donate it.                             |
+| `n_no_data_extracted` | for which the Extraction Rules removed all entries.                                                  |
+
+**`donated_data`**
+
+Only in questions linked to a Blueprint: the data that this Blueprint extracted for the
+participant. For how it's structured and how to use it, see
+[Data Integration](../data_collection_configuration/questionnaire/questionnaire_data_integration.md).
 
 ### Tags
 
-The following template tags are supported:
+Write tags in `{% … %}`. Most tags need a closing tag, such as `{% endif %}`. If it's
+missing, the text isn't shown at all.
 
-- `{% if %}`/`{% elif %}`/`{% else %}`/`{% endif %}`: Conditional rendering to include content based on a true/false
-statement ([more information](https://docs.djangoproject.com/en/4.2/ref/templates/builtins/#if)).
-- `{% for %}`/`{% endfor %}`: Iteration over a sequence to render content multiple times
-([more information](https://docs.djangoproject.com/en/4.2/ref/templates/builtins/#for)).
-- `{% ifchanged %}`/`{% else %}`/`{% endifchanged %}`: Checks if a value has changed compared to the last iteration of
-a for-loop ([more information](https://docs.djangoproject.com/en/4.2/ref/templates/builtins/#ifchanged)).
-- `{% regroup %}`: Use to regroup a consistently structured list ([more information](https://docs.djangoproject.com/en/4.2/ref/templates/builtins/#regroup)).
+For example, on the debriefing page:
 
-#### Usage
-
-Template tags can be used by enclosing them in `{% <...> %}`. For example, on the debriefing page, you could write:
-
-```
-{% if donation_info.n_consent == 0 %}Unfortunately, you did not donate any data.{% else %}Thank you very much for
-donationg your data!{% endif %}
+```django
+{% if donation_info.n_consent == 0 %}
+Unfortunately, you didn't donate any data.
+{% else %}
+Thank you very much for donating your data!
+{% endif %}
 ```
 
-If a person has agreed to donate at least some of their data, they will see the following on the debriefing page:
-"Thank you very much for donating your data!". Note that for most tags it is important to close them (in the example
-by including `{% endif %}`), otherwise an error occurs and the text will not be rendered at all.
+Participants who donated at least some data see "Thank you very much for donating your
+data!".
 
-For more details and examples, see https://docs.djangoproject.com/en/4.2/ref/templates/language/#tags.
+| Tag                                                                                                                                | What it does                                                           |
+|------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------|
+| [`{% if %}` … `{% elif %}` … `{% else %}` … `{% endif %}`](https://docs.djangoproject.com/en/5.2/ref/templates/builtins/#if)       | Shows text only if a condition is true.                                |
+| [`{% for %}` … `{% endfor %}`](https://docs.djangoproject.com/en/5.2/ref/templates/builtins/#for)                                  | Repeats text for each entry of a list.                                 |
+| [`{% ifchanged %}` … `{% else %}` … `{% endifchanged %}`](https://docs.djangoproject.com/en/5.2/ref/templates/builtins/#ifchanged) | In a loop, shows text only if a value differs from the previous entry. |
+| [`{% regroup %}`](https://docs.djangoproject.com/en/5.2/ref/templates/builtins/#regroup)                                           | Groups the entries of a list by a field.                               |
 
 ### Filters
 
-The following template filters can be used to modify the output of variables:
+Add filters to a variable with `|`. For example, `{{ "abcde"|truncatechars:3 }}` shows
+"ab…".
 
-- `date`: Formats a date according to the given format string ([more information](https://docs.djangoproject.com/en/4.2/ref/templates/builtins/#date)).
-- `default`:  Provides a default value if the variable evaluates to False ([more information](https://docs.djangoproject.com/en/4.2/ref/templates/builtins/#default)).
-- `dictsort:"var"`: Sorts a list of dictionaries by the provided variable ([more information](https://docs.djangoproject.com/en/4.2/ref/templates/builtins/#dictsort)).
-- `dictsortreversed:"var"`: Sorts a list of dictionaries by the provided variable in reversed order ([more information](https://docs.djangoproject.com/en/4.2/ref/templates/builtins/#dictsortreversed)).
-- `first`: Returns the first item in a list ([more information](https://docs.djangoproject.com/en/4.2/ref/templates/builtins/#first)).
-- `last`: Returns the last item in a list ([more information](https://docs.djangoproject.com/en/4.2/ref/templates/builtins/#last)).
-- `length`: The length of a value ([more information](https://docs.djangoproject.com/en/4.2/ref/templates/builtins/#length)).
-- `random`: Returns a random item from the given list ([more information](https://docs.djangoproject.com/en/4.2/ref/templates/builtins/#random)).
-- `truncatechars:n_chars`: Truncates a string after a specified number of characters ([more information](https://docs.djangoproject.com/en/4.2/ref/templates/builtins/#truncatechars)).
-- `truncatewords:n_words`: Truncates a string after a specified number of words ([more information](https://docs.djangoproject.com/en/4.2/ref/templates/builtins/#truncatewords)).
+| Filter                                                                                               | What it does                                                                                  |
+|------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+| [`date`](https://docs.djangoproject.com/en/5.2/ref/templates/builtins/#date)                         | Formats a date, for example `{{ entry.time                                                    |date:"d.m.Y" }}`. |
+| [`default`](https://docs.djangoproject.com/en/5.2/ref/templates/builtins/#default)                   | Shows a fallback text if the value is empty or missing, for example `{{ url_parameter.channel |default:"unknown" }}`. |
+| [`dictsort`](https://docs.djangoproject.com/en/5.2/ref/templates/builtins/#dictsort)                 | Sorts a list by a field, for example `donated_data                                            |dictsort:"time"`. |
+| [`dictsortreversed`](https://docs.djangoproject.com/en/5.2/ref/templates/builtins/#dictsortreversed) | Sorts a list by a field in reverse order.                                                     |
+| [`first`](https://docs.djangoproject.com/en/5.2/ref/templates/builtins/#first)                       | The first entry of a list.                                                                    |
+| [`last`](https://docs.djangoproject.com/en/5.2/ref/templates/builtins/#last)                         | The last entry of a list.                                                                     |
+| [`length`](https://docs.djangoproject.com/en/5.2/ref/templates/builtins/#length)                     | The number of entries in a list, or of characters in a text.                                  |
+| [`random`](https://docs.djangoproject.com/en/5.2/ref/templates/builtins/#random)                     | A random entry of a list.                                                                     |
+| [`truncatechars`](https://docs.djangoproject.com/en/5.2/ref/templates/builtins/#truncatechars)       | Shortens a text to a number of characters, including the "…".                                 |
+| [`truncatewords`](https://docs.djangoproject.com/en/5.2/ref/templates/builtins/#truncatewords)       | Shortens a text to a number of words.                                                         |
 
-#### Usage
+## Use Cases
 
-Template filters can be used by adding them to a value (which can also be a variable) as follows: `{{ value|filter }}`.
-For example, `{{ "abcde"|truncatechars:3 }}` will render as "abc…".
+### Different Debriefing Texts Depending on Consent
 
-For more details and examples, see https://docs.djangoproject.com/en/4.2/ref/templates/language/#filters.
+To thank participants differently depending on whether they consented on the briefing page,
+use this debriefing text:
 
-### Use Cases
-
-#### Different Debriefing Pages Depending on Participation Success
-
-You may want to display a different debriefing text to participants that do not provide initial
-consent for participation. In this case you would use the following in the text configuration of
-your debriefing page:
-
-```
-Dear participant I would like to tell you something about yourself.
-
+```django
 {% if briefing_consent == "1" %}
-You did consent to take part in this study and for this we are really grateful.
+Thank you for taking part in this study.
 {% else %}
-Unfortunately, you did not consent to take part in the study but we respect your
-decision and completely understand! :')
+You decided not to take part in this study. We respect your decision.
 {% endif %}
 
-Your public ID is as follows: "{{ participant_id }}". Please take a photo
-of this ID. If you wnat to request the deletion of your data at some point in the
-future you can send an e-mail with your personal public ID to someone@mail.com
-and your data will be deleted from our servers.
+Your participation ID is "{{ participant_id }}". To have your data deleted later, send this
+ID to someone@example.org.
 ```
 
-A participant that consented to take part in the study will then see this question as
-follows:
+Participants who consented see:
 
-```
-Dear participant I would like to tell you something about yourself.
+> Thank you for taking part in this study.
+>
+> Your participation ID is "xHQVbrYUYXn5lklW3RGSeouX". To have your data deleted later, send
+> this ID to someone@example.org.
 
-You did consent to take part in this study and for this we are really grateful.
+### Refer to the Donated Data in a Question
 
-Your public ID is as follows: "xHQVbrYUYXn5lklW3RGSeouX". Please take a photo
-of this ID. If you wnat to request the deletion of your data at some point in the
-future you can send an e-mail with your personal public ID to someone@mail.com
-and your data will be deleted from our servers.
-```
-
-#### Display First Element of List in Data Donation
-
-Assuming you collect data donations from your participants that lead to the following data structure:
-
-```
-[
-    {'title': 'First Title', 'timestamp': '2022-12-19T08:49:18'},
-    {'title': 'Second Title', 'timestamp': '2022-12-16T11:43:02'},
-    # ...
-]
-```
-
-When you want to display the title of the first element of that list in a question text, you can do this by specifying
-the question text as follows:
-
-```
-This is the title of the last video you watched on YouTube: "{{ donated_data.0.title }}"
-
-Please indicate below, why you watched this video.
-```
-
-This will then be rendered as follows:
-
-```
-This is the title of the last video you watched on YouTube: "First Title"
-
-Please indicate below, why you watched this video.
-```
-
-!!! tip
-
-    If you are starting to construct a dynamic question text, first include the
-    complete data objects stored in the variables in your question text (e.g.,
-    `{{ participant }}, {{ data }}`).
-
-    Next, open the link to your study in an anonymous browser window and go through
-    the steps until you reach the questionnaire part. This way you can see how the
-    data object is structured and figure out from there, how you can access the
-    information on deeper levels of the data structure. You can then start to adjust
-    the variables and reload the anonymous window every time you made a change to the
-    question definition to see how your new specification will be rendered.
-
-## Technical Implementation
-
-We have extended the default Django Template Engine to create a tailored version that supports a subset of the full
-range of template tags and filters implemented in Django. This customized engine allows for enhanced control over which
-features are available to users, focusing on simplicity and security while maintaining core template functionality.
-
-Limiting the available template tags and filters, ensures security and performance while maintaining essential template
-functionalities and providing customization and flexibility to users.
+See [Data Integration](../data_collection_configuration/questionnaire/questionnaire_data_integration.md).

@@ -1,51 +1,56 @@
-# Debriefing
+# Debriefing Page
 
-The debriefing page is the last part of your project, that participants will see and interact with.
-The purpose of the debriefing page is to debrief participant and possibly reroute them to the
-next part of your study (e.g., by redirecting to an external questionnaire).
+The debriefing page is the last page participants see. Use it to thank participants,
+explain the purpose of the study, and, if needed, send them on to the next part of your
+study, such as a follow-up survey.
 
 ## Participants' Perspective
 
-To the participants, the debriefing page will look something like this:
+![Debriefing page as participants see it](../img/debriefing_page.png){ width="95%" }
 
-![Debriefing Page Screenshot](../img/debriefing_page.png){ width="95%" }
+To show a button that takes participants to another website, such as your survey, see
+[General Project Settings → Redirect Configuration](../general_project_settings.md#redirect-configuration).
 
-## Configuration Options
+## Configuration
 
-You can access the configuration options for the briefing page in _Project Hub > Project Configuration > Debriefing_.
-To configure the debriefing page, you have the following option:
+Open the [Project Hub](../project_hub.md) and go to
+**Data Collection Configuration → Debriefing**.
 
-#### `Debriefing text`
-: Text displayed to participants on the debriefing page.
+!!! setting-details "Settings"
 
-!!! tip
+    ---
 
-    Sometimes you might want to display different debriefing texts depending on the
-    previous actions of your participant (e.g., if a participant did indicate that
-    they do not want to take part in the study, or if a participant did not attempt
-    to donate any data).
+    **Debriefing text**
 
-    For this, you can make use of the templating engine and, for example, define the
-    following debriefing page that displays a different text to a participant that
-    did not attempt to donate any that compared to a participant who donated at least
-    some data (the example assumes that two donations were expected in this study):
+    The text shown on the debriefing page.
 
-    ```
-    {% if donation_info.n_success > 0 %}
-    Dear participant,
+### Show Different Texts to Different Participants
 
-    Thank you very much for participating in our study. With your data donation, you
-    made a great contribution towards advancing our understanding of algorithmic
-    selection on the internet.
-    {% endif %}
+You can adapt the debriefing text to what happened during participation, for example to
+tell participants whose files couldn't be processed that they aren't eligible for a reward.
 
-    {% if donation_info.n_pending == 2 %}
-    Dear participant,
+To do this, add conditions to the text. A condition starts with `{% if … %}`, can have
+alternatives (`{% elif … %}`, `{% else %}`), and ends with `{% endif %}`. DDM shows only the
+text of the first condition that applies:
 
-    Thank you for your time. Because you did not attempt to donate any data, you are
-    unfortunately not eligible to receive the participation reward.
-    {% endif %}
-    ```
+```django
+{% if donation_info.n_success > 0 %}
+    Thank you very much for participating in our study. With your data donation, you made a
+    great contribution to our research.
+{% elif donation_info.n_no_data_extracted > 0 %}
+    Thank you for your time. Unfortunately, no data could be extracted from your upload, so
+    you aren't eligible for the participation reward.
+{% else %}
+    Thank you for your time.
+{% endif %}
+```
 
-    You can read more about how to use dynamic templates
-    [here](../topics/templating_features.md).
+In this example:
+
+- Participants who donated at least some data see the first text.
+- Participants who donated nothing, and from whose upload no data could be extracted, see
+  the second text.
+- Everyone else, for example participants who declined to donate, sees the third text.
+
+For all `donation_info` values and other variables, see
+[Template Rendering → Available Variables](../topics/templating_features.md#available-variables).

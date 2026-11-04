@@ -1,52 +1,56 @@
 # Data Integration
 
-It is possible to dynamically include participant-related and/or donation-related information in a question text.
+Questions linked to a [Blueprint](../datadonation/datadonation_overview.md) can include the
+participant's donated data. For example, you can ask about a specific video from the
+participant's watch history:
 
-## Available Data
+> Why did you watch "How to Bake Sourdough Bread"?
 
-There are two types of data that can be integrated in a questionnaire: Metadata related to the participant and
-data contained in the donated data. This data can be integrated by using the follwing pattern in the text field of
-your question or item: `This is the variable I would like to render {{ VARIABLE_NAME }}`.
+DDM fills in the data for each participant when the question is shown.
 
-### Participant-Related Data
+!!! note
 
-Regarding the metadata related to the participant, you can integrate the following information in your questionnaire:
+    This isn't available for projects with
+    [enhanced encryption](../../create_project.md#advanced-options-enhanced-encryption).
 
-- `participant_id`: The external ID of the participant.
-- `url_parameter`: A dictionary containing the URL parameters extracted from the initial URL. For example, this variable
-could look like `{'url_param_a': <value A>, 'url_param_b': <value B>}` and you would access a specific value by
-including `{{ url_paramerer.url_param_a }}` in your text field.
-- `briefing_consent`: If you
-[enable the briefing consent on the Briefing page](../briefing.md#configuration-options), this variable will be `1` if participant has
-consented to participation and `0` otherwise. If you have not enabled briefing consent, then
-this will be `None`.
-- `donation_info`: A dictionary containing information on the status of a participant's donation.
-Contains the following information which can be included in a text field as `{{ donation_info.n_success }}`:
+## How the Donated Data Is Structured
 
-```json
-"donation_info": {
-    "n_success": 1,           # number of successfully uploaded blueprints by this participant (regardless of consent).
-    "n_pending": 1,           # number of pending (i.e., not attempted) blueprint uploads.
-    "n_failed": 0,            # number of blueprints where an upload was attempted but failed.
-    "n_consent": 1,           # number of successful uploads to which donation consent was given.
-    "n_no_consent": 0,        # number of successful uploads to which no donation consent was given.
-    "n_no_data_extracted": 0  # number of donations by this participant where all entries were filtered out
-}
+In a question linked to a Blueprint, the variable `donated_data` contains the data that this
+Blueprint extracted for the participant. It's a list of entries, one per row. Each entry
+contains the [Relevant Fields](../datadonation/datadonation_configuration.md#relevant-fields)
+of the Blueprint, under their **Rename to** names if you set them.
+
+For example, a watch-history Blueprint with the fields `title` and `time` could produce:
+
+| title                       | time             |
+|-----------------------------|------------------|
+| How to Bake Sourdough Bread | 2026-04-02 15:30 |
+| Why are Harry's eyes blue   | 2026-04-01 14:09 |
+
+The entries keep the order of the platform's file. Check whether the first entry is the
+oldest or the newest before you refer to "the last video".
+
+## Include Data in a Question
+
+Write variables in double curly braces. Use the entry's position (starting at `0`) and the
+field name, separated by dots:
+
+```django
+Why did you watch "{{ donated_data.0.title }}"?
 ```
 
-### Donation-Related Data
+To list several entries, use a loop. This example lists the first three titles:
 
-Additionally, in questions related to a specific Blueprint, you can access the data that were extracted through
-this specific Blueprint in the question text and item texts by using the following variable:
+```django
+Which of these videos do you remember?
+{% for entry in donated_data %}{% if forloop.counter <= 3 %}
+- {{ entry.title }}
+{% endif %}{% endfor %}
+```
 
-- `donated_data`: The data uploaded by the participant for a specific Blueprint. This will usually be a JSON-object,
-but how this object is structured is dependent on the donation that you collect and cannot be described universally.
+You can also use the variables available in all texts, such as `{{ participant_id }}` and
+`{{ url_parameter.<name> }}`. For all variables and more examples, see
+[Template Rendering](../../topics/templating_features.md).
 
-## How to Integrate Data
-
-To integrate data in your question or item text, DDM makes use of a restricted version of the
-[Django templating system](https://docs.djangoproject.com/en/4.2/ref/templates/builtins/).
-
-This means that you can use so-called _filters_, _tags_, and _variables_ to render information dynamically and
-conditionally per participant. To get further information on how to do this and also find some examples,
-visit the [templating features page](../../topics/templating_features.md).
+To show or hide questions depending on the donation, use
+[filters](questionnaire_configuration.md#filter-configuration).

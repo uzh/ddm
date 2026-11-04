@@ -1,68 +1,95 @@
-# Data Download: Accessing the Collected Data
+# Download
 
-![Project Statistics Section](../img/data_download_section.png){ width="95%" }
+You can download your data in two ways:
 
-There are two options to download your data. The first option is to use the internal download option in the
-[Project Hub](../project_hub.md).
-The second one is to download the data through the API.
+- **In the Project Hub**, in the **Data Center** section. Described on this page.
+- **Through the API**, with a script. See [Download Through the API](#download-through-the-api).
 
-## Download Donations Through the Project Hub
+![The Data Center section in the Project Hub](../img/data_download_section.png){ width="95%" }
 
-Downloading the data through the Project Hub is a two-step process.
+For projects with
+[enhanced encryption](../create_project.md#advanced-options-enhanced-encryption), you need
+the project password for every download.
 
-First, go to the Project Hub, scroll down to the section "Data Center" and download the Participation Overview:
+## Download Donations
+
+In the Project Hub, you download donations one participant at a time:
+
+1. In the **Data Center** section of the Project Hub, download the **Participation
+   Overview**. It's a CSV file with one row per participant, including participants who
+   didn't finish.
+
+2. In the file, open the link in the `donation_download_link` column of the participant.
+   Open it in the browser in which you're logged in to DDM.
+
+Each donation is a JSON file with the data that each Blueprint extracted, using the field
+names you defined under
+[Relevant Fields](../data_collection_configuration/datadonation/datadonation_configuration.md#relevant-fields).
+
+!!! tip "Download all donations at once"
+
+    There's no button to download all donations at once. To download the donations of all
+    participants, use the [API](#download-through-the-api).
+
+### Participation Overview
+
+The Participation Overview has these columns:
+
+| Column                   | Description                                                                                                                                                                                                                              |
+|--------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `participant_id`         | The participant's ID.                                                                                                                                                                                                                    |
+| `is_test_case`           | `True` if the participant used the [test link](../test_and_launch.md).                                                                                                                                                                   |
+| `start_time`             | When the participant first opened the project, for example `2024-07-16 20:30:40.863581+00:00` (UTC).                                                                                                                                     |
+| `end_time`               | When the participant reached the debriefing page.                                                                                                                                                                                        |
+| `current_step`           | The last step the participant reached: `0` briefing, `1` data donation, `2` questionnaire, `3` debriefing.                                                                                                                               |
+| `completed`              | `True` if the participant completed the study.                                                                                                                                                                                           |
+| `url_parameter`          | All [extracted URL parameters](../general_project_settings.md#url-parameter-extraction) in one column, if enabled, for example `{"participant": "ID123", "channel": "email"}`. Split it into separate columns in your analysis software. |
+| `extra_data`             | `briefing_consent` (`"1"` or `"0"`) if you ask for consent on the briefing page. For test runs, it may also contain internal test information (see [Test and Launch](../test_and_launch.md)).                                            |
+| `donation_download_link` | The link to download the participant's donation.                                                                                                                                                                                         |
+
+For each Blueprint, the file has these columns, where `<X>` is the Blueprint's ID:
+
+| Column                    | Description                                                                                                                                                                                                                               |
+|---------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `bp-<X>_name`             | The Blueprint's name. Use it to see which Blueprint the ID belongs to.                                                                                                                                                                    |
+| `bp-<X>_time_submitted`   | When the participant submitted the donation for this Blueprint.                                                                                                                                                                           |
+| `bp-<X>_consent`          | `True` if the participant consented to donate this Blueprint's data, `False` if not.                                                                                                                                                      |
+| `bp-<X>_extraction_state` | `DATA_EXTRACTED`: data was extracted. `NOT_ATTEMPTED`: the participant reached the data donation step but didn't upload a file. `FAILED`: the upload or extraction failed. `NO_DATA_EXTRACTED`: the Extraction Rules removed all entries. |
+| `bp-<X>_n_data_entries`   | The number of entries in the donation. For some data structures, the actual number may be higher.                                                                                                                                         |
 
 !!! note "Test runs"
 
-    Test runs made through the project's [Test Link](../topics/test_mode.md) are included here, unless you
-    used that link to jump between steps - see [Test Mode](../topics/test_mode.md#test-runs-in-your-data-and-exports)
-    for details. They are marked as `is_test_case`.
+    Participants who used the [test link](../test_and_launch.md) are included and marked
+    with `is_test_case = True`. Exclude them before you analyze the data. For exceptions,
+    see [Test and Launch](../test_and_launch.md#test-runs-in-your-data-and-exports).
 
-<!-- TODO: screenshot missing in the old docs too — capture "Participation Overview Download" and add as download_participation_overview.png -->
-This will download a CSV file containing one row for every participant that has started participation in the project
-(i.e., this also contains participants that have not completed the donation). The file includes the following variables:
+## Download Questionnaire Responses
 
-| Variable/Column         | Description                                                                                                                                                                                                                                                                                                         |
-|-------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| participant_id          | The ID of the participant.                                                                                                                                                                                                                                                                                          |
-| start_time              | Date and time in ISO 8601 format when the participant first accessed the project (e.g., "2024-07-16 20:30:40.863581+00:00").                                                                                                                                                                                        |
-| end_time                | Date and time in ISO 8601 format when the participant accessed the debriefing page of the project (e.g., "2024-07-16 22:25:30.1634581+00:00").                                                                                                                                                                      |
-| current_step            | The last step of the participation flow that the participant has accessed ("1" = Briefing page, "2" = data donation step, "3" = questionnaire, "4" = debriefing page).                                                                                                                                              |
-| completed               | Indicates whether the participant has completed the participation (True/False).                                                                                                                                                                                                                                     |
-| extra_data              | Contains any extra data recorded in relation to a participation (e.g., extracted URL parameters).                                                                                                                                                                                                                   |
-| bp-<X>_name             | The name of the blueprint with ID "X".                                                                                                                                                                                                                                                                              |
-| bp-<X>_time_submitted   | Date and time in ISO 8601 format when the participant has submitted their donation for blueprint X.                                                                                                                                                                                                                 |
-| bp-<X>_consent          | Indicates whether the participant has consented to the donation of their data related to blueprint X. `True` = consent, `False` = no consent.                                                                                                                                                                       |
-| bp-<X>_extraction_state | Indicates the status of the participant's donation in relation to blueprint X ("DATA_EXTRACTED" = donation was successful, "NOT_ATTEMPTED" = data donation step reached but donation not attempted, "FAILED" = donation attempted but donation failed due to an error, "NO_DATA_EXTRACTED" = all data filtered out) |
-| bp-<X>_n_data_entries   | The number of entries detected in the donated data (depending on the data structure, this value may underestimate how many entries the donation actually contained).                                                                                                                                                |
-| donation_download_link  | A link though which the donation for the participant can be downloaded. Can be opened in the browser where you are logged in to DDM.                                                                                                                                                                                |
+In the **Data Center** section of the Project Hub, click **Download CSV** next to the
+questionnaire responses.
 
-Next, you can download the data donations for each participant through the donation download link.
+The file has one row per participant and one column per question or item, named after its
+**Variable Name** (see [Questionnaire Configuration](../data_collection_configuration/questionnaire/questionnaire_configuration.md#general-settings)).
 
-!!! note
+The responses use these codes for missing values:
 
-    For larger donation projects where you collect data donations from many participants,
-    it may be more convenient to download the data donations through the API (see below).
+- `-77`: The question or item wasn't shown because of a
+  [filter](../data_collection_configuration/questionnaire/questionnaire_configuration.md#filter-configuration).
+- `-99`: The participant saw the question or item but didn't answer it.
 
-## Download Questionnaire Responses Through the Project Hub
+The `questionnaire_complete` column is `true` if the participant submitted the last page
+of the questionnaire, and `false` if they stopped partway through.
 
-To download the questionnaire responses as a csv table, go to the Project Hub, scroll down to the section
-"Data Center" and download the file by clicking on Download CSV:
+## Download Through the API
 
-<!-- TODO: screenshot missing in the old docs too — capture "Questionnaire Responses Download" and add as download_responses.png -->
-## Download via API
+1. In the **Data Center** section of the Project Hub, click **Manage Remote Access**.
+2. Create an API token.
+3. Use the token in your script. For the available endpoints and examples, see
+   [APIs](../topics/apis.md).
 
-To download your data via the API, you first have to create an API token. You can do so by going to the "Data Center"
-section in your Project Hub, and then clicking on "Manage Access Token". In the page that opens you can create an
-API token that is used to authenticate your external download request.
+!!! warning "Share data access carefully"
 
-A list of available API endpoints and a more detailed description on how to use them can be found in the
-[API section of the documentation](../topics/apis.md).
-
-!!! tip
-
-    A project can only be accessed through the Researcher Interface by the user who created it.
-    This means that the internal download is only accessible for a project owner.
-    The API token, on the other hand, can be used to share data access with colleagues working on the same project.
-    However, be careful with whom you share this token as it exposes the sensitive data collected from participants.
-    We recommend choosing a short expiration date for Tokens that you create.
+    Only the researcher who created a project can open it in DDM. To give colleagues access
+    to the data, you can share an API token instead. Anyone with the token can download
+    all collected data, so share it only with people who are allowed to see the data, and
+    set a short expiration date.

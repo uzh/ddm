@@ -1,10 +1,19 @@
 # DDM Documentation
 
-**DDM** (Data Donation Module) is an open-source web-application that researchers can
-use to set up data donation projects and collect data donations for academic research.
+**DDM** (Data Donation Module) is an open-source web application for collecting data
+donations for academic research. In a data donation, participants request a copy of the
+data that a platform such as YouTube or Instagram has collected about them, and share
+selected parts of it with researchers.
 
-It is developed and maintained by the [Data Donation Lab](https://datadonation.uzh.ch)
-at the University of Zurich.
+DDM is developed and maintained by the [Data Donation Lab](https://datadonation.uzh.ch) at
+the University of Zurich.
+
+## Documentation Structure
+
+- **[For Researchers](researchers/index.md)**: Set up and run data donation projects on an
+  existing DDM server.
+- **[For System Administrators](administrators/index.md)**: Install and run a DDM server.
+- **[For Developers](developers/index.md)**: Contribute to DDM, or fork and extend it.
 
 ## Key Features
 
@@ -15,8 +24,8 @@ at the University of Zurich.
 
     ---
 
-    Researchers can **configure** the data donation collection (incl. validation 
-    and extraction), **access collected data**, and **monitor** on-going data collections 
+    Researchers can **configure** the data donation collection (including validation
+    and extraction), **access collected data**, and **monitor** ongoing data collections
     through a **graphical user interface**.
 
     Project configurations can also easily be shared through the integrated 
@@ -49,86 +58,70 @@ at the University of Zurich.
 
     ---
 
-    DDM puts participant privacy first
+    DDM puts participant privacy first.
 
-    **Local Processing:** Data is extracted in the participant's browser and 
-    only submitted after explicit consent
+    **Local Processing:** Donated data is extracted in the participant's browser and
+    only submitted after explicit consent.
 
-    **Encryption:** All donated data is encrypted before storage
+    **Encryption:** All donated data is encrypted before storage.
 
-    **Enhanced Encryption:** Activate enhanced encryption for an additional 
-    layer of security (e.g., if you're dealing with health data)
+    **Enhanced Encryption:** Encrypt a project's data with a password that only
+    your team knows, so that not even the server administrators can read it
+    (e.g., if you're dealing with health data).
 
 </div>
 
-## Overview of a data donation collection using DDM
+## How a Data Donation Works
 
-A data donation collection using DDM consists - from a participant's perspective -
-of the following steps:
+Participants go through these steps:
 
-**1) Briefing page**
+1. **Briefing page:** Participants learn about the study.
+2. **Data donation:**
+    1. Participants follow the instructions to request their data from the platform and
+       download it.
+    2. They upload the file to DDM.
+    3. DDM extracts and filters the data according to the researcher's rules, in the
+       participant's browser.
+    4. Participants review the extracted data and decide whether to donate it.
+3. **Questionnaire (optional):** Participants answer questions, which can refer to their
+   donated data, for example to add context or to show participants insights into their
+   own data.
+4. **Debriefing page:** The last page, which can send participants on to another website,
+   such as an external survey.
 
-First, the participant is presented with a briefing page. On this page, researchers
-describe their project, and provide a study briefing.
+The content of a donation is sent to the researcher's server only after the participant
+consents in step 2.4. For details, see
+[Data Donation Overview](researchers/data_collection_configuration/datadonation/datadonation_overview.md).
 
-**2) Data donation**
+## Design Philosophy
 
-Next, the participant is presented with a webpage through which they can donate their
-data. This page is divided into three steps: `(A)` instructions, 
-`(B)` data upload, and `(C)` data review and consent.
+DDM is designed to be hosted by an institution, such as a university, a department, or a
+research consortium, and to run many independent data donation projects at the same time.
+It also works for a single project.
 
-The participation flow in this step looks as follows:
+Researchers configure everything in a graphical user interface, without programming.
 
-1. The participant reads the instructions and downloads the relevant file onto their device.
-2. The participant uploads their data into DDM.
-3. The uploaded data is filtered and transformed according to the rules defined by the researcher 
-(e.g., only certain fields are extracted). This happens locally on the participant's device.
-4. The participant is presented with the extracted data which they will be donating to the researchers.
-5. The participant reviews the extracted data and decides whether to donate their data (i.e., submit their data to the researcher's server).
+For more on DDM's design, see the [accompanying article](#how-to-cite-ddm).
 
-Steps `2` to `4` are all client-based and executed in the participant's browser. No personal
-data is submitted until step `5`.
+## How to Cite DDM
 
-**3) Follow-up questionnaire (optional)**
-After the data donation, the participant fills out the survey the researcher 
-has configured in DDM. Questions defined in this questionnaire can be configured 
-to include data points from the donated data – either to enrich the donated data 
-or to provide participants with insights into their personal data.
+If you use DDM in your research, please cite:
 
-This step is skipped if no questionnaire is defined in DDM.
+> Pfiffner, N., Witlox, P., & Friemel, T. N. (2024). Data Donation Module: A Web
+> Application for Collecting and Enriching Data Donations. *Computational Communication
+> Research*, 6(2), 1–19. [https://doi.org/10.5117/CCR2024.2.4.PFIF](https://doi.org/10.5117/CCR2024.2.4.PFIF)
 
-**4) End / debriefing page**
-Lastly, the participant sees the debriefing page. From here, researchers can 
-optionally redirect participants to another website or web application (e.g., an 
-external survey tool).
+```bibtex
+@article{pfiffner2024ddm,
+  author  = {Pfiffner, Nico and Witlox, Pim and Friemel, Thomas N.},
+  title   = {Data Donation Module: A Web Application for Collecting and Enriching Data Donations},
+  journal = {Computational Communication Research},
+  year    = {2024},
+  volume  = {6},
+  number  = {2},
+  pages   = {1--19},
+  doi     = {10.5117/CCR2024.2.4.PFIF}
+}
+```
 
-## Design philosophy
-
-The application is intended to be hosted at an institutional level (e.g., a university, a
-university division, or a research conglomerate) and be used by multiple research projects
-as it provides the possibility to host multiple independent data donation projects 
-simultaneously. Nevertheless, it is also possible to use it for single projects.
-
-For researchers, DDM is designed to be as easy to use as possible. Everything can
-be configured through a graphical user interface without requiring in-depth programming knowledge.
-
-!!! abstract "Read more about DDM"
-
-    Read more about DDM and its design philosophies in the accompanying article "Data Donation
-    Module: A Web Application for Collecting and Enriching Data Donations" by N. Pfiffner,
-    P. Witlox, and T. Friemel (2024), published in *Computational Communication Research*
-    ([doi:10.5117/CCR2024.2.4.PFIF](https://doi.org/10.5117/CCR2024.2.4.PFIF)).
-
-    [![DDM paper title page](img/ddm_paper.png){ width="220" }](https://doi.org/10.5117/CCR2024.2.4.PFIF)
-
-## Documentation structure
-
-This documentation consists of three parts, each targeted at one specific user group:
-
-- **[Documentation for Researchers](researchers/index.md)**: for researchers who use DDM to set
-  up their data donation projects on an existing application server. It demonstrates how to
-  create and configure a new data donation project.
-- **[Documentation for Administrators](administrators/index.md)**: for server administrators/ dev ops who
-  want to set up a server to host DDM.
-- **[Documentation for Developers](developers/index.md)**: for developers who want to contribute
-  to the development of DDM, or who want to fork and extend DDM on their own.
+[![Title page of the DDM article](img/ddm_paper.png){ width="220" }](https://doi.org/10.5117/CCR2024.2.4.PFIF)

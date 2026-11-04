@@ -1,4 +1,4 @@
-# Documentation for older releases
+# Older Versions
 
 This site documents DDM 3.x and later. Documentation for older major versions stays online as a
 frozen archive of the previous (Antora-based) documentation:

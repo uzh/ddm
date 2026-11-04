@@ -1,4 +1,4 @@
-# Reporting issues and getting help
+# Reporting Issues
 
 If you encounter issues or detect a bug, please open a new issue in the
 [GitHub repository](https://github.com/uzh/ddm).

@@ -8,8 +8,8 @@ deployments to GitHub Pages are managed with [mike](https://github.com/jimporter
 ## Building the documentation locally
 
 ```console
-.../ddm> uv sync --group docs
-.../ddm> uv run mkdocs serve
+uv sync --group docs
+uv run mkdocs serve
 ```
 
 `mkdocs serve` starts a live-reloading preview at <http://127.0.0.1:8000/>.
@@ -47,10 +47,10 @@ automatically).
 
 ```console
 # 1. serve the demo project
-.../ddm> uv run python test_project/manage.py runserver
+uv run python test_project/manage.py runserver
 
 # 2. regenerate the screenshots
-.../ddm> uv run python tools/screenshots/update_screenshots.py
+uv run python tools/screenshots/update_screenshots.py
 ```
 
 The demo project is referenced by the `PROJECT_ID` / `PROJECT_SLUG` / `FILE_UPLOADER_ID`

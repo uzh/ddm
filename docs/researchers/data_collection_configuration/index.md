@@ -1,21 +1,27 @@
 # Data Collection Configuration
 
-This part of the documentation will take you through the steps involved in 
-setting up a data collection. This includes the setup of:
+Configure what participants see and do, step by step. Participants go through the steps in
+this order:
 
-1. Briefing Page: Define what is displayed to participants when they enter your project.
-2. Data Donation: Define the expected data donations, extraction rules, and donation instructions.
-3. Questionnaire: Define questions that will be shown to participants after they have donated their data.
-4. Debriefing Page: Define what is displayed when participants reach the end of the data donation.
+1. [Briefing Page](briefing.md): Introduces your study when participants open the link.
+2. [Data Donation](datadonation/datadonation_overview.md): Participants upload their data,
+   review it, and decide what to donate. You define which files you expect, which data is
+   extracted, and the instructions participants follow.
+3. [Questionnaire](questionnaire/questionnaire_overview.md) (optional): Questions shown after
+   the donation, which can refer to the donated data.
+4. [Debriefing Page](debriefing.md): The last page, for example to thank participants or send
+   them on to a follow-up survey.
 
-Currently, the order of these parts is fixed (e.g., you cannot change the order 
-of the data donation and the questionnaire to ask questions before the donation, 
-and you cannot hide/skip the briefing and debriefing pages). However, the
-questionnaire is optional and can be skipped.
+!!! info "The order is fixed"
 
-You can access the configuration of each of these parts through the
-_Data Collection Configuration_ section in the Project Hub:
+    You can't change the order of the steps or skip the briefing and debriefing pages. Only
+    the questionnaire is optional.
 
-![Project Configuration Screenshot](../img/project_configuration_section.png){ width="90%" }
+    To ask questions *before* the donation, use an external survey tool (for example,
+    SoSciSurvey or Qualtrics) first and send participants on to DDM with their ID in the link.
+    See [URL Parameter Extraction](../general_project_settings.md#url-parameter-extraction).
 
-The following pages will take you step-by-step through the configuration.
+To configure a step, open the [Project Hub](../project_hub.md) and select it under
+**Data Collection Configuration**:
+
+![The Data Collection Configuration section in the Project Hub](../img/project_configuration_section.png){ width="90%" }

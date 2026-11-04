@@ -88,9 +88,13 @@ strong {
 .md-typeset .setting-details > .admonition-title,
 .md-typeset .setting-details > summary {
   background-color: var(--md-default-bg-color);
+  padding-top: 12px;
 }
 .md-typeset .setting-details > summary {
   padding: .9375em 3.25em;
+}
+.md-typeset .setting-details hr {
+  margin: 1em 0;
 }
 .md-typeset .setting-details > .admonition-title::before,
 .md-typeset .setting-details > summary::before {
